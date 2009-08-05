@@ -77,7 +77,7 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${file.reference.gwt-dev-windows.jar}</file>
+                    <file>${file.reference.gwt-incubator-july-14-2009.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
@@ -85,8 +85,7 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${file.reference.gwt-incubator-march-02-2009.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
+                    <file>${file.reference.gwt-dev-linux.jar}</file>
                 </library>
                 <library>
                     <file>${file.reference.Shell.jar}</file>

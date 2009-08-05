@@ -541,13 +541,12 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.unoil-3.0.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.unoil-3.0.1.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.gwt-user.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.gwt-user.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.org.cobogw.gwt-1.2.4.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.org.cobogw.gwt-1.2.4.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.gwt-dev-windows.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.gwt-dev-windows.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.gwt-incubator-july-14-2009.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.gwt-incubator-july-14-2009.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.gwttheme.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.gwttheme.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.gwt-incubator-march-02-2009.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.gwt-incubator-march-02-2009.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.Shell.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.Shell.jar" todir="${dist.ear.dir}"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.reference.DocDoku-Common.jar} ${manifest.file.reference.ical4j-1.0-beta2.jar} ${manifest.file.reference.commons-lang-2.3.jar} ${manifest.file.reference.log4j-1.2.14.jar} ${manifest.file.reference.commons-fileupload-1.2.jar} ${manifest.file.reference.jnlp-servlet.jar} ${manifest.file.reference.commons-cli-1.1.jar} ${manifest.file.reference.commons-io-1.4.jar} ${manifest.file.reference.jodconverter-3.0-beta-2.jar} ${manifest.file.reference.json-20080701.jar} ${manifest.file.reference.juh-3.0.1.jar} ${manifest.file.reference.jurt-3.0.1.jar} ${manifest.file.reference.ridl-3.0.1.jar} ${manifest.file.reference.unoil-3.0.1.jar} ${manifest.file.reference.gwt-user.jar} ${manifest.file.reference.org.cobogw.gwt-1.2.4.jar} ${manifest.file.reference.gwt-dev-windows.jar} ${manifest.file.reference.gwttheme.jar} ${manifest.file.reference.gwt-incubator-march-02-2009.jar} ${manifest.file.reference.Shell.jar} "/>
+            <attribute name="Class-Path" value="${manifest.reference.DocDoku-Common.jar} ${manifest.file.reference.ical4j-1.0-beta2.jar} ${manifest.file.reference.commons-lang-2.3.jar} ${manifest.file.reference.log4j-1.2.14.jar} ${manifest.file.reference.commons-fileupload-1.2.jar} ${manifest.file.reference.jnlp-servlet.jar} ${manifest.file.reference.commons-cli-1.1.jar} ${manifest.file.reference.commons-io-1.4.jar} ${manifest.file.reference.jodconverter-3.0-beta-2.jar} ${manifest.file.reference.json-20080701.jar} ${manifest.file.reference.juh-3.0.1.jar} ${manifest.file.reference.jurt-3.0.1.jar} ${manifest.file.reference.ridl-3.0.1.jar} ${manifest.file.reference.unoil-3.0.1.jar} ${manifest.file.reference.gwt-user.jar} ${manifest.file.reference.org.cobogw.gwt-1.2.4.jar} ${manifest.file.reference.gwt-incubator-july-14-2009.jar} ${manifest.file.reference.gwttheme.jar} ${manifest.file.reference.Shell.jar} "/>
         </manifest>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
@@ -567,9 +566,8 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.unoil-3.0.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.gwt-user.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.org.cobogw.gwt-1.2.4.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.gwt-dev-windows.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.gwt-incubator-july-14-2009.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.gwttheme.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.gwt-incubator-march-02-2009.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.Shell.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,library-inclusion-in-manifest" if="do.tmp.war.package" name="do-ear-dist">
