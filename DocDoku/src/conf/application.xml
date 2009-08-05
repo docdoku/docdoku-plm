@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application version="5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
+    <display-name>DocDoku</display-name>
+    <module>
+        <web>
+            <web-uri>DocDoku-war.war</web-uri>
+            <context-root>/mydocdoku</context-root>
+        </web>
+    </module>
+    <module>
+        <ejb>DocDoku-ejb.jar</ejb>       
+    </module>
+    <security-role>
+        <description>All the regular users</description>
+        <role-name>users</role-name>
+    </security-role>
+</application>

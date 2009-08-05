@@ -1,0 +1,11 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+<table  border="0" style="border-color:green" ><tr>
+  <td width="8px" height="8px">
+      <img height="10px" width="10px" style="border-style:solid" id="btn${i}" src="${context}/images/plus.png" onclick="switchMenuVideo('${id}', 'btn${i}','${context}');"/></td>
+  <td align="left" width="180px"><a href="${filePath}">${fileName}</a></td>
+  </tr>
+</table>
+<div align="left"  style="display:none;" id="${id}" title="Player">    
+    <img height="420" width="443" src="${filePath}"id="img1${i}" style="background-color:transparent; border-color:green" >    
+</div>

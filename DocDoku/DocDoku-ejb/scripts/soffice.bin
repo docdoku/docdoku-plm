@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# This script allows open office to start in servermode without needing X11
+# it must be in /opt/openoffice.org3/program directory
+#
+#to check that OO is listening
+# netstat -nap | grep office
+#
+#/usr/bin/soffice -headless -nologo -nofirststartwizard -accept="socket,host=127.0.0.1,port=8100;urp;StarOffice.NamingService" & > /dev/null
+#soffice -headless "-accept=socket,host=localhost,port=8101;urp;StarOffice.NamingService"
+
+/usr/bin/soffice -headless -nologo -nofirststartwizard -accept="socket,host=127.0.0.1,port=8101;urp;StarOffice.NamingService" & > /dev/null

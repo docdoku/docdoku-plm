@@ -1,0 +1,34 @@
+
+<module rename-to="gwtExplorer">
+    
+    <!-- Inherit the core Web Toolkit stuff.                  -->
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.google.gwt.i18n.I18N"/>
+
+    <inherits name='org.cobogw.gwt.user.User' />
+    <inherits name='com.google.gwt.gen2.selection.Selection' />
+    <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
+    <inherits name='com.google.gwt.libideas.LibIdeas' />
+    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+
+   
+
+    <!-- Specify the app entry point class.                   -->
+    <entry-point class="com.docdoku.gwt.explorer.client.ExplorerEntryPoint"/>
+
+    <!-- French language, independent of country -->
+    <extend-property name="locale" values="fr"/>
+    
+    <!-- Source for java classes to translate into javascript -->
+    <source path="client"/>
+    <source path="common"/>
+    
+    <!-- Inherit the default GWT style sheet.  You can change       -->
+    <!-- the theme of your GWT application by uncommenting          -->
+    <!-- any one of the following lines.                            -->
+    <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
+    <!-- <inherits name="com.google.gwt.user.theme.chrome.Chrome"/> -->
+    <!-- <inherits name="com.google.gwt.user.theme.dark.Dark"/> -->
+    <inherits name="com.sensei.themes.mytheme.Mytheme"/>
+
+</module>
