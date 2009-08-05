@@ -1200,11 +1200,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             for (DocumentToDocumentLink linkToRemove : linksToRemove) {
                 linkDAO.removeLink(linkToRemove);
             }
-
-
-            /*
-            */
-
+            
             doc.setInstanceAttributes(Arrays.asList(pAttributes));
             
             doc.setRevisionNote(pRevisionNote);
