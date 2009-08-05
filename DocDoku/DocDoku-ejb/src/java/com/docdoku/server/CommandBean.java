@@ -1201,13 +1201,12 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                 linkDAO.removeLink(linkToRemove);
             }
 
-            for (InstanceAttribute attr : pAttributes) {
-                InstanceAttribute attrToUpdate = doc.getInstanceAttributes().get(attr.getName());
-                if (attrToUpdate != null) {
-                    attrToUpdate.setValue(attr.getValue());
-                }
-            }
 
+            /*
+            */
+
+            doc.setInstanceAttributes(Arrays.asList(pAttributes));
+            
             doc.setRevisionNote(pRevisionNote);
             doc.setLinkedDocuments(links);
             return mdoc;
