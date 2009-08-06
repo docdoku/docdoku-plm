@@ -69,12 +69,12 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
     public void onBlur(BlurEvent event) {
         removeStyleName(selectedStyle);
         hasFocus = false ;
-        int x = event.getNativeEvent().getClientX();
-        int y = event.getNativeEvent().getClientY() ;
-
-        if (x < getOffsetWidth() +  getAbsoluteLeft() && x > getAbsoluteLeft() && y < getOffsetHeight() + getAbsoluteTop() && y > getAbsoluteTop()){
-            addStyleName(overStyle) ;
-        }
+//        int x = event.getNativeEvent().getClientX();
+//        int y = event.getNativeEvent().getClientY() ;
+//
+//        if (x < getOffsetWidth() +  getAbsoluteLeft() && x > getAbsoluteLeft() && y < getOffsetHeight() + getAbsoluteTop() && y > getAbsoluteTop()){
+//            addStyleName(overStyle) ;
+//        }
     }
 
     public void onMouseOver(MouseOverEvent event) {

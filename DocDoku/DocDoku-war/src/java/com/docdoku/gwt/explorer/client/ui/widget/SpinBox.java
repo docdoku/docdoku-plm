@@ -173,7 +173,7 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 	public void onChange(ChangeEvent event) {
 		if (inputField.getText().matches("^[0-9]+")){
 			Integer tempValue = new Integer(inputField.getText()) ;
-			if (tempValue > minValue && tempValue < maxValue){
+			if (tempValue >= minValue && tempValue <= maxValue){
 				value = tempValue ;
 			}else{
 				// restaure backup :
