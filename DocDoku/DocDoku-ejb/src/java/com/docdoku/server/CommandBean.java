@@ -1200,8 +1200,36 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             for (DocumentToDocumentLink linkToRemove : linksToRemove) {
                 linkDAO.removeLink(linkToRemove);
             }
-            
-            doc.setInstanceAttributes(Arrays.asList(pAttributes));
+
+            // set doc for all attributes
+            Map<String,InstanceAttribute>  attrs = new HashMap<String, InstanceAttribute>();
+            for (InstanceAttribute attr : pAttributes) {
+                attr.setDocument(doc);
+                attrs.put(attr.getName(),attr);
+            }
+
+            // diff to get those to remove
+            List<String> keysToRemove = new LinkedList<String>();
+            for (Map.Entry<String, InstanceAttribute> entry : doc.getInstanceAttributes().entrySet()) {
+                if (!attrs.containsKey(entry.getKey())){
+                    keysToRemove.add(entry.getKey());
+                }
+            }
+            // remove
+            for (String key : keysToRemove) {
+                doc.getInstanceAttributes().remove(key);
+            }
+            // update or add
+            for (InstanceAttribute attr : pAttributes) {
+                InstanceAttribute attrToUpdate = doc.getInstanceAttributes().get(attr.getName());
+                if (attrToUpdate != null) {
+                    attrToUpdate.setValue(attr.getValue());
+                }else{
+                    attr.setDocument(doc) ;
+                    doc.getInstanceAttributes().put(attr.getName(), attr) ;
+                }
+            }
+
             
             doc.setRevisionNote(pRevisionNote);
             doc.setLinkedDocuments(links);
