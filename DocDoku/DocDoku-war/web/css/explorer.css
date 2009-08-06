@@ -426,3 +426,20 @@ body {
     padding:2px;
     background-color:#C3D9FF;
 }
+
+.myMenuBarSearch {
+    width: 100%;
+    background-color: #C9EDCC;
+    padding: 10px 10px 10px 10px;
+}
+
+.searchTable-header{
+    background-color:#69C17D ;
+}
+
+.searchTable-selected {
+    background-color: #FFFFCC;
+    color: black;
+}
+
+

@@ -25,7 +25,6 @@ import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.common.TaskModelDTO;
 import com.docdoku.gwt.explorer.common.UserDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,26 +118,4 @@ public class TaskModelModel {
             listener.onTaskModelModelChanged(event);
         }
     }
-
-
-    /**
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    private void fetchAuthor(){
-        AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>() {
-
-            public void onFailure(Throwable caught) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public void onSuccess(UserDTO result) {
-                data.setResponsible(result);
-            }
-        } ;
-
-//        ServiceLocator.getInstance().getExplorerService().whoAmI(, callback);
-    }
-
 }

@@ -84,6 +84,7 @@ public class ExplorerPage extends DockPanel {
     private PickupDragController m_dndController;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
     private final ExplorerImageBundle images = ServiceLocator.getInstance().getExplorerImageBundle();
+    private DecoratorPanel elementTableDecPanel;
 
     public ExplorerPage(String workspaceId, String login) {
         m_workspaceId = workspaceId;
@@ -221,7 +222,7 @@ public class ExplorerPage extends DockPanel {
         inputPanel = new SimplePanel();
         showTablePanel();
         inputPanel.setWidth("100%");
-        DecoratorPanel elementTableDecPanel = new DecoratorPanel();
+        elementTableDecPanel = new DecoratorPanel();
         elementTableDecPanel.addStyleName("elementTable");
         elementTableDecPanel.setWidget(inputPanel);
         elementTableDecPanel.setWidth("100%");
@@ -251,6 +252,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showCreateFolderPanel() {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         inputPanel.clear();
         m_createFolderPanel.clearInputs();
@@ -260,6 +264,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showCreateVersionPanel(String workspaceId, String id, String version) {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         inputPanel.clear();
         m_createVersionPanel.clearInputs();
@@ -273,6 +280,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showEditDocPanel() {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         DocumentDTO iteration = m_lastOpenedMDoc.getLastIteration();
         if (iteration != null) {
@@ -289,6 +299,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showEditDocPanel(int iter) {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         if (iter != m_lastOpenedMDoc.getIterations().size() - 1) {
             DocumentDTO iteration = m_lastOpenedMDoc.getIterations().get(iter);
@@ -309,6 +322,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showEditWorkflowModelPanel() {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         int spaceAvailable = inputPanel.getOffsetWidth() ;
         inputPanel.clear();
@@ -320,6 +336,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showCreateWorkflowModelPanel() {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         
         int spaceAvailable = inputPanel.getOffsetWidth() ;
@@ -331,6 +350,9 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showEditMDocTemplatePanel() {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         inputPanel.clear();
         m_mdocTemplatePanel.clearInputs();
@@ -343,10 +365,17 @@ public class ExplorerPage extends DockPanel {
         inputPanel.clear();
         MDocDataSource source = new MDocDataSource(result, m_login);
         m_elementTable.setSource(source, true);
-        showTablePanel();
+        m_menuDocumentBarBottom.setStyleName("myMenuBarSearch");
+        m_menuDocumentBarTop.setStyleName("myMenuBarSearch");
+        m_elementTable.setStylePrefix("searchTable");
+        elementTableDecPanel.addStyleName("searchTable");
+        showTablePanel(false);
     }
 
     public void showCreateMDocTemplatePanel() {
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         showBasicSearchPanel() ;
         inputPanel.clear();
         m_mdocTemplatePanel.clearInputs();
@@ -357,6 +386,9 @@ public class ExplorerPage extends DockPanel {
 
     public void showCreateMDocPanel() {
         showBasicSearchPanel() ;
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
         inputPanel.clear();
         m_createMDocPanel.clearInputs();
         String selectedFolder = m_folderTree.getSelectedFolderPath();
@@ -369,7 +401,20 @@ public class ExplorerPage extends DockPanel {
     }
 
     public void showTablePanel() {
-        showBasicSearchPanel() ;
+        m_menuDocumentBarTop.setStyleName("myMenuBar") ;
+        m_menuDocumentBarBottom.setStyleName("myMenuBar") ;
+        m_elementTable.setStylePrefix("myTable");
+        if(elementTableDecPanel != null){
+            elementTableDecPanel.removeStyleName("searchTable");
+        }
+        
+        showTablePanel(true);
+    }
+
+    public void showTablePanel(boolean maskSearchComplete) {
+        if (maskSearchComplete){
+            showBasicSearchPanel() ;
+        }
         inputPanel.clear();
         m_group.unselect();
 

@@ -94,6 +94,10 @@
                 <library>
                     <file>${file.reference.gwt-dnd-2.6.4.jar}</file>
                 </library>
+                <library>
+                    <file>${file.reference.searchTheme.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>

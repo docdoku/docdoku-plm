@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -124,6 +125,7 @@ public class Table extends FlexTable implements DragHandler {
                     getFlexCellFormatter().setWidth(row, 0, "10px");
                     getFlexCellFormatter().setWidth(row, 3, "20px");
                     getFlexCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_CENTER);
+                    getFlexCellFormatter().setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_MIDDLE);
                 }
                 row++;
             }
@@ -330,5 +332,16 @@ public class Table extends FlexTable implements DragHandler {
         public void onClick(ClickEvent event) {
             tooltipPanel.hide();
         }
+    }
+
+    public void setStylePrefix(String stylePrefix){
+        this.selectedStyle = stylePrefix + "-selected";
+        this.headerStyle = stylePrefix + "-header";
+
+        if (source != null && source.getHeaderRow() != null){
+            getRowFormatter().setStyleName(0, headerStyle);
+        }
+
+        
     }
 }
