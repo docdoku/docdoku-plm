@@ -341,7 +341,7 @@ body {
 
 .docdoku-editableStateWidget-selected{
     padding:0px;
-    background-color: #C3D9FF;
+    background-color: white;
     border:solid 2px #6694E3;
 
 }
@@ -362,7 +362,7 @@ body {
 .docdoku-editableLabel-selected{
     border: #6694E3 2px solid ;
     margin:2px;
-    background-color: #C3D9FF;
+    background-color: white;
 }
 
 .docdoku-editableLabel-over{
@@ -419,6 +419,7 @@ body {
 .docAttributeEdit{
     border:solid 1px black;
     margin:1px;
+    background-color:white ;
 }
 
 .docdoku-spinBox{

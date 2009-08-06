@@ -44,6 +44,7 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
     private String normalStyle;
     private String selectedStyle;
     private String overStyle;
+    private boolean hasFocus ;
 
     public EditableLabel() {
         normalStyle = DEFAULT_STYLE;
@@ -55,20 +56,31 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
         addMouseOverHandler(this);
         addFocusHandler(this);
         addKeyDownHandler(this);
-
+        hasFocus =false ;
     }
 
     public void onFocus(FocusEvent event) {
         addStyleName(selectedStyle);
         this.selectAll();
+        removeStyleName(overStyle);
+        hasFocus = true ;
     }
 
     public void onBlur(BlurEvent event) {
         removeStyleName(selectedStyle);
+        hasFocus = false ;
+        int x = event.getNativeEvent().getClientX();
+        int y = event.getNativeEvent().getClientY() ;
+
+        if (x < getOffsetWidth() +  getAbsoluteLeft() && x > getAbsoluteLeft() && y < getOffsetHeight() + getAbsoluteTop() && y > getAbsoluteTop()){
+            addStyleName(overStyle) ;
+        }
     }
 
     public void onMouseOver(MouseOverEvent event) {
-        addStyleName(overStyle);
+        if (!hasFocus){
+            addStyleName(overStyle);
+        }
     }
 
     public void onMouseOut(MouseOutEvent event) {

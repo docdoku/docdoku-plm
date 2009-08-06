@@ -2,7 +2,7 @@ package com.docdoku.gwt.explorer.client.localization;
 
 /**
  * Interface to represent the constants contained in resource bundle:
- * 	'C:/Users/Florent GARIN/Documents/NetBeansProjects/DocDoku/DocDoku-war/src/java/com/docdoku/gwt/explorer/client/localization/ExplorerI18NConstants.properties'.
+ * 	'/home/manu/projets/docdoku/DocDoku/DocDoku-war/src/java/com/docdoku/gwt/explorer/client/localization/ExplorerI18NConstants.properties'.
  */
 public interface ExplorerI18NConstants extends com.google.gwt.i18n.client.Constants {
   
@@ -959,6 +959,15 @@ public interface ExplorerI18NConstants extends com.google.gwt.i18n.client.Consta
   @DefaultStringValue("Name")
   @Key("nameLabel")
   String nameLabel();
+
+  /**
+   * Translated "New attribute".
+   * 
+   * @return translated "New attribute"
+   */
+  @DefaultStringValue("New attribute")
+  @Key("newAttributeLabel")
+  String newAttributeLabel();
 
   /**
    * Translated "not specified".

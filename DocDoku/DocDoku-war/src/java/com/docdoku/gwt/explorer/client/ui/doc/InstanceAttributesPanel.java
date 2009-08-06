@@ -7,6 +7,7 @@ import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
 import com.docdoku.gwt.explorer.client.ui.widget.input.DocdokuNumberLineEdit;
 import com.docdoku.gwt.explorer.client.ui.widget.input.DocdokuUrlLineEdit;
 import com.docdoku.gwt.explorer.client.ui.widget.input.EditableLabel;
+import com.docdoku.gwt.explorer.client.ui.widget.input.checker.NotEmptyChecker;
 import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.common.InstanceAttributeTemplateDTO;
 import com.docdoku.gwt.explorer.common.InstanceBooleanAttributeDTO;
@@ -98,9 +99,8 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
             l.setOverStyle("docAttributeOver");
             l.setSelectedStyle("docAttributeEdit");
             l.setText(attr.getKey());
-            l.setVisibleLength(attr.getKey().length() + 10);
             l.setEnabled(m_editionMode);
-//            m_attributeList.setText(i, 1, attr.getKey());
+
             m_attributeList.setWidget(i, 1, l);
 
             Widget attrWidget = null;
@@ -136,29 +136,6 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
         }
     }
 
-    @Deprecated
-    public Map<String, InstanceAttributeDTO> getAttributesOld() {
-        int i = 1;
-        for (Map.Entry<String, InstanceAttributeDTO> attr : m_attrs.entrySet()) {
-            Widget attrWidget = m_attributeList.getWidget(i, 2);
-            if (attrWidget instanceof CheckBox) {
-                attr.getValue().setValue(((CheckBox) attrWidget).getValue());
-            } else if (attrWidget instanceof DateBox) {
-                attr.getValue().setValue(((DateBox) attrWidget).getValue());
-            } else if (attrWidget instanceof DocdokuNumberLineEdit) {
-                attr.getValue().setValue(((DocdokuNumberLineEdit) attrWidget).getText());
-            } else if (attrWidget instanceof DocdokuUrlLineEdit) {
-                attr.getValue().setValue(((DocdokuUrlLineEdit) attrWidget).getText());
-            } else if (attrWidget instanceof TextBox) {
-                attr.getValue().setValue(((TextBox) attrWidget).getValue());
-            }
-
-            i++;
-        }
-
-        return m_attrs;
-    }
-
     public List<InstanceAttributeDTO> getAttributes() {
         List<InstanceAttributeDTO> result = new LinkedList<InstanceAttributeDTO>();
         for (int i = 1; i < m_attributeList.getRowCount(); i++) {
@@ -188,8 +165,10 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
                     attribute = tmp ;
                 }
 
-                attribute.setName(name.getText());
-                result.add(attribute);
+                if (! (attrWidget instanceof ListBox)){
+                    attribute.setName(name.getText());
+                    result.add(attribute);
+                }
             }
         }
         return result;
@@ -228,6 +207,8 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
 
         CheckBox select = new CheckBox();
         EditableLabel l = new EditableLabel();
+        l.setChecker(new NotEmptyChecker());
+        l.setText(ServiceLocator.getInstance().getExplorerI18NConstants().newAttributeLabel());
         l.setNormalStyle("docAttributeName");
         l.setOverStyle("docAttributeOver");
         l.setSelectedStyle("docAttributeEdit");
