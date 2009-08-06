@@ -46,4 +46,10 @@ public class LabelMenuItem extends AbstractMenuItem implements ClickHandler{
         activate();
     }
 
+    public void onShowUp() {
+        // nothing to do by default
+    }
+
+
+
 }

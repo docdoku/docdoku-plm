@@ -23,5 +23,10 @@ public interface MenuItem extends HasMouseOverHandlers, HasMouseOutHandlers{
     public void addListener(MenuItemListener l) ;
 
     public void removeListener(MenuItemListener l) ;
+
+    /**
+     * This method is called when a the menu is shown 
+     */
+    public void onShowUp() ;
     
 }

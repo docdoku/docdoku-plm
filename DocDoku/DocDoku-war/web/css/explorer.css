@@ -413,7 +413,8 @@ body {
 }
 
 .docAttributeOver{
-    
+    border:solid 1px black;
+    margin:1px;
 }
 
 .docAttributeEdit{
@@ -443,4 +444,14 @@ body {
     color: black;
 }
 
+.createLabelField{
+    background-color:white ;
+    margin:2px;
+    border:1px solid black;
+}
 
+.createLabelPanel{
+    margin-top:2px ;
+    padding-top:2px ;
+    border-top:black 1px solid
+}

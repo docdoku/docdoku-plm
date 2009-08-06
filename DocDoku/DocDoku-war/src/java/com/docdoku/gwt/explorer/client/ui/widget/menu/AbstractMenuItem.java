@@ -4,12 +4,6 @@
  */
 
 package com.docdoku.gwt.explorer.client.ui.widget.menu;
-
-import com.docdoku.gwt.explorer.client.ui.widget.menu.MenuItemListener;
-import com.docdoku.gwt.explorer.client.ui.widget.menu.MenuItem;
-import com.docdoku.gwt.explorer.client.ui.widget.menu.MenuItemActivatedEvent;
-import com.google.gwt.event.dom.client.HasMouseOutHandlers;
-import com.google.gwt.event.dom.client.HasMouseOverHandlers;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;

@@ -22,15 +22,18 @@ package com.docdoku.gwt.explorer.client.ui;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
+import com.docdoku.gwt.explorer.client.ui.widget.menu.AbstractMenuItem;
 import com.docdoku.gwt.explorer.client.ui.widget.menu.ButtonMenu;
 import com.docdoku.gwt.explorer.client.ui.widget.menu.DocdokuLabelMenuItem;
+import com.docdoku.gwt.explorer.client.util.DocdokuCommand;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import java.util.Map;
 import org.cobogw.gwt.user.client.ui.Button;
@@ -182,7 +185,7 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
                     m_tagActionsMenu.addItem(item);
                 }
 
-                AddTagItem item = new AddTagItem(i18n.menuAddNewTag());
+                AddTagItem item = new AddTagItem();
                 m_tagActionsMenu.addItem(item);
             }
 
@@ -197,22 +200,58 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
         fetchTags();
     }
 
-    private class AddTagItem extends DocdokuLabelMenuItem {
+    private class AddTagItem extends AbstractMenuItem {
 
-        public AddTagItem(String text) {
-            super(text);
-            setAction(m_cmds.get("SaveTagsCommand"));
+
+        private HorizontalPanel panel ;
+        private TextBox labelField ;
+        private Button createButton ;
+
+        public AddTagItem() {
+            panel = new HorizontalPanel() ;
+            labelField = new TextBox() ;
+            createButton = new Button("create") ;
+            panel.add(labelField);
+            panel.add(createButton);
+            initWidget(panel);
+            DocdokuCommand command = new DocdokuCommand() ;
+            command.setAction(m_cmds.get("SaveTagsCommand"));
+            setCommand(command);
+            createButton.addClickHandler(new ClickHandler() {
+
+                public void onClick(ClickEvent event) {
+                    activate();
+                }
+            });
+            addStyleName("createLabelPanel");
+            labelField.addStyleName("createLabelField");
+            labelField.setVisibleLength(8);
+
+            panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         }
 
         @Override
         protected boolean beforeCommandCall() {
-            String tag = Window.prompt(i18n.promptNewTag(), "");
+            String tag = labelField.getText();
             if (tag != null && !tag.trim().equals("")) {
-                setParameters(true, true, tag);
+                ((DocdokuCommand)getCommand()).setParameters(true, true, tag);
                 return true;
             } else {
                 return false;
             }
+        }
+
+        @Override
+        protected void afterCommandCall() {
+            
+        }
+
+        public void setSelected(boolean selected) {
+            
+        }
+
+        public void onShowUp() {
+            labelField.setText("");
         }
 
         

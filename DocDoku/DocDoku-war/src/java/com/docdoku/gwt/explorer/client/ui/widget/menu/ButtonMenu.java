@@ -4,9 +4,6 @@
  */
 package com.docdoku.gwt.explorer.client.ui.widget.menu;
 
-import com.docdoku.gwt.explorer.client.ui.widget.menu.MenuItemListener;
-import com.docdoku.gwt.explorer.client.ui.widget.menu.MenuItem;
-import com.docdoku.gwt.explorer.client.ui.widget.menu.MenuItemActivatedEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -111,5 +108,19 @@ public class ButtonMenu extends Composite implements ClickHandler{
             }
             super.hide();
         }
+
+        @Override
+        public void show() {
+            super.show();
+
+            for(int i = 0 ; i  < mainPanel.getWidgetCount() ; i++){
+                MenuItem item = (MenuItem) mainPanel.getWidget(i);
+                item.onShowUp();
+            }
+        }
+
+
+
+
     }
 }
