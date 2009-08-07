@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -35,15 +36,21 @@ import java.util.List;
  */
 public class Table extends FlexTable implements DragHandler {
 
+    private static final int DEFAULT_ENTRIES_BY_PAGE = 10;
     private String headerStyle;
     private String selectedStyle;
     private TableDataSource source;
     private boolean dragNDropEnabled;
     private PickupDragController dndController;
+    private int pagesEntryCount; // entries by page
+    private int currentPage;
+    private int numberOfPages;
+    private List<TableListener> observers;
 
     /** Creates a new instance of Table */
     public Table(TableDataSource source, String stylePrefix, PickupDragController dndController) {
         super();
+        observers = new LinkedList<TableListener>();
         this.dndController = dndController;
         this.setCellPadding(1);
         this.setCellSpacing(0);
@@ -61,15 +68,19 @@ public class Table extends FlexTable implements DragHandler {
     }
 
     public void setSource(TableDataSource source, boolean dragNDrop) {
+        this.source = source;
         dragNDropEnabled = dragNDrop;
+        pagesEntryCount = DEFAULT_ENTRIES_BY_PAGE;
+        currentPage = 0;
 
         for (int i = this.getRowCount(); i > 0; i--) {
             this.removeRow(0);
         }
         if (source == null) {
             return;
+        } else {
+            numberOfPages = source.getRowCount() / pagesEntryCount + 1;
         }
-
 
         int row = 0;
         String[] headers = source.getHeaderRow();
@@ -84,6 +95,12 @@ public class Table extends FlexTable implements DragHandler {
             row++;
         }
         if (source.getRowCount() != 0) {
+            int beginning = currentPage * pagesEntryCount;
+            int end = pagesEntryCount * (currentPage + 1);
+            if (end > source.getRowCount()) {
+                end = source.getRowCount();
+            }
+
             for (int i = 0; i < source.getRowCount(); i++) {
                 final CheckBox selection = new CheckBox();
                 selection.setFormValue(i + "");
@@ -127,6 +144,10 @@ public class Table extends FlexTable implements DragHandler {
                     getFlexCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_CENTER);
                     getFlexCellFormatter().setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_MIDDLE);
                 }
+
+                // visibility:
+                getRowFormatter().setVisible(row, i >= beginning && i < end);
+
                 row++;
             }
         } else {
@@ -136,10 +157,12 @@ public class Table extends FlexTable implements DragHandler {
             getFlexCellFormatter().setColSpan(row, 0, getCellCount(0));
             getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_CENTER);
         }
-        this.source = source;
+
+        fireEvent();
     }
 
     public void setToIndicatorPanel(int row, int position, Widget widget) {
+
         int offset = 0;
         if (source.getHeaderRow() != null) {
             offset = 1;
@@ -149,10 +172,20 @@ public class Table extends FlexTable implements DragHandler {
             colOffset = 1;
         }
 
+
+
         this.setWidget(row + offset, position + colOffset, widget);
+
     }
 
     public void setToCommandPanel(int row, int position, Widget widget) {
+
+        int end = pagesEntryCount * (currentPage + 1);
+        if (end > source.getRowCount()) {
+            end = source.getRowCount();
+        }
+
+
         int offset = 0;
         if (source.getHeaderRow() != null) {
             offset = 1;
@@ -161,10 +194,12 @@ public class Table extends FlexTable implements DragHandler {
         if (dragNDropEnabled) {
             colOffset = 1;
         }
+
 
         int col = source.getRow(row).length + 3 + position + colOffset;
         this.setWidget(row + offset, col, widget);
         getFlexCellFormatter().setWidth(row + offset, col, "20px");
+
     }
 
     public List<Integer> getSelectedRows() {
@@ -221,15 +256,16 @@ public class Table extends FlexTable implements DragHandler {
             offset = 1;
         }
         for (int i = offset; i < getRowCount(); i++) {
-            CheckBox selection = (CheckBox) getWidget(i, getCheckBoxColumnIndex());
-            selection.setValue(selected);
+            if (getRowFormatter().isVisible(i)) {
+                CheckBox selection = (CheckBox) getWidget(i, getCheckBoxColumnIndex());
+                selection.setValue(selected);
 
-            if (selected) {
-                getRowFormatter().addStyleName(i, selectedStyle);
-            } else {
-                getRowFormatter().removeStyleName(i, selectedStyle);
+                if (selected) {
+                    getRowFormatter().addStyleName(i, selectedStyle);
+                } else {
+                    getRowFormatter().removeStyleName(i, selectedStyle);
+                }
             }
-
         }
     }
 
@@ -242,14 +278,6 @@ public class Table extends FlexTable implements DragHandler {
     }
 
     public void onDragEnd(DragEndEvent event) {
-//        for (Widget w : event.getContext().selectedWidgets) {
-//            // cast :
-//            if (w instanceof DraggableDocWidget) {
-//                DraggableDocWidget dw = (DraggableDocWidget) w;
-//                dw.onDragEnd();
-//                setWidget(dw.getRow(), 0, dw);
-//            }
-//        }
     }
 
     public void onDragStart(DragStartEvent event) {
@@ -274,7 +302,7 @@ public class Table extends FlexTable implements DragHandler {
         return dragNDropEnabled;
     }
 
-    boolean isInCommandZone(int colIndex) {
+    public boolean isInCommandZone(int colIndex) {
         int colOffset = 0;
         if (dragNDropEnabled) {
             colOffset = 1;
@@ -335,14 +363,81 @@ public class Table extends FlexTable implements DragHandler {
         }
     }
 
-    public void setStylePrefix(String stylePrefix){
+    public void setStylePrefix(String stylePrefix) {
         this.selectedStyle = stylePrefix + "-selected";
         this.headerStyle = stylePrefix + "-header";
 
-        if (source != null && source.getHeaderRow() != null){
+        if (source != null && source.getHeaderRow() != null) {
             getRowFormatter().setStyleName(0, headerStyle);
         }
 
-        
+
+    }
+
+    public void showFirstPage() {
+        showPage(0);
+    }
+
+    public void showLastPage() {
+        showPage(numberOfPages - 1);
+    }
+
+    public void showPreviousPage() {
+        if (currentPage != 0) {
+            showPage(currentPage - 1);
+        }
+    }
+
+    public void showNextPage() {
+        if (currentPage != numberOfPages - 1) {
+            showPage(currentPage + 1);
+        }
+    }
+
+    public void showPage(int pageNumber) {
+        currentPage = pageNumber;
+
+        int beginning = currentPage * pagesEntryCount;
+        int end = pagesEntryCount * (currentPage + 1);
+        if (end > source.getRowCount()) {
+            end = source.getRowCount();
+        }
+        int offset = 0;
+        if (source.getHeaderRow() != null) {
+            offset = 1;
+        }
+        for (int i = 0; i < source.getRowCount(); i++) {
+
+            getRowFormatter().setVisible(i + offset, i >= beginning && i < end);
+        }
+        // fire event :
+        fireEvent();
+    }
+
+    public void addListener(TableListener l) {
+        observers.add(l);
+    }
+
+    public void removeListener(TableListener l) {
+        observers.remove(l);
+    }
+
+    private void fireEvent() {
+        TableEvent event = new TableEvent(this);
+        for (TableListener listener : observers) {
+            listener.onPageChanged(event);
+        }
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public int getNumberOfPages() {
+        return numberOfPages;
+    }
+
+    public int getEntiesByPage() {
+        return pagesEntryCount;
     }
 }

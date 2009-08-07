@@ -961,6 +961,42 @@ public interface ExplorerI18NConstants extends com.google.gwt.i18n.client.Consta
   String nameLabel();
 
   /**
+   * Translated "« beginning".
+   * 
+   * @return translated "« beginning"
+   */
+  @DefaultStringValue("« beginning")
+  @Key("navigateBeginning")
+  String navigateBeginning();
+
+  /**
+   * Translated "end »".
+   * 
+   * @return translated "end »"
+   */
+  @DefaultStringValue("end »")
+  @Key("navigateEnd")
+  String navigateEnd();
+
+  /**
+   * Translated "next".
+   * 
+   * @return translated "next"
+   */
+  @DefaultStringValue("next")
+  @Key("navigateNext")
+  String navigateNext();
+
+  /**
+   * Translated "previous".
+   * 
+   * @return translated "previous"
+   */
+  @DefaultStringValue("previous")
+  @Key("navigatePrevious")
+  String navigatePrevious();
+
+  /**
    * Translated "New attribute".
    * 
    * @return translated "New attribute"

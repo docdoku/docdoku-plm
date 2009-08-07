@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.Map;
 import org.cobogw.gwt.user.client.ui.Button;
 
@@ -27,6 +28,7 @@ public class ExplorerMenuBar extends VerticalPanel{
     private Label m_selectNone ;
     private Map<String, Action> m_cmds;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
+    private HorizontalPanel buttonBar;
 
     public ExplorerMenuBar(final Map<String, Action> cmds, ExplorerPage mainPage, boolean selectionTop){
         setStyleName("myMenuBar");
@@ -42,7 +44,7 @@ public class ExplorerMenuBar extends VerticalPanel{
         });
 
 
-        HorizontalPanel buttonBar= new HorizontalPanel();
+        buttonBar= new HorizontalPanel();
 
         m_selectAll = new Label(i18n.selectAllLabel());
         m_selectAll.setStyleName("clickableLabel");
@@ -75,6 +77,10 @@ public class ExplorerMenuBar extends VerticalPanel{
         }
         
 
+    }
+
+    public void addExtension(Widget w) {
+        buttonBar.add(w);
     }
 
 }

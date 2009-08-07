@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.Map;
 import org.cobogw.gwt.user.client.ui.Button;
 import org.cobogw.gwt.user.client.ui.ButtonBar;
@@ -56,6 +57,7 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
     private Label m_selectCheckedOut;
     private Label m_selectCheckedIn;
     private Map<String, Action> m_cmds;
+    private HorizontalPanel top ;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
     public ExplorerDocumentMenuBar(final Map<String, Action> cmds, ExplorerPage mainPage, boolean selectionTop) {
@@ -133,8 +135,13 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
         fetchTags();
     }
 
+    public void addExtension(Widget w){
+        top.add(w);
+        top.setCellHorizontalAlignment(w, ALIGN_RIGHT);
+    }
+
     private void createLayout(boolean selectionTop) {
-        HorizontalPanel top = new HorizontalPanel();
+        top = new HorizontalPanel();
 
         ButtonBar iterationBar = new ButtonBar();
         iterationBar.add(m_checkInBtn);
@@ -253,9 +260,6 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
         public void onShowUp() {
             labelField.setText("");
         }
-
-        
-
 
     }
 
