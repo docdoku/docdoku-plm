@@ -12,6 +12,7 @@ import com.google.gwt.user.client.Command;
  * As actions in Docdoku have parameters,
  * this class encapsulate params & command call
  * for Actions.
+ * It is usefull in ButtonMenu for instance, with a DocdokuLabelMenuItem
  * @author Emmanuel Nhan
  */
 public class DocdokuCommand implements Command{

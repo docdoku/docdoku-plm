@@ -777,6 +777,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         dto.setAuthor(mdoc.getAuthor().toString());
         dto.setCheckOutDate(mdoc.getCheckOutDate());
         dto.setCheckOutUser((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().toString());
+        dto.setCheckOutUserFullName((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().getName()) ;
         dto.setCreationDate(mdoc.getCreationDate());
         dto.setDescription(mdoc.getDescription());
         dto.setLifeCycleState(mdoc.getLifeCycleState());

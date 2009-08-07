@@ -108,7 +108,7 @@ public class MDocDataSource implements TableDataSource {
 
         if (row >= 0 && row < mdocs.length && mdocs[row].getCheckOutUser() != null && column == 0) {
             ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
-            String tooltip = constants.checkedInBy() + " " + mdocs[row].getCheckOutUser() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(mdocs[row].getCheckOutDate());
+            String tooltip = constants.checkedInBy() + " " + mdocs[row].getCheckOutUserFullName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(mdocs[row].getCheckOutDate());
             String result[] = new String[1];
             result[0] = tooltip;
             return result;

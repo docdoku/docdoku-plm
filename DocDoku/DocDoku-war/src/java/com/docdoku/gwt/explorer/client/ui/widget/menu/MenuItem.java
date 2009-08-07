@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.HasMouseOverHandlers;
 public interface MenuItem extends HasMouseOverHandlers, HasMouseOutHandlers{
     /**
      * This method is invocked whenever the mouse is over the widget
+     * It is usefull if you want to display a frame around the item, for instance
      * @param selected
      */
     public void setSelected(boolean selected) ;
@@ -25,7 +26,8 @@ public interface MenuItem extends HasMouseOverHandlers, HasMouseOutHandlers{
     public void removeListener(MenuItemListener l) ;
 
     /**
-     * This method is called when a the menu is shown 
+     * This method is called when a the menu is shown
+     * You can here specify if some textboxes must be cleared
      */
     public void onShowUp() ;
     

@@ -22,6 +22,7 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
     private String lifeCycleState;
     private String[] tags;
     private String description;
+    private String checkOutUserFullName ;
 
     private List<DocumentDTO> iterations;
 
@@ -170,6 +171,15 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
             return iterations.get(index);
     }
 
+    public String getCheckOutUserFullName() {
+        return checkOutUserFullName;
+    }
+
+    public void setCheckOutUserFullName(String checkOutUserFullName) {
+        this.checkOutUserFullName = checkOutUserFullName;
+    }
+
+    
     
     @Override
     public String toString() {

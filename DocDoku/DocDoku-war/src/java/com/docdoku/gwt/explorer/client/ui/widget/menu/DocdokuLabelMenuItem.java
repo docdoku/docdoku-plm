@@ -5,12 +5,12 @@
 
 package com.docdoku.gwt.explorer.client.ui.widget.menu;
 
-import com.docdoku.gwt.explorer.client.ui.widget.menu.LabelMenuItem;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.util.DocdokuCommand;
 
 /**
- *
+ * This is a class provided for conveniance and usage with Docdoku GWT client side actions
+ * The command in this AbstractMenuItem is a DocdokuCommand
  * @author Emmanuel Nhan
  */
 public class DocdokuLabelMenuItem extends LabelMenuItem{
