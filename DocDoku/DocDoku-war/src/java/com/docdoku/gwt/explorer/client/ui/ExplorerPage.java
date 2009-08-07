@@ -341,7 +341,7 @@ public class ExplorerPage extends DockPanel {
         }
         showBasicSearchPanel() ;
         
-        int spaceAvailable = inputPanel.getOffsetWidth() ;
+        int spaceAvailable = inputPanel.getOffsetWidth() -10 ;
 
         inputPanel.clear();
         inputPanel.setWidget(m_wfEditor);
