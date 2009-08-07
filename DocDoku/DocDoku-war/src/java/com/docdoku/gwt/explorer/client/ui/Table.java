@@ -319,9 +319,10 @@ public class Table extends FlexTable implements DragHandler {
         }
 
         public void onMouseMove(MouseMoveEvent event) {
-            tooltipPanel.setPopupPosition(event.getClientX() + 10, event.getClientY() + 10);
+//            tooltipPanel.setPopupPosition(event.getClientX() + 10, event.getClientY() + 10);
             if (!tooltipPanel.isShowing()) {
-                tooltipPanel.show();
+//                tooltipPanel.show();
+                tooltipPanel.showRelativeTo(this);
             }
         }
 
