@@ -30,11 +30,13 @@ import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Map;
 import org.cobogw.gwt.user.client.ui.Button;
@@ -44,7 +46,7 @@ import org.cobogw.gwt.user.client.ui.ButtonBar;
  *
  * @author Florent GARIN
  */
-public class ExplorerDocumentMenuBar extends VerticalPanel {
+public class ExplorerDocumentMenuBar extends Composite {
 
     private Button m_checkInBtn;
     private Button m_checkOutBtn;
@@ -58,9 +60,14 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
     private Label m_selectCheckedIn;
     private Map<String, Action> m_cmds;
     private HorizontalPanel top ;
+    private FlexTable mainPanel ;
+    private boolean selectionTop ;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
     public ExplorerDocumentMenuBar(final Map<String, Action> cmds, ExplorerPage mainPage, boolean selectionTop) {
+        mainPanel = new FlexTable();
+        initWidget(mainPanel);
+        this.selectionTop = selectionTop ;
         setStyleName("myMenuBar");
         m_mainPage = mainPage;
         m_cmds = cmds;
@@ -131,16 +138,22 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
             }
         });
 
-        createLayout(selectionTop);
+        createLayout();
+        
         fetchTags();
     }
 
     public void addExtension(Widget w){
-        top.add(w);
-        top.setCellHorizontalAlignment(w, ALIGN_RIGHT);
+        if(!selectionTop){
+            mainPanel.setWidget(0,1, w);
+            mainPanel.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+        }else{
+            mainPanel.setWidget(1,1, w);
+            mainPanel.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+        }
     }
 
-    private void createLayout(boolean selectionTop) {
+    private void createLayout() {
         top = new HorizontalPanel();
 
         ButtonBar iterationBar = new ButtonBar();
@@ -165,12 +178,13 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
         bottom.add(m_selectCheckedIn);
         bottom.add(m_selectCheckedOut);
         if (!selectionTop) {
-            add(top);
-            add(bottom);
+            mainPanel.setWidget(0, 0,top);
+            mainPanel.setWidget(1, 0, bottom);
         }else{
-            add(bottom);
-            add(top);
+            mainPanel.setWidget(1, 0,top);
+            mainPanel.setWidget(0, 0, bottom);
         }
+
     }
 
     private void fetchTags() {

@@ -10,9 +10,10 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Map;
 import org.cobogw.gwt.user.client.ui.Button;
@@ -21,7 +22,7 @@ import org.cobogw.gwt.user.client.ui.Button;
  *
  * @author Emmanuel Nhan
  */
-public class ExplorerMenuBar extends VerticalPanel{
+public class ExplorerMenuBar extends Composite{
     private Button m_deleteBtn;
     private ExplorerPage m_mainPage;
     private Label m_selectAll ;
@@ -29,9 +30,14 @@ public class ExplorerMenuBar extends VerticalPanel{
     private Map<String, Action> m_cmds;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
     private HorizontalPanel buttonBar;
+    private FlexTable mainPanel ;
+    private boolean selectionTop ;
 
     public ExplorerMenuBar(final Map<String, Action> cmds, ExplorerPage mainPage, boolean selectionTop){
+        mainPanel = new FlexTable() ;
+        initWidget(mainPanel);
         setStyleName("myMenuBar");
+        this.selectionTop = selectionTop;
         m_mainPage = mainPage;
         m_cmds = cmds;
 
@@ -69,18 +75,22 @@ public class ExplorerMenuBar extends VerticalPanel{
         
         buttonBar.add(m_deleteBtn);
         if (!selectionTop){
-            add(buttonBar);
-            add(selection);
+            mainPanel.setWidget(0, 0, buttonBar);
+            mainPanel.setWidget(1, 0, selection);
         }else{
-            add(selection);
-            add(buttonBar);
+            mainPanel.setWidget(0, 0, selection);
+            mainPanel.setWidget(1, 0, buttonBar);
         }
         
 
     }
 
     public void addExtension(Widget w) {
-        buttonBar.add(w);
+        if (!selectionTop){
+            mainPanel.setWidget(0, 1, w);
+        }else{
+            mainPanel.setWidget(1, 1, w);
+        }
     }
 
 }
