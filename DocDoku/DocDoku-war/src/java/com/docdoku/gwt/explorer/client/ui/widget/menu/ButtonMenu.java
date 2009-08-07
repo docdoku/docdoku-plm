@@ -30,7 +30,7 @@ public class ButtonMenu extends Composite implements ClickHandler{
         initWidget(menuButton);
         menuButton.addClickHandler(this);
         menu = new PopupMenu();
-
+        menu.addAutoHidePartner(this.getElement());
     }
 
     public <T extends Widget & MenuItem> void addItem(T i) {
@@ -47,7 +47,12 @@ public class ButtonMenu extends Composite implements ClickHandler{
 
     public void onClick(ClickEvent event) {
         // show popup menu
-        menu.showRelativeTo(this);
+        if (menu.isShowing()){
+            menu.hide();
+        }else{
+            menu.showRelativeTo(this);
+        }
+        
     }
 
     public void showMenu(){
@@ -98,6 +103,8 @@ public class ButtonMenu extends Composite implements ClickHandler{
         public void onMenuItemActivated(MenuItemActivatedEvent event) {
             this.hide();
         }
+
+
 
         @Override
         public void hide() {

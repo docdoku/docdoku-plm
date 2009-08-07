@@ -210,7 +210,7 @@ public class ExplorerDocumentMenuBar extends VerticalPanel {
         public AddTagItem() {
             panel = new HorizontalPanel() ;
             labelField = new TextBox() ;
-            createButton = new Button("create") ;
+            createButton = new Button(ServiceLocator.getInstance().getExplorerI18NConstants().btnCreate()) ;
             panel.add(labelField);
             panel.add(createButton);
             initWidget(panel);
