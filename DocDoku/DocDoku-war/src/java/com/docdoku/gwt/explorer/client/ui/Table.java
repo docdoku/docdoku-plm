@@ -79,7 +79,11 @@ public class Table extends FlexTable implements DragHandler {
         if (source == null) {
             return;
         } else {
-            numberOfPages = source.getRowCount() / pagesEntryCount + 1;
+            if (source.getRowCount() % pagesEntryCount != 0){
+                numberOfPages = source.getRowCount() / pagesEntryCount + 1;
+            }else{
+                numberOfPages = source.getRowCount() /pagesEntryCount ;
+            }
         }
 
         int row = 0;
