@@ -42,8 +42,11 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -56,7 +59,7 @@ import java.util.Map;
  *
  * @author Florent GARIN
  */
-public class ExplorerPage extends DockPanel {
+public class ExplorerPage extends DockPanel implements ResizeHandler{
 
     private String m_workspaceId;
     private String m_login;
@@ -91,6 +94,7 @@ public class ExplorerPage extends DockPanel {
         m_login = login;
         m_dndController = new DocDragController(RootPanel.get(), false);
         ExplorerConstants.init(workspaceId);
+        Window.addResizeHandler(this);
     }
 
     public FilesPanel getEditDocFilesPanel() {
@@ -832,6 +836,14 @@ public class ExplorerPage extends DockPanel {
         };
         if (templateId != null) {
             ServiceLocator.getInstance().getExplorerService().generateId(workspaceId, templateId, callback);
+        }
+    }
+
+    public void onResize(ResizeEvent event) {
+        if (m_wfEditor.isVisible()){
+            m_wfEditor.setVisible(false);
+            m_wfEditor.setWidth(inputPanel.getOffsetWidth() -10);
+            m_wfEditor.setVisible(true);
         }
     }
 
