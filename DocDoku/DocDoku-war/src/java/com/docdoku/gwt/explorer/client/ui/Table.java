@@ -107,7 +107,7 @@ public class Table extends FlexTable implements DragHandler {
 
             for (int i = 0; i < source.getRowCount(); i++) {
                 final CheckBox selection = new CheckBox();
-                selection.setFormValue(i + "");
+                selection.setFormValue( i + "");
                 selection.addClickHandler(new ClickHandler() {
 
                     public void onClick(ClickEvent event) {

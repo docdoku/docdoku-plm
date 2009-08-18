@@ -31,6 +31,12 @@ public class IconFactory extends Image {
     }
     public NewVersionIcon createNewVersionIcon(String workspaceId, String id, String version){
         final NewVersionIcon icon = new NewVersionIcon(workspaceId,id,version);
+        icon.addClickHandler(new ClickHandler() {
+
+            public void onClick(ClickEvent event) {
+                m_cmds.get("ShowCreateVersionPanelCommand").execute(icon.workspaceId,icon.id,icon.version);
+            }
+        });
         return icon;
     }
     public SubscriptionIcon createIterationSubscriptionIcon(boolean subscribe, String workspaceId, String id, String version){

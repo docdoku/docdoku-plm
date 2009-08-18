@@ -642,12 +642,6 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
                 for (int row = 0; row < mdocSource.getRowCount(); row++) {
                     final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
                     Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                    icon.addClickHandler(new ClickHandler() {
-
-                        public void onClick(ClickEvent event) {
-                            showCreateVersionPanel(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                        }
-                    });
                     m_elementTable.setToCommandPanel(row, 0, icon);
                 }
 
@@ -673,12 +667,6 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
                 for (int row = 0; row < mdocSource.getRowCount(); row++) {
                     final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
                     Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                    icon.addClickHandler(new ClickHandler() {
-
-                        public void onClick(ClickEvent event) {
-                            showCreateVersionPanel(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                        }
-                    });
                     m_elementTable.setToCommandPanel(row, 0, icon);
                 }
             }
@@ -703,12 +691,6 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
                 for (int row = 0; row < mdocSource.getRowCount(); row++) {
                     final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
                     Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                    icon.addClickHandler(new ClickHandler() {
-
-                        public void onClick(ClickEvent event) {
-                            showCreateVersionPanel(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                        }
-                    });
                     m_elementTable.setToCommandPanel(row, 0, icon);
                 }
             }
