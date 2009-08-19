@@ -55,6 +55,7 @@ public interface ExplorerService extends RemoteService{
     MasterDocumentDTO approve(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException;
     MasterDocumentDTO reject(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException;
     MasterDocumentDTO[] searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content) throws ApplicationException;
+    MDocSearchResultDTO searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int sizeOfChunck) throws ApplicationException;
     MasterDocumentDTO moveMDoc(String parentFolder, String workspaceId, String id, String version) throws ApplicationException;
     UserDTO[] getWorkspaceUserMemberships(String workspaceId) throws ApplicationException;
     UserGroupDTO[] getWorkspaceUserGroupMemberships(String workspaceId) throws ApplicationException;

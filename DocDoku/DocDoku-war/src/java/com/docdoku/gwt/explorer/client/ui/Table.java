@@ -34,6 +34,7 @@ import java.util.List;
  *
  * @author cooper
  */
+@Deprecated
 public class Table extends FlexTable implements DragHandler {
 
     private static final int DEFAULT_ENTRIES_BY_PAGE = 10;
@@ -59,7 +60,7 @@ public class Table extends FlexTable implements DragHandler {
         this.headerStyle = stylePrefix + "-header";
         this.setSource(source, true);
         dndController.addDragHandler(this);
-        ((DocDragController) dndController).setTable(this);
+        ((DocDragController) dndController).setTableOld(this);
         dndController.setBehaviorDragProxy(true);
     }
 

@@ -22,11 +22,10 @@ package com.docdoku.gwt.explorer.client.ui;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
-import com.docdoku.gwt.explorer.client.data.MDocDataSource;
-import com.docdoku.gwt.explorer.client.data.MDocTemplateDataSource;
+import com.docdoku.gwt.explorer.client.data.MDocTableModel;
+import com.docdoku.gwt.explorer.client.data.MDocTemplateTableModel;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
-import com.docdoku.gwt.explorer.client.data.TableDataSource;
-import com.docdoku.gwt.explorer.client.data.WorkflowModelDataSource;
+import com.docdoku.gwt.explorer.client.data.WorkflowModelTableModel;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.resources.icons.ExplorerImageBundle;
 import com.docdoku.gwt.explorer.client.ui.doc.*;
@@ -34,6 +33,10 @@ import com.docdoku.gwt.explorer.client.ui.folder.CreateFolderPanel;
 import com.docdoku.gwt.explorer.client.ui.search.CompleteSearchPanel;
 import com.docdoku.gwt.explorer.client.ui.template.MDocTemplatePanel;
 import com.docdoku.gwt.explorer.client.ui.widget.*;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableClickEvent;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableClickHandler;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableWidget;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.WorkflowModelEditor;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.WorkflowModelModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
@@ -49,9 +52,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     private String m_workspaceId;
     private String m_login;
     private FolderTree m_folderTree;
-    private Table m_elementTable;
+    private TableWidget m_elementTable;
     private ExplorerDocumentMenuBar m_menuDocumentBarTop;
     private ExplorerDocumentMenuBar m_menuDocumentBarBottom;
     private ExplorerMenuBar m_menuBarTop;
@@ -84,15 +85,18 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     private WorkflowModelDTO m_lastOpenedWorkflowModel;
     private IconFactory m_iconFactory;
     private CompleteSearchPanel m_completeSearchPanel;
-    private PickupDragController m_dndController;
+    private DocDragController m_dndController;
+    private ExplorerTableProfileCollection m_tableProfiles ;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
     private final ExplorerImageBundle images = ServiceLocator.getInstance().getExplorerImageBundle();
     private DecoratorPanel elementTableDecPanel;
+
 
     public ExplorerPage(String workspaceId, String login) {
         m_workspaceId = workspaceId;
         m_login = login;
         m_dndController = new DocDragController(RootPanel.get(), false);
+        m_dndController.setBehaviorDragProxy(true);
         ExplorerConstants.init(workspaceId);
         Window.addResizeHandler(this);
     }
@@ -115,49 +119,46 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         m_wfEditor = new WorkflowModelEditor(cmds);
 
         m_iconFactory = new IconFactory(cmds);
+        m_tableProfiles = new ExplorerTableProfileCollection(m_iconFactory);
         m_folderTree = new FolderTree(cmds, m_workspaceId, m_login, m_dndController);
-        m_elementTable = new Table(null, "myTable", m_dndController);
-        m_elementTable.addClickHandler(new ClickHandler() {
+//        m_elementTable = new Table(null, "myTable", m_dndController);
+        m_elementTable = new TableWidget(m_dndController);
+        m_elementTable.addTableClickHandler(new TableClickHandler() {
 
-            public void onClick(ClickEvent event) {
-                Cell cell = m_elementTable.getCellForEvent(event);
-                int col = cell.getCellIndex();
-                int row = cell.getRowIndex();
-                TableDataSource source = m_elementTable.getSource();
-                if (((source.getHeaderRow() == null) || (row > 0)) && ((col > 2 && !m_elementTable.isDragNDropEnabled()) || (col > 3 && m_elementTable.isDragNDropEnabled()))) {
-                    if (source instanceof MDocDataSource) {
-                        if (!m_elementTable.isInCommandZone(col)) {
-                            m_lastOpenedMDoc = ((MDocDataSource) source).getElementAt(row - 1);
-                            showEditDocPanel();
-                        }
-
-                    } else if (source instanceof MDocTemplateDataSource) {
-                        m_lastOpenedMDocTemplate = ((MDocTemplateDataSource) source).getElementAt(row - 1);
-                        showEditMDocTemplatePanel();
-                    } else if (source instanceof WorkflowModelDataSource) {
-                        m_lastOpenedWorkflowModel = ((WorkflowModelDataSource) source).getElementAt(row - 1);
-                        showEditWorkflowModelPanel();
-                    }
+            public void onClick(TableClickEvent event) {
+                TableModel model = m_elementTable.getTableModel() ;
+                if (model instanceof MDocTableModel){
+                    m_lastOpenedMDoc = ((MDocTableModel) model).getValueAt(event.getTableModelIndex().getRow()) ;
+                    showEditDocPanel();
+                }else if (model instanceof MDocTemplateTableModel){
+                    m_lastOpenedMDocTemplate = ((MDocTemplateTableModel) model).getValueAt(event.getTableModelIndex().getRow()) ;
+                    showEditMDocTemplatePanel();
+                }else if (model instanceof WorkflowModelTableModel){
+                    m_lastOpenedWorkflowModel = ((WorkflowModelTableModel) model).getValueAt(event.getTableModelIndex().getRow()) ;
+                    showEditWorkflowModelPanel();
                 }
+
             }
         });
+
+        m_dndController.setTable(m_elementTable);
         m_elementTable.setStyleName("myTable");
         m_menuDocumentBarTop = new ExplorerDocumentMenuBar(cmds, this, false);
-        TableNavigatorPanel tmp1 = new TableNavigatorPanel(m_elementTable);
-        m_elementTable.addListener(tmp1);
-        m_menuDocumentBarTop.addExtension(tmp1);
+//        TableNavigatorPanel tmp1 = new TableNavigatorPanel(m_elementTable);
+//        m_elementTable.addListener(tmp1);
+//        m_menuDocumentBarTop.addExtension(tmp1);
         m_menuDocumentBarBottom = new ExplorerDocumentMenuBar(cmds, this, true);
-        TableNavigatorPanel tmp2 = new TableNavigatorPanel(m_elementTable);
-        m_elementTable.addListener(tmp2);
-        m_menuDocumentBarBottom.addExtension(tmp2);
+//        TableNavigatorPanel tmp2 = new TableNavigatorPanel(m_elementTable);
+//        m_elementTable.addListener(tmp2);
+//        m_menuDocumentBarBottom.addExtension(tmp2);
         m_menuBarTop = new ExplorerMenuBar(cmds, this, false);
-        TableNavigatorPanel tmp3 = new TableNavigatorPanel(m_elementTable);
-        m_elementTable.addListener(tmp3);
-        m_menuBarTop.addExtension(tmp3) ;
+//        TableNavigatorPanel tmp3 = new TableNavigatorPanel(m_elementTable);
+//        m_elementTable.addListener(tmp3);
+//        m_menuBarTop.addExtension(tmp3) ;
         m_menuBarBottom = new ExplorerMenuBar(cmds, this, true);
-        TableNavigatorPanel tmp4 = new TableNavigatorPanel(m_elementTable);
-        m_elementTable.addListener(tmp4);
-        m_menuBarBottom.addExtension(tmp4);
+//        TableNavigatorPanel tmp4 = new TableNavigatorPanel(m_elementTable);
+//        m_elementTable.addListener(tmp4);
+//        m_menuBarBottom.addExtension(tmp4);
         m_searchPanel = new SearchPanel(cmds, this);
         m_completeSearchPanel = new CompleteSearchPanel(cmds, this);
         m_completeSearchPanel.setVisible(false);
@@ -379,11 +380,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
 
     public void showSearchResult(MasterDocumentDTO[] result) {
         inputPanel.clear();
-        MDocDataSource source = new MDocDataSource(result, m_login);
-        m_elementTable.setSource(source, true);
+        MDocTableModel source =new MDocTableModel(result, m_login, true);
+        m_elementTable.setModel(source,m_tableProfiles.getProfile("searchProfile"));
         m_menuDocumentBarBottom.setStyleName("myMenuBarSearch");
         m_menuDocumentBarTop.setStyleName("myMenuBarSearch");
-        m_elementTable.setStylePrefix("searchTable");
         elementTableDecPanel.addStyleName("searchTable");
         showTablePanel(false);
     }
@@ -419,7 +419,6 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     public void showTablePanel() {
         m_menuDocumentBarTop.setStyleName("myMenuBar") ;
         m_menuDocumentBarBottom.setStyleName("myMenuBar") ;
-        m_elementTable.setStylePrefix("myTable");
         if(elementTableDecPanel != null){
             elementTableDecPanel.removeStyleName("searchTable");
         }
@@ -437,7 +436,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         VerticalPanel vp = new VerticalPanel();
         vp.setWidth("100%");
 
-        if (m_elementTable.getSource() instanceof MDocDataSource) {
+        if (m_elementTable.getTableModel() instanceof MDocTableModel) {
             vp.add(m_menuDocumentBarTop);
             vp.add(m_elementTable);
             vp.add(m_menuDocumentBarBottom);
@@ -497,11 +496,16 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
 
     public List<MasterDocumentDTO> getSelectedMDocs() {
         List<MasterDocumentDTO> mdocs = new ArrayList<MasterDocumentDTO>();
-        TableDataSource source = m_elementTable.getSource();
-        if (source instanceof MDocDataSource) {
-            MDocDataSource mdocSource = (MDocDataSource) source;
-            for (int row : m_elementTable.getSelectedRows()) {
-                mdocs.add(mdocSource.getElementAt(row));
+//        TableDataSource source = m_elementTable.getSource();
+        TableModel source = m_elementTable.getTableModel();
+        if (source instanceof MDocTableModel) {
+//            MDocDataSource mdocSource = (MDocDataSource) source;
+//            for (int row : m_elementTable.getSelectedRows()) {
+//                mdocs.add(mdocSource.getElementAt(row));
+//            }
+            MDocTableModel mdocSource = (MDocTableModel) source ;
+            for(int row : m_elementTable.getSelectedRows()){
+                mdocs.add(mdocSource.getValueAt(row));
             }
         }
         return mdocs;
@@ -509,11 +513,11 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
 
     public List<MasterDocumentTemplateDTO> getSelectedMDocTemplates() {
         List<MasterDocumentTemplateDTO> templates = new ArrayList<MasterDocumentTemplateDTO>();
-        TableDataSource source = m_elementTable.getSource();
-        if (source instanceof MDocTemplateDataSource) {
-            MDocTemplateDataSource templateSource = (MDocTemplateDataSource) source;
+        TableModel source = m_elementTable.getTableModel();
+        if (source instanceof MDocTemplateTableModel) {
+            MDocTemplateTableModel templateSource = (MDocTemplateTableModel) source;
             for (int row : m_elementTable.getSelectedRows()) {
-                templates.add(templateSource.getElementAt(row));
+                templates.add(templateSource.getValueAt(row));
             }
         }
         return templates;
@@ -521,11 +525,11 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
 
     public List<WorkflowModelDTO> getSelectedWorkflowModels() {
         List<WorkflowModelDTO> workflows = new ArrayList<WorkflowModelDTO>();
-        TableDataSource source = m_elementTable.getSource();
-        if (source instanceof WorkflowModelDataSource) {
-            WorkflowModelDataSource workflowSource = (WorkflowModelDataSource) source;
+        TableModel source = m_elementTable.getTableModel();
+        if (source instanceof WorkflowModelTableModel) {
+            WorkflowModelTableModel workflowSource = (WorkflowModelTableModel) source;
             for (int row : m_elementTable.getSelectedRows()) {
-                workflows.add(workflowSource.getElementAt(row));
+                workflows.add(workflowSource.getValueAt(row));
             }
         }
         return workflows;
@@ -558,7 +562,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
             WorkflowModelTreeItem workflowItem = (WorkflowModelTreeItem) item;
             fetchWorkflowModels(workflowItem.getWorkspaceId());
         } else {
-            m_elementTable.setSource(null, true);
+//            m_elementTable.setSource(null, true);
         }
     }
 
@@ -577,13 +581,13 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     }
 
     public void selectAllElementsInTable() {
-        if (m_elementTable.getSource() != null) {
+        if (m_elementTable.getTableModel() != null) {
             m_elementTable.selectAllRows();
         }
     }
 
     public void unselectAllElementsInTable() {
-        if (m_elementTable.getSource() != null) {
+        if (m_elementTable.getTableModel() != null) {
             m_elementTable.unselectAllRows();
         }
 
@@ -591,19 +595,20 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
 
     public void selectAllCheckedInDocs() {
         m_elementTable.unselectAllRows();
-        m_elementTable.setSelectionForRows(((MDocDataSource) m_elementTable.getSource()).getCheckedInDocuments(), true);
+        m_elementTable.setSelectionForRows(((MDocTableModel) m_elementTable.getTableModel()).getCheckedInDocuments(), true);
     }
 
     public void selectAllCheckedOutDocs() {
         m_elementTable.unselectAllRows();
-        m_elementTable.setSelectionForRows(((MDocDataSource) m_elementTable.getSource()).getCheckedOutDocuments(), true);
+        m_elementTable.setSelectionForRows(((MDocTableModel) m_elementTable.getTableModel()).getCheckedOutDocuments(), true);
     }
 
     private void fetchWorkflowModels(String workspaceId) {
         AsyncCallback<WorkflowModelDTO[]> callback = new AsyncCallback<WorkflowModelDTO[]>() {
 
             public void onSuccess(WorkflowModelDTO[] workflows) {
-                m_elementTable.setSource(new WorkflowModelDataSource(workflows, m_login), false);
+//                m_elementTable.setSource(new WorkflowModelDataSource(workflows, m_login), false);
+                m_elementTable.setModel(new WorkflowModelTableModel(workflows), m_tableProfiles.getProfile("workflowsProfile")) ;
                 showTablePanel();
             }
 
@@ -618,7 +623,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
 
             public void onSuccess(MasterDocumentTemplateDTO[] templates) {
-                m_elementTable.setSource(new MDocTemplateDataSource(templates, m_login), false);
+//                m_elementTable.setSource(new MDocTemplateDataSource(templates, m_login), false);
+                m_elementTable.setModel(new MDocTemplateTableModel(templates), m_tableProfiles.getProfile("templatesProfile")) ;
                 showTablePanel();
             }
 
@@ -633,17 +639,17 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
 
             public void onSuccess(MasterDocumentDTO[] mdocs) {
-                MDocDataSource mdocSource = new MDocDataSource(mdocs, m_login);
-                m_elementTable.setSource(mdocSource, true);
+                MDocTableModel model = new MDocTableModel(mdocs, m_login, true) ;
+                m_elementTable.setModel(model);
                 showTablePanel();
-                fetchIterationSubscriptions();
-                fetchStateSubscriptions();
-
-                for (int row = 0; row < mdocSource.getRowCount(); row++) {
-                    final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
-                    Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                    m_elementTable.setToCommandPanel(row, 0, icon);
-                }
+//                fetchIterationSubscriptions();
+//                fetchStateSubscriptions();
+//
+//                for (int row = 0; row < mdocSource.getRowCount(); row++) {
+//                    final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
+//                    Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
+//                    m_elementTable.setToCommandPanel(row, 0, icon);
+//                }
 
             }
 
@@ -658,17 +664,17 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
 
             public void onSuccess(MasterDocumentDTO[] mdocs) {
-                MDocDataSource mdocSource = new MDocDataSource(mdocs, m_login);
-                m_elementTable.setSource(mdocSource, true);
+                MDocTableModel mdocSource = new MDocTableModel(mdocs, m_login, true);
+                m_elementTable.setModel(mdocSource, m_tableProfiles.getProfile("documentsProfile"));
                 showTablePanel();
-                fetchIterationSubscriptions();
-                fetchStateSubscriptions();
-
-                for (int row = 0; row < mdocSource.getRowCount(); row++) {
-                    final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
-                    Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                    m_elementTable.setToCommandPanel(row, 0, icon);
-                }
+//                fetchIterationSubscriptions();
+//                fetchStateSubscriptions();
+//
+//                for (int row = 0; row < mdocSource.getRowCount(); row++) {
+//                    final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
+//                    Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
+//                    m_elementTable.setToCommandPanel(row, 0, icon);
+//                }
             }
 
             public void onFailure(Throwable caught) {
@@ -682,17 +688,17 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
 
             public void onSuccess(MasterDocumentDTO[] mdocs) {
-                MDocDataSource mdocSource = new MDocDataSource(mdocs, m_login);
-                m_elementTable.setSource(mdocSource, true);
+                MDocTableModel mdocSource = new MDocTableModel(mdocs, m_login, true);
+                m_elementTable.setModel(mdocSource, m_tableProfiles.getProfile("documentsProfile"));
                 showTablePanel();
-                fetchIterationSubscriptions();
-                fetchStateSubscriptions();
-
-                for (int row = 0; row < mdocSource.getRowCount(); row++) {
-                    final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
-                    Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                    m_elementTable.setToCommandPanel(row, 0, icon);
-                }
+//                fetchIterationSubscriptions();
+//                fetchStateSubscriptions();
+//
+//                for (int row = 0; row < mdocSource.getRowCount(); row++) {
+//                    final MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
+//                    Image icon = m_iconFactory.createNewVersionIcon(mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
+//                    m_elementTable.setToCommandPanel(row, 0, icon);
+//                }
             }
 
             public void onFailure(Throwable caught) {
@@ -702,62 +708,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         ServiceLocator.getInstance().getExplorerService().findMDocsByTag(workspaceId, label, callback);
     }
 
-    private void fetchIterationSubscriptions() {
-        AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
-
-            public void onSuccess(MasterDocumentDTO[] mdocs) {
-                TableDataSource source = m_elementTable.getSource();
-                if (source instanceof MDocDataSource) {
-                    List<MasterDocumentDTO> lstMDocs = Arrays.asList(mdocs);
-                    MDocDataSource mdocSource = (MDocDataSource) source;
-                    for (int row = 0; row < mdocSource.getRowCount(); row++) {
-                        MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
-                        if (lstMDocs.contains(mdoc)) {
-                            Image icon = m_iconFactory.createIterationSubscriptionIcon(true, mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                            m_elementTable.setToIndicatorPanel(row, 1, icon);
-                        } else {
-                            Image icon = m_iconFactory.createIterationSubscriptionIcon(false, mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                            m_elementTable.setToIndicatorPanel(row, 1, icon);
-                        }
-                    }
-                }
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().getIterationChangeEventSubscriptions(m_workspaceId, callback);
-    }
-
-    private void fetchStateSubscriptions() {
-        AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
-
-            public void onSuccess(MasterDocumentDTO[] mdocs) {
-                TableDataSource source = m_elementTable.getSource();
-                if (source instanceof MDocDataSource) {
-                    List<MasterDocumentDTO> lstMDocs = Arrays.asList(mdocs);
-                    MDocDataSource mdocSource = (MDocDataSource) source;
-                    for (int row = 0; row < mdocSource.getRowCount(); row++) {
-                        MasterDocumentDTO mdoc = mdocSource.getElementAt(row);
-                        if (lstMDocs.contains(mdoc)) {
-                            Image icon = m_iconFactory.createStateSubscriptionIcon(true, mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                            m_elementTable.setToIndicatorPanel(row, 2, icon);
-                        } else {
-                            Image icon = m_iconFactory.createStateSubscriptionIcon(false, mdoc.getWorkspaceId(), mdoc.getId(), mdoc.getVersion());
-                            m_elementTable.setToIndicatorPanel(row, 2, icon);
-                        }
-                    }
-                }
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().getStateChangeEventSubscriptions(m_workspaceId, callback);
-    }
-
+    
     private void fetchWorkflowModels() {
         AsyncCallback<WorkflowModelDTO[]> callback = new AsyncCallback<WorkflowModelDTO[]>() {
 

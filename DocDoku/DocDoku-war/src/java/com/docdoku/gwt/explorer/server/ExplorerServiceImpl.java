@@ -20,6 +20,7 @@
 package com.docdoku.gwt.explorer.server;
 
 import com.docdoku.core.ICommandLocal;
+import com.docdoku.core.MDocSearchResult;
 import com.docdoku.core.entities.ACL;
 import com.docdoku.core.entities.ACLUserEntry;
 import com.docdoku.core.entities.ACLUserGroupEntry;
@@ -71,6 +72,7 @@ import com.docdoku.gwt.explorer.common.InstanceDateAttributeSearchDTO;
 import com.docdoku.gwt.explorer.common.InstanceNumberAttributeDTO;
 import com.docdoku.gwt.explorer.common.InstanceTextAttributeDTO;
 import com.docdoku.gwt.explorer.common.InstanceURLAttributeDTO;
+import com.docdoku.gwt.explorer.common.MDocSearchResultDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
 import com.docdoku.gwt.explorer.common.ParallelActivityDTO;
@@ -87,12 +89,15 @@ import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
 import com.docdoku.gwt.explorer.common.WorkspaceMembership;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 
 /**
@@ -153,7 +158,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO[] getCheckedOutMDocs(String workspaceId) throws ApplicationException {
         try {
             MasterDocument[] mdocs = commandService.getCheckedOutMDocs(workspaceId);
-            return createDTO(mdocs);
+            return setupMDocNotifications(createDTO(mdocs), workspaceId);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -162,7 +167,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO[] findMDocsByFolder(String completePath) throws ApplicationException {
         try {
             MasterDocument[] mdocs = commandService.findMDocsByFolder(completePath);
-            return createDTO(mdocs);
+            return setupMDocNotifications(createDTO(mdocs), completePath.split("/")[0]);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -171,7 +176,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO[] findMDocsByTag(String workspaceId, String label) throws ApplicationException {
         try {
             MasterDocument[] mdocs = commandService.findMDocsByTag(new TagKey(workspaceId, label));
-            return createDTO(mdocs);
+            return setupMDocNotifications(createDTO(mdocs), workspaceId);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -272,26 +277,26 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     public MasterDocumentDTO[] createVersion(String pWorkspaceId, String pID, String pVersion, String pTitle, String pDescription, String pWorkflowModelId, ACLDTO acl) throws ApplicationException {
         try {
-            ACLUserEntry[] userEntries=null;
-            ACLUserGroupEntry[] userGroupEntries=null;
-            if(acl!=null){
-                userEntries=new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries=new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i=0;
-                for(Map.Entry<String, ACLDTO.Permission> entry:acl.getUserEntries().entrySet()){
-                    userEntries[i]=new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId),entry.getKey()));
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] userGroupEntries = null;
+            if (acl != null) {
+                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+                int i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries[i] = new ACLUserEntry();
+                    userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
                     userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
-                i=0;
-                for(Map.Entry<String, ACLDTO.Permission> entry:acl.getGroupEntries().entrySet()){
-                    userGroupEntries[i]=new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId),entry.getKey()));
+                i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    userGroupEntries[i] = new ACLUserGroupEntry();
+                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
             }
             MasterDocument mdocs[] = commandService.createVersion(new MasterDocumentKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
-            return createDTO(mdocs);
+            return setupMDocNotifications(createDTO(mdocs), pWorkspaceId);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -361,26 +366,26 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     public MasterDocumentDTO createMDoc(String pParentFolder, String pMDocID, String pTitle, String pDescription, String pMDocTemplateId, String pWorkflowModelId, ACLDTO acl) throws ApplicationException {
         try {
-            ACLUserEntry[] userEntries=null;
-            ACLUserGroupEntry[] userGroupEntries=null;
-            if(acl!=null){
-                String workspaceId=Folder.parseWorkspaceId(pParentFolder);
-                userEntries=new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries=new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i=0;
-                for(Map.Entry<String, ACLDTO.Permission> entry:acl.getUserEntries().entrySet()){
-                    userEntries[i]=new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId),entry.getKey()));
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] userGroupEntries = null;
+            if (acl != null) {
+                String workspaceId = Folder.parseWorkspaceId(pParentFolder);
+                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+                int i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries[i] = new ACLUserEntry();
+                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
                     userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
-                i=0;
-                for(Map.Entry<String, ACLDTO.Permission> entry:acl.getGroupEntries().entrySet()){
-                    userGroupEntries[i]=new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId),entry.getKey()));
+                i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    userGroupEntries[i] = new ACLUserGroupEntry();
+                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
             }
-            MasterDocument mdoc = commandService.createMDoc(pParentFolder, pMDocID, pTitle, pDescription, pMDocTemplateId, pWorkflowModelId, userEntries,userGroupEntries);
+            MasterDocument mdoc = commandService.createMDoc(pParentFolder, pMDocID, pTitle, pDescription, pMDocTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
             return createDTO(mdoc);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
@@ -527,7 +532,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     public MasterDocumentDTO[] searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content) throws ApplicationException {
         try {
-            return createDTO(commandService.searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content));
+            return setupMDocNotifications(createDTO(commandService.searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content)), workspaceId);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -547,6 +552,24 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
+    }
+
+    public MDocSearchResultDTO searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int sizeOfChunck) throws ApplicationException {
+//        try {
+//            return createDTO(commandService.searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content, startOffset, sizeOfChunck));
+//        } catch (com.docdoku.core.ApplicationException ex) {
+//            throw new ApplicationException(ex.getMessage());
+//        }
+        // TODO
+        return null;
+    }
+
+    private MDocSearchResultDTO createDTO(MDocSearchResult result) {
+        MDocSearchResultDTO dto = new MDocSearchResultDTO();
+        dto.setData(createDTO(result.getData()));
+        dto.setOffset(result.getOffsetOfChunk());
+        dto.setResultsSize(result.getSizeOfResults());
+        return dto;
     }
 
     private UserGroupDTO[] createDTO(WorkspaceUserGroupMembership[] groupMSs) {
@@ -777,7 +800,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         dto.setAuthor(mdoc.getAuthor().toString());
         dto.setCheckOutDate(mdoc.getCheckOutDate());
         dto.setCheckOutUser((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().toString());
-        dto.setCheckOutUserFullName((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().getName()) ;
+        dto.setCheckOutUserFullName((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().getName());
         dto.setCreationDate(mdoc.getCreationDate());
         dto.setDescription(mdoc.getDescription());
         dto.setLifeCycleState(mdoc.getLifeCycleState());
@@ -856,7 +879,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             dto.setName(attr.getName());
             dto.setDateValue((Date) attr.getValue());
             return dto;
-        }else if(attr instanceof InstanceURLAttribute){
+        } else if (attr instanceof InstanceURLAttribute) {
             InstanceURLAttributeDTO dto = new InstanceURLAttributeDTO();
             dto.setName(attr.getName());
             dto.setValue(attr.getValue());
@@ -865,8 +888,6 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             throw new IllegalArgumentException("Instance attribute not supported");
         }
     }
-
-
 
     private InstanceAttribute[] createObject(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {
@@ -907,12 +928,12 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             attr.setName(dto.getName());
             attr.setDateFrom(((InstanceDateAttributeSearchDTO) dto).getDateFrom());
             attr.setDateTo(((InstanceDateAttributeSearchDTO) dto).getDateTo());
-            return attr ;
-        }else if(dto instanceof InstanceURLAttributeDTO){
+            return attr;
+        } else if (dto instanceof InstanceURLAttributeDTO) {
             InstanceURLAttribute attr = new InstanceURLAttribute();
             attr.setName(dto.getName());
             attr.setUrlValue((String) dto.getValue());
-            return attr ;
+            return attr;
         } else {
             throw new IllegalArgumentException("Instance attribute not supported");
         }
@@ -1000,5 +1021,16 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         obj.setWorkspace(new Workspace(dto.getWorkspaceId()));
 
         return obj;
+    }
+
+    private MasterDocumentDTO[] setupMDocNotifications(MasterDocumentDTO[] mdocs, String workspaceId) throws com.docdoku.core.ApplicationException{
+            List<MasterDocumentDTO> markedIteration = Arrays.asList(createDTO(commandService.getIterationChangeEventSubscriptions(workspaceId)));
+            List<MasterDocumentDTO> markedState = Arrays.asList(createDTO(commandService.getStateChangeEventSubscriptions(workspaceId)));
+
+            for (int i = 0 ; i < mdocs.length ; i++){
+                mdocs[i].setIterationNotification(markedIteration.contains(mdocs[i]));
+                mdocs[i].setStateNotification(markedState.contains(mdocs[i]));
+            }
+            return mdocs ;
     }
 }

@@ -26,6 +26,8 @@ public interface TableDataSource {
      */
     public String[] getRow(int row);
 
+    //public String[] getRow(int row, TableDataSourceObserver seeker) ;
+
     /**
      * Returns the message that must be displayed when the model contains no data
      * @return
@@ -40,6 +42,8 @@ public interface TableDataSource {
      * @return
      */
     public String[] getTooltipForRowColumn(int row, int column) ;
+
+    
     
     
 }

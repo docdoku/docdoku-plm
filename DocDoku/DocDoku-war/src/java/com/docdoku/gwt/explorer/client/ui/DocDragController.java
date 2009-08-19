@@ -6,6 +6,7 @@ package com.docdoku.gwt.explorer.client.ui;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableWidget;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,7 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class DocDragController extends PickupDragController {
 
-    private Table table ;
+    private Table tableOld ;
+    private TableWidget table ;
 
     public DocDragController(AbsolutePanel boundaryPanel, boolean allowDroppingOnBoundaryPanel) {
         super(boundaryPanel, allowDroppingOnBoundaryPanel);
@@ -44,13 +46,25 @@ public class DocDragController extends PickupDragController {
         return container ;
     }
 
-    public Table getTable() {
+    @Deprecated
+    public Table getTableOld() {
+        return tableOld;
+    }
+
+    @Deprecated
+    public void setTableOld(Table table) {
+        this.tableOld = table;
+    }
+
+    public TableWidget getTable() {
         return table;
     }
 
-    public void setTable(Table table) {
+    public void setTable(TableWidget table) {
         this.table = table;
     }
+
+    
 
     
 }

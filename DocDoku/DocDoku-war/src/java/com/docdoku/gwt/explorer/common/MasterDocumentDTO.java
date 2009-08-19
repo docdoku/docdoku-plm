@@ -23,6 +23,8 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
     private String[] tags;
     private String description;
     private String checkOutUserFullName ;
+    private boolean iterationNotification ;
+    private boolean stateNotification ;
 
     private List<DocumentDTO> iterations;
 
@@ -179,7 +181,21 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         this.checkOutUserFullName = checkOutUserFullName;
     }
 
-    
+    public boolean isIterationNotification() {
+        return iterationNotification;
+    }
+
+    public void setIterationNotification(boolean iterationNotification) {
+        this.iterationNotification = iterationNotification;
+    }
+
+    public boolean isStateNotification() {
+        return stateNotification;
+    }
+
+    public void setStateNotification(boolean stateNotification) {
+        this.stateNotification = stateNotification;
+    }
     
     @Override
     public String toString() {
