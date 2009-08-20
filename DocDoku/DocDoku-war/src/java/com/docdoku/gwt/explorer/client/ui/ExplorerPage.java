@@ -71,6 +71,8 @@ import java.util.Map;
  */
 public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandler {
 
+    private static final int TABLE_PAGE_SIZE = 4 ;
+
     private String m_workspaceId;
     private String m_login;
     private FolderTree m_folderTree;
@@ -109,6 +111,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         ExplorerConstants.init(workspaceId);
         Window.addResizeHandler(this);
         pageManager = new PageManager();
+        pageManager.setPageSize(TABLE_PAGE_SIZE);
     }
 
     public FilesPanel getEditDocFilesPanel() {

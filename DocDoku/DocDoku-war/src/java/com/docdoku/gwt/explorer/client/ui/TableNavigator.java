@@ -114,7 +114,7 @@ public class TableNavigator extends Composite implements PageHandler{
         previous.setVisible(event.getCurrentPage() > 0);
         next.setVisible(event.getCurrentPage() < event.getNumberOfPages() -1);
         last.setVisible(event.getCurrentPage() < event.getNumberOfPages() -1);
-        infos.setVisible(event.getNumberOfPages() != 1);
+        infos.setVisible(event.getNumberOfPages() > 1);
     }
 
 
