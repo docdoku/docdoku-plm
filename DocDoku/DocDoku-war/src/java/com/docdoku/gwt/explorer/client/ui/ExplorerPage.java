@@ -69,7 +69,7 @@ import java.util.Map;
  *
  * @author Florent GARIN
  */
-public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandler{
+public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandler {
 
     private String m_workspaceId;
     private String m_login;
@@ -85,8 +85,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     private CreateMDocPanel m_createMDocPanel;
     private MDocTemplatePanel m_mdocTemplatePanel;
     private CreateVersionPanel m_createVersionPanel;
-
-    private WorkflowModelEditor m_wfEditor ;
+    private WorkflowModelEditor m_wfEditor;
     private DocPanel m_docPanel;
     private TabMenuGroup m_group;
     private MasterDocumentDTO m_lastOpenedMDoc;
@@ -95,13 +94,12 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     private IconFactory m_iconFactory;
     private CompleteSearchPanel m_completeSearchPanel;
     private DocDragController m_dndController;
-    private ExplorerTableProfileCollection m_tableProfiles ;
+    private ExplorerTableProfileCollection m_tableProfiles;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
     private final ExplorerImageBundle images = ServiceLocator.getInstance().getExplorerImageBundle();
     private DecoratorPanel elementTableDecPanel;
-    private TableProfile desiredProfile ;
-    private PageManager pageManager ;
-
+    private TableProfile desiredProfile;
+    private PageManager pageManager;
 
     public ExplorerPage(String workspaceId, String login) {
         m_workspaceId = workspaceId;
@@ -145,7 +143,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         m_menuBarTop = new ExplorerMenuBar(cmds, this, false);
         TableNavigator tmp3 = new TableNavigator(pageManager);
         pageManager.addPageHandler(tmp3);
-        m_menuBarTop.addExtension(tmp3) ;
+        m_menuBarTop.addExtension(tmp3);
         m_menuBarBottom = new ExplorerMenuBar(cmds, this, true);
         TableNavigator tmp4 = new TableNavigator(pageManager);
         pageManager.addPageHandler(tmp4);
@@ -155,15 +153,15 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         m_elementTable.addTableClickHandler(new TableClickHandler() {
 
             public void onClick(TableClickEvent event) {
-                TableModel model = m_elementTable.getTableModel() ;
-                if (model instanceof MDocTableModel){
-                    m_lastOpenedMDoc = ((MDocTableModel) model).getValueAt(event.getTableModelIndex().getRow()) ;
+                TableModel model = m_elementTable.getTableModel();
+                if (model instanceof MDocTableModel) {
+                    m_lastOpenedMDoc = ((MDocTableModel) model).getValueAt(event.getTableModelIndex().getRow());
                     showEditDocPanel();
-                }else if (model instanceof MDocTemplateTableModel){
-                    m_lastOpenedMDocTemplate = ((MDocTemplateTableModel) model).getValueAt(event.getTableModelIndex().getRow()) ;
+                } else if (model instanceof MDocTemplateTableModel) {
+                    m_lastOpenedMDocTemplate = ((MDocTemplateTableModel) model).getValueAt(event.getTableModelIndex().getRow());
                     showEditMDocTemplatePanel();
-                }else if (model instanceof WorkflowModelTableModel){
-                    m_lastOpenedWorkflowModel = ((WorkflowModelTableModel) model).getValueAt(event.getTableModelIndex().getRow()) ;
+                } else if (model instanceof WorkflowModelTableModel) {
+                    m_lastOpenedWorkflowModel = ((WorkflowModelTableModel) model).getValueAt(event.getTableModelIndex().getRow());
                     showEditWorkflowModelPanel();
                 }
 
@@ -173,7 +171,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         m_dndController.setTable(m_elementTable.getInnerTable());
         m_elementTable.getInnerTable().setStyleName("myTable");
         m_elementTable.setWidth("100%");
-        
+
         m_searchPanel = new SearchPanel(cmds, this);
         m_completeSearchPanel = new CompleteSearchPanel(cmds, this);
         m_completeSearchPanel.setVisible(false);
@@ -285,10 +283,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showCreateFolderPanel() {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
+        showBasicSearchPanel();
         inputPanel.clear();
         m_createFolderPanel.clearInputs();
         String selectedFolder = m_folderTree.getSelectedFolderPath();
@@ -297,10 +295,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showCreateVersionPanel(String workspaceId, String id, String version) {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
+        showBasicSearchPanel();
         inputPanel.clear();
         m_createVersionPanel.clearInputs();
         m_createVersionPanel.setWorkspaceId(workspaceId);
@@ -313,10 +311,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showEditDocPanel() {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
+        showBasicSearchPanel();
         DocumentDTO iteration = m_lastOpenedMDoc.getLastIteration();
         if (iteration != null) {
             inputPanel.clear();
@@ -332,10 +330,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showEditDocPanel(int iter) {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
+        showBasicSearchPanel();
         if (iter != m_lastOpenedMDoc.getIterations().size() - 1) {
             DocumentDTO iteration = m_lastOpenedMDoc.getIterations().get(iter);
             if (iteration != null) {
@@ -355,13 +353,13 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showEditWorkflowModelPanel() {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
-        int spaceAvailable = inputPanel.getOffsetWidth() ;
+        showBasicSearchPanel();
+        int spaceAvailable = inputPanel.getOffsetWidth();
         inputPanel.clear();
-        WorkflowModelModel model = new WorkflowModelModel(m_lastOpenedWorkflowModel, m_workspaceId) ;
+        WorkflowModelModel model = new WorkflowModelModel(m_lastOpenedWorkflowModel, m_workspaceId);
         inputPanel.setWidget(m_wfEditor);
         m_wfEditor.setWidth(spaceAvailable);
         m_wfEditor.setWorkflowModel(model);
@@ -369,12 +367,12 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showCreateWorkflowModelPanel() {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
-        
-        int spaceAvailable = inputPanel.getOffsetWidth() -10 ;
+        showBasicSearchPanel();
+
+        int spaceAvailable = inputPanel.getOffsetWidth() - 10;
 
         inputPanel.clear();
         inputPanel.setWidget(m_wfEditor);
@@ -383,10 +381,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showEditMDocTemplatePanel() {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
+        showBasicSearchPanel();
         inputPanel.clear();
         m_mdocTemplatePanel.clearInputs();
         m_mdocTemplatePanel.setTemplate(m_lastOpenedMDocTemplate);
@@ -396,15 +394,15 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
 
     public void showSearchResult(MasterDocumentDTO[] result) {
         inputPanel.clear();
-        MDocTableModel source =new MDocTableModel(result, m_login, true);
-        m_elementTable.setModel(source,m_tableProfiles.getProfile("searchProfile"));
+        MDocTableModel source = new MDocTableModel(result, m_login, true);
+        m_elementTable.setModel(source, m_tableProfiles.getProfile("searchProfile"));
         m_menuDocumentBarBottom.setStyleName("myMenuBarSearch");
         m_menuDocumentBarTop.setStyleName("myMenuBarSearch");
         elementTableDecPanel.addStyleName("searchTable");
         showTablePanel(false);
     }
 
-    public void showSearchResult(PageManagerBackend backend){
+    public void showSearchResult(PageManagerBackend backend) {
         inputPanel.clear();
         desiredProfile = m_tableProfiles.getProfile("searchProfile");
         elementTableDecPanel.addStyleName("searchTable");
@@ -412,10 +410,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showCreateMDocTemplatePanel() {
-        if(elementTableDecPanel != null){
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
-        showBasicSearchPanel() ;
+        showBasicSearchPanel();
         inputPanel.clear();
         m_mdocTemplatePanel.clearInputs();
         m_mdocTemplatePanel.setCreationMode(true);
@@ -424,8 +422,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showCreateMDocPanel() {
-        showBasicSearchPanel() ;
-        if(elementTableDecPanel != null){
+        showBasicSearchPanel();
+        if (elementTableDecPanel != null) {
             elementTableDecPanel.removeStyleName("searchTable");
         }
         inputPanel.clear();
@@ -440,12 +438,19 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showTablePanel() {
+        if (pageManager.getCurrentBackend() instanceof MDocSearchBackend) {
+            elementTableDecPanel.addStyleName("searchTable");
+        } else {
+            if (elementTableDecPanel != null) {
+                elementTableDecPanel.removeStyleName("searchTable");
+            }
+        }
         showTablePanel(true);
     }
 
     public void showTablePanel(boolean maskSearchComplete) {
-        if (maskSearchComplete){
-            showBasicSearchPanel() ;
+        if (maskSearchComplete) {
+            showBasicSearchPanel();
         }
         inputPanel.clear();
         m_group.unselect();
@@ -500,8 +505,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         List<MasterDocumentDTO> mdocs = new ArrayList<MasterDocumentDTO>();
         TableModel source = m_elementTable.getTableModel();
         if (source instanceof MDocTableModel) {
-            MDocTableModel mdocSource = (MDocTableModel) source ;
-            for(int row : m_elementTable.getSelectedRows()){
+            MDocTableModel mdocSource = (MDocTableModel) source;
+            for (int row : m_elementTable.getSelectedRows()) {
                 mdocs.add(mdocSource.getValueAt(row));
             }
         }
@@ -630,7 +635,6 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         pageManager.setPageManagerBackend(new MDocTagBackend(m_login, label, workspaceId));
     }
 
-    
     private void fetchWorkflowModels() {
         AsyncCallback<WorkflowModelDTO[]> callback = new AsyncCallback<WorkflowModelDTO[]>() {
 
@@ -707,19 +711,19 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void onResize(ResizeEvent event) {
-        if (m_wfEditor.isVisible()){
+        if (m_wfEditor.isVisible()) {
             m_wfEditor.setVisible(false);
-            m_wfEditor.setWidth(inputPanel.getOffsetWidth() -10);
+            m_wfEditor.setWidth(inputPanel.getOffsetWidth() - 10);
             m_wfEditor.setVisible(true);
         }
     }
 
     public void onPageChanged(PageManagerEvent event) {
-        
-        if (pageManager.getCurrentBackend() instanceof MDocSearchBackend){
+
+        if (pageManager.getCurrentBackend() instanceof MDocSearchBackend) {
             m_elementTable.setModelSearch(pageManager.getCurrentModel(), desiredProfile);
             showTablePanel(false);
-        }else{
+        } else {
             m_elementTable.setModel(pageManager.getCurrentModel(), desiredProfile);
             showTablePanel();
         }
@@ -727,6 +731,5 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
 
     public String getLogin() {
         return m_login;
-    }  
-
+    }
 }
