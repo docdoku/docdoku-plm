@@ -44,6 +44,7 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
      *
      * @return returns the handler type
      */
+    @SuppressWarnings(value="unchecked")
     public static Type<PageHandler> getType() {
         if (TYPE == null) {
             TYPE = new Type<PageHandler>();
