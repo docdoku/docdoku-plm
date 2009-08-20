@@ -1024,6 +1024,15 @@ public interface ExplorerI18NConstants extends com.google.gwt.i18n.client.Consta
   String numberSearchAttribute();
 
   /**
+   * Translated "of".
+   * 
+   * @return translated "of"
+   */
+  @DefaultStringValue("of")
+  @Key("ofDocumentsLabel")
+  String ofDocumentsLabel();
+
+  /**
    * Translated "on".
    * 
    * @return translated "on"

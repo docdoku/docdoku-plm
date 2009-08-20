@@ -40,6 +40,7 @@ public class TableNavigator extends Composite implements PageHandler{
 
     private Grid mainPanel ;
 
+    private Label infos ;
     private Label first;
     private Label last;
     private Label next;
@@ -47,17 +48,20 @@ public class TableNavigator extends Composite implements PageHandler{
 
     public TableNavigator(final PageManager pm) {
         ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
-        mainPanel = new Grid(1, 4);
+        mainPanel = new Grid(1, 5);
+        infos = new Label() ;
         first = new Label(constants.navigateBeginning());
         next = new Label(constants.navigateNext());
         last = new Label(constants.navigateEnd());
         previous = new Label(constants.navigatePrevious());
-        mainPanel.setWidget(0,0,first);
-        mainPanel.setWidget(0,1,previous);
-        mainPanel.setWidget(0,2,next);
-        mainPanel.setWidget(0,3,last);
+        mainPanel.setWidget(0, 0, infos);
+        mainPanel.setWidget(0,1,first);
+        mainPanel.setWidget(0,2,previous);
+        mainPanel.setWidget(0,3,next);
+        mainPanel.setWidget(0,4,last);
         initWidget(mainPanel);
 
+        infos.setVisible(false);
         first.setVisible(false);
         previous.setVisible(false);
         next.setVisible(false);
@@ -105,10 +109,12 @@ public class TableNavigator extends Composite implements PageHandler{
 
     public void onPageChanged(PageManagerEvent event) {
         // update visibility
+        infos.setText(event.getStart()+" - "+event.getEnd() + " " + ServiceLocator.getInstance().getExplorerI18NConstants().ofDocumentsLabel() + " "+ event.getTotal()) ;
         first.setVisible(event.getCurrentPage() > 0);
         previous.setVisible(event.getCurrentPage() > 0);
         next.setVisible(event.getCurrentPage() < event.getNumberOfPages() -1);
         last.setVisible(event.getCurrentPage() < event.getNumberOfPages() -1);
+        infos.setVisible(event.getNumberOfPages() != 1);
     }
 
 

@@ -32,9 +32,9 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
 
     private static Type<PageHandler> TYPE;
 
-    public static void fire(HasPageHandlers source,int current, int numberOfPages) {
+    public static void fire(HasPageHandlers source,int current, int numberOfPages, int start, int end, int total) {
         if (TYPE != null) {
-            PageManagerEvent event = new PageManagerEvent(current, numberOfPages);
+            PageManagerEvent event = new PageManagerEvent(current, numberOfPages, start, end, total);
             source.fireEvent(event);
         }
     }
@@ -53,11 +53,19 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
 
     private int currentPage ;
     private int numberOfPages ;
+    private int start ;
+    private int end ;
+    private int total ;
 
-    public PageManagerEvent(int currentPage, int numberOfPages) {
+    public PageManagerEvent(int currentPage, int numberOfPages, int start, int end, int total) {
         this.currentPage = currentPage;
         this.numberOfPages = numberOfPages;
+        this.start = start;
+        this.end = end;
+        this.total = total;
     }
+
+    
 
     public int getCurrentPage() {
         return currentPage;
@@ -66,6 +74,22 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
     public int getNumberOfPages() {
         return numberOfPages;
     }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    
+
+    
 
     @Override
     public Type<PageHandler> getAssociatedType() {

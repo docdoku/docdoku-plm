@@ -58,7 +58,7 @@ public class PageManager implements HasPageHandlers{
         currentModel = currentBackend.getTableModel() ;
         numberOfPages = response.getTotalSize() / pageSize + 1;
         currentPage = response.getChunckOffset() / pageSize ;
-        PageManagerEvent.fire(this, currentPage, numberOfPages);
+        PageManagerEvent.fire(this, currentPage, numberOfPages, response.getChunckOffset() + 1, response.getChunckOffset() + response.getData().length, response.getTotalSize());
     }
 
     public void fireEvent(GwtEvent<?> event) {
