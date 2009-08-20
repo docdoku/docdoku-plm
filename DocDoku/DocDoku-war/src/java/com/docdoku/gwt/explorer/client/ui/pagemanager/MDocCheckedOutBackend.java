@@ -42,6 +42,7 @@ public class MDocCheckedOutBackend implements PageManagerBackend {
     public MDocCheckedOutBackend(String login, String workspaceId) {
         this.login = login;
         this.workspaceId = workspaceId;
+        callback = new InternalCallback();
     }
 
     public void fetchNextPage() {

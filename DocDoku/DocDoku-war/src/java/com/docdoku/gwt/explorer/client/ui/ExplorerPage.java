@@ -29,13 +29,22 @@ import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.resources.icons.ExplorerImageBundle;
 import com.docdoku.gwt.explorer.client.ui.doc.*;
 import com.docdoku.gwt.explorer.client.ui.folder.CreateFolderPanel;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocCheckedOutBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocFolderBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocTagBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocTemplateBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.PageHandler;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.PageManager;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.PageManagerBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.PageManagerEvent;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.WorkflowModelBackend;
 import com.docdoku.gwt.explorer.client.ui.search.CompleteSearchPanel;
 import com.docdoku.gwt.explorer.client.ui.template.MDocTemplatePanel;
 import com.docdoku.gwt.explorer.client.ui.widget.*;
 import com.docdoku.gwt.explorer.client.ui.widget.table.TableClickEvent;
 import com.docdoku.gwt.explorer.client.ui.widget.table.TableClickHandler;
 import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableWidget;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableProfile;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.WorkflowModelEditor;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.WorkflowModelModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
@@ -59,12 +68,12 @@ import java.util.Map;
  *
  * @author Florent GARIN
  */
-public class ExplorerPage extends DockPanel implements ResizeHandler{
+public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandler{
 
     private String m_workspaceId;
     private String m_login;
     private FolderTree m_folderTree;
-    private TableWidget m_elementTable;
+    private ExplorerTable m_elementTable;
     private ExplorerDocumentMenuBar m_menuDocumentBarTop;
     private ExplorerDocumentMenuBar m_menuDocumentBarBottom;
     private ExplorerMenuBar m_menuBarTop;
@@ -89,6 +98,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
     private final ExplorerImageBundle images = ServiceLocator.getInstance().getExplorerImageBundle();
     private DecoratorPanel elementTableDecPanel;
+    private TableProfile desiredProfile ;
+    private PageManager pageManager ;
 
 
     public ExplorerPage(String workspaceId, String login) {
@@ -98,6 +109,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         m_dndController.setBehaviorDragProxy(true);
         ExplorerConstants.init(workspaceId);
         Window.addResizeHandler(this);
+        pageManager = new PageManager();
     }
 
     public FilesPanel getEditDocFilesPanel() {
@@ -120,8 +132,25 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         m_iconFactory = new IconFactory(cmds);
         m_tableProfiles = new ExplorerTableProfileCollection(m_iconFactory);
         m_folderTree = new FolderTree(cmds, m_workspaceId, m_login, m_dndController);
-//        m_elementTable = new Table(null, "myTable", m_dndController);
-        m_elementTable = new TableWidget(m_dndController);
+
+        m_menuDocumentBarTop = new ExplorerDocumentMenuBar(cmds, this, false);
+        TableNavigator tmp1 = new TableNavigator(pageManager);
+        pageManager.addPageHandler(tmp1);
+        m_menuDocumentBarTop.addExtension(tmp1);
+        m_menuDocumentBarBottom = new ExplorerDocumentMenuBar(cmds, this, true);
+        TableNavigator tmp2 = new TableNavigator(pageManager);
+        m_menuDocumentBarBottom.addExtension(tmp2);
+        pageManager.addPageHandler(tmp2);
+        m_menuBarTop = new ExplorerMenuBar(cmds, this, false);
+        TableNavigator tmp3 = new TableNavigator(pageManager);
+        pageManager.addPageHandler(tmp3);
+        m_menuBarTop.addExtension(tmp3) ;
+        m_menuBarBottom = new ExplorerMenuBar(cmds, this, true);
+        TableNavigator tmp4 = new TableNavigator(pageManager);
+        pageManager.addPageHandler(tmp4);
+        m_menuBarBottom.addExtension(tmp4);
+
+        m_elementTable = new ExplorerTable(m_menuBarTop, m_menuBarBottom, m_menuDocumentBarTop, m_menuDocumentBarBottom, m_dndController);
         m_elementTable.addTableClickHandler(new TableClickHandler() {
 
             public void onClick(TableClickEvent event) {
@@ -140,24 +169,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
             }
         });
 
-        m_dndController.setTable(m_elementTable);
-        m_elementTable.setStyleName("myTable");
-        m_menuDocumentBarTop = new ExplorerDocumentMenuBar(cmds, this, false);
-//        TableNavigatorPanel tmp1 = new TableNavigatorPanel(m_elementTable);
-//        m_elementTable.addListener(tmp1);
-//        m_menuDocumentBarTop.addExtension(tmp1);
-        m_menuDocumentBarBottom = new ExplorerDocumentMenuBar(cmds, this, true);
-//        TableNavigatorPanel tmp2 = new TableNavigatorPanel(m_elementTable);
-//        m_elementTable.addListener(tmp2);
-//        m_menuDocumentBarBottom.addExtension(tmp2);
-        m_menuBarTop = new ExplorerMenuBar(cmds, this, false);
-//        TableNavigatorPanel tmp3 = new TableNavigatorPanel(m_elementTable);
-//        m_elementTable.addListener(tmp3);
-//        m_menuBarTop.addExtension(tmp3) ;
-        m_menuBarBottom = new ExplorerMenuBar(cmds, this, true);
-//        TableNavigatorPanel tmp4 = new TableNavigatorPanel(m_elementTable);
-//        m_elementTable.addListener(tmp4);
-//        m_menuBarBottom.addExtension(tmp4);
+        m_dndController.setTable(m_elementTable.getInnerTable());
+        m_elementTable.getInnerTable().setStyleName("myTable");
+        m_elementTable.setWidth("100%");
+        
         m_searchPanel = new SearchPanel(cmds, this);
         m_completeSearchPanel = new CompleteSearchPanel(cmds, this);
         m_completeSearchPanel.setVisible(false);
@@ -257,6 +272,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
             }
         });
 
+        pageManager.addPageHandler(this);
     }
 
     public void setDocFiles(Map<String, String> files) {
@@ -387,6 +403,13 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         showTablePanel(false);
     }
 
+    public void showSearchResult(PageManagerBackend backend){
+        inputPanel.clear();
+        desiredProfile = m_tableProfiles.getProfile("searchProfile");
+        elementTableDecPanel.addStyleName("searchTable");
+        pageManager.setPageManagerBackend(backend);
+    }
+
     public void showCreateMDocTemplatePanel() {
         if(elementTableDecPanel != null){
             elementTableDecPanel.removeStyleName("searchTable");
@@ -416,12 +439,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     }
 
     public void showTablePanel() {
-        m_menuDocumentBarTop.setStyleName("myMenuBar") ;
-        m_menuDocumentBarBottom.setStyleName("myMenuBar") ;
-        if(elementTableDecPanel != null){
-            elementTableDecPanel.removeStyleName("searchTable");
-        }
-        
+//        if(elementTableDecPanel != null){
+//            elementTableDecPanel.removeStyleName("searchTable");
+//        }
+//
         showTablePanel(true);
     }
 
@@ -431,22 +452,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
         }
         inputPanel.clear();
         m_group.unselect();
-
-        VerticalPanel vp = new VerticalPanel();
-        vp.setWidth("100%");
-
-        if (m_elementTable.getTableModel() instanceof MDocTableModel) {
-            vp.add(m_menuDocumentBarTop);
-            vp.add(m_elementTable);
-            vp.add(m_menuDocumentBarBottom);
-        } else {
-            vp.add(m_menuBarTop);
-            vp.add(m_elementTable);
-            vp.add(m_menuBarBottom);
-        }
-
-
-        inputPanel.setWidget(vp);
+        inputPanel.setWidget(m_elementTable);
     }
 
     public void showCompleteSearchPanel() {
@@ -597,81 +603,34 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
     }
 
     private void fetchWorkflowModels(String workspaceId) {
-        AsyncCallback<WorkflowModelDTO[]> callback = new AsyncCallback<WorkflowModelDTO[]>() {
+        desiredProfile = m_tableProfiles.getProfile("workflowsProfile");
+        elementTableDecPanel.removeStyleName("searchTable");
 
-            public void onSuccess(WorkflowModelDTO[] workflows) {
-                m_elementTable.setModel(new WorkflowModelTableModel(workflows), m_tableProfiles.getProfile("workflowsProfile")) ;
-                showTablePanel();
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().getWorkflowModels(workspaceId, callback);
+        pageManager.setPageManagerBackend(new WorkflowModelBackend(workspaceId));
     }
 
     private void fetchMDocTemplates(String workspaceId) {
-        AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
-
-            public void onSuccess(MasterDocumentTemplateDTO[] templates) {
-                m_elementTable.setModel(new MDocTemplateTableModel(templates), m_tableProfiles.getProfile("templatesProfile")) ;
-                showTablePanel();
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().getMDocTemplates(workspaceId, callback);
+        desiredProfile = m_tableProfiles.getProfile("templatesProfile");
+        pageManager.setPageManagerBackend(new MDocTemplateBackend(workspaceId));
     }
 
     private void fetchCheckedOutMDocs(String workspaceId) {
-        AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
+        desiredProfile = m_tableProfiles.getProfile("documentsProfile");
+        elementTableDecPanel.removeStyleName("searchTable");
 
-            public void onSuccess(MasterDocumentDTO[] mdocs) {
-                MDocTableModel model = new MDocTableModel(mdocs, m_login, true) ;
-                m_elementTable.setModel(model);
-                showTablePanel();
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().getCheckedOutMDocs(workspaceId, callback);
+        pageManager.setPageManagerBackend(new MDocCheckedOutBackend(m_login, workspaceId));
     }
 
     private void fetchMDocsByFolder(String completePath) {
-        AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
+        desiredProfile = m_tableProfiles.getProfile("documentsProfile");
+        elementTableDecPanel.removeStyleName("searchTable");
 
-            public void onSuccess(MasterDocumentDTO[] mdocs) {
-                MDocTableModel mdocSource = new MDocTableModel(mdocs, m_login, true);
-                m_elementTable.setModel(mdocSource, m_tableProfiles.getProfile("documentsProfile"));
-                showTablePanel();
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().findMDocsByFolder(completePath, callback);
+        pageManager.setPageManagerBackend(new MDocFolderBackend(completePath, m_login));
     }
 
     private void fetchMDocsByTag(String workspaceId, String label) {
-        AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
-
-            public void onSuccess(MasterDocumentDTO[] mdocs) {
-                MDocTableModel mdocSource = new MDocTableModel(mdocs, m_login, true);
-                m_elementTable.setModel(mdocSource, m_tableProfiles.getProfile("documentsProfile"));
-                showTablePanel();
-            }
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().findMDocsByTag(workspaceId, label, callback);
+        desiredProfile = m_tableProfiles.getProfile("documentsProfile");
+        pageManager.setPageManagerBackend(new MDocTagBackend(m_login, label, workspaceId));
     }
 
     
@@ -757,5 +716,14 @@ public class ExplorerPage extends DockPanel implements ResizeHandler{
             m_wfEditor.setVisible(true);
         }
     }
+
+    public void onPageChanged(PageManagerEvent event) {
+        m_elementTable.setModel(pageManager.getCurrentModel(), desiredProfile);
+        showTablePanel();
+    }
+
+    public String getLogin() {
+        return m_login;
+    }  
 
 }

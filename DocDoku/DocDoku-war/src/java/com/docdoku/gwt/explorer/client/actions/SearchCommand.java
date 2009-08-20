@@ -19,8 +19,8 @@
  */
 package com.docdoku.gwt.explorer.client.actions;
 
-import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocSearchBackend;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
@@ -40,17 +40,6 @@ public class SearchCommand implements Action {
     }
 
     public void execute(Object... userObject) {
-        AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-
-            public void onSuccess(MasterDocumentDTO[] result) {
-                m_mainPage.showSearchResult(result);
-            }
-        };
-
         String workspaceId= (String) userObject[0];
         String mdocId= (String) userObject[1];
         String title= (String) userObject[2];
@@ -63,9 +52,7 @@ public class SearchCommand implements Action {
         String[] tags= (String[]) userObject[9];
         String content= (String) userObject[10];
 
-        ServiceLocator.getInstance().getExplorerService().searchMDocs(workspaceId, mdocId,
-                title, version, author, type,
-                fromDate, toDate, attributes, tags, content, callback);
+         m_mainPage.showSearchResult(new MDocSearchBackend(m_mainPage.getLogin(), workspaceId, mdocId, title, version, author, type, fromDate, toDate, attributes, tags, content));
 
     }
 }

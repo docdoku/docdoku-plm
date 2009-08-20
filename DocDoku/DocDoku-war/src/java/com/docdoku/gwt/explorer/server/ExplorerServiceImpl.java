@@ -1062,7 +1062,13 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
         }
 
-        return null ;
+        MDocResponse defaultResponse = new MDocResponse() ;
+        defaultResponse.setChunckOffset(0);
+        defaultResponse.setTotalSize(0);
+        MasterDocumentDTO defaultChunk[] = new MasterDocumentDTO[0] ;
+        defaultResponse.setData(defaultChunk);
+
+        return  defaultResponse;
     }
 
     public MDocTemplateResponse getMDocTemplates(String workspaceId, int startOffset, int chunkSize) throws ApplicationException {
@@ -1095,7 +1101,13 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
         }
 
-        return null ;
+        MDocTemplateResponse defaultResponse = new MDocTemplateResponse() ;
+        MasterDocumentTemplateDTO defaultChunk[] = new MasterDocumentTemplateDTO[0];
+        defaultResponse.setTotalSize(0);
+        defaultResponse.setChunckOffset(0);
+        defaultResponse.setData(defaultChunk);
+
+        return  defaultResponse;
     }
 
     public WorkflowResponse getWorkflowModels(String workspaceId, int startOffset, int chunkSize) throws ApplicationException {
@@ -1128,7 +1140,13 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
         }
 
-        return null ;
+        WorkflowResponse defaultResponse = new WorkflowResponse();
+        defaultResponse.setChunckOffset(0);
+        defaultResponse.setTotalSize(0);
+        WorkflowModelDTO defaultChunk[] = new WorkflowModelDTO[0];
+        defaultResponse.setData(defaultChunk);
+
+        return defaultResponse ;
     }
 
 }
