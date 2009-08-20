@@ -56,7 +56,12 @@ public class PageManager implements HasPageHandlers{
     // called only by backend (package visibility)
     void dataReady(ExplorerServiceResponse response){
         currentModel = currentBackend.getTableModel() ;
-        numberOfPages = response.getTotalSize() / pageSize + 1;
+        if (response.getTotalSize() % pageSize != 0){
+            numberOfPages = response.getTotalSize() / pageSize + 1;
+        }else{
+            numberOfPages = response.getTotalSize() / pageSize;
+        }
+        
         currentPage = response.getChunckOffset() / pageSize ;
         PageManagerEvent.fire(this, currentPage, numberOfPages, response.getChunckOffset() + 1, response.getChunckOffset() + response.getData().length, response.getTotalSize());
     }
