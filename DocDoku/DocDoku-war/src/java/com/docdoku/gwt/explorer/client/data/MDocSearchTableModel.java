@@ -1,5 +1,5 @@
 /*
- * TableListener.java
+ * MDocSearchTableModel.java
  * 
  * Copyright (c) 2009 Docdoku. All rights reserved.
  * 
@@ -19,15 +19,25 @@
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.gwt.explorer.client.ui;
+package com.docdoku.gwt.explorer.client.data;
 
-import java.util.EventListener;
+import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-@Deprecated
-public interface TableListener extends EventListener{
-    void onPageChanged(TableEvent event) ;
+public class MDocSearchTableModel extends MDocTableModel{
+
+    public MDocSearchTableModel(MasterDocumentDTO[] mdocs, String login, boolean createVersionEnabled) {
+        super(mdocs, login, createVersionEnabled);
+    }
+
+    @Override
+    public String getEmptyCaseMessage() {
+        return ServiceLocator.getInstance().getExplorerI18NConstants().searchNoResult();
+    }
+
+
+
 }

@@ -21,6 +21,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
+import com.docdoku.gwt.explorer.client.data.MDocSearchTableModel;
 import com.docdoku.gwt.explorer.client.data.MDocTableModel;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
@@ -116,7 +117,7 @@ public class MDocSearchBackend implements PageManagerBackend{
         }
 
         public void onSuccess(MDocResponse result) {
-            model = new MDocTableModel(result.getData(), login, true) ;
+            model = new MDocSearchTableModel(result.getData(), login, true) ;
             notifyFrontend(result);
         }
     }

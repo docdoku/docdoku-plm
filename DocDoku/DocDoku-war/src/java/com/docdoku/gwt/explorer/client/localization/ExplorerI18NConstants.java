@@ -1213,6 +1213,15 @@ public interface ExplorerI18NConstants extends com.google.gwt.i18n.client.Consta
   String searchLabel();
 
   /**
+   * Translated "No documents matched your search".
+   * 
+   * @return translated "No documents matched your search"
+   */
+  @DefaultStringValue("No documents matched your search")
+  @Key("searchNoResult")
+  String searchNoResult();
+
+  /**
    * Translated "All".
    * 
    * @return translated "All"

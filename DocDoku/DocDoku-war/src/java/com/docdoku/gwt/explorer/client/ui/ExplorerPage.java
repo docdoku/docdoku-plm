@@ -31,6 +31,7 @@ import com.docdoku.gwt.explorer.client.ui.doc.*;
 import com.docdoku.gwt.explorer.client.ui.folder.CreateFolderPanel;
 import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocCheckedOutBackend;
 import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocFolderBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocSearchBackend;
 import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocTagBackend;
 import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocTemplateBackend;
 import com.docdoku.gwt.explorer.client.ui.pagemanager.PageHandler;
@@ -439,10 +440,6 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void showTablePanel() {
-//        if(elementTableDecPanel != null){
-//            elementTableDecPanel.removeStyleName("searchTable");
-//        }
-//
         showTablePanel(true);
     }
 
@@ -718,8 +715,14 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void onPageChanged(PageManagerEvent event) {
-        m_elementTable.setModel(pageManager.getCurrentModel(), desiredProfile);
-        showTablePanel();
+        
+        if (pageManager.getCurrentBackend() instanceof MDocSearchBackend){
+            m_elementTable.setModelSearch(pageManager.getCurrentModel(), desiredProfile);
+            showTablePanel(false);
+        }else{
+            m_elementTable.setModel(pageManager.getCurrentModel(), desiredProfile);
+            showTablePanel();
+        }
     }
 
     public String getLogin() {

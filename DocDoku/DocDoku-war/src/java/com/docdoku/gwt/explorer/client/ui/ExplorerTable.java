@@ -63,6 +63,24 @@ public class ExplorerTable extends Composite{
 
     public void setModel(TableModel model, TableProfile profile){
         mainPanel.clear();
+        docMenuBarBottom.removeStyleName("myMenuBarSearch");
+        docMenuBarTop.removeStyleName("myMenuBarSearch");
+        if (model instanceof MDocTableModel){
+            mainPanel.add(docMenuBarTop);
+            mainPanel.add(table);
+            mainPanel.add(docMenuBarBottom);
+        }else{
+            mainPanel.add(menuBarTop);
+            mainPanel.add(table);
+            mainPanel.add(menuBarBottom);
+        }
+        table.setModel(model, profile);
+    }
+
+    public void setModelSearch(TableModel model, TableProfile profile){
+        mainPanel.clear();
+        docMenuBarTop.addStyleName("myMenuBarSearch");
+        docMenuBarBottom.addStyleName("myMenuBarSearch");
         if (model instanceof MDocTableModel){
             mainPanel.add(docMenuBarTop);
             mainPanel.add(table);

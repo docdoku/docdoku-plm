@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class DocDragController extends PickupDragController {
 
-    private Table tableOld ;
     private TableWidget table ;
 
     public DocDragController(AbsolutePanel boundaryPanel, boolean allowDroppingOnBoundaryPanel) {
@@ -44,16 +43,6 @@ public class DocDragController extends PickupDragController {
         DOM.setStyleAttribute(container.getElement(), "overflow", "visible");
         container.add(new DragDocInfoPanel(table.getSelectedRows().size()));
         return container ;
-    }
-
-    @Deprecated
-    public Table getTableOld() {
-        return tableOld;
-    }
-
-    @Deprecated
-    public void setTableOld(Table table) {
-        this.tableOld = table;
     }
 
     public TableWidget getTable() {
