@@ -1,5 +1,5 @@
 /*
- * TableListener.java
+ * ExplorerServiceResponse.java
  * 
  * Copyright (c) 2009 Docdoku. All rights reserved.
  * 
@@ -19,15 +19,45 @@
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.gwt.explorer.client.ui;
+package com.docdoku.gwt.explorer.common;
 
-import java.util.EventListener;
+import java.io.Serializable;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-@Deprecated
-public interface TableListener extends EventListener{
-    void onPageChanged(TableEvent event) ;
+public abstract class ExplorerServiceResponse<T extends Serializable> implements Serializable{
+    
+    private int totalSize ;
+    private int chunckOffset ;
+    private T data[] ;
+
+    public ExplorerServiceResponse() {
+    }
+
+    public T[] getData() {
+        return data;
+    }
+
+    public void setData(T[] data) {
+        this.data = data;
+    }
+
+    public void setChunckOffset(int chunckOffset) {
+        this.chunckOffset = chunckOffset;
+    }
+
+    public void setTotalSize(int totalSize) {
+        this.totalSize = totalSize;
+    }
+
+
+    public int getChunckOffset() {
+        return chunckOffset;
+    }
+    
+    public int getTotalSize() {
+        return totalSize;
+    }
 }

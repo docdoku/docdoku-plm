@@ -20,7 +20,6 @@
 package com.docdoku.gwt.explorer.server;
 
 import com.docdoku.core.ICommandLocal;
-import com.docdoku.core.MDocSearchResult;
 import com.docdoku.core.entities.ACL;
 import com.docdoku.core.entities.ACLUserEntry;
 import com.docdoku.core.entities.ACLUserGroupEntry;
@@ -72,7 +71,8 @@ import com.docdoku.gwt.explorer.common.InstanceDateAttributeSearchDTO;
 import com.docdoku.gwt.explorer.common.InstanceNumberAttributeDTO;
 import com.docdoku.gwt.explorer.common.InstanceTextAttributeDTO;
 import com.docdoku.gwt.explorer.common.InstanceURLAttributeDTO;
-import com.docdoku.gwt.explorer.common.MDocSearchResultDTO;
+import com.docdoku.gwt.explorer.common.MDocResponse;
+import com.docdoku.gwt.explorer.common.MDocTemplateResponse;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
 import com.docdoku.gwt.explorer.common.ParallelActivityDTO;
@@ -86,6 +86,7 @@ import com.docdoku.gwt.explorer.common.UserDTO;
 import com.docdoku.gwt.explorer.common.UserGroupDTO;
 import com.docdoku.gwt.explorer.common.WorkflowDTO;
 import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
+import com.docdoku.gwt.explorer.common.WorkflowResponse;
 import com.docdoku.gwt.explorer.common.WorkspaceMembership;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
@@ -96,8 +97,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 
 /**
@@ -554,23 +553,6 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         }
     }
 
-    public MDocSearchResultDTO searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int sizeOfChunck) throws ApplicationException {
-//        try {
-//            return createDTO(commandService.searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content, startOffset, sizeOfChunck));
-//        } catch (com.docdoku.core.ApplicationException ex) {
-//            throw new ApplicationException(ex.getMessage());
-//        }
-        // TODO
-        return null;
-    }
-
-    private MDocSearchResultDTO createDTO(MDocSearchResult result) {
-        MDocSearchResultDTO dto = new MDocSearchResultDTO();
-        dto.setData(createDTO(result.getData()));
-        dto.setOffset(result.getOffsetOfChunk());
-        dto.setResultsSize(result.getSizeOfResults());
-        return dto;
-    }
 
     private UserGroupDTO[] createDTO(WorkspaceUserGroupMembership[] groupMSs) {
         UserGroupDTO[] dtos = new UserGroupDTO[groupMSs.length];
@@ -1033,4 +1015,120 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             }
             return mdocs ;
     }
+
+    public MDocResponse getCheckedOutMDocs(String workspaceId, int startOffset, int chunkSize) throws ApplicationException {
+        return generateMDocResponse(getCheckedOutMDocs(workspaceId), startOffset,chunkSize);   
+    }
+
+    public MDocResponse findMDocsByFolder(String completePath, int startOffset, int chunkSize) throws ApplicationException {
+        return generateMDocResponse(findMDocsByFolder(completePath), startOffset, chunkSize);
+    }
+
+    public MDocResponse findMDocsByTag(String workspaceId, String label, int startOffset, int chunkSize) throws ApplicationException {
+        return generateMDocResponse(findMDocsByTag(workspaceId, label), startOffset, chunkSize);
+    }
+
+    public MDocResponse searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize) throws ApplicationException {
+        return generateMDocResponse(searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, attributes, tags, content), startOffset, chunkSize);
+    }
+    
+
+    private MDocResponse generateMDocResponse(MasterDocumentDTO response[], int startOffset, int chunkSize){
+        if (startOffset < response.length){
+
+            MasterDocumentDTO chunk[] ;
+
+            if (startOffset + chunkSize <= response.length){
+                chunk = new MasterDocumentDTO[chunkSize] ;
+                int j = 0 ;
+                for (int i = startOffset; i < startOffset + chunkSize; i++) {
+                     chunk[j]= response[i];
+                     j++;
+                }
+            }else{
+                chunk = new MasterDocumentDTO[response.length - startOffset] ;
+                int j = 0 ;
+                for (int i = startOffset ; i < response.length ; i++){
+                    chunk[j] = response[i] ;
+                    j++ ;
+                }
+            }
+
+            MDocResponse result = new MDocResponse();
+            result.setChunckOffset(startOffset);
+            result.setTotalSize(response.length);
+            result.setData(chunk);
+            return result;
+
+        }
+
+        return null ;
+    }
+
+    public MDocTemplateResponse getMDocTemplates(String workspaceId, int startOffset, int chunkSize) throws ApplicationException {
+        MasterDocumentTemplateDTO response[] = getMDocTemplates(workspaceId);
+        if (startOffset < response.length){
+
+            MasterDocumentTemplateDTO chunk[] ;
+
+            if (startOffset + chunkSize <= response.length){
+                chunk = new MasterDocumentTemplateDTO[chunkSize] ;
+                int j = 0 ;
+                for (int i = startOffset; i < startOffset + chunkSize; i++) {
+                     chunk[j]= response[i];
+                     j++;
+                }
+            }else{
+                chunk = new MasterDocumentTemplateDTO[response.length - startOffset] ;
+                int j = 0 ;
+                for (int i = startOffset ; i < response.length ; i++){
+                    chunk[j] = response[i] ;
+                    j++ ;
+                }
+            }
+
+            MDocTemplateResponse result = new MDocTemplateResponse();
+            result.setChunckOffset(startOffset);
+            result.setTotalSize(response.length);
+            result.setData(chunk);
+            return result;
+
+        }
+
+        return null ;
+    }
+
+    public WorkflowResponse getWorkflowModels(String workspaceId, int startOffset, int chunkSize) throws ApplicationException {
+        WorkflowModelDTO response[] = getWorkflowModels(workspaceId);
+        if (startOffset < response.length){
+
+            WorkflowModelDTO chunk[] ;
+
+            if (startOffset + chunkSize <= response.length){
+                chunk = new WorkflowModelDTO[chunkSize] ;
+                int j = 0 ;
+                for (int i = startOffset; i < startOffset + chunkSize; i++) {
+                     chunk[j]= response[i];
+                     j++;
+                }
+            }else{
+                chunk = new WorkflowModelDTO[response.length - startOffset] ;
+                int j = 0 ;
+                for (int i = startOffset ; i < response.length ; i++){
+                    chunk[j] = response[i] ;
+                    j++ ;
+                }
+            }
+
+            WorkflowResponse result = new WorkflowResponse();
+            result.setChunckOffset(startOffset);
+            result.setTotalSize(response.length);
+            result.setData(chunk);
+            return result;
+
+        }
+
+        return null ;
+    }
+
 }

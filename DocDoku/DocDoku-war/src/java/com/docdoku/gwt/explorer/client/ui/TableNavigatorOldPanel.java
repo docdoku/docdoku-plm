@@ -1,5 +1,5 @@
 /*
- * TableNavigatorPanel.java
+ * TableNavigatorOldPanel.java
  * 
  * Copyright (c) 2009 Docdoku. All rights reserved.
  * 
@@ -32,7 +32,8 @@ import com.google.gwt.user.client.ui.Label;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class TableNavigatorPanel extends Composite implements TableListener {
+@Deprecated
+public class TableNavigatorOldPanel extends Composite implements TableListener {
 
     private HorizontalPanel mainPanel;
     private Label first;
@@ -40,7 +41,7 @@ public class TableNavigatorPanel extends Composite implements TableListener {
     private Label next;
     private Label previous;
 
-    public TableNavigatorPanel(final Table table) {
+    public TableNavigatorOldPanel(final Table table) {
         ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
         mainPanel = new HorizontalPanel();
         first = new Label(constants.navigateBeginning());

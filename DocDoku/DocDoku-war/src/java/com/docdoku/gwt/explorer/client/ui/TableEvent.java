@@ -27,6 +27,7 @@ import java.util.EventObject;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
+@Deprecated
 public class TableEvent extends EventObject{
 
     private Table realSource ;

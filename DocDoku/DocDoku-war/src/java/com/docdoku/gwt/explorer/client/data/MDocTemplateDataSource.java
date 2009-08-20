@@ -8,7 +8,7 @@ import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import java.util.Date;
 
-
+@Deprecated
 public class MDocTemplateDataSource implements TableDataSource {
     
     private String[] headers; 

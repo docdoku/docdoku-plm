@@ -1,5 +1,5 @@
 /*
- * TableListener.java
+ * PageManagerBackend.java
  * 
  * Copyright (c) 2009 Docdoku. All rights reserved.
  * 
@@ -19,15 +19,23 @@
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.gwt.explorer.client.ui;
+package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
-import java.util.EventListener;
+import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-@Deprecated
-public interface TableListener extends EventListener{
-    void onPageChanged(TableEvent event) ;
+public interface PageManagerBackend {
+
+    public void fetchNextPage() ;
+    public void fetchPreviousPage() ;
+    public void fetchFirstPage() ;
+    public void fetchLastPage() ;
+
+    public void setFrontend(PageManager pm);
+
+    public TableModel getTableModel();
+
 }

@@ -1,5 +1,5 @@
 /*
- * MDocSearchResultDTO.java
+ * HasPageHandlers.java
  * 
  * Copyright (c) 2009 Docdoku. All rights reserved.
  * 
@@ -19,47 +19,17 @@
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.gwt.explorer.common;
+package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
-import java.io.Serializable;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocSearchResultDTO implements Serializable{
+public interface HasPageHandlers extends HasHandlers{
 
-    private MasterDocumentDTO data[] ;
-    private int offset ;
-    private int resultsSize ;
-
-    public MDocSearchResultDTO() {
-    }
-
-    public MasterDocumentDTO[] getData() {
-        return data;
-    }
-
-    public void setData(MasterDocumentDTO[] data) {
-        this.data = data;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public int getResultsSize() {
-        return resultsSize;
-    }
-
-    public void setResultsSize(int resultsSize) {
-        this.resultsSize = resultsSize;
-    }
-
-    
+    public HandlerRegistration addPageHandler(PageHandler handler) ;
 
 }

@@ -8,7 +8,7 @@ import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import java.util.Date;
 
-
+@Deprecated
 public class WorkflowModelDataSource implements TableDataSource {
     
     private String[] headers; 

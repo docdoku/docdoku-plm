@@ -28,10 +28,12 @@ import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.docdoku.gwt.explorer.client.ui.DraggableDocIcon;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import java.util.LinkedList;
@@ -137,6 +139,7 @@ public class TableWidget extends FlexTable implements DragHandler, HasTableClick
                     if (dragNDropEnabled) {
                         setWidget(i + rowOffset, 0, dndIcon);
                         getFlexCellFormatter().setWidth(i + rowOffset, 0, "10px");
+                        getFlexCellFormatter().setAlignment(i+rowOffset, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
                         if (selectionEnabled) {
                             setWidget(i + rowOffset, 1, selection);
                             getFlexCellFormatter().setWidth(i + rowOffset, 1, "20px");

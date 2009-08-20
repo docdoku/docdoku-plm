@@ -19,12 +19,7 @@
  */
 package com.docdoku.gwt.explorer.client.actions;
 
-import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
-import com.docdoku.gwt.explorer.client.ui.FolderTreeItem;
-import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.TreeItem;
 
 /**
  *
