@@ -37,10 +37,10 @@ import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.InlineLabel;
 
 /**
- *
+ * TODO : find a way to fix the space problem...
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class DraggableDocPanel extends Composite implements HasAllMouseHandlers {
@@ -55,7 +55,8 @@ public class DraggableDocPanel extends Composite implements HasAllMouseHandlers 
 
     public void setNumberOfDocs(int num){
         mainPanel.clear();
-        InlineHTML label = new InlineHTML("<p>"+ num+ " " + ServiceLocator.getInstance().getExplorerI18NConstants().documentsLabel() + "</p>") ;
+        String numS = num +  " " ;
+        InlineLabel label = new InlineLabel( numS +  ServiceLocator.getInstance().getExplorerI18NConstants().documentsLabel() ) ;
         mainPanel.add(label);
     }
 

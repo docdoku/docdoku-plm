@@ -24,8 +24,8 @@ package com.docdoku.gwt.explorer.client.ui.widget.input;
 import com.docdoku.gwt.explorer.client.ui.widget.input.checker.DocdokuChecker;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,7 @@ import java.util.Set;
  * A DocdokuLineEdit fires DocdokuLineEditEvent whenever its input state change.
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyUpHandler{
+public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyPressHandler{
 
     private DocdokuChecker checker ;
     private String backup ;
@@ -50,7 +50,8 @@ public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyUpHand
             }
         };
         addChangeHandler(this);
-        addKeyUpHandler(this);
+//        addKeyUpHandler(this);
+        addKeyPressHandler(this);
         observers = new HashSet<DocdokuLineEditListener>() ;
         hasAcceptableInput = true ;
     }
@@ -107,7 +108,7 @@ public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyUpHand
         }
     }
 
-    public void onKeyUp(KeyUpEvent event) {
+    public void onKeyPress(KeyPressEvent event) {
         if (checker.check(super.getText()) != hasAcceptableInput){
             hasAcceptableInput = containsAcceptableInput();
             fireInputStateChange();

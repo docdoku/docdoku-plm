@@ -81,7 +81,7 @@ public class DocOracle extends SuggestOracle {
 
     public void setTriggerSize(int triggerSize) {
         this.triggerSize = triggerSize;
-    }
+    };
 
     public String getWorkspaceId() {
         return workspaceId;
