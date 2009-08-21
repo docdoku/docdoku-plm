@@ -25,6 +25,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -64,6 +65,7 @@ public class IterationNavigator extends Composite {
     private void setupUi() {
         mainPanel = new HorizontalPanel();
         initWidget(mainPanel);
+        mainPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
         navigatePrevious = new Image();
         navigateNext = new Image();
@@ -77,6 +79,7 @@ public class IterationNavigator extends Composite {
         mainPanel.add(navigatePrevious);
         mainPanel.add(iterationsPanel);
         mainPanel.add(navigateNext);
+        
 
     }
 
