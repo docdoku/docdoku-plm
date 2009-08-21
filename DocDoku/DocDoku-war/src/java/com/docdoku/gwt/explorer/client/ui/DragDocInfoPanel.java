@@ -39,7 +39,7 @@ public class DragDocInfoPanel extends Composite{
         initWidget(mainPanel);
         setStyleName("dnd-infosPanel");
         mainPanel.addStyleName("dnd-onMove");
-        label = new InlineLabel(nb + ServiceLocator.getInstance().getExplorerI18NConstants().documentsLabel());
+        label = new InlineLabel(nb + " "+ ServiceLocator.getInstance().getExplorerI18NConstants().documentsLabel());
         mainPanel.add(label);
     }
 
