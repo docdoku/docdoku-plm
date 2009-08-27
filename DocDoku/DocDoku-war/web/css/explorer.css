@@ -66,16 +66,6 @@ body {
     padding: 10px 10px 10px 10px;
 }
 
-.myTable-header {
-    background-color: #C3D9FF;
-    font-weight: bold;
-}
-
-.myTable-selected {
-    background-color: #FFFFCC;
-    color: black;
-}
-
 .myTable td {
     border-bottom-width: 1px;
     border-bottom-style: solid;
@@ -279,17 +269,7 @@ body {
     padding:4px;
 }
 
-.itemMenu-notSelected{
-    background-color:white;
-    cursor:pointer ;
-    padding:2px;
-}
 
-.itemMenu-selected{
-    border: 2px solid #6694E3;
-    background: #C3D9FF;
-    cursor:pointer ;
-}
 
 .clickableLabel{
     cursor:pointer;
@@ -353,23 +333,6 @@ body {
 }
 
 /* widgets default style */
-.docdoku-editableLabel{
-    padding : 2px ;
-    margin : 4px;
-    border : none;
-}
-
-.docdoku-editableLabel-selected{
-    border: #6694E3 2px solid ;
-    margin:2px;
-    background-color: white;
-}
-
-.docdoku-editableLabel-over{
-    border: #6694E3 2px solid ;
-    margin:2px;
-    background-color: #C3D9FF;
-}
 
 
 .iteration-Corner {
@@ -423,11 +386,7 @@ body {
     background-color:white ;
 }
 
-.docdoku-spinBox{
-    border:none;
-    padding:2px;
-    background-color:#C3D9FF;
-}
+
 
 .myMenuBarSearch {
     width: 100%;
