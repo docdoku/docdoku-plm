@@ -75,6 +75,7 @@
             </fileset>
             <fileset dir="${src.dir}">
                 <include name="com/docdoku/gwt/client/**"/>
+                <include name="LICENSE"/>
             </fileset>
         </jar>
     </target>
