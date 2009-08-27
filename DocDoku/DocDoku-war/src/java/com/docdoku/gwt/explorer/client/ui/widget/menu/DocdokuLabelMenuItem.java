@@ -5,6 +5,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.widget.menu;
 
+import com.docdoku.gwt.client.ui.widget.menu.LabelMenuItem;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.util.DocdokuCommand;
 

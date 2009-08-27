@@ -20,9 +20,9 @@
  */
 package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
-import com.docdoku.gwt.explorer.client.ui.widget.SpinBox;
-import com.docdoku.gwt.explorer.client.ui.widget.SpinBoxEvent;
-import com.docdoku.gwt.explorer.client.ui.widget.SpinBoxListener;
+import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
+import com.docdoku.gwt.client.ui.widget.spinbox.SpinBoxEvent;
+import com.docdoku.gwt.client.ui.widget.spinbox.SpinBoxListener;
 import com.docdoku.gwt.explorer.client.ui.workflow.VerticalLink;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityEvent;

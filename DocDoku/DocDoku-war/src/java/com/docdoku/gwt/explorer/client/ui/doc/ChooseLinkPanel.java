@@ -6,7 +6,7 @@ package com.docdoku.gwt.explorer.client.ui.doc;
 
 import com.docdoku.gwt.explorer.client.data.DocOracle;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
-import com.docdoku.gwt.explorer.client.ui.widget.SpinBox;
+import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.DocumentDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;

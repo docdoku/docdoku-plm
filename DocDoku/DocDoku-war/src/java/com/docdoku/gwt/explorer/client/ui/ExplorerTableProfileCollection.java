@@ -26,8 +26,8 @@ import com.docdoku.gwt.explorer.client.ui.delegates.MDocTemplateIdDelegate;
 import com.docdoku.gwt.explorer.client.ui.delegates.StateDelegate;
 import com.docdoku.gwt.explorer.client.ui.delegates.VersionDelegate;
 import com.docdoku.gwt.explorer.client.ui.delegates.WorkflowIdDelegate;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableDelegate;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableProfile;
+import com.docdoku.gwt.client.ui.widget.table.TableDelegate;
+import com.docdoku.gwt.client.ui.widget.table.TableProfile;
 import java.util.HashMap;
 import java.util.Map;
 

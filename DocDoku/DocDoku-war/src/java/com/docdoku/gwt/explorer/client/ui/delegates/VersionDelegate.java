@@ -24,9 +24,9 @@ package com.docdoku.gwt.explorer.client.ui.delegates;
 
 import com.docdoku.gwt.explorer.client.ui.*;
 import com.docdoku.gwt.explorer.client.data.MDocTableModel;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableDelegate;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableModelIndex;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableWidget;
+import com.docdoku.gwt.client.ui.widget.table.TableDelegate;
+import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
+import com.docdoku.gwt.client.ui.widget.table.TableWidget;
 import com.google.gwt.user.client.ui.Image;
 
 /**

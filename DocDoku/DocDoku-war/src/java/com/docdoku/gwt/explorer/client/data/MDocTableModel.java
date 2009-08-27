@@ -21,8 +21,8 @@
 package com.docdoku.gwt.explorer.client.data;
 
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableModelIndex;
+import com.docdoku.gwt.client.ui.widget.table.TableModel;
+import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
 import com.docdoku.gwt.explorer.common.DocumentDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.google.gwt.i18n.client.DateTimeFormat;

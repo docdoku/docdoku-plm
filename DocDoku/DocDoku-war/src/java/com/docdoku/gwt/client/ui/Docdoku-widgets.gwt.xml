@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : docdoku-widgets.xml
+    Created on : 27 août 2009, 11:32
+    Author     : Emmanuel Nhan emmanuel.nhan@insa-lyon.fr
+    Description:
+        module descriptor for Docdoku-widgets
+-->
+
+<!--
+    
+-->
+
+<!DOCTYPE module PUBLIC '-//Google Inc.//DTD Google Web Toolkit 1.6.4//EN ' 'http://google-web-toolkit.googlecode.com/svn/tags/1.6.4/distro-source/core/src/gwt-module.dtd'>
+<module>
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name='org.cobogw.gwt.user.User' />
+    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+
+    <source path="widget"/>
+    
+    
+</module>

@@ -20,8 +20,8 @@
  */
 package com.docdoku.gwt.explorer.client.ui.workflow;
 
-import com.docdoku.gwt.explorer.client.ui.widget.input.EditableLabel;
-import com.docdoku.gwt.explorer.client.ui.widget.input.checker.NotEmptyChecker;
+import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
+import com.docdoku.gwt.client.ui.widget.util.NotEmptyChecker;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;

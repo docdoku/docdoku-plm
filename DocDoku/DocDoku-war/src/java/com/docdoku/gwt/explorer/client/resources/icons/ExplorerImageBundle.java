@@ -88,9 +88,6 @@ public interface ExplorerImageBundle extends TreeImages {
     @Resource("com/docdoku/gwt/explorer/client/resources/icons/alarm_state_off.png")
     AbstractImagePrototype alarmStateOffIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/grippy.png")
-    AbstractImagePrototype dragNDropIcon();
-
     @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/clipboard_large.png")
     AbstractImagePrototype getTaskImage();
 
@@ -159,12 +156,6 @@ public interface ExplorerImageBundle extends TreeImages {
 
     @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/trafficlight_red.png")
     AbstractImagePrototype getRejectTaskImage();
-
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/navigate_up_small.png")
-    AbstractImagePrototype getSmallUpImage();
-
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/navigate_down_small.png")
-    AbstractImagePrototype getSmallDownImage();
 
     @Resource("com/docdoku/gwt/explorer/client/resources/search/icons/navigate_plus.png")
     AbstractImagePrototype getSearchAddImage();

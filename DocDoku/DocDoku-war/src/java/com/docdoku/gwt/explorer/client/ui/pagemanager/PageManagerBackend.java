@@ -21,7 +21,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
+import com.docdoku.gwt.client.ui.widget.table.TableModel;
 
 /**
  *

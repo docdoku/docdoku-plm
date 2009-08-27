@@ -10,6 +10,7 @@
     <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
     <inherits name='com.google.gwt.libideas.LibIdeas' />
     <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+    <inherits name='com.docdoku.gwt.client.ui.Docdoku-widgets'/>
 
    
 

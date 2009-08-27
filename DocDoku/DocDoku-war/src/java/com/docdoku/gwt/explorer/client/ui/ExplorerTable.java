@@ -22,10 +22,10 @@
 package com.docdoku.gwt.explorer.client.ui;
 
 import com.docdoku.gwt.explorer.client.data.MDocTableModel;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableClickHandler;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableModel;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableProfile;
-import com.docdoku.gwt.explorer.client.ui.widget.table.TableWidget;
+import com.docdoku.gwt.client.ui.widget.table.TableClickHandler;
+import com.docdoku.gwt.client.ui.widget.table.TableModel;
+import com.docdoku.gwt.client.ui.widget.table.TableProfile;
+import com.docdoku.gwt.client.ui.widget.table.TableWidget;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
