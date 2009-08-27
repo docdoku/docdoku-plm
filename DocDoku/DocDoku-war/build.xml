@@ -64,5 +64,18 @@
     nbproject/build-impl.xml file. 
 
     -->
-  
+    <property name="docdoku-widgets-version" value="1.0"/>
+    <property name="docdoku-widgets.jar" value="docdoku-widgets-${docdoku-widgets-version}.jar"/>
+
+    <target name="generate-library" depends="-do-compile">
+        <echo message="generating ${docdoku-widgets.jar} in ${build.classes.dir} using ${src.dir}"/>
+        <jar destfile="${build.dir}/${docdoku-widgets.jar}">
+            <fileset dir="${build.classes.dir}">
+               <include name="com/docdoku/gwt/client/**"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="com/docdoku/gwt/client/**"/>
+            </fileset>
+        </jar>
+    </target>
 </project>

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.gwt.explorer.client.ui.widget;
+package com.docdoku.gwt.client.ui.widget.util;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

@@ -21,7 +21,7 @@
 
 package com.docdoku.gwt.client.ui.widget.table;
 
-import com.docdoku.gwt.explorer.client.ui.widget.InteractiveHTML;
+import com.docdoku.gwt.client.ui.widget.util.InteractiveHTML;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import java.util.Date;
 
