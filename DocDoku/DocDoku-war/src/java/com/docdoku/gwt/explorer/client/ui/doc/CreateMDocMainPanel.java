@@ -19,7 +19,7 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
 
     private TextBox m_parentTextBox;
     private ListBox m_templateListBox;
-    private TextBox m_idTextBox;
+    private MaskLineEdit m_idTextBox;
     private TextBox m_titleTextBox;
     private ListBox m_workflowListBox;
 
@@ -40,7 +40,7 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
         inputPanel.setWidget(1,1,m_templateListBox);
 
         inputPanel.setText(2,0,i18n.fieldLabelIDMandatory());
-        m_idTextBox = new TextBox();
+        m_idTextBox = new MaskLineEdit();
         inputPanel.setWidget(2,1,m_idTextBox);
 
         inputPanel.setText(3,0,i18n.fieldLabelTitle());
@@ -81,7 +81,12 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
     }
 
     public void setMDocId(String mdocId){
-        m_idTextBox.setText(mdocId);
+//        m_idTextBox.setText(mdocId);
+        m_idTextBox.setGeneratedId(mdocId);
+    }
+
+    public void setMDocIdMask(String mask){
+        m_idTextBox.setMask(mask);
     }
 
     public String getTemplateId(){
@@ -108,11 +113,17 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
 
     public void clearInputs(){
         m_idTextBox.setText("");
+        m_idTextBox.setMask("");
         m_titleTextBox.setText("");
     }
 
     public ListBox getTemplateListBox(){
         return m_templateListBox;
+    }
+
+    void setMDocIdEnabled(boolean b) {
+        m_idTextBox.setText("");
+        m_idTextBox.setMask("");
     }
 
     

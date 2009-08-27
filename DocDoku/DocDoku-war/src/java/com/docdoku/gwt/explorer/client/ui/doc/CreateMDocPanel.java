@@ -92,6 +92,10 @@ public class CreateMDocPanel extends FlexTable {
         m_mainPanel.setMDocId(mdocId);
     }
 
+    public void setMDocIdMask(String mask) {
+        m_mainPanel.setMDocIdMask(mask);
+    }
+
     public void setWorkflowModels(WorkflowModelDTO[] wks) {
         m_mainPanel.setWorkflowModels(wks);
     }
@@ -102,5 +106,9 @@ public class CreateMDocPanel extends FlexTable {
 
     public void setUserGroupMemberships(UserGroupDTO[] groupMSs){
         m_securityPanel.setUserGroupMemberships(groupMSs);
+    }
+
+    public void setMDocIdEnabled(boolean b) {
+        m_mainPanel.setMDocIdEnabled(b) ;
     }
 }

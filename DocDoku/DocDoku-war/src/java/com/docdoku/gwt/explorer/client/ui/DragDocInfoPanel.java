@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 
 /**
- *
+ * This widget is displayed when dnd MasterDocumentsDTO
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class DragDocInfoPanel extends Composite{

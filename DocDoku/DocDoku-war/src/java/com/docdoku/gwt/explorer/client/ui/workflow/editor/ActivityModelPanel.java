@@ -78,7 +78,7 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
 
         options.addMouseOutHandler(this);
         options.addMouseOverHandler(this);
-
+        
         mainPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
     }
@@ -110,11 +110,9 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
     }
 
     public void onMoveUpClicked(TaskModelPanelEvent ev) {
-        // nothing todo - default impl
     }
 
     public void onMoveDownClicked(TaskModelPanelEvent ev) {
-        // nothing to do - default impl
     }
 
     private void fireAddClicked() {

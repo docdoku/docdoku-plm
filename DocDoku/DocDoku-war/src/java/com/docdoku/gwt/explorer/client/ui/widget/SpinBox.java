@@ -16,6 +16,11 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * SpinBox is a simple widget that allow to choose an integer value
+ * 
+ * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
+ */
 public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 
         private static final String DEFAULT_STYLE ="docdoku-spinBox" ;
@@ -30,11 +35,21 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 	private int value ;
 	private TextBox inputField ;
 	int backupValue ;
-	
+
+        /**
+         * Build a default SpinBox
+         * This spin box allows values between 0 and 100, initialy it shows 0
+         */
 	public SpinBox(){
 		this(0,100,0);
 	}
-	
+
+        /**
+         * Build a SpinBox with specified values
+         * @param min the minimum value
+         * @param max the maximum value
+         * @param initial the initial value
+         */
 	public SpinBox(int min, int max, int initial){
 		this.observers = new ArrayList<SpinBoxListener>();
 		maxValue = max ;
@@ -45,11 +60,19 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 		setupListeners() ;
                 inputField.setStyleName(DEFAULT_STYLE);
 	}
-		
+
+        /**
+         * Retrieve the maximum value
+         * @return the maximum value accepted by the SpinBox
+         */
 	public int getMaxValue() {
 		return maxValue;
 	}
 
+        /**
+         * 
+         * @param maxValue
+         */
 	public void setMaxValue(int maxValue) {
 		this.maxValue = maxValue;
 		if (value > maxValue){

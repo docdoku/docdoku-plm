@@ -33,7 +33,7 @@ import org.cobogw.gwt.user.client.ui.RoundedPanel;
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class StateWidget extends RoundedPanel implements ChangeHandler{
+public class StateWidget extends RoundedPanel implements ChangeHandler {
 
     private EditableLabel stateEdit;
 
@@ -42,7 +42,7 @@ public class StateWidget extends RoundedPanel implements ChangeHandler{
 
         HorizontalPanel p = new HorizontalPanel();
         p.setStyleName("editableState-Element");
-        p.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER) ;
+        p.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         stateEdit = new EditableLabel();
         stateEdit.setNormalStyle("docdoku-editableStateWidget");
         stateEdit.setSelectedStyle("docdoku-editableStateWidget-selected");
@@ -50,7 +50,6 @@ public class StateWidget extends RoundedPanel implements ChangeHandler{
         stateEdit.setTextAlignment(EditableLabel.ALIGN_CENTER);
         stateEdit.setChecker(new NotEmptyChecker());
         p.add(stateEdit);
-//        stateEdit.setWidth("100%");
 
         p.setWidth("100%");
         setWidget(p);
@@ -74,20 +73,17 @@ public class StateWidget extends RoundedPanel implements ChangeHandler{
         return stateEdit;
     }
 
-    
-
     public void onChange(ChangeEvent event) {
-        if (stateEdit.getText().length() > stateEdit.getVisibleLength()){
-            while (stateEdit.getText().length() > stateEdit.getVisibleLength()){
-                stateEdit.setVisibleLength(stateEdit.getVisibleLength()+1);
+        if (stateEdit.getText().length() > stateEdit.getVisibleLength()) {
+            while (stateEdit.getText().length() > stateEdit.getVisibleLength()) {
+                stateEdit.setVisibleLength(stateEdit.getVisibleLength() + 1);
             }
-            
-        }else{
-            while (stateEdit.getText().length() < stateEdit.getVisibleLength()){
-                stateEdit.setVisibleLength(stateEdit.getVisibleLength()-1);
+
+        } else {
+            while (stateEdit.getText().length() < stateEdit.getVisibleLength()) {
+                stateEdit.setVisibleLength(stateEdit.getVisibleLength() - 1);
             }
         }
-
         setText(getText());
     }
 }

@@ -699,10 +699,26 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     private void fetchMDocId(String workspaceId, String templateId) {
+        final String tId = templateId ;
         AsyncCallback<String> callback = new AsyncCallback<String>() {
 
             public void onSuccess(String mdocId) {
-                m_createMDocPanel.setMDocId(mdocId);
+                if (mdocId != null && !mdocId.equals("")){
+                    m_createMDocPanel.setMDocId(mdocId);
+                }else{
+                   AsyncCallback<MasterDocumentTemplateDTO> cb = new AsyncCallback<MasterDocumentTemplateDTO>() {
+
+                        public void onFailure(Throwable caught) {
+                            String s ;
+                            s = "bnnj" ;
+                        }
+
+                        public void onSuccess(MasterDocumentTemplateDTO result) {
+                            m_createMDocPanel.setMDocIdMask(result.getMask());
+                        }
+                    };
+                    ServiceLocator.getInstance().getExplorerService().getMDocTemplate(m_workspaceId, tId, cb);
+                }                
             }
 
             public void onFailure(Throwable caught) {
@@ -710,6 +726,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         };
         if (templateId != null) {
             ServiceLocator.getInstance().getExplorerService().generateId(workspaceId, templateId, callback);
+        }else{
+            m_createMDocPanel.setMDocIdEnabled(true) ;
         }
     }
 
