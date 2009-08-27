@@ -26,11 +26,17 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
+/*
+ * TODO : handler system to notify when a valid input is entered
+ *
+ */
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandler {
+public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandler{
+
+    public enum InputState {VALID,NOT_VALID}
 
     private static final char NUMBER = '_';
     private static final char CHAR = '*';
@@ -38,9 +44,14 @@ public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandle
     private String backup;
     private String regExp ;
 
+
+    
+
     public MaskLineEdit() {
         addKeyDownHandler(this);
         addKeyUpHandler(this);
+        mask = "" ;
+        regExp = ".*" ;
     }
 
     public void onKeyDown(KeyDownEvent event) {
@@ -51,7 +62,7 @@ public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandle
         setEnabled(true);
         mask = pmask ;
         regExp = mask.replaceAll("#", "[0-9]") ;
-        regExp.replaceAll("\\*", "[a-zA-Z]");
+        regExp.replaceAll("\\*", ".");
         mask = mask.replaceAll("#", "_") ;
         setText(mask);
     }
@@ -88,7 +99,7 @@ public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandle
                     if (mask.charAt(i - 1) == NUMBER) {
                         testRegExp = "[0-9]";
                     } else if (mask.charAt(i - 1) == CHAR) {
-                        testRegExp = "[a-zA-Z]";
+                        testRegExp = ".";
                     }
 
                     if (testRegExp != null && added.matches(testRegExp)) {
