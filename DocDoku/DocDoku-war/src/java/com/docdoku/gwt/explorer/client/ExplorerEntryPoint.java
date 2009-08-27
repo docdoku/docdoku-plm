@@ -7,14 +7,10 @@ package com.docdoku.gwt.explorer.client;
 
 import com.docdoku.gwt.explorer.client.actions.ActionMap;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
-import com.docdoku.gwt.explorer.client.ui.doc.MaskLineEdit;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 /**
  *
@@ -37,9 +33,6 @@ public class ExplorerEntryPoint implements EntryPoint {
         cmds.init(m_mainPage);
         m_mainPage.init(cmds);
         RootPanel.get("content").add(m_mainPage);
-        MaskLineEdit tb = new MaskLineEdit();
-        tb.setMask("ref-___-ok");
-        RootPanel.get().add(tb);
        
     }
 }
