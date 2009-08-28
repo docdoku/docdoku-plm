@@ -165,4 +165,5 @@ public class ROTaskPanel extends Composite implements MouseMoveHandler, MouseOut
     public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
         return this.addDomHandler(handler, MouseMoveEvent.getType());
     }
+
 }

@@ -19,6 +19,7 @@ public class DocdokuInfoPopupPanel extends DecoratedPopupPanel{
     private Grid internalPanel ;
 
     public DocdokuInfoPopupPanel(int rows, int columns) {
+        super(true) ;
         internalPanel = new Grid(rows, columns);
         super.setWidget(internalPanel);
     }
