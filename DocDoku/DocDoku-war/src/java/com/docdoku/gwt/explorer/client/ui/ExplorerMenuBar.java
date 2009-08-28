@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -86,10 +87,12 @@ public class ExplorerMenuBar extends Composite{
     }
 
     public void addExtension(Widget w) {
-        if (!selectionTop){
-            mainPanel.setWidget(0, 1, w);
+        if(!selectionTop){
+            mainPanel.setWidget(0,1, w);
+            mainPanel.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
         }else{
-            mainPanel.setWidget(1, 1, w);
+            mainPanel.setWidget(1,1, w);
+            mainPanel.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_RIGHT);
         }
     }
 
