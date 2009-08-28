@@ -45,6 +45,8 @@ public class ActionMap extends HashMap<String,Action>{
         put("MoveCommand", new MoveMDocCommand(mainPage)) ;
         put("ShowIterationCommand", new ShowDocumentIterationCommand(mainPage));
         put("ShowCreateVersionPanelCommand", new ShowCreateVersionPanelCommand(mainPage)) ;
+        put("ApproveCommand", new ApprouveTaskCommand(mainPage));
+        put("RejectCommand", new RejectTaskCommand(mainPage)) ;
     }
     
 }

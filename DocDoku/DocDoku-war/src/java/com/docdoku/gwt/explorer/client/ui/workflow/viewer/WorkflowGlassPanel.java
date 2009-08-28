@@ -4,6 +4,8 @@
  */
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
+import com.docdoku.gwt.explorer.client.actions.Action;
+import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.doc.DocMainPanel;
 import com.docdoku.gwt.explorer.client.ui.workflow.viewer.TaskChangeEvent.Type;
@@ -20,32 +22,33 @@ import com.google.gwt.widgetideas.client.GlassPanel;
 
 /**
  *
- * @author manu
+ * @author Emmanuel Nhan
  */
 public class WorkflowGlassPanel extends GlassPanel implements ClickHandler, TaskListener {
 
-    public final static double RATIO = 0.85 ;
+    public final static double RATIO = 0.85;
     // note : this is a scroll size experimentaly build with Firefox & may not fit other browsers
-    private final static int SCROLL_SIZE = 15 ;
-
+    private final static int SCROLL_SIZE = 15;
     private WorkflowViewer viewer;
     private ScrollPanel scroll;
     private WorkflowDTO workflow;
     private String visitorName;
-    private DocMainPanel parentPanel ;
+    private DocMainPanel parentPanel;
+    private Action approveCommand;
+    private Action rejectCommand;
 
     public WorkflowGlassPanel(DocMainPanel owner) {
         super(true);
         parentPanel = owner;
         viewer = null;
-        scroll = null ;
+        scroll = null;
 
 
     }
 
-    public void setWorkflow(WorkflowDTO workflow, String visitorName) {
+    public void setWorkflow(WorkflowDTO workflow) {
         this.workflow = workflow;
-        this.visitorName = visitorName;
+        this.visitorName = ExplorerConstants.getInstance().getUser().getName();
         viewer = new WorkflowViewer(workflow, visitorName, this);
     }
 
@@ -58,13 +61,13 @@ public class WorkflowGlassPanel extends GlassPanel implements ClickHandler, Task
     @Override
     protected void onDetach() {
         super.onDetach();
-        if (scroll != null){
+        if (scroll != null) {
             scroll.removeFromParent();
         }
-        if (viewer.isAttached()){
+        if (viewer.isAttached()) {
             viewer.removeFromParent();
         }
-        
+
     }
 
     @Override
@@ -73,38 +76,11 @@ public class WorkflowGlassPanel extends GlassPanel implements ClickHandler, Task
     }
 
     private void callApprove(int activityStep, int taskStep, String comment) {
-        AsyncCallback<MasterDocumentDTO> callback = new AsyncCallback<MasterDocumentDTO>() {
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-
-            public void onSuccess(MasterDocumentDTO result) {
-                viewer.hideAllPopups() ;
-                viewer.removeFromParent();
-                parentPanel.setLifeCycleState(result.getLifeCycleState()) ;
-                setWorkflow(result.getWorkflow(), visitorName);
-                showViewer();
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().approve(workflow.getWorkspaceId(), workflow.getId(), activityStep, taskStep, comment, callback);
+        approveCommand.execute(workflow.getWorkspaceId(), workflow.getId(), activityStep, taskStep, comment, this);
     }
 
     private void callReject(int activityStep, int taskStep, String comment) {
-        AsyncCallback<MasterDocumentDTO> callback = new AsyncCallback<MasterDocumentDTO>() {
-
-            public void onFailure(Throwable caught) {
-                HTMLUtil.showError(caught.getMessage());
-            }
-
-            public void onSuccess(MasterDocumentDTO result) {
-                viewer.hideAllPopups() ;
-                viewer.removeFromParent();
-                setWorkflow(result.getWorkflow(), visitorName);
-                showViewer();
-            }
-        };
-        ServiceLocator.getInstance().getExplorerService().reject(workflow.getWorkspaceId(), workflow.getId(), activityStep, taskStep, comment, callback);
+        rejectCommand.execute(workflow.getWorkspaceId(), workflow.getId(), activityStep, taskStep, comment, this);
     }
 
     public void onTaskStatusChange(TaskChangeEvent event) {
@@ -117,48 +93,62 @@ public class WorkflowGlassPanel extends GlassPanel implements ClickHandler, Task
     }
 
     private void showViewer() {
-        if (scroll != null){
+        if (scroll != null) {
             scroll.removeFromParent();
         }
         RootPanel.get().add(viewer);
         // very dirty workaround to get widget size !
-        int width = viewer.getOffsetWidth() ;
+        int width = viewer.getOffsetWidth();
         int height = viewer.getOffsetHeight();
-        viewer.setVisible(false );
-        if (width <=  Window.getClientWidth() * RATIO && height <= Window.getClientHeight() * RATIO ){
-            viewer.setVisible(true) ;
+        viewer.setVisible(false);
+        if (width <= Window.getClientWidth() * RATIO && height <= Window.getClientHeight() * RATIO) {
+            viewer.setVisible(true);
             RootPanel.get().setWidgetPosition(viewer, Window.getClientWidth() / 2 - viewer.getOffsetWidth() / 2, Window.getClientHeight() / 2 - viewer.getOffsetHeight() / 2);
-            
-        }else if (width <=  Window.getClientWidth() * RATIO && height > Window.getClientHeight() * RATIO) {
+
+        } else if (width <= Window.getClientWidth() * RATIO && height > Window.getClientHeight() * RATIO) {
             // width ok, but not height :
-            scroll = new ScrollPanel(viewer) ;
-            scroll.setHeight((Window.getClientHeight()* RATIO) + "px");
-            scroll.setWidth(width +"px");
+            scroll = new ScrollPanel(viewer);
+            scroll.setHeight((Window.getClientHeight() * RATIO) + "px");
+            scroll.setWidth(width + "px");
             RootPanel.get().remove(viewer);
             viewer.setVisible(true);
             RootPanel.get().add(scroll);
-            RootPanel.get().setWidgetPosition(scroll,Window.getClientWidth() / 2 - scroll.getOffsetWidth() / 2, Window.getClientHeight() / 2 - scroll.getOffsetHeight() / 2) ;
-        }else if (width >  Window.getClientWidth() * RATIO && height <= Window.getClientHeight() * RATIO){
+            RootPanel.get().setWidgetPosition(scroll, Window.getClientWidth() / 2 - scroll.getOffsetWidth() / 2, Window.getClientHeight() / 2 - scroll.getOffsetHeight() / 2);
+        } else if (width > Window.getClientWidth() * RATIO && height <= Window.getClientHeight() * RATIO) {
             // height ok, but not width :
-            scroll = new ScrollPanel(viewer) ;
-            scroll.setHeight((height+SCROLL_SIZE) + "px");
-            scroll.setWidth((Window.getClientWidth() * RATIO) +"px");
+            scroll = new ScrollPanel(viewer);
+            scroll.setHeight((height + SCROLL_SIZE) + "px");
+            scroll.setWidth((Window.getClientWidth() * RATIO) + "px");
             RootPanel.get().remove(viewer);
             viewer.setVisible(true);
             RootPanel.get().add(scroll);
-            RootPanel.get().setWidgetPosition(scroll,Window.getClientWidth() / 2 - scroll.getOffsetWidth() / 2, Window.getClientHeight() / 2 - scroll.getOffsetHeight() / 2) ;
-        }else{
-            scroll = new ScrollPanel(viewer) ;
+            RootPanel.get().setWidgetPosition(scroll, Window.getClientWidth() / 2 - scroll.getOffsetWidth() / 2, Window.getClientHeight() / 2 - scroll.getOffsetHeight() / 2);
+        } else {
+            scroll = new ScrollPanel(viewer);
             // this viewer is realy too large ... or client is on EEEPC !!
-            scroll.setHeight((Window.getClientHeight()* RATIO) + "px");
-            scroll.setWidth((Window.getClientWidth() * RATIO) +"px");
+            scroll.setHeight((Window.getClientHeight() * RATIO) + "px");
+            scroll.setWidth((Window.getClientWidth() * RATIO) + "px");
             RootPanel.get().remove(viewer);
             viewer.setVisible(true);
             RootPanel.get().add(scroll);
-            RootPanel.get().setWidgetPosition(scroll,Window.getClientWidth() / 2 - scroll.getOffsetWidth() / 2, Window.getClientHeight() / 2 - scroll.getOffsetHeight() / 2) ;
+            RootPanel.get().setWidgetPosition(scroll, Window.getClientWidth() / 2 - scroll.getOffsetWidth() / 2, Window.getClientHeight() / 2 - scroll.getOffsetHeight() / 2);
         }
-        
-        
-        
+
+    }
+
+    public void updateAfterAcceptOrReject(MasterDocumentDTO result) {
+        viewer.hideAllPopups();
+        viewer.removeFromParent();
+        parentPanel.setLifeCycleState(result.getLifeCycleState());
+        setWorkflow(result.getWorkflow());
+        showViewer();
+    }
+
+    public void setApproveAction(Action command) {
+        approveCommand = command;
+    }
+
+    public void setRejectAction(Action command) {
+        rejectCommand = command;
     }
 }

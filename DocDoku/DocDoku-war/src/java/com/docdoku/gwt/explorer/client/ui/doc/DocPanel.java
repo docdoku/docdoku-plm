@@ -36,7 +36,7 @@ public class DocPanel extends FlexTable {
     private FilesPanel m_filesPanel;
     private InstanceAttributesPanel m_attributesPanel;
     private LinksPanel m_linksPanel;
-    private IterationNavigator m_iterationNavigator ;
+    private IterationNavigator m_iterationNavigator;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
     public DocPanel(final Map<String, Action> cmds) {
@@ -63,7 +63,7 @@ public class DocPanel extends FlexTable {
                 cmds.get("UploadCompleteDocFileCommand").execute();
             }
         });
-        m_mainPanel = new DocMainPanel();
+        m_mainPanel = new DocMainPanel(cmds);
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(5);
@@ -82,7 +82,7 @@ public class DocPanel extends FlexTable {
 
             public void onClick(ClickEvent event) {
 //                Map<String, InstanceAttributeDTO> attributes = m_attributesPanel.getAttributesOld();
-                List<InstanceAttributeDTO> attributes = m_attributesPanel.getAttributes() ;
+                List<InstanceAttributeDTO> attributes = m_attributesPanel.getAttributes();
                 DocumentDTO[] links = m_linksPanel.getLinks();
                 cmds.get("EditElementCommand").execute(m_mainPanel.getRevisionNote(), attributes.toArray(new InstanceAttributeDTO[attributes.size()]), links);
             }
@@ -120,21 +120,21 @@ public class DocPanel extends FlexTable {
     }
 
     public void setMDoc(final MasterDocumentDTO mdoc) {
-        setMDoc(mdoc, mdoc.getIterations().size()-1);
+        setMDoc(mdoc, mdoc.getIterations().size() - 1);
     }
 
-    public void setMDoc(final MasterDocumentDTO mdoc, int it){
+    public void setMDoc(final MasterDocumentDTO mdoc, int it) {
         m_mainPanel.setMDocAuthor(mdoc.getAuthor().toString());
         int iteration = 0;
         String revision = "";
 
-        if (it == mdoc.getIterations().size()-1){
+        if (it == mdoc.getIterations().size() - 1) {
             if (mdoc.getLastIteration() != null) {
                 iteration = mdoc.getLastIteration().getIteration();
                 revision = mdoc.getLastIteration().getRevisionNote();
             }
-        }else{
-            iteration = it+1 ;
+        } else {
+            iteration = it + 1;
             revision = mdoc.getIterations().get(it).getRevisionNote();
         }
 
@@ -158,23 +158,12 @@ public class DocPanel extends FlexTable {
 
 
         // iteration stuff
-        m_iterationNavigator.setIterationsNumber(it, mdoc.getIterations().size()-1);
+        m_iterationNavigator.setIterationsNumber(it, mdoc.getIterations().size() - 1);
         m_iterationNavigator.setVisible(mdoc.getIterations().size() != 1);
-        
+
 
         if (mdoc.getWorkflow() != null) {
-            //TODO workaround -- kinda dirty ...
-            AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>() {
-
-                public void onFailure(Throwable caught) {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                public void onSuccess(UserDTO result) {
-                    m_mainPanel.setWorkflow(mdoc.getWorkflow(), result.getName());
-                }
-            };
-            ServiceLocator.getInstance().getExplorerService().whoAmI(mdoc.getWorkspaceId(), callback);
+            m_mainPanel.setWorkflow(mdoc.getWorkflow());
         }
 
     }

@@ -1,5 +1,6 @@
 package com.docdoku.gwt.explorer.client.ui.doc;
 
+import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import java.util.Date;
+import java.util.Map;
 
 /**
  *
@@ -33,8 +35,10 @@ public class DocMainPanel extends DataRoundedPanel {
 
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
-    public DocMainPanel() {
+    public DocMainPanel(final Map<String, Action> cmds) {
         createLayout();
+        m_workflowPanel.setApproveAction(cmds.get("ApproveCommand")) ;
+        m_workflowPanel.setRejectAction(cmds.get("RejectCommand"));
     }
 
     private void createLayout() {
@@ -137,8 +141,8 @@ public class DocMainPanel extends DataRoundedPanel {
 
     }
 
-   public void setWorkflow(WorkflowDTO wk, String visitor){
-       m_workflowPanel.setWorkflow(wk, visitor);
+   public void setWorkflow(WorkflowDTO wk){
+       m_workflowPanel.setWorkflow(wk);
    }
 
 

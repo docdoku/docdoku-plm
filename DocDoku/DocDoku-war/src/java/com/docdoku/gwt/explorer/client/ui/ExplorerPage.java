@@ -753,4 +753,12 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     public String getLogin() {
         return m_login;
     }
+
+    /**
+     * does not update the view !
+     * @param doc
+     */
+    public void setCurrentMDoc (MasterDocumentDTO doc){
+        m_lastOpenedMDoc = doc ;
+    }
 }
