@@ -130,7 +130,6 @@ public class TableWidget extends FlexTable implements DragHandler, HasTableClick
                         }
                     });
 
-                    // drag n drop icon (TODO : replace this by a delegate to get the draggable widget)
                     Image dndIcon = new DefaultTableDragIcon(i+rowOffset);
                     dndController.makeDraggable(dndIcon, dndIcon);
 

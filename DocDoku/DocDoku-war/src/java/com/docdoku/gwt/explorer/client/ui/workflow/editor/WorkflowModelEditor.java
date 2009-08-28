@@ -164,7 +164,6 @@ public class WorkflowModelEditor extends Composite implements ActivityLinkListen
         if (model.getActivities().get(position) instanceof SerialActivityModelModel){
             panel = new SerialActivityModelPanel(util);
         }else{
-            // TODO -- parallel case
             panel = new ParallelActivityModelPanel(util) ;
         }
         canvas.setWidget(0, position*2+2, panel);
