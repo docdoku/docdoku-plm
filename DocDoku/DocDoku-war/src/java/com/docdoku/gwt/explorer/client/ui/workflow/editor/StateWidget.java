@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.gwt.explorer.client.ui.workflow;
+package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
 import com.docdoku.gwt.client.ui.widget.util.NotEmptyChecker;
@@ -30,7 +30,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
 /**
- *
+ * A widget that contains an editable label.
+ * It is designed to edit states name in the workflow editor.
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
 public class StateWidget extends RoundedPanel implements ChangeHandler {

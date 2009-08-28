@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This widget is a simple horizontal line which let appear 2 images on hover.s
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class ActivityLink extends Composite implements MouseOverHandler, MouseOutHandler, ClickHandler{

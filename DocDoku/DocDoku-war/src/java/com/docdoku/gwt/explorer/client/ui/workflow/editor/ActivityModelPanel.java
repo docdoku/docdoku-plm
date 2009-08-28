@@ -44,7 +44,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * This class takes care of common features of panels designed to represent an activity
+ * It mainly features a popup panel to add task and remove the activity
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public abstract class ActivityModelPanel extends Composite implements MouseOverHandler, MouseOutHandler, ActivityModelListener, TaskModelPanelListener {
@@ -61,6 +62,10 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
     // utils
     protected ScrollPanelUtil util;
 
+    /**
+     * Builds an ActivityModelPanel
+     * @param util the scroll panel tool to determine whether a point is visible or not
+     */
     public ActivityModelPanel(ScrollPanelUtil util) {
         this.util = util;
         mainPanel = new HorizontalPanel();
@@ -83,6 +88,9 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
 
     }
 
+    /**
+     * hide all popup panels
+     */
     public void hidePopups() {
         options.hide();
     }
@@ -131,6 +139,8 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
 
     private void showPopups() {
         timer.cancel();
+        // the position of the popup must be chosen carefully as it is a popup its visibility is not managed by the scroll panel containing the editor
+
         DecoratedPopupPanel.PositionCallback callback = new DecoratedPopupPanel.PositionCallback() {
 
             public void setPosition(int offsetWidth, int offsetHeight) {
@@ -138,6 +148,7 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
                     options.setPopupPosition(getAbsoluteLeft() + getOffsetWidth() / 2 - offsetWidth / 2, getAbsoluteTop() - offsetHeight);
                 } else {
                     // find a position that fit...
+                    // this is possible thanks to the ScrollPanelUtil
                     int newX = util.findAcceptableX(getAbsoluteLeft() + getOffsetWidth() / 2 - offsetWidth / 2, offsetWidth);
                     options.setPopupPosition(newX, getAbsoluteTop() - offsetHeight);
                 }

@@ -1,11 +1,11 @@
-package com.docdoku.gwt.explorer.client.ui.workflow;
+package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 
 
-public class HorizontalLink extends HorizontalPanel implements WorkflowItem/*, HasClickHandlers*/{
+public class HorizontalLink extends HorizontalPanel {
 
     protected Image link ;
 

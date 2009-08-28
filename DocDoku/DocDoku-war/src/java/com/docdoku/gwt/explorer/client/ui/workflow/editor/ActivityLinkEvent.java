@@ -24,7 +24,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 import java.util.EventObject;
 
 /**
- *
+ * This kind of even is fired by ActivityLinks.
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class ActivityLinkEvent extends EventObject{

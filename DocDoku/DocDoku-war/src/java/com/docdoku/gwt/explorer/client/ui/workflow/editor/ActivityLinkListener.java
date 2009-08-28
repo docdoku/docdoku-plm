@@ -22,12 +22,22 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
 /**
- *
+ * The methods of this interface are called by an ActivityLink instance.
+ * Each class interested in observing ActivityLinks must implement it.
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public interface ActivityLinkListener {
 
+    /**
+     * This method is called whanever a add serial activity image is clicked
+     * @param ev
+     */
     void onSerialClicked(ActivityLinkEvent ev) ;
+
+    /**
+     * This method is called whanever a add serial parallel image is clicked
+     * @param ev
+     */
     void onParallelClicked(ActivityLinkEvent ev) ;
 
 }

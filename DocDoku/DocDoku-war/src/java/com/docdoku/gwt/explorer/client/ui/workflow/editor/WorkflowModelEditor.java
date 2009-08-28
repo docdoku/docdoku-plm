@@ -25,7 +25,6 @@ import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
 import com.docdoku.gwt.explorer.client.ui.workflow.EndPoint;
 import com.docdoku.gwt.explorer.client.ui.workflow.StartPoint;
-import com.docdoku.gwt.explorer.client.ui.workflow.StateWidget;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.SerialActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.WorkflowModelEvent;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.WorkflowModelListener;
