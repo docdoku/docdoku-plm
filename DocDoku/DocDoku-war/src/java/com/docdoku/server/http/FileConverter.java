@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.docdoku.server.http;
 
 import com.developpez.adiguba.shell.ProcessConsumer;
@@ -18,156 +14,76 @@ import net.sf.jodconverter.office.OfficeManager;
 
 /**
  *
- * @author admin2
+ * @author Diom Yero Sow
  */
 public class FileConverter {
 
-    private File fileClass;
-    private String pdf2swfPath;
-
+    private String pdf2SWFHome;
     private String ooHome;
     private int ooPort;
 
-    public FileConverter(FileAVT fileAVT) {
-        this.fileClass = new File(fileAVT.getAVTPath());
-        this.pdf2swfPath = null;
 
+    public FileConverter(String pdf2SWFHome, String ooHome, int ooPort) {
+        this.pdf2SWFHome = pdf2SWFHome;
+        this.ooHome = ooHome;
+        this.ooPort = ooPort;
     }
 
-    public FileConverter(String pdf2swfCmd, FileAVT fileAVT, String ooHome, int ooPort) {
-        this.fileClass = new File(fileAVT.getAVTPath());
-        this.pdf2swfPath = pdf2swfCmd;
-        this.ooHome=ooHome;
-        this.ooPort=ooPort;
+    public FileConverter(String ooHome, int ooPort) {
+        this.ooHome = ooHome;
+        this.ooPort = ooPort;
     }
 
-    public String getFileName() {
-        return fileClass.getAbsolutePath();
-    }
-
-    private File convertToSwfService() throws Exception {
-        File fileWithDiapo = null;
-        File swfFile = null;
-        String extension = FileIO.getExtension(getFileName());
-        if (extension.equals("pdf") == false) {
-            //Si le fichier lui même est de format swf, plus besoin de le converit
-            //ni de comparer les dates
-            if (extension.equals("swf") == true) {
-                File file = new File(getFileName());
-                return file;
-            } else {
-                fileWithDiapo = new File(convertTopdf());
-            }
-        } else {
-            fileWithDiapo = new File(getFileName());
+    public File convertToSWF(File fileToConvert) throws IOException {
+        if ("swf".equals(FileIO.getExtension(fileToConvert))) {
+            return fileToConvert;
         }
-        int index = fileWithDiapo.getName().lastIndexOf(".");
-        swfFile = new File(fileWithDiapo.getParentFile(), fileWithDiapo.getName().substring(0, index) + ".swf");
-        if (swfFile.exists()) {
-            if (fileWithDiapo.lastModified() <= swfFile.lastModified()) {
-                return swfFile;
-            }
+        String swfFileNameWOExt = FileIO.getFileNameWithoutExtension(fileToConvert);
+        File swfFile = new File(fileToConvert.getParentFile(), swfFileNameWOExt + ".swf");
+
+        if (swfFile.exists() && fileToConvert.lastModified() < swfFile.lastModified()) {
+            return swfFile;
         }
 
+        File pdfFile=convertToPDF(fileToConvert);
         String sep = File.separator;
-        String sourceFile = fileWithDiapo.getCanonicalPath();
-        String destinationRepository = swfFile.getAbsolutePath();
-        String pdf2swfFolder = pdf2swfPath + sep + "pdf2swf";
-        String[] cmdArray2 = {pdf2swfFolder, sourceFile, "-o", destinationRepository};
+
+        String sourceFile = pdfFile.getAbsolutePath();
+        String outputFile = swfFile.getAbsolutePath();
+        String pdf2SWFCmd = pdf2SWFHome + sep + "pdf2swf";
+        String[] cmdArray = {pdf2SWFCmd, sourceFile, "-o", outputFile};
 
         Shell sh = new Shell();
-        sh.setDirectory(new File(pdf2swfPath));
-        ProcessConsumer pc = sh.exec(cmdArray2);
+        sh.setDirectory(new File(pdf2SWFHome));
+        ProcessConsumer pc = sh.exec(cmdArray);
         pc.consume();
 
-        addViewer(new File(destinationRepository));
+        String rfxViewer = FileIO.urlToFile(FileConverter.class.getResource("/com/docdoku/server/http/resources/swf/rfxview.swf")).getAbsolutePath();
+        cmdArray = new String[]{pdf2SWFHome + sep + "swfcombine", rfxViewer, "viewport=" + outputFile, "-o", outputFile};
+        pc = sh.exec(cmdArray);
+        pc.consume();
 
-        if (swfFile.exists()) {
-            return swfFile;
-        } else {
-            return null;
-        }
+        return swfFile;
     }
 
-    private void addViewer(File file) throws IOException, URISyntaxException {
-        String destinationRepository = file.getAbsolutePath();
-        String sep = File.separator;
-
-        String rfxViewer = FileIO.urlToFile(FileConverter.class.getResource("/com/docdoku/server/http/resources/swf/rfxview.swf")).getCanonicalPath();
-        String[] commandelecteur = {pdf2swfPath + sep + "swfcombine", rfxViewer, "viewport=" + destinationRepository, "-o", destinationRepository};
-
-        Shell sh = new Shell();
-        ProcessConsumer pc2 = sh.exec(commandelecteur);
-        pc2.consume();
-
-    }
-
-    public File convertToSwf() throws Exception {
-
-        File fileWithDiapo = null;
-        File fileToReturn = null;
-        String extension = FileIO.getExtension(getFileName());
-        if (extension.equals("pdf") == false) {
-            //Si le fichier lui même est de format swf, plus besoin de le converit
-            //ni de comparer les dates
-            if (extension.equals("swf") == true) {
-                File file = new File(getFileName());
-                return file;
-            } else {
-                fileWithDiapo = new File(convertTopdf());
-            }
-        } else {
-
-            fileWithDiapo = new File(getFileName());
+    public File convertToPDF(File fileToConvert) {
+        if ("pdf".equals(FileIO.getExtension(fileToConvert))) {
+            return fileToConvert;
         }
-        try {
-            File fswf = verifyExistingFile("swf");
-            if ((fswf != null)) {
-                if (fswf.exists()) {
-                    if (fswf.lastModified() <= fileWithDiapo.lastModified()) {
-                        fileToReturn = fswf;
-                    } else {
-                        fileToReturn = convertToSwfService();
-                    }
-                } else {
-                    fileToReturn = convertToSwfService();
-                }
-            } else {
-                fileToReturn = convertToSwfService();
-            }
-        } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
-        }
-        return fileToReturn;
+        String pdfFileNameWOExt = FileIO.getFileNameWithoutExtension(fileToConvert);
+        File pdfFile = new File(fileToConvert.getParentFile(), pdfFileNameWOExt + ".pdf");
 
-    }
-
-    public String convertTopdf() throws Exception {
-        File pdfFile = null;
-        int index = fileClass.getName().lastIndexOf(".");
-        pdfFile = new File(fileClass.getParentFile(), fileClass.getName().substring(0, index) + ".pdf");
-        if (pdfFile.exists()) {
-            if (fileClass.lastModified() <= pdfFile.lastModified()) {
-                return pdfFile.getAbsolutePath();
-            }
+        if (pdfFile.exists() && fileToConvert.lastModified() < pdfFile.lastModified()) {
+            return pdfFile;
         }
-        ManagedProcessOfficeManagerConfiguration cfg=new ManagedProcessOfficeManagerConfiguration(OfficeConnectionMode.socket(ooPort));
+
+        ManagedProcessOfficeManagerConfiguration cfg = new ManagedProcessOfficeManagerConfiguration(OfficeConnectionMode.socket(ooPort));
         cfg.setOfficeHome(new File(ooHome));
         OfficeManager officeManager = new ManagedProcessOfficeManager(cfg);
         officeManager.start();
         OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
-        converter.convert(fileClass, pdfFile);
+        converter.convert(fileToConvert, pdfFile);
 
-        return pdfFile.getAbsolutePath();
-
-    }
-
-    public File verifyExistingFile(String extension) {
-        File swf = null;
-        File file = new File(fileClass.getParentFile(), FileIO.getFileNameWithoutExtension(fileClass) + "." + extension);
-        if (file.exists()) {
-            swf = file;
-        }
-        return swf;
+        return pdfFile;
     }
 }

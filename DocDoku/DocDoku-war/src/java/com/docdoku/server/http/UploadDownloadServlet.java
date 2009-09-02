@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.*;
 import com.docdoku.core.entities.keys.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -41,15 +40,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 
 import com.docdoku.core.*;
-import com.docdoku.core.util.FileIO;
 import javax.annotation.Resource;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
-import net.sf.jodconverter.OfficeDocumentConverter;
-import net.sf.jodconverter.office.ManagedProcessOfficeManager;
-import net.sf.jodconverter.office.ManagedProcessOfficeManagerConfiguration;
-import net.sf.jodconverter.office.OfficeConnectionMode;
-import net.sf.jodconverter.office.OfficeManager;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -78,7 +71,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 offset = 3;
             }
 
-            
+
             String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
             String elementType = pathInfos[offset + 1];
             String fullName = null;
@@ -96,82 +89,38 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
             File dataFile = commandService.getDataFile(fullName);
-
+            File fileToOutput;
             if ("pdf".equals(pRequest.getParameter("type"))) {
                 pResponse.setContentType("application/pdf");
-                
-                File pdfFile=null;
-                if("pdf".equals(FileIO.getExtension(dataFile))){
-                    pdfFile=dataFile;
-                }else{
-                    String pdfFileNameWOExt = FileIO.getFileNameWithoutExtension(dataFile);
-                    pdfFile = new File(dataFile.getParentFile(), pdfFileNameWOExt + ".pdf");
-                    String ooHome = this.getInitParameter("OO_HOME");
-                    int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
-                    ManagedProcessOfficeManagerConfiguration cfg=new ManagedProcessOfficeManagerConfiguration(OfficeConnectionMode.socket(ooPort));
-                    cfg.setOfficeHome(new File(ooHome));
-                    OfficeManager officeManager = new ManagedProcessOfficeManager(cfg);
-                    officeManager.start();
-                    OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
-                    converter.convert(dataFile, pdfFile);
-                }
-                pResponse.setHeader("Content-disposition", "attachment; filename=\"" + pdfFile.getName() + "\"");
-                pResponse.setContentLength((int) pdfFile.length());
-
-                ServletOutputStream httpOut = pResponse.getOutputStream();
-                InputStream input = new BufferedInputStream(new FileInputStream(pdfFile), BUFFER_CAPACITY);
-
-                byte[] data = new byte[CHUNK_SIZE];
-                int length;
-                while ((length = input.read(data)) != -1) {
-                    httpOut.write(data, 0, length);
-                }
-                input.close();
-                httpOut.flush();
-                httpOut.close();
-            } else if ("swf".equals(pRequest.getParameter("type"))) {
-                pResponse.setContentType("application/x-shockwave-flash");
-                String pdf2swfPath = this.getInitParameter("PDF2SWF_HOME");
-
-                FileAVT fileAVT= new FileAVT(dataFile.getPath());
                 String ooHome = this.getInitParameter("OO_HOME");
                 int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
-
-                FileConverter fileConverter = new FileConverter(pdf2swfPath, fileAVT, ooHome, ooPort);
-                File swfFile = fileConverter.convertToSwf();
-                //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + swfFile.getName() + "\"");
-                pResponse.setContentLength((int) swfFile.length());
-
-                ServletOutputStream httpOut = pResponse.getOutputStream();
-                InputStream input = new BufferedInputStream(new FileInputStream(swfFile), BUFFER_CAPACITY);
-                byte[] data = new byte[CHUNK_SIZE];
-                int length;
-                while ((length = input.read(data)) != -1) {
-                    httpOut.write(data, 0, length);
-                }
-
-                input.close();
-                httpOut.flush();
-                httpOut.close();
+                fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
+            } else if ("swf".equals(pRequest.getParameter("type"))) {
+                pResponse.setContentType("application/x-shockwave-flash");
+                String pdf2SWFHome = this.getInitParameter("PDF2SWF_HOME");
+                String ooHome = this.getInitParameter("OO_HOME");
+                int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
+                FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
+                fileToOutput = fileConverter.convertToSWF(dataFile);
             } else {
-                pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");
-                pResponse.setContentLength((int) dataFile.length());
-
+                //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");             
                 String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
                 pResponse.setContentType(contentType);
-                ServletOutputStream httpOut = pResponse.getOutputStream();
-
-                InputStream input = new BufferedInputStream(new FileInputStream(dataFile), BUFFER_CAPACITY);
-
-                byte[] data = new byte[CHUNK_SIZE];
-                int length;
-                while ((length = input.read(data)) != -1) {
-                    httpOut.write(data, 0, length);
-                }
-                input.close();
-                httpOut.flush();
-                httpOut.close();
+                fileToOutput = dataFile;
             }
+            pResponse.setContentLength((int) fileToOutput.length());
+            ServletOutputStream httpOut = pResponse.getOutputStream();
+            InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
+
+            byte[] data = new byte[CHUNK_SIZE];
+            int length;
+            while ((length = input.read(data)) != -1) {
+                httpOut.write(data, 0, length);
+            }
+            input.close();
+            httpOut.flush();
+            httpOut.close();
+
         } catch (Exception pEx) {
             throw new ServletException("Error while downloading the file.", pEx);
         }
