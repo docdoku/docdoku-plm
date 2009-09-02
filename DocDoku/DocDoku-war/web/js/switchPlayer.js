@@ -1,32 +1,17 @@
 function switchMenu(obj, btn, context) {
-                var el = document.getElementById(obj);
+    var el = document.getElementById(obj);
                 
-                if ( el.style.display != 'none' ) {
-                    el.style.display = 'none';
-                    document.getElementById(btn).src=context+'/images/plus.png';
-                }
-                else {
-                    el.style.display = 'inline';
-                    document.getElementById(btn).src=context+'/images/minus.png';
-                }
-            }
+    if ( el.style.display != 'none' ) {
+        el.style.display = 'none';
+        document.getElementById(btn).src=context+'/images/plus.png';
+    }
+    else {
+        el.style.display = 'inline';
+        document.getElementById(btn).src=context+'/images/minus.png';
+    }
+}
 
-            function switchMenuVideo(obj, btn,context) {
-                var el = document.getElementById(obj);
-
-                if ( el.style.display != "none" ) {
-                    el.style.display = 'none';
-                    document.getElementById(btn).src=context+'/images/plus.png';
-                }
-                else {
-                    el.style.display = 'inline';
-                    document.getElementById(btn).src=context+'/images/minus.png';
-                }
-            }
-
-            function OpenDoc(obj) {
-                var source=document.getElementById(obj).data;
-                var nomDoc=document.getElementById(obj).name;
-                window.open(source, nomDoc, "");
-            }
+function openFullScreen(strUrl, strWindowName) {
+    window.open(strUrl, strWindowName, "");
+}
 

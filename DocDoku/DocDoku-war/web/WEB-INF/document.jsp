@@ -1,4 +1,4 @@
-<%@ page import="com.docdoku.core.entities.*,java.io.File,java.util.Set,com.docdoku.server.http.FileConverter,com.docdoku.server.http.PlayerProperties,com.docdoku.core.util.FileIO,com.docdoku.server.http.FileAVT" contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.docdoku.core.entities.*,com.docdoku.core.util.FileIO" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -9,98 +9,48 @@
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/docdoku.css" media="screen"/>
-        <script src="<%=request.getContextPath()%>/js/switchPlayer.js"></script>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/switchPlayer.js"></script>
 
     </head>
 
     <body>
         <div id="page">
             <div id="content">
-
                 <div id="sidebar">
-                    <div id="wrapper">
-                    <h3><fmt:message key="sidebar.title1"/></h3>
-                    <p>
-       <%
+                        <h3><fmt:message key="sidebar.title1"/></h3>
+                        <c:forEach var="item" varStatus="status" items="${mdoc.lastIteration.attachedFiles}">
+                            <c:set scope="request" var="context" value="<%=request.getContextPath()%>" />
+                            <c:set scope="request" var="filePath" value="${context}/files/${item.fullName}" />
+                            <c:set scope="request" var="fileName" value="${item.name}" />
+                            <c:set scope="request" var="index" value="${status.index}"/>
+                            <jsp:useBean scope="request" type="java.lang.String" id="filePath"/>
+                            <c:choose>
+                                <c:when test="<%=FileIO.isDocFile(filePath)%>" >
+                                    <%@include file="/WEB-INF/docPlayer.jspf"%>
+                                </c:when>
+                                <c:when test="<%=FileIO.isAVFile(filePath)%>" >
+                                    <%@include file="/WEB-INF/audioVideoPlayer.jspf"%>
+                                </c:when>
+                                <c:when test="<%=FileIO.isImageFile(filePath)%>" >
+                                    <%@include file="/WEB-INF/imagePlayer.jspf" %>
+                                </c:when>
+                                <c:otherwise>
+                                    <table border="0">
+                                        <tr>
+                                            <td width="14px" height="14px">&nbsp;</td>
+                                            <td><a href="<%=filePath%>">${item.name}</a></td>
+                                        </tr>
+                                    </table>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
 
-        String filePath = null;
-        String fileName = null;
-       
-        int i = 0;
-       %>
-
-    <c:forEach var="item" items="${mdoc.lastIteration.attachedFiles}">
-        <%
-        BinaryResource file = (BinaryResource) pageContext.getAttribute("item");
-        filePath = request.getContextPath()+"/files/" + file.getFullName();
-        fileName = file.getName();
-        String extension = FileIO.getExtension(filePath);
-        if(extension != null){
-        
-        String id = "player" + i;     
-        String idObject = id + "3";
-        String type = "application/x-shockwave-flash";    
-        FileAVT fileAVT= new FileAVT(filePath);
-        request.setAttribute("fileName", fileName);
-        request.setAttribute("filePath", filePath);
-        request.setAttribute("type", type);
-        request.setAttribute("extension", extension);
-        request.setAttribute("context", request.getContextPath());
-        request.setAttribute("idObject", idObject);
-        request.setAttribute("id", id);
-        request.setAttribute("i", i);      
-          if (fileAVT.getTypeFile().equals("textFile")) {
-          %>
-
-                      <%@include file="/WEB-INF/swfPlayer.jspf"%>
-
-          <%
-          } else if (fileAVT.getTypeFile().equals("audioVideo")) {
-         %>
-
-                       <%@include file="/WEB-INF/audioVideoPlayer.jspf"%>
-
-          <% }else if (fileAVT.getTypeFile().equals("image")) {
-          %>
-                          
-                          <%@include file="/WEB-INF/imagePlayer.jspf" %>
-          <%
-            }else{
-
-          %>
-            <table border="0" style="border-color:green">
-                <tr>
-                    <td width="8px" height="8px">&nbsp;</td>
-                    <td align="left" width="180px"><a href="<%=filePath%>"><%=fileName%></a></td>
-                </tr>
-            </table>
-             
-          <%
-                }
-        }else{  %>
-
-        <table border="0" style="border-color:green">
-                <tr>
-                    <td width="8px" height="8px">&nbsp;</td>
-                    <td align="left" width="180px"><a href="<%=filePath%>"><%=fileName%></a></td>
-                </tr>
-         </table>
-         
-        <%
-        }
-            i++;
-         %>
-
-                    </c:forEach>
-                
-                <h3><fmt:message key="sidebar.title2"/></h3>
-                <p>
-                    <c:forEach var="item" items="${mdoc.lastIteration.linkedDocuments}">
-                        <a href="<%=request.getContextPath()%>/documents/${item.toDocumentWorkspaceId}/${item.toDocumentMasterDocumentId}/${item.toDocumentMasterDocumentVersion}">${item.toDocumentMasterDocumentId}-${item.toDocumentMasterDocumentVersion}-${item.toDocumentIteration}</a><br/>
-                    </c:forEach>
-                </p>
-
-                </div>
+                        <h3><fmt:message key="sidebar.title2"/></h3>
+                        <p>
+                            <c:forEach var="item" items="${mdoc.lastIteration.linkedDocuments}">
+                                <a href="<%=request.getContextPath()%>/documents/${item.toDocumentWorkspaceId}/${item.toDocumentMasterDocumentId}/${item.toDocumentMasterDocumentVersion}">${item.toDocumentMasterDocumentId}-${item.toDocumentMasterDocumentVersion}-${item.toDocumentIteration}</a><br/>
+                            </c:forEach>
+                        </p>
                 </div>
             </div>
 

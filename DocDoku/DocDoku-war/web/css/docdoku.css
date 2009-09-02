@@ -264,19 +264,12 @@
 
     #sidebar {
         float: right;
-
-        width: 550px;
-
+        width: 510px;
         padding: 10px 10px 10px 10px;
         background: #eee;
         margin: 0;
-
     }
-     #wrapper {
-   margin:0 auto;
-   width:460px;
-   border:1px solid #ccc;
-   padding:15px; }
+
 
     #result {
         width: 100%;

@@ -1,0 +1,30 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<table border="0">
+    <tr>
+        <td width="14px" height="14px">
+            <img height="10px" width="10px" id="btn${index}" src="${context}/images/plus.png" onclick="switchMenu('swf${index}', 'btn${index}','${context}');"/>
+        </td>
+        <td>
+            <a href="${filePath}">${fileName}</a>
+            <a href="${filePath}?type=pdf"><img style="border-style:none" height="20px" width="20px" src="${context}/images/pdfIcon.png" /></a>
+        </td>
+    </tr>
+</table>
+<div style="display:none;" id="swf${index}">
+    <div align="right">
+        <a href="#">
+            <img style="border-style:none" src="${context}/images/view.png" height="20px" width="20px" onclick="openFullScreen('${filePath}?type=swf','${fileName}');" />
+        </a>
+    </div>
+    <object data="${filePath}?type=swf" type="application/x-shockwave-flash" name="${filePath}" width="510" height="422">
+        <param name="menu" value="true"></param>
+        <param name="movie" value="${filePath}?type=swf"></param>
+        <param name="play" value="true"></param>
+        <param name="loop" value="true"></param>
+        <param name="quality" value="high"></param>
+        <param name="allowScriptAccess" value="always"></param>
+        <embed src="${filePath}?type=swf" type="application/x-shockwave-flash" menu="true" play="true" loop="true" quality="high" allowScriptAccess="always" width="510" height="422">
+        </embed>
+    </object>
+</div>

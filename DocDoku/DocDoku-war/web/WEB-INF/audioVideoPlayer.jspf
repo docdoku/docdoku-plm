@@ -1,22 +1,18 @@
-<%@ page import="com.docdoku.server.http.PlayerProperties" contentType="text/html;charset=UTF-8" language="java" %>
-<!-- Ici, on récupère le chemin du player avec lequel la lecture du fichier se fait, puis on demande le service à la classe PlayerProperties    -->
-
- <%
-    
-    String jwPlayerPath=request.getContextPath()+"/players/player-viral.swf";
-    PlayerProperties pp = new PlayerProperties((String)request.getAttribute("filePath"), jwPlayerPath);
- %>
-
-<!-- On intègre alors le lecteur tout en récuperant les variables contenues dans la requête  -->
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <table  border="0" style="border-style:none" >
-     <tr>        
-        <td width="8px" height="8px"><img height="10px" width="10px" style="border-style:solid" id="btn${i}" src="${context}/images/plus.png" onclick="switchMenuVideo('${id}', 'btn${i}','${context}');"/></td>
+    <tr>
+        <td width="8px" height="8px"><img height="10px" width="10px" style="border-style:solid" id="btn${i}" src="${context}/images/plus.png" onclick="switchMenu('${id}', 'btn${i}','${context}');"/></td>
         <td align="left" width="180px"><a href="${filePath}">${fileName}</a></td>
     </tr>
 </table>
-<div align="left"  style="display:none;" id="${id}"    title="Player">
+<div align="left"  style="display:none;" id="${index}" title="Player">
     <div align="center" style="border:3px; display:block; width:443px;">
-        <% out.print(pp.getHtmlCode());%>
+        <object type="application/x-shockwave-flash" data="${context}/players/player-viral.swf" width="+getWidth()+" height="+getHeight()+">"
+            <param name="movie" value="+getPlayerFile()+"/>
+            <param name="allowscriptaccess" value="always"/>
+            <param name="allowfullscreen" value="true"/>
+            <param name="flashvars" value="file="${filePath}"/>
+            <embed type="application/x-shockwave-flash" flashvars="file="${filePath} allowfullscreen="true" allowscriptaccess="true" src="<%=request.getContextPath()+"/players/player-viral.swf"%>" width="+getWidth()+" height="+getHeight()+"></embed>
+        </object>
     </div>
 </div>
