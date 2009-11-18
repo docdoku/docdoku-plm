@@ -59,7 +59,6 @@ public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandle
     }
 
     public void setMask(String pmask) {
-        setEnabled(true);
         mask = pmask ;
         regExp = mask.replaceAll("#", "[0-9]") ;
         regExp.replaceAll("\\*", ".");
@@ -118,6 +117,5 @@ public class MaskLineEdit extends TextBox implements KeyDownHandler, KeyUpHandle
 
     public void setGeneratedId(String id){
         setText(id);
-        setEnabled(false);
     }
 }
