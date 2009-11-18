@@ -732,7 +732,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
     }
 
     public void onResize(ResizeEvent event) {
-        if (m_wfEditor.isVisible()) {
+        if (m_wfEditor.isVisible() && m_wfEditor.isAttached()) {
             m_wfEditor.setVisible(false);
             m_wfEditor.setWidth(inputPanel.getOffsetWidth() - 10);
             m_wfEditor.setVisible(true);
