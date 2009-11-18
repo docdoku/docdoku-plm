@@ -5,9 +5,6 @@ import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
 import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
 import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
