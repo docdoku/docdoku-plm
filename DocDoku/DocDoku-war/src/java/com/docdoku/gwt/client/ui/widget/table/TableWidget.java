@@ -262,7 +262,7 @@ public class TableWidget extends FlexTable implements DragHandler, HasTableClick
 
     public List<Integer> getSelectedRows() {
         List<Integer> result = new LinkedList<Integer>();
-        if (selectionEnabled) {
+        if (selectionEnabled && data.getRowCount()>0) {
             int rowOffset = 0;
             if (data.getHeaderRow() != null) {
                 rowOffset++;
