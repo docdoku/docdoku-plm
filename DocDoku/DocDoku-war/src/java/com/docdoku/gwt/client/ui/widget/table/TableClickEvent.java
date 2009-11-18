@@ -58,7 +58,7 @@ public class TableClickEvent extends GwtEvent<TableClickHandler> {
 
     @Override
     public Type<TableClickHandler> getAssociatedType() {
-        return (Type) TYPE;
+        return TYPE;
     }
 
     @Override
