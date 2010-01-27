@@ -59,7 +59,7 @@ public interface ICommandLocal{
     
     public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     public MasterDocument getMDoc(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, MasterDocumentNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
-    public MasterDocument[] searchMDocs(String pWorkspaceId, String pMDocId, String pTitle, String pVersion, String pAuthor, String pType, Date pCreationDateFrom, Date pCreationDateTo, InstanceAttribute[] pAttributes, String[] pTags, String pContent) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    public MasterDocument[] searchMDocs(SearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     public MasterDocumentTemplate getMDocTemplate(BasicElementKey pKey) throws WorkspaceNotFoundException, MasterDocumentTemplateNotFoundException, UserNotFoundException, UserNotActiveException;
     public MasterDocumentTemplate[] getMDocTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     public WorkflowModel[] getWorkflowModels(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;

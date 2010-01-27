@@ -106,7 +106,7 @@ public interface ICommandWS {
     
     public String generateId(String pWorkspaceId, String pMDocTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, MasterDocumentTemplateNotFoundException;
     
-    public MasterDocument[] searchMDocs(String pWorkspaceId, String pMDocId, String pTitle, String pVersion, String pAuthor, String pType, Date pCreationDateFrom, Date pCreationDateTo, InstanceAttribute[] pAttributes, String[] pTags, String pContent) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    public MasterDocument[] searchMDocs(SearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
     public void subscribeToIterationChangeEvent(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, UserNotFoundException, UserNotActiveException;
 
