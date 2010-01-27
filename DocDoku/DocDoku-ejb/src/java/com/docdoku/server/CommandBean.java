@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -533,31 +533,29 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     }
 
     @RolesAllowed("users")
-    public MasterDocument[] searchMDocs(String pWorkspaceId, String pMDocId, String pTitle,
-            String pVersion, String pAuthor, String pType, Date pCreationDateFrom,
-            Date pCreationDateTo, InstanceAttribute[] pAttributes, String[] pTags, String pContent) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = checkWorkspaceReadAccess(pWorkspaceId);
-        List<MasterDocument> fetchedMDocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).searchMDocs(pWorkspaceId, pMDocId, pTitle, pVersion, pAuthor, pType, pCreationDateFrom,
-                pCreationDateTo);
+    public MasterDocument[] searchMDocs(SearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = checkWorkspaceReadAccess(pQuery.getWorkspaceId());
+        List<MasterDocument> fetchedMDocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).searchMDocs(pQuery.getWorkspaceId(), pQuery.getMDocId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
+                pQuery.getCreationDateTo());
 
         //preparing tag filtering
         Set<Tag> tags = null;
-        if (fetchedMDocs.size() > 0 && pTags != null) {
+        if (fetchedMDocs.size() > 0 && pQuery.getTags() != null) {
             Workspace wks = new Workspace();
-            wks.setId(pWorkspaceId);
+            wks.setId(pQuery.getWorkspaceId());
             tags = new HashSet<Tag>();
-            for (String label : pTags) {
+            for (String label : pQuery.getTags()) {
                 tags.add(new Tag(wks, label));
             }
         }
 
         //preparing fulltext filtering
         Set<MasterDocumentKey> indexedKeys = null;
-        if (fetchedMDocs.size() > 0 && pContent != null && !pContent.equals("")) {
-            indexedKeys = indexSearcher.searchInIndex(pWorkspaceId, pContent);
+        if (fetchedMDocs.size() > 0 && pQuery.getContent() != null && !pQuery.getContent().equals("")) {
+            indexedKeys = indexSearcher.searchInIndex(pQuery.getWorkspaceId(), pQuery.getContent());
         }
 
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pWorkspaceId);
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
 
         ListIterator<MasterDocument> ite=fetchedMDocs.listIterator();
@@ -576,31 +574,20 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
             //TODO search should not be based on checked out (especially by someone else) doc working copy
             Document doc = mdoc.getLastIteration();
-            if (pAttributes != null) {
+            if (pQuery.getAttributes() != null) {
                 if (doc == null) {
                     ite.remove();
                     continue mdocBlock;
                 }
-                for (InstanceAttribute attr : pAttributes) {
-                    InstanceAttribute docAttr = doc.getInstanceAttributes().get(attr.getName());
+                for (SearchQuery.AbstractAttributeQuery attrQuery : pQuery.getAttributes()) {
+                    InstanceAttribute docAttr = doc.getInstanceAttributes().get(attrQuery.getName());
                     if (docAttr == null ){
                         ite.remove();
                         continue mdocBlock;
                     }
-            //TODO design SearchQuery object
-                    if (attr instanceof InstanceDateAttributeSearch) {
-                        InstanceDateAttributeSearch casted = (InstanceDateAttributeSearch) attr ;
-                        Date docAttrDate = (Date) docAttr.getValue();
-                        if (docAttrDate.after(casted.getDateTo()) || docAttrDate.before(casted.getDateFrom())){
-                            ite.remove();
-                            continue mdocBlock;
-                        }
-                        
-                    } else {
-                        if (docAttr == null || !docAttr.isValueEquals(attr.getValue())) {
-                            ite.remove();
-                            continue mdocBlock;
-                        }
+                    if (!attrQuery.attributeMatches(docAttr)) {
+                        ite.remove();
+                        continue mdocBlock;
                     }
                 }
             }
