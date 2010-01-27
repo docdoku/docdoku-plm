@@ -721,7 +721,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     public MasterDocument createMDoc(String pParentFolder,
-            String pMDocID, String pTitle, String pDescription, String pMDocTemplateId, String pWorkflowModelId, ACLUserEntry[] aclUserEntries, ACLUserGroupEntry[] aclUserGroupEntries) throws WorkspaceNotFoundException, WorkflowModelNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FolderNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+            String pMDocID, String pTitle, String pDescription, String pMDocTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, WorkflowModelNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FolderNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
         Folder folder = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
         checkWritingRight(user, folder);
@@ -771,17 +771,16 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         mdoc.setTitle(pTitle);
         mdoc.setDescription(pDescription);
 
-        if(aclUserEntries !=null || aclUserGroupEntries!=null){
+        if((pACLUserEntries !=null && pACLUserEntries.length>0) || (pACLUserGroupEntries!=null && pACLUserGroupEntries.length>0)){
             ACL acl=new ACL();
-            if(aclUserEntries !=null){
-                for(ACLUserEntry entry:aclUserEntries)
+            if(pACLUserEntries !=null){
+                for(ACLUserEntry entry:pACLUserEntries)
                     acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(),entry.getPrincipalLogin())), entry.getPermission());
             }
 
-            if(aclUserGroupEntries !=null){
-               for(ACLUserGroupEntry entry:aclUserGroupEntries)
+            if(pACLUserGroupEntries !=null){
+               for(ACLUserGroupEntry entry:pACLUserGroupEntries)
                     acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(),entry.getPrincipalId())), entry.getPermission());
-
             }
             mdoc.setACL(acl);
         }
@@ -1208,31 +1207,19 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                 attrs.put(attr.getName(),attr);
             }
 
-            // diff to get those to remove
-            List<String> keysToRemove = new LinkedList<String>();
-            for (Map.Entry<String, InstanceAttribute> entry : doc.getInstanceAttributes().entrySet()) {
-                if (!attrs.containsKey(entry.getKey())){
-                    keysToRemove.add(entry.getKey());
-                }
-            }
-            // remove
-            for (String key : keysToRemove) {
-                doc.getInstanceAttributes().remove(key);
-            }
-            // update or add
-            for (InstanceAttribute attr : pAttributes) {
-                InstanceAttribute attrToUpdate = doc.getInstanceAttributes().get(attr.getName());
-                if (attrToUpdate != null) {
-                    attrToUpdate.setValue(attr.getValue());
-                }else{
-                    attr.setDocument(doc) ;
-                    doc.getInstanceAttributes().put(attr.getName(), attr) ;
-                }
+
+            Set<InstanceAttribute> attrsToRemove = new HashSet<InstanceAttribute>(doc.getInstanceAttributes().values());
+            attrsToRemove.removeAll(attrs.values());
+
+            InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
+            for (InstanceAttribute attrToRemove : attrsToRemove) {
+                attrDAO.removeAttribute(attrToRemove);
             }
 
-            
+                        
             doc.setRevisionNote(pRevisionNote);
             doc.setLinkedDocuments(links);
+            doc.setInstanceAttributes(attrs);
             return mdoc;
 
         } else {
@@ -1243,7 +1230,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     public MasterDocument[] createVersion(MasterDocumentKey pOriginalMDocPK,
-            String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] aclUserEntries, ACLUserGroupEntry[] aclUserGroupEntries) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, WorkflowModelNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+            String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, WorkflowModelNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = checkWorkspaceWriteAccess(pOriginalMDocPK.getWorkspaceId());
         MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
         MasterDocument originalMDoc = mdocDAO.loadMDoc(pOriginalMDocPK);
@@ -1301,17 +1288,16 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
         mdoc.setTitle(pTitle);
         mdoc.setDescription(pDescription);
-        if(aclUserEntries !=null || aclUserGroupEntries!=null){
+        if((pACLUserEntries !=null && pACLUserEntries.length >0) || (pACLUserGroupEntries!=null && pACLUserGroupEntries.length >0)){
             ACL acl=new ACL();
-            if(aclUserEntries !=null){
-                for(ACLUserEntry entry:aclUserEntries)
+            if(pACLUserEntries !=null){
+                for(ACLUserEntry entry:pACLUserEntries)
                     acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(),entry.getPrincipalLogin())), entry.getPermission());
             }
 
-            if(aclUserGroupEntries !=null){
-               for(ACLUserGroupEntry entry:aclUserGroupEntries)
+            if(pACLUserGroupEntries !=null){
+               for(ACLUserGroupEntry entry:pACLUserGroupEntries)
                     acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(),entry.getPrincipalId())), entry.getPermission());
-
             }
             mdoc.setACL(acl);
         }
