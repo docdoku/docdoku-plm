@@ -1,0 +1,117 @@
+package com.docdoku.client.ui.template;
+
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.EditFilesPanel;
+import com.docdoku.client.ui.common.OKCancelPanel;
+import com.docdoku.core.entities.InstanceAttributeTemplate;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+
+public class CreateMDocTemplateDialog extends MDocTemplateDialog implements ActionListener{
+
+    private CreateMDocTemplatePanel mCreateMDocTemplatePanel;
+    private EditFilesPanel mEditFilesPanel;
+    private EditAttributeTemplatesPanel mAttributesPanel;
+    private ActionListener mAction;
+    private OKCancelPanel mOKCancelPanel;
+    
+    public CreateMDocTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction) {
+        super(pOwner, I18N.BUNDLE.getString("CreateMDocTemplate_title"));
+        init(pOKAction,pEditFileAction, pAddAttributeAction);
+    }
+
+    public CreateMDocTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction) {
+        super(pOwner, I18N.BUNDLE.getString("CreateMDocTemplate_title"));
+        init(pOKAction,pEditFileAction, pAddAttributeAction);
+    }
+
+    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction){
+        mCreateMDocTemplatePanel = new CreateMDocTemplatePanel();
+        mEditFilesPanel = new EditFilesPanel(pEditFileAction);
+        mAttributesPanel = new EditAttributeTemplatesPanel(pAddAttributeAction);
+        mAction = pOKAction;
+        mOKCancelPanel = new OKCancelPanel(this, this);
+        getRootPane().setDefaultButton(mOKCancelPanel.getOKButton());
+        createLayout();
+        mOKCancelPanel.setEnabled(false);
+        createListener();
+        setVisible(true);
+    }
+    
+    private void createListener() {
+        DocumentListener listener = new DocumentListener() {
+            public void insertUpdate(DocumentEvent pDE) {
+                mOKCancelPanel.setEnabled(true);
+            }
+            
+            public void removeUpdate(DocumentEvent pDE) {
+                int length = pDE.getDocument().getLength();
+                if (length == 0)
+                    mOKCancelPanel.setEnabled(false);
+            }
+            
+            public void changedUpdate(DocumentEvent pDE) {
+            }
+        };
+        mCreateMDocTemplatePanel.getIDText().getDocument().addDocumentListener(listener);
+    }
+    
+    public String getMDocTemplateID() {
+        return mCreateMDocTemplatePanel.getID();
+    }
+    
+    public String getMask() {
+        return mCreateMDocTemplatePanel.getMask();
+    }
+    
+    public String getDocumentType() {
+        return mCreateMDocTemplatePanel.getDocumentType();
+    }
+    
+    public boolean isIdGenerated(){
+        return mCreateMDocTemplatePanel.isIdGenerated();
+    }
+    
+    public Set<InstanceAttributeTemplate> getAttributeTemplates() {
+        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
+        for(int i=0;i<mAttributesPanel.getAttributesListModel().getSize();i++){
+            attrs.add((InstanceAttributeTemplate) mAttributesPanel.getAttributesListModel().get(i));
+        }
+        return attrs;
+    }
+    
+    public Collection<File> getFilesToAdd() {
+        return mEditFilesPanel.getFilesToAdd();
+    }
+    
+    
+    public void actionPerformed(ActionEvent pAE) {
+        mAction.actionPerformed(new ActionEvent(this, 0, null));
+    }
+
+    protected JPanel getSouthPanel() {
+        return mOKCancelPanel;
+    }
+    
+    protected JPanel getFilesPanel() {
+        return mEditFilesPanel;
+    }
+    
+    protected JPanel getAttributesPanel() {
+        return mAttributesPanel;
+    }
+
+    protected JPanel getMDocTemplatePanel() {
+        return mCreateMDocTemplatePanel;
+    }
+    
+}

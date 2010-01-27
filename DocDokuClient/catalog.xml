@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+<system systemId="http://localhost:8080/WSBeanService/WSBean?wsdl" uri="xml-resources/web-service-references/WSBean/wsdl/localhost_8080/WSBeanService/WSBean.wsdl"/>
+<system systemId="http://localhost.localdomain:8080/WSBeanService/WSBean/__container$publishing$subctx/META-INF/wsdl/WSBeanService_schema1.xsd" uri="xml-resources/web-service-references/WSBean/wsdl/localhost.localdomain_8080/WSBeanService/WSBean/__container_publishing_subctx/META-INF/wsdl/WSBeanService_schema1.xsd"/>
+    <system systemId="http://localhost:8081/CommandBeanService/CommandBean?wsdl" uri="xml-resources/web-service-references/CommandBean/wsdl/localhost_8081/CommandBeanService/CommandBean.wsdl"/>
+    <system systemId="http://localhost:8081/CommandBeanService/CommandBean?wsdl=1" uri="xml-resources/web-service-references/CommandBean/wsdl/localhost_8081/CommandBeanService/CommandBean.wsdl_1.wsdl"/>
+    <system systemId="http://localhost:8081/CommandBeanService/CommandBean?xsd=1" uri="xml-resources/web-service-references/CommandBean/wsdl/localhost_8081/CommandBeanService/CommandBean.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/CommandBeanService/CommandBean?wsdl" uri="xml-resources/web-service-references/CommandBean/wsdl/localhost_8080/CommandBeanService/CommandBean.wsdl"/>
+    <system systemId="http://localhost:8080/CommandBeanService/CommandBean?wsdl=1" uri="xml-resources/web-service-references/CommandBean/wsdl/localhost_8080/CommandBeanService/CommandBean.wsdl_1.wsdl"/>
+    <system systemId="http://localhost:8080/CommandBeanService/CommandBean?xsd=1" uri="xml-resources/web-service-references/CommandBean/wsdl/localhost_8080/CommandBeanService/CommandBean.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080//community/UploadDownloadService?wsdl" uri="xml-resources/web-service-references/UploadDownloadService/wsdl/localhost_8080/community/UploadDownloadService.wsdl"/>
+    <system systemId="http://localhost:8080/webservices/DocDoku?wsdl" uri="xml-resources/web-service-references/DocDoku/wsdl/localhost_8080/webservices/DocDoku.wsdl"/>
+    <system systemId="http://localhost:8080/webservices/DocDoku?wsdl=1" uri="xml-resources/web-service-references/DocDoku/wsdl/localhost_8080/webservices/DocDoku.wsdl_1.wsdl"/>
+    <system systemId="http://localhost:8080/webservices/DocDoku?xsd=1" uri="xml-resources/web-service-references/DocDoku/wsdl/localhost_8080/webservices/DocDoku.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/community/UploadDownloadService?wsdl" uri="xml-resources/web-service-references/UploadDownloadService/wsdl/localhost_8080/community/UploadDownloadService.wsdl"/>
+    <system systemId="http://localhost:8080/community/UploadDownloadService?xsd=1" uri="xml-resources/web-service-references/UploadDownloadService/wsdl/localhost_8080/community/UploadDownloadService.xsd_1.xsd"/>
+</catalog>
