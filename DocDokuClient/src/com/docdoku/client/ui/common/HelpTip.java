@@ -1,30 +1,41 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ *
+ * This file is part of DocDoku.
+ *
+ * DocDoku is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDoku is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.client.ui.common;
 
 import com.docdoku.client.localization.I18N;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.InternalFrameAdapter;
 
 
 public class HelpTip extends JInternalFrame {
@@ -58,6 +69,7 @@ public class HelpTip extends JInternalFrame {
     
     private void createListener(){
         mAttachedComponent.addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentMoved(ComponentEvent e) {
                 if (isShowing()) {
                     computeAndSetLocation();
@@ -75,7 +87,8 @@ public class HelpTip extends JInternalFrame {
         mTextArea.setText(text);
         pack();
     }
-    
+
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             computeAndSetLocation();
