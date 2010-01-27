@@ -24,7 +24,6 @@ import com.docdoku.core.entities.*;
 import com.docdoku.core.entities.keys.*;
 import java.io.File;
 import java.util.Date;
-import java.util.Map;
 
 
 /**

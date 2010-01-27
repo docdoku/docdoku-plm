@@ -32,6 +32,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -41,6 +43,11 @@ public class FileIO {
 
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
+
+
+    private final static List<String> DOC_EXTENSIONS = Arrays.asList(new String[]{"odt", "html", "sxw", "swf", "sxc", "doc", "xls", "rtf", "txt", "ppt", "odp", "wpd", "tsv", "sxi", "csv", "pdf"});   
+    private final static List<String> AV_EXTENSIONS = Arrays.asList(new String[]{"mp3", "mpg", "flv", "mp4", "aac", "mov"});
+    private final static List<String> IMAGE_EXTENSIONS = Arrays.asList(new String[]{"jpg", "png", "gif", "psd", "jpeg", "psp", "tif"});
 
     private FileIO() {
     }
@@ -128,5 +135,20 @@ public class FileIO {
             codeUri += "/" + URLEncoder.encode(tabFolder[i], enc);
         }
         return codeUri;
+    }
+
+    public static boolean isAVFile(String fileName){
+        String ext=getExtension(fileName);
+        return AV_EXTENSIONS.contains(ext);
+    }
+
+    public static boolean isDocFile(String fileName){
+        String ext=getExtension(fileName);
+        return DOC_EXTENSIONS.contains(ext);
+    }
+
+    public static boolean isImageFile(String fileName){
+        String ext=getExtension(fileName);
+        return IMAGE_EXTENSIONS.contains(ext);
     }
 }

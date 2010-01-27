@@ -210,13 +210,30 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         return instanceAttributes;
     }
 
+
+    
+
     public void setInstanceAttributes(Map<String, InstanceAttribute> pInstanceAttributes) {
+        for (InstanceAttribute attr : pInstanceAttributes.values()) {
+            InstanceAttribute attrToUpdate = instanceAttributes.get(attr.getName());
+            if (attrToUpdate != null) {
+                attrToUpdate.setValue(attr.getValue());
+            }
+        }
+
         instanceAttributes.values().retainAll(pInstanceAttributes.values());
         pInstanceAttributes.values().removeAll(instanceAttributes.values());
         instanceAttributes.putAll(pInstanceAttributes);
     }
     
     public void setInstanceAttributes(Collection<InstanceAttribute> pInstanceAttributes) {
+        for (InstanceAttribute attr : pInstanceAttributes) {
+            InstanceAttribute attrToUpdate = instanceAttributes.get(attr.getName());
+            if (attrToUpdate != null) {
+                attrToUpdate.setValue(attr.getValue());
+            }
+        }
+
         instanceAttributes.values().retainAll(pInstanceAttributes);
         pInstanceAttributes.removeAll(instanceAttributes.values());
         
