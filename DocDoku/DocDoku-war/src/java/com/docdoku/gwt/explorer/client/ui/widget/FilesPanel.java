@@ -86,7 +86,6 @@ public class FilesPanel extends DataRoundedPanel implements FormPanel.SubmitComp
         scroll.setHeight("10em");
         inputPanel.setWidget(2, 0, scroll);
 
-        //Due to GWT bug we use the deprecated method at compilation time
         m_form.addSubmitCompleteHandler(this);
         m_form.addSubmitHandler(this);
     }

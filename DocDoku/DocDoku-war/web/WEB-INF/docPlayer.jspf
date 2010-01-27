@@ -14,7 +14,7 @@
 <div style="display:none;" id="swf${index}">
     <div align="right">
         <a href="#">
-            <img style="border-style:none" src="${context}/images/view.png" height="20px" width="20px" onclick="openFullScreen('${filePath}?type=swf','${fileName}');" />
+            <img style="border-style:none;" src="${context}/images/view.png" height="20px" width="20px" onclick="openFullScreen('${filePath}?type=swf','${fileName}');" />
         </a>
     </div>
     <object data="${filePath}?type=swf" type="application/x-shockwave-flash" name="${filePath}" width="510" height="422">

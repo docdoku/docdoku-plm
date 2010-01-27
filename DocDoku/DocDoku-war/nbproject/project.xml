@@ -66,37 +66,34 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
+                    <file>${file.reference.Shell.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
                     <file>${file.reference.appserv-rt.jar}</file>
+                </library>
+                <library>
+                    <file>${file.reference.org.cobogw.gwt-1.2.4.jar}</file>
+                </library>
+                <library>
+                    <file>${file.reference.gwt-incubator-july-14-2009.jar}</file>
+                </library>
+                <library>
+                    <file>${file.reference.gwttheme.jar}</file>
+                </library>
+                <library>
+                    <file>${file.reference.gwt-dnd-2.6.4.jar}</file>
+                </library>
+                <library>
+                    <file>${file.reference.gwt-dev-windows.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
                     <file>${file.reference.gwt-user.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${file.reference.org.cobogw.gwt-1.2.4.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library>
-                    <file>${file.reference.gwt-incubator-july-14-2009.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library>
-                    <file>${file.reference.gwttheme.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library>
-                    <file>${file.reference.gwt-dev-linux.jar}</file>
-                </library>
-                <library>
-                    <file>${file.reference.Shell.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library>
-                    <file>${file.reference.gwt-dnd-2.6.4.jar}</file>
-                </library>
-                <library>
                     <file>${file.reference.searchTheme.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>

@@ -66,7 +66,11 @@
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.date"/>:</th>
-                        <td><fmt:formatDate value="${mdoc.creationDate}"/></td>
+                        <td><fmt:formatDate type="both" value="${mdoc.creationDate}"/></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><fmt:message key="section1.type"/>:</th>
+                        <td>${mdoc.type}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.titledoc"/>:</th>
@@ -78,7 +82,7 @@
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.checkout_date"/>:</th>
-                        <td><fmt:formatDate value="${mdoc.checkOutDate}"/></td>
+                        <td><fmt:formatDate type="both" value="${mdoc.checkOutDate}"/></td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.state"/>:</th>
@@ -108,7 +112,7 @@
                 </tr>
                 <tr>
                     <th scope="row"><fmt:message key="section2.date"/>:</th>
-                    <td><fmt:formatDate value="${mdoc.lastIteration.creationDate}"/></td>
+                    <td><fmt:formatDate type="both" value="${mdoc.lastIteration.creationDate}"/></td>
                 </tr>
                 <tr>
                     <th scope="row"><fmt:message key="section2.revisionNote"/>:</th>

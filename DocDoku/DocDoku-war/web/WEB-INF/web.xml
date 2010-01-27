@@ -109,9 +109,9 @@
         </init-param>
         <init-param>
             <param-name>OO_PORT</param-name>
-            <param-value>8101</param-value>
+            <param-value>8100</param-value>
         </init-param>
-        </servlet>
+    </servlet>
     <servlet>
         <servlet-name>ExplorerGWTServlet</servlet-name>
         <servlet-class>com.docdoku.gwt.explorer.server.ExplorerServiceImpl</servlet-class>
@@ -249,4 +249,4 @@
         <description>All the regular users</description>
         <role-name>users</role-name>
     </security-role>
-    </web-app>
+</web-app>

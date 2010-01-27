@@ -22,6 +22,8 @@ public class FileConverter {
     private String ooHome;
     private int ooPort;
 
+    private final static String SIMPLE_VIEWER="/com/docdoku/server/http/resources/swf/simple_viewer.swf";
+    private final static String RFX_VIEWER="/com/docdoku/server/http/resources/swf/rfxview.swf";
 
     public FileConverter(String pdf2SWFHome, String ooHome, int ooPort) {
         this.pdf2SWFHome = pdf2SWFHome;
@@ -58,8 +60,8 @@ public class FileConverter {
         ProcessConsumer pc = sh.exec(cmdArray);
         pc.consume();
 
-        String rfxViewer = FileIO.urlToFile(FileConverter.class.getResource("/com/docdoku/server/http/resources/swf/rfxview.swf")).getAbsolutePath();
-        cmdArray = new String[]{pdf2SWFHome + sep + "swfcombine", rfxViewer, "viewport=" + outputFile, "-o", outputFile};
+        String swfViewer = FileIO.urlToFile(FileConverter.class.getResource(RFX_VIEWER)).getAbsolutePath();
+        cmdArray = new String[]{pdf2SWFHome + sep + "swfcombine", swfViewer, "viewport=" + outputFile, "-o", outputFile};
         pc = sh.exec(cmdArray);
         pc.consume();
 

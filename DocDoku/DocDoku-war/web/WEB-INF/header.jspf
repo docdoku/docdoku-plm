@@ -25,7 +25,7 @@
                 </c:when>
                 <c:otherwise>
                     <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp"><fmt:message key="toplinks.workspace"/></a>
-                    <a href="#" onClick="this.blur();switchMenu('menu');"><small>&#9660;</small></a>
+                    <a href="#" onClick="this.blur();switchMenu('menu');">&#9660;</a>
                     <ul id="menu" style="position:absolute; right: 280px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
                         <c:forEach var="item" items="${administeredWorkspaces}">
                             <li>
