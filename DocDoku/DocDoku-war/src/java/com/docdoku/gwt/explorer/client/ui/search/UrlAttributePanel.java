@@ -20,8 +20,7 @@
  */
 package com.docdoku.gwt.explorer.client.ui.search;
 
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceURLAttributeDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.ui.TextBox;
 
 /**
@@ -39,13 +38,11 @@ public class UrlAttributePanel extends AbstractAttributePanel {
     }
 
     @Override
-    public InstanceAttributeDTO getAttribute() {
+    public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
         if (getNameValue().isEmpty()){
-            return null ;
+            return null;
         }
-        InstanceURLAttributeDTO result = new InstanceURLAttributeDTO();
-        result.setUrlValue(valueField.getText());
-        result.setName(getNameValue());
-        return result ;
+        SearchQueryDTO.URLAttributeQueryDTO result = new SearchQueryDTO.URLAttributeQueryDTO(getNameValue(),valueField.getText());
+        return result;
     }
 }

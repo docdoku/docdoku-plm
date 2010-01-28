@@ -85,7 +85,7 @@
                     <file>${file.reference.gwt-dnd-2.6.4.jar}</file>
                 </library>
                 <library>
-                    <file>${file.reference.gwt-dev-windows.jar}</file>
+                    <file>${file.reference.gwt-dev.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
  * 
  * This file is part of DocDoku.
  *
@@ -22,8 +22,6 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.common.DocumentDTO;
-import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.List;

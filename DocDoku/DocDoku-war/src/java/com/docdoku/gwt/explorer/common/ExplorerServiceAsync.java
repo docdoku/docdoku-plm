@@ -52,7 +52,7 @@ public interface ExplorerServiceAsync {
 
     void approve(String workspaceId, int workflowId, int activityStep, int num, String comment, AsyncCallback<MasterDocumentDTO> callback);
     void reject(String workspaceId, int workflowId, int activityStep, int num, String comment, AsyncCallback<MasterDocumentDTO> callback);
-    void searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, AsyncCallback<MasterDocumentDTO[]> callback);
+    void searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, AsyncCallback<MasterDocumentDTO[]> callback);
     void moveMDoc(String parentFolder, String workspaceId, String id, String version, AsyncCallback<MasterDocumentDTO> callback);
     void getWorkspaceUserMemberships(String workspaceId, AsyncCallback<UserDTO[]> callback);
     void getWorkspaceUserGroupMemberships(String workspaceId, AsyncCallback<UserGroupDTO[]> callback);
@@ -62,7 +62,7 @@ public interface ExplorerServiceAsync {
     void getCheckedOutMDocs(String workspaceId, int startOffset, int chunkSize, AsyncCallback<MDocResponse> callback) ;
     void findMDocsByFolder(String completePath, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback);
     void findMDocsByTag(String workspaceId, String label, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback);
-    void searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback) ;
+    void searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback);
 
     void getMDocTemplates(String workspaceId, int startPoint, int chunkSize, AsyncCallback<MDocTemplateResponse> callback);
     void getWorkflowModels(String workspaceId, int startPoint, int chunkSize, AsyncCallback<WorkflowResponse> callback);

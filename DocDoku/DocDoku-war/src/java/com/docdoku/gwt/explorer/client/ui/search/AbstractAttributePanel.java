@@ -1,6 +1,6 @@
 package com.docdoku.gwt.explorer.client.ui.search;
 
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -33,5 +33,5 @@ public abstract class AbstractAttributePanel extends HorizontalPanel {
         nameField.setText(name);
     }
 
-    abstract public InstanceAttributeDTO getAttribute();
+    abstract public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute();
 }

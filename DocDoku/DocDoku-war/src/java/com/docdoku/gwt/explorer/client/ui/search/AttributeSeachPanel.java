@@ -9,6 +9,7 @@ import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.common.InstanceAttributeTemplateDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -46,8 +47,8 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
         fetchModelList(ServiceLocator.getInstance().getExplorerI18NConstants().notSpecifiedOption());
     }
 
-    public InstanceAttributeDTO[] getAttributes() {
-        Set<InstanceAttributeDTO> tempSet = new HashSet<InstanceAttributeDTO>();
+    public SearchQueryDTO.AbstractAttributeQueryDTO[] getAttributes() {
+        Set<SearchQueryDTO.AbstractAttributeQueryDTO> tempSet = new HashSet<SearchQueryDTO.AbstractAttributeQueryDTO>();
 
         for (int i = 0; i < attributeLines.size(); i++) {
             if (attributeLines.get(i).getAttribute() != null) {
@@ -55,7 +56,7 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
             }
         }
         if (tempSet.size() != 0) {
-            InstanceAttributeDTO result[] = new InstanceAttributeDTO[tempSet.size()];
+            SearchQueryDTO.AbstractAttributeQueryDTO result[] = new SearchQueryDTO.AbstractAttributeQueryDTO[tempSet.size()];
             tempSet.toArray(result);
             return result;
         }
@@ -283,7 +284,7 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
             attributePanel.setNameValue(name);
         }
 
-        public InstanceAttributeDTO getAttribute() {
+        public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
             return attributePanel.getAttribute();
         }
     }

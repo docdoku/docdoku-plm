@@ -1,19 +1,18 @@
 package com.docdoku.gwt.explorer.client.ui.search;
 
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceNumberAttributeDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class NumberAttributePanel extends AbstractAttributePanel implements ChangeHandler {
 	
-	private TextBox valueField ;
-	private String backup ;
+	private TextBox valueField;
+	private String backup;
 	
 	public NumberAttributePanel() {
 		valueField = new TextBox();
-		add(valueField) ;
+		add(valueField);
 		backup = "";
 		valueField.addChangeHandler(this);
 		valueField.setTextAlignment(TextBox.ALIGN_RIGHT);
@@ -34,15 +33,12 @@ public class NumberAttributePanel extends AbstractAttributePanel implements Chan
 	}
 
     @Override
-    public InstanceAttributeDTO getAttribute() {
+    public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
         if (getNameValue().isEmpty()){
             return null ;
         }
-        InstanceNumberAttributeDTO result = new InstanceNumberAttributeDTO();
-        Float f = new Float(valueField.getText());
-        result.setNumberValue(f);
-        result.setName(getNameValue());
-        return result ;
+        SearchQueryDTO.NumberAttributeQueryDTO result = new SearchQueryDTO.NumberAttributeQueryDTO(getNameValue(),Float.parseFloat(valueField.getText()));
+        return result;
     }
 
 }

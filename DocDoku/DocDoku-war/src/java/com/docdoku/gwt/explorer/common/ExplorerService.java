@@ -54,7 +54,7 @@ public interface ExplorerService extends RemoteService{
     void unsubscribeToStateChangeEvent(String workspaceId, String id, String version) throws ApplicationException;
     MasterDocumentDTO approve(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException;
     MasterDocumentDTO reject(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException;
-    MasterDocumentDTO[] searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content) throws ApplicationException;
+    MasterDocumentDTO[] searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content) throws ApplicationException;
     MasterDocumentDTO moveMDoc(String parentFolder, String workspaceId, String id, String version) throws ApplicationException;
     UserDTO[] getWorkspaceUserMemberships(String workspaceId) throws ApplicationException;
     UserGroupDTO[] getWorkspaceUserGroupMemberships(String workspaceId) throws ApplicationException;
@@ -72,7 +72,7 @@ public interface ExplorerService extends RemoteService{
     MDocResponse getCheckedOutMDocs(String workspaceId, int startOffset, int chunkSize) throws ApplicationException;
     MDocResponse findMDocsByFolder(String completePath, int startOffset, int chunkSize) throws ApplicationException;
     MDocResponse findMDocsByTag(String workspaceId, String label, int startOffset, int chunkSize) throws ApplicationException;
-    MDocResponse searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize) throws ApplicationException;
+    MDocResponse searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize) throws ApplicationException;
 
     MDocTemplateResponse getMDocTemplates(String workspaceId, int startOffset, int chunkSize) throws ApplicationException;
     WorkflowResponse getWorkflowModels(String workspaceId, int startOffser, int chunkSize) throws ApplicationException;

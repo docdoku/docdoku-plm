@@ -1,7 +1,6 @@
 package com.docdoku.gwt.explorer.client.ui.search;
 
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceTextAttributeDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.ui.TextBox;
 
 
@@ -18,14 +17,12 @@ public class TextAttributePanel extends AbstractAttributePanel {
 
 
     @Override
-    public InstanceAttributeDTO getAttribute() {
+    public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
         if (getNameValue().isEmpty()){
-            return null ;
+            return null;
         }
-        InstanceTextAttributeDTO result = new InstanceTextAttributeDTO();
-        result.setTextValue(valueField.getText());
-        result.setName(getNameValue());
-        return result ;
+        SearchQueryDTO.TextAttributeQueryDTO result = new SearchQueryDTO.TextAttributeQueryDTO(getNameValue(),valueField.getText());
+        return result;
     }
 	
 }

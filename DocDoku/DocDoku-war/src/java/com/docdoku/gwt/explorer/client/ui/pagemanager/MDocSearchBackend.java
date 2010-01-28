@@ -28,6 +28,7 @@ import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.common.MDocResponse;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
@@ -55,11 +56,11 @@ public class MDocSearchBackend implements PageManagerBackend{
     private String type ;
     private Date creationFrom;
     private Date creationTo ;
-    private InstanceAttributeDTO[] attributes;
+    private SearchQueryDTO.AbstractAttributeQueryDTO[] attributes;
     private String[] tags ;
     private String content ;
 
-    public MDocSearchBackend(String login, String workspaceId, String mdocId, String title, String version, String author, String type, Date creationFrom, Date creationTo, InstanceAttributeDTO[] attributes, String[] tags, String content) {
+    public MDocSearchBackend(String login, String workspaceId, String mdocId, String title, String version, String author, String type, Date creationFrom, Date creationTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content) {
         this.login = login;
         this.workspaceId = workspaceId;
         this.mdocId = mdocId;

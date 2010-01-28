@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
  * 
  * This file is part of DocDoku.
  *
@@ -24,6 +24,7 @@ import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocSearchBackend;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
@@ -48,7 +49,7 @@ public class SearchCommand implements Action {
         String type= (String) userObject[5];
         Date fromDate= (Date) userObject[6];
         Date toDate= (Date) userObject[7];
-        InstanceAttributeDTO[] attributes= (InstanceAttributeDTO[]) userObject[8];
+        SearchQueryDTO.AbstractAttributeQueryDTO[] attributes= (SearchQueryDTO.AbstractAttributeQueryDTO[]) userObject[8];
         String[] tags= (String[]) userObject[9];
         String content= (String) userObject[10];
 

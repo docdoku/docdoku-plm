@@ -1,9 +1,28 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ *
+ * This file is part of DocDoku.
+ *
+ * DocDoku is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDoku is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.gwt.explorer.client.ui.search;
 
 import com.docdoku.gwt.explorer.client.data.ShortDateFormater;
 import com.docdoku.gwt.explorer.client.ui.widget.DocdokuDateBox;
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceDateAttributeSearchDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -30,19 +49,11 @@ public class DateAttributePanel extends AbstractAttributePanel {
     }
 
     @Override
-    public InstanceAttributeDTO getAttribute() {
+    public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
         if (getNameValue().isEmpty()) {
             return null;
         }
-//        InstanceDateAttributeDTO result = new InstanceDateAttributeDTO();
-//        result.setDateValue(dateField.getValue());
-//        result.setName(getNameValue());
-//        return result;
-
-        InstanceDateAttributeSearchDTO result = new InstanceDateAttributeSearchDTO();
-        result.setDateFrom(fromDate.getValue());
-        result.setDateTo(toDate.getValue());
-        result.setName(getNameValue());
+        SearchQueryDTO.DateAttributeQueryDTO result = new SearchQueryDTO.DateAttributeQueryDTO(getNameValue(),fromDate.getValue(),toDate.getValue());
         return result;
     }
 }

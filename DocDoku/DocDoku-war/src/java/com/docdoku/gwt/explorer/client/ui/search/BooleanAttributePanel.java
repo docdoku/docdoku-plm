@@ -1,7 +1,6 @@
 package com.docdoku.gwt.explorer.client.ui.search;
 
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceBooleanAttributeDTO;
+import com.docdoku.gwt.explorer.common.SearchQueryDTO;
 import com.google.gwt.user.client.ui.CheckBox;
 
 public class BooleanAttributePanel extends AbstractAttributePanel {
@@ -14,17 +13,11 @@ public class BooleanAttributePanel extends AbstractAttributePanel {
 	}
 
     @Override
-    public InstanceAttributeDTO getAttribute() {
+    public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
         if (getNameValue().isEmpty()){
-            return null ;
+            return null;
         }
-        InstanceBooleanAttributeDTO result = new InstanceBooleanAttributeDTO();
-        result.setBooleanValue(valueField.getValue());
-        result.setName(getNameValue());
-        
-        return result ;
+        SearchQueryDTO.BooleanAttributeQueryDTO result = new SearchQueryDTO.BooleanAttributeQueryDTO(getNameValue(),valueField.getValue());
+        return result;
     }
-
-
-
 }

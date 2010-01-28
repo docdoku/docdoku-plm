@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,74 +20,9 @@
 package com.docdoku.gwt.explorer.server;
 
 import com.docdoku.core.ICommandLocal;
-import com.docdoku.core.entities.ACL;
-import com.docdoku.core.entities.ACLUserEntry;
-import com.docdoku.core.entities.ACLUserGroupEntry;
-import com.docdoku.core.entities.Activity;
-import com.docdoku.core.entities.ActivityModel;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.DocumentToDocumentLink;
-import com.docdoku.core.entities.Folder;
-import com.docdoku.core.entities.InstanceAttribute;
-import com.docdoku.core.entities.InstanceAttributeTemplate;
-import com.docdoku.core.entities.InstanceBooleanAttribute;
-import com.docdoku.core.entities.InstanceDateAttribute;
-import com.docdoku.core.entities.InstanceDateAttributeSearch;
-import com.docdoku.core.entities.InstanceNumberAttribute;
-import com.docdoku.core.entities.InstanceTextAttribute;
-import com.docdoku.core.entities.InstanceURLAttribute;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.ParallelActivity;
-import com.docdoku.core.entities.ParallelActivityModel;
-import com.docdoku.core.entities.SerialActivityModel;
-import com.docdoku.core.entities.Tag;
-import com.docdoku.core.entities.Task;
-import com.docdoku.core.entities.TaskModel;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.UserGroup;
-import com.docdoku.core.entities.Workflow;
-import com.docdoku.core.entities.WorkflowModel;
-import com.docdoku.core.entities.Workspace;
-import com.docdoku.core.entities.WorkspaceUserGroupMembership;
-import com.docdoku.core.entities.WorkspaceUserMembership;
-import com.docdoku.core.entities.keys.BasicElementKey;
-import com.docdoku.core.entities.keys.DocumentKey;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.keys.TagKey;
-import com.docdoku.core.entities.keys.TaskKey;
-import com.docdoku.gwt.explorer.common.ACLDTO;
-import com.docdoku.gwt.explorer.common.AbstractActivityModelDTO;
-import com.docdoku.gwt.explorer.common.ActivityDTO;
-import com.docdoku.gwt.explorer.common.ApplicationException;
-import com.docdoku.gwt.explorer.common.DocumentDTO;
-import com.docdoku.gwt.explorer.common.ExplorerService;
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceAttributeTemplateDTO;
-import com.docdoku.gwt.explorer.common.InstanceBooleanAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceDateAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceDateAttributeSearchDTO;
-import com.docdoku.gwt.explorer.common.InstanceNumberAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceTextAttributeDTO;
-import com.docdoku.gwt.explorer.common.InstanceURLAttributeDTO;
-import com.docdoku.gwt.explorer.common.MDocResponse;
-import com.docdoku.gwt.explorer.common.MDocTemplateResponse;
-import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
-import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
-import com.docdoku.gwt.explorer.common.ParallelActivityDTO;
-import com.docdoku.gwt.explorer.common.ParallelActivityModelDTO;
-import com.docdoku.gwt.explorer.common.SerialActivityDTO;
-import com.docdoku.gwt.explorer.common.SerialActivityModelDTO;
-import com.docdoku.gwt.explorer.common.TaskDTO;
-import com.docdoku.gwt.explorer.common.TaskDTO.TaskStatus;
-import com.docdoku.gwt.explorer.common.TaskModelDTO;
-import com.docdoku.gwt.explorer.common.UserDTO;
-import com.docdoku.gwt.explorer.common.UserGroupDTO;
-import com.docdoku.gwt.explorer.common.WorkflowDTO;
-import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
-import com.docdoku.gwt.explorer.common.WorkflowResponse;
-import com.docdoku.gwt.explorer.common.WorkspaceMembership;
+import com.docdoku.core.entities.*;
+import com.docdoku.core.entities.keys.*;
+import com.docdoku.gwt.explorer.common.*;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -529,9 +464,10 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         }
     }
 
-    public MasterDocumentDTO[] searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content) throws ApplicationException {
+    public MasterDocumentDTO[] searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content) throws ApplicationException {
         try {
-            return setupMDocNotifications(createDTO(commandService.searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content)), workspaceId);
+            SearchQuery query = new SearchQuery(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content);
+            return setupMDocNotifications(createDTO(commandService.searchMDocs(query)), workspaceId);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -676,19 +612,19 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         dto.setTargetIteration(task.getTargetIteration());
         dto.setTitle(task.getTitle());
 
-        TaskStatus s = TaskStatus.APPROVED;
+        TaskDTO.TaskStatus s = TaskDTO.TaskStatus.APPROVED;
         switch (task.getStatus()) {
             case APPROVED:
-                s = TaskStatus.APPROVED;
+                s = TaskDTO.TaskStatus.APPROVED;
                 break;
             case IN_PROGRESS:
-                s = TaskStatus.IN_PROGRESS;
+                s = TaskDTO.TaskStatus.IN_PROGRESS;
                 break;
             case NOT_STARTED:
-                s = TaskStatus.NOT_STARTED;
+                s = TaskDTO.TaskStatus.NOT_STARTED;
                 break;
             case REJECTED:
-                s = TaskStatus.REJECTED;
+                s = TaskDTO.TaskStatus.REJECTED;
                 break;
         }
         dto.setStatus(s);
@@ -871,6 +807,21 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         }
     }
 
+
+
+    private SearchQuery.AbstractAttributeQuery[] createObject(SearchQueryDTO.AbstractAttributeQueryDTO[] dtos) {
+        if (dtos == null) {
+            return null;
+        }
+        SearchQuery.AbstractAttributeQuery[] data = new SearchQuery.AbstractAttributeQuery[dtos.length];
+
+        for (int i = 0; i < dtos.length; i++) {
+            data[i] = createObject(dtos[i]);
+        }
+
+        return data;
+    }
+
     private InstanceAttribute[] createObject(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {
             return null;
@@ -882,6 +833,32 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         }
 
         return data;
+    }
+
+    private SearchQuery.AbstractAttributeQuery createObject(SearchQueryDTO.AbstractAttributeQueryDTO dto) {
+        if (dto instanceof SearchQueryDTO.BooleanAttributeQueryDTO) {
+            SearchQueryDTO.BooleanAttributeQueryDTO booleanDTO = (SearchQueryDTO.BooleanAttributeQueryDTO) dto;
+            SearchQuery.BooleanAttributeQuery attr = new SearchQuery.BooleanAttributeQuery(booleanDTO.getName(),booleanDTO.isBooleanValue());
+            return attr;
+        } else if (dto instanceof SearchQueryDTO.TextAttributeQueryDTO) {
+            SearchQueryDTO.TextAttributeQueryDTO textDTO = (SearchQueryDTO.TextAttributeQueryDTO) dto;
+            SearchQuery.TextAttributeQuery attr = new SearchQuery.TextAttributeQuery(textDTO.getName(),textDTO.getTextValue());
+            return attr;
+        } else if (dto instanceof SearchQueryDTO.NumberAttributeQueryDTO) {
+            SearchQueryDTO.NumberAttributeQueryDTO numberDTO = (SearchQueryDTO.NumberAttributeQueryDTO) dto;
+            SearchQuery.NumberAttributeQuery attr = new SearchQuery.NumberAttributeQuery(numberDTO.getName(),numberDTO.getNumberValue());
+            return attr;
+        } else if (dto instanceof SearchQueryDTO.DateAttributeQueryDTO) {
+            SearchQueryDTO.DateAttributeQueryDTO dateDTO = (SearchQueryDTO.DateAttributeQueryDTO) dto;
+            SearchQuery.DateAttributeQuery attr = new SearchQuery.DateAttributeQuery(dateDTO.getName(),dateDTO.getFromDate(),dateDTO.getToDate());
+            return attr;
+        } else if (dto instanceof SearchQueryDTO.URLAttributeQueryDTO) {
+            SearchQueryDTO.URLAttributeQueryDTO urlDTO = (SearchQueryDTO.URLAttributeQueryDTO) dto;
+            SearchQuery.URLAttributeQuery attr = new SearchQuery.URLAttributeQuery(urlDTO.getName(),urlDTO.getUrlValue());
+            return attr;
+        } else {
+            throw new IllegalArgumentException("Attribute query not supported");
+        }
     }
 
     private InstanceAttribute createObject(InstanceAttributeDTO dto) {
@@ -904,12 +881,6 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             InstanceDateAttribute attr = new InstanceDateAttribute();
             attr.setName(dto.getName());
             attr.setDateValue((Date) dto.getValue());
-            return attr;
-        } else if (dto instanceof InstanceDateAttributeSearchDTO) {
-            InstanceDateAttributeSearch attr = new InstanceDateAttributeSearch();
-            attr.setName(dto.getName());
-            attr.setDateFrom(((InstanceDateAttributeSearchDTO) dto).getDateFrom());
-            attr.setDateTo(((InstanceDateAttributeSearchDTO) dto).getDateTo());
             return attr;
         } else if (dto instanceof InstanceURLAttributeDTO) {
             InstanceURLAttribute attr = new InstanceURLAttribute();
@@ -1028,7 +999,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         return generateMDocResponse(findMDocsByTag(workspaceId, label), startOffset, chunkSize);
     }
 
-    public MDocResponse searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, InstanceAttributeDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize) throws ApplicationException {
+    public MDocResponse searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize) throws ApplicationException {
         return generateMDocResponse(searchMDocs(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, attributes, tags, content), startOffset, chunkSize);
     }
     
