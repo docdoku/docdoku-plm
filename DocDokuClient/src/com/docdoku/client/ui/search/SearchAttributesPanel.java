@@ -30,14 +30,11 @@ import javax.swing.*;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.entities.InstanceAttribute;
 import com.docdoku.core.entities.InstanceAttributeTemplate;
-import com.docdoku.core.entities.InstanceBooleanAttribute;
-import com.docdoku.core.entities.InstanceDateAttribute;
-import com.docdoku.core.entities.InstanceNumberAttribute;
-import com.docdoku.core.entities.InstanceTextAttribute;
 import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.entities.SearchQuery;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
@@ -45,6 +42,8 @@ import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JCheckBox;
@@ -139,15 +138,15 @@ public class SearchAttributesPanel extends JPanel {
         createLayout();
     }
 
-    public InstanceAttribute[] getInstanceAttributes(){
-        List<InstanceAttribute> attrList = new ArrayList<InstanceAttribute>();
+    public SearchQuery.AbstractAttributeQuery[] getInstanceAttributes(){
+        List<SearchQuery.AbstractAttributeQuery> attrList = new ArrayList<SearchQuery.AbstractAttributeQuery>();
         for(AttributePanel panel:mAttributePanels){
-            InstanceAttribute attr=panel.getInstanceAttribute();
+            SearchQuery.AbstractAttributeQuery attr=panel.getInstanceAttribute();
             if(attr!=null)
                 attrList.add(attr);
              
         }
-        return attrList.toArray(new InstanceAttribute[attrList.size()]);
+        return attrList.toArray(new SearchQuery.AbstractAttributeQuery[attrList.size()]);
     }
     
     private void createLayout() {
@@ -239,24 +238,20 @@ public class SearchAttributesPanel extends JPanel {
             });
         }
         
-        public InstanceAttribute getInstanceAttribute(){
+        public SearchQuery.AbstractAttributeQuery getInstanceAttribute(){
             String name = mNameText.getText();
             if(name==null || name.equals(""))
                 return null;
             
             InstanceAttributeTemplate.AttributeType attributeType = (InstanceAttributeTemplate.AttributeType)mTypeList.getSelectedItem();
-            InstanceAttribute attr = null;
+            SearchQuery.AbstractAttributeQuery attr = null;
             
             switch (attributeType) {
             case TEXT:
-                attr = new InstanceTextAttribute();
                 JTextField componentText = (JTextField) mValueComponent;
-                Object value = componentText.getText();
-                attr.setName(name);
-                attr.setValue(value);
+                attr = new SearchQuery.TextAttributeQuery(name,componentText.getText()+"");
                 break;
             case NUMBER:
-                attr = new InstanceNumberAttribute();
                 JFormattedTextField componentNumber = (JFormattedTextField) mValueComponent;
                 
                 float floatValue = 0;
@@ -264,21 +259,28 @@ public class SearchAttributesPanel extends JPanel {
                     floatValue = NumberFormat.getInstance().parse(componentNumber.getText()).floatValue();
                 } catch (ParseException pEx) {
                     System.err.println(pEx.getMessage());
-                }              
-                attr.setName(name);
-                attr.setValue(floatValue);
+                }
+                attr = new SearchQuery.NumberAttributeQuery(name,floatValue);
                 break;
             case BOOLEAN:
-                attr = new InstanceBooleanAttribute();
                 JCheckBox componentBoolean = (JCheckBox) mValueComponent;
-                attr.setName(name);
-                attr.setValue(componentBoolean.isSelected());
+                attr = new SearchQuery.BooleanAttributeQuery(name,componentBoolean.isSelected());
                 break;
             case DATE:
-                attr = new InstanceDateAttribute();
-                JSpinner componentDate = (JSpinner) mValueComponent;
-                attr.setName(name);
-                attr.setValue(componentDate.getValue());
+                DateAttributePanel componentDate = (DateAttributePanel) mValueComponent;
+                Object fromValue = componentDate.getSpinnerDateFrom().getValue();
+                Date dateFromValue = null;
+                if(fromValue instanceof Date){
+                    dateFromValue=(Date)fromValue;
+                }
+                Object toValue = componentDate.getSpinnerDateTo().getValue();
+                Date dateToValue = null;
+                if(toValue instanceof Date){
+                    dateToValue=(Date)toValue;
+                }
+                attr = new SearchQuery.DateAttributeQuery(name,dateFromValue,dateToValue);
+
+
                 break;
             }
             return attr;
@@ -323,11 +325,44 @@ public class SearchAttributesPanel extends JPanel {
                 case BOOLEAN:
                     return new JCheckBox();
                 case DATE:
-                    return new JSpinner(new SpinnerDateModel());
+                    return new DateAttributePanel();
                 case TEXT:
                 default:
                     return new JTextField(new MaxLengthDocument(50), "", 10);
             }
         }
+    }
+    private static class DateAttributePanel extends JPanel{
+        private JSpinner mSpinnerDateFrom;
+        private JSpinner mSpinnerDateTo;
+
+        private final static Date FROM_DATE;
+
+        static {
+            Calendar cal = Calendar.getInstance();
+            cal.set(2000, 0, 1, 0, 0);
+            FROM_DATE = cal.getTime();
+        }
+
+        public DateAttributePanel(){
+            setLayout(new FlowLayout(FlowLayout.LEFT));
+            mSpinnerDateFrom = new JSpinner(new SpinnerDateModel(FROM_DATE, null, null, Calendar.DAY_OF_MONTH));
+            mSpinnerDateTo = new JSpinner(new SpinnerDateModel());
+
+            add(new JLabel(I18N.BUNDLE.getString("FromDate_label")));
+            add(mSpinnerDateFrom);
+            add(new JLabel(I18N.BUNDLE.getString("ToDate_label")));
+            add(mSpinnerDateTo);
+        }
+
+        public JSpinner getSpinnerDateFrom() {
+            return mSpinnerDateFrom;
+        }
+
+        public JSpinner getSpinnerDateTo() {
+            return mSpinnerDateTo;
+        }
+
+        
     }
 }

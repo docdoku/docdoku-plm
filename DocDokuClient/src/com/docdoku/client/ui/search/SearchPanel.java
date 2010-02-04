@@ -165,17 +165,15 @@ public class SearchPanel extends JPanel {
         constraints.gridy = 5;
         constraints.weightx = 0;
         constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
         add(new JLabel(I18N.BUNDLE.getString("FromDate_label")), constraints);
-        constraints.weightx = 1;
         constraints.gridx = 2;
         add(mSpinnerCreationDateFrom, constraints);
-        constraints.weightx = 0;
         constraints.gridx = 3;
         add(new JLabel(I18N.BUNDLE.getString("ToDate_label")), constraints);
-        constraints.weightx = 1;
         constraints.gridx = 4;
         add(mSpinnerCreationDateTo, constraints);
-        
+
         constraints.gridx = 0;
         constraints.gridy = GridBagConstraints.RELATIVE;
         constraints.weighty = 1;

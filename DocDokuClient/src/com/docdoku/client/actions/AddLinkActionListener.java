@@ -32,6 +32,7 @@ import com.docdoku.core.entities.User;
 import com.docdoku.core.entities.keys.Version;
 import com.docdoku.core.entities.MasterDocument;
 
+import com.docdoku.core.entities.SearchQuery;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,7 +56,7 @@ public class AddLinkActionListener implements ActionListener {
                     User author = source.getAuthor();
                     String type = source.getType();
                     String[] tags = source.getTags();
-                    InstanceAttribute[] attrs = source.getInstanceAttributes();
+                    SearchQuery.AbstractAttributeQuery[] attrs = source.getInstanceAttributes();
                     String content = source.getContent();
                     Date creationDateFrom = source.getCreationDateFrom();
                     Date creationDateTo = source.getCreationDateTo();

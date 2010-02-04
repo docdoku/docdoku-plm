@@ -47,6 +47,7 @@ import java.util.*;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.entities.InstanceAttribute;
+import com.docdoku.core.entities.SearchQuery;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.ws.developer.StreamingDataHandler;
 import java.io.InterruptedIOException;
@@ -859,12 +860,12 @@ public class MainModel {
 
     public MasterDocument[] searchMDocs(String pMDocId, String pTitle,
             Version pVersion, User pAuthor, String pType, Date pCreationDateFrom,
-            Date pCreationDateTo, InstanceAttribute[] pAttributes, String[] pTags, String pContent) throws Exception{
+            Date pCreationDateTo, SearchQuery.AbstractAttributeQuery[] pAttributes, String[] pTags, String pContent) throws Exception{
         MasterDocument[] mdocs = null;
         try {
             System.out.println("Searching for master document " + pMDocId + " version " + pVersion + " title " + pTitle + " author " + pAuthor + " creation date between " + pCreationDateFrom + " and " + pCreationDateTo + " tags " + pTags + " content " + pContent);
-            mdocs = Tools.resetParentReferences(mCommandService.searchMDocs(getWorkspace().getId(), pMDocId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
-                    pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent));
+            mdocs = Tools.resetParentReferences(mCommandService.searchMDocs(new SearchQuery(getWorkspace().getId(), pMDocId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
+                    pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent)));
         //TODO cache mdocs ?
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
