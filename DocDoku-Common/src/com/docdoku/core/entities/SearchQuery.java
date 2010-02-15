@@ -20,7 +20,9 @@
 
 package com.docdoku.core.entities;
 
+import java.io.Serializable;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * Wraps data needed to perform a query on documents.
@@ -29,188 +31,248 @@ import java.util.Date;
  * @version 2.0, 27/01/10
  * @since   V2.0
  */
-public class SearchQuery {
+public class SearchQuery implements Serializable{
     
-    private String m_workspaceId;
-    private String m_mdocId;
-    private String m_title;
-    private String m_version;
-    private String m_author;
-    private String m_type;
-    private Date m_creationDateFrom;
-    private Date m_creationDateTo;
-    private AbstractAttributeQuery[] m_attributes;
-    private String[] m_tags;
-    private String m_content;
+    private String workspaceId;
+    private String mdocId;
+    private String title;
+    private String version;
+    private String author;
+    private String type;
+    private Date creationDateFrom;
+    private Date creationDateTo;
+    private AbstractAttributeQuery[] attributes;
+    private String[] tags;
+    private String content;
 
 
     public SearchQuery(){
         
     }
 
+    public SearchQuery(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
+        this.workspaceId=workspaceId;
+        this.mdocId=mdocId;
+        this.title=title;
+        this.version=version;
+        this.author=author;
+        this.type=type;
+        this.creationDateFrom=creationDateFrom;
+        this.creationDateTo=creationDateTo;
+        this.attributes=attributes;
+        this.tags=tags;
+        this.content=content;
+    }
+    
     public void setAttributes(AbstractAttributeQuery[] attributes) {
-        this.m_attributes = attributes;
+        this.attributes = attributes;
     }
 
     public void setAuthor(String author) {
-        this.m_author = author;
+        this.author = author;
     }
 
     public void setContent(String content) {
-        this.m_content = content;
+        this.content = content;
     }
 
     public void setCreationDateFrom(Date creationDateFrom) {
-        this.m_creationDateFrom = creationDateFrom;
+        this.creationDateFrom = creationDateFrom;
     }
 
     public void setCreationDateTo(Date creationDateTo) {
-        this.m_creationDateTo = creationDateTo;
+        this.creationDateTo = creationDateTo;
     }
 
     public void setMDocId(String mdocId) {
-        this.m_mdocId = mdocId;
+        this.mdocId = mdocId;
     }
 
     public void setTags(String[] tags) {
-        this.m_tags = tags;
+        this.tags = tags;
     }
 
     public void setTitle(String title) {
-        this.m_title = title;
+        this.title = title;
     }
 
     public void setType(String type) {
-        this.m_type = type;
+        this.type = type;
     }
 
     public void setVersion(String version) {
-        this.m_version = version;
+        this.version = version;
     }
 
     public void setWorkspaceId(String workspaceId) {
-        this.m_workspaceId = workspaceId;
+        this.workspaceId = workspaceId;
     }
 
 
     public AbstractAttributeQuery[] getAttributes() {
-        return m_attributes;
+        return attributes;
     }
 
     public String getAuthor() {
-        return m_author;
+        return author;
     }
 
     public String getContent() {
-        return m_content;
+        return content;
     }
 
     public Date getCreationDateFrom() {
-        return m_creationDateFrom;
+        return creationDateFrom;
     }
 
     public Date getCreationDateTo() {
-        return m_creationDateTo;
+        return creationDateTo;
     }
 
     public String getMDocId() {
-        return m_mdocId;
+        return mdocId;
     }
 
     public String[] getTags() {
-        return m_tags;
+        return tags;
     }
 
     public String getTitle() {
-        return m_title;
+        return title;
     }
 
     public String getType() {
-        return m_type;
+        return type;
     }
 
     public String getVersion() {
-        return m_version;
+        return version;
     }
 
     public String getWorkspaceId() {
-        return m_workspaceId;
+        return workspaceId;
     }
 
-
-    public static abstract class AbstractAttributeQuery{
-        protected String m_name;
+    @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})
+    public static abstract class AbstractAttributeQuery implements Serializable{
+        protected String name;
         
         public String getName() {
-            return m_name;
+            return name;
         }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public AbstractAttributeQuery(){}
         public AbstractAttributeQuery(String name){
-            m_name=name;
+            this.name=name;
         }
         public abstract boolean attributeMatches(InstanceAttribute attr);
     }
 
     public static class TextAttributeQuery extends AbstractAttributeQuery{
-        private String m_value;
+        private String textValue;
+        public TextAttributeQuery(){}
         public TextAttributeQuery(String name, String value){
             super(name);
-            m_value=value;
+            this.textValue=value;
+        }
+        public String getTextValue() {
+            return textValue;
+        }
+        public void setTextValue(String textValue) {
+            this.textValue = textValue;
         }
         @Override
         public boolean attributeMatches(InstanceAttribute attr){
-            return attr.isValueEquals(m_value);
+            return attr.isValueEquals(textValue);
         }
     }
     public static class NumberAttributeQuery extends AbstractAttributeQuery{
-        private float m_value;
+        private float numberValue;
+        public NumberAttributeQuery(){}
         public NumberAttributeQuery(String name, float value){
             super(name);
-            m_value=value;
+            this.numberValue=value;
+        }
+        public float getNumberValue() {
+            return numberValue;
+        }
+        public void setNumberValue(float numberValue) {
+            this.numberValue = numberValue;
         }
         @Override
         public boolean attributeMatches(InstanceAttribute attr){
-            return attr.isValueEquals(m_value);
+            return attr.isValueEquals(numberValue);
         }
     }
     public static class BooleanAttributeQuery extends AbstractAttributeQuery{
-        private boolean m_value;
+        private boolean booleanValue;
+        public BooleanAttributeQuery(){}
         public BooleanAttributeQuery(String name, boolean value){
             super(name);
-            m_value=value;
+            this.booleanValue=value;
+        }
+        public boolean isBooleanValue() {
+            return booleanValue;
+        }
+        public void setBooleanValue(boolean booleanValue) {
+            this.booleanValue = booleanValue;
         }
         @Override
         public boolean attributeMatches(InstanceAttribute attr){
-            return attr.isValueEquals(m_value);
+            return attr.isValueEquals(booleanValue);
         }
     }
     public static class URLAttributeQuery extends AbstractAttributeQuery{
-        private String m_value;
+        private String urlValue;
+        public URLAttributeQuery(){}
         public URLAttributeQuery(String name, String value){
             super(name);
-            m_value=value;
+            this.urlValue=value;
+        }
+
+        public void setUrlValue(String urlValue) {
+            this.urlValue = urlValue;
+        }
+        public String getUrlValue() {
+            return urlValue;
         }
         @Override
         public boolean attributeMatches(InstanceAttribute attr){
-            return attr.isValueEquals(m_value);
+            return attr.isValueEquals(urlValue);
         }
     }
     public static class DateAttributeQuery extends AbstractAttributeQuery{
-        private Date m_fromDate;
-        private Date m_toDate;
+        private Date fromDate;
+        private Date toDate;
+        public DateAttributeQuery(){}
         public DateAttributeQuery(String name, Date fromDate, Date toDate){
             super(name);
-            m_fromDate=fromDate;
-            m_toDate=toDate;
+            this.fromDate=fromDate;
+            this.toDate=toDate;
         }
-
+        public Date getFromDate() {
+            return fromDate;
+        }
+        public void setFromDate(Date fromDate) {
+            this.fromDate = fromDate;
+        }
+        public Date getToDate() {
+            return toDate;
+        }
+        public void setToDate(Date toDate) {
+            this.toDate = toDate;
+        }
         @Override
         public boolean attributeMatches(InstanceAttribute attr) {
             if (attr instanceof InstanceDateAttribute) {
                 InstanceDateAttribute dateAttr = (InstanceDateAttribute) attr;
                 Date dateValue = dateAttr.getDateValue();
-                return !(dateValue.after(m_toDate) || dateValue.before(m_fromDate));
-            }else
-                return false;
+                if(toDate !=null && fromDate !=null)
+                    return !(dateValue.after(toDate) || dateValue.before(fromDate));
+            }
+            return false;
         }
     }
 }
