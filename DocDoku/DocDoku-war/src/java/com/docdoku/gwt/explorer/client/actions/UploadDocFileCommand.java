@@ -20,6 +20,7 @@
 package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
+import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.FileUpload;
@@ -50,8 +51,9 @@ public class UploadDocFileCommand implements Action {
 
         if(index!=-1)
             fileName=fileName.substring(index+1);
-            
-        String url = "/mydocdoku/" + "files/" + URL.encode(mdoc.getWorkspaceId()) + "/" + "documents/" + URL.encode(mdoc.getId()) + "/" + mdoc.getVersion() + "/" + mdoc.getLastIteration().getIteration() + "/" + URL.encode(fileName);
+
+        String webappContext = HTMLUtil.getWebContext();
+        String url = "/" + webappContext + "/files/" + URL.encode(mdoc.getWorkspaceId()) + "/" + "documents/" + URL.encode(mdoc.getId()) + "/" + mdoc.getVersion() + "/" + mdoc.getLastIteration().getIteration() + "/" + URL.encode(fileName);
         form.setAction(url);
         form.submit();
     }

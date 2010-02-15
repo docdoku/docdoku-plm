@@ -24,9 +24,14 @@
                     <fmt:message key="toplinks.notRegistered"/> <a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="toplinks.subscribe"/></a>
                 </c:when>
                 <c:otherwise>
-                    <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp"><fmt:message key="toplinks.workspace"/></a>
-                    <a href="#" onClick="this.blur();switchMenu('menu');">&#9660;</a>
+                    <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');"><fmt:message key="toplinks.workspace"/>&#9660;</a>
                     <ul id="menu" style="position:absolute; right: 280px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
+                            <li>
+                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
+                                    <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                     onmouseout="this.style.backgroundColor='';this.style.color='';"><fmt:message key="toplinks.admin"/></div></a>
+                            </li>
+                            <hr/>
                         <c:forEach var="item" items="${administeredWorkspaces}">
                             <li>
                                 <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/explorer/${item.value.id}">

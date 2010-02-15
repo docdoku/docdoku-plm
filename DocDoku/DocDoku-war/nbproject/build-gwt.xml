@@ -3,7 +3,7 @@
 <project name="DocDoku-war-gwt" default="-post-compile" basedir="..">
     <description>Generates Javascript for DocDoku-war.</description>
     
-    <target name="-post-compile">        
+    <target name="-post-compile">
         <java classpath="${javac.classpath}:${src.dir}" failonerror="true"
               classname="com.google.gwt.dev.Compiler" fork="true"
               jvmargs="-Xmx256M -Xss1M">
@@ -13,14 +13,14 @@
         </java>
     </target>
 
-     <target name="launchHostedMode" depends="init">
+     <target name="launchDevMode" depends="init">
         <java classpath="${javac.classpath}:${src.dir}" failonerror="true"
-            jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.HostedMode" fork="true">
+            jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.DevMode" fork="true">
             <arg value="-noserver"/>
-            <arg value="-port"/>
-            <arg value="8080"/>
+<!--            <arg value="-port"/>
+            <arg value="8080"/>-->
             <arg value="-startupUrl"/>
-            <arg value="/mydocdoku"/>
+            <arg value="http://localhost:8080/mydocdoku/"/>
             <arg value="-war"/>
             <arg path="${build.web.dir}/"/>
             <arg value="com.docdoku.gwt.explorer.Explorer"/>

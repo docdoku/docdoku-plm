@@ -8,6 +8,7 @@ import com.docdoku.gwt.explorer.common.DocumentDTO;
 import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.docdoku.gwt.explorer.common.UserDTO;
+import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -138,8 +139,7 @@ public class DocPanel extends FlexTable {
             revision = mdoc.getIterations().get(it).getRevisionNote();
         }
 
-        //TODO make it relative
-        String webappContext = "mydocdoku";
+        String webappContext = HTMLUtil.getWebContext();
         String htmlLink = "<a href=\"/" + webappContext + "/documents/" + mdoc.getWorkspaceId() + "/" + mdoc.getId() + "/" + mdoc.getVersion() + "\">" + i18n.permaLink() + "</a>";
         m_mainPanel.setPermaLink(htmlLink);
 

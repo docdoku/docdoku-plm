@@ -20,6 +20,7 @@
 package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
+import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
 import com.docdoku.gwt.explorer.common.MasterDocumentTemplateDTO;
 import com.google.gwt.http.client.URL;
@@ -42,8 +43,9 @@ public class UploadTemplateFileCommand implements Action {
         FileUpload upload = m_mainPage.getEditTemplateFilesPanel().getFileUpload();
         FormPanel form = m_mainPage.getEditTemplateFilesPanel().getForm();
         MasterDocumentTemplateDTO template = m_mainPage.getLastOpenedMDocTemplate();
-        //TODO make it relative
-        String url = "/mydocdoku/" + "files/" + URL.encode(template.getWorkspaceId()) + "/" + "templates/" + URL.encode(template.getId()) + "/" + URL.encode(upload.getFilename());
+
+        String webappContext = HTMLUtil.getWebContext();
+        String url = "/" + webappContext + "/files/" + URL.encode(template.getWorkspaceId()) + "/" + "templates/" + URL.encode(template.getId()) + "/" + URL.encode(upload.getFilename());
         form.setAction(url);
         form.submit();
     }

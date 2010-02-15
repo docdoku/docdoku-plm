@@ -2,6 +2,7 @@ package com.docdoku.gwt.explorer.client.ui.widget;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
+import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Event;
@@ -131,8 +132,7 @@ public class FilesPanel extends DataRoundedPanel implements FormPanel.SubmitComp
             fileCheckBox.setVisible(m_editionMode);
             m_fileList.setWidget(i, 0, fileCheckBox);
 
-            //TODO make it relative
-            String webappContext = "mydocdoku";
+            String webappContext = HTMLUtil.getWebContext();
             String htmlLink = "<a href=\"/" + webappContext + "/files/" + file.getValue() + "\">" + file.getKey() + "</a>";
             m_fileList.setHTML(i, 1, htmlLink);
             i++;
