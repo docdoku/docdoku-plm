@@ -50,6 +50,7 @@ public interface ActionFactory extends ElementSelectedListener{
     public Action getManageTagsAction();
     public Action getSearchAction();
     public Action getCreateWorkflowModelAction();
+    public Action getDisplayShortcutsAction();
 }
 
 

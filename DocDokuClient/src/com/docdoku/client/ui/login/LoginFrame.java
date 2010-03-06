@@ -87,6 +87,7 @@ public class LoginFrame extends JFrame implements ActionListener {
         mValidButton.addActionListener(this);
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         mAction.actionPerformed(new ActionEvent(this, 0, null));
     }

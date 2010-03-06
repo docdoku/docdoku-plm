@@ -55,11 +55,13 @@ public class ActionFactoryImpl implements ActionFactory {
         mOwner = pOwner;
         mActions = new HashMap<String, Action>();
     }
-    
+
+    @Override
     public ActionFactory clone(ExplorerFrame pOwner) {
         return new ActionFactoryImpl(pOwner);
     }
-    
+
+    @Override
     public Action getCreateMDocAction() {
         Action action = mActions.get("CreateMDocAction");
         if (action == null) {
@@ -69,7 +71,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCreateMDocTemplateAction() {
         Action action = mActions.get("CreateMDocTemplateAction");
         if (action == null) {
@@ -78,7 +81,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCheckInAction() {
         Action action = mActions.get("CheckInAction");
         if (action == null) {
@@ -88,7 +92,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCheckOutAction() {
         Action action = mActions.get("CheckOutAction");
         if (action == null) {
@@ -98,7 +103,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getUndoCheckOutAction() {
         Action action = mActions.get("UndoCheckOutAction");
         if (action == null) {
@@ -108,7 +114,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getDeleteElementAction() {
         Action action = mActions.get("DeleteElementAction");
         if (action == null) {
@@ -118,7 +125,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getRefreshAction() {
         Action action = mActions.get("RefreshAction");
         if (action == null) {
@@ -127,7 +135,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCreateFolderAction() {
         Action action = mActions.get("CreateFolderAction");
         if (action == null) {
@@ -137,7 +146,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getEditElementAction() {
         Action action = mActions.get("EditElementAction");
         if (action == null) {
@@ -147,7 +157,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCreateVersionAction() {
         Action action = mActions.get("CreateVersionAction");
         if (action == null) {
@@ -157,7 +168,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getViewElementAction() {
         Action action = mActions.get("ViewElementAction");
         if (action == null) {
@@ -167,7 +179,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getViewIterationsAction() {
         Action action = mActions.get("ViewIterationsAction");
         if (action == null) {
@@ -177,7 +190,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getNotificationAction() {
         Action action = mActions.get("NotificationAction");
         if (action == null) {
@@ -187,7 +201,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getEditUserAction() {
         Action action = mActions.get("EditUserAction");
         if (action == null) {
@@ -196,7 +211,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getNewWinAction() {
         Action action = mActions.get("NewWinAction");
         if (action == null) {
@@ -205,7 +221,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getExportAction() {
         Action action = mActions.get("ExportAction");
         if (action == null) {
@@ -215,7 +232,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCloseWinAction() {
         Action action = mActions.get("CloseWinAction");
         if (action == null) {
@@ -224,7 +242,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getSettingAction() {
         Action action = mActions.get("SettingAction");
         if (action == null) {
@@ -233,7 +252,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getApproveAction() {
         Action action = mActions.get("ApproveAction");
         if (action == null) {
@@ -243,7 +263,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getRejectAction() {
         Action action = mActions.get("RejectAction");
         if (action == null) {
@@ -253,7 +274,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getManageTagsAction() {
         Action action = mActions.get("ManageTagsAction");
         if (action == null) {
@@ -263,7 +285,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getSearchAction() {
         Action action = mActions.get("SearchAction");
         if (action == null) {
@@ -272,7 +295,8 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
+
+    @Override
     public Action getCreateWorkflowModelAction() {
         Action action = mActions.get("CreateWorkflowModelAction");
         if (action == null) {
@@ -281,8 +305,18 @@ public class ActionFactoryImpl implements ActionFactory {
         }
         return action;
     }
-    
-    
+
+    @Override
+    public Action getDisplayShortcutsAction() {
+        Action action = mActions.get("DisplayShortcutsAction");
+        if (action == null) {
+            action = new DisplayShortcutsAction(mOwner);
+            mActions.put("DisplayShortcutsAction", action);
+        }
+        return action;
+    }
+
+    @Override
     public void elementSelected(ElementSelectedEvent pElmentSelectedEvent) {
         Object selection = pElmentSelectedEvent.getElement();
         ElementType type = pElmentSelectedEvent.getElementType();
@@ -476,4 +510,6 @@ public class ActionFactoryImpl implements ActionFactory {
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
     }
+
+
 }

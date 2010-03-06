@@ -30,6 +30,7 @@ import com.docdoku.client.data.TagTreeNode;
 import com.docdoku.client.data.TemplateTreeNode;
 import com.docdoku.client.data.WorkflowModelTreeNode;
 import com.docdoku.client.ui.common.ElementsScrollPane;
+import com.docdoku.client.ui.help.ShortcutsPanel;
 import com.docdoku.core.entities.MasterDocument;
 import com.docdoku.core.entities.MasterDocumentTemplate;
 import com.docdoku.core.entities.WorkflowModel;
@@ -61,7 +62,10 @@ public class ExplorerFrame extends JFrame {
     private MasterDocumentTemplate mSelectedMDocTemplate;
     private ActionFactory mActionFactory;
     private TransferHandler mTransferHandler;
-    
+
+    private Container mRegularPanel;
+    private Container mShortcutsPanel;
+
     private List<ElementSelectedListener> mElementSelectedListener;
     
     
@@ -85,6 +89,8 @@ public class ExplorerFrame extends JFrame {
         mMenuBar = new ExplorerMenu(mStatusLabel);
         mPopupMenu = new ExplorerPopupMenu();
         mElementSelectedListener = new LinkedList<ElementSelectedListener>();
+        mRegularPanel=new JPanel(new BorderLayout());
+        mShortcutsPanel=new ShortcutsPanel();
         createLayout();
         createListener();
         mInstances.add(this);
@@ -97,13 +103,13 @@ public class ExplorerFrame extends JFrame {
                 ExplorerFrame.class
                 .getResource("/com/docdoku/client/resources/icons/logo.png"));
         this.setIconImage(img);
-        getContentPane().setLayout(new BorderLayout());
         JPanel main = new JPanel();
         main.setLayout(new BorderLayout());
         main.add(mToolBar, BorderLayout.NORTH);
         main.add(mSplitPane, BorderLayout.CENTER);
-        getContentPane().add(main, BorderLayout.CENTER);
-        getContentPane().add(mStatusLabel, BorderLayout.SOUTH);
+        mRegularPanel.add(main, BorderLayout.CENTER);
+        mRegularPanel.add(mStatusLabel, BorderLayout.SOUTH);
+        
         setJMenuBar(mMenuBar);
         mFolderTree.setComponentPopupMenu(mPopupMenu);
         mRightScrollPane.getElementsTable().setComponentPopupMenu(mPopupMenu);
@@ -209,11 +215,21 @@ public class ExplorerFrame extends JFrame {
                 return this;
             }
         });
+        showRegularPanel();
     }
-    
+
+    public void showRegularPanel(){
+        setContentPane(mRegularPanel);
+    }
+
+    public void showShortcutsPanel(){
+        setContentPane(mShortcutsPanel);
+    }
+
     private void createListener() {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         mFolderTree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
             public void valueChanged(TreeSelectionEvent pTSE) {
                 TreePath path = pTSE.getPath();
                 FolderTreeNode node = (FolderTreeNode) path

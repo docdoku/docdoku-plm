@@ -64,6 +64,7 @@ public class ExplorerMenu extends JMenuBar {
     private ButtonMenu mSetting;
     
     private JMenuItem mHelpOnline;
+    private ButtonMenu mShortcuts;
     private JMenuItem mAbout;
     
     public ExplorerMenu(JLabel pStatusLabel) {
@@ -169,7 +170,10 @@ public class ExplorerMenu extends JMenuBar {
         mHelpOnline = new JMenuItem(I18N.BUNDLE.getString("HeplMenuOption_title"), helpIcon);
         mHelpOnline.setMnemonic(I18N.getCharBundle("HeplMenuOption_mnemonic_key"));
         
+        mShortcuts = new ButtonMenu(pStatusLabel);
+        
         help.add(mHelpOnline);
+        help.add(mShortcuts);
         help.add(mAbout);
     }
     
@@ -183,6 +187,7 @@ public class ExplorerMenu extends JMenuBar {
         mClose.setAction(pActionFactory.getCloseWinAction());
         
         mQuit.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 System.exit(0);
             }
@@ -207,6 +212,7 @@ public class ExplorerMenu extends JMenuBar {
         mSetting.setAction(pActionFactory.getSettingAction());
         
         mHelpOnline.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 try {
                     String page = "help";
@@ -221,12 +227,15 @@ public class ExplorerMenu extends JMenuBar {
                 }
             }
         });
+        mShortcuts.setAction(pActionFactory.getDisplayShortcutsAction());
         mAbout.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 String aboutMessage = I18N.BUNDLE.getString("About_copyright");
                 
                 final OKButton option = new OKButton(I18N.BUNDLE.getString("Ok_button"));
                 option.addActionListener(new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         Window topWindow =
                                 (Window) option.getTopLevelAncestor();

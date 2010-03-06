@@ -56,6 +56,7 @@ public class ExplorerBoot {
             Config.setHTTPCodebase(webURL);
             MainController.init(lookupCommandWebService(commandServiceURL), lookupUploadDownloadWebService(new URL(webURL,"UploadDownloadService?wsdl")));
             SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
                 public void run() {
                     LoginFrame frame = new LoginFrame(new LoginActionListener());
                 }
