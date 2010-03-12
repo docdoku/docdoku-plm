@@ -66,11 +66,11 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     private SessionContext ctx;
     @Resource(name = "vaultPath")
     private String vaultPath;
-    @Resource(name = "jms/connectionFactory")
+    @Resource(name = "jms/docdokuConnFactory")
     private ConnectionFactory connectionFactory;
-    @Resource(name = "jms/mailerQueue")
+    @Resource(name = "jms/docdokuMailerQueue")
     private Queue mailerQueue;
-    @Resource(name = "jms/indexerQueue")
+    @Resource(name = "jms/docdokuIndexerQueue")
     private Queue indexerQueue;
     @EJB
     private IIndexSearcherLocal indexSearcher;

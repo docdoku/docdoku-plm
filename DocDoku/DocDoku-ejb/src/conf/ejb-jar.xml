@@ -24,8 +24,8 @@
             <env-entry>
                 <env-entry-name>codebase</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://localhost:8080/mydocdoku</env-entry-value>
-                <!--<env-entry-value>http://www.docdoku.net/mydocdoku</env-entry-value>-->             
+                <env-entry-value>http://localhost:8080</env-entry-value>
+                <!--<env-entry-value>http://www.docdoku.net</env-entry-value>-->             
             </env-entry>
         </message-driven>
         <message-driven>
@@ -38,4 +38,5 @@
             </env-entry>
         </message-driven>
     </enterprise-beans>
+    <ejb-client-jar>DocDoku-Common.jar</ejb-client-jar>
 </ejb-jar>

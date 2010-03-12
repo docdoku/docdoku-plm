@@ -116,11 +116,9 @@ is divided into following sections:
         <property name="javadoc.encoding.used" value="${source.encoding}"/>
         <property name="includes" value="**"/>
         <property name="excludes" value=""/>
-        <condition else="" property="javac.compilerargs.jaxws" value="-Djava.endorsed.dirs='${jaxws.endorsed.dir}'">
-            <and>
-                <isset property="jaxws.endorsed.dir"/>
-                <available file="nbproject/jaxws-build.xml"/>
-            </and>
+        <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
+        <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
+            <length length="0" string="${endorsed.classpath}" when="greater"/>
         </condition>
     </target>
     <target depends="init" name="-init-cos" unless="deploy.on.save">
@@ -182,7 +180,8 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
-                    <compilerarg line="${javac.compilerargs} ${javac.compilerargs.jaxws}"/>
+                    <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
+                    <compilerarg line="${javac.compilerargs}"/>
                     <customize/>
                 </javac>
             </sequential>
@@ -194,7 +193,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <attribute default="${excludes}" name="excludes"/>
             <attribute default="**" name="testincludes"/>
             <sequential>
-                <junit dir="${basedir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true">
+                <junit dir="${basedir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true" tempdir="${java.io.tmpdir}">
                     <batchtest todir="${build.test.results.dir}">
                         <fileset dir="${test.src.dir}" excludes="@{excludes},${excludes}" includes="@{includes}">
                             <filename name="@{testincludes}"/>
@@ -203,6 +202,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     <classpath>
                         <path path="${run.test.classpath}"/>
                         <path path="${j2ee.platform.classpath}"/>
+                        <path path="${j2ee.platform.embeddableejb.classpath}"/>
                     </classpath>
                     <syspropertyset>
                         <propertyref prefix="test-sys-prop."/>
@@ -210,6 +210,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     </syspropertyset>
                     <formatter type="brief" usefile="false"/>
                     <formatter type="xml"/>
+                    <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg line="${runmain.jvmargs}"/>
                 </junit>
             </sequential>
@@ -221,6 +222,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <element name="customize" optional="true"/>
             <sequential>
                 <java classname="@{classname}" fork="true">
+                    <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg line="${runmain.jvmargs}"/>
                     <classpath>
                         <path path="${build.classes.dir}:${javac.classpath}:${j2ee.platform.classpath}"/>
@@ -345,14 +347,12 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${reference.DocDoku-Common.jar}" manifestproperty="manifest.reference.DocDoku-Common.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.lucene-core-2.2.0.jar}" manifestproperty="manifest.file.reference.lucene-core-2.2.0.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.poi-3.0.1-FINAL-20070705.jar}" manifestproperty="manifest.file.reference.poi-3.0.1-FINAL-20070705.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}" manifestproperty="manifest.file.reference.poi-contrib-3.0.1-FINAL-20070705.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}" manifestproperty="manifest.file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar" todir="${dist.ear.dir}"/>
-        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.reference.DocDoku-Common.jar} ${manifest.file.reference.lucene-core-2.2.0.jar} ${manifest.file.reference.poi-3.0.1-FINAL-20070705.jar} ${manifest.file.reference.poi-contrib-3.0.1-FINAL-20070705.jar} ${manifest.file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar} "/>
-        </manifest>
+        <copyfiles files="${reference.DocDoku-Common.jar}" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.lucene-core-2.2.0.jar}" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.poi-3.0.1-FINAL-20070705.jar}" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}" todir="${dist.ear.dir}"/>
+        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
         <copy todir="${classes.dir}">
@@ -550,13 +550,14 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init,compile" if="have.tests" name="-pre-pre-compile-test">
         <mkdir dir="${build.test.classes.dir}"/>
+        <property name="j2ee.platform.embeddableejb.classpath" value=""/>
     </target>
     <target name="-pre-compile-test">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="init,compile,-pre-pre-compile-test,-pre-compile-test" if="have.tests" name="-do-compile-test">
-        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}" debug="true" destdir="${build.test.classes.dir}" srcdir="${test.src.dir}"/>
+        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" srcdir="${test.src.dir}"/>
         <copy todir="${build.test.classes.dir}">
             <fileset dir="${test.src.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
         </copy>
@@ -572,7 +573,7 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,compile,-pre-pre-compile-test,-pre-compile-test-single" if="have.tests" name="-do-compile-test-single">
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
-        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}" debug="true" destdir="${build.test.classes.dir}" excludes="" includes="${javac.includes}" srcdir="${test.src.dir}"/>
+        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" excludes="" includes="${javac.includes}" srcdir="${test.src.dir}"/>
     </target>
     <target name="-post-compile-test-single">
         <!-- Empty placeholder for easier customization. -->
@@ -614,7 +615,7 @@ exists or setup the property manually. For example like this:
         <delete file="${test.report.file}"/>
         <!-- the directory must exist, otherwise the XML formatter would fail -->
         <mkdir dir="${build.test.results.dir}"/>
-        <ejbjarproject1:debug args="${test.class}" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner" classpath="${ant.home}/lib/ant.jar:${ant.home}/lib/ant-junit.jar:${debug.test.classpath}">
+        <ejbjarproject1:debug args="${test.class}" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner" classpath="${ant.home}/lib/ant.jar:${ant.home}/lib/ant-junit.jar:${debug.test.classpath}:${j2ee.platform.embeddableejb.classpath}">
             <customize>
                 <arg value="showoutput=true"/>
                 <arg value="formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter"/>
