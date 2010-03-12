@@ -28,14 +28,14 @@ public class CreateMDocPanel extends FlexTable {
     private Button m_okBtn;
     private Label m_backAction;
     private DescriptionPanel m_descriptionPanel;
-    private SecurityPanel m_securityPanel;
+    //private SecurityPanel m_securityPanel;
     private CreateMDocMainPanel m_mainPanel;
 
     public CreateMDocPanel(final Map<String, Action> cmds) {
         ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
         FlexCellFormatter cellFormatter = getFlexCellFormatter();
         m_descriptionPanel = new DescriptionPanel();
-        m_securityPanel= new SecurityPanel();
+        //m_securityPanel= new SecurityPanel();
         m_mainPanel = new CreateMDocMainPanel();
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
@@ -52,7 +52,8 @@ public class CreateMDocPanel extends FlexTable {
         m_okBtn.addClickHandler(new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                ACLDTO acl=m_securityPanel.getACL();
+                //ACLDTO acl=m_securityPanel.getACL();
+                ACLDTO acl=null;
                 cmds.get("CreateMDocCommand").execute(m_mainPanel.getParentFolderText(),m_mainPanel.getMDocTitle(), m_mainPanel.getMDocId(), m_mainPanel.getTemplateId(), m_mainPanel.getWorkflowModelId(), m_descriptionPanel.getMDocDescription(),acl);
             }
         });
@@ -61,17 +62,17 @@ public class CreateMDocPanel extends FlexTable {
        
         setWidget(0,0, m_mainPanel);
         setWidget(0,1, m_descriptionPanel);
-        setWidget(0,2, m_securityPanel);
+        //setWidget(0,2, m_securityPanel);
         setWidget(1,0,buttonsPanel);
         cellFormatter.setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
         cellFormatter.setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
-        cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
+        //cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
     }
 
     public void clearInputs() {
         m_mainPanel.clearInputs();
         m_descriptionPanel.clearInputs();
-        m_securityPanel.clearInputs();
+        //m_securityPanel.clearInputs();
     }
 
     public String getTemplateId(){
@@ -100,6 +101,7 @@ public class CreateMDocPanel extends FlexTable {
         m_mainPanel.setWorkflowModels(wks);
     }
 
+    /*
     public void setUserMemberships(UserDTO[] userMSs){
         m_securityPanel.setUserMemberships(userMSs);
     }
@@ -107,7 +109,8 @@ public class CreateMDocPanel extends FlexTable {
     public void setUserGroupMemberships(UserGroupDTO[] groupMSs){
         m_securityPanel.setUserGroupMemberships(groupMSs);
     }
-
+    */
+    
     public void setMDocIdEnabled(boolean b) {
         m_mainPanel.setMDocIdEnabled(b) ;
     }

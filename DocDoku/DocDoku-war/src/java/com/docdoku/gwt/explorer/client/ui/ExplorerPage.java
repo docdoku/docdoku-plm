@@ -308,8 +308,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         m_createVersionPanel.setMDocId(id);
         m_createVersionPanel.setMDocVersion(version);
         fetchWorkflowModels();
-        fetchUserGroupMemberships();
-        fetchUserMemberships();
+        //fetchUserGroupMemberships();
+        //fetchUserMemberships();
         inputPanel.setWidget(m_createVersionPanel);
     }
 
@@ -435,8 +435,8 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         m_createMDocPanel.setParentFolder(selectedFolder == null ? "" : selectedFolder);
         fetchWorkflowModels();
         fetchTemplates();
-        fetchUserGroupMemberships();
-        fetchUserMemberships();
+        //fetchUserGroupMemberships();
+        //fetchUserMemberships();
         inputPanel.setWidget(m_createMDocPanel);
     }
 
@@ -653,6 +653,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         ServiceLocator.getInstance().getExplorerService().getWorkflowModels(getWorkspaceId(), callback);
     }
 
+    /*
     private void fetchUserGroupMemberships() {
         AsyncCallback<UserGroupDTO[]> callback = new AsyncCallback<UserGroupDTO[]>() {
 
@@ -667,7 +668,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         };
         ServiceLocator.getInstance().getExplorerService().getWorkspaceUserGroupMemberships(getWorkspaceId(), callback);
     }
-
+    
     private void fetchUserMemberships() {
         AsyncCallback<UserDTO[]> callback = new AsyncCallback<UserDTO[]>() {
 
@@ -682,7 +683,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         };
         ServiceLocator.getInstance().getExplorerService().getWorkspaceUserMemberships(getWorkspaceId(), callback);
     }
-
+    */
     private void fetchTemplates() {
         AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
 

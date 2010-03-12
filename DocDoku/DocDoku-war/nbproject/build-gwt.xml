@@ -20,7 +20,7 @@
 <!--            <arg value="-port"/>
             <arg value="8080"/>-->
             <arg value="-startupUrl"/>
-            <arg value="http://localhost:8080/mydocdoku/"/>
+            <arg value="http://localhost:8080/"/>
             <arg value="-war"/>
             <arg path="${build.web.dir}/"/>
             <arg value="com.docdoku.gwt.explorer.Explorer"/>
