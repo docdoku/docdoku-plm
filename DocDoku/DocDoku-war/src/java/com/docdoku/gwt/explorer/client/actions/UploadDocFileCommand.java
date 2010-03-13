@@ -53,7 +53,7 @@ public class UploadDocFileCommand implements Action {
             fileName=fileName.substring(index+1);
 
         String webappContext = HTMLUtil.getWebContext();
-        String url = "/" + webappContext + "/files/" + URL.encode(mdoc.getWorkspaceId()) + "/" + "documents/" + URL.encode(mdoc.getId()) + "/" + mdoc.getVersion() + "/" + mdoc.getLastIteration().getIteration() + "/" + URL.encode(fileName);
+        String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(mdoc.getWorkspaceId()) + "/" + "documents/" + URL.encode(mdoc.getId()) + "/" + mdoc.getVersion() + "/" + mdoc.getLastIteration().getIteration() + "/" + URL.encode(fileName);
         form.setAction(url);
         form.submit();
     }

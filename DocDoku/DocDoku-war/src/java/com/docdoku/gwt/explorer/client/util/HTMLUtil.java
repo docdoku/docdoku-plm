@@ -44,7 +44,7 @@ public class HTMLUtil {
         String moduleName = GWT.getModuleName();
         String webContext = moduleBaseURL.split("/")[3];
         if (webContext.equals(moduleName)) {
-            return "";
+            return null;
         } else {
             return webContext;
         }

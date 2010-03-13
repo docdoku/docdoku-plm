@@ -133,7 +133,7 @@ public class FilesPanel extends DataRoundedPanel implements FormPanel.SubmitComp
             m_fileList.setWidget(i, 0, fileCheckBox);
 
             String webappContext = HTMLUtil.getWebContext();
-            String htmlLink = "<a href=\"/" + webappContext + "/files/" + file.getValue() + "\">" + file.getKey() + "</a>";
+            String htmlLink = "<a href=\"/" + (webappContext==null?"":webappContext+"/") + "files/" + file.getValue() + "\">" + file.getKey() + "</a>";
             m_fileList.setHTML(i, 1, htmlLink);
             i++;
         }

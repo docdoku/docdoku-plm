@@ -140,7 +140,7 @@ public class DocPanel extends FlexTable {
         }
 
         String webappContext = HTMLUtil.getWebContext();
-        String htmlLink = "<a href=\"/" + webappContext + "/documents/" + mdoc.getWorkspaceId() + "/" + mdoc.getId() + "/" + mdoc.getVersion() + "\">" + i18n.permaLink() + "</a>";
+        String htmlLink = "<a href=\"/" + (webappContext==null?"":webappContext+"/") + "documents/" + mdoc.getWorkspaceId() + "/" + mdoc.getId() + "/" + mdoc.getVersion() + "\">" + i18n.permaLink() + "</a>";
         m_mainPanel.setPermaLink(htmlLink);
 
         m_mainPanel.setDocID(mdoc.getId() + "-" + mdoc.getVersion() + "-" + iteration);

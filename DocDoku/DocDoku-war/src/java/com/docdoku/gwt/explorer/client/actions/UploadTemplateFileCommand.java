@@ -45,7 +45,7 @@ public class UploadTemplateFileCommand implements Action {
         MasterDocumentTemplateDTO template = m_mainPage.getLastOpenedMDocTemplate();
 
         String webappContext = HTMLUtil.getWebContext();
-        String url = "/" + webappContext + "/files/" + URL.encode(template.getWorkspaceId()) + "/" + "templates/" + URL.encode(template.getId()) + "/" + URL.encode(upload.getFilename());
+        String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(template.getWorkspaceId()) + "/" + "templates/" + URL.encode(template.getId()) + "/" + URL.encode(upload.getFilename());
         form.setAction(url);
         form.submit();
     }
