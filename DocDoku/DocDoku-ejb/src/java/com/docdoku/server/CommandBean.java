@@ -66,7 +66,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     private SessionContext ctx;
     @Resource(name = "vaultPath")
     private String vaultPath;
-    @Resource(name = "jms/docdokuConnFactory")
+    @Resource(name = "jms/docdokuConnFactory", authenticationType=Resource.AuthenticationType.APPLICATION)
     private ConnectionFactory connectionFactory;
     @Resource(name = "jms/docdokuMailerQueue")
     private Queue mailerQueue;
