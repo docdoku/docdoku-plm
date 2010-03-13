@@ -14,7 +14,7 @@
     <target name="wsimport-client-UploadDownloadService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/UploadDownloadService"/>
         <property name="wsdl-UploadDownloadService" location="xml-resources/web-service-references/UploadDownloadService/wsdl/localhost_8080/community/UploadDownloadService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/UploadDownloadService" destdir="${build.generated.dir}/jax-wsCache/UploadDownloadService" package="com.docdoku.client.ws.proxies.uploaddownloadservice" wsdl="${wsdl-UploadDownloadService}" catalog="catalog.xml">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/jax-wsCache/UploadDownloadService" destdir="${build.generated.dir}/jax-wsCache/UploadDownloadService" package="com.docdoku.client.ws.proxies.uploaddownloadservice" wsdl="${wsdl-UploadDownloadService}" catalog="catalog.xml">
             <depends file="${wsdl-UploadDownloadService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/UploadDownloadService"/>
         </wsimport>
