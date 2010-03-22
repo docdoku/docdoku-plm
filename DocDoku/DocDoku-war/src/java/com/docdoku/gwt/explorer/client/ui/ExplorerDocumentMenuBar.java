@@ -174,8 +174,11 @@ public class ExplorerDocumentMenuBar extends Composite {
         HorizontalPanel bottom = new HorizontalPanel();
         bottom.add(new Label(i18n.selectLabel() + ":"));
         bottom.add(m_selectAll);
+        bottom.add(new Label(", "));
         bottom.add(m_selectNone);
+        bottom.add(new Label(", "));
         bottom.add(m_selectCheckedIn);
+        bottom.add(new Label(", "));
         bottom.add(m_selectCheckedOut);
         if (!selectionTop) {
             mainPanel.setWidget(0, 0,top);
