@@ -2,13 +2,15 @@ package com.docdoku.gwt.client.ui.widget.spinbox;
 
 import com.docdoku.gwt.client.ui.widget.WidgetServiceLocator;
 import com.docdoku.gwt.client.ui.widget.resources.WidgetRessourcesBundle;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -21,12 +23,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
+public class SpinBox extends Composite implements ClickHandler, ChangeHandler, HasValueChangeHandlers<Integer>{
 
         private static final String DEFAULT_STYLE ="docdoku-spinBox" ;
-        
-	
-	private List<SpinBoxListener> observers ;
 	
 	private int minValue ;
 	private int maxValue ;
@@ -34,7 +33,7 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 	private PushButton buttonDown ;
 	private int value ;
 	private TextBox inputField ;
-	int backupValue ;
+	private int backupValue ;
 
         /**
          * Build a default SpinBox
@@ -51,7 +50,6 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
          * @param initial the initial value
          */
 	public SpinBox(int min, int max, int initial){
-		this.observers = new ArrayList<SpinBoxListener>();
 		maxValue = max ;
 		minValue = min ;
 		value = initial ;
@@ -187,8 +185,7 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 			buttonDown.setEnabled(true);
 		}
 		inputField.setText(""+value);
-		// send event
-		fireChange() ;
+                fireChange();
 	}
 
 
@@ -208,19 +205,12 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler{
 		onValueChanged() ;
 	}
 	
-	public void addListener(SpinBoxListener l){
-		this.observers.add(l);
-	}
-	
-	public void removeListener(SpinBoxListener l){
-		this.observers.remove(l);
-	}
-	
-	private void fireChange(){
-		SpinBoxEvent ev = new SpinBoxEvent(this, value);
-		for (SpinBoxListener l : observers) {
-			l.onValueChanged(ev);
-		}
-		
-	}
+
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
+        return addHandler(handler, ValueChangeEvent.getType());
+    }
+
+    private void fireChange() {
+        ValueChangeEvent.fire(this, value);
+    }
 }

@@ -21,14 +21,14 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
 import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
-import com.docdoku.gwt.client.ui.widget.spinbox.SpinBoxEvent;
-import com.docdoku.gwt.client.ui.widget.spinbox.SpinBoxListener;
 import com.docdoku.gwt.explorer.client.ui.workflow.VerticalLink;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityEvent;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityModelListener;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.TaskModelModel;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class ParallelActivityModelPanel extends ActivityModelPanel implements ParallelActivityModelListener, SpinBoxListener{
+public class ParallelActivityModelPanel extends ActivityModelPanel implements ParallelActivityModelListener, ValueChangeHandler<Integer>{
 
     private VerticalPanel privatePanel;
     private SpinBox spinBox;
@@ -48,7 +48,7 @@ public class ParallelActivityModelPanel extends ActivityModelPanel implements Pa
         mainPanel.add(spinBox);
         mainPanel.add(privatePanel);
         privatePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        spinBox.addListener(this);
+        spinBox.addValueChangeHandler(this);
 
 
     }
@@ -131,8 +131,8 @@ public class ParallelActivityModelPanel extends ActivityModelPanel implements Pa
         }
     }
 
-    public void onValueChanged(SpinBoxEvent event) {
-        ((ParallelActivityModelModel)model).setTasksToComplete(event.getNewValue());
+    public void onValueChange(ValueChangeEvent<Integer> event) {
+     ((ParallelActivityModelModel)model).setTasksToComplete(event.getValue());
     }
 
 
