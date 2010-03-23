@@ -1,0 +1,4 @@
+#aptitude install xvfb
+aptitude install openoffice.org-headless
+
+/usr/lib/openoffice/program/soffice.bin -headless -nofirststartwizard -accept="socket,port=8100;urp;" & 
