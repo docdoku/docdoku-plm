@@ -24,11 +24,12 @@ import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
 import com.docdoku.gwt.explorer.client.ui.workflow.VerticalLink;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityEvent;
-import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityModelListener;
+import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityModelHandler;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ParallelActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.TaskModelModel;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -36,10 +37,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class ParallelActivityModelPanel extends ActivityModelPanel implements ParallelActivityModelListener, ValueChangeHandler<Integer>{
+public class ParallelActivityModelPanel extends ActivityModelPanel implements ParallelActivityModelHandler, ValueChangeHandler<Integer>{
 
     private VerticalPanel privatePanel;
     private SpinBox spinBox;
+    private HandlerRegistration activityRegistration;
 
     public ParallelActivityModelPanel(ScrollPanelUtil util) {
         super(util);
@@ -55,11 +57,12 @@ public class ParallelActivityModelPanel extends ActivityModelPanel implements Pa
 
     @Override
     public void setModel(ActivityModelModel model) {
-        if (this.model != null){
-            ((ParallelActivityModelModel)this.model).removeListener(this);
+        super.setModel(model);
+        if (activityRegistration != null){
+            activityRegistration.removeHandler();
         }
         if (model instanceof ParallelActivityModelModel) {
-            ((ParallelActivityModelModel) model).addListener(this);
+            activityRegistration = ((ParallelActivityModelModel) model).addParallelActivityModelHandler(this);
             this.model = model;
             setupUi();
 

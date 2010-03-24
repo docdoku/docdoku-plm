@@ -22,6 +22,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
 import com.docdoku.gwt.explorer.common.AbstractActivityModelDTO;
 import com.docdoku.gwt.explorer.common.TaskModelDTO;
+import com.google.gwt.event.shared.HandlerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +30,12 @@ import java.util.List;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public abstract class ActivityModelModel {
+public abstract class ActivityModelModel extends ModelObject {
 
     private String workspaceId;
     protected List<TaskModelModel> taskModels;
     protected AbstractActivityModelDTO model;
+    
 
     public ActivityModelModel(AbstractActivityModelDTO model, String workspaceId) {
         this.model = model;
@@ -45,9 +47,9 @@ public abstract class ActivityModelModel {
             TaskModelModel tmpModel = new TaskModelModel(workspaceId);
             model.addTask(tmpModel.getData());
             taskModels.add(tmpModel);
-        }else{
+        } else {
             for (TaskModelDTO taskModelDTO : model.getTasks()) {
-                TaskModelModel tmpModel = new TaskModelModel(taskModelDTO) ;
+                TaskModelModel tmpModel = new TaskModelModel(taskModelDTO);
                 taskModels.add(tmpModel);
             }
         }
@@ -57,11 +59,8 @@ public abstract class ActivityModelModel {
         TaskModelModel tmpModel = new TaskModelModel(workspaceId);
         model.addTask(tmpModel.getData());
         taskModels.add(tmpModel);
-        // fire event :
-        ActivityEvent event = new ActivityEvent(this, model.getTasks().size(), ActivityEvent.EventType.ADD_TASK);
-        for (ActivityModelListener listener : getListeners()) {
-            listener.onActivityModelChanged(event);
-        }
+        ActivityEvent.fire(this, model.getTasks().size(), ActivityEvent.EventType.ADD_TASK);
+       
 
     }
 
@@ -69,29 +68,28 @@ public abstract class ActivityModelModel {
         taskModels.get(position).removeAllListeners();
         taskModels.remove(position);
         model.getTasks().remove(position);
-
-        ActivityEvent event = new ActivityEvent(this, position, ActivityEvent.EventType.DELETE_TASK);
-        for (ActivityModelListener listener : getListeners()) {
-            listener.onActivityModelChanged(event);
-        }
+        ActivityEvent.fire(this, model.getTasks().size(), ActivityEvent.EventType.DELETE_TASK);
 
     }
 
-    public List<TaskModelModel> getTasks(){
-        return taskModels ;
+    public List<TaskModelModel> getTasks() {
+        return taskModels;
     }
 
     public void setLifeCycleState(String state) {
         model.setLifeCycleState(state);
     }
 
-    public String getLifeCycleState(){
+    public String getLifeCycleState() {
         return model.getLifeCycleState();
     }
 
-    abstract protected List<? extends ActivityModelListener> getListeners();
 
-    public AbstractActivityModelDTO getData(){
-        return model ;
+    public AbstractActivityModelDTO getData() {
+        return model;
+    }
+
+    public HandlerRegistration addActivityModelHandler(ActivityModelHandler handler){
+        return addHandler(handler, ActivityEvent.TYPE);
     }
 }

@@ -45,7 +45,7 @@ import java.util.Map;
  * To store internal data, it uses a WorkflowModelModel by default
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class WorkflowModelEditor extends Composite implements ActivityLinkListener,WorkflowModelListener, ActivityModelPanelListener, ChangeHandler{
+public class WorkflowModelEditor extends Composite implements ActivityLinkHandler,WorkflowModelListener, ActivityModelPanelListener, ChangeHandler{
 
     // panels (general)
     private VerticalPanel mainPanel;
@@ -121,7 +121,7 @@ public class WorkflowModelEditor extends Composite implements ActivityLinkListen
         StartPoint sp = new StartPoint() ;
         EndPoint ep = new EndPoint() ;
         ActivityLink link = new ActivityLink() ;
-        link.addListener(this);
+        link.addActivityLinkHandler(this);
 
         canvas.setWidget(0, 0, sp);
         canvas.setWidget(0, 1, link);
@@ -136,27 +136,11 @@ public class WorkflowModelEditor extends Composite implements ActivityLinkListen
 
     }
 
-    public void onSerialClicked(ActivityLinkEvent ev) {
-
-        int index = links.indexOf(ev.getSource()) ;
-        if (index != -1){
-            model.addSerialActivity(index);
-        }
-    }
-
-    public void onParallelClicked(ActivityLinkEvent ev) {
-        int index = links.indexOf(ev.getSource());
-        if (index != -1){
-            model.addParallelActivity(index);
-        }
-    }
-
-    
     private void addActivityPanel(int position){
         canvas.insertCell(0, position*2+2);
         ActivityLink tmpLink = new ActivityLink() ;
         links.add(position+1, tmpLink);
-        tmpLink.addListener(this);
+        tmpLink.addActivityLinkHandler(this);
         canvas.setWidget(0, position*2+2, tmpLink);
 
         canvas.insertCell(0, position*2+2);
@@ -227,6 +211,20 @@ public class WorkflowModelEditor extends Composite implements ActivityLinkListen
         }else{
             int index  = states.indexOf(event.getSource());
             model.setStateName(index, states.get(index).getText());
+        }
+    }
+
+    public void onAddActivityClicked(ActivityLinkEvent ev) {
+        if (ev.getOpType() == ActivityLinkEvent.OperationType.ADD_SERIAL){
+             int index = links.indexOf(ev.getSource()) ;
+        if (index != -1){
+            model.addSerialActivity(index);
+        }
+        }else{
+            int index = links.indexOf(ev.getSource());
+        if (index != -1){
+            model.addParallelActivity(index);
+        }
         }
     }
 

@@ -22,8 +22,7 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
 import com.docdoku.gwt.explorer.common.SerialActivityModelDTO;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
  *
@@ -31,44 +30,26 @@ import java.util.List;
  */
 public class SerialActivityModelModel extends ActivityModelModel{
     
-    private List<SerialActivityModelListener> observers ;
 
     public SerialActivityModelModel(SerialActivityModelDTO model, String workspaceId) {
         super(model, workspaceId);
-        observers = new ArrayList<SerialActivityModelListener>() ;
     }
     
     public void moveUpTask(int position){
         ((SerialActivityModelDTO)model).moveUpTask(position);
         taskModels.add(position-1, taskModels.remove(position));
-
-        SerialActivityModelEvent event = new SerialActivityModelEvent(this, position, SerialActivityModelEvent.MoveType.MOVE_UP);
-        for (SerialActivityModelListener listener : observers) {
-            listener.onTaskMove(event);
-        }
+        SerialActivityModelEvent.fire(this, position, SerialActivityModelEvent.MoveType.MOVE_UP);
     }
     
     public void moveDownTask(int position){
         ((SerialActivityModelDTO) model).moveDownTask(position);
         taskModels.add(position+1, taskModels.remove(position));
+        SerialActivityModelEvent.fire(this, position, SerialActivityModelEvent.MoveType.MOVE_DOWN);
 
-        SerialActivityModelEvent event = new SerialActivityModelEvent(this, position, SerialActivityModelEvent.MoveType.MOVE_DOWN);
-        for (SerialActivityModelListener listener : observers) {
-            listener.onTaskMove(event);
-        }
     }
 
-    @Override
-    protected List<? extends ActivityModelListener> getListeners() {
-        return observers ;
-    }
-
-    public void addListener(SerialActivityModelListener l){
-        observers.add(l);
-    }
-
-    public void removeListener(SerialActivityModelListener l){
-        observers.remove(l);
+    public HandlerRegistration addSerialActivityModelHandler(SerialActivityModelHandler handler){
+        return addHandler(handler, SerialActivityModelEvent.TYPE);
     }
     
 }

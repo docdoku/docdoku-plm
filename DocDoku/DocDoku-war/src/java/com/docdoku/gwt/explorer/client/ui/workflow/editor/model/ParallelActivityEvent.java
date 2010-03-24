@@ -21,29 +21,43 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import java.util.EventObject;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.GwtEvent.Type;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class ParallelActivityEvent extends EventObject{
+public class ParallelActivityEvent extends GwtEvent<ParallelActivityModelHandler>{
+
+    public static final GwtEvent.Type<ParallelActivityModelHandler> TYPE = new GwtEvent.Type<ParallelActivityModelHandler>();
+
+
+    public static void fire (ParallelActivityModelModel source, int value){
+        ParallelActivityEvent ev = new ParallelActivityEvent(value);
+        source.fireEvent(ev);
+    }
 
     private int newValue ;
-    private ParallelActivityModelModel realSource ;
 
-    public ParallelActivityEvent(ParallelActivityModelModel source, int value) {
-        super(source);
-        newValue = value;
-        realSource = source ;
+    
+    protected ParallelActivityEvent(int value){
+        newValue =value;
     }
 
     public int getNewValue() {
         return newValue;
     }
 
-    public ParallelActivityModelModel getRealSource() {
-        return realSource;
+
+    @Override
+    public Type<ParallelActivityModelHandler> getAssociatedType() {
+        return TYPE;
+    }
+
+    @Override
+    protected void dispatch(ParallelActivityModelHandler handler) {
+        handler.onTaskRequiredChanged(this);
     }
 
     

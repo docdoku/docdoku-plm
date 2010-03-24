@@ -25,6 +25,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
+@Deprecated
 public interface ActivityModelListener {
     public void onActivityModelChanged(ActivityEvent event) ;
 }

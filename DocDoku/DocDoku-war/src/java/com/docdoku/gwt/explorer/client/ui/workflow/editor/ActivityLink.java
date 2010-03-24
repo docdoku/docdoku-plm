@@ -27,11 +27,11 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This widget is a simple horizontal line which let appear 2 images on hover.s
@@ -42,10 +42,7 @@ public class ActivityLink extends Composite implements MouseOverHandler, MouseOu
     private Image serial;
     private Image parallel;
     private Image link;
-
-    private List<ActivityLinkListener> observers ;
-
-    private boolean in ;
+    private boolean in;
 
     public ActivityLink() {
         HorizontalPanel mainPanel = new HorizontalPanel();
@@ -68,11 +65,9 @@ public class ActivityLink extends Composite implements MouseOverHandler, MouseOu
         serial.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().addSerialTooltip());
         parallel.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().addParallelTooltip());
 
-        in = false ;
+        in = false;
         serial.setVisible(false);
         parallel.setVisible(false);
-
-        observers = new ArrayList<ActivityLinkListener>();
 
         addDomHandler(this, MouseOverEvent.getType());
         addDomHandler(this, MouseOutEvent.getType());
@@ -82,40 +77,38 @@ public class ActivityLink extends Composite implements MouseOverHandler, MouseOu
     }
 
     public void onMouseOver(MouseOverEvent event) {
-        if(!in){
+        if (!in) {
             link.setVisible(false);
             parallel.setVisible(true);
             serial.setVisible(true);
-            in =true ;
+            in = true;
         }
     }
 
     public void onMouseOut(MouseOutEvent event) {
-        in = false ;
+        in = false;
         link.setVisible(true);
         serial.setVisible(false);
         parallel.setVisible(false);
     }
 
-    public void addListener(ActivityLinkListener l){
-        observers.add(l);
+    
+
+    public HandlerRegistration addActivityLinkHandler(ActivityLinkHandler handler){
+        return addHandler(handler, ActivityLinkEvent.TYPE);
     }
 
-    public void removeListener(ActivityLinkListener l){
-        observers.remove(l);
-    }
+
+
+
+
 
     public void onClick(ClickEvent event) {
-        if (event.getSource() == serial){
-            ActivityLinkEvent ev = new ActivityLinkEvent(this);
-            for (ActivityLinkListener listener : observers) {
-                listener.onSerialClicked(ev);
-            }
-        }else if (event.getSource() == parallel){
-            ActivityLinkEvent ev = new ActivityLinkEvent(this);
-            for (ActivityLinkListener listener : observers) {
-                listener.onParallelClicked(ev);
-            }
+        if (event.getSource() == serial) {
+            ActivityLinkEvent.fire(this, ActivityLinkEvent.OperationType.ADD_SERIAL);
+        } else if (event.getSource() == parallel) {
+            ActivityLinkEvent.fire(this, ActivityLinkEvent.OperationType.ADD_PARALLEL);
+            
         }
     }
 

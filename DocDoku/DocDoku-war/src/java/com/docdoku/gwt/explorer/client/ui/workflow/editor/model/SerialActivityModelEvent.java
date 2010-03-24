@@ -21,13 +21,23 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import java.util.EventObject;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.GwtEvent.Type;
+
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class SerialActivityModelEvent extends EventObject{
+public class SerialActivityModelEvent extends GwtEvent<SerialActivityModelHandler>{
+
+    public static final GwtEvent.Type<SerialActivityModelHandler> TYPE = new GwtEvent.Type<SerialActivityModelHandler>();
+
+
+    public static void fire (SerialActivityModelModel source, int position, MoveType type){
+        SerialActivityModelEvent ev = new SerialActivityModelEvent(position, type);
+        source.fireEvent(ev);
+    }
 
     public enum MoveType{
         MOVE_UP,
@@ -38,17 +48,23 @@ public class SerialActivityModelEvent extends EventObject{
     private MoveType type ;
     private SerialActivityModelModel realSource ;
 
+    @Deprecated
     public SerialActivityModelEvent(SerialActivityModelModel source, int position, MoveType type) {
-        super(source);
         realSource = source ;
         this.position = position ;
         this.type = type;
+    }
+
+    protected SerialActivityModelEvent(int position, MoveType type){
+       this.position = position;
+       this.type =type ;
     }
 
     public int getPosition() {
         return position;
     }
 
+    @Deprecated
     public SerialActivityModelModel getRealSource() {
         return realSource;
     }
@@ -58,5 +74,13 @@ public class SerialActivityModelEvent extends EventObject{
     }
 
     
+    @Override
+    public Type<SerialActivityModelHandler> getAssociatedType() {
+        return TYPE;
+    }
 
+    @Override
+    protected void dispatch(SerialActivityModelHandler handler) {
+        handler.onTaskMove(this);
+    }
 }

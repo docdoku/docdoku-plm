@@ -18,27 +18,55 @@
  * You should have received a copy of the GNU General Public License
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
-import java.util.EventObject;
-
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.GwtEvent.Type;
 /**
  * This kind of even is fired by ActivityLinks.
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class ActivityLinkEvent extends EventObject{
+public class ActivityLinkEvent extends GwtEvent<ActivityLinkHandler> {
 
-    private ActivityLink realSource ;
+    private OperationType opType;
 
+    public final static GwtEvent.Type<ActivityLinkHandler> TYPE = new GwtEvent.Type<ActivityLinkHandler>();
+
+    public static void fire (ActivityLink source, OperationType op){
+        ActivityLinkEvent ev = new ActivityLinkEvent(op);
+        source.fireEvent(ev);
+    }
+
+    public enum OperationType{
+        ADD_SERIAL,
+        ADD_PARALLEL;
+    }
+
+    @Deprecated
     public ActivityLinkEvent(ActivityLink source) {
-        super(source);
-        realSource = source;
+        
     }
 
-    public ActivityLink getRealSource() {
-        return realSource;
+    public OperationType getOpType() {
+        return opType;
     }
+
     
+    protected ActivityLinkEvent(OperationType type)
+    {
+        opType = type ;
+    }
 
+
+    @Override
+    public Type<ActivityLinkHandler> getAssociatedType() {
+        return TYPE;
+    }
+
+    @Override
+    protected void dispatch(ActivityLinkHandler handler) {
+        handler.onAddActivityClicked(this);
+    }
+
+    
 }

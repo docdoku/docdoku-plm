@@ -21,13 +21,22 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import java.util.EventObject;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.GwtEvent.Type;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class ActivityEvent extends EventObject{
+public class ActivityEvent extends GwtEvent<ActivityModelHandler>{
+
+
+    public final static GwtEvent.Type<ActivityModelHandler> TYPE = new GwtEvent.Type<ActivityModelHandler>();
+
+    public static void fire (ActivityModelModel source,int position, EventType type){
+        ActivityEvent ev = new ActivityEvent(position, type);
+        source.fireEvent(ev);
+    }
 
     public enum EventType {
         ADD_TASK,
@@ -38,10 +47,17 @@ public class ActivityEvent extends EventObject{
     private EventType type ;
     private ActivityModelModel realSource ;
 
+
+    @Deprecated
     public ActivityEvent(ActivityModelModel source, int position, EventType type) {
-        super(source);
+
         realSource = source;
         this.position = position;
+        this.type = type;
+    }
+
+    protected ActivityEvent(int position, EventType type){
+        this.position = position ;
         this.type = type;
     }
 
@@ -55,6 +71,16 @@ public class ActivityEvent extends EventObject{
 
     public EventType getType() {
         return type;
+    }
+
+     @Override
+    public Type<ActivityModelHandler> getAssociatedType() {
+        return TYPE;
+    }
+
+    @Override
+    protected void dispatch(ActivityModelHandler handler) {
+        handler.onActivityModelChanged(this);
     }
 
 }

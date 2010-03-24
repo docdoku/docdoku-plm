@@ -23,16 +23,17 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelModel;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.SerialActivityModelEvent;
-import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.SerialActivityModelListener;
+import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.SerialActivityModelHandler;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.SerialActivityModelModel;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class SerialActivityModelPanel extends ActivityModelPanel implements SerialActivityModelListener{
+public class SerialActivityModelPanel extends ActivityModelPanel implements SerialActivityModelHandler{
 
-    
+    private HandlerRegistration activityRegistration;
 
 
     public SerialActivityModelPanel(ScrollPanelUtil util) {
@@ -41,12 +42,13 @@ public class SerialActivityModelPanel extends ActivityModelPanel implements Seri
 
     @Override
     public void setModel(ActivityModelModel model) {
-        if (this.model != null){
-            ((SerialActivityModelModel) this.model).removeListener(this);
+        super.setModel(model);
+        if (this.activityRegistration != null){
+            activityRegistration.removeHandler();
         }
         if (model instanceof SerialActivityModelModel){
             this.model = model ;
-            ((SerialActivityModelModel) model).addListener(this);
+            ((SerialActivityModelModel) model).addSerialActivityModelHandler(this);
             setupUi();
         }
         

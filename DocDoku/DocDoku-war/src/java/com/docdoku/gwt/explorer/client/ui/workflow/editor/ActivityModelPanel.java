@@ -22,6 +22,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityEvent;
+import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelHandler;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelListener;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelModel;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,7 +49,7 @@ import java.util.List;
  * It mainly features a popup panel to add task and remove the activity
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public abstract class ActivityModelPanel extends Composite implements MouseOverHandler, MouseOutHandler, ActivityModelListener, TaskModelPanelListener {
+public abstract class ActivityModelPanel extends Composite implements MouseOverHandler, MouseOutHandler, ActivityModelHandler, TaskModelPanelListener {
 
     private static final int TIME_OUT = 200;
     protected List<TaskModelPanel> taskPanels;
@@ -62,6 +63,7 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
     // utils
     protected ScrollPanelUtil util;
 
+    private HandlerRegistration registration;
     /**
      * Builds an ActivityModelPanel
      * @param util the scroll panel tool to determine whether a point is visible or not
@@ -103,7 +105,13 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
         timer.schedule(TIME_OUT);
     }
 
-    public abstract void setModel(ActivityModelModel model);
+    public void setModel(ActivityModelModel model){
+        if (registration !=null){
+            registration.removeHandler();
+        }
+        registration = model.addActivityModelHandler(this);
+
+    }
 
     public void addListener(ActivityModelPanelListener l) {
         observers.add(l);
