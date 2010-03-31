@@ -49,7 +49,7 @@ public class Workspace implements Serializable, Cloneable {
     
     private VaultType vaultType;
     
-    public enum VaultType {FREE,SW1G,SW2G,MW3G,MW5G}
+    public enum VaultType {DEMO,SMALL,LARGE,UNLIMITED}
 
 
     public Workspace(String pId, Account pAdmin, String pDescription, VaultType pVaultType, boolean pFolderLocked) {
