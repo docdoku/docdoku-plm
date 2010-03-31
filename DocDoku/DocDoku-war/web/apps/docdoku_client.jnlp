@@ -5,9 +5,10 @@
     <title>DocDoku</title>
     <vendor>DocDoku ltd</vendor>
     <homepage href="../"/>
-    <description>Manage your documents on Internet</description>
+    <description>Manage your documents</description>
     <icon  href="DocDokuIcon.png" width="64" height="64"/>
-     <icon kind="splash" href="DocDokuSplash.png"/>
+    <icon kind="splash" href="DocDokuSplash.png"/>
+    <shortcut online="true"><desktop/></shortcut>
   </information>
 
   <resources>

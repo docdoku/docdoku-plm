@@ -98,13 +98,13 @@
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
         <init-param>
             <param-name>PDF2SWF_HOME</param-name>
-            <param-value>C:\tools\SWFTools</param-value>
-            <!--<param-value>/usr/bin</param-value>-->
+            <!--<param-value>C:\tools\SWFTools</param-value>-->
+            <param-value>/usr/bin</param-value>
         </init-param>
         <init-param>
             <param-name>OO_HOME</param-name>
-            <param-value>C:\Program Files\OpenOffice.org 3</param-value>
-            <!--<param-value>/usr/lib/openoffice</param-value>-->
+            <!--<param-value>C:\Program Files\OpenOffice.org 3</param-value>-->
+            <param-value>/usr/lib/openoffice</param-value>
             <!--<param-value>/opt/openoffice.org3</param-value>-->
         </init-param>
         <init-param>

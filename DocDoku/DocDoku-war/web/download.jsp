@@ -30,12 +30,11 @@
                 </p>
                 <p><fmt:message key="section1.text1"/></p>
                 <p><fmt:message key="section1.text2"/></p>
-                <!--<script type="text/javascript" src="http://java.com/js/deployJava.js"></script>
-                <script src="<%=request.getContextPath()%>/js/deployJava.js"></script>
+                <script type="text/javascript" src="http://java.com/js/deployJava.js"></script>
                 <script type="text/javascript">
                     deployJava.createWebStartLaunchButton('<%=new java.net.URL(new java.net.URL(request.getRequestURL().toString()), request.getContextPath()+"/apps/docdoku_client.jnlp")%>','1.6.0_04');
-                </script>-->
-                <a href="<%=request.getContextPath()%>/apps/docdoku_client.jnlp">Go!</a>
+                </script>
+                <!--<a href="<%=request.getContextPath()%>/apps/docdoku_client.jnlp">Go!</a>-->
             </div>
             <%@ include file="/WEB-INF/footer.jspf" %>
         </div>

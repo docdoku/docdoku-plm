@@ -54,25 +54,24 @@ public class AddUserServlet extends HttpServlet {
             Workspace workspace = (Workspace) sessionHTTP.getAttribute("selectedWorkspace");
             User[] users = commandService.getUsers(workspace.getId());
 
-            //TODO
-            /*
+            
             switch(workspace.getVaultType()){
-                case FREE:
+                case DEMO:
                     if(users.length>1)
                         throw new NotAllowedException(pRequest.getLocale(),"NotAllowedException1");
                     break;
                     
-                case SW1G:
+                case SMALL:
                     if(users.length>9)
                         throw new NotAllowedException(pRequest.getLocale(),"NotAllowedException2");
                     break;
                     
-                case SW2G:
+                case LARGE:
                     if(users.length>19)
                         throw new NotAllowedException(pRequest.getLocale(),"NotAllowedException3");
                     break;
             }
-            */
+            
             String login = pRequest.getParameter("login");
             String group = pRequest.getParameter("group");
             if(group!=null && !group.equals("")){
