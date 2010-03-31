@@ -34,6 +34,7 @@ import com.docdoku.client.data.FolderTreeNode;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.text.MessageFormat;
 
 
 public class DeleteElementAction extends ClientAbstractAction {
@@ -49,6 +50,7 @@ public class DeleteElementAction extends ClientAbstractAction {
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         MasterDocument mdoc = mOwner.getSelectedMDoc();
         WorkflowModel wfModel = mOwner.getSelectedWorkflowModel();
@@ -59,11 +61,13 @@ public class DeleteElementAction extends ClientAbstractAction {
         try {
             if (mdoc == null && wfModel == null && template == null && folderTreeNode != null) {
                 if(folderTreeNode instanceof TagTreeNode){
-                    if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,I18N.BUNDLE.getString("DeleteElement_question_tag"),I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+                    String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_tag"),folderTreeNode.getName());
+                    if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
                         controller.delTag(folderTreeNode.getName());
                     }
                 }else{
-                    if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,I18N.BUNDLE.getString("DeleteElement_question_folder"),I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+                    String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_folder"),folderTreeNode.getCompletePath());
+                    if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
                         MasterDocumentKey[] pks=controller.delFolder(folderTreeNode.getCompletePath());
                         for(MasterDocumentKey pk:pks){
                             FileIO.rmDir(Config.getCheckOutFolder(pk));
@@ -73,18 +77,21 @@ public class DeleteElementAction extends ClientAbstractAction {
                     }
                 }
             } else if (mdoc != null){
-                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner, I18N.BUNDLE.getString("DeleteElement_question_document"),I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+                String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_document"),mdoc);
+                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
                     controller.delMDoc(mdoc);
                     FileIO.rmDir(Config.getCheckOutFolder(mdoc));
                     FileIO.rmDir(Config.getCacheFolder(mdoc));
                     Prefs.removeDocNode(mdoc);
                 }
             } else if (wfModel != null){
-                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner, I18N.BUNDLE.getString("DeleteElement_question_workflow"),I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+                String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_workflow"),wfModel);
+                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
                     controller.delWorkflowModel(wfModel);
                 }
             } else if (template != null){
-                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner, I18N.BUNDLE.getString("DeleteElement_question_template"),I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+                String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_template"),template);               
+                if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner, questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
                     controller.delMDocTemplate(template);
                     FileIO.rmDir(Config.getCacheFolder(template));
                 }

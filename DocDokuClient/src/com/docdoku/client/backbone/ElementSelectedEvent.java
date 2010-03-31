@@ -32,30 +32,30 @@ public class ElementSelectedEvent extends EventObject {
 	private Object mElement;
 	private ElementType mType;
 	
-	public enum ElementType{MasterDocument,MasterDocumentTemplate,WorkflowModel,FolderTreeNode};
+	public enum ElementType{MASTER_DOCUMENT,MASTER_DOCUMENT_TEMPLATE,WORKFLOW_MODEL,FOLDER_TREE_NODE};
 	
 	public ElementSelectedEvent(Object pSource, MasterDocument pElement) {
 		super(pSource);
 		mElement=pElement;
-		mType=ElementType.MasterDocument;
+		mType=ElementType.MASTER_DOCUMENT;
 	}
         
         public ElementSelectedEvent(Object pSource, MasterDocumentTemplate pElement) {
 		super(pSource);
 		mElement=pElement;
-		mType=ElementType.MasterDocumentTemplate;
+		mType=ElementType.MASTER_DOCUMENT_TEMPLATE;
 	}
 	
 	public ElementSelectedEvent(Object pSource, FolderTreeNode pElement) {
 		super(pSource);
 		mElement=pElement;
-		mType=ElementType.FolderTreeNode;
+		mType=ElementType.FOLDER_TREE_NODE;
 	}
 	
 	public ElementSelectedEvent(Object pSource, WorkflowModel pElement) {
 		super(pSource);
 		mElement=pElement;
-		mType=ElementType.WorkflowModel;
+		mType=ElementType.WORKFLOW_MODEL;
 	}
 
 	public Object getElement() {

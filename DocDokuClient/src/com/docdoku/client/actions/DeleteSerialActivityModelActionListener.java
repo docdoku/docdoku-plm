@@ -32,6 +32,7 @@ import javax.swing.*;
 
 public class DeleteSerialActivityModelActionListener implements ActionListener {
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         SerialActivityModelCanvas source = (SerialActivityModelCanvas) pAE.getSource();
         WorkflowModelFrame owner = (WorkflowModelFrame) SwingUtilities.getAncestorOfClass(WorkflowModelFrame.class, source);

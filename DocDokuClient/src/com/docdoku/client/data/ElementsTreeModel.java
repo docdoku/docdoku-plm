@@ -36,29 +36,36 @@ public class ElementsTreeModel implements TreeModel {
         mRoot = new RootTreeNode();
     }
     
+    @Override
     public void addTreeModelListener(TreeModelListener pTreeModelListener) {
         mTreeModelListeners.add(pTreeModelListener);
     }
     
+    @Override
     public void removeTreeModelListener(TreeModelListener pTreeModelListener) {
         mTreeModelListeners.remove(pTreeModelListener);
     }
     
+    @Override
     public void valueForPathChanged(TreePath pPath, Object pNewValue) {
     }
     
+    @Override
     public RootTreeNode getRoot() {
         return mRoot;
     }
     
+    @Override
     public Object getChild(Object pParent, int pIndex) {
         return ((FolderTreeNode) pParent).getFolderChild(pIndex);
     }
     
+    @Override
     public int getChildCount(Object pParent) {
         return ((FolderTreeNode) pParent).folderSize();
     }
     
+    @Override
     public int getIndexOfChild(Object pParent, Object pChild) {
         if (pParent == null || pChild == null)
             return -1;
@@ -66,6 +73,7 @@ public class ElementsTreeModel implements TreeModel {
             return ((FolderTreeNode) pParent).getFolderIndexOfChild(pChild);
     }
     
+    @Override
     public boolean isLeaf(Object pNode) {
         return false;
     }

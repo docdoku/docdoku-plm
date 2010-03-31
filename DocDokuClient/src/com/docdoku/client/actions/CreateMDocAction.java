@@ -51,8 +51,10 @@ public class CreateMDocAction extends ClientAbstractAction {
         setLargeIcon("/com/docdoku/client/resources/icons/document_new_large.png");
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 final CreateMDocDialog source = (CreateMDocDialog) pAE.getSource();           
                 Thread worker = new Thread(new Runnable() {

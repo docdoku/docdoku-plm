@@ -27,7 +27,6 @@ import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.entities.Document;
 import com.docdoku.core.entities.DocumentToDocumentLink;
-import com.docdoku.core.entities.InstanceAttribute;
 import com.docdoku.core.entities.User;
 import com.docdoku.core.entities.keys.Version;
 import com.docdoku.core.entities.MasterDocument;
@@ -41,11 +40,13 @@ import java.util.Date;
 
 public class AddLinkActionListener implements ActionListener {
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final EditLinksPanel sourcePanel = (EditLinksPanel) pAE.getSource();
         Dialog owner = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, sourcePanel);
         ActionListener action = new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 SearchDialog source = (SearchDialog) pAE.getSource();
                 try {
@@ -62,6 +63,7 @@ public class AddLinkActionListener implements ActionListener {
                     Date creationDateTo = source.getCreationDateTo();
                     ActionListener action = new ActionListener() {
 
+                        @Override
                         public void actionPerformed(ActionEvent pAE) {
                             SearchResultDialog source = (SearchResultDialog) pAE.getSource();
                             for (MasterDocument mdoc : source.getSelectedMDocs()) {

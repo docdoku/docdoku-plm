@@ -22,6 +22,7 @@ package com.docdoku.client.ui;
 
 import com.docdoku.client.backbone.ElementSelectedEvent;
 import com.docdoku.client.backbone.ElementSelectedListener;
+import com.docdoku.client.backbone.HasElementSelectedListeners;
 import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.FolderBasedElementsTableModel;
@@ -42,10 +43,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
-public class ExplorerFrame extends JFrame {
+public class ExplorerFrame extends JFrame implements HasElementSelectedListeners{
     private static Set<ExplorerFrame> mInstances = new HashSet<ExplorerFrame>();
     
     private ExplorerToolBar mToolBar;
@@ -64,7 +66,7 @@ public class ExplorerFrame extends JFrame {
     private TransferHandler mTransferHandler;
 
     private Container mRegularPanel;
-    private Container mShortcutsPanel;
+    private ShortcutsPanel mShortcutsPanel;
 
     private List<ElementSelectedListener> mElementSelectedListener;
     
@@ -90,12 +92,17 @@ public class ExplorerFrame extends JFrame {
         mPopupMenu = new ExplorerPopupMenu();
         mElementSelectedListener = new LinkedList<ElementSelectedListener>();
         mRegularPanel=new JPanel(new BorderLayout());
-        mShortcutsPanel=new ShortcutsPanel();
+        mShortcutsPanel=new ShortcutsPanel(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showRegularPanel();
+            }
+        }, ExplorerFrame.this);
         createLayout();
         createListener();
         mInstances.add(this);
     }
-    
+
     private void createLayout() {
         Image img = Toolkit
                 .getDefaultToolkit()
@@ -247,6 +254,7 @@ public class ExplorerFrame extends JFrame {
         });
         mRightScrollPane.getSelectionModel().addListSelectionListener(
                 new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent pE) {
                 Object element = mRightScrollPane.getSelectedElement();
                 if (element instanceof MasterDocument) {
@@ -280,6 +288,7 @@ public class ExplorerFrame extends JFrame {
             }
         });
         mRightScrollPane.getElementsTable().addMouseListener(new MouseListener() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount()>1){
                     Action editAction = mActionFactory.getEditElementAction();
@@ -287,12 +296,16 @@ public class ExplorerFrame extends JFrame {
                         editAction.actionPerformed(new ActionEvent(this, 0, null));
                 }
             }
+            @Override
             public void mouseEntered(MouseEvent e) {
             }
+            @Override
             public void mouseExited(MouseEvent e) {
             }
+            @Override
             public void mousePressed(MouseEvent e) {
             }
+            @Override
             public void mouseReleased(MouseEvent e) {
             }
         });
@@ -323,6 +336,7 @@ public class ExplorerFrame extends JFrame {
         mToolBar.setActions(pActionFactory);
         mMenuBar.setActions(pActionFactory);
         mPopupMenu.setActions(pActionFactory);
+        mShortcutsPanel.setActions(pActionFactory);
     }
     
     public void showMDoc(MasterDocument pMDoc){
@@ -360,16 +374,19 @@ public class ExplorerFrame extends JFrame {
         }
     }
     
+    @Override
     public void addElementSelectedListener(ElementSelectedListener pListener) {
         mElementSelectedListener.add(pListener);
     }
     
+    @Override
     public void removeElementSelectedListener(ElementSelectedListener pListener) {
         mElementSelectedListener.remove(pListener);
     }
     
     protected void fireElementSelected(ElementSelectedEvent event) {
-        for (ElementSelectedListener listener : mElementSelectedListener) {
+
+        for (ElementSelectedListener listener : new ArrayList<ElementSelectedListener>(mElementSelectedListener)) {
             listener.elementSelected(event);
         }
     }

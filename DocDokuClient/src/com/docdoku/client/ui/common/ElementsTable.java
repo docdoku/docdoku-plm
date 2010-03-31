@@ -40,7 +40,23 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 public class ElementsTable extends JXTable {
-    
+
+    private final static ImageIcon DOC_ICON = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
+                    "/com/docdoku/client/resources/icons/document.png")));
+
+    private final static ImageIcon CHECKED_ICON = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
+                    "/com/docdoku/client/resources/icons/document_edit.png")));
+
+    private final static ImageIcon LOCK_ICON = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
+                    "/com/docdoku/client/resources/icons/document_lock.png")));
+
+    private final static ImageIcon BRANCH_ICON = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
+                    "/com/docdoku/client/resources/icons/branch.png")));
+
+    private final static ImageIcon TEMPLATE_ICON = new ImageIcon(Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
+                    "/com/docdoku/client/resources/icons/document_notebook.png")));
+
+
     public ElementsTable(ElementsTableModel pElementsTableModel,TransferHandler pTransferHandler) {
         super(pElementsTableModel);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -148,26 +164,7 @@ public class ElementsTable extends JXTable {
                     pColumn);
             Object element =
                     ((ElementsTableModel) pTable.getModel()).getElementAt(convertRowIndexToModel(pRow));
-            Image img =
-                    Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
-                    "/com/docdoku/client/resources/icons/document.png"));
-            ImageIcon docIcon = new ImageIcon(img);
-            img =
-                    Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
-                    "/com/docdoku/client/resources/icons/document_edit.png"));
-            ImageIcon checkedIcon = new ImageIcon(img);
-            img =
-                    Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
-                    "/com/docdoku/client/resources/icons/document_lock.png"));
-            ImageIcon lockIcon = new ImageIcon(img);
-            img =
-                    Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
-                    "/com/docdoku/client/resources/icons/branch.png"));
-            ImageIcon branchIcon = new ImageIcon(img);
-            img =
-                    Toolkit.getDefaultToolkit().getImage(ElementsTable.class.getResource(
-                    "/com/docdoku/client/resources/icons/document_notebook.png"));
-            ImageIcon templateIcon = new ImageIcon(img);
+            
 
 
 
@@ -177,9 +174,9 @@ public class ElementsTable extends JXTable {
                     if (mdoc
                             .getCheckOutUser()
                             .equals(MainModel.getInstance().getUser()))
-                        setIcon(checkedIcon);
+                        setIcon(CHECKED_ICON);
                     else
-                        setIcon(lockIcon);
+                        setIcon(LOCK_ICON);
                     DateFormat format = DateFormat.getInstance();
                     setToolTipText(
                             I18N.BUNDLE.getString("ElementsTable_toolTipText1")
@@ -190,12 +187,12 @@ public class ElementsTable extends JXTable {
                             + " "
                             + format.format(mdoc.getCheckOutDate()));
                 } else {
-                    setIcon(docIcon);
+                    setIcon(DOC_ICON);
                 }
             }else if (element instanceof WorkflowModel){
-                setIcon(branchIcon);
+                setIcon(BRANCH_ICON);
             }else if (element instanceof MasterDocumentTemplate){
-                setIcon(templateIcon);
+                setIcon(TEMPLATE_ICON);
             }
             return this;
         }

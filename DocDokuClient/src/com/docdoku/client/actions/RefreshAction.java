@@ -38,6 +38,7 @@ public class RefreshAction extends ClientAbstractAction {
         setLargeIcon("/com/docdoku/client/resources/icons/refresh_large.png");
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         MainModel.getInstance().updater.clear();
     }

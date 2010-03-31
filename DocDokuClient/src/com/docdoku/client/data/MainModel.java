@@ -154,10 +154,12 @@ public class MainModel {
             };
 
             int[] childIndices = {path[path.length - 1].getFolderIndexOfChild(children[0])};
-
+            //fireTreeStructureChanged just for the case the structure display on the screen
+            //is not the one that is stored on the model
+            MainModel.this.getElementsTreeModel().fireTreeStructureChanged(path);
             MainModel.this.getElementsTreeModel().fireTreeNodesRemoved(path,
-                    childIndices, children);
-            mCache.removeFolder(pCompletePath);
+                        childIndices, children);
+                mCache.removeFolder(pCompletePath);
         }
 
         public void delTag(String pTag) {
@@ -394,6 +396,7 @@ public class MainModel {
         updater = new ModelUpdater();
     }
 
+
     public FolderTreeNode[] getFolderTreeNodes(FolderTreeNode pParent) {
         String completePath = pParent.getCompletePath();
         FolderTreeNode[] folderTreeNodes = mCache.getFolderTreeNodes(completePath);
@@ -424,6 +427,7 @@ public class MainModel {
         }
         return folderTreeNodes;
     }
+
 
     public WorkflowModel[] getWorkflowModels() {
         WorkflowModel[] models = mCache.getWorkflowModels();

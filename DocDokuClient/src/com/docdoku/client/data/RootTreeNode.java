@@ -37,6 +37,7 @@ public class RootTreeNode extends FolderTreeNode {
         mTagRootTreeNode = new TagRootTreeNode(this);
     }
     
+    @Override
     public int folderSize() {
         return super.folderSize() + 4;
     }
@@ -45,6 +46,7 @@ public class RootTreeNode extends FolderTreeNode {
         return mTagRootTreeNode;
     }
     
+    @Override
     public FolderTreeNode getFolderChild(int pIndex) {
         switch (pIndex) {
             case 0:
@@ -60,6 +62,7 @@ public class RootTreeNode extends FolderTreeNode {
         }
     }
     
+    @Override
     public String toString() {
         boolean numbered = MainModel.getInstance().getElementsTreeModel().getNumbered();
         String workspaceId = MainModel.getInstance().getWorkspace().getId();
@@ -69,6 +72,7 @@ public class RootTreeNode extends FolderTreeNode {
             return workspaceId;
     }
     
+    @Override
     public String getPosition() {
         return 1 + "";
     }

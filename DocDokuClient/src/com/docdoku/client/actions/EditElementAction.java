@@ -56,6 +56,7 @@ public class EditElementAction extends ClientAbstractAction {
         setLargeIcon("/com/docdoku/client/resources/icons/edit_large.png");
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final MasterDocument mdoc = mOwner.getSelectedMDoc();
         MasterDocumentTemplate template = mOwner.getSelectedMDocTemplate();
@@ -63,10 +64,12 @@ public class EditElementAction extends ClientAbstractAction {
         
         if (mdoc != null) {
             ActionListener okAction = new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent pAE) {
                     final EditDocDialog source = (EditDocDialog) pAE
                             .getSource();
                     Thread worker = new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             MainController controller = MainController
                                     .getInstance();
@@ -150,9 +153,11 @@ public class EditElementAction extends ClientAbstractAction {
             }
         } else if(template != null){
             ActionListener action = new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent pAE) {
                     final EditMDocTemplateDialog source = (EditMDocTemplateDialog) pAE.getSource();
                     Thread worker = new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             MainController controller = MainController
                                     .getInstance();

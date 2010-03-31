@@ -33,10 +33,12 @@ import java.awt.*;
 public class AddAttributeActionListener implements ActionListener {
 
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final EditAttributesPanel sourcePanel = (EditAttributesPanel) pAE.getSource();
         Dialog owner = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, sourcePanel);
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 CreateAttributeTemplateDialog source = (CreateAttributeTemplateDialog) pAE.getSource();
                 InstanceAttributeTemplate attr = new InstanceAttributeTemplate();

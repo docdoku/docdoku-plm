@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -71,7 +72,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
     private JButton mRemoveButton;
     private Set<String> mSelectedAttributes = new HashSet<String>();
     
-    private Map<String, JComponent> mAttributeComponents = new LinkedHashMap<String, JComponent>();
+    private Map<String, JComponent> mAttributeComponents = new HashMap<String, JComponent>();
     private Map<String, InstanceAttribute> mAttributesWorkingCopy = new HashMap<String, InstanceAttribute>();
     private Map<String, InstanceAttribute> mAttributes;
 
@@ -176,6 +177,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
         mAddButton.addActionListener(this);
         mRemoveButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 for (String selectedAttr : mSelectedAttributes) {
                     mAttributesWorkingCopy.remove(selectedAttr);
@@ -245,6 +247,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
             final JCheckBox attrBox = new JCheckBox();
             attrBox.addChangeListener(new ChangeListener() {
 
+                @Override
                 public void stateChanged(ChangeEvent e) {
                     if (attrBox.isSelected()) {
                         mSelectedAttributes.add(compEntry.getKey());
@@ -279,6 +282,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
         mAttributesPanel.add(new JPanel(), constraints);
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         mAddAttributeAction.actionPerformed(new ActionEvent(this, 0, null));
     }

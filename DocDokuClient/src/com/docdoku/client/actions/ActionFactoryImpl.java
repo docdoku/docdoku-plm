@@ -317,12 +317,12 @@ public class ActionFactoryImpl implements ActionFactory {
     }
 
     @Override
-    public void elementSelected(ElementSelectedEvent pElmentSelectedEvent) {
-        Object selection = pElmentSelectedEvent.getElement();
-        ElementType type = pElmentSelectedEvent.getElementType();
+    public void elementSelected(ElementSelectedEvent pElementSelectedEvent) {
+        Object selection = pElementSelectedEvent.getElement();
+        ElementType type = pElementSelectedEvent.getElementType();
         
         switch (type) {
-            case MasterDocument:
+            case MASTER_DOCUMENT:
                 if (selection != null) {
                     MasterDocument mdoc =((MasterDocument)selection);
                     switchOnMDocActions(mdoc);
@@ -334,7 +334,7 @@ public class ActionFactoryImpl implements ActionFactory {
                     mMDocSelected=false;
                 }
                 break;
-            case WorkflowModel:
+            case WORKFLOW_MODEL:
                 if (selection != null) {
                     switchOnWorkflowModelActions();
                     mWorkflowModelSelected=true;
@@ -345,7 +345,7 @@ public class ActionFactoryImpl implements ActionFactory {
                     mWorkflowModelSelected=false;
                 }
                 break;
-            case MasterDocumentTemplate:
+            case MASTER_DOCUMENT_TEMPLATE:
                 if (selection != null) {
                     switchOnMDocTemplateActions();
                     mMDocTemplateSelected=true;
@@ -356,7 +356,7 @@ public class ActionFactoryImpl implements ActionFactory {
                     mMDocTemplateSelected=false;
                 }
                 break;
-            case FolderTreeNode:
+            case FOLDER_TREE_NODE:
                 if (selection != null) {
                     FolderTreeNode folderTreeNode =((FolderTreeNode)selection);
                     if(folderTreeNode instanceof HomeTreeNode)

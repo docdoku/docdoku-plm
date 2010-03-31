@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import java.awt.Desktop;
 
 import com.docdoku.client.localization.I18N;
+import javax.swing.Icon;
 
 public class WebLink extends JLabel {
 
@@ -41,6 +42,15 @@ public class WebLink extends JLabel {
         super("<html><a href=\"#\">" + pLabel + "</a>");
         init();
     }
+    
+    public WebLink(String pLabel, Icon icon) {
+        super("<html><a href=\"#\">" + pLabel + "</a>",icon, JLabel.CENTER);
+        setVerticalTextPosition(JLabel.BOTTOM);
+        setHorizontalTextPosition(JLabel.CENTER);
+        init();
+    }
+
+
 
     public WebLink(String pLabel, String pTarget) {
         this(pLabel);
