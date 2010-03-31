@@ -6,8 +6,8 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>C:\docdoku\vault</env-entry-value>
-                <!--<env-entry-value>/var/lib/docdoku/vault</env-entry-value>-->
+                <!--<env-entry-value>C:\docdoku\vault</env-entry-value>-->
+                <env-entry-value>/var/lib/docdoku/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -15,8 +15,8 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>C:\docdoku\index</env-entry-value>
-                <!--<env-entry-value>/var/lib/docdoku/index</env-entry-value>-->
+                <!--<env-entry-value>C:\docdoku\index</env-entry-value>-->
+                <env-entry-value>/var/lib/docdoku/index</env-entry-value>
             </env-entry>
         </session>
         <message-driven>
@@ -24,9 +24,9 @@
             <env-entry>
                 <env-entry-name>codebase</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://localhost:8080</env-entry-value>
+                <!--<env-entry-value>http://localhost:8080</env-entry-value>-->
                 <!--<env-entry-value>http://docdokubox</env-entry-value>-->
-                <!--<env-entry-value>http://www.docdoku.net</env-entry-value>-->             
+                <env-entry-value>http://www.docdoku.net</env-entry-value>             
             </env-entry>
         </message-driven>
         <message-driven>
@@ -34,8 +34,8 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>C:\docdoku\index</env-entry-value>
-                <!--<env-entry-value>/var/lib/docdoku/index</env-entry-value>-->
+                <!--<env-entry-value>C:\docdoku\index</env-entry-value>-->
+                <env-entry-value>/var/lib/docdoku/index</env-entry-value>
             </env-entry>
         </message-driven>
     </enterprise-beans>
