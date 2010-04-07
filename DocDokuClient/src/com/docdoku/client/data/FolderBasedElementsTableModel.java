@@ -82,6 +82,7 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
         return returnValue;
     }
     
+    @Override
     public int getColumnCount() {
         return mColumnName.length;
     }
@@ -91,10 +92,12 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
         return mColumnName[pColumnIndex];
     }
     
+    @Override
     public int getRowCount() {
         return ((mFolder == null) ? 0 : mFolder.elementSize());
     }
     
+    @Override
     public Object getValueAt(int pRowIndex, int pColumnIndex) {
         Object element = mFolder.getElementChild(pRowIndex);       
         if (element instanceof MasterDocument) {
@@ -158,6 +161,7 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
         return null;
     }
     
+    @Override
     public Object getElementAt(int pRowIndex) {
         return mFolder.getElementChild(pRowIndex);
     }
@@ -166,6 +170,7 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
         return mFolder==null?null:mFolder.getCompletePath();
     }
     
+    @Override
     public int getIndexOfElement(Object pElement) {
         int count = getRowCount();
         for (int i = 0; i < count; i++)

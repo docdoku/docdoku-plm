@@ -40,6 +40,7 @@ import com.docdoku.client.ui.common.ViewFilesPanel;
 public class DownloadActionListener implements ActionListener {
     private JFileChooser mFileChooser = new JFileChooser();
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final ViewFilesPanel source = (ViewFilesPanel) pAE.getSource();
         final BinaryResource remoteFile = source.getSelectedFile();
@@ -47,6 +48,7 @@ public class DownloadActionListener implements ActionListener {
         int state = mFileChooser.showSaveDialog(source);
         if (state == JFileChooser.APPROVE_OPTION) {
             Thread worker = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         File localFile;

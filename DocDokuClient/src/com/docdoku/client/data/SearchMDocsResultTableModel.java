@@ -50,18 +50,22 @@ public class SearchMDocsResultTableModel extends AbstractTableModel implements E
         mMDocs = pMDocs;
     }
 
+    @Override
     public int getColumnCount() {
         return COLUMN_NAME.length;
     }
 
+    @Override
     public String getColumnName(int pColumnIndex) {
         return COLUMN_NAME[pColumnIndex];
     }
 
+    @Override
     public int getRowCount() {
         return mMDocs.length;
     }
 
+    @Override
     public Class getColumnClass(int column) {
         Class returnValue;
         if ((column >= 0) && (column < getColumnCount()) && getRowCount() > 0) {
@@ -72,6 +76,7 @@ public class SearchMDocsResultTableModel extends AbstractTableModel implements E
         return returnValue;
     }
 
+    @Override
     public Object getValueAt(int pRowIndex, int pColumnIndex) {
         MasterDocument mdoc = mMDocs[pRowIndex];
         Document doc = mdoc.getLastIteration();
@@ -107,10 +112,12 @@ public class SearchMDocsResultTableModel extends AbstractTableModel implements E
         return null;
     }
 
+    @Override
     public MasterDocument getElementAt(int pRowIndex) {
         return mMDocs[pRowIndex];
     }
 
+    @Override
     public int getIndexOfElement(Object pElement) {
         int count = getRowCount();
         for (int i = 0; i < count; i++) {

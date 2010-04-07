@@ -49,8 +49,10 @@ public class SearchAction extends ClientAbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('F', Event.CTRL_MASK));
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 SearchDialog source = (SearchDialog) pAE.getSource();
                 try{                   
@@ -66,6 +68,7 @@ public class SearchAction extends ClientAbstractAction {
                     Date creationDateFrom = source.getCreationDateFrom();
                     Date creationDateTo = source.getCreationDateTo();
                     ActionListener resultAction = new ActionListener() {
+                        @Override
                         public void actionPerformed(ActionEvent pAE) {
                             SearchResultDialog source = (SearchResultDialog) pAE.getSource();
                             MasterDocument mdoc = source.getSelectedMDocs()[0];

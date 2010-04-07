@@ -49,11 +49,13 @@ public class ExportAction extends ClientAbstractAction {
         putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("Export_mnemonic_key")));
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final FolderTreeNode folderToExport = mOwner.getSelectedFolder();
         int state = mDirectoryChooser.showSaveDialog(mOwner);
         if (state == JFileChooser.APPROVE_OPTION) {
             Thread worker = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         File directory=mDirectoryChooser.getSelectedFile();

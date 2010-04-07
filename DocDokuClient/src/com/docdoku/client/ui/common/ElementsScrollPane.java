@@ -59,7 +59,7 @@ public class ElementsScrollPane extends JScrollPane {
     }
     
     public void selectElement(MasterDocument pMDoc){
-        int index = getModel().getIndexOfElement(pMDoc);
+        int index = mElementsTable.convertRowIndexToView(getModel().getIndexOfElement(pMDoc));
         if(index !=-1)
             getSelectionModel().setSelectionInterval(index,index);
     }
