@@ -45,9 +45,11 @@ public class CheckOutAction extends ClientAbstractAction {
         setLargeIcon("/com/docdoku/client/resources/icons/document_out_large.png");
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final MasterDocument mdoc = mOwner.getSelectedMDoc();
         Thread worker = new Thread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

@@ -111,6 +111,7 @@ public class FolderTreeNode implements Comparable<FolderTreeNode> {
         return mFolder.hashCode();
     }
 
+    @Override
     public int compareTo(FolderTreeNode pFolderTreeNode) {
         return mFolder.compareTo(pFolderTreeNode.mFolder);
     }
