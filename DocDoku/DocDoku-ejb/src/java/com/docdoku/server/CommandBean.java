@@ -66,7 +66,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     private SessionContext ctx;
     @Resource(name = "vaultPath")
     private String vaultPath;
-    @Resource(name = "jms/docdokuConnFactory", authenticationType=Resource.AuthenticationType.APPLICATION)
+    @Resource(name = "jms/docdokuConnFactory", authenticationType = Resource.AuthenticationType.APPLICATION)
     private ConnectionFactory connectionFactory;
     @Resource(name = "jms/docdokuMailerQueue")
     private Queue mailerQueue;
@@ -264,9 +264,9 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
-        try{
-        Account account = checkAdmin(pWorkspaceId);
-        UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
+        try {
+            Account account = checkAdmin(pWorkspaceId);
+            UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
             for (String login : pLogins) {
                 MasterDocument[] mdocs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
                 for (MasterDocument mdoc : mdocs) {
@@ -278,12 +278,25 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                     }
                 }
             }
-        }catch(UserNotFoundException ex){ctx.setRollbackOnly();throw ex;}
-        catch(NotAllowedException ex){ctx.setRollbackOnly();throw ex;}
-        catch(AccessRightException ex){ctx.setRollbackOnly();throw ex;}
-        catch(AccountNotFoundException ex){ctx.setRollbackOnly();throw ex;}
-        catch(WorkspaceNotFoundException ex){ctx.setRollbackOnly();throw ex;}
-        catch(FolderNotFoundException ex){ctx.setRollbackOnly();throw ex;}
+        } catch (UserNotFoundException ex) {
+            ctx.setRollbackOnly();
+            throw ex;
+        } catch (NotAllowedException ex) {
+            ctx.setRollbackOnly();
+            throw ex;
+        } catch (AccessRightException ex) {
+            ctx.setRollbackOnly();
+            throw ex;
+        } catch (AccountNotFoundException ex) {
+            ctx.setRollbackOnly();
+            throw ex;
+        } catch (WorkspaceNotFoundException ex) {
+            ctx.setRollbackOnly();
+            throw ex;
+        } catch (FolderNotFoundException ex) {
+            ctx.setRollbackOnly();
+            throw ex;
+        }
     }
 
     @RolesAllowed("users")
@@ -424,23 +437,23 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     public MasterDocument[] findMDocsByFolder(String pCompletePath) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        String workspaceId=Folder.parseWorkspaceId(pCompletePath);
+        String workspaceId = Folder.parseWorkspaceId(pCompletePath);
         User user = checkWorkspaceReadAccess(workspaceId);
         List<MasterDocument> mdocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findMDocsByFolder(pCompletePath);
-        ListIterator<MasterDocument> ite=mdocs.listIterator();
+        ListIterator<MasterDocument> ite = mdocs.listIterator();
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
         while (ite.hasNext()) {
-            MasterDocument mdoc=ite.next();
-            if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasReadAccess(user)){
+            MasterDocument mdoc = ite.next();
+            if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
             }
             if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc=mdoc.clone();
+                mdoc = mdoc.clone();
                 mdoc.removeLastIteration();
                 ite.set(mdoc);
-                
+
             }
         }
         return mdocs.toArray(new MasterDocument[mdocs.size()]);
@@ -448,20 +461,20 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     public MasterDocument[] findMDocsByTag(TagKey pKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        String workspaceId=pKey.getWorkspaceId();
+        String workspaceId = pKey.getWorkspaceId();
         User user = checkWorkspaceReadAccess(workspaceId);
         List<MasterDocument> mdocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findMDocsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
-        ListIterator<MasterDocument> ite=mdocs.listIterator();
+        ListIterator<MasterDocument> ite = mdocs.listIterator();
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
         while (ite.hasNext()) {
-            MasterDocument mdoc=ite.next();
-            if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasReadAccess(user)){
+            MasterDocument mdoc = ite.next();
+            if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
             }
             if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc=mdoc.clone();
+                mdoc = mdoc.clone();
                 mdoc.removeLastIteration();
                 ite.set(mdoc);
 
@@ -489,7 +502,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     @RolesAllowed("users")
     public MasterDocument[] getCheckedOutMDocs(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = checkWorkspaceReadAccess(pWorkspaceId);
-        List<MasterDocument> mdocs =  new MasterDocumentDAO(new Locale(user.getLanguage()), em).findCheckedOutMDocs(user);
+        List<MasterDocument> mdocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findCheckedOutMDocs(user);
         return mdocs.toArray(new MasterDocument[mdocs.size()]);
     }
 
@@ -535,12 +548,9 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     @RolesAllowed("users")
     public MasterDocument[] searchMDocs(SearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<MasterDocument> fetchedMDocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).searchMDocs(pQuery.getWorkspaceId(), pQuery.getMDocId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo());
-
         //preparing tag filtering
         Set<Tag> tags = null;
-        if (fetchedMDocs.size() > 0 && pQuery.getTags() != null) {
+        if (pQuery.getTags() != null) {
             Workspace wks = new Workspace();
             wks.setId(pQuery.getWorkspaceId());
             tags = new HashSet<Tag>();
@@ -548,6 +558,9 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                 tags.add(new Tag(wks, label));
             }
         }
+       
+        List<MasterDocument> fetchedMDocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).searchMDocs(pQuery.getWorkspaceId(), pQuery.getMDocId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
+                pQuery.getCreationDateTo(), tags, Arrays.asList(pQuery.getAttributes()));
 
         //preparing fulltext filtering
         Set<MasterDocumentKey> indexedKeys = null;
@@ -556,51 +569,26 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
-        ListIterator<MasterDocument> ite=fetchedMDocs.listIterator();
+        ListIterator<MasterDocument> ite = fetchedMDocs.listIterator();
         mdocBlock:
         while (ite.hasNext()) {
-            MasterDocument mdoc=ite.next();
+            MasterDocument mdoc = ite.next();
             if (indexedKeys != null && (!indexedKeys.contains(mdoc.getKey()))) {
                 ite.remove();
                 continue mdocBlock;
             }
 
-            if (tags != null && (!mdoc.getTags().containsAll(tags))){
-                ite.remove();
-                continue mdocBlock;
-            }
-
-            //TODO search should not be based on checked out (especially by someone else) doc working copy
-            Document doc = mdoc.getLastIteration();
-            if (pQuery.getAttributes() != null) {
-                if (doc == null) {
-                    ite.remove();
-                    continue mdocBlock;
-                }
-                for (SearchQuery.AbstractAttributeQuery attrQuery : pQuery.getAttributes()) {
-                    InstanceAttribute docAttr = doc.getInstanceAttributes().get(attrQuery.getName());
-                    if (docAttr == null ){
-                        ite.remove();
-                        continue mdocBlock;
-                    }
-                    if (!attrQuery.attributeMatches(docAttr)) {
-                        ite.remove();
-                        continue mdocBlock;
-                    }
-                }
-            }
-
             //TODO search should not fetch back private mdoc
             if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc=mdoc.clone();
+                mdoc = mdoc.clone();
                 mdoc.removeLastIteration();
                 ite.set(mdoc);
             }
 
             //Check acess rights
-            if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasReadAccess(user)){
+            if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
             }
@@ -758,16 +746,18 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         mdoc.setTitle(pTitle);
         mdoc.setDescription(pDescription);
 
-        if((pACLUserEntries !=null && pACLUserEntries.length>0) || (pACLUserGroupEntries!=null && pACLUserGroupEntries.length>0)){
-            ACL acl=new ACL();
-            if(pACLUserEntries !=null){
-                for(ACLUserEntry entry:pACLUserEntries)
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(),entry.getPrincipalLogin())), entry.getPermission());
+        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
+            ACL acl = new ACL();
+            if (pACLUserEntries != null) {
+                for (ACLUserEntry entry : pACLUserEntries) {
+                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
+                }
             }
 
-            if(pACLUserGroupEntries !=null){
-               for(ACLUserGroupEntry entry:pACLUserGroupEntries)
-                    acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(),entry.getPrincipalId())), entry.getPermission());
+            if (pACLUserGroupEntries != null) {
+                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+                    acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
+                }
             }
             mdoc.setACL(acl);
         }
@@ -813,8 +803,8 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
         //Check access rights on mdoc
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
-        if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasWriteAccess(user)){
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
         Folder oldLocation = mdoc.getLocation();
@@ -918,8 +908,8 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
         //Check access rights on mdoc
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
-        if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasWriteAccess(user)){
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
         String owner = mdoc.getLocation().getOwner();
@@ -1043,8 +1033,8 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
         //Check access rights on mdoc
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
-        if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasWriteAccess(user)){
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
         if (mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(user)) {
@@ -1103,8 +1093,8 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
         //Check access rights on
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
-        boolean isAdmin=wks.getAdmin().getLogin().equals(user.getLogin());
-        if(!isAdmin && mdoc.getACL() !=null && !mdoc.getACL().hasWriteAccess(user)){
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
         String owner = mdoc.getLocation().getOwner();
@@ -1188,10 +1178,10 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             }
 
             // set doc for all attributes
-            Map<String,InstanceAttribute>  attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : pAttributes) {
                 attr.setDocument(doc);
-                attrs.put(attr.getName(),attr);
+                attrs.put(attr.getName(), attr);
             }
 
 
@@ -1203,7 +1193,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                 attrDAO.removeAttribute(attrToRemove);
             }
 
-                        
+
             doc.setRevisionNote(pRevisionNote);
             doc.setLinkedDocuments(links);
             doc.setInstanceAttributes(attrs);
@@ -1275,16 +1265,18 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
         mdoc.setTitle(pTitle);
         mdoc.setDescription(pDescription);
-        if((pACLUserEntries !=null && pACLUserEntries.length >0) || (pACLUserGroupEntries!=null && pACLUserGroupEntries.length >0)){
-            ACL acl=new ACL();
-            if(pACLUserEntries !=null){
-                for(ACLUserEntry entry:pACLUserEntries)
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(),entry.getPrincipalLogin())), entry.getPermission());
+        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
+            ACL acl = new ACL();
+            if (pACLUserEntries != null) {
+                for (ACLUserEntry entry : pACLUserEntries) {
+                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
+                }
             }
 
-            if(pACLUserGroupEntries !=null){
-               for(ACLUserGroupEntry entry:pACLUserGroupEntries)
-                    acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(),entry.getPrincipalId())), entry.getPermission());
+            if (pACLUserGroupEntries != null) {
+                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+                    acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
+                }
             }
             mdoc.setACL(acl);
         }
