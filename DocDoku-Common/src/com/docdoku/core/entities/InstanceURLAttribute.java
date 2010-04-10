@@ -38,7 +38,7 @@ public class InstanceURLAttribute extends InstanceAttribute {
 
     public InstanceURLAttribute(Document pDoc, String pName, String pValue) {
         super(pDoc, pName);
-        urlValue = pValue;
+        setUrlValue(pValue);
     }
 
     @Override
@@ -49,6 +49,7 @@ public class InstanceURLAttribute extends InstanceAttribute {
     @Override
     public boolean setValue(Object pValue) {
         urlValue = pValue + "";
+        attributeValue=urlValue;
         return true;
     }
 
@@ -58,6 +59,7 @@ public class InstanceURLAttribute extends InstanceAttribute {
 
     public void setUrlValue(String urlValue) {
         this.urlValue = urlValue;
+        attributeValue=urlValue;
     }
 
     

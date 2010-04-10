@@ -42,7 +42,7 @@ public class InstanceDateAttribute extends InstanceAttribute{
     
     public InstanceDateAttribute(Document pDoc, String pName, Date pValue) {
         super(pDoc, pName);
-        dateValue=pValue;
+        setDateValue(pValue);
     }
 
     public Date getValue() {
@@ -55,6 +55,7 @@ public class InstanceDateAttribute extends InstanceAttribute{
 
     public void setDateValue(Date dateValue) {
         this.dateValue = dateValue;
+        attributeValue=dateValue.getTime() + "";
     }
     
     
@@ -75,6 +76,7 @@ public class InstanceDateAttribute extends InstanceAttribute{
     public boolean setValue(Object pValue) {
         if(pValue instanceof Date){
             dateValue=(Date)pValue;
+            attributeValue=dateValue.getTime() + "";
             return true;
         }else
             return false;

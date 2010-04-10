@@ -72,6 +72,8 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
     @javax.persistence.Id
     protected String name = "";
 
+    protected String attributeValue;
+
     public InstanceAttribute() {
     }
 

@@ -41,7 +41,7 @@ public class InstanceNumberAttribute extends InstanceAttribute{
     
     public InstanceNumberAttribute(Document pDoc, String pName, float pValue) {
         super(pDoc, pName);
-        numberValue=pValue;
+        setNumberValue(pValue);
     }
 
     public Float getValue() {
@@ -54,12 +54,14 @@ public class InstanceNumberAttribute extends InstanceAttribute{
 
     public void setNumberValue(float numberValue) {
         this.numberValue = numberValue;
+        attributeValue = numberValue + "";
     }
 
     @Override
     public boolean setValue(Object pValue) {
         try{
             numberValue=Float.parseFloat(pValue + "");
+            attributeValue=numberValue + "";
             return true;
         }catch(NumberFormatException ex){
             return false;

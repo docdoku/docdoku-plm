@@ -41,7 +41,7 @@ public class InstanceTextAttribute extends InstanceAttribute{
     
     public InstanceTextAttribute(Document pDoc, String pName, String pValue) {
         super(pDoc, pName);
-        textValue=pValue;
+        setTextValue(pValue);
     }
 
     @Override
@@ -55,11 +55,13 @@ public class InstanceTextAttribute extends InstanceAttribute{
 
     public void setTextValue(String textValue) {
         this.textValue = textValue;
+        attributeValue = textValue;
     }
 
     @Override
     public boolean setValue(Object pValue) {
         textValue=pValue + "";
+        attributeValue=textValue;
         return true;
     }
 
