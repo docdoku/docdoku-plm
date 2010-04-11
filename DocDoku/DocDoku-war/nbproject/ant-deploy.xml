@@ -4,12 +4,12 @@
         <property file="${deploy.ant.properties.file}" />
         <available file="${deploy.ant.docbase.dir}/WEB-INF/sun-web.xml" property="sun.web.present"/>
         <available file="${deploy.ant.resource.dir}" property="has.setup"/>
-        <tempfile prefix="sjsas" property="sjsas.password.file" destdir="${java.io.tmpdir}"/>  <!-- do not forget to delete this! -->
-        <echo message="AS_ADMIN_PASSWORD=${sjsas.password}" file="${sjsas.password.file}"/>
+        <tempfile prefix="gfv3" property="gfv3.password.file" destdir="${java.io.tmpdir}"/>  <!-- do not forget to delete this! -->
+        <echo message="AS_ADMIN_PASSWORD=${gfv3.password}" file="${gfv3.password.file}"/>
     </target>
     
     <target name="-parse-sun-web" depends="-init-cl-deployment-env" if="sun.web.present">
-        <tempfile prefix="sjsas" property="temp.sun.web" destdir="${java.io.tmpdir}"/>
+        <tempfile prefix="gfv3" property="temp.sun.web" destdir="${java.io.tmpdir}"/>
         <copy file="${deploy.ant.docbase.dir}/WEB-INF/sun-web.xml" tofile="${temp.sun.web}"/>
         <!-- The doctype triggers resolution which can fail -->
         <replace file="${temp.sun.web}">
@@ -23,38 +23,38 @@
         <xmlproperty file="${temp.sun.web}" validate="false">
         </xmlproperty>    
         <delete file="${temp.sun.web}"/>
-        <property name="deploy.ant.client.url" value="${sjsas.url}${sun-web-app.context-root}"/>
+        <property name="deploy.ant.client.url" value="${gfv3.url}${sun-web-app.context-root}"/>
+        <property name="deploy.context.root.argument" value="?contextroot=${sun-web-app.context-root}"/>
+    </target>
+    <target name="-no-parse-sun-web" depends="-init-cl-deployment-env" unless="sun.web.present">
+        <property name="deploy.context.root.argument" value=""/>
     </target>
     <target name="-add-resources" depends="-init-cl-deployment-env" if="has.setup">
-        <tempfile prefix="sjsas" property="sjsas.resources.dir" destdir="${java.io.tmpdir}"/>
-        <mkdir dir="${sjsas.resources.dir}"/>
-        <mkdir dir="${sjsas.resources.dir}/META-INF"/>
-        <property name="sjsas.resources.file" value="${sjsas.resources.dir}/META-INF/sun-resources.xml"/>
-        <copy todir="${sjsas.resources.dir}/META-INF">
+        <tempfile prefix="gfv3" property="gfv3.resources.dir" destdir="${java.io.tmpdir}"/>
+        <mkdir dir="${gfv3.resources.dir}"/>
+        <mkdir dir="${gfv3.resources.dir}/META-INF"/>
+        <property name="gfv3.resources.file" value="${gfv3.resources.dir}/META-INF/sun-resources.xml"/>
+        <copy todir="${gfv3.resources.dir}/META-INF">
             <fileset dir="${deploy.ant.resource.dir}"/>
         </copy>
         <jar destfile="${deploy.ant.archive}" update="true">
-            <fileset dir="${sjsas.resources.dir}"/>
+            <fileset dir="${gfv3.resources.dir}"/>
         </jar>
-        <delete dir="${sjsas.resources.dir}"/>
+        <delete dir="${gfv3.resources.dir}"/>
     </target>
-    <target name="-deploy-ant" depends="-parse-sun-web,-add-resources" if="deploy.ant.enabled">
+    <target name="-deploy-ant" depends="-parse-sun-web,-no-parse-sun-web,-add-resources" if="deploy.ant.enabled">
         <echo message="Deploying ${deploy.ant.archive}"/>
-        <taskdef name="sun-appserv-deploy" classname="org.apache.tools.ant.taskdefs.optional.sun.appserv.DeployTask"
-                 classpath="${sjsas.root}/lib/sun-appserv-ant.jar" />
-        <sun-appserv-deploy user="${sjsas.username}"
-                passwordfile="${sjsas.password.file}"
-                host="${sjsas.host}" port="${sjsas.port}"
-                file="${deploy.ant.archive}" asinstalldir="${sjsas.root}"/>
-        <delete file="${sjsas.password.file}"/>
+        <tempfile prefix="gfv3" property="gfv3.results.file" destdir="${java.io.tmpdir}"/>  <!-- do not forget to delete this! -->
+        <property name="full.deploy.ant.archive" location="${deploy.ant.archive}"/>
+        <get src="${gfv3.url}/__asadmin/deploy?path=${full.deploy.ant.archive}${deploy.context.root.argument}?force=true?name=${ant.project.name}"
+            dest="${gfv3.results.file}"/>
+        <delete file="${gfv3.results.file}"/>    
     </target>
     <target name="-undeploy-ant" depends="-init-cl-deployment-env" if="deploy.ant.enabled">
-        <taskdef name="sun-appserv-undeploy" classname="org.apache.tools.ant.taskdefs.optional.sun.appserv.UndeployTask"
-                 classpath="${sjsas.root}/lib/sun-appserv-ant.jar" />
-        <sun-appserv-undeploy user="${sjsas.username}"
-                passwordfile="${sjsas.password.file}"
-                host="${sjsas.host}" port="${sjsas.port}"
-                file="${deploy.ant.archive}" asinstalldir="${sjsas.root}"/>
-        <delete file="${sjsas.password.file}"/>
+        <echo message="Undeploying ${deploy.ant.archive}"/>
+        <tempfile prefix="gfv3" property="gfv3.results.file" destdir="${java.io.tmpdir}"/>  <!-- do not forget to delete this! -->
+        <get src="${gfv3.url}/__asadmin/undeploy?name=${ant.project.name}"
+            dest="${gfv3.results.file}"/>
+        <delete file="${gfv3.results.file}"/>    
     </target>
 </project>

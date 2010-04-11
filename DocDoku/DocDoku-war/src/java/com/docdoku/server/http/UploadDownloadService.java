@@ -91,8 +91,10 @@ public class UploadDownloadService {
             vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
             vaultFile.getParentFile().mkdirs();
             vaultFile.createNewFile();
+            
             StreamingDataHandler dh = (StreamingDataHandler) data;
             dh.moveTo(vaultFile);
+            dh.close();
             commandService.saveFileInDocument(docPK, fileName, vaultFile.length());
             utx.commit();
         } catch (Exception pEx) {
@@ -123,6 +125,7 @@ public class UploadDownloadService {
 
             StreamingDataHandler dh = (StreamingDataHandler) data;
             dh.moveTo(vaultFile);
+            dh.close();
             commandService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
             utx.commit();
         } catch (Exception pEx) {

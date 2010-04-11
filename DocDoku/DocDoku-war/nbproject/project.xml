@@ -95,6 +95,9 @@
                 <library>
                     <file>${file.reference.searchTheme.jar}</file>
                 </library>
+                <library>
+                    <file>${file.reference.webservices-rt.jar}</file>
+                </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>
