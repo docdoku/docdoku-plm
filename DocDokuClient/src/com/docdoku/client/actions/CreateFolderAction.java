@@ -37,8 +37,10 @@ public class CreateFolderAction extends ClientAbstractAction {
         putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("FolderCreation_mnemonic_key")));
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 try{
                     CreateFolderDialog source = (CreateFolderDialog) pAE.getSource();
