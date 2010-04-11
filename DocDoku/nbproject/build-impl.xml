@@ -112,10 +112,6 @@ is divided into following sections:
                 <isset property="app.client"/>
             </and>
         </condition>
-        <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
-        <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
-            <length length="0" string="${endorsed.classpath}" when="greater"/>
-        </condition>
     </target>
     <target depends="init" name="-init-cos">
         <condition else="false" property="build.deploy.on.save">
@@ -150,17 +146,18 @@ exists or setup the property manually. For example like this:
     <!--
     COMPILATION SECTION
     -->
-    <target depends="init" name="deps-jar" unless="no.deps"/>
-    <target depends="init" name="deps-j2ee-archive" unless="no.deps">
+    <target depends="init" name="deps-jar" unless="no.deps">
         <condition property="build.deploy.on.save" value="false">
             <not>
                 <isset property="build.deploy.on.save"/>
             </not>
         </condition>
-        <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="dist-ear">
+        <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="dist">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
+    </target>
+    <target depends="init" name="deps-j2ee-archive" unless="no.deps">
         <condition property="build.deploy.on.save" value="false">
             <not>
                 <isset property="build.deploy.on.save"/>
@@ -181,8 +178,8 @@ exists or setup the property manually. For example like this:
             <fileset dir="${meta.inf}"/>
         </copy>
     </target>
-    <target depends="init,deps-jar,pre-pre-compile,pre-compile" name="-do-compile-deps">
-        <copyfiles files="${reference.DocDoku-ejb.dist-ear}" todir="${build.dir}//"/>
+    <target depends="init,deps-jar,pre-pre-compile,pre-compile" if="do.package.not.directory.deploy" name="-do-compile-deps">
+        <copyfiles files="${reference.DocDoku-ejb.dist}" todir="${build.dir}//"/>
         <copyfiles files="${reference.DocDoku-war.dist-ear}" todir="${build.dir}//"/>
     </target>
     <target name="post-compile">
@@ -260,7 +257,6 @@ exists or setup the property manually. For example like this:
     </target>
     <target name="-run-deploy-am" unless="no.deps">
         <!-- Task to deploy to the Access Manager runtime. -->
-        <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="-run-deploy-am"/>
         <ant antfile="${project.DocDoku-war}/build.xml" inheritall="false" target="-run-deploy-am"/>
     </target>
     <target depends="-init-cos,dist-directory-deploy,pre-run-deploy,-pre-nbmodule-run-deploy,-run-deploy-nb,-init-deploy-ant,-deploy-ant,-run-deploy-am,-post-nbmodule-run-deploy,post-run-deploy" name="run-deploy"/>
@@ -349,16 +345,7 @@ exists or setup the property manually. For example like this:
     <target if="j2ee.appclient.mainclass.args" name="-as-retrieve-option-workaround" unless="j2ee.clientName">
         <property name="client.jar" value="${dist.dir}/DocDokuClient.jar"/>
         <sleep seconds="3"/>
-        <copy failonerror="false" file="${wa.copy.client.jar.from}/DocDoku/DocDokuClient.jar" todir="${dist.dir}"/>
-        <copy failonerror="false" flatten="true" todir="${dist.dir}/">
-            <fileset dir="${wa.copy.client.jar.from}/DocDoku" includes="**/DocDokuClient.jar"/>
-        </copy>
-        <copy flatten="true" todir="${dist.dir}/DocDokuClient">
-            <fileset dir="${wa.copy.client.jar.from}/DocDoku" includes="**/*.*ar"/>
-        </copy>
-        <copy flatten="false" todir="${dist.dir}/DocDokuClient">
-            <fileset dir="${dist.dir}/gfdeploy/DocDoku" includes="**/*.jar"/>
-        </copy>
+        <copy file="${wa.copy.client.jar.from}/DocDoku/DocDokuClient.jar" todir="${dist.dir}"/>
     </target>
     <!--
     DEBUGGING SECTION
@@ -373,7 +360,6 @@ exists or setup the property manually. For example like this:
         <nbjpdaconnect address="${jpda.address}" host="${jpda.host}" name="${name}" transport="${jpda.transport}">
             <classpath>
                 <path path="${debug.classpath}"/>
-                <fileset dir="${build.dir}/lib" includes="*.jar"/>
             </classpath>
             <sourcepath>
                 <path path="${ear.docbase.dirs}"/>
@@ -406,7 +392,6 @@ exists or setup the property manually. For example like this:
             <sequential>
                 <parallel>
                     <java classname="@{mainclass}" fork="true">
-                        <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                         <jvmarg line="${j2ee.appclient.tool.jvmoptions}"/>
                         <jvmarg line="${debug-args-line}"/>
                         <jvmarg value="-Xrunjdwp:transport=${jpda.transport},server=y,address=${jpda.address},suspend=y"/>
@@ -446,7 +431,7 @@ exists or setup the property manually. For example like this:
                 <isset property="build.deploy.on.save"/>
             </not>
         </condition>
-        <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="clean-ear">
+        <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="clean">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>

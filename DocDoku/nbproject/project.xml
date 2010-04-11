@@ -8,11 +8,11 @@
             <minimum-ant-version>1.6</minimum-ant-version>
             <web-module-libraries/>
             <web-module-additional-libraries>
-                <library files="1">
-                    <file>${reference.DocDoku-ejb.dist-ear}</file>
+                <library>
+                    <file>${reference.DocDoku-ejb.dist}</file>
                     <path-in-war>/</path-in-war>
                 </library>
-                <library files="1">
+                <library>
                     <file>${reference.DocDoku-war.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
@@ -21,11 +21,11 @@
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>DocDoku-ejb</foreign-project>
-                <artifact-type>j2ee_ear_archive</artifact-type>
+                <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
-                <target>dist-ear</target>
-                <clean-target>clean-ear</clean-target>
-                <id>dist-ear</id>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
             </reference>
             <reference>
                 <foreign-project>DocDoku-war</foreign-project>
