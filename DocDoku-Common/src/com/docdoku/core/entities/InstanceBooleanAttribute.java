@@ -54,13 +54,11 @@ public class InstanceBooleanAttribute extends InstanceAttribute{
 
     public void setBooleanValue(boolean booleanValue) {
         this.booleanValue = booleanValue;
-        attributeValue=booleanValue + "";
     }
 
     @Override
     public boolean setValue(Object pValue) {
         booleanValue=Boolean.parseBoolean(pValue + "");
-        attributeValue=booleanValue + "";
         return true;
     }
     

@@ -20,6 +20,7 @@
 
 package com.docdoku.core.entities;
 
+import java.util.Arrays;
 import java.util.Date;
 import javax.persistence.Entity;
 
@@ -55,7 +56,6 @@ public class InstanceDateAttribute extends InstanceAttribute{
 
     public void setDateValue(Date dateValue) {
         this.dateValue = dateValue;
-        attributeValue=dateValue.getTime() + "";
     }
     
     
@@ -76,7 +76,6 @@ public class InstanceDateAttribute extends InstanceAttribute{
     public boolean setValue(Object pValue) {
         if(pValue instanceof Date){
             dateValue=(Date)pValue;
-            attributeValue=dateValue.getTime() + "";
             return true;
         }else
             return false;
