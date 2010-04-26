@@ -60,11 +60,44 @@ public class MasterDocumentDAO {
 
         if (pAttrs != null && pAttrs.size() > 0) {
             queryStr.append("JOIN m.documentIterations d ");
-            for(int i =0 ;i<pAttrs.size();i++)
-                queryStr.append("JOIN d.instanceAttributes attr" + i + " ");
         }
 
         queryStr.append("WHERE m.workspaceId = :workspaceId ");
+        if (pAttrs != null && pAttrs.size() > 0) {
+            queryStr.append("AND d.iteration = (SELECT MAX(d2.iteration) FROM MasterDocument m2 JOIN m2.documentIterations d2 WHERE m2=m) ");
+            int i=0;
+            for(SearchQuery.AbstractAttributeQuery attr:pAttrs){
+                queryStr.append("AND EXISTS (");
+                if(attr instanceof SearchQuery.DateAttributeQuery){
+                    queryStr.append("SELECT attr" + i + " FROM InstanceDateAttribute attr" + i + " ");
+                    queryStr.append("WHERE attr" + i + ".dateValue BETWEEN :attrLValue" + i + " AND :attrUValue" + i + " ");
+                    queryStr.append("AND attr" + i + ".document = d ");
+                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                }else if(attr instanceof SearchQuery.TextAttributeQuery){
+                    queryStr.append("SELECT attr" + i + " FROM InstanceTextAttribute attr" + i + " ");
+                    queryStr.append("WHERE attr" + i + ".textValue  = :attrValue" + i + " ");
+                    queryStr.append("AND attr" + i + ".document = d ");
+                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                }else if(attr instanceof SearchQuery.NumberAttributeQuery){
+                    queryStr.append("SELECT attr" + i + " FROM InstanceNumberAttribute attr" + i + " ");
+                    queryStr.append("WHERE attr" + i + ".numberValue  = :attrValue" + i + " ");
+                    queryStr.append("AND attr" + i + ".document = d ");
+                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                }else if(attr instanceof SearchQuery.BooleanAttributeQuery){
+                    queryStr.append("SELECT attr" + i + " FROM InstanceBooleanAttribute attr" + i + " ");
+                    queryStr.append("WHERE attr" + i + ".booleanValue  = :attrValue" + i + " ");
+                    queryStr.append("AND attr" + i + ".document = d ");
+                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                }else if(attr instanceof SearchQuery.URLAttributeQuery){
+                    queryStr.append("SELECT attr" + i + " FROM InstanceURLAttribute attr" + i + " ");
+                    queryStr.append("WHERE attr" + i + ".urlValue  = :attrValue" + i + " ");
+                    queryStr.append("AND attr" + i + ".document = d ");
+                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                }
+                queryStr.append(") ");
+            }
+            
+        }
         queryStr.append("AND m.id LIKE :id ");
         queryStr.append("AND m.version LIKE :version ");
         queryStr.append("AND m.title LIKE :title ");
@@ -75,20 +108,6 @@ public class MasterDocumentDAO {
             for(int i =0 ;i<pTags.size();i++)
                 queryStr.append("AND :tag" + i + " MEMBER OF m.tags ");
         }
-
-        if (pAttrs != null && pAttrs.size() > 0) {
-            queryStr.append("AND d.iteration = (SELECT MAX(d2.iteration) FROM Document d2 WHERE d2=d) ");
-            int i=0;
-            for(SearchQuery.AbstractAttributeQuery attr:pAttrs){
-                if(attr instanceof SearchQuery.DateAttributeQuery){
-                    queryStr.append("AND attr" + i + ".attributeValue BETWEEN :attrLValue" + i + " AND :attrUValue" + i + " ");
-                }else{
-                    queryStr.append("AND attr" + i + ".attributeValue = :attrValue" + i + " ");
-                }
-                queryStr.append("AND attr" + i + ".name = :attrName" + (i++) + " ");
-            }
-        }
-
         queryStr.append("AND m.creationDate BETWEEN :lowerDate AND :upperDate ");
         queryStr.append("ORDER BY m.id, m.version");
 
@@ -115,12 +134,12 @@ public class MasterDocumentDAO {
                 }else if(attr instanceof SearchQuery.URLAttributeQuery){
                     query.setParameter("attrValue" + i, ((SearchQuery.URLAttributeQuery)attr).getUrlValue());
                 }else if(attr instanceof SearchQuery.NumberAttributeQuery){
-                    query.setParameter("attrValue" + i, ((SearchQuery.NumberAttributeQuery)attr).getNumberValue()+"");
+                    query.setParameter("attrValue" + i, ((SearchQuery.NumberAttributeQuery)attr).getNumberValue());
                 }else if(attr instanceof SearchQuery.BooleanAttributeQuery){
-                    query.setParameter("attrValue" + i, ((SearchQuery.BooleanAttributeQuery)attr).isBooleanValue()+"");
+                    query.setParameter("attrValue" + i, ((SearchQuery.BooleanAttributeQuery)attr).isBooleanValue());
                 }else if(attr instanceof SearchQuery.DateAttributeQuery){
-                    query.setParameter("attrLValue" + i, ((SearchQuery.DateAttributeQuery)attr).getFromDate().getTime()+"");
-                    query.setParameter("attrUValue" + i, ((SearchQuery.DateAttributeQuery)attr).getToDate().getTime()+"");
+                    query.setParameter("attrLValue" + i, ((SearchQuery.DateAttributeQuery)attr).getFromDate());
+                    query.setParameter("attrUValue" + i, ((SearchQuery.DateAttributeQuery)attr).getToDate());
                 }
                 query.setParameter("attrName" + (i++), attr.getName());
             }

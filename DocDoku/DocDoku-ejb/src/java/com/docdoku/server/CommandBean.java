@@ -560,7 +560,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
        
         List<MasterDocument> fetchedMDocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).searchMDocs(pQuery.getWorkspaceId(), pQuery.getMDocId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo(), tags, Arrays.asList(pQuery.getAttributes()));
+                pQuery.getCreationDateTo(), tags, pQuery.getAttributes()!=null?Arrays.asList(pQuery.getAttributes()):null);
 
         //preparing fulltext filtering
         Set<MasterDocumentKey> indexedKeys = null;
