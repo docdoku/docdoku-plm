@@ -29,6 +29,7 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
 import javax.swing.filechooser.FileSystemView;
@@ -63,6 +64,18 @@ public class Config {
         return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "templates" + File.separator + pTemplate.getId());
     }
     
+    public static String getPermaLink(MasterDocument pMDoc){
+        String file = null;
+        try {
+            file = "documents/"
+                    + URLEncoder.encode(MainModel.getInstance().getWorkspace().getId(),"UTF-8") + "/"
+                    + URLEncoder.encode(pMDoc.getId(),"UTF-8") + "/"
+                    + pMDoc.getVersion();
+        } catch (UnsupportedEncodingException pEx) {
+            System.err.println(pEx.getMessage());
+        }
+        return getHTTPCodebase().toString() + file;
+    }
     
     public static File getCheckOutFolder(MasterDocument pMDoc){
         return getCheckOutFolder(pMDoc.getKey());

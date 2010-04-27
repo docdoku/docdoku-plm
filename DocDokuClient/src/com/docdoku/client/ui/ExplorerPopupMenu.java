@@ -40,6 +40,7 @@ public class ExplorerPopupMenu extends JPopupMenu {
         addSeparator();
         add(pActionFactory.getDeleteElementAction());
         add(pActionFactory.getEditElementAction());
-
+        addSeparator();
+        add(pActionFactory.getDistributeDocumentAction());
     }
 }

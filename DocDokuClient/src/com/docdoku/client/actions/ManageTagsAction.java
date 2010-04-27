@@ -38,10 +38,12 @@ public class ManageTagsAction extends ClientAbstractAction {
         putValue(Action.LONG_DESCRIPTION, I18N.BUNDLE.getString("ManageTags_long_desc"));
         putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("ManageTags_mnemonic_key")));
     }
-    
+
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         MasterDocument mdoc = mOwner.getSelectedMDoc();
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 ManageTagsDialog source = (ManageTagsDialog) pAE.getSource();
                 MasterDocument mdoc = source.getMDoc();

@@ -38,6 +38,7 @@ import com.docdoku.core.entities.keys.Version;
 import java.awt.Component;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.jdesktop.swingx.JXDatePicker;
 
 public class SearchPanel extends JPanel {
 
@@ -57,8 +58,8 @@ public class SearchPanel extends JPanel {
     private JComboBox mAuthorComboBox;
     
     private JLabel mCreationDateLabel;
-    private JSpinner mSpinnerCreationDateFrom;
-    private JSpinner mSpinnerCreationDateTo;
+    private JXDatePicker mCreationDateFrom;
+    private JXDatePicker mCreationDateTo;
 
     private final static Date FROM_DATE;
 
@@ -116,8 +117,8 @@ public class SearchPanel extends JPanel {
         });
         
         mCreationDateLabel = new JLabel(I18N.BUNDLE.getString("CreationDate_label"));
-        mSpinnerCreationDateFrom = new JSpinner(new SpinnerDateModel(FROM_DATE, null, null, Calendar.DAY_OF_MONTH));
-        mSpinnerCreationDateTo = new JSpinner(new SpinnerDateModel());
+        mCreationDateFrom = new JXDatePicker(FROM_DATE);
+        mCreationDateTo = new JXDatePicker(new Date());
 
         createLayout();
     }
@@ -168,11 +169,11 @@ public class SearchPanel extends JPanel {
         constraints.fill = GridBagConstraints.NONE;
         add(new JLabel(I18N.BUNDLE.getString("FromDate_label")), constraints);
         constraints.gridx = 2;
-        add(mSpinnerCreationDateFrom, constraints);
+        add(mCreationDateFrom, constraints);
         constraints.gridx = 3;
         add(new JLabel(I18N.BUNDLE.getString("ToDate_label")), constraints);
         constraints.gridx = 4;
-        add(mSpinnerCreationDateTo, constraints);
+        add(mCreationDateTo, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = GridBagConstraints.RELATIVE;
@@ -217,10 +218,10 @@ public class SearchPanel extends JPanel {
     }
 
     public Date getCreationDateFrom() {
-        return (Date) mSpinnerCreationDateFrom.getValue();
+        return mCreationDateFrom.getDate();
     }
 
     public Date getCreationDateTo() {
-        return (Date) mSpinnerCreationDateTo.getValue();
+        return mCreationDateTo.getDate();
     }
 }

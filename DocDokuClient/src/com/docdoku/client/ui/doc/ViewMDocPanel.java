@@ -24,8 +24,6 @@ import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.WebLink;
 import com.docdoku.core.entities.MasterDocument;
 import com.docdoku.core.entities.User;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 
 import javax.swing.*;
@@ -35,7 +33,6 @@ import java.awt.event.MouseEvent;
 
 import com.docdoku.client.ui.workflow.ViewWorkflowDetailsDialog;
 import com.docdoku.client.data.Config;
-import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.entities.Workflow;
 
@@ -58,7 +55,7 @@ public class ViewMDocPanel extends DocPanel {
 
     public ViewMDocPanel(final MasterDocument pWatchedMDoc) {
         super(pWatchedMDoc);
-        DateFormat format=DateFormat.getInstance();
+        DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
         mTitleLabel = new JLabel(I18N.BUNDLE.getString("Title_label"));
         mTitleValueLabel = new JLabel(pWatchedMDoc.getTitle());
         mTypeLabel = new JLabel(I18N.BUNDLE.getString("Type_label"));
@@ -72,16 +69,7 @@ public class ViewMDocPanel extends DocPanel {
         mLifeCycleStateValueLabel =
                 new JLabel(pWatchedMDoc.getLifeCycleState());
 
-        String file = null;
-        try {
-            file = "documents/"
-                    + URLEncoder.encode(MainModel.getInstance().getWorkspace().getId(),"UTF-8") + "/"
-                    + URLEncoder.encode(pWatchedMDoc.getId(),"UTF-8") + "/"
-                    + pWatchedMDoc.getVersion();
-        } catch (UnsupportedEncodingException pEx) {
-            System.err.println(pEx.getMessage());
-        }
-        mPermaLink = new WebLink(I18N.BUNDLE.getString("Permalink_label"),Config.getHTTPCodebase().toString() + file);
+        mPermaLink = new WebLink(I18N.BUNDLE.getString("Permalink_label"),Config.getPermaLink(pWatchedMDoc));
 
         final Workflow workflow = pWatchedMDoc.getWorkflow();
         if (workflow != null) {

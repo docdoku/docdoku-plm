@@ -39,11 +39,13 @@ import com.docdoku.client.localization.I18N;
 import java.awt.Desktop;
 
 public class OpenActionListener implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         final ViewFilesPanel source = (ViewFilesPanel) pAE.getSource();
         final BinaryResource remoteFile = source
                 .getSelectedFile();
         Thread worker = new Thread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     File localFile;

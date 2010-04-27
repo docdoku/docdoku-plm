@@ -141,7 +141,7 @@ public class ElementsTable extends JXTable {
                     pColumn);
 
             if(pValue instanceof Date)
-                setText(DateFormat.getInstance().format(pValue));
+                setText(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT).format(pValue));
             return this;
         }
     }
@@ -177,7 +177,7 @@ public class ElementsTable extends JXTable {
                         setIcon(CHECKED_ICON);
                     else
                         setIcon(LOCK_ICON);
-                    DateFormat format = DateFormat.getInstance();
+                    DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
                     setToolTipText(
                             I18N.BUNDLE.getString("ElementsTable_toolTipText1")
                             + " "

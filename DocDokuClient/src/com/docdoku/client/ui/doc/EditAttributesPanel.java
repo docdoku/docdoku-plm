@@ -41,10 +41,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,12 +51,11 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.jdesktop.swingx.JXDatePicker;
 
 /**
  *
@@ -123,8 +120,8 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
                 JCheckBox componentBoolean = (JCheckBox) mAttributeComponents.get(attr.getName());
                 ((InstanceBooleanAttribute) attr).setBooleanValue(componentBoolean.isSelected());
             } else if (attr instanceof InstanceDateAttribute) {
-                JSpinner componentDate = (JSpinner) mAttributeComponents.get(attr.getName());
-                ((InstanceDateAttribute) attr).setDateValue((Date) componentDate.getValue());
+                JXDatePicker componentDate = (JXDatePicker) mAttributeComponents.get(attr.getName());
+                ((InstanceDateAttribute) attr).setDateValue(componentDate.getDate());
             }
         }
         return mAttributes;
@@ -215,13 +212,12 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
             componentBoolean.setSelected(((InstanceBooleanAttribute) attr).isBooleanValue());
             return mAttributeComponents.put(attr.getName(), componentBoolean);
         } else if (attr instanceof InstanceDateAttribute) {
-            SpinnerDateModel dateModel = new SpinnerDateModel();
             Date date = ((InstanceDateAttribute) attr).getDateValue();
+            JXDatePicker datePicker = new JXDatePicker();
             if (date != null) {
-                dateModel.setValue(date);
+                datePicker.setDate(date);
             }
-
-            return mAttributeComponents.put(attr.getName(), new JSpinner(dateModel));
+            return mAttributeComponents.put(attr.getName(), datePicker);
         }
         return null;
     }

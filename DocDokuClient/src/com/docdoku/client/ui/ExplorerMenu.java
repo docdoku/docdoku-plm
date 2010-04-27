@@ -52,6 +52,8 @@ public class ExplorerMenu extends JMenuBar {
     private ButtonMenu mVersionMDoc;
     private ButtonMenu mApprove;
     private ButtonMenu mReject;
+
+    private ButtonMenu mDistributeDocument;
     private ButtonMenu mNotification;
     private ButtonMenu mManageTags;
     
@@ -126,6 +128,7 @@ public class ExplorerMenu extends JMenuBar {
         mVersionMDoc = new ButtonMenu(pStatusLabel);
         mApprove = new ButtonMenu(pStatusLabel);
         mReject = new ButtonMenu(pStatusLabel);
+        mDistributeDocument = new ButtonMenu(pStatusLabel);
         mNotification = new ButtonMenu(pStatusLabel);
         mManageTags = new ButtonMenu(pStatusLabel);
         
@@ -140,6 +143,7 @@ public class ExplorerMenu extends JMenuBar {
         action.add(mApprove);
         action.add(mReject);
         action.addSeparator();
+        action.add(mDistributeDocument);
         action.add(mNotification);
         action.add(mManageTags);
         
@@ -201,6 +205,7 @@ public class ExplorerMenu extends JMenuBar {
         mVersionMDoc.setAction(pActionFactory.getCreateVersionAction());
         mApprove.setAction(pActionFactory.getApproveAction());
         mReject.setAction(pActionFactory.getRejectAction());
+        mDistributeDocument.setAction(pActionFactory.getDistributeDocumentAction());
         mNotification.setAction(pActionFactory.getNotificationAction());
         mManageTags.setAction(pActionFactory.getManageTagsAction());
         

@@ -39,7 +39,7 @@ public abstract class DocPanel extends JPanel {
     private JLabel mCreationDateValueLabel;
 
     public DocPanel(MasterDocument pMDoc) {
-        DateFormat format=DateFormat.getInstance();
+        DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
         mAuthorValueLabel = new JLabel(pMDoc.getAuthor().getName());
         mIDLabel = new JLabel(I18N.BUNDLE.getString("ID_label"));
@@ -50,7 +50,7 @@ public abstract class DocPanel extends JPanel {
     }
 
     public DocPanel(Document pDoc) {
-        DateFormat format=DateFormat.getInstance();
+        DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
         mAuthorValueLabel = new JLabel(pDoc.getAuthor().getName());
         mIDLabel = new JLabel(I18N.BUNDLE.getString("ID_label"));

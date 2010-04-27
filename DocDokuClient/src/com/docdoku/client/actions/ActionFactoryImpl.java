@@ -276,6 +276,17 @@ public class ActionFactoryImpl implements ActionFactory {
     }
 
     @Override
+    public Action getDistributeDocumentAction() {
+        Action action = mActions.get("DistributeDocumentAction");
+        if (action == null) {
+            action = new DistributeDocumentAction(mOwner);
+            mActions.put("DistributeDocumentAction", action);
+            action.setEnabled(false);
+        }
+        return action;
+    }
+
+    @Override
     public Action getManageTagsAction() {
         Action action = mActions.get("ManageTagsAction");
         if (action == null) {
@@ -401,6 +412,7 @@ public class ActionFactoryImpl implements ActionFactory {
         mActions.get("ApproveAction").setEnabled(false);
         mActions.get("RejectAction").setEnabled(false);
         mActions.get("ManageTagsAction").setEnabled(false);
+        mActions.get("DistributeDocumentAction").setEnabled(false);
         mActions.get("EditElementAction").setEnabled(false);
         mActions.get("ViewElementAction").setEnabled(false);
     }
@@ -423,6 +435,7 @@ public class ActionFactoryImpl implements ActionFactory {
         mActions.get("RejectAction").setEnabled(hasWorkflow);
         
         mActions.get("ManageTagsAction").setEnabled(true);
+        mActions.get("DistributeDocumentAction").setEnabled(true);
         mActions.get("NotificationAction").setEnabled(true);
         mActions.get("DeleteElementAction").setEnabled(true);
         mActions.get("EditElementAction").setEnabled(!isCheckedOut || hasCheckedOut);

@@ -39,6 +39,7 @@ public interface ActionFactory extends ElementSelectedListener{
     public Action getCreateVersionAction();
     public Action getViewElementAction();
     public Action getViewIterationsAction();
+    public Action getDistributeDocumentAction();
     public Action getNotificationAction();
     public Action getEditUserAction();
     public Action getNewWinAction();

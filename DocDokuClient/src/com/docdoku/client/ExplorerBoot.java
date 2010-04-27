@@ -94,7 +94,7 @@ public class ExplorerBoot {
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
         Prefs.initLocale();
         FileIO.rmDir(Config.LOCAL_TEMP_FOLDER);
-        try {
+        try {           
             UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel");
         } catch (Exception pEx) {
             System.err.println("Look And Feel Exception.");

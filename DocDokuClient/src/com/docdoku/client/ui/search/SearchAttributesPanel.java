@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JCheckBox;
+import org.jdesktop.swingx.JXDatePicker;
 
 public class SearchAttributesPanel extends JPanel {
 
@@ -268,12 +269,12 @@ public class SearchAttributesPanel extends JPanel {
                 break;
             case DATE:
                 DateAttributePanel componentDate = (DateAttributePanel) mValueComponent;
-                Object fromValue = componentDate.getSpinnerDateFrom().getValue();
+                Object fromValue = componentDate.getDateFrom().getDate();
                 Date dateFromValue = null;
                 if(fromValue instanceof Date){
                     dateFromValue=(Date)fromValue;
                 }
-                Object toValue = componentDate.getSpinnerDateTo().getValue();
+                Object toValue = componentDate.getDateTo().getDate();
                 Date dateToValue = null;
                 if(toValue instanceof Date){
                     dateToValue=(Date)toValue;
@@ -333,8 +334,8 @@ public class SearchAttributesPanel extends JPanel {
         }
     }
     private static class DateAttributePanel extends JPanel{
-        private JSpinner mSpinnerDateFrom;
-        private JSpinner mSpinnerDateTo;
+        private JXDatePicker mDateFrom;
+        private JXDatePicker mDateTo;
 
         private final static Date FROM_DATE;
 
@@ -346,21 +347,21 @@ public class SearchAttributesPanel extends JPanel {
 
         public DateAttributePanel(){
             setLayout(new FlowLayout(FlowLayout.LEFT));
-            mSpinnerDateFrom = new JSpinner(new SpinnerDateModel(FROM_DATE, null, null, Calendar.DAY_OF_MONTH));
-            mSpinnerDateTo = new JSpinner(new SpinnerDateModel());
+            mDateFrom = new JXDatePicker(FROM_DATE);
+            mDateTo = new JXDatePicker(new Date());
 
             add(new JLabel(I18N.BUNDLE.getString("FromDate_label")));
-            add(mSpinnerDateFrom);
+            add(mDateFrom);
             add(new JLabel(I18N.BUNDLE.getString("ToDate_label")));
-            add(mSpinnerDateTo);
+            add(mDateTo);
         }
 
-        public JSpinner getSpinnerDateFrom() {
-            return mSpinnerDateFrom;
+        public JXDatePicker getDateFrom() {
+            return mDateFrom;
         }
 
-        public JSpinner getSpinnerDateTo() {
-            return mSpinnerDateTo;
+        public JXDatePicker getDateTo() {
+            return mDateTo;
         }
 
         

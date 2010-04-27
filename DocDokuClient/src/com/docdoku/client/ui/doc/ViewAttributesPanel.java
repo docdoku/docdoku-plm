@@ -84,7 +84,7 @@ public class ViewAttributesPanel extends JPanel{
                 attrsPanel.add(checkBox, constraints);
             }
             else if(attr instanceof InstanceDateAttribute){
-                DateFormat format=DateFormat.getInstance();
+                DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
                 JLabel label = new JLabel();
                 Date date = ((InstanceDateAttribute)attr).getDateValue();
                 if(date!=null)

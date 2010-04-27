@@ -72,7 +72,7 @@ public class DocsTable extends JXTable {
                     pColumn);
 
             if(pValue instanceof Date)
-                setText(DateFormat.getInstance().format(pValue));
+                setText(DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT).format(pValue));
             return this;
         }
     }
