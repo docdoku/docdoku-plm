@@ -698,9 +698,12 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     public MasterDocument createMDoc(String pParentFolder,
             String pMDocID, String pTitle, String pDescription, String pMDocTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, WorkflowModelNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FolderNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
+        if (!NamingConvention.correct(pMDocID)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
+        }
         Folder folder = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
         checkWritingRight(user, folder);
-
+        
         MasterDocument mdoc;
         Document newDoc;
 
@@ -775,8 +778,11 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     public MasterDocumentTemplate createMDocTemplate(String pWorkspaceId, String pId, String pDocumentType,
-            String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+            String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateAlreadyExistsException, UserNotFoundException, UserNotActiveException, NotAllowedException, CreationException {
         User user = checkWorkspaceWriteAccess(pWorkspaceId);
+        if (!NamingConvention.correct(pId)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
+        }
         MasterDocumentTemplate template = new MasterDocumentTemplate(user.getWorkspace(), pId, user, pDocumentType, pMask);
         Date now = new Date();
         template.setCreationDate(now);

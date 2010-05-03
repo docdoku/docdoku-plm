@@ -102,7 +102,8 @@ public class MasterDocumentDAO {
         queryStr.append("AND m.version LIKE :version ");
         queryStr.append("AND m.title LIKE :title ");
         queryStr.append("AND m.type LIKE :type ");
-        queryStr.append("AND m.author.login LIKE :author ");
+        if(pAuthor != null)
+            queryStr.append("AND m.author.login = :author ");
 
         if (pTags != null && pTags.size() > 0) {
             for(int i =0 ;i<pTags.size();i++)
@@ -117,7 +118,8 @@ public class MasterDocumentDAO {
         query.setParameter("version", pVersion == null ? "%" : "%" + pVersion + "%");
         query.setParameter("title", pTitle == null ? "%" : "%" + pTitle + "%");
         query.setParameter("type", pType == null ? "%" : "%" + pType + "%");
-        query.setParameter("author", pAuthor == null ? "%" : "%" + pAuthor + "%");
+        if(pAuthor != null)
+            query.setParameter("author", pAuthor);
 
         
         if (pTags != null && pTags.size() > 0) {
@@ -146,7 +148,18 @@ public class MasterDocumentDAO {
         }
 
         query.setParameter("lowerDate", pCreationDateFrom == null ? new Date(0) : pCreationDateFrom);
-        query.setParameter("upperDate", pCreationDateTo == null ? new Date() : pCreationDateTo);
+        if(pCreationDateTo!=null){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(pCreationDateTo);
+            cal.set(Calendar.HOUR_OF_DAY, 24);
+            cal.set(Calendar.MINUTE, 0);
+
+            pCreationDateTo=cal.getTime();
+        }else
+            pCreationDateTo=new Date();
+
+        query.setParameter("upperDate", pCreationDateTo);
+
         query.setMaxResults(MAX_RESULTS);
         return query.getResultList();
 
