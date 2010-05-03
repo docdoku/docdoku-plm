@@ -202,7 +202,7 @@ public class UploadDownloadServlet extends HttpServlet {
             throw new ServletException("Error while uploading the file.", pEx);
         } finally {
             try {
-                if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus()==Status.STATUS_MARKED_ROLLBACK) {
                     utx.rollback();
                 }
             } catch (Exception pRBEx) {

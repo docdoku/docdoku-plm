@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.server.http;
 
 import com.docdoku.core.FileAlreadyExistsException;
@@ -38,6 +37,7 @@ import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.TransactionManagement;
 import javax.jws.WebService;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
@@ -53,16 +53,15 @@ import javax.xml.ws.soap.MTOM;
 @WebService(name = "UploadDownload", serviceName = "UploadDownloadService", portName = "UploadDownloadPort", wsdlLocation = "")
 public class UploadDownloadService {
 
-
     @EJB
     private ICommandLocal commandService;
     @Resource
     private UserTransaction utx;
 
     @RolesAllowed("users")
-    public 
+    public
     @XmlMimeType("application/octet-stream")
-    DataHandler downloadFromDocument( String workspaceId,  String mdocID,  String mdocVersion,  int iteration,  String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    DataHandler downloadFromDocument(String workspaceId, String mdocID, String mdocVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         String fullName = workspaceId + "/documents/" + mdocID + "/" + mdocVersion + "/" + iteration + "/" + fileName;
         File dataFile = commandService.getDataFile(fullName);
 
@@ -70,9 +69,9 @@ public class UploadDownloadService {
     }
 
     @RolesAllowed("users")
-    public 
+    public
     @XmlMimeType("application/octet-stream")
-    DataHandler downloadFromTemplate( String workspaceId,  String templateID,  String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         String fullName = workspaceId + "/templates/" + templateID + "/" + fileName;
         File dataFile = commandService.getDataFile(fullName);
 
@@ -81,7 +80,6 @@ public class UploadDownloadService {
 
     @RolesAllowed("users")
     public void uploadToDocument(String workspaceId, String mdocID, String mdocVersion, int iteration, String fileName,
-            
             @XmlMimeType("application/octet-stream") DataHandler data) throws NotAllowedException, MasterDocumentNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
         DocumentKey docPK = null;
         File vaultFile = null;
@@ -91,7 +89,7 @@ public class UploadDownloadService {
             vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
             vaultFile.getParentFile().mkdirs();
             vaultFile.createNewFile();
-            
+
             StreamingDataHandler dh = (StreamingDataHandler) data;
             dh.moveTo(vaultFile);
             dh.close();
@@ -99,12 +97,12 @@ public class UploadDownloadService {
             utx.commit();
         } catch (Exception pEx) {
             throw new WebServiceException("Error while uploading the file.", pEx);
-        }finally{
-            try{
-                if(utx.getStatus()==Status.STATUS_ACTIVE)
+        } finally {
+            try {
+                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                     utx.rollback();
-            }
-            catch (Exception pRBEx){
+                }
+            } catch (Exception pRBEx) {
                 throw new WebServiceException("Rollback failed.", pRBEx);
             }
         }
@@ -112,12 +110,11 @@ public class UploadDownloadService {
 
     @RolesAllowed("users")
     public void uploadToTemplate(String workspaceId, String templateID, String fileName,
-            
             @XmlMimeType("application/octet-stream") DataHandler data) throws NotAllowedException, MasterDocumentTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
         BasicElementKey templatePK = null;
         File vaultFile = null;
         try {
-            utx.begin(); 
+            utx.begin();
             templatePK = new BasicElementKey(workspaceId, templateID);
             vaultFile = commandService.saveFileInTemplate(templatePK, fileName, 0);
             vaultFile.getParentFile().mkdirs();
@@ -130,12 +127,12 @@ public class UploadDownloadService {
             utx.commit();
         } catch (Exception pEx) {
             throw new WebServiceException("Error while uploading the file.", pEx);
-        }finally{
-            try{
-                if(utx.getStatus()==Status.STATUS_ACTIVE)
+        } finally {
+            try {
+                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                     utx.rollback();
-            }
-            catch (Exception pRBEx){
+                }
+            } catch (Exception pRBEx) {
                 throw new WebServiceException("Rollback failed.", pRBEx);
             }
         }
