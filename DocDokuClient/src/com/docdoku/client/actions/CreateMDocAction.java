@@ -58,6 +58,7 @@ public class CreateMDocAction extends ClientAbstractAction {
             public void actionPerformed(ActionEvent pAE) {
                 final CreateMDocDialog source = (CreateMDocDialog) pAE.getSource();           
                 Thread worker = new Thread(new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

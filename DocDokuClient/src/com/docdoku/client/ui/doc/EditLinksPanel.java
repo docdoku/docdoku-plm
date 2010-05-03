@@ -108,12 +108,14 @@ public class EditLinksPanel extends JPanel implements ActionListener {
 
     private void createListener() {
         mLinksList.addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent pE) {
                 mRemoveButton.setEnabled(!mLinksList.isSelectionEmpty());
             }
         });
         mAddButton.addActionListener(this);
         mRemoveButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 Object[] selectedObjects = mLinksList.getSelectedValues();
                 for (int i = 0; i < selectedObjects.length; i++) {
@@ -124,6 +126,7 @@ public class EditLinksPanel extends JPanel implements ActionListener {
         });
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         mAddLinkAction.actionPerformed(new ActionEvent(this, 0, null));
     }

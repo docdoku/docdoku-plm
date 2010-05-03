@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.client.ui.common;
 
 import com.docdoku.core.entities.BinaryResource;
@@ -32,6 +31,10 @@ import java.io.File;
 import java.util.*;
 
 import com.docdoku.client.localization.I18N;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import javax.swing.filechooser.FileSystemView;
 
 public class EditFilesPanel extends JPanel implements ActionListener {
@@ -43,16 +46,14 @@ public class EditFilesPanel extends JPanel implements ActionListener {
     private JButton mEditButton;
     private JFileChooser mFileChooser;
     private DefaultListModel mFilesListModel;
-
     private Set<File> mFilesToAdd;
     private Set<BinaryResource> mFilesToRemove;
     private Map<BinaryResource, Long> mFilesToUpdate;
     private FileHolder mFileHolder;
-    
     private ActionListener mEditAction;
 
     public EditFilesPanel(ActionListener pEditAction) {
-        mEditAction=pEditAction;
+        mEditAction = pEditAction;
         mFileChooser = new JFileChooser();
         mFileChooser.setMultiSelectionEnabled(true);
         mFilesListModel = new DefaultListModel();
@@ -74,6 +75,38 @@ public class EditFilesPanel extends JPanel implements ActionListener {
 
         mFilesScrollPane = new JScrollPane();
         mFilesList = new JList(mFilesListModel);
+        mFilesList.setDragEnabled(true);
+        mFilesList.setDropMode(DropMode.ON);
+        mFilesList.setTransferHandler(new TransferHandler() {
+
+            @Override
+            public boolean canImport(TransferHandler.TransferSupport support) {
+                return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+            }
+
+            @Override
+            public boolean importData(TransferHandler.TransferSupport support) {
+                if (!canImport(support)) {
+                    return false;
+                }
+                Transferable t = support.getTransferable();
+                try {
+                    java.util.List localFiles =
+                            (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
+
+                    for (Object localFile : localFiles) {
+                        mFilesToAdd.add((File)localFile);
+                        mFilesListModel.addElement((File)localFile);
+                    }
+                } catch (UnsupportedFlavorException e) {
+                    return false;
+                } catch (IOException e) {
+                    return false;
+                }
+
+                return true;
+            }
+        });
         mFilesToAdd = new HashSet<File>();
         mFilesToRemove = new HashSet<BinaryResource>();
         mFilesToUpdate = new HashMap<BinaryResource, Long>();
@@ -83,7 +116,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
 
     public EditFilesPanel(FileHolder pFileHolder, ActionListener pEditAction) {
         this(pEditAction);
-        mFileHolder=pFileHolder;
+        mFileHolder = pFileHolder;
         for (BinaryResource file : pFileHolder.getAttachedFiles()) {
             mFilesListModel.addElement(file);
         }
@@ -97,15 +130,15 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         return mFileHolder;
     }
 
-
-    
     private void createLayout() {
-        mFilesList.setCellRenderer(new DefaultListCellRenderer(){
+        mFilesList.setCellRenderer(new DefaultListCellRenderer() {
+
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
-                if(value instanceof File)
-                    setIcon(FileSystemView.getFileSystemView().getSystemIcon((File)value));
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof File) {
+                    setIcon(FileSystemView.getFileSystemView().getSystemIcon((File) value));
+                }
                 return this;
             }
         });
@@ -158,6 +191,8 @@ public class EditFilesPanel extends JPanel implements ActionListener {
     private void createListener() {
         mEditButton.addActionListener(this);
         mFilesList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
             public void valueChanged(ListSelectionEvent pE) {
                 if (mFilesList.isSelectionEmpty()) {
                     mRemoveButton.setEnabled(false);
@@ -170,6 +205,8 @@ public class EditFilesPanel extends JPanel implements ActionListener {
             }
         });
         mAddButton.addActionListener(new ActionListener() {
+
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 int state = mFileChooser.showOpenDialog(mAddButton);
                 if (state == JFileChooser.APPROVE_OPTION) {
@@ -182,14 +219,15 @@ public class EditFilesPanel extends JPanel implements ActionListener {
             }
         });
         mRemoveButton.addActionListener(new ActionListener() {
+
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 Object[] selectedObjects = mFilesList.getSelectedValues();
                 for (int i = 0; i < selectedObjects.length; i++) {
-                    if (selectedObjects[i] instanceof BinaryResource){
-                        mFilesToRemove.add((BinaryResource)selectedObjects[i]);
-                        mFilesToUpdate.remove((BinaryResource)selectedObjects[i]);
-                    }
-                    else{
+                    if (selectedObjects[i] instanceof BinaryResource) {
+                        mFilesToRemove.add((BinaryResource) selectedObjects[i]);
+                        mFilesToUpdate.remove((BinaryResource) selectedObjects[i]);
+                    } else {
                         mFilesToAdd.remove(selectedObjects[i]);
                     }
                     mFilesListModel.removeElement(selectedObjects[i]);
@@ -199,9 +237,11 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         });
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         Object button = pAE.getSource();
-        if (button==mEditButton)
+        if (button == mEditButton) {
             mEditAction.actionPerformed(new ActionEvent(this, 0, null));
+        }
     }
 }

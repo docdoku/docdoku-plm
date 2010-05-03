@@ -34,6 +34,7 @@ public class ExplorerToolBar extends JToolBar {
     private ButtonBar mViewDoc;
     private ButtonBar mRefresh;
 
+
     public ExplorerToolBar(JLabel pStatusLabel) {
         super("ToolBar");
 

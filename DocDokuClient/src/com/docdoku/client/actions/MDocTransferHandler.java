@@ -44,6 +44,7 @@ public class MDocTransferHandler extends TransferHandler {
         }
     }
     
+    @Override
     public boolean canImport(JComponent pComp,
             DataFlavor[] pTransferFlavors) {
         
@@ -62,6 +63,7 @@ public class MDocTransferHandler extends TransferHandler {
         return false;
     }
     
+    @Override
     public int getSourceActions
             (JComponent
             pComp) {
@@ -71,6 +73,7 @@ public class MDocTransferHandler extends TransferHandler {
             return TransferHandler.NONE;
     }
     
+    @Override
     public boolean importData
             (JComponent
             pComp, Transferable
@@ -99,7 +102,8 @@ public class MDocTransferHandler extends TransferHandler {
         
         return false;
     }
-    
+
+    @Override
     protected Transferable createTransferable(JComponent pComp) {
         if (pComp instanceof JTable) {
             ElementsTable table = (ElementsTable) pComp;

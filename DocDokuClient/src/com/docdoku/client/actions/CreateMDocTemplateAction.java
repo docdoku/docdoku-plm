@@ -43,12 +43,15 @@ public class CreateMDocTemplateAction extends ClientAbstractAction {
         putValue(Action.LONG_DESCRIPTION, I18N.BUNDLE.getString("MDocTemplateCreation_long_desc"));
         putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("MDocTemplateCreation_mnemonic_key")));
     }
-    
+
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 final CreateMDocTemplateDialog source = (CreateMDocTemplateDialog) pAE.getSource();
                 Thread worker = new Thread(new Runnable() {
+                    @Override
                     public void run() {
                         MainController controller = MainController
                                 .getInstance();

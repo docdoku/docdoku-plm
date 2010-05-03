@@ -58,6 +58,7 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
     private ExplorerMenu mMenuBar;
     private ExplorerPopupMenu mPopupMenu;
     private JLabel mStatusLabel;
+    private JButton mGuideBtn;
     private FolderTreeNode mSelectedFolder;
     private MasterDocument mSelectedMDoc;
     private WorkflowModel mSelectedWorkflowModel;
@@ -81,6 +82,7 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         setLocationByPlatform(true);
         mTransferHandler=pTransferHandler;
         mStatusLabel = new JLabel("DocDoku");
+        mGuideBtn = new JButton();
         mToolBar = new ExplorerToolBar(mStatusLabel);
         mSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         mLeftScrollPane = new JScrollPane();
@@ -115,7 +117,10 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         main.add(mToolBar, BorderLayout.NORTH);
         main.add(mSplitPane, BorderLayout.CENTER);
         mRegularPanel.add(main, BorderLayout.CENTER);
-        mRegularPanel.add(mStatusLabel, BorderLayout.SOUTH);
+        JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        statusPanel.add(mGuideBtn);
+        statusPanel.add(mStatusLabel);
+        mRegularPanel.add(statusPanel, BorderLayout.SOUTH);
         
         setJMenuBar(mMenuBar);
         mFolderTree.setComponentPopupMenu(mPopupMenu);
@@ -230,6 +235,7 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
     }
 
     public void showShortcutsPanel(){
+        mFolderTree.setSelectionPath(null);
         setContentPane(mShortcutsPanel);
     }
 
@@ -337,6 +343,7 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         mMenuBar.setActions(pActionFactory);
         mPopupMenu.setActions(pActionFactory);
         mShortcutsPanel.setActions(pActionFactory);
+        mGuideBtn.setAction(pActionFactory.getDisplayShortcutsAction());
     }
     
     public void showMDoc(MasterDocument pMDoc){

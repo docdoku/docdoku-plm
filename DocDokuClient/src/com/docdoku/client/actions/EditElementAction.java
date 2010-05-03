@@ -153,7 +153,7 @@ public class EditElementAction extends ClientAbstractAction {
                         } finally {
                             mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-
+                        ExplorerFrame.unselectElementInAllFrame();
                     }
                 });
                 worker.start();

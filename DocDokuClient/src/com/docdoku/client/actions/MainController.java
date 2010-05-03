@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.client.actions;
 
 import com.docdoku.client.data.*;
@@ -26,6 +25,7 @@ import com.docdoku.client.ui.common.ProgressMonitorFileDataSource;
 import com.docdoku.core.*;
 import com.docdoku.core.entities.*;
 import com.docdoku.core.entities.keys.*;
+import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import java.awt.Component;
@@ -34,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.activation.DataHandler;
@@ -237,6 +238,9 @@ public class MainController {
     }
 
     public void saveFile(Component pParent, Document pDocument, File pLocalFile) throws Exception {
+        if (!NamingConvention.correct(pLocalFile.getName())) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+        }
         MainModel model = MainModel.getInstance();
         String message = I18N.BUNDLE.getString("UploadMsg_part1") + " " + pLocalFile.getName() + " (" + (int) (pLocalFile.length() / 1024) + I18N.BUNDLE.getString("UploadMsg_part2");
         DataHandler data = new DataHandler(new ProgressMonitorFileDataSource(pParent, pLocalFile, message));
@@ -251,9 +255,16 @@ public class MainController {
                 }
 
             } catch (Exception ex) {
-                if (ex.getCause() instanceof InterruptedIOException) {
-                    throw ex;
+                Throwable currentEx=ex;
+                while(currentEx!=null){
+                    if(currentEx instanceof InterruptedIOException)
+                        throw ex;
+                    if(currentEx instanceof ApplicationException)
+                        throw ex;
+                        
+                    currentEx=currentEx.getCause();
                 }
+                
                 //error encountered, try again, workaround mode
                 if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                     System.out.println("Disabling chunked mode");
@@ -276,12 +287,15 @@ public class MainController {
 
     }
 
-    private String getServletURL(Document pDoc, File pLocalFile) throws UnsupportedEncodingException {
+    private String getServletURL(Document pDoc, File pLocalFile) throws UnsupportedEncodingException, NotAllowedException {
         MainModel model = MainModel.getInstance();
         return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "documents/" + URLEncoder.encode(pDoc.getMasterDocumentId(), "UTF-8") + "/" + pDoc.getMasterDocumentVersion() + "/" + pDoc.getIteration() + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
 
     public void saveFile(Component pParent, MasterDocumentTemplate pTemplate, File pLocalFile) throws Exception {
+        if (!NamingConvention.correct(pLocalFile.getName())) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+        }
         MainModel model = MainModel.getInstance();
         String message = I18N.BUNDLE.getString("UploadMsg_part1") + " " + pLocalFile.getName() + " (" + (int) (pLocalFile.length() / 1024) + I18N.BUNDLE.getString("UploadMsg_part2");
         DataHandler data = new DataHandler(new ProgressMonitorFileDataSource(pParent, pLocalFile, message));
@@ -320,7 +334,7 @@ public class MainController {
         }
     }
 
-    private String getServletURL(MasterDocumentTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException {
+    private String getServletURL(MasterDocumentTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException, NotAllowedException {
         MainModel model = MainModel.getInstance();
         return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "templates/" + URLEncoder.encode(pTemplate.getId(), "UTF-8") + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
@@ -372,9 +386,17 @@ public class MainController {
 
             int code = conn.getResponseCode();
             System.out.println("Upload HTTP response code: " + code);
-
-        } finally {
+            if (code != 200) {
+                //TODO create a more suitable exception
+                throw new IOException();
+            }
             out.close();
+        } catch (InterruptedIOException pEx) {
+            throw pEx;
+        } catch (IOException pEx) {
+            out.close();
+            throw pEx;
+        } finally {
             in.close();
             conn.disconnect();
         }
@@ -420,10 +442,10 @@ public class MainController {
             System.out.println("Saving master document " + pMDocID + " version " + "A" + " with title " + pTitle + ", template " + pTemplate + " and description " + pDescription + " in " + pParentFolder);
             MasterDocument newMasterDocument;
             //TODO ACL
-            ACLUserEntry[] userEntries=null;
-            ACLUserGroupEntry[] groupEntries=null;
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] groupEntries = null;
 
-            newMasterDocument = Tools.resetParentReferences(mCommandService.createMDoc(pParentFolder, pMDocID, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(),userEntries,groupEntries));
+            newMasterDocument = Tools.resetParentReferences(mCommandService.createMDoc(pParentFolder, pMDocID, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
             MainModel.getInstance().updater.createMDocInFolder(newMasterDocument);
             return newMasterDocument;
         } catch (WebServiceException pWSEx) {
@@ -479,10 +501,10 @@ public class MainController {
         try {
             System.out.println("Creating new version to master document " + pMasterDocument + " with title " + pTitle + " and description " + pDescription);
             //TODO ACL
-            ACLUserEntry[] userEntries=null;
-            ACLUserGroupEntry[] groupEntries=null;
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] groupEntries = null;
 
-            MasterDocument[] originalAndNewMDoc = Tools.resetParentReferences(mCommandService.createVersion(pMasterDocument.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(),userEntries,groupEntries));
+            MasterDocument[] originalAndNewMDoc = Tools.resetParentReferences(mCommandService.createVersion(pMasterDocument.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
             MainModel.getInstance().updater.makeNewVersion(originalAndNewMDoc);
             return originalAndNewMDoc;
         } catch (WebServiceException pWSEx) {
@@ -612,7 +634,6 @@ public class MainController {
             try {
                 mCommandService.delWorkflowModel(pWorkflowModel.getKey());
             } catch (WorkflowModelNotFoundException pWNFEx) {
-
             }
             ActivityModel[] activityModels = pWorkflowModel.getActivityModels().toArray(new ActivityModel[pWorkflowModel.getActivityModels().size()]);
             model = Tools.resetParentReferences(mCommandService.createWorkflowModel(pWorkflowModel.getWorkspaceId(), pWorkflowModel.getId(), pWorkflowModel.getFinalLifeCycleState(), activityModels));
@@ -665,10 +686,10 @@ public class MainController {
             System.out.println("Updating document " + pDocument);
             MasterDocument newMDoc;
             DocumentKey docKey = pDocument.getKey();
-            
+
             DocumentKey[] linkKeys = new DocumentKey[pLinks.length];
-            for (int i = 0; i<pLinks.length;i++) {
-                linkKeys[i]=pLinks[i].getToDocumentKey();
+            for (int i = 0; i < pLinks.length; i++) {
+                linkKeys[i] = pLinks[i].getToDocumentKey();
             }
 
             newMDoc = Tools.resetParentReferences(mCommandService.updateDoc(docKey, pComment, pAttributes, linkKeys));
