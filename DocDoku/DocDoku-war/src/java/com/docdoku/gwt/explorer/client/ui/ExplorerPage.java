@@ -49,7 +49,7 @@ import com.docdoku.gwt.client.ui.widget.table.TableProfile;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.WorkflowModelEditor;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.WorkflowModelModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.common.*;
+import com.docdoku.gwt.explorer.shared.*;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -71,7 +71,7 @@ import java.util.Map;
  */
 public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandler {
 
-    private static final int TABLE_PAGE_SIZE = 4 ;
+    private static final int TABLE_PAGE_SIZE = 50;
 
     private String m_workspaceId;
     private String m_login;

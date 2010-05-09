@@ -1,7 +1,7 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
-import com.docdoku.gwt.explorer.common.SerialActivityDTO;
-import com.docdoku.gwt.explorer.common.TaskDTO;
+import com.docdoku.gwt.explorer.shared.SerialActivityDTO;
+import com.docdoku.gwt.explorer.shared.TaskDTO;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class ROSerialActivityPanel extends ROActivityPanel {

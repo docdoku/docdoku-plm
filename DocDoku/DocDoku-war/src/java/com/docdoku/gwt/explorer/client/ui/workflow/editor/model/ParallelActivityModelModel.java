@@ -21,7 +21,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import com.docdoku.gwt.explorer.common.ParallelActivityModelDTO;
+import com.docdoku.gwt.explorer.shared.ParallelActivityModelDTO;
 import com.google.gwt.event.shared.HandlerRegistration;
 /**
  *

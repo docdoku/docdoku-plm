@@ -20,8 +20,8 @@
  */
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import com.docdoku.gwt.explorer.common.AbstractActivityModelDTO;
-import com.docdoku.gwt.explorer.common.TaskModelDTO;
+import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
+import com.docdoku.gwt.explorer.shared.TaskModelDTO;
 import com.google.gwt.event.shared.HandlerRegistration;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,21 +34,21 @@ public abstract class ActivityModelModel extends ModelObject {
 
     private String workspaceId;
     protected List<TaskModelModel> taskModels;
-    protected AbstractActivityModelDTO model;
+    protected ActivityModelDTO model;
     
 
-    public ActivityModelModel(AbstractActivityModelDTO model, String workspaceId) {
+    public ActivityModelModel(ActivityModelDTO model, String workspaceId) {
         this.model = model;
         this.workspaceId = workspaceId;
         taskModels = new ArrayList<TaskModelModel>();
 
         // we have at least 1 task
-        if (model.getTasks().isEmpty()) {
+        if (model.getTaskModels().isEmpty()) {
             TaskModelModel tmpModel = new TaskModelModel(workspaceId);
-            model.addTask(tmpModel.getData());
+            model.addTaskModel(tmpModel.getData());
             taskModels.add(tmpModel);
         } else {
-            for (TaskModelDTO taskModelDTO : model.getTasks()) {
+            for (TaskModelDTO taskModelDTO : model.getTaskModels()) {
                 TaskModelModel tmpModel = new TaskModelModel(taskModelDTO);
                 taskModels.add(tmpModel);
             }
@@ -57,9 +57,9 @@ public abstract class ActivityModelModel extends ModelObject {
 
     public void addTask() {
         TaskModelModel tmpModel = new TaskModelModel(workspaceId);
-        model.addTask(tmpModel.getData());
+        model.addTaskModel(tmpModel.getData());
         taskModels.add(tmpModel);
-        ActivityEvent.fire(this, model.getTasks().size(), ActivityEvent.EventType.ADD_TASK);
+        ActivityEvent.fire(this, model.getTaskModels().size(), ActivityEvent.EventType.ADD_TASK);
        
 
     }
@@ -67,8 +67,8 @@ public abstract class ActivityModelModel extends ModelObject {
     public void removeTask(int position) {
         taskModels.get(position).removeAllListeners();
         taskModels.remove(position);
-        model.getTasks().remove(position);
-        ActivityEvent.fire(this, model.getTasks().size(), ActivityEvent.EventType.DELETE_TASK);
+        model.getTaskModels().remove(position);
+        ActivityEvent.fire(this, model.getTaskModels().size(), ActivityEvent.EventType.DELETE_TASK);
 
     }
 
@@ -85,7 +85,7 @@ public abstract class ActivityModelModel extends ModelObject {
     }
 
 
-    public AbstractActivityModelDTO getData() {
+    public ActivityModelDTO getData() {
         return model;
     }
 

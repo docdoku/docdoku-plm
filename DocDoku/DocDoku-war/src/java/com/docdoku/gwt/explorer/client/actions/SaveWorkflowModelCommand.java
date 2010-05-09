@@ -23,8 +23,8 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.ui.FolderTreeItem;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.common.AbstractActivityModelDTO;
-import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
+import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
+import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TreeItem;
 
@@ -44,7 +44,7 @@ public class SaveWorkflowModelCommand implements Action {
         final String workspaceId = m_mainPage.getWorkspaceId();
         final String wfId=(String) userObject[0];
         final String finalState = (String) userObject[1];
-        final AbstractActivityModelDTO[] activities = (AbstractActivityModelDTO[]) userObject[2];
+        final ActivityModelDTO[] activities = (ActivityModelDTO[]) userObject[2];
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
             public void saveAnyway(){

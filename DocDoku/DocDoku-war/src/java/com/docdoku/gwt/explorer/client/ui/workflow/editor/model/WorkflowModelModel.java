@@ -22,10 +22,10 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
-import com.docdoku.gwt.explorer.common.AbstractActivityModelDTO;
-import com.docdoku.gwt.explorer.common.ParallelActivityModelDTO;
-import com.docdoku.gwt.explorer.common.SerialActivityModelDTO;
-import com.docdoku.gwt.explorer.common.WorkflowModelDTO;
+import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
+import com.docdoku.gwt.explorer.shared.ParallelActivityModelDTO;
+import com.docdoku.gwt.explorer.shared.SerialActivityModelDTO;
+import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +49,7 @@ public class WorkflowModelModel {
         if (model != null){
             this.model = model;
 
-            for (AbstractActivityModelDTO activity : model.getActivities()) {
+            for (ActivityModelDTO activity : model.getActivities()) {
                 ActivityModelModel tmpModel = null ;
                 if(activity instanceof SerialActivityModelDTO){
                     tmpModel =new SerialActivityModelModel((SerialActivityModelDTO) activity,workspaceId);

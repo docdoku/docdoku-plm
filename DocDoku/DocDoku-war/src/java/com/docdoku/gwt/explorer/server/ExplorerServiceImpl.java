@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.server;
 import com.docdoku.core.ICommandLocal;
 import com.docdoku.core.entities.*;
 import com.docdoku.core.entities.keys.*;
-import com.docdoku.gwt.explorer.common.*;
+import com.docdoku.gwt.explorer.shared.*;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -392,7 +392,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         }
     }
 
-    public WorkflowModelDTO createWorkflowModel(String workspaceId, String id, String finalLifeCycleState, AbstractActivityModelDTO[] activityModels) throws ApplicationException {
+    public WorkflowModelDTO createWorkflowModel(String workspaceId, String id, String finalLifeCycleState, ActivityModelDTO[] activityModels) throws ApplicationException {
         try {
             return createDTO(commandService.createWorkflowModel(workspaceId, id, finalLifeCycleState, createObject(activityModels)));
         } catch (com.docdoku.core.ApplicationException ex) {
@@ -566,7 +566,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
         dto.setFinalLifeCycleState(wk.getFinalLifeCycleState());
         for (ActivityModel activity : wk.getActivityModels()) {
-            AbstractActivityModelDTO activityDTO = createDTO(activity);
+            ActivityModelDTO activityDTO = createDTO(activity);
             dto.addActivity(activityDTO);
         }
 
@@ -634,9 +634,9 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         return dto;
     }
 
-    private AbstractActivityModelDTO createDTO(ActivityModel activity) {
+    private ActivityModelDTO createDTO(ActivityModel activity) {
 
-        AbstractActivityModelDTO dto = null;
+        ActivityModelDTO dto = null;
         if (activity instanceof SerialActivityModel) {
             dto = new SerialActivityModelDTO();
 
@@ -649,7 +649,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
         for (TaskModel task : activity.getTaskModels()) {
             TaskModelDTO taskDTO = createDTO(task);
-            dto.addTask(taskDTO);
+            dto.addTaskModel(taskDTO);
         }
         dto.setLifeCycleState(activity.getLifeCycleState());
         return dto;
@@ -657,8 +657,8 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     private TaskModelDTO createDTO(TaskModel task) {
         TaskModelDTO dto = new TaskModelDTO();
-        dto.setTaskName(task.getTitle());
-        dto.setResponsible(createDTO(task.getWorker()));
+        dto.setTitle(task.getTitle());
+        dto.setWorker(createDTO(task.getWorker()));
         dto.setInstructions(task.getInstructions());
         return dto;
     }
@@ -923,7 +923,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         return new DocumentKey(dto.getWorkspaceId(), dto.getMasterDocumentId(), dto.getMasterDocumentVersion(), dto.getIteration());
     }
 
-    private ActivityModel[] createObject(AbstractActivityModelDTO[] dtos) {
+    private ActivityModel[] createObject(ActivityModelDTO[] dtos) {
         ActivityModel[] data = new ActivityModel[dtos.length];
 
         for (int i = 0; i < dtos.length; i++) {
@@ -933,7 +933,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         return data;
     }
 
-    private ActivityModel createObject(AbstractActivityModelDTO dto) {
+    private ActivityModel createObject(ActivityModelDTO dto) {
 
         ActivityModel obj = null;
         if (dto instanceof SerialActivityModelDTO) {
@@ -948,7 +948,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
         int num = 0;
         List<TaskModel> tasks = new ArrayList<TaskModel>();
-        for (TaskModelDTO task : dto.getTasks()) {
+        for (TaskModelDTO task : dto.getTaskModels()) {
             TaskModel taskObj = createObject(task);
             taskObj.setNum(num++);
             tasks.add(taskObj);
@@ -960,8 +960,8 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     private TaskModel createObject(TaskModelDTO dto) {
         TaskModel obj = new TaskModel();
-        obj.setTitle(dto.getTaskName());
-        obj.setWorker(createObject(dto.getResponsible()));
+        obj.setTitle(dto.getTitle());
+        obj.setWorker(createObject(dto.getWorker()));
         obj.setInstructions(dto.getInstructions());
         return obj;
     }

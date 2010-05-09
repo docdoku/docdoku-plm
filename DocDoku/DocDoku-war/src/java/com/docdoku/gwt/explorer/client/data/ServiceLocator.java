@@ -7,8 +7,8 @@ package com.docdoku.gwt.explorer.client.data;
 
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.resources.icons.ExplorerImageBundle;
-import com.docdoku.gwt.explorer.common.ExplorerService;
-import com.docdoku.gwt.explorer.common.ExplorerServiceAsync;
+import com.docdoku.gwt.explorer.shared.ExplorerService;
+import com.docdoku.gwt.explorer.shared.ExplorerServiceAsync;
 import com.google.gwt.core.client.GWT;
 
 /**

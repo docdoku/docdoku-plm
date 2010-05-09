@@ -1,10 +1,10 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
 import com.docdoku.gwt.explorer.client.ui.workflow.*;
-import com.docdoku.gwt.explorer.common.ActivityDTO;
-import com.docdoku.gwt.explorer.common.ParallelActivityDTO;
-import com.docdoku.gwt.explorer.common.SerialActivityDTO;
-import com.docdoku.gwt.explorer.common.WorkflowDTO;
+import com.docdoku.gwt.explorer.shared.ActivityDTO;
+import com.docdoku.gwt.explorer.shared.ParallelActivityDTO;
+import com.docdoku.gwt.explorer.shared.SerialActivityDTO;
+import com.docdoku.gwt.explorer.shared.WorkflowDTO;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;

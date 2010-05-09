@@ -22,7 +22,7 @@
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
-import com.docdoku.gwt.explorer.common.ExplorerServiceResponse;
+import com.docdoku.gwt.explorer.shared.ExplorerServiceResponse;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;

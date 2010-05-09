@@ -26,7 +26,7 @@ import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
 import com.docdoku.gwt.client.ui.widget.util.NotEmptyChecker;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.TaskModelModel;
-import com.docdoku.gwt.explorer.common.UserDTO;
+import com.docdoku.gwt.explorer.shared.UserDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;

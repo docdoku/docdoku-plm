@@ -22,7 +22,7 @@
 package com.docdoku.gwt.explorer.client.data;
 
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.common.UserDTO;
+import com.docdoku.gwt.explorer.shared.UserDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

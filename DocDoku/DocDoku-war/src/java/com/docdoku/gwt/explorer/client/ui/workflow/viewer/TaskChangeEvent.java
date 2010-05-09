@@ -5,7 +5,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
-import com.docdoku.gwt.explorer.common.TaskDTO;
+import com.docdoku.gwt.explorer.shared.TaskDTO;
 import java.util.EventObject;
 
 /**

@@ -20,7 +20,7 @@
 package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
-import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;

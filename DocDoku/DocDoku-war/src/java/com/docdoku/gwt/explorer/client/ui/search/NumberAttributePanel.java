@@ -1,6 +1,6 @@
 package com.docdoku.gwt.explorer.client.ui.search;
 
-import com.docdoku.gwt.explorer.common.SearchQueryDTO;
+import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.TextBox;

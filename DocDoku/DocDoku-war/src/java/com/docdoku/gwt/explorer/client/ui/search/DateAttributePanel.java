@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.ui.search;
 
 import com.docdoku.gwt.explorer.client.data.ShortDateFormater;
 import com.docdoku.gwt.explorer.client.ui.widget.DocdokuDateBox;
-import com.docdoku.gwt.explorer.common.SearchQueryDTO;
+import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.datepicker.client.DateBox;
 

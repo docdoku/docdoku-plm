@@ -23,8 +23,8 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
-import com.docdoku.gwt.explorer.common.TaskModelDTO;
-import com.docdoku.gwt.explorer.common.UserDTO;
+import com.docdoku.gwt.explorer.shared.TaskModelDTO;
+import com.docdoku.gwt.explorer.shared.UserDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +56,9 @@ public class TaskModelModel {
     public TaskModelModel(String workspaceId){
         data = new TaskModelDTO() ;
         data.setInstructions("");
-        data.setTaskName(ServiceLocator.getInstance().getExplorerI18NConstants().taskName());
+        data.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().taskName());
         observers = new ArrayList<TaskModelModelListener>();
-        data.setResponsible(ExplorerConstants.getInstance().getUser());
+        data.setWorker(ExplorerConstants.getInstance().getUser());
     }
 
     public TaskModelDTO getData() {
@@ -72,12 +72,12 @@ public class TaskModelModel {
     }
 
     public void setTaskName(String taskName) {
-        data.setTaskName(taskName);
+        data.setTitle(taskName);
         fireChange();
     }
 
     public void setResponsible(UserDTO responsible) {
-        data.setResponsible(responsible);
+        data.setWorker(responsible);
         fireChange();
     }
 
@@ -89,11 +89,11 @@ public class TaskModelModel {
 
 
     public String getTaskName() {
-        return data.getTaskName();
+        return data.getTitle();
     }
 
     public UserDTO getResponsible() {
-        return data.getResponsible();
+        return data.getWorker();
     }
 
     public String getInstructions() {

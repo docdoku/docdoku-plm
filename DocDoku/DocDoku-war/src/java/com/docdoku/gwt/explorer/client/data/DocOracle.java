@@ -5,8 +5,8 @@
 package com.docdoku.gwt.explorer.client.data;
 
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.common.MDocResponse;
-import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.MDocResponse;
+import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;

@@ -5,7 +5,7 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
-import com.docdoku.gwt.explorer.common.TaskDTO;
+import com.docdoku.gwt.explorer.shared.TaskDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;

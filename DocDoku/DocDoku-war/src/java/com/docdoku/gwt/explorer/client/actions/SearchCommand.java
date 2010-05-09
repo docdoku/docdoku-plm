@@ -22,9 +22,9 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocSearchBackend;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.common.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.common.MasterDocumentDTO;
-import com.docdoku.gwt.explorer.common.SearchQueryDTO;
+import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
+import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 

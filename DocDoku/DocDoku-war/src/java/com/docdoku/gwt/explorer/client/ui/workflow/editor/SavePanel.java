@@ -8,6 +8,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
+import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -15,6 +16,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import java.util.List;
 import java.util.Map;
 import org.cobogw.gwt.user.client.ui.Button;
 
@@ -49,7 +51,9 @@ public class SavePanel extends FlexTable implements KeyUpHandler{
 
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                cmds.get("SaveWorkflowModelCommand").execute(m_mainPanel.getWorkflowModelID(), m_editorn.getWorkflowModel().getFinalStateName(),  m_editorn.getWorkflowModel().getData().getActivitiesArray());
+                List<ActivityModelDTO> activitiesList = m_editorn.getWorkflowModel().getData().getActivities();
+                ActivityModelDTO[] activities = activitiesList.toArray(new ActivityModelDTO[activitiesList.size()]);
+                cmds.get("SaveWorkflowModelCommand").execute(m_mainPanel.getWorkflowModelID(), m_editorn.getWorkflowModel().getFinalStateName(),  activities);
             }
         });
         m_mainPanel.getWorkflowModelIDTextBox().addKeyUpHandler(this) ;
