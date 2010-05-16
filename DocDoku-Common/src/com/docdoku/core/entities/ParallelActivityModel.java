@@ -61,6 +61,7 @@ public class ParallelActivityModel extends ActivityModel {
         tasksToComplete = pTasksToComplete;
     }
 
+    @Override
     public void removeTaskModel(TaskModel pTaskModel) {
         super.removeTaskModel(pTaskModel);
         if (tasksToComplete > taskModels.size())
@@ -83,6 +84,7 @@ public class ParallelActivityModel extends ActivityModel {
         return taskModels + " (" + getTasksToComplete() + "/" + taskModels.size() + ")";
     }
     
+    @Override
     public ParallelActivityModel clone() {
         return (ParallelActivityModel) super.clone();
     }

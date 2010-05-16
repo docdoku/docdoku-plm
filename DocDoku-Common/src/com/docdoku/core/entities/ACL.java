@@ -18,7 +18,6 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package com.docdoku.core.entities;
 
 import java.io.Serializable;

@@ -86,6 +86,7 @@ public class SerialActivityModel extends ActivityModel {
         }
     }
 
+    @Override
     public SerialActivityModel clone() {
         return (SerialActivityModel) super.clone();
     }
