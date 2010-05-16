@@ -22,6 +22,7 @@
 package com.docdoku.gwt.client.ui.widget.table;
 
 import com.docdoku.gwt.client.ui.widget.WidgetServiceLocator;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
 
 /**
@@ -33,7 +34,7 @@ public class DefaultTableDragIcon extends Image implements TableDragIcon{
     private int row ;
 
     public DefaultTableDragIcon(int row) {
-        WidgetServiceLocator.getInstance().getImages().dragNDropIcon().applyTo(this);
+        AbstractImagePrototype.create(WidgetServiceLocator.getInstance().getImages().dragNDropIcon()).applyTo(this);
         this.row = row ;
     }
 

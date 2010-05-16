@@ -67,13 +67,10 @@ public class IterationNavigator extends Composite {
         initWidget(mainPanel);
         mainPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-        navigatePrevious = new Image();
-        navigateNext = new Image();
+        navigatePrevious = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getLeftImage());
+        navigateNext = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getRightImage());
 
         iterationsPanel = new HorizontalPanel();
-
-        ServiceLocator.getInstance().getExplorerImageBundle().getRightImage().applyTo(navigateNext);
-        ServiceLocator.getInstance().getExplorerImageBundle().getLeftImage().applyTo(navigatePrevious);
 
 
         mainPanel.add(navigatePrevious);

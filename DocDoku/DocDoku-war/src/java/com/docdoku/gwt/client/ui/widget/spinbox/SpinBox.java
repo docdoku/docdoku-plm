@@ -23,188 +23,182 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class SpinBox extends Composite implements ClickHandler, ChangeHandler, HasValueChangeHandlers<Integer>{
+public class SpinBox extends Composite implements ClickHandler, ChangeHandler, HasValueChangeHandlers<Integer> {
 
-        private static final String DEFAULT_STYLE ="docdoku-spinBox" ;
-	
-	private int minValue ;
-	private int maxValue ;
-	private PushButton buttonUp ;
-	private PushButton buttonDown ;
-	private int value ;
-	private TextBox inputField ;
-	private int backupValue ;
+    private static final String DEFAULT_STYLE = "docdoku-spinBox";
+    private int minValue;
+    private int maxValue;
+    private PushButton buttonUp;
+    private PushButton buttonDown;
+    private int value;
+    private TextBox inputField;
+    private int backupValue;
 
-        /**
-         * Build a default SpinBox
-         * This spin box allows values between 0 and 100, initialy it shows 0
-         */
-	public SpinBox(){
-		this(0,100,0);
-	}
-
-        /**
-         * Build a SpinBox with specified values
-         * @param min the minimum value
-         * @param max the maximum value
-         * @param initial the initial value
-         */
-	public SpinBox(int min, int max, int initial){
-		maxValue = max ;
-		minValue = min ;
-		value = initial ;
-		backupValue = value ;
-		setupUi();
-		setupListeners() ;
-                inputField.setStyleName(DEFAULT_STYLE);
-	}
-
-        /**
-         * Retrieve the maximum value
-         * @return the maximum value accepted by the SpinBox
-         */
-	public int getMaxValue() {
-		return maxValue;
-	}
-
-        /**
-         * 
-         * @param maxValue
-         */
-	public void setMaxValue(int maxValue) {
-		this.maxValue = maxValue;
-		if (value > maxValue){
-			value = maxValue ;
-                        onValueChanged() ;
-		}else{
-                    onValueChangeWithoutNotification();
-                }
-		
-	}
-
-    public void setMinValue(int minValue){
-        this.minValue = minValue ;
-        if(value < minValue){
-            value = minValue ;
-            onValueChanged();
-        }else{
-            onValueChangeWithoutNotification();
-        }
-        
+    /**
+     * Build a default SpinBox
+     * This spin box allows values between 0 and 100, initialy it shows 0
+     */
+    public SpinBox() {
+        this(0, 100, 0);
     }
 
-	public int getValue() {
-		return value;
-	}
+    /**
+     * Build a SpinBox with specified values
+     * @param min the minimum value
+     * @param max the maximum value
+     * @param initial the initial value
+     */
+    public SpinBox(int min, int max, int initial) {
+        maxValue = max;
+        minValue = min;
+        value = initial;
+        backupValue = value;
+        setupUi();
+        setupListeners();
+        inputField.setStyleName(DEFAULT_STYLE);
+    }
 
-    public void setValue (int newValue){
+    /**
+     * Retrieve the maximum value
+     * @return the maximum value accepted by the SpinBox
+     */
+    public int getMaxValue() {
+        return maxValue;
+    }
+
+    /**
+     *
+     * @param maxValue
+     */
+    public void setMaxValue(int maxValue) {
+        this.maxValue = maxValue;
+        if (value > maxValue) {
+            value = maxValue;
+            onValueChanged();
+        } else {
+            onValueChangeWithoutNotification();
+        }
+
+    }
+
+    public void setMinValue(int minValue) {
+        this.minValue = minValue;
+        if (value < minValue) {
+            value = minValue;
+            onValueChanged();
+        } else {
+            onValueChangeWithoutNotification();
+        }
+
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int newValue) {
         value = newValue;
         onValueChanged();
     }
 
-	private void setupUi(){
-		HorizontalPanel mainPanel = new HorizontalPanel();
-		VerticalPanel buttonsPanel = new VerticalPanel();
-		WidgetRessourcesBundle images = WidgetServiceLocator.getInstance().getImages();
-		Image up = new Image();
-		Image down = new Image() ;
-		images.getSmallUpImage().applyTo(up);
-		images.getSmallDownImage().applyTo(down);
-		buttonUp = new PushButton(up);
+    private void setupUi() {
+        HorizontalPanel mainPanel = new HorizontalPanel();
+        VerticalPanel buttonsPanel = new VerticalPanel();
+        WidgetRessourcesBundle images = WidgetServiceLocator.getInstance().getImages();
+        Image up = new Image(images.getSmallUpImage());
+        Image down = new Image(images.getSmallDownImage());
+        buttonUp = new PushButton(up);
         buttonUp.setStyleName("spinbox-button");
-		buttonDown = new PushButton(down);
+        buttonDown = new PushButton(down);
         buttonDown.setStyleName("spinbox-button");
-		buttonsPanel.add(buttonUp);
-		buttonsPanel.add(buttonDown);
-		inputField = new TextBox() ;
-		inputField.setVisibleLength(1) ;
-		inputField.setText(""+value);
-		inputField.setTextAlignment(TextBox.ALIGN_RIGHT) ;
-		mainPanel.add(inputField);
-		mainPanel.add(buttonsPanel);
-		initWidget(mainPanel);
-		onValueChanged() ;
-	}
+        buttonsPanel.add(buttonUp);
+        buttonsPanel.add(buttonDown);
+        inputField = new TextBox();
+        inputField.setVisibleLength(1);
+        inputField.setText("" + value);
+        inputField.setTextAlignment(TextBox.ALIGN_RIGHT);
+        mainPanel.add(inputField);
+        mainPanel.add(buttonsPanel);
+        initWidget(mainPanel);
+        onValueChanged();
+    }
 
-	private void setupListeners(){
-		buttonUp.addClickHandler(this);
-		buttonDown.addClickHandler(this);
-		inputField.addChangeHandler(this);
-	}
+    private void setupListeners() {
+        buttonUp.addClickHandler(this);
+        buttonDown.addClickHandler(this);
+        inputField.addChangeHandler(this);
+    }
 
-	@Override
-	public void onClick(ClickEvent event) {
-		if (event.getSource() == buttonUp) {
-			if (value < maxValue){
-				value ++ ;
-				onValueChanged() ;
-			}
-			
-		} else {
-			if (value>minValue) {
-				value-- ;
-				onValueChanged() ;
-			}
-		}
-	}
+    @Override
+    public void onClick(ClickEvent event) {
+        if (event.getSource() == buttonUp) {
+            if (value < maxValue) {
+                value++;
+                onValueChanged();
+            }
 
-        private void onValueChangeWithoutNotification(){
-            // value is the new backup now
-		backupValue = value ;
-		if (value == maxValue && value == minValue){
-			buttonUp.setEnabled(false);
-			buttonDown.setEnabled(false) ;
-		}else if (value == maxValue){
-			buttonUp.setEnabled(false);
-			buttonDown.setEnabled(true) ;
-		}else if(value == minValue){
-			buttonUp.setEnabled(true);
-			buttonDown.setEnabled(false) ;
-		}else{
-			buttonUp.setEnabled(true);
-			buttonDown.setEnabled(true);
-		}
-		inputField.setText(""+value);
+        } else {
+            if (value > minValue) {
+                value--;
+                onValueChanged();
+            }
         }
-	
-	
-	private void onValueChanged(){
-		// value is the new backup now
-		backupValue = value ;
-		if (value == maxValue && value == minValue){
-			buttonUp.setEnabled(false);
-			buttonDown.setEnabled(false) ;
-		}else if (value == maxValue){
-			buttonUp.setEnabled(false);
-			buttonDown.setEnabled(true) ;
-		}else if(value == minValue){
-			buttonUp.setEnabled(true);
-			buttonDown.setEnabled(false) ;
-		}else{
-			buttonUp.setEnabled(true);
-			buttonDown.setEnabled(true);
-		}
-		inputField.setText(""+value);
-                fireChange();
-	}
+    }
 
+    private void onValueChangeWithoutNotification() {
+        // value is the new backup now
+        backupValue = value;
+        if (value == maxValue && value == minValue) {
+            buttonUp.setEnabled(false);
+            buttonDown.setEnabled(false);
+        } else if (value == maxValue) {
+            buttonUp.setEnabled(false);
+            buttonDown.setEnabled(true);
+        } else if (value == minValue) {
+            buttonUp.setEnabled(true);
+            buttonDown.setEnabled(false);
+        } else {
+            buttonUp.setEnabled(true);
+            buttonDown.setEnabled(true);
+        }
+        inputField.setText("" + value);
+    }
 
-	@Override
-	public void onChange(ChangeEvent event) {
-		if (inputField.getText().matches("^[0-9]+")){
-			Integer tempValue = new Integer(inputField.getText()) ;
-			if (tempValue >= minValue && tempValue <= maxValue){
-				value = tempValue ;
-			}else{
-				// restaure backup :
-				value = backupValue ;
-			}
-		}else{
-			value = backupValue ;
-		}
-		onValueChanged() ;
-	}
-	
+    private void onValueChanged() {
+        // value is the new backup now
+        backupValue = value;
+        if (value == maxValue && value == minValue) {
+            buttonUp.setEnabled(false);
+            buttonDown.setEnabled(false);
+        } else if (value == maxValue) {
+            buttonUp.setEnabled(false);
+            buttonDown.setEnabled(true);
+        } else if (value == minValue) {
+            buttonUp.setEnabled(true);
+            buttonDown.setEnabled(false);
+        } else {
+            buttonUp.setEnabled(true);
+            buttonDown.setEnabled(true);
+        }
+        inputField.setText("" + value);
+        fireChange();
+    }
+
+    @Override
+    public void onChange(ChangeEvent event) {
+        if (inputField.getText().matches("^[0-9]+")) {
+            Integer tempValue = new Integer(inputField.getText());
+            if (tempValue >= minValue && tempValue <= maxValue) {
+                value = tempValue;
+            } else {
+                // restaure backup :
+                value = backupValue;
+            }
+        } else {
+            value = backupValue;
+        }
+        onValueChanged();
+    }
 
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
         return addHandler(handler, ValueChangeEvent.getType());

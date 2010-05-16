@@ -55,8 +55,7 @@ public class ROTaskPanel extends Composite implements MouseMoveHandler, MouseOut
         ExplorerImageBundle images = ServiceLocator.getInstance().getExplorerImageBundle() ;
         panel = new FlexTable();
         CellFormatter formatter = panel.getCellFormatter();
-        taskImage = new Image();
-        images.getTaskImage().applyTo(taskImage);
+        taskImage = new Image(images.getTaskImage());
         panel.setWidget(0, 0, taskImage);
         taskName = new Label(task.getTitle());
         if (task.getInstructions() != null && !task.getInstructions().trim().isEmpty()) {
@@ -64,9 +63,9 @@ public class ROTaskPanel extends Composite implements MouseMoveHandler, MouseOut
             instructionsInfos.setData(0, 0, task.getInstructions());
         }
         panel.setWidget(1, 0, taskName);
-        taskResponsible = new Label(task.getWorkerName());
+        taskResponsible = new Label(task.getWorker().getName());
         responsibleMail = new DocdokuInfoPopupPanel(1, 1);
-        responsibleMail.setData(0, 0, task.getWorkerMail());
+        responsibleMail.setData(0, 0, task.getWorker().getEmail());
         panel.setWidget(2, 0, new Label(constants.responsible()));
         panel.setWidget(2, 1, taskResponsible);
 

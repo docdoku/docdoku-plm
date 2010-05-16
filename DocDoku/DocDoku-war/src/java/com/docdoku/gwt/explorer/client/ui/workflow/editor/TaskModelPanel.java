@@ -168,8 +168,7 @@ public class TaskModelPanel extends Composite implements MouseOverHandler, Mouse
         mainPanel = new FlexTable();
         initWidget(mainPanel);
 
-        taskImage = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getTaskImage().applyTo(taskImage);
+        taskImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getTaskImage());
         taskName = new EditableLabel();
         taskName.setChecker(new NotEmptyChecker());
         taskName.setTextAlignment(EditableLabel.ALIGN_CENTER);
@@ -199,12 +198,9 @@ public class TaskModelPanel extends Composite implements MouseOverHandler, Mouse
 
     private void setupPopups() {
         // images :
-        removeImage = new Image();
-        leftImage = new Image();
-        rightImage = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getDeleteImage().applyTo(removeImage);
-        ServiceLocator.getInstance().getExplorerImageBundle().getRightImage().applyTo(rightImage);
-        ServiceLocator.getInstance().getExplorerImageBundle().getLeftImage().applyTo(leftImage);
+        removeImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getDeleteImage());
+        leftImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getLeftImage());
+        rightImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getRightImage());
 
         // containers (popups)
         removeOption = new PopupPanel();

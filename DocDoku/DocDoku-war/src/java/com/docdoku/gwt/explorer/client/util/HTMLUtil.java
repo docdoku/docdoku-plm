@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  *
@@ -16,8 +17,8 @@ public class HTMLUtil {
     private HTMLUtil() {
 
     }
-    public static String imageItemHTML(AbstractImagePrototype imageProto, String title) {
-        return "<span>" + imageProto.getHTML() + " " + title + "</span>";
+    public static String imageItemHTML(ImageResource imageResource, String title) {
+        return "<span>" + AbstractImagePrototype.create(imageResource).getHTML() + " " + title + "</span>";
     }
 
     public static void showError(String message) {

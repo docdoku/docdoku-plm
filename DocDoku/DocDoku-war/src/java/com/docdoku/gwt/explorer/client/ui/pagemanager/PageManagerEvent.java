@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
 import com.google.gwt.event.shared.GwtEvent;
@@ -28,11 +27,11 @@ import com.google.gwt.event.shared.GwtEvent.Type;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class PageManagerEvent extends GwtEvent<PageHandler>{
+public class PageManagerEvent extends GwtEvent<PageHandler> {
 
     private static Type<PageHandler> TYPE;
 
-    public static void fire(HasPageHandlers source,int current, int numberOfPages, int start, int end, int total) {
+    public static void fire(HasPageHandlers source, int current, int numberOfPages, int start, int end, int total) {
         if (TYPE != null) {
             PageManagerEvent event = new PageManagerEvent(current, numberOfPages, start, end, total);
             source.fireEvent(event);
@@ -44,19 +43,18 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
      *
      * @return returns the handler type
      */
-    @SuppressWarnings(value="unchecked")
+    @SuppressWarnings(value = "unchecked")
     public static Type<PageHandler> getType() {
         if (TYPE == null) {
             TYPE = new Type<PageHandler>();
         }
         return TYPE;
     }
-
-    private int currentPage ;
-    private int numberOfPages ;
-    private int start ;
-    private int end ;
-    private int total ;
+    private int currentPage;
+    private int numberOfPages;
+    private int start;
+    private int end;
+    private int total;
 
     public PageManagerEvent(int currentPage, int numberOfPages, int start, int end, int total) {
         this.currentPage = currentPage;
@@ -65,8 +63,6 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
         this.end = end;
         this.total = total;
     }
-
-    
 
     public int getCurrentPage() {
         return currentPage;
@@ -88,18 +84,13 @@ public class PageManagerEvent extends GwtEvent<PageHandler>{
         return total;
     }
 
-    
-
-    
-
     @Override
     public Type<PageHandler> getAssociatedType() {
-        return (Type) TYPE;
+        return TYPE;
     }
 
     @Override
     protected void dispatch(PageHandler handler) {
         handler.onPageChanged(this);
     }
-    
 }

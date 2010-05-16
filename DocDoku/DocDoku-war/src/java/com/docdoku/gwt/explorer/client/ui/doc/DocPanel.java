@@ -121,22 +121,22 @@ public class DocPanel extends FlexTable {
     }
 
     public void setMDoc(final MasterDocumentDTO mdoc) {
-        setMDoc(mdoc, mdoc.getIterations().size() - 1);
+        setMDoc(mdoc, mdoc.getDocumentIterations().size() - 1);
     }
 
     public void setMDoc(final MasterDocumentDTO mdoc, int it) {
-        m_mainPanel.setMDocAuthor(mdoc.getAuthor().toString());
+        m_mainPanel.setMDocAuthor(mdoc.getAuthor().getName());
         int iteration = 0;
         String revision = "";
 
-        if (it == mdoc.getIterations().size() - 1) {
+        if (it == mdoc.getDocumentIterations().size() - 1) {
             if (mdoc.getLastIteration() != null) {
                 iteration = mdoc.getLastIteration().getIteration();
                 revision = mdoc.getLastIteration().getRevisionNote();
             }
         } else {
             iteration = it + 1;
-            revision = mdoc.getIterations().get(it).getRevisionNote();
+            revision = mdoc.getDocumentIterations().get(it).getRevisionNote();
         }
 
         String webappContext = HTMLUtil.getWebContext();
@@ -148,7 +148,7 @@ public class DocPanel extends FlexTable {
         m_mainPanel.setCreationDate(mdoc.getCreationDate());
         m_mainPanel.setModificationDate(mdoc.getCheckOutDate());
 
-        m_mainPanel.setCheckOutUser(mdoc.getCheckOutUser());
+        m_mainPanel.setCheckOutUser(mdoc.getCheckOutUser()==null?null:mdoc.getCheckOutUser().getName());
 
         m_mainPanel.setMDocType(mdoc.getType());
         m_mainPanel.setMDocTitle(mdoc.getTitle());
@@ -158,8 +158,8 @@ public class DocPanel extends FlexTable {
 
 
         // iteration stuff
-        m_iterationNavigator.setIterationsNumber(it, mdoc.getIterations().size() - 1);
-        m_iterationNavigator.setVisible(mdoc.getIterations().size() != 1);
+        m_iterationNavigator.setIterationsNumber(it, mdoc.getDocumentIterations().size() - 1);
+        m_iterationNavigator.setVisible(mdoc.getDocumentIterations().size() != 1);
 
 
         if (mdoc.getWorkflow() != null) {

@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ *
+ * This file is part of DocDoku.
+ *
+ * DocDoku is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDoku is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.gwt.explorer.shared;
 
 import java.io.Serializable;
@@ -14,12 +34,12 @@ public class MasterDocumentTemplateDTO implements Serializable{
     private String workspaceId;
     private String id;
     private String documentType;
-    private String author;
+    private UserDTO author;
     private Date creationDate;
     private boolean idGenerated;
     private String mask;
 
-    private Map<String,String> files;
+    private Map<String,String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
     
     public MasterDocumentTemplateDTO(){
@@ -32,11 +52,11 @@ public class MasterDocumentTemplateDTO implements Serializable{
         this.documentType=documentType;
     }
 
-    public String getAuthor() {
+    public UserDTO getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(UserDTO author) {
         this.author = author;
     }
 
@@ -72,12 +92,12 @@ public class MasterDocumentTemplateDTO implements Serializable{
         return creationDate;
     }
 
-    public Map<String, String> getFiles() {
-        return files;
+    public Map<String, String> getAttachedFiles() {
+        return attachedFiles;
     }
 
-    public void setFiles(Map<String, String> files) {
-        this.files = files;
+    public void setAttachedFiles(Map<String, String> attachedFiles) {
+        this.attachedFiles = attachedFiles;
     }
 
     public void setCreationDate(Date creationDate) {

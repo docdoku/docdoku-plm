@@ -43,7 +43,7 @@ public class WorkflowModelTableModel implements TableModel {
         this.data = new Object[workflows.length][3];
         for( int i=0; i < workflows.length ; i++ ){
             this.data[i][0] = workflows[i].getId();
-            this.data[i][1] = workflows[i].getAuthor().toString();
+            this.data[i][1] = workflows[i].getAuthor().getName();
             this.data[i][2] = workflows[i].getCreationDate();
         }
     }

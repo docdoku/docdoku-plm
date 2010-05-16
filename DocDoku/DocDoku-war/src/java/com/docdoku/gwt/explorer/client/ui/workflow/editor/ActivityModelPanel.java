@@ -23,7 +23,6 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityEvent;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelHandler;
-import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelListener;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.ActivityModelModel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -196,12 +195,9 @@ public abstract class ActivityModelPanel extends Composite implements MouseOverH
         public OptionsPopup() {
 
             HorizontalPanel panel = new HorizontalPanel();
-            add = new Image();
-            remove = new Image();
-
-            ServiceLocator.getInstance().getExplorerImageBundle().getAddSmallImage().applyTo(add);
-            ServiceLocator.getInstance().getExplorerImageBundle().getDeleteImage().applyTo(remove);
-
+            add = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getAddSmallImage());
+            remove = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getDeleteImage());
+            
             add.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().taskAdd());
             remove.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().deleteActivityTooltip());
             panel.add(add);

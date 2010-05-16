@@ -43,7 +43,7 @@ public class DeleteTemplateFileCommand implements Action {
         AsyncCallback<MasterDocumentTemplateDTO> callback = new AsyncCallback<MasterDocumentTemplateDTO>() {
 
             public void onSuccess(MasterDocumentTemplateDTO template) {
-                m_mainPage.setEditTemplateFiles(template.getFiles());
+                m_mainPage.setEditTemplateFiles(template.getAttachedFiles());
             }
 
             public void onFailure(Throwable caught) {

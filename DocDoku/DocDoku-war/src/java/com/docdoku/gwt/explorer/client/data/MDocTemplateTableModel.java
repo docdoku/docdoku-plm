@@ -47,7 +47,7 @@ public class MDocTemplateTableModel implements TableModel{
         for( int i=0; i < templates.length ; i++ ){
             this.data[i][0] = templates[i].getId();
             this.data[i][1] = templates[i].getDocumentType();
-            this.data[i][2] = templates[i].getAuthor();
+            this.data[i][2] = templates[i].getAuthor().getName();
             this.data[i][3] = templates[i].getCreationDate();
         }
     }

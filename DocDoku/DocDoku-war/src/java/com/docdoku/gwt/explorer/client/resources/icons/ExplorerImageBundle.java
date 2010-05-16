@@ -19,147 +19,149 @@
  */
 package com.docdoku.gwt.explorer.client.resources.icons;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.TreeImages;
+
+import com.google.gwt.resources.client.ClientBundle.Source;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.Tree;
 
 /**
  *
  * @author Florent GARIN
  */
-public interface ExplorerImageBundle extends TreeImages {
+public interface ExplorerImageBundle extends Tree.Resources {
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/home.png")
-    AbstractImagePrototype homeNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/home.png")
+    ImageResource homeNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/branch_folder.png")
-    AbstractImagePrototype workflowNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/branch_folder.png")
+    ImageResource workflowNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/tags_blue.png")
-    AbstractImagePrototype tagRootNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/tags_blue.png")
+    ImageResource tagRootNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/tag_blue.png")
-    AbstractImagePrototype tagNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/tag_blue.png")
+    ImageResource tagNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/template_folder.png")
-    AbstractImagePrototype templateNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/template_folder.png")
+    ImageResource templateNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/safe.png")
-    AbstractImagePrototype rootNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/safe.png")
+    ImageResource rootNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/open_folder.png")
-    AbstractImagePrototype openFolderNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/open_folder.png")
+    ImageResource openFolderNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/closed_folder.png")
-    AbstractImagePrototype closedFolderNodeIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/closed_folder.png")
+    ImageResource closedFolderNodeIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/tree_open.png")
-    AbstractImagePrototype treeOpen();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/tree_open.png")
+    ImageResource treeOpen();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/tree_closed.png")
-    AbstractImagePrototype treeClosed();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/tree_closed.png")
+    ImageResource treeClosed();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/template.png")
-    AbstractImagePrototype templateRowIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/template.png")
+    ImageResource templateRowIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/workflow.png")
-    AbstractImagePrototype workflowRowIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/workflow.png")
+    ImageResource workflowRowIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/document.png")
-    AbstractImagePrototype documentRowIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/document.png")
+    ImageResource documentRowIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/document_edit.png")
-    AbstractImagePrototype documentEditRowIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/document_edit.png")
+    ImageResource documentEditRowIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/document_lock.png")
-    AbstractImagePrototype documentLockRowIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/document_lock.png")
+    ImageResource documentLockRowIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/document_version.png")
-    AbstractImagePrototype documentNewVersionRowIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/document_version.png")
+    ImageResource documentNewVersionRowIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/alarm_iteration_on.png")
-    AbstractImagePrototype alarmIterationOnIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/alarm_iteration_on.png")
+    ImageResource alarmIterationOnIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/alarm_iteration_off.png")
-    AbstractImagePrototype alarmIterationOffIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/alarm_iteration_off.png")
+    ImageResource alarmIterationOffIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/alarm_state_on.png")
-    AbstractImagePrototype alarmStateOnIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/alarm_state_on.png")
+    ImageResource alarmStateOnIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/icons/alarm_state_off.png")
-    AbstractImagePrototype alarmStateOffIcon();
+    @Source("com/docdoku/gwt/explorer/client/resources/icons/alarm_state_off.png")
+    ImageResource alarmStateOffIcon();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/clipboard_large.png")
-    AbstractImagePrototype getTaskImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/clipboard_large.png")
+    ImageResource getTaskImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/editdelete.png")
-    AbstractImagePrototype getDeleteImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/editdelete.png")
+    ImageResource getDeleteImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/edit_large.png")
-    AbstractImagePrototype getEditImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/edit_large.png")
+    ImageResource getEditImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/flag_green.png")
-    AbstractImagePrototype getStartImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/flag_green.png")
+    ImageResource getStartImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/target.png")
-    AbstractImagePrototype getEndImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/target.png")
+    ImageResource getEndImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_up.png")
-    AbstractImagePrototype getUpImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_up.png")
+    ImageResource getUpImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_down.png")
-    AbstractImagePrototype getDownImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_down.png")
+    ImageResource getDownImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_plus.png")
-    AbstractImagePrototype getAddImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_plus.png")
+    ImageResource getAddImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_minus.png")
-    AbstractImagePrototype getRemoveImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_minus.png")
+    ImageResource getRemoveImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/edit.png")
-    AbstractImagePrototype getEditSmallImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/edit.png")
+    ImageResource getEditSmallImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/disk_blue_window.png")
-    AbstractImagePrototype getSaveImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/disk_blue_window.png")
+    ImageResource getSaveImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/hand_point.png")
-    AbstractImagePrototype getHandImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/hand_point.png")
+    ImageResource getHandImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/branch_element_serial.png")
-    AbstractImagePrototype getSerialImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/branch_element_serial.png")
+    ImageResource getSerialImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/branch_element_parallel.png")
-    AbstractImagePrototype getParallelImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/branch_element_parallel.png")
+    ImageResource getParallelImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/lineV.png")
-    AbstractImagePrototype getVerticalLine();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/lineV.png")
+    ImageResource getVerticalLine();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/lineH2.png")
-    AbstractImagePrototype getHorizontalLine();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/lineH2.png")
+    ImageResource getHorizontalLine();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_plus_small.png")
-    AbstractImagePrototype getAddSmallImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_plus_small.png")
+    ImageResource getAddSmallImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_minus_small.png")
-    AbstractImagePrototype getRemoveSmallImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_minus_small.png")
+    ImageResource getRemoveSmallImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_left.png")
-    AbstractImagePrototype getLeftImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_left.png")
+    ImageResource getLeftImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_right.png")
-    AbstractImagePrototype getRightImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/navigate_right.png")
+    ImageResource getRightImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/selection_delete.png")
-    AbstractImagePrototype getRemoveTaskImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/selection_delete.png")
+    ImageResource getRemoveTaskImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/trafficlight_green.png")
-    AbstractImagePrototype getApproveTaskImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/trafficlight_green.png")
+    ImageResource getApproveTaskImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/workflow/icons/trafficlight_red.png")
-    AbstractImagePrototype getRejectTaskImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/workflow/icons/trafficlight_red.png")
+    ImageResource getRejectTaskImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/search/icons/navigate_plus.png")
-    AbstractImagePrototype getSearchAddImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/search/icons/navigate_plus.png")
+    ImageResource getSearchAddImage();
 
-    @Resource("com/docdoku/gwt/explorer/client/resources/search/icons/navigate_minus.png")
-    AbstractImagePrototype getSearchRemoveImage();
+    @Source("com/docdoku/gwt/explorer/client/resources/search/icons/navigate_minus.png")
+    ImageResource getSearchRemoveImage();
 }

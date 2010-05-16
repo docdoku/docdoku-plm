@@ -1,6 +1,4 @@
 /*
- * InstanceURLAttributeDTO.java
- * 
  * Copyright (c) 2009 Docdoku. All rights reserved.
  * 
  * This file is part of Docdoku.

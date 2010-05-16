@@ -10,8 +10,7 @@ public class HorizontalLink extends HorizontalPanel {
     protected Image link ;
 
 	public HorizontalLink(){
-        link = new Image();
-		ServiceLocator.getInstance().getExplorerImageBundle().getHorizontalLine().applyTo(link);
+        link = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getHorizontalLine());
         this.add(link);
 	}
 

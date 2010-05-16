@@ -12,8 +12,7 @@ public class StartPoint extends SimplePanel {
 	
 	public StartPoint(){
 		
-		Image im = new Image();
-		ServiceLocator.getInstance().getExplorerImageBundle().getStartImage().applyTo(im);
+		Image im = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getStartImage());
 		this.add(im) ;
 	}
 	

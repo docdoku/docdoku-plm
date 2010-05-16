@@ -72,8 +72,7 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
 
 
         // add button (by default : on top )
-        addAttribute = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getSearchAddImage().applyTo(addAttribute);
+        addAttribute = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getSearchAddImage());
         setWidget(1, 0, addAttribute);
         addAttribute.addClickHandler(this);
 
@@ -98,16 +97,14 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
 
         // check if we have to add a minus for the first line :
         if (removeButtons.size() == 0) {
-            Image imRemoveTmp = new Image();
-            ServiceLocator.getInstance().getExplorerImageBundle().getSearchRemoveImage().applyTo(imRemoveTmp);
+            Image imRemoveTmp = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getSearchRemoveImage());
             removeButtons.add(imRemoveTmp);
             setWidget(0, 0, imRemoveTmp);
             imRemoveTmp.addClickHandler(this);
         }
 
         // then, add a button for new line
-        Image rmTmp = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getSearchRemoveImage().applyTo(rmTmp);
+        Image rmTmp = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getSearchRemoveImage());
         removeButtons.add(rmTmp);
         setWidget(attributeLines.size(), 0, rmTmp);
         rmTmp.addClickHandler(this);

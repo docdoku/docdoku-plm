@@ -12,8 +12,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class EndPoint extends VerticalPanel{
 
 	public  EndPoint() {
-		Image im = new Image();
-		ServiceLocator.getInstance().getExplorerImageBundle().getEndImage().applyTo(im);
+		Image im = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getEndImage());
 		this.add(im);
 	}
 }

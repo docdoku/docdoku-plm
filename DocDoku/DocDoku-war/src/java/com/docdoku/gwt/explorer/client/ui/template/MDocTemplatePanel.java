@@ -123,13 +123,13 @@ public class MDocTemplatePanel extends FlexTable {
     }
     
     public void setTemplate(MasterDocumentTemplateDTO template) {
-        m_mainPanel.setMDocTemplateAuthor(template.getAuthor().toString());
+        m_mainPanel.setMDocTemplateAuthor(template.getAuthor().getName());
         m_mainPanel.setMDocTemplateGeneratedID(template.isIdGenerated());
         m_mainPanel.setMDocTemplateID(template.getId());
         m_mainPanel.setMDocTemplateMask(template.getMask());
         m_mainPanel.setMDocTemplateType(template.getDocumentType());
         m_attributesPanel.setAttributes(template.getAttributeTemplates());
-        m_filesPanel.setFiles(template.getFiles());
+        m_filesPanel.setFiles(template.getAttachedFiles());
     }
 
     

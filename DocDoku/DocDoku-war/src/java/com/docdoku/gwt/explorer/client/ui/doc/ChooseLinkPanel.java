@@ -47,7 +47,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
 
             public void onSuccess(MasterDocumentDTO result) {
                 masterDoc = result;
-                iterationsSpin.setMaxValue(masterDoc.getIterations().size());
+                iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
                 iterationsSpin.setMinValue(1);
                 iterationsSpin.setValue(doc.getIteration());
                 iterationsSpin.setVisible(true);
@@ -78,7 +78,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
 
     public DocumentDTO getSelectedDocument() {
         if (masterDoc != null) {
-            return masterDoc.getIterations().get(iterationsSpin.getValue() - 1);
+            return masterDoc.getDocumentIterations().get(iterationsSpin.getValue() - 1);
         } else {
             return null;
         }
@@ -88,9 +88,9 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
         iterationsSpin.setVisible(true);
         DocOracle.DocOracleSuggestion selection = (DocOracle.DocOracleSuggestion) event.getSelectedItem();
         masterDoc = selection.getMDoc();
-        iterationsSpin.setMaxValue(masterDoc.getIterations().size());
+        iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
         iterationsSpin.setMinValue(1);
-        iterationsSpin.setValue(masterDoc.getIterations().size());
+        iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
     }
 
     public void onKeyUp(KeyUpEvent event) {
@@ -119,9 +119,9 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
                             if (result != null) {
                                 iterationsSpin.setVisible(true);
                                 masterDoc = result;
-                                iterationsSpin.setMaxValue(masterDoc.getIterations().size());
+                                iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
                                 iterationsSpin.setMinValue(1);
-                                iterationsSpin.setValue(masterDoc.getIterations().size());
+                                iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
                             } else {
                                 iterationsSpin.setVisible(false);
                                 masterDoc = null;

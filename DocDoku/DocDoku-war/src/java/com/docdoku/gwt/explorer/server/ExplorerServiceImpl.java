@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 /**
  *
@@ -42,6 +44,13 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     @EJB
     private ICommandLocal commandService;
+    
+    private Mapper mapper;
+    
+    @Override
+    public void init(){
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
 
     public String[] getFolders(String completePath) throws ApplicationException {
         try {
@@ -195,7 +204,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public UserDTO whoAmI(String pWorkspaceId) throws ApplicationException {
         try {
             User user = commandService.whoAmI(pWorkspaceId);
-            return createDTO(user);
+            return mapper.map(user, UserDTO.class);
         } catch (com.docdoku.core.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -529,7 +538,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         MasterDocumentTemplateDTO dto = new MasterDocumentTemplateDTO();
         dto.setId(template.getId());
         dto.setWorkspaceId(template.getWorkspaceId());
-        dto.setAuthor(template.getAuthor().toString());
+        dto.setAuthor(mapper.map(template.getAuthor(), UserDTO.class));
         dto.setDocumentType(template.getDocumentType());
         dto.setMask(template.getMask());
         dto.setCreationDate(template.getCreationDate());
@@ -545,7 +554,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         for (BinaryResource file : template.getAttachedFiles()) {
             files.put(file.getName(), file.getFullName());
         }
-        dto.setFiles(files);
+        dto.setAttachedFiles(files);
 
         return dto;
     }
@@ -561,7 +570,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         WorkflowModelDTO dto = new WorkflowModelDTO();
         dto.setId(wk.getId());
         dto.setWorkspaceId(wk.getWorkspaceId());
-        dto.setAuthor(wk.getAuthor().toString());
+        dto.setAuthor(mapper.map(wk.getAuthor(), UserDTO.class));
         dto.setCreationDate(wk.getCreationDate());
 
         dto.setFinalLifeCycleState(wk.getFinalLifeCycleState());
@@ -575,14 +584,12 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     private WorkflowDTO createDTO(Workflow wk) {
         WorkflowDTO dto = new WorkflowDTO();
-        dto.setFinalStateName(wk.getFinalLifeCycleState());
-        dto.setStates(wk.getLifeCycle());
+        dto.setFinalLifeCycleState(wk.getFinalLifeCycleState());
         List<ActivityDTO> activities = new ArrayList<ActivityDTO>();
         for (Activity activity : wk.getActivities()) {
             activities.add(createDTO(activity));
         }
         dto.setActivities(activities);
-        dto.setCurrentStep(wk.getCurrentStep());
         dto.setId(wk.getId());
         return dto;
     }
@@ -591,12 +598,13 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         ActivityDTO dto = null;
         if (activity instanceof ParallelActivity) {
             dto = new ParallelActivityDTO();
-            ((ParallelActivityDTO) dto).setNbTaskToComplete(((ParallelActivity) activity).getTasksToComplete());
+            ((ParallelActivityDTO) dto).setTasksToComplete(((ParallelActivity) activity).getTasksToComplete());
         } else {
             dto = new SerialActivityDTO();
         }
-        dto.setStep(activity.getStep());
         dto.setStopped(activity.isStopped());
+        dto.setComplete(activity.isComplete());
+        dto.setLifeCycleState((activity.getLifeCycleState()));
         List<TaskDTO> tasks = new ArrayList<TaskDTO>();
         for (Task task : activity.getTasks()) {
             tasks.add(createDTO(task));
@@ -612,25 +620,24 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         dto.setTargetIteration(task.getTargetIteration());
         dto.setTitle(task.getTitle());
 
-        TaskDTO.TaskStatus s = TaskDTO.TaskStatus.APPROVED;
+        TaskDTO.Status s = TaskDTO.Status.APPROVED;
         switch (task.getStatus()) {
             case APPROVED:
-                s = TaskDTO.TaskStatus.APPROVED;
+                s = TaskDTO.Status.APPROVED;
                 break;
             case IN_PROGRESS:
-                s = TaskDTO.TaskStatus.IN_PROGRESS;
+                s = TaskDTO.Status.IN_PROGRESS;
                 break;
             case NOT_STARTED:
-                s = TaskDTO.TaskStatus.NOT_STARTED;
+                s = TaskDTO.Status.NOT_STARTED;
                 break;
             case REJECTED:
-                s = TaskDTO.TaskStatus.REJECTED;
+                s = TaskDTO.Status.REJECTED;
                 break;
         }
         dto.setStatus(s);
         dto.setInstructions(task.getInstructions());
-        dto.setWorkerName(task.getWorker().getName());
-        dto.setWorkerMail(task.getWorker().getEmail());
+        dto.setWorker(mapper.map(task.getWorker(), UserDTO.class));
         return dto;
     }
 
@@ -658,7 +665,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     private TaskModelDTO createDTO(TaskModel task) {
         TaskModelDTO dto = new TaskModelDTO();
         dto.setTitle(task.getTitle());
-        dto.setWorker(createDTO(task.getWorker()));
+        dto.setWorker(mapper.map(task.getWorker(), UserDTO.class));
         dto.setInstructions(task.getInstructions());
         return dto;
     }
@@ -666,19 +673,9 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     private UserDTO[] createDTO(User[] users) {
         UserDTO[] data = new UserDTO[users.length];
         for (int i = 0; i < users.length; i++) {
-            data[i] = createDTO(users[i]);
+            data[i] = mapper.map(users[i], UserDTO.class);
         }
         return data;
-    }
-
-    private UserDTO createDTO(User user) {
-        UserDTO dto = new UserDTO();
-        dto.setLogin(user.getLogin());
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setWorkspaceId(user.getWorkspaceId());
-
-        return dto;
     }
 
     private MasterDocumentDTO[] createDTO(MasterDocumentKey[] mdocPKs) {
@@ -715,14 +712,12 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         dto.setWorkspaceID(mdoc.getWorkspaceId());
         dto.setID(mdoc.getId());
         dto.setVersion(mdoc.getVersion());
-        dto.setAuthor(mdoc.getAuthor().toString());
+        dto.setAuthor(mapper.map(mdoc.getAuthor(), UserDTO.class));
         dto.setCheckOutDate(mdoc.getCheckOutDate());
-        dto.setCheckOutUser((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().toString());
-        dto.setCheckOutUserFullName((mdoc.getCheckOutUser() == null) ? null : mdoc.getCheckOutUser().getName());
+        dto.setCheckOutUser((mdoc.getCheckOutUser() == null) ? null : mapper.map(mdoc.getCheckOutUser(), UserDTO.class));
         dto.setCreationDate(mdoc.getCreationDate());
         dto.setDescription(mdoc.getDescription());
-        dto.setLifeCycleState(mdoc.getLifeCycleState());
-
+        
         String[] tags = new String[mdoc.getTags().size()];
         int i = 0;
         for (Tag tag : mdoc.getTags()) {
@@ -737,7 +732,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         for (Document doc : mdoc.getDocumentIterations()) {
             iterations.add(createDTO(doc));
         }
-        dto.setIterations(iterations);
+        dto.setDocumentIterations(iterations);
         if (mdoc.getWorkflow() != null) {
             WorkflowDTO wk = createDTO(mdoc.getWorkflow());
             wk.setWorkspaceId(mdoc.getWorkspaceId());
@@ -748,7 +743,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
 
     private DocumentDTO createDTO(Document doc) {
         DocumentDTO dto = new DocumentDTO();
-        dto.setAuthor(doc.getAuthor().toString());
+        dto.setAuthor(mapper.map(doc.getAuthor(), UserDTO.class));
         dto.setCreationDate(doc.getCreationDate());
         dto.setIteration(doc.getIteration());
         dto.setMasterDocumentId(doc.getMasterDocumentId());
@@ -760,19 +755,19 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         for (BinaryResource file : doc.getAttachedFiles()) {
             files.put(file.getName(), file.getFullName());
         }
-        dto.setFiles(files);
+        dto.setAttachedFiles(files);
 
         Map<String, InstanceAttributeDTO> attributes = new HashMap<String, InstanceAttributeDTO>();
         for (Map.Entry<String, InstanceAttribute> entry : doc.getInstanceAttributes().entrySet()) {
             attributes.put(entry.getKey(), createDTO(entry.getValue()));
         }
-        dto.setAttributes(attributes);
+        dto.setInstanceAttributes(attributes);
 
         Set<DocumentDTO> links = new HashSet<DocumentDTO>();
         for (DocumentToDocumentLink link : doc.getLinkedDocuments()) {
             links.add(new DocumentDTO(link.getToDocumentWorkspaceId(), link.getToDocumentMasterDocumentId(), link.getToDocumentMasterDocumentVersion(), link.getToDocumentIteration()));
         }
-        dto.setLinks(links);
+        dto.setLinkedDocuments(links);
         return dto;
     }
 
@@ -981,8 +976,8 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             List<MasterDocumentDTO> markedState = Arrays.asList(createDTO(commandService.getStateChangeEventSubscriptions(workspaceId)));
 
             for (int i = 0 ; i < mdocs.length ; i++){
-                mdocs[i].setIterationNotification(markedIteration.contains(mdocs[i]));
-                mdocs[i].setStateNotification(markedState.contains(mdocs[i]));
+                mdocs[i].setIterationSubscription(markedIteration.contains(mdocs[i]));
+                mdocs[i].setStateSubscription(markedState.contains(mdocs[i]));
             }
             return mdocs ;
     }

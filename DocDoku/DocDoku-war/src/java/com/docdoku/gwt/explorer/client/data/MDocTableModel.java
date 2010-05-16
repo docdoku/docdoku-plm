@@ -57,11 +57,11 @@ public class MDocTableModel implements TableModel {
         status = new CheckOutStatus[mdocs.length];
         data = new Object[mdocs.length][9];
         for (int i = 0; i < mdocs.length; i++) {
-            data[i][0] = mdocs[i].isIterationNotification();
-            data[i][1] = mdocs[i].isStateNotification();
+            data[i][0] = mdocs[i].isIterationSubscription();
+            data[i][1] = mdocs[i].isStateSubscription();
             this.data[i][2] = mdocs[i].getId();
             if (mdocs[i].getCheckOutUser() != null) {
-                if (mdocs[i].getCheckOutUser().equals(login)) {
+                if (mdocs[i].getCheckOutUser().getLogin().equals(login)) {
 //                    this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentEditRowIcon(), mdocs[i].getId());
                     status[i] = CheckOutStatus.CHECKED_OUT_BY_USER;
                 } else {
@@ -81,7 +81,7 @@ public class MDocTableModel implements TableModel {
                 iterationNumber = iteration.getIteration();
             }
             this.data[i][4] = new String(iterationNumber + "");
-            this.data[i][5] = mdocs[i].getAuthor();
+            this.data[i][5] = mdocs[i].getAuthor().getName();
             this.data[i][6] = mdocs[i].getTitle();
             this.data[i][7] = mdocs[i].getCreationDate();
             this.data[i][8] = createVersionEnabled;
@@ -108,7 +108,7 @@ public class MDocTableModel implements TableModel {
     public String[] getTooltip(int row, int column) {
         if (row >= 0 && row < mdocs.length && mdocs[row].getCheckOutUser() != null && column == 2) {
             ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
-            String tooltip = constants.checkedInBy() + " " + mdocs[row].getCheckOutUserFullName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(mdocs[row].getCheckOutDate());
+            String tooltip = constants.checkedInBy() + " " + mdocs[row].getCheckOutUser().getName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(mdocs[row].getCheckOutDate());
             String result[] = new String[1];
             result[0] = tooltip;
             return result;

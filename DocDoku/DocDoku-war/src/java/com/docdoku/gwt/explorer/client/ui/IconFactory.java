@@ -11,6 +11,7 @@ import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.resources.icons.ExplorerImageBundle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class IconFactory extends Image {
             this.workspaceId=workspaceId;
             this.id=id;
             this.version=version;
-            images.documentNewVersionRowIcon().applyTo(this);
+            AbstractImagePrototype.create(images.documentNewVersionRowIcon()).applyTo(this);
             setTitle(i18n.actionCreateVersion());
         }
     }
@@ -97,11 +98,11 @@ public class IconFactory extends Image {
         public void setSubscribe(boolean subscribe) {
             super.setSubscribe(subscribe);
             if(subscribe){
-                images.alarmIterationOnIcon().applyTo(this);
+                AbstractImagePrototype.create(images.alarmIterationOnIcon()).applyTo(this);
                 setTitle(i18n.actionIterationNotificationRemove());
             }
             else{
-                images.alarmIterationOffIcon().applyTo(this);
+                AbstractImagePrototype.create(images.alarmIterationOffIcon()).applyTo(this);
                 setTitle(i18n.actionIterationNotificationAdd());
             }
         }
@@ -114,11 +115,11 @@ public class IconFactory extends Image {
         public void setSubscribe(boolean subscribe) {
             super.setSubscribe(subscribe);
             if(subscribe){
-                images.alarmStateOnIcon().applyTo(this);
+                AbstractImagePrototype.create(images.alarmStateOnIcon()).applyTo(this);
                 setTitle(i18n.actionStateNotificationRemove());
             }
             else{
-                images.alarmStateOffIcon().applyTo(this);
+                AbstractImagePrototype.create(images.alarmStateOffIcon()).applyTo(this);
                 setTitle(i18n.actionStateNotificationAdd());
             }
         }

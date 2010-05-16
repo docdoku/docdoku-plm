@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.gwt.explorer.shared;
 
 import java.io.Serializable;
@@ -28,39 +27,35 @@ import java.util.List;
  *
  * @author Florent GARIN
  */
-public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumentDTO>{
-    
+public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumentDTO> {
+
     private String workspaceId;
     private String id;
     private String version;
     private String type;
-    private String author;
+    private UserDTO author;
     private Date creationDate;
     private String title;
-    private String checkOutUser;
+    private UserDTO checkOutUser;
     private Date checkOutDate;
-    private String lifeCycleState;
     private String[] tags;
     private String description;
-    private String checkOutUserFullName ;
-    private boolean iterationNotification ;
-    private boolean stateNotification ;
-
-    private List<DocumentDTO> iterations;
-
+    private boolean iterationSubscription;
+    private boolean stateSubscription;
+    private List<DocumentDTO> documentIterations;
     private WorkflowDTO workflow;
-    
+
     public MasterDocumentDTO() {
     }
 
     public MasterDocumentDTO(String workspaceId, String id, String version) {
-        this.workspaceId=workspaceId;
-        this.id=id;
-        this.version=version;
-        
+        this.workspaceId = workspaceId;
+        this.id = id;
+        this.version = version;
+
     }
-    
-    public String getAuthor() {
+
+    public UserDTO getAuthor() {
         return author;
     }
 
@@ -68,10 +63,9 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         return checkOutDate;
     }
 
-    public String getCheckOutUser() {
+    public UserDTO getCheckOutUser() {
         return checkOutUser;
     }
-
 
     public Date getCreationDate() {
         return creationDate;
@@ -97,7 +91,6 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         this.version = version;
     }
 
-
     public String getType() {
         return type;
     }
@@ -119,7 +112,10 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
     }
 
     public String getLifeCycleState() {
-        return lifeCycleState;
+        if (workflow != null)
+            return workflow.getLifeCycleState();
+        else
+            return null;
     }
 
     public String[] getTags() {
@@ -130,7 +126,7 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         return title;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(UserDTO author) {
         this.author = author;
     }
 
@@ -138,11 +134,10 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         this.checkOutDate = checkOutDate;
     }
 
-    public void setCheckOutUser(String checkOutUser) {
+    public void setCheckOutUser(UserDTO checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
 
-    
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -159,11 +154,6 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         this.id = id;
     }
 
-    
-    public void setLifeCycleState(String lifeCycleState) {
-        this.lifeCycleState = lifeCycleState;
-    }
-
     public void setTags(String[] tags) {
         this.tags = tags;
     }
@@ -172,51 +162,44 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         this.title = title;
     }
 
-    public List<DocumentDTO> getIterations() {
-        return iterations;
+    public List<DocumentDTO> getDocumentIterations() {
+        return documentIterations;
     }
 
-    public void setIterations(List<DocumentDTO> iterations) {
-        this.iterations = iterations;
+    public void setDocumentIterations(List<DocumentDTO> documentIterations) {
+        this.documentIterations = documentIterations;
     }
 
     public void setId(String id) {
         this.id = id;
     }
 
-    
     public DocumentDTO getLastIteration() {
-        int index = iterations.size()-1;
-        if(index < 0)
+        int index = documentIterations.size() - 1;
+        if (index < 0) {
             return null;
-        else
-            return iterations.get(index);
+        } else {
+            return documentIterations.get(index);
+        }
     }
 
-    public String getCheckOutUserFullName() {
-        return checkOutUserFullName;
+  
+    public boolean isIterationSubscription() {
+        return iterationSubscription;
     }
 
-    public void setCheckOutUserFullName(String checkOutUserFullName) {
-        this.checkOutUserFullName = checkOutUserFullName;
+    public void setIterationSubscription(boolean iterationSubscription) {
+        this.iterationSubscription = iterationSubscription;
     }
 
-    public boolean isIterationNotification() {
-        return iterationNotification;
+    public boolean isStateSubscription() {
+        return stateSubscription;
     }
 
-    public void setIterationNotification(boolean iterationNotification) {
-        this.iterationNotification = iterationNotification;
+    public void setStateSubscription(boolean stateSubscription) {
+        this.stateSubscription = stateSubscription;
     }
 
-    public boolean isStateNotification() {
-        return stateNotification;
-    }
-
-    public void setStateNotification(boolean stateNotification) {
-        this.stateNotification = stateNotification;
-    }
-    
     @Override
     public String toString() {
         return workspaceId + "-" + id + "-" + version;
@@ -227,8 +210,9 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterDocumentDTO))
+        if (!(pObj instanceof MasterDocumentDTO)) {
             return false;
+        }
         MasterDocumentDTO mdoc = (MasterDocumentDTO) pObj;
         return ((mdoc.id.equals(id)) && (mdoc.workspaceId.equals(workspaceId)) && (mdoc.version.equals(version)));
 
@@ -237,22 +221,22 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + id.hashCode();
         hash = 31 * hash + version.hashCode();
-	return hash;
+        return hash;
     }
-
 
     public int compareTo(MasterDocumentDTO pMDoc) {
         int wksComp = workspaceId.compareTo(pMDoc.workspaceId);
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
+        }
         int idComp = id.compareTo(pMDoc.id);
-        if (idComp != 0)
+        if (idComp != 0) {
             return idComp;
-        else
+        } else {
             return version.compareTo(pMDoc.version);
+        }
     }
-
 }

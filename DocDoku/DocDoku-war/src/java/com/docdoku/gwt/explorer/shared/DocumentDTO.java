@@ -36,16 +36,14 @@ public class DocumentDTO implements Serializable {
     private String masterDocumentVersion;
     private int iteration;
 
-
     private Date creationDate;
-    private String author;
+    private UserDTO author;
     private String revisionNote;
 
 
-
-    private Map<String,String> files;
-    private Map<String,InstanceAttributeDTO> attributes;
-    private Set<DocumentDTO> links;
+    private Map<String,String> attachedFiles;
+    private Map<String,InstanceAttributeDTO> instanceAttributes;
+    private Set<DocumentDTO> linkedDocuments;
 
     public DocumentDTO() {
     }
@@ -57,11 +55,11 @@ public class DocumentDTO implements Serializable {
         iteration=pIteration;
     }
 
-    public String getAuthor() {
+    public UserDTO getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(UserDTO author) {
         this.author = author;
     }
 
@@ -83,28 +81,28 @@ public class DocumentDTO implements Serializable {
         return revisionNote;
     }
 
-    public Map<String,String> getFiles() {
-        return files;
+    public Map<String,String> getAttachedFiles() {
+        return attachedFiles;
     }
 
-    public Set<DocumentDTO> getLinks() {
-        return links;
+    public Set<DocumentDTO> getLinkedDocuments() {
+        return linkedDocuments;
     }
 
-    public void setFiles(Map<String,String> files) {
-        this.files = files;
+    public void setAttachedFiles(Map<String,String> attachedFiles) {
+        this.attachedFiles = attachedFiles;
     }
 
-    public void setLinks(Set<DocumentDTO> links) {
-        this.links = links;
+    public void setLinkedDocuments(Set<DocumentDTO> linkedDocuments) {
+        this.linkedDocuments = linkedDocuments;
     }
 
-    public Map<String,InstanceAttributeDTO> getAttributes() {
-        return attributes;
+    public Map<String,InstanceAttributeDTO> getInstanceAttributes() {
+        return instanceAttributes;
     }
 
-    public void setAttributes(Map<String,InstanceAttributeDTO> attributes) {
-        this.attributes = attributes;
+    public void setInstanceAttributes(Map<String,InstanceAttributeDTO> instanceAttributes) {
+        this.instanceAttributes = instanceAttributes;
     }
 
 

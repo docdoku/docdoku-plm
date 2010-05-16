@@ -55,11 +55,9 @@ public class InteractiveTaskPanel extends ROTaskPanel implements ClickHandler, M
         this.step = i ;
         this.active = active;
         // init images
-        approveImage = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getApproveTaskImage().applyTo(approveImage);
+        approveImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getApproveTaskImage());
         approveImage.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().approveTaskTooltip());
-        rejectImage = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getRejectTaskImage().applyTo(rejectImage);
+        rejectImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getRejectTaskImage());
         rejectImage.setTitle(ServiceLocator.getInstance().getExplorerI18NConstants().rejectTaskTooltip()) ;
         // init popups
         options = new OptionsPopup();

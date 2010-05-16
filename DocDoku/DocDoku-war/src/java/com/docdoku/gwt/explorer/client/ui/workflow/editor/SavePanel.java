@@ -51,7 +51,7 @@ public class SavePanel extends FlexTable implements KeyUpHandler{
 
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                List<ActivityModelDTO> activitiesList = m_editorn.getWorkflowModel().getData().getActivities();
+                List<ActivityModelDTO> activitiesList = m_editorn.getWorkflowModel().getData().getActivityModels();
                 ActivityModelDTO[] activities = activitiesList.toArray(new ActivityModelDTO[activitiesList.size()]);
                 cmds.get("SaveWorkflowModelCommand").execute(m_mainPanel.getWorkflowModelID(), m_editorn.getWorkflowModel().getFinalStateName(),  activities);
             }

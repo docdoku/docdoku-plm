@@ -46,7 +46,7 @@ public class DeleteDocFileCommand implements Action {
             public void onSuccess(MasterDocumentDTO mdoc) {
                 DocumentDTO iteration = mdoc.getLastIteration();
                 if(iteration!=null)
-                    m_mainPage.setDocFiles(iteration.getFiles());
+                    m_mainPage.setDocFiles(iteration.getAttachedFiles());
             }
 
             public void onFailure(Throwable caught) {

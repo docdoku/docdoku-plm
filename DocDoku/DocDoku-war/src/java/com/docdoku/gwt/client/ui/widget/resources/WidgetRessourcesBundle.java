@@ -21,22 +21,22 @@
 
 package com.docdoku.gwt.client.ui.widget.resources;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public interface WidgetRessourcesBundle extends ImageBundle{
+public interface WidgetRessourcesBundle extends ClientBundle{
 
-    @Resource("com/docdoku/gwt/client/ui/widget/resources/navigate_up_small.png")
-    AbstractImagePrototype getSmallUpImage();
+    @Source("com/docdoku/gwt/client/ui/widget/resources/navigate_up_small.png")
+    ImageResource getSmallUpImage();
 
-    @Resource("com/docdoku/gwt/client/ui/widget/resources/navigate_down_small.png")
-    AbstractImagePrototype getSmallDownImage();
+    @Source("com/docdoku/gwt/client/ui/widget/resources/navigate_down_small.png")
+    ImageResource getSmallDownImage();
 
-    @Resource("com/docdoku/gwt/client/ui/widget/resources/grippy.png")
-    AbstractImagePrototype dragNDropIcon();
+    @Source("com/docdoku/gwt/client/ui/widget/resources/grippy.png")
+    ImageResource dragNDropIcon();
 
 }

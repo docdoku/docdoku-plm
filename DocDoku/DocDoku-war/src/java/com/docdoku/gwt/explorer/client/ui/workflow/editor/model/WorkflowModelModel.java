@@ -49,7 +49,7 @@ public class WorkflowModelModel {
         if (model != null){
             this.model = model;
 
-            for (ActivityModelDTO activity : model.getActivities()) {
+            for (ActivityModelDTO activity : model.getActivityModels()) {
                 ActivityModelModel tmpModel = null ;
                 if(activity instanceof SerialActivityModelDTO){
                     tmpModel =new SerialActivityModelModel((SerialActivityModelDTO) activity,workspaceId);
@@ -79,7 +79,7 @@ public class WorkflowModelModel {
         tmpDto.setLifeCycleState(ServiceLocator.getInstance().getExplorerI18NConstants().stateName());
         SerialActivityModelModel tmp = new SerialActivityModelModel(tmpDto, workspaceId);
 
-        model.getActivities().add(position,tmpDto);
+        model.getActivityModels().add(position,tmpDto);
         activities.add(position, tmp);
 
         fireActivityAdded(position) ;
@@ -91,14 +91,14 @@ public class WorkflowModelModel {
         tmpDto.setTasksToComplete(1) ;
         ParallelActivityModelModel tmp = new ParallelActivityModelModel(tmpDto, workspaceId);
 
-        model.getActivities().add(position, tmpDto);
+        model.getActivityModels().add(position, tmpDto);
         activities.add(position,tmp);
 
         fireActivityAdded(position) ;
     }
 
     public void setStateName(int position, String newName){
-        model.getActivities().get(position).setLifeCycleState(newName);
+        model.getActivityModels().get(position).setLifeCycleState(newName);
     }
 
     public void setFinalStateName(String newName){
@@ -110,7 +110,7 @@ public class WorkflowModelModel {
     }
 
     public void removeActivity (int position){
-        model.getActivities().remove(position);
+        model.getActivityModels().remove(position);
         activities.remove(position);
 
         WorkflowModelEvent event = new WorkflowModelEvent(this, position, WorkflowModelEvent.ActivityOperation.ACTIVITY_DELETE);

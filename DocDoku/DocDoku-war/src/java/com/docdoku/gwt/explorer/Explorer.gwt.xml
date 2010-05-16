@@ -22,7 +22,7 @@
     
     <!-- Source for java classes to translate into javascript -->
     <source path="client"/>
-    <source path="common"/>
+    <source path="shared"/>
     
     <!-- Inherit the default GWT style sheet.  You can change       -->
     <!-- the theme of your GWT application by uncommenting          -->

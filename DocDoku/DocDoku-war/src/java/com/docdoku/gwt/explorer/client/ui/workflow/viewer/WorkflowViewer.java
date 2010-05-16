@@ -53,7 +53,7 @@ public class WorkflowViewer extends Composite implements HasMouseOutHandlers, Mo
         workflowViewer.setWidget(0, 1, new HorizontalLink());
         for (int i = 0; i < workflow.getActivities().size(); i++) {
             // add an activity panel :
-            ROActivityPanel activityPanel = createActivityPanel(workflow.getActivities().get(i), workflow.getCurrentStep() == i, listener);
+            ROActivityPanel activityPanel = createActivityPanel(workflow.getActivities().get(i), workflow.getCurrentStep() == i, i, listener);
             workflowViewer.setWidget(0, i * 2 + 2, activityPanel);
             panels.add(activityPanel);
             // add state name
@@ -61,7 +61,7 @@ public class WorkflowViewer extends Composite implements HasMouseOutHandlers, Mo
             rp.setCornerStyleName("editableState-Corner");
             
 
-            Label l = new Label(workflow.getStates().get(i));
+            Label l = new Label(workflow.getActivities().get(i).getLifeCycleState());
 
             l.setStyleName("editableState-Element") ;
 
@@ -76,20 +76,20 @@ public class WorkflowViewer extends Composite implements HasMouseOutHandlers, Mo
         workflowViewer.setWidget(0, workflow.getActivities().size() + 5, new EndPoint());
         RoundedPanel finalStatePanel = new RoundedPanel(RoundedPanel.ALL, 3);
         finalStatePanel.setCornerStyleName("editableState-Corner");
-        Label finalLabel = new Label(workflow.getFinalStateName());
+        Label finalLabel = new Label(workflow.getFinalLifeCycleState());
         finalLabel.setStyleName("editableState-Element") ;
         finalStatePanel.setWidget(finalLabel);
         workflowViewer.setWidget(1, workflow.getActivities().size() + 5, finalStatePanel);
     }
 
-    private ROActivityPanel createActivityPanel(ActivityDTO abstractActivityDTO, boolean active,  TaskListener listener) {
+    private ROActivityPanel createActivityPanel(ActivityDTO abstractActivityDTO, boolean active, int step, TaskListener listener) {
         if (abstractActivityDTO instanceof SerialActivityDTO) {
             SerialActivityDTO dtos = (SerialActivityDTO) abstractActivityDTO;
-            ROSerialActivityPanel panel = new ROSerialActivityPanel(dtos, visitorName, active, listener);
+            ROSerialActivityPanel panel = new ROSerialActivityPanel(dtos, visitorName, active, step, listener);
             return panel;
         } else {
             ParallelActivityDTO dtop = (ParallelActivityDTO) abstractActivityDTO;
-            ROParallelActivityPanel panel = new ROParallelActivityPanel(dtop, visitorName, active, listener);
+            ROParallelActivityPanel panel = new ROParallelActivityPanel(dtop, visitorName, active, step, listener);
             return panel;
         }
     }

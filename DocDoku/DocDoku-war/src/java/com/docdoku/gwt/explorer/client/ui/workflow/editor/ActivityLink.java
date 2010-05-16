@@ -48,15 +48,12 @@ public class ActivityLink extends Composite implements MouseOverHandler, MouseOu
         HorizontalPanel mainPanel = new HorizontalPanel();
         initWidget(mainPanel);
 
-        serial = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getSerialImage().applyTo(serial);
+        serial = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getSerialImage());
         serial.setStyleName("workflow-addActivity");
-        parallel = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getParallelImage().applyTo(parallel);
+        parallel = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getParallelImage());
         parallel.setStyleName("workflow-addActivity");
 
-        link = new Image();
-        ServiceLocator.getInstance().getExplorerImageBundle().getHorizontalLine().applyTo(link);
+        link = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getHorizontalLine());
 
         mainPanel.add(link);
         mainPanel.add(serial);
@@ -97,10 +94,6 @@ public class ActivityLink extends Composite implements MouseOverHandler, MouseOu
     public HandlerRegistration addActivityLinkHandler(ActivityLinkHandler handler){
         return addHandler(handler, ActivityLinkEvent.TYPE);
     }
-
-
-
-
 
 
     public void onClick(ClickEvent event) {

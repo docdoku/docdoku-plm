@@ -29,12 +29,12 @@ public class WorkflowModelDTO implements Serializable {
     private String workspaceId;
     private String id;
     private String finalLifeCycleState;
-    private String author;
+    private UserDTO author;
     private Date creationDate;
-    private List<ActivityModelDTO> activities;
+    private List<ActivityModelDTO> activityModels;
 
     public WorkflowModelDTO() {
-        activities = new ArrayList<ActivityModelDTO>();
+        activityModels = new ArrayList<ActivityModelDTO>();
     }
 
     public WorkflowModelDTO(String workspaceId, String id) {
@@ -59,15 +59,15 @@ public class WorkflowModelDTO implements Serializable {
     }
 
     public void addActivity(ActivityModelDTO activity) {
-        this.activities.add(activity);
+        this.activityModels.add(activity);
     }
 
     public void removeActivity(ActivityModelDTO activity) {
-        this.activities.remove(activity);
+        this.activityModels.remove(activity);
     }
 
-    public List<ActivityModelDTO> getActivities() {
-        return this.activities;
+    public List<ActivityModelDTO> getActivityModels() {
+        return this.activityModels;
     }
 
     public void setFinalLifeCycleState(String finalLifeCycleState) {
@@ -78,11 +78,11 @@ public class WorkflowModelDTO implements Serializable {
         return finalLifeCycleState;
     }
 
-    public String getAuthor() {
+    public UserDTO getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(UserDTO author) {
         this.author = author;
     }
 
@@ -94,7 +94,7 @@ public class WorkflowModelDTO implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public void setActivities(List<ActivityModelDTO> activities) {
-        this.activities = activities;
+    public void setActivityModels(List<ActivityModelDTO> activityModels) {
+        this.activityModels = activityModels;
     }
 }

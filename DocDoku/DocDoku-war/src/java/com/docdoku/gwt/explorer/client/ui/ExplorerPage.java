@@ -323,10 +323,10 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             inputPanel.clear();
             m_docPanel.clearInputs();
             m_docPanel.setMDoc(m_lastOpenedMDoc);
-            m_docPanel.setEditionMode(m_login.equals(m_lastOpenedMDoc.getCheckOutUser()));
-            m_docPanel.setFiles(iteration.getFiles());
-            m_docPanel.setAttributes(iteration.getAttributes());
-            m_docPanel.setLinks(iteration.getLinks(), m_lastOpenedMDoc.getWorkspaceId());
+            m_docPanel.setEditionMode(m_lastOpenedMDoc.getCheckOutUser() != null && m_login.equals(m_lastOpenedMDoc.getCheckOutUser().getLogin()));
+            m_docPanel.setFiles(iteration.getAttachedFiles());
+            m_docPanel.setAttributes(iteration.getInstanceAttributes());
+            m_docPanel.setLinks(iteration.getLinkedDocuments(), m_lastOpenedMDoc.getWorkspaceId());
             inputPanel.setWidget(m_docPanel);
         }
 
@@ -337,16 +337,16 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             elementTableDecPanel.removeStyleName("searchTable");
         }
         showBasicSearchPanel();
-        if (iter != m_lastOpenedMDoc.getIterations().size() - 1) {
-            DocumentDTO iteration = m_lastOpenedMDoc.getIterations().get(iter);
+        if (iter != m_lastOpenedMDoc.getDocumentIterations().size() - 1) {
+            DocumentDTO iteration = m_lastOpenedMDoc.getDocumentIterations().get(iter);
             if (iteration != null) {
                 inputPanel.clear();
                 m_docPanel.clearInputs();
                 m_docPanel.setMDoc(m_lastOpenedMDoc, iter);
                 m_docPanel.setEditionMode(false);
-                m_docPanel.setFiles(iteration.getFiles());
-                m_docPanel.setAttributes(iteration.getAttributes());
-                m_docPanel.setLinks(iteration.getLinks(), m_lastOpenedMDoc.getWorkspaceId());
+                m_docPanel.setFiles(iteration.getAttachedFiles());
+                m_docPanel.setAttributes(iteration.getInstanceAttributes());
+                m_docPanel.setLinks(iteration.getLinkedDocuments(), m_lastOpenedMDoc.getWorkspaceId());
                 inputPanel.setWidget(m_docPanel);
             }
         } else {
