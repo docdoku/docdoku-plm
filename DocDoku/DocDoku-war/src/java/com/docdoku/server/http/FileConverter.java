@@ -24,7 +24,7 @@ public class FileConverter {
 
     private final static String SIMPLE_VIEWER="/com/docdoku/server/http/resources/swf/simple_viewer.swf";
     private final static String RFX_VIEWER="/com/docdoku/server/http/resources/swf/rfxview.swf";
-
+  
     public FileConverter(String pdf2SWFHome, String ooHome, int ooPort) {
         this.pdf2SWFHome = pdf2SWFHome;
         this.ooHome = ooHome;
