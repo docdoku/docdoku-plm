@@ -22,7 +22,7 @@
                 
                 <div align="center">
                     <h3><a href="<%=request.getContextPath()%>/help/help.jsp"><fmt:message key="category1.title"/></a> | <a href="<%=request.getContextPath()%>/help/adminHelp.jsp"><fmt:message key="category2.title"/></a> | <a href="<%=request.getContextPath()%>/help/documentHelp.jsp"><fmt:message key="category3.title"/></a> | <a href="<%=request.getContextPath()%>/help/workflowHelp.jsp"><fmt:message key="category4.title"/></a></h3>
-                    <h3><a href="<%=request.getContextPath()%>/help/templateHelp.jsp"><fmt:message key="category5.title"/></a> | <a href="<%=request.getContextPath()%>/help/tagHelp.jsp"><fmt:message key="category6.title"/></a> | <a href="<%=request.getContextPath()%>/help/aboutHelp.jsp"><fmt:message key="category8.title"/></a> | <a href="<%=request.getContextPath()%>/help/otherHelp.jsp"><fmt:message key="category9.title"/></a></h3>
+                    <h3><a href="<%=request.getContextPath()%>/help/templateHelp.jsp"><fmt:message key="category5.title"/></a> | <a href="<%=request.getContextPath()%>/help/tagHelp.jsp"><fmt:message key="category6.title"/></a> | <a href="<%=request.getContextPath()%>/help/aboutHelp.jsp"><fmt:message key="category8.title"/></a></h3>
                 </div>
                 
                 <div class="headline">

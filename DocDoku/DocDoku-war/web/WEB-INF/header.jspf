@@ -16,7 +16,7 @@
 <fmt:bundle basename="com.docdoku.server.localization.header_footer_resource">
     <div id="header">
         <span id="home">
-            <a href="<%=request.getContextPath()%>/index.jsp"><fmt:message key="toplinks.home"/></a>
+            <a href="<%=request.getContextPath()%>/index.jsp"><fmt:message key="toplinks.home"/></a> | <a href="<%=request.getContextPath()%>/download.jsp"><fmt:message key="menu.download"/></a> | <a href="<%=request.getContextPath()%>/help/help.jsp"><fmt:message key="menu.help"/></a>
         </span>
         <span id="toplinks">
             <c:choose>
@@ -25,7 +25,7 @@
                 </c:when>
                 <c:otherwise>
                     <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');"><fmt:message key="toplinks.workspace"/>&#9660;</a>
-                    <ul id="menu" style="position:absolute; right: 280px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
+                    <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
                             <li>
                                 <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
                                     <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
@@ -53,7 +53,6 @@
                     | <a href="<%=request.getContextPath()%>/admin/accountEditionForm.jsp"><fmt:message key="toplinks.account"/></a> | <a href="<%=request.getContextPath()%>/admin/logout.jsp"><fmt:message key="toplinks.logout"/></a>
                 </c:otherwise>
             </c:choose>
-            | <a href="<%=request.getContextPath()%>/download.jsp"><fmt:message key="menu.download"/></a> | <a href="<%=request.getContextPath()%>/help/help.jsp"><fmt:message key="menu.help"/></a>
         </span>
     </div>
 </fmt:bundle>
