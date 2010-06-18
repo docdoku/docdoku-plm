@@ -14,8 +14,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import fr.senioriales.stocks.gwt.client.actions.Action;
 import fr.senioriales.stocks.gwt.client.ui.widget.util.NotEmptyChecker;
 
-
-public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler, KeyDownHandler {
+public class EditableArea extends DocdokuLinesEdit implements MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler, KeyDownHandler {
 
     private final static String DEFAULT_STYLE = "editableText";
     private final static String DEFAULT_FOCUS_STYLE = "editableText-selected";
@@ -23,12 +22,10 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
     private String normalStyle;
     private String selectedStyle;
     private String overStyle;
-    private boolean hasFocus ;
-
+    private boolean hasFocus;
     private Action cmd;
 
-
-    public EditableLabel() {
+    public EditableArea() {
         normalStyle = DEFAULT_STYLE;
         selectedStyle = DEFAULT_FOCUS_STYLE;
         overStyle = DEFAULT_OVER_STYLE;
@@ -38,21 +35,22 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
         addMouseOverHandler(this);
         addFocusHandler(this);
         addKeyDownHandler(this);
-        hasFocus =false ;
+        hasFocus = false;
     }
 
     public void onFocus(FocusEvent event) {
         addStyleName(selectedStyle);
         this.selectAll();
         removeStyleName(overStyle);
-        hasFocus = true ;
+        hasFocus = true;
     }
 
     public void onBlur(BlurEvent event) {
         removeStyleName(selectedStyle);
-        hasFocus = false ;
-        if(cmd!=null)
+        hasFocus = false;
+        if (cmd != null) {
             cmd.execute();
+        }
 //        int x = event.getNativeEvent().getClientX();
 //        int y = event.getNativeEvent().getClientY() ;
 //
@@ -62,7 +60,7 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
     }
 
     public void onMouseOver(MouseOverEvent event) {
-        if (!hasFocus){
+        if (!hasFocus) {
             addStyleName(overStyle);
         }
     }
@@ -105,8 +103,7 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
         this.overStyle = overStyle;
     }
 
-    public void setAction(Action cmd){
-        this.cmd=cmd;
+    public void setAction(Action cmd) {
+        this.cmd = cmd;
     }
-
 }

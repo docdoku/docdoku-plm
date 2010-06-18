@@ -3,9 +3,9 @@ package fr.senioriales.stocks.gwt.client.ui.widget.input;
 import java.util.EventObject;
 
 
-public class DocdokuLineEditEvent extends EventObject{
+public class DocdokuLinesEditEvent extends EventObject{
 
-    public DocdokuLineEditEvent(DocdokuLineEdit source) {
+    public DocdokuLinesEditEvent(DocdokuLinesEdit source) {
         super(source);
     }
 }
