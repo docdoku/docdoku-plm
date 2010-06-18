@@ -1,24 +1,4 @@
-/*
- * InteractiveHTML.java
- * 
- * Copyright (c) 2009 Docdoku. All rights reserved.
- * 
- * This file is part of Docdoku.
- * 
- * Docdoku is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * Docdoku is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with Docdoku.  If not, see <http://www.gnu.org/licenses/>.
- */
-package com.docdoku.gwt.client.ui.widget.util;
+package fr.senioriales.stocks.gwt.client.ui.widget.util;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -34,7 +14,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 /**
  * InteractiveHTML is like an HTML widget, but displays a popup tooltip on mouse over
  * 
- * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class InteractiveHTML extends HTML implements MouseOutHandler, MouseMoveHandler, ClickHandler {
 
