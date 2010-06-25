@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import fr.senioriales.stocks.gwt.client.actions.Action;
-import fr.senioriales.stocks.gwt.client.ui.widget.util.NotEmptyChecker;
 
 public class EditableArea extends DocdokuLinesEdit implements MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler, KeyDownHandler {
 
@@ -36,6 +35,8 @@ public class EditableArea extends DocdokuLinesEdit implements MouseOverHandler, 
         addFocusHandler(this);
         addKeyDownHandler(this);
         hasFocus = false;
+        setVisibleLines(2);
+        setCharacterWidth(15);
     }
 
     public void onFocus(FocusEvent event) {

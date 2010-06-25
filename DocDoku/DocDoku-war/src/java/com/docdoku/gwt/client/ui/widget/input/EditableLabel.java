@@ -39,6 +39,7 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
         addFocusHandler(this);
         addKeyDownHandler(this);
         hasFocus =false ;
+        setVisibleLength(15);
     }
 
     public void onFocus(FocusEvent event) {
