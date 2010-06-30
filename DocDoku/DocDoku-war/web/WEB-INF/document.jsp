@@ -10,7 +10,7 @@
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/docdoku.css" media="screen"/>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/switchPlayer.js"></script>
-
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/swfobject/swfobject.js"></script>
     </head>
 
     <body>

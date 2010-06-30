@@ -98,6 +98,7 @@
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
         <init-param>
             <param-name>PDF2SWF_HOME</param-name>
+            <!--<param-value>/usr/local/bin</param-value>-->
             <!--<param-value>C:\tools\SWFTools</param-value>-->
             <param-value>/usr/bin</param-value>
         </init-param>

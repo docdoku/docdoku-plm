@@ -1,5 +1,75 @@
-<%-- any content can be specified here e.g.: --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:choose>
+    <c:when test="<%="fr".equals(request.getLocale().getLanguage())%>">
+        <c:set scope="page" var="locale" value="fr_FR"/>
+    </c:when>
+    <c:otherwise>
+        <c:set scope="page" var="locale" value="en_US"/>
+    </c:otherwise>
+</c:choose>
+<script type="text/javascript">
+    if(window.addEventListener)
+        window.addEventListener('DOMMouseScroll', handleWheel, false);
+    window.onmousewheel = document.onmousewheel = handleWheel;
+
+    if (window.attachEvent)
+        window.attachEvent("onmousewheel", handleWheel);
+
+    function handleWheel(event){
+        try{
+            if(!window.document.FlexPaperViewer${index}.hasFocus()){return true;}
+            window.document.FlexPaperViewer${index}.setViewerFocus(true);
+            window.document.FlexPaperViewer${index}.focus();
+
+            if(navigator.appName == "Netscape"){
+                if (event.detail)
+                    delta = 0;
+                if (event.preventDefault){
+                    event.preventDefault();
+                    event.returnValue = false;
+                }
+            }
+            return false;
+        }catch(err){return true;}
+    }
+</script>
+
+<script type="text/javascript">
+    <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. -->
+    var swfVersionStr = "9.0.124";
+    <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
+    var xiSwfUrlStr = "${expressInstallSwf}";
+    var flashvars = {
+        SwfFile : escape("${filePath}?type=swf"),
+        Scale : 0.6,
+        ZoomTransition : "easeOut",
+        ZoomTime : 0.5,
+        ZoomInterval : 0.1,
+        FitPageOnLoad : false,
+        FitWidthOnLoad : true,
+        PrintEnabled : true,
+        FullScreenAsMaxWindow : false,
+        ProgressiveLoading : true,
+        localeChain: "${locale}"
+    };
+    var params = {
+
+    }
+    params.quality = "high";
+    params.bgcolor = "#ffffff";
+    params.allowscriptaccess = "sameDomain";
+    params.allowfullscreen = "true";
+    var attributes = {};
+    attributes.id = "FlexPaperViewer${index}";
+    attributes.name = "FlexPaperViewer${index}";
+    swfobject.embedSWF(
+    "${context}/swf/FlexPaperViewer.swf", "flashContent${index}",
+    "540", "422",
+    swfVersionStr, xiSwfUrlStr,
+    flashvars, params, attributes);
+    swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+</script> 
+
 <table border="0">
     <tr>
         <td width="14px" height="14px">
@@ -12,19 +82,16 @@
     </tr>
 </table>
 <div style="display:none;" id="swf${index}">
-    <div align="right">
-        <a href="#">
-            <img style="border-style:none;" src="${context}/images/view.png" height="20px" width="20px" onclick="openFullScreen('${filePath}?type=swf','${fileName}');" />
-        </a>
+
+    <div id="flashContent${index}">
+        <p>
+		        	To view this page ensure that Adobe Flash Player version
+					9.0.124 or greater is installed.
+        </p>
+        <script type="text/javascript">
+            var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://");
+            document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='"
+                + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" );
+        </script>
     </div>
-    <object data="${filePath}?type=swf" type="application/x-shockwave-flash" name="${filePath}" width="510" height="422">
-        <param name="menu" value="true"></param>
-        <param name="movie" value="${filePath}?type=swf"></param>
-        <param name="play" value="true"></param>
-        <param name="loop" value="true"></param>
-        <param name="quality" value="high"></param>
-        <param name="allowScriptAccess" value="always"></param>
-        <embed src="${filePath}?type=swf" type="application/x-shockwave-flash" menu="true" play="true" loop="true" quality="high" allowScriptAccess="always" width="510" height="422">
-        </embed>
-    </object>
 </div>
