@@ -42,6 +42,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
     private JScrollPane mFilesScrollPane;
     private JList mFilesList;
     private JButton mAddButton;
+    private JButton mAcquireButton;
     private JButton mRemoveButton;
     private JButton mEditButton;
     private JFileChooser mFileChooser;
@@ -51,9 +52,11 @@ public class EditFilesPanel extends JPanel implements ActionListener {
     private Map<BinaryResource, Long> mFilesToUpdate;
     private FileHolder mFileHolder;
     private ActionListener mEditAction;
+    private ActionListener mScanAction;
 
-    public EditFilesPanel(ActionListener pEditAction) {
+    public EditFilesPanel(ActionListener pEditAction, ActionListener pScanAction) {
         mEditAction = pEditAction;
+        mScanAction = pScanAction;
         mFileChooser = new JFileChooser();
         mFileChooser.setMultiSelectionEnabled(true);
         mFilesListModel = new DefaultListModel();
@@ -62,6 +65,11 @@ public class EditFilesPanel extends JPanel implements ActionListener {
                 Toolkit.getDefaultToolkit().getImage(EditFilesPanel.class.getResource("/com/docdoku/client/resources/icons/navigate_plus.png"));
         ImageIcon addIcon = new ImageIcon(img);
 
+        img =
+                Toolkit.getDefaultToolkit().getImage(EditFilesPanel.class.getResource("/com/docdoku/client/resources/icons/scanner.png"));
+        ImageIcon scanIcon = new ImageIcon(img);
+
+
         img = Toolkit.getDefaultToolkit().getImage(EditFilesPanel.class.getResource("/com/docdoku/client/resources/icons/navigate_minus.png"));
         ImageIcon removeIcon = new ImageIcon(img);
 
@@ -69,6 +77,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         ImageIcon editIcon = new ImageIcon(img);
 
         mAddButton = new JButton(I18N.BUNDLE.getString("AddFile_button"), addIcon);
+        mAcquireButton = new JButton(I18N.BUNDLE.getString("Acquire_button"), scanIcon);
         mRemoveButton = new JButton(I18N.BUNDLE.getString("RemoveFile_button"), removeIcon);
 
         mEditButton = new JButton(I18N.BUNDLE.getString("EditFile_button"), editIcon);
@@ -95,8 +104,8 @@ public class EditFilesPanel extends JPanel implements ActionListener {
                             (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
 
                     for (Object localFile : localFiles) {
-                        mFilesToAdd.add((File)localFile);
-                        mFilesListModel.addElement((File)localFile);
+                        mFilesToAdd.add((File) localFile);
+                        mFilesListModel.addElement((File) localFile);
                     }
                 } catch (UnsupportedFlavorException e) {
                     return false;
@@ -114,8 +123,8 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         createListener();
     }
 
-    public EditFilesPanel(FileHolder pFileHolder, ActionListener pEditAction) {
-        this(pEditAction);
+    public EditFilesPanel(FileHolder pFileHolder, ActionListener pEditAction, ActionListener pScanAction) {
+        this(pEditAction, pScanAction);
         mFileHolder = pFileHolder;
         for (BinaryResource file : pFileHolder.getAttachedFiles()) {
             mFilesListModel.addElement(file);
@@ -143,6 +152,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
             }
         });
         mAddButton.setHorizontalAlignment(SwingConstants.LEFT);
+        mAcquireButton.setHorizontalAlignment(SwingConstants.LEFT);
         mRemoveButton.setHorizontalAlignment(SwingConstants.LEFT);
         mEditButton.setHorizontalAlignment(SwingConstants.LEFT);
         mRemoveButton.setEnabled(false);
@@ -154,7 +164,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         constraints.insets = GUIConstants.INSETS;
         constraints.gridwidth = 1;
 
-        constraints.gridheight = 4;
+        constraints.gridheight = 5;
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.weightx = 1;
@@ -170,9 +180,12 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         add(mAddButton, constraints);
 
         constraints.gridy = 1;
-        add(mRemoveButton, constraints);
+        add(mAcquireButton, constraints);
 
         constraints.gridy = 2;
+        add(mRemoveButton, constraints);
+
+        constraints.gridy = 3;
         add(mEditButton, constraints);
     }
 
@@ -190,6 +203,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
 
     private void createListener() {
         mEditButton.addActionListener(this);
+        mAcquireButton.addActionListener(this);
         mFilesList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -242,6 +256,8 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         Object button = pAE.getSource();
         if (button == mEditButton) {
             mEditAction.actionPerformed(new ActionEvent(this, 0, null));
+        }else if(button == mAcquireButton) {
+            mScanAction.actionPerformed(new ActionEvent(this, 0, null));
         }
     }
 }

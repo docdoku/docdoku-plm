@@ -44,19 +44,19 @@ public class CreateMDocTemplateDialog extends MDocTemplateDialog implements Acti
     private ActionListener mAction;
     private OKCancelPanel mOKCancelPanel;
     
-    public CreateMDocTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction) {
+    public CreateMDocTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction) {
         super(pOwner, I18N.BUNDLE.getString("CreateMDocTemplate_title"));
-        init(pOKAction,pEditFileAction, pAddAttributeAction);
+        init(pOKAction,pEditFileAction, pScanAction, pAddAttributeAction);
     }
 
-    public CreateMDocTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction) {
+    public CreateMDocTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction) {
         super(pOwner, I18N.BUNDLE.getString("CreateMDocTemplate_title"));
-        init(pOKAction,pEditFileAction, pAddAttributeAction);
+        init(pOKAction,pEditFileAction, pScanAction, pAddAttributeAction);
     }
 
-    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction){
+    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction){
         mCreateMDocTemplatePanel = new CreateMDocTemplatePanel();
-        mEditFilesPanel = new EditFilesPanel(pEditFileAction);
+        mEditFilesPanel = new EditFilesPanel(pEditFileAction, pScanAction);
         mAttributesPanel = new EditAttributeTemplatesPanel(pAddAttributeAction);
         mAction = pOKAction;
         mOKCancelPanel = new OKCancelPanel(this, this);
@@ -69,16 +69,19 @@ public class CreateMDocTemplateDialog extends MDocTemplateDialog implements Acti
     
     private void createListener() {
         DocumentListener listener = new DocumentListener() {
+            @Override
             public void insertUpdate(DocumentEvent pDE) {
                 mOKCancelPanel.setEnabled(true);
             }
             
+            @Override
             public void removeUpdate(DocumentEvent pDE) {
                 int length = pDE.getDocument().getLength();
                 if (length == 0)
                     mOKCancelPanel.setEnabled(false);
             }
             
+            @Override
             public void changedUpdate(DocumentEvent pDE) {
             }
         };

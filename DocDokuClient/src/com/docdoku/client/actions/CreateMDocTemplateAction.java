@@ -91,7 +91,8 @@ public class CreateMDocTemplateAction extends ClientAbstractAction {
             }
         };
         ActionListener editFileAction = new EditFileActionListener();
+        ActionListener scanAction = new ScanActionListener();
         ActionListener addAttributeAction = new AddAttributeTemplateActionListener();
-        new CreateMDocTemplateDialog(mOwner, action, editFileAction, addAttributeAction);
+        new CreateMDocTemplateDialog(mOwner, action, editFileAction, scanAction, addAttributeAction);
     }
 }

@@ -25,7 +25,6 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.search.SearchDialog;
 import com.docdoku.client.ui.search.SearchResultDialog;
-import com.docdoku.core.entities.InstanceAttribute;
 import com.docdoku.core.entities.MasterDocument;
 import com.docdoku.core.entities.SearchQuery;
 import com.docdoku.core.entities.User;

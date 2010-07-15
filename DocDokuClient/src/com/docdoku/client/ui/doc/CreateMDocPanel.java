@@ -147,6 +147,7 @@ public class CreateMDocPanel extends JPanel {
     
     private void createListener(){
         mTemplateList.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent e) {
                 MasterDocumentTemplate template = getMDocTemplate();
                 if(template!=null &&  !template.getMask().equals("")){

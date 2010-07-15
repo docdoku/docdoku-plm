@@ -48,13 +48,13 @@ public class EditDocDialog extends JDialog implements ActionListener {
     public EditDocDialog(
             Frame pOwner,
             Document pEditedDoc,
-            ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction, ActionListener pAddLinkAction) {
+            ActionListener pOKAction, ActionListener pEditFileAction,  ActionListener pScanAction, ActionListener pAddAttributeAction, ActionListener pAddLinkAction) {
         super(pOwner, I18N.BUNDLE.getString("EditDocDialog_title"), true);
         setLocationRelativeTo(pOwner);
         mEditedDoc = pEditedDoc;
         mDocPanel = new EditDocPanel(mEditedDoc);
         mOKCancelPanel = new OKCancelPanel(this, this);
-        mFilesPanel = new EditFilesPanel(mEditedDoc, pEditFileAction);
+        mFilesPanel = new EditFilesPanel(mEditedDoc, pEditFileAction, pScanAction);
         mAttributesPanel = new EditAttributesPanel(mEditedDoc, pAddAttributeAction);
         mLinksPanel = new EditLinksPanel(mEditedDoc,pAddLinkAction);
         mOKAction = pOKAction;
@@ -120,6 +120,7 @@ public class EditDocDialog extends JDialog implements ActionListener {
         return links;
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         mOKAction.actionPerformed(new ActionEvent(this, 0, null));
     }

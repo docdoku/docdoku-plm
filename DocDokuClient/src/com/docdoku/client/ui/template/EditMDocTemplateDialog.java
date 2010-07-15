@@ -47,20 +47,20 @@ public class EditMDocTemplateDialog extends MDocTemplateDialog implements Action
     private ActionListener mAction;
     private OKCancelPanel mOKCancelPanel;
     
-    public EditMDocTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction, MasterDocumentTemplate pTemplate) {
+    public EditMDocTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction, MasterDocumentTemplate pTemplate) {
         super(pOwner, I18N.BUNDLE.getString("EditMDocTemplate_title"));
-        init(pOKAction, pEditFileAction, pAddAttributeAction, pTemplate);
+        init(pOKAction, pEditFileAction, pScanAction, pAddAttributeAction, pTemplate);
     }
 
-    public EditMDocTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction,MasterDocumentTemplate pTemplate) {
+    public EditMDocTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction,MasterDocumentTemplate pTemplate) {
         super(pOwner, I18N.BUNDLE.getString("EditMDocTemplate_title"));
-        init(pOKAction, pEditFileAction, pAddAttributeAction, pTemplate);
+        init(pOKAction, pEditFileAction, pScanAction, pAddAttributeAction, pTemplate);
     }
 
-    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pAddAttributeAction, MasterDocumentTemplate pTemplate){
+    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction, MasterDocumentTemplate pTemplate){
         mTemplate=pTemplate;
         mEditMDocTemplatePanel = new EditMDocTemplatePanel(mTemplate);
-        mEditFilesPanel = new EditFilesPanel(pTemplate,pEditFileAction);
+        mEditFilesPanel = new EditFilesPanel(pTemplate, pEditFileAction, pScanAction);
         mAttributesPanel = new EditAttributeTemplatesPanel(pTemplate, pAddAttributeAction);
         mAction = pOKAction;
         mOKCancelPanel = new OKCancelPanel(this, this);

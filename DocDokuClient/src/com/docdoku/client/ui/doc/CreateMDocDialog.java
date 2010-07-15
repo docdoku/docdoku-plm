@@ -73,16 +73,19 @@ public class CreateMDocDialog extends JDialog implements ActionListener {
 
     private void createListener() {
         DocumentListener docListener = new DocumentListener() {
+            @Override
             public void insertUpdate(DocumentEvent pDE) {
                 mOKCancelPanel.setEnabled(true);
             }
 
+            @Override
             public void removeUpdate(DocumentEvent pDE) {
                 int length = pDE.getDocument().getLength();
                 if (length == 0)
                     mOKCancelPanel.setEnabled(false);
             }
 
+            @Override
             public void changedUpdate(DocumentEvent pDE) {
             }
         };
@@ -113,6 +116,7 @@ public class CreateMDocDialog extends JDialog implements ActionListener {
         return mCreateMDocPanel.getMDocTemplate();
     }
 
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         mAction.actionPerformed(new ActionEvent(this, 0, null));
     }

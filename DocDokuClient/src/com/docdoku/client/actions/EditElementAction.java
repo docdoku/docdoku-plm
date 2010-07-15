@@ -113,9 +113,10 @@ public class EditElementAction extends ClientAbstractAction {
             final ActionListener editAction = new EditFileActionListener();
             final ActionListener addAttributeAction = new AddAttributeActionListener();
             final ActionListener addLinkAction = new AddLinkActionListener();
+            final ActionListener scanAction = new ScanActionListener();
             if (mdoc.isCheckedOut()) {
                 new EditDocDialog(mOwner, mdoc.getLastIteration(), okAction,
-                        editAction, addAttributeAction, addLinkAction);
+                        editAction, scanAction, addAttributeAction, addLinkAction);
             } else if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
                     mOwner,
                     I18N.BUNDLE.getString("EditElement_question"),
@@ -141,7 +142,7 @@ public class EditElementAction extends ClientAbstractAction {
                                 @Override
                                 public void run() {
                                     new EditDocDialog(mOwner, newMDoc.getLastIteration(), okAction,
-                                    editAction, addAttributeAction, addLinkAction);
+                                    editAction, addAttributeAction, addLinkAction, scanAction);
                                 }
                             });
                             
@@ -216,9 +217,10 @@ public class EditElementAction extends ClientAbstractAction {
                     worker.start();
                 }
             };
-            ActionListener editFileAction = new EditFileActionListener();
-            ActionListener addAttributeTemplateAction = new AddAttributeTemplateActionListener();
-            new EditMDocTemplateDialog(mOwner, action, editFileAction, addAttributeTemplateAction, template);
+            final ActionListener editFileAction = new EditFileActionListener();
+            final ActionListener scanAction = new ScanActionListener();
+            final ActionListener addAttributeTemplateAction = new AddAttributeTemplateActionListener();
+            new EditMDocTemplateDialog(mOwner, action, editFileAction, scanAction, addAttributeTemplateAction, template);
         } else if (wfModel != null) {
             final WorkflowModel clonedModel = wfModel.clone();
             final ActionListener saveAsWorkflowModelAction = new SaveAsWorkflowModelActionListener();
