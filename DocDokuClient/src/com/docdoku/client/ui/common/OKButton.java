@@ -38,6 +38,7 @@ public class OKButton extends JButton {
         this(pLabel);
         addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 pFrame.dispose();
             }

@@ -104,8 +104,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
                             (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
 
                     for (Object localFile : localFiles) {
-                        mFilesToAdd.add((File) localFile);
-                        mFilesListModel.addElement((File) localFile);
+                        addFile((File) localFile);
                     }
                 } catch (UnsupportedFlavorException e) {
                     return false;
@@ -129,6 +128,11 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         for (BinaryResource file : pFileHolder.getAttachedFiles()) {
             mFilesListModel.addElement(file);
         }
+    }
+
+    public void addFile(File fileToAdd) {
+        mFilesToAdd.add(fileToAdd);
+        mFilesListModel.addElement(fileToAdd);
     }
 
     public Object getSelectedFile() {
@@ -226,8 +230,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
                 if (state == JFileChooser.APPROVE_OPTION) {
                     File[] selectedFiles = mFileChooser.getSelectedFiles();
                     for (int i = 0; i < selectedFiles.length; i++) {
-                        mFilesToAdd.add(selectedFiles[i]);
-                        mFilesListModel.addElement(selectedFiles[i]);
+                        addFile(selectedFiles[i]);
                     }
                 }
             }
@@ -256,7 +259,7 @@ public class EditFilesPanel extends JPanel implements ActionListener {
         Object button = pAE.getSource();
         if (button == mEditButton) {
             mEditAction.actionPerformed(new ActionEvent(this, 0, null));
-        }else if(button == mAcquireButton) {
+        } else if (button == mAcquireButton) {
             mScanAction.actionPerformed(new ActionEvent(this, 0, null));
         }
     }

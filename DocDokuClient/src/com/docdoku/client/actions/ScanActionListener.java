@@ -17,9 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.client.actions;
 
+import com.docdoku.client.data.Config;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.doc.ScanDialog;
@@ -28,6 +28,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
+import java.io.File;
 
 public class ScanActionListener implements ActionListener {
 
@@ -39,19 +40,30 @@ public class ScanActionListener implements ActionListener {
 
             @Override
             public void actionPerformed(ActionEvent pAE) {
-                ScanDialog source = (ScanDialog) pAE.getSource();
+                final ScanDialog source = (ScanDialog) pAE.getSource();
                 try {
-                    source.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    //String id = source.getId();
-                    //String title = source.getMDocTitle();
-                 
+                    String deviceName = source.getSelectedDevice();
+                    String fileName = source.getFileName();
+                    ScannerDevice device = ScannerDevice.getInstance();
+                    device.select(deviceName);
+                    final File scanFile = Config.getTempScanFile(fileName);
+                    File folder = scanFile.getParentFile();
+                    folder.mkdirs();
+                    scanFile.deleteOnExit();
+                    ActionListener callbackAction = new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent pAE) {
+                            source.dispose();
+                            sourcePanel.addFile(scanFile);
+                        }
+                    };
+                    device.scan(scanFile, callbackAction);
                 } catch (Exception pEx) {
                     String message = pEx.getMessage() == null ? I18N.BUNDLE.getString("Error_unknown") : pEx.getMessage();
                     JOptionPane.showMessageDialog(null,
                             message, I18N.BUNDLE.getString("Error_title"),
                             JOptionPane.ERROR_MESSAGE);
-                } finally {
-                    source.setCursor(Cursor.getDefaultCursor());
                 }
             }
         };

@@ -60,6 +60,13 @@ public class ScanPanel extends JPanel {
         return mFileNameText.getText();
     }
 
+    public String getSelectedDevice(){
+        return mScanSourceList.getSelectedItem()+"";
+    }
+
+    public JTextField getFileNameText(){
+        return mFileNameText;
+    }
     private void createLayout() {
         mFileNameLabel.setLabelFor(mFileNameText);
         mScanSourceLabel.setLabelFor(mScanSourceList);

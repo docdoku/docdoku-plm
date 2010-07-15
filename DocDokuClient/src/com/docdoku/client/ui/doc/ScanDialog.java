@@ -25,6 +25,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.ImageIcon.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * @author Gary Gautruche
@@ -35,7 +37,6 @@ public class ScanDialog extends JDialog implements ActionListener {
 
     private OKCancelPanel mOKCancelPanel;
     private ScanPanel mScanPanel;
-
     private ActionListener mOKAction;
 
     public ScanDialog(Dialog pOwner,
@@ -43,7 +44,7 @@ public class ScanDialog extends JDialog implements ActionListener {
         super(pOwner, I18N.BUNDLE.getString("ScanDialog_title"), true);
         setLocationRelativeTo(pOwner);
 
-        mScanPanel=new ScanPanel();
+        mScanPanel = new ScanPanel();
         mOKCancelPanel = new OKCancelPanel(this, this);
         mOKAction = pOKAction;
         createLayout();
@@ -63,13 +64,40 @@ public class ScanDialog extends JDialog implements ActionListener {
 
     }
 
+    public String getFileName() {
+        return mScanPanel.getFileName();
+    }
+
+    public String getSelectedDevice() {
+        return mScanPanel.getSelectedDevice();
+    }
+
     @Override
     public void actionPerformed(ActionEvent pAE) {
         mOKAction.actionPerformed(new ActionEvent(this, 0, null));
     }
 
     private void createListener() {
-        
+        DocumentListener docListener = new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent pDE) {
+                mOKCancelPanel.setEnabled(true);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent pDE) {
+                int length = pDE.getDocument().getLength();
+                if (length == 0) {
+                    mOKCancelPanel.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent pDE) {
+            }
+        };
+        mScanPanel.getFileNameText().getDocument().addDocumentListener(docListener);
     }
 }
 
@@ -83,5 +111,4 @@ public class ScanDialog extends JDialog implements ActionListener {
 
 
 
-    
 

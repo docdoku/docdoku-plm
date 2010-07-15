@@ -117,22 +117,27 @@ public class CreateMDocTemplateDialog extends MDocTemplateDialog implements Acti
     }
     
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         mAction.actionPerformed(new ActionEvent(this, 0, null));
     }
 
+    @Override
     protected JPanel getSouthPanel() {
         return mOKCancelPanel;
     }
     
+    @Override
     protected JPanel getFilesPanel() {
         return mEditFilesPanel;
     }
     
+    @Override
     protected JPanel getAttributesPanel() {
         return mAttributesPanel;
     }
 
+    @Override
     protected JPanel getMDocTemplatePanel() {
         return mCreateMDocTemplatePanel;
     }

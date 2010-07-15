@@ -37,33 +37,38 @@ import javax.swing.filechooser.FileSystemView;
 public class Config {
 
     private static URL sHTTPCodebase;
-    
+
     public final static int CHUNK_SIZE = 1024*8;
     public final static int BUFFER_CAPACITY = 1024*32;
     public final static File LOCAL_TEMP_FOLDER = new File(System.getProperty("java.io.tmpdir"),"docdoku");
-    
+
     private final static File LOCAL_CHECKOUT_FOLDER = new File(FileSystemView.getFileSystemView().getDefaultDirectory(),"docdoku");
     private final static File LOCAL_CACHE_FOLDER =  new File(LOCAL_TEMP_FOLDER, UUID.randomUUID() + File.separator + "cache");
+    private final static File LOCAL_TEMP_SCAN =  new File(LOCAL_TEMP_FOLDER, UUID.randomUUID() + File.separator + "scan");
 
     private Config() {
+    }
+
+    public static File getTempScanFile(String fileName){
+        return new File(Config.LOCAL_TEMP_SCAN, MainModel.getInstance().getWorkspace() + File.separator + fileName);
     }
 
     public static File getCheckOutFolder(MasterDocumentKey pMDocPK){
         return new File(LOCAL_CHECKOUT_FOLDER,MainModel.getInstance().getWorkspace() + File.separator + pMDocPK.getId() + "-" + pMDocPK.getVersion());
     }
-    
+
     public static File getCacheFolder(MasterDocumentKey pMDocPK){
         return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "documents" + File.separator + pMDocPK.getId() + "-" + pMDocPK.getVersion());
     }
-    
+
     public static File getCacheFolder(MasterDocument pMDoc){
         return getCacheFolder(pMDoc.getKey());
     }
-    
+
     public static File getCacheFolder(MasterDocumentTemplate pTemplate){
         return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "templates" + File.separator + pTemplate.getId());
     }
-    
+
     public static String getPermaLink(MasterDocument pMDoc){
         String file = null;
         try {
@@ -76,25 +81,25 @@ public class Config {
         }
         return getHTTPCodebase().toString() + file;
     }
-    
+
     public static File getCheckOutFolder(MasterDocument pMDoc){
         return getCheckOutFolder(pMDoc.getKey());
     }
-    
+
     public static Proxy getProxy(URI pURI){
         List<Proxy> proxies = ProxySelector.getDefault().select(pURI);
         return proxies.get(0);
     }
-    
+
     public static Proxy getProxy(String pURI) throws URISyntaxException{
         return getProxy(new URI(pURI));
     }
-    
+
     public static URL getHTTPCodebase(){
         return sHTTPCodebase;
     }
 
     public static void setHTTPCodebase(URL pHTTPCodebase){
-        sHTTPCodebase=pHTTPCodebase;        
+        sHTTPCodebase=pHTTPCodebase;
     }
 }
