@@ -38,25 +38,13 @@ import java.awt.event.ActionListener;
 
 public class ScannerDevice implements ScannerListener {
 
-    private final Scanner mScanner;
+    private Scanner mScanner;
     private ImageWriter mWriter;
     private ActionListener mCallbackAction;
 
-    private static ScannerDevice sInstance;
-    
-    private ScannerDevice() {
+    public ScannerDevice() {
         mScanner = Scanner.getDevice();
-        if (mScanner != null) {
-            mScanner.addListener(this);
-        }
-    }
-
-    public static ScannerDevice getInstance() {
-        if (sInstance == null) {
-            sInstance = new ScannerDevice();
-        }
-
-        return sInstance;
+        mScanner.addListener(this);
     }
 
     public void select(String device) throws IOException {
@@ -78,14 +66,16 @@ public class ScannerDevice implements ScannerListener {
     }
 
     public void scan(File pScanFile, ActionListener pCallbackAction) throws Exception {
-        mCallbackAction=pCallbackAction;
+        mScanner.acquire();
+        mCallbackAction = pCallbackAction;
         String extension = FileIO.getExtension(pScanFile);
         mWriter = ImageIO.getImageWritersByFormatName(extension).next();
-        
+
         ImageOutputStream ios = ImageIO.createImageOutputStream(pScanFile);
         mWriter.setOutput(ios);
         mWriter.prepareWriteSequence(null);
-        mScanner.acquire();
+        System.out.println("BUSY: "+mScanner.isBusy());
+        
     }
 
     @Override
@@ -94,17 +84,30 @@ public class ScannerDevice implements ScannerListener {
             if (type.equals(ScannerIOMetadata.ACQUIRED)) {
                 BufferedImage image = metadata.getImage();
                 mWriter.writeToSequence(new IIOImage(image, null, null), null);
+            } else if (type.equals(ScannerIOMetadata.NEGOTIATE)) {
+                metadata.getDevice().setShowUserInterface(true);
+                metadata.getDevice().setShowProgressBar(true);
+            } else if (type.equals(ScannerIOMetadata.FILE)) {
+                System.out.println("FILE");
+            } else if (type.equals(ScannerIOMetadata.INFO)) {
+                System.out.println("INFO");
+            } else if (type.equals(ScannerIOMetadata.MEMORY)) {
+                System.out.println("MEMORY");
             } else if (type.equals(ScannerIOMetadata.STATECHANGE)) {
+                System.out.println("STATECHANGE");
+                System.out.println(metadata.getStateStr());
+                System.out.println("FINISHED : " + metadata.isFinished());
                 if (metadata.isFinished()) {
                     mWriter.endWriteSequence();
                     ((ImageOutputStream) mWriter.getOutput()).close();
                     mWriter.dispose();
                     mCallbackAction.actionPerformed(new ActionEvent(this, 0, null));
-                    mWriter=null;
-                    mCallbackAction=null;
+                    mWriter = null;
+                    mCallbackAction = null;
                 }
 
             } else if (type.equals(ScannerIOMetadata.EXCEPTION)) {
+                System.out.println("EXCEPTION");
             }
         } catch (IOException ex) {
         }

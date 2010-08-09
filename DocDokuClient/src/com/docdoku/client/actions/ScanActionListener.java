@@ -23,6 +23,7 @@ import com.docdoku.client.data.Config;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.doc.ScanDialog;
+import com.docdoku.core.util.FileIO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -36,6 +37,7 @@ public class ScanActionListener implements ActionListener {
     public void actionPerformed(ActionEvent pAE) {
         final EditFilesPanel sourcePanel = (EditFilesPanel) pAE.getSource();
         Dialog owner = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, sourcePanel);
+        final ScannerDevice device = new ScannerDevice();
         ActionListener action = new ActionListener() {
 
             @Override
@@ -44,7 +46,12 @@ public class ScanActionListener implements ActionListener {
                 try {
                     String deviceName = source.getSelectedDevice();
                     String fileName = source.getFileName();
-                    ScannerDevice device = ScannerDevice.getInstance();
+                    String format = source.getFileFormat();
+                    String extension = FileIO.getExtension(fileName);
+                    if(!format.equalsIgnoreCase(extension)){
+                        fileName=fileName+"."+format;
+                    }
+
                     device.select(deviceName);
                     final File scanFile = Config.getTempScanFile(fileName);
                     File folder = scanFile.getParentFile();
@@ -67,6 +74,6 @@ public class ScanActionListener implements ActionListener {
                 }
             }
         };
-        new ScanDialog(owner, action);
+        new ScanDialog(owner, action, device.getDeviceNames());
     }
 }
