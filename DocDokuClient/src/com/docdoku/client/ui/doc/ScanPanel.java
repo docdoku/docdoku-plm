@@ -19,7 +19,7 @@
  */
 package com.docdoku.client.ui.doc;
 
-import com.docdoku.client.actions.ScannerDevice;
+
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 
@@ -35,13 +35,14 @@ public class ScanPanel extends JPanel {
     private JTextField mFileNameText;
     private JLabel mScanSourceLabel;
     private JComboBox mScanSourceList;
+    private JLabel mFormatLabel;
 
     /**
      * @author Gary Gautruche
      * @version 1.4, 15/07/10
      * @since   V1.4
      */
-    public ScanPanel() {
+    public ScanPanel(String[] pDeviceNames) {
 
         mTiffRadio = new JRadioButton("Tiff");
         mPDFRadio = new JRadioButton("PDF", true);
@@ -51,13 +52,18 @@ public class ScanPanel extends JPanel {
         formatGroup.add(mPDFRadio);
         mFileNameLabel = new JLabel(I18N.BUNDLE.getString("Name_label"));
         mScanSourceLabel = new JLabel(I18N.BUNDLE.getString("Source_label"));
+        mFormatLabel = new JLabel(I18N.BUNDLE.getString("Format_label"));
         mFileNameText = new JTextField(new MaxLengthDocument(50), "", 10);
-        mScanSourceList = new JComboBox(ScannerDevice.getInstance().getDeviceNames());
+        mScanSourceList = new JComboBox(pDeviceNames);
         createLayout();
     }
 
     public String getFileName() {
         return mFileNameText.getText();
+    }
+
+    public String getFileFormat() {
+        return mPDFRadio.isSelected()?"pdf":"tiff";
     }
 
     public String getSelectedDevice(){
@@ -86,16 +92,21 @@ public class ScanPanel extends JPanel {
 
         add(mScanSourceLabel, constraints);
         add(mFileNameLabel, constraints);
-
+        add(mFormatLabel, constraints);
 
         constraints.gridx = 1;
         constraints.gridy = 0;
         constraints.weightx = 1;
+        constraints.gridwidth = 2;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         add(mScanSourceList, constraints);
-        constraints.gridy = GridBagConstraints.RELATIVE;
+        constraints.gridy = 1;
         add(mFileNameText, constraints);
-
+        constraints.gridwidth = 1;
+        constraints.gridy = 2;
+        add(mPDFRadio, constraints);
+        constraints.gridx = 2;
+        add(mTiffRadio, constraints);
 
     }
 }
