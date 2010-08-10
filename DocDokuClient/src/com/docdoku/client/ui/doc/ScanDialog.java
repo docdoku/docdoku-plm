@@ -40,11 +40,11 @@ public class ScanDialog extends JDialog implements ActionListener {
     private ActionListener mOKAction;
 
     public ScanDialog(Dialog pOwner,
-            ActionListener pOKAction, String[] pDeviceNames) {
+            ActionListener pOKAction, String[] pDeviceNames, String pDefaultDevice, String pDefaultFormat) {
         super(pOwner, I18N.BUNDLE.getString("ScanDialog_title"), true);
         setLocationRelativeTo(pOwner);
 
-        mScanPanel = new ScanPanel(pDeviceNames);
+        mScanPanel = new ScanPanel(pDeviceNames, pDefaultDevice, pDefaultFormat);
         mOKCancelPanel = new OKCancelPanel(this, this);
         mOKAction = pOKAction;
         createLayout();

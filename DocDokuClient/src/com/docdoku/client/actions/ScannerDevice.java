@@ -1,7 +1,7 @@
 /*
  * DocDoku, Professional Open Source
  * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
- *
+ *s
  * This file is part of DocDoku.
  *
  * DocDoku is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
  */
 package com.docdoku.client.actions;
 
+import com.docdoku.client.localization.I18N;
 import java.io.File;
 import java.awt.Window.*;
 import java.io.IOException;
@@ -35,21 +36,44 @@ import javax.swing.ImageIcon.*;
 import com.docdoku.core.util.FileIO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 public class ScannerDevice implements ScannerListener {
 
-    private Scanner mScanner;
+    private final Scanner mScanner;
     private ImageWriter mWriter;
     private ActionListener mCallbackAction;
+    private String mCurrentDeviceName;
+    private String mCurrentFormat;
+    private boolean mScanned;
+    private static ScannerDevice sInstance;
 
-    public ScannerDevice() {
+    private ScannerDevice() {
         mScanner = Scanner.getDevice();
-        mScanner.addListener(this);
+    }
+
+    public static ScannerDevice getInstance() {
+        if (sInstance == null) {
+            sInstance = new ScannerDevice();
+            sInstance.mScanner.addListener(sInstance);
+        }
+        return sInstance;
+    }
+
+    public String getCurrentDeviceName() {
+        return mCurrentDeviceName;
+    }
+
+    public String getCurrenFormat() {
+        return mCurrentFormat;
     }
 
     public void select(String device) throws IOException {
         try {
-            mScanner.select(device);
+            if (!device.equals(mCurrentDeviceName)) {
+                mScanner.select(device);
+                mCurrentDeviceName = device;
+            }
         } catch (ScannerIOException ex) {
             throw new IOException(ex);
         }
@@ -66,16 +90,16 @@ public class ScannerDevice implements ScannerListener {
     }
 
     public void scan(File pScanFile, ActionListener pCallbackAction) throws Exception {
-        mScanner.acquire();
+        mScanned = false;
         mCallbackAction = pCallbackAction;
+
         String extension = FileIO.getExtension(pScanFile);
         mWriter = ImageIO.getImageWritersByFormatName(extension).next();
-
+        mCurrentFormat=extension;
         ImageOutputStream ios = ImageIO.createImageOutputStream(pScanFile);
         mWriter.setOutput(ios);
         mWriter.prepareWriteSequence(null);
-        System.out.println("BUSY: "+mScanner.isBusy());
-        
+        mScanner.acquire();
     }
 
     @Override
@@ -84,40 +108,46 @@ public class ScannerDevice implements ScannerListener {
             if (type.equals(ScannerIOMetadata.ACQUIRED)) {
                 BufferedImage image = metadata.getImage();
                 mWriter.writeToSequence(new IIOImage(image, null, null), null);
+                mScanned = true;
             } else if (type.equals(ScannerIOMetadata.NEGOTIATE)) {
                 metadata.getDevice().setShowUserInterface(true);
                 metadata.getDevice().setShowProgressBar(true);
             } else if (type.equals(ScannerIOMetadata.FILE)) {
-                System.out.println("FILE");
             } else if (type.equals(ScannerIOMetadata.INFO)) {
-                System.out.println("INFO");
             } else if (type.equals(ScannerIOMetadata.MEMORY)) {
-                System.out.println("MEMORY");
             } else if (type.equals(ScannerIOMetadata.STATECHANGE)) {
-                System.out.println("STATECHANGE");
-                System.out.println(metadata.getStateStr());
-                System.out.println("FINISHED : " + metadata.isFinished());
                 if (metadata.isFinished()) {
                     mWriter.endWriteSequence();
-                    ((ImageOutputStream) mWriter.getOutput()).close();
+                   if(mScanned){
+                       try{
+                        ((ImageOutputStream) mWriter.getOutput()).close();
+                       }catch(IOException pEx){
+                           //has probably already been closed
+                       }
+                    }
                     mWriter.dispose();
-                    mCallbackAction.actionPerformed(new ActionEvent(this, 0, null));
+                    mCallbackAction.actionPerformed(new ActionEvent(this, 0, mScanned + ""));
                     mWriter = null;
                     mCallbackAction = null;
                 }
 
             } else if (type.equals(ScannerIOMetadata.EXCEPTION)) {
-                System.out.println("EXCEPTION");
+                showErrorMessage(metadata.getException());
             }
         } catch (IOException ex) {
+            showErrorMessage(ex);
         }
+    }
+
+    private void showErrorMessage(Exception pEx) {
+        String message = pEx.getMessage() == null ? I18N.BUNDLE.getString("Error_unknown") : pEx.getMessage();
+        JOptionPane.showMessageDialog(null,
+                message, I18N.BUNDLE.getString("Error_title"),
+                JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
     protected void finalize() throws Throwable {
-        //mScanner.
+        super.finalize();
     }
 }
-
-
-

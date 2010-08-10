@@ -37,7 +37,7 @@ public class ScanActionListener implements ActionListener {
     public void actionPerformed(ActionEvent pAE) {
         final EditFilesPanel sourcePanel = (EditFilesPanel) pAE.getSource();
         Dialog owner = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, sourcePanel);
-        final ScannerDevice device = new ScannerDevice();
+        final ScannerDevice device = ScannerDevice.getInstance();
         ActionListener action = new ActionListener() {
 
             @Override
@@ -61,8 +61,8 @@ public class ScanActionListener implements ActionListener {
 
                         @Override
                         public void actionPerformed(ActionEvent pAE) {
-                            source.dispose();
-                            sourcePanel.addFile(scanFile);
+                            if(Boolean.parseBoolean(pAE.getActionCommand()))
+                                sourcePanel.addFile(scanFile);
                         }
                     };
                     device.scan(scanFile, callbackAction);
@@ -74,6 +74,6 @@ public class ScanActionListener implements ActionListener {
                 }
             }
         };
-        new ScanDialog(owner, action, device.getDeviceNames());
+        new ScanDialog(owner, action, device.getDeviceNames(), device.getCurrentDeviceName(), device.getCurrenFormat());
     }
 }

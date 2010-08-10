@@ -42,10 +42,11 @@ public class ScanPanel extends JPanel {
      * @version 1.4, 15/07/10
      * @since   V1.4
      */
-    public ScanPanel(String[] pDeviceNames) {
+    public ScanPanel(String[] pDeviceNames, String pDefaultDevice, String pDefaultFormat) {
 
-        mTiffRadio = new JRadioButton("Tiff");
-        mPDFRadio = new JRadioButton("PDF", true);
+        boolean selectTiff="tiff".equals(pDefaultFormat);
+        mTiffRadio = new JRadioButton("Tiff", selectTiff);
+        mPDFRadio = new JRadioButton("PDF", !selectTiff);
 
         ButtonGroup formatGroup = new ButtonGroup();
         formatGroup.add(mTiffRadio);
@@ -55,6 +56,9 @@ public class ScanPanel extends JPanel {
         mFormatLabel = new JLabel(I18N.BUNDLE.getString("Format_label"));
         mFileNameText = new JTextField(new MaxLengthDocument(50), "", 10);
         mScanSourceList = new JComboBox(pDeviceNames);
+
+        if(pDefaultDevice!=null)
+            mScanSourceList.setSelectedItem(pDefaultDevice);
         createLayout();
     }
 
