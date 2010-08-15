@@ -40,4 +40,10 @@
         </message-driven>
     </enterprise-beans>
     <ejb-client-jar>DocDoku-Common.jar</ejb-client-jar>
+    <assembly-descriptor>
+        <application-exception>
+            <exception-class>com.docdoku.core.ApplicationException</exception-class>
+            <rollback>true</rollback>
+        </application-exception>
+    </assembly-descriptor>
 </ejb-jar>
