@@ -403,7 +403,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             String owner = mdoc.getLocation().getOwner();
 
             if (((owner != null) && (!owner.equals(user.getLogin()))) || (mdoc.isCheckedOut() && !mdoc.getCheckOutUser().equals(user) && mdoc.getLastIteration().equals(document))) {
-                throw new NotAllowedException(Locale.getDefault(), "NotAllowedException34");
+                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
             } else {
                 return dataManager.getDataFile(file);
             }
