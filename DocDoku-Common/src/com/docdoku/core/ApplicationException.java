@@ -27,14 +27,17 @@ import java.util.ResourceBundle;
  *
  * @author Florent GARIN
  */
-@javax.ejb.ApplicationException(rollback=true)
+
 public abstract class ApplicationException extends Exception{
     
     private final static String DEFAULT_BUNDLE_NAME = "com.docdoku.core.LocalStrings";    
     private ResourceBundle mResourceBundle;
     
     
-    
+    public ApplicationException(String pMessage, String pBundleName) {
+        super(pMessage);
+        mResourceBundle=ResourceBundle.getBundle(pBundleName, Locale.getDefault());
+    }
     
     public ApplicationException(String pMessage) {
         super(pMessage);
@@ -68,10 +71,12 @@ public abstract class ApplicationException extends Exception{
         return mResourceBundle.getString(pKey);
     }
     
+    @Override
     public String getMessage() {
         String detailMessage=super.getMessage();
         return detailMessage==null?getLocalizedMessage():detailMessage;
     }
     
+    @Override
      public abstract String getLocalizedMessage();
 }
