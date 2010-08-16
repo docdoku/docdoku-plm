@@ -68,14 +68,14 @@ public class ScannerDevice implements ScannerListener {
         return mCurrentFormat;
     }
 
-    public void select(String device) throws IOException {
+    public void select(String device) throws ScannerException {
         try {
             if (!device.equals(mCurrentDeviceName)) {
                 mScanner.select(device);
                 mCurrentDeviceName = device;
             }
         } catch (ScannerIOException ex) {
-            throw new IOException(ex);
+            throw new ScannerException(ex);
         }
     }
 
@@ -89,7 +89,7 @@ public class ScannerDevice implements ScannerListener {
         return names;
     }
 
-    public void scan(File pScanFile, ActionListener pCallbackAction) throws Exception {
+    public void scan(File pScanFile, ActionListener pCallbackAction) throws ScannerException, IOException {
         mScanned = false;
         mCallbackAction = pCallbackAction;
 
@@ -99,7 +99,11 @@ public class ScannerDevice implements ScannerListener {
         ImageOutputStream ios = ImageIO.createImageOutputStream(pScanFile);
         mWriter.setOutput(ios);
         mWriter.prepareWriteSequence(null);
-        mScanner.acquire();
+        try{
+            mScanner.acquire();
+        }catch (ScannerIOException ex) {
+            throw new ScannerException(ex);
+        }
     }
 
     @Override
