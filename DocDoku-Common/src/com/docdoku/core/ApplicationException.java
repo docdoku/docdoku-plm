@@ -34,8 +34,8 @@ public abstract class ApplicationException extends Exception{
     private ResourceBundle mResourceBundle;
     
     
-    public ApplicationException(String pMessage, String pBundleName) {
-        super(pMessage);
+    public ApplicationException(String pMessage, Throwable pCause, String pBundleName) {
+        super(pMessage, pCause);
         mResourceBundle=ResourceBundle.getBundle(pBundleName, Locale.getDefault());
     }
     
