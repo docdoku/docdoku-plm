@@ -2,6 +2,7 @@ package fr.senioriales.stocks.gwt.client.ui.widget.input;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -11,6 +12,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.Window;
 import fr.senioriales.stocks.gwt.client.actions.Action;
 import fr.senioriales.stocks.gwt.client.ui.widget.util.NotEmptyChecker;
 
@@ -49,11 +51,25 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
         hasFocus = true ;
     }
 
+    @Override
+    public void onChange(ChangeEvent event) {
+        if (!checker.check(super.getText())) {
+            setText(backup);
+        } else {
+            if(cmd!=null && Window.confirm("Confirmez-vous les changements ?")){
+                cmd.execute(this);
+                backup = super.getText();
+            }else{
+                 setText(backup);
+            }
+            
+        }
+    }
+
     public void onBlur(BlurEvent event) {
         removeStyleName(selectedStyle);
         hasFocus = false ;
-        if(cmd!=null)
-            cmd.execute();
+        
 //        int x = event.getNativeEvent().getClientX();
 //        int y = event.getNativeEvent().getClientY() ;
 //

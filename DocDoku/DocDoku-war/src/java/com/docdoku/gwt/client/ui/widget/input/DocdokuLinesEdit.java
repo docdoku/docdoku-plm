@@ -16,10 +16,10 @@ import java.util.Set;
  */
 public class DocdokuLinesEdit extends TextArea implements ChangeHandler, KeyPressHandler {
 
-    private DocdokuChecker checker;
-    private String backup;
-    private Set<DocdokuLinesEditListener> observers;
-    private boolean hasAcceptableInput;
+    protected DocdokuChecker checker;
+    protected String backup;
+    protected Set<DocdokuLinesEditListener> observers;
+    protected boolean hasAcceptableInput;
 
     public DocdokuLinesEdit() {
         backup = "";

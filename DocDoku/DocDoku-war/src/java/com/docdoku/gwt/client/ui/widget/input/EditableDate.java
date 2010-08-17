@@ -3,6 +3,7 @@ package fr.senioriales.stocks.gwt.client.ui.widget.input;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -12,66 +13,64 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.datepicker.client.DateBox;
 import fr.senioriales.stocks.gwt.client.actions.Action;
+import fr.senioriales.stocks.gwt.client.ui.widget.util.NotEmptyChecker;
+import java.util.Date;
 
-public class EditableArea extends DocdokuLinesEdit implements MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler, KeyDownHandler {
+public class EditableDate extends DateBox implements ValueChangeHandler<Date>, MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler {
 
-    private final static String DEFAULT_STYLE = "editableText";
-    private final static String DEFAULT_FOCUS_STYLE = "editableText-selected";
-    private final static String DEFAULT_OVER_STYLE = "editableText-over";
+    private final static String DEFAULT_STYLE = "editableList";
+    private final static String DEFAULT_FOCUS_STYLE = "editableList-selected";
+    private final static String DEFAULT_OVER_STYLE = "editableList-over";
     private String normalStyle;
     private String selectedStyle;
     private String overStyle;
     private boolean hasFocus;
     private Action cmd;
+    private Date backup;
 
-    public EditableArea() {
+    public EditableDate() {
         normalStyle = DEFAULT_STYLE;
         selectedStyle = DEFAULT_FOCUS_STYLE;
         overStyle = DEFAULT_OVER_STYLE;
         setStyleName(normalStyle);
-        addBlurHandler(this);
-        addMouseOutHandler(this);
-        addMouseOverHandler(this);
-        addFocusHandler(this);
-        addKeyDownHandler(this);
         hasFocus = false;
-        setVisibleLines(2);
-        setCharacterWidth(15);
+        addValueChangeHandler(this);
+        setFormat(new DateBox.DefaultFormat(DateTimeFormat.getShortDateFormat()));
+    }
+
+    @Override
+    public void onValueChange(ValueChangeEvent<Date> event) {
+        Date newDate=getValue();
+        if (cmd != null && (!(backup == null && newDate == null)) && ((backup != null && newDate == null) || !newDate.equals(backup)) && Window.confirm("Confirmez-vous les changements ?")) {
+            cmd.execute(this);
+            backup = newDate;
+        } else {
+            setValue(backup);
+        }
+    }
+
+    @Override
+    public void setValue(Date value) {
+        super.setValue(value);
+        backup = value;
     }
 
     public void onFocus(FocusEvent event) {
         addStyleName(selectedStyle);
-        this.selectAll();
         removeStyleName(overStyle);
         hasFocus = true;
-    }
-
-    @Override
-    public void onChange(ChangeEvent event) {
-        if (!checker.check(super.getText())) {
-            setText(backup);
-        } else {
-            if(cmd!=null && Window.confirm("Confirmez-vous les changements ?")){
-                cmd.execute(this);
-                backup = super.getText();
-            }else{
-                 setText(backup);
-            }
-
-        }
     }
 
     public void onBlur(BlurEvent event) {
         removeStyleName(selectedStyle);
         hasFocus = false;
-//        int x = event.getNativeEvent().getClientX();
-//        int y = event.getNativeEvent().getClientY() ;
-//
-//        if (x < getOffsetWidth() +  getAbsoluteLeft() && x > getAbsoluteLeft() && y < getOffsetHeight() + getAbsoluteTop() && y > getAbsoluteTop()){
-//            addStyleName(overStyle) ;
-//        }
     }
 
     public void onMouseOver(MouseOverEvent event) {
@@ -99,15 +98,6 @@ public class EditableArea extends DocdokuLinesEdit implements MouseOverHandler, 
 
     public void setSelectedStyle(String selectedStyle) {
         this.selectedStyle = selectedStyle;
-    }
-
-    public void onKeyDown(KeyDownEvent event) {
-        if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-            setText(getBackup());
-            setFocus(false);
-        } else if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-            setFocus(false);
-        }
     }
 
     public String getOverStyle() {

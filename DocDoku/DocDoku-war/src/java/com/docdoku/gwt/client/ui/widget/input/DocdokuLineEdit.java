@@ -15,10 +15,10 @@ import java.util.Set;
  */
 public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyPressHandler {
 
-    private DocdokuChecker checker;
-    private String backup;
-    private Set<DocdokuLineEditListener> observers;
-    private boolean hasAcceptableInput;
+    protected DocdokuChecker checker;
+    protected String backup;
+    protected Set<DocdokuLineEditListener> observers;
+    protected boolean hasAcceptableInput;
 
     public DocdokuLineEdit() {
         backup = "";
