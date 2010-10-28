@@ -34,8 +34,8 @@ import javax.xml.ws.soap.MTOMFeature;
  */
 public class ScriptingTools {
     
-    private final static String DEFAULT_WSDL_LOCATION="http://localhost:8080/webservices/DocDoku?wsdl";
-
+    public final static String DEFAULT_COMMAND_WSDL_LOCATION="http://localhost:8080/webservices/DocDoku?wsdl";
+    public final static String DEFAULT_FILE_MANAGER_WSDL_LOCATION="http://localhost:8080/UploadDownloadService?wsdl";
     
     
     private ScriptingTools(){}
@@ -61,11 +61,11 @@ public class ScriptingTools {
     }
 
     public static ICommandWS createCommandServer(String login, String password) throws MalformedURLException, Exception{
-        return createCommandServer(DEFAULT_WSDL_LOCATION,login,password);
+        return createCommandServer(DEFAULT_COMMAND_WSDL_LOCATION,login,password);
     }
 
     public static com.docdoku.client.ws.proxies.uploaddownloadservice.UploadDownload createFileManagerServer(String login, String password) throws MalformedURLException, Exception{
-        return createFileManagerServer(DEFAULT_WSDL_LOCATION,login,password);
+        return createFileManagerServer(DEFAULT_FILE_MANAGER_WSDL_LOCATION,login,password);
     }
     
 }
