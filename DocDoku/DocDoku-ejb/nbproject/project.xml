@@ -6,11 +6,11 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>DocDoku-ejb</name>
             <minimum-ant-version>1.6</minimum-ant-version>
-            <included-library>reference.DocDoku-Common.jar</included-library>
-            <included-library>file.reference.lucene-core-2.2.0.jar</included-library>
-            <included-library>file.reference.poi-3.0.1-FINAL-20070705.jar</included-library>
-            <included-library>file.reference.poi-contrib-3.0.1-FINAL-20070705.jar</included-library>
-            <included-library>file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar</included-library>
+            <included-library dirs="200">reference.DocDoku-Common.jar</included-library>
+            <included-library dirs="200">file.reference.lucene-core-2.2.0.jar</included-library>
+            <included-library dirs="200">file.reference.poi-3.0.1-FINAL-20070705.jar</included-library>
+            <included-library dirs="200">file.reference.poi-contrib-3.0.1-FINAL-20070705.jar</included-library>
+            <included-library dirs="200">file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

@@ -26,7 +26,7 @@
                 <env-entry-type>java.lang.String</env-entry-type>
                 <!--<env-entry-value>http://localhost:8080</env-entry-value>-->
                 <!--<env-entry-value>http://docdokubox</env-entry-value>-->
-                <env-entry-value>http://www.docdoku.net</env-entry-value>             
+                <env-entry-value>http://www.docdoku.net</env-entry-value>
             </env-entry>
         </message-driven>
         <message-driven>
@@ -39,11 +39,11 @@
             </env-entry>
         </message-driven>
     </enterprise-beans>
-    <ejb-client-jar>DocDoku-Common.jar</ejb-client-jar>
     <assembly-descriptor>
         <application-exception>
             <exception-class>com.docdoku.core.ApplicationException</exception-class>
             <rollback>true</rollback>
         </application-exception>
     </assembly-descriptor>
+    <ejb-client-jar>DocDoku-Common.jar</ejb-client-jar>
 </ejb-jar>

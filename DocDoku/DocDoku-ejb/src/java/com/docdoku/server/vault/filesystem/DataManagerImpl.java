@@ -36,6 +36,7 @@ public class DataManagerImpl implements DataManager {
         mBaseDir = pBaseDir;
     }
     
+    @Override
     public void delData(BinaryResource pBinaryResource) {
         File fileToRemove=getVaultFile(pBinaryResource);
         String woExName=FileIO.getFileNameWithoutExtension(fileToRemove);
@@ -46,6 +47,7 @@ public class DataManagerImpl implements DataManager {
     }
     
         
+    @Override
     public void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource) {
         try {
             FileIO.copyFile(getDataFile(pSourceBinaryResource), getVaultFile(pTargetBinaryResource));
@@ -55,10 +57,12 @@ public class DataManagerImpl implements DataManager {
     }
         
     
+    @Override
     public File getVaultFile(BinaryResource pBinaryResource) {
         return new File(mBaseDir,pBinaryResource.getFullName());
     }
 
+    @Override
     public File getDataFile(BinaryResource pBinaryResource){
         File realFile = new File(mBaseDir,pBinaryResource.getFullName());
         if(realFile.exists())
