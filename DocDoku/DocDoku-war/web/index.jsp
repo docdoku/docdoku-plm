@@ -11,40 +11,39 @@
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/docdoku.css" media="screen"/>
     </head>
-    
+
     <body>
         <div id="page">
             <%@ include file="/WEB-INF/header.jspf" %>
-            
+
             <div id="content">
-                
-                
+
                 <div id="panel">
                     <div id="loginpanel">
                         <h3><fmt:message key="login.title"/></h3>
-                        
+
                         <form action="<%=request.getContextPath()%>/admin/workspacesMenu.jsp" method="post"><fieldset>
                                 <p><label for="login"><fmt:message key="login.user"/></label>
                                     <input name="login" id="login" type="text" size="20" maxlength="50"/>
                                 </p>
-                                
+
                                 <p><label for="password"><fmt:message key="login.password"/></label>
                                     <input name="password" id="password" type="password" size="20" maxlength="50"/>
                                 </p>
-                                
+
                                 <p><input type="submit" class="button" value="Login" name="auth" alt="Login"/>
                                 </p>
                                 <br/>
                                 <p><a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="login.subscribe"/></a></p>
-                        </fieldset>
-                    </form>
-                  </div>                 
-                    
+                            </fieldset>
+                        </form>
+                    </div>
+
                 </div>
             </div>
-            
-             <%@ include file="/WEB-INF/footer.jspf" %>
+
+            <%@ include file="/WEB-INF/footer.jspf" %>
         </div>
-        
+
     </body>
 </html>
