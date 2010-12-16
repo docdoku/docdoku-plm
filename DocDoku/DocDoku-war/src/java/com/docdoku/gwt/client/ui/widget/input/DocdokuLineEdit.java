@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import fr.senioriales.stocks.gwt.client.ui.widget.util.DocdokuChecker;
 import java.util.HashSet;
 import java.util.Set;
-
+//
 /**
  * DocdokuLineEdit is a simple TextBox providing checking features on input
  * A DocdokuLineEdit fires DocdokuLineEditEvent whenever its input state change.
