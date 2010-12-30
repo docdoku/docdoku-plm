@@ -53,18 +53,19 @@ public class FileConverter {
         String sourceFile = pdfFile.getAbsolutePath();
         String outputFile = swfFile.getAbsolutePath();
         String pdf2SWFCmd = pdf2SWFHome + sep + "pdf2swf";
-        String[] cmdArray = {pdf2SWFCmd, sourceFile, "-o", outputFile};
+        String[] cmdArray = {pdf2SWFCmd, sourceFile, "-o", outputFile, "-T 9", "-f"};
 
         Shell sh = new Shell();
         sh.setDirectory(new File(pdf2SWFHome));
         ProcessConsumer pc = sh.exec(cmdArray);
         pc.consume();
 
+        /*
         String swfViewer = FileIO.urlToFile(FileConverter.class.getResource(RFX_VIEWER)).getAbsolutePath();
         cmdArray = new String[]{pdf2SWFHome + sep + "swfcombine", swfViewer, "viewport=" + outputFile, "-o", outputFile};
         pc = sh.exec(cmdArray);
         pc.consume();
-
+        */
         return swfFile;
     }
 
@@ -85,7 +86,7 @@ public class FileConverter {
         officeManager.start();
         OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
         converter.convert(fileToConvert, pdfFile);
-
+        officeManager.stop();
         return pdfFile;
     }
 }

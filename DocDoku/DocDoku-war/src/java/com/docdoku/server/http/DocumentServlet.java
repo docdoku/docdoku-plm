@@ -40,6 +40,7 @@ public class DocumentServlet extends HttpServlet {
     @EJB
     private ICommandLocal commandService;
     
+    @Override
     protected void doGet(HttpServletRequest pRequest,
                          HttpServletResponse pResponse)
             throws ServletException, IOException {
