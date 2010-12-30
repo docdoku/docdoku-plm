@@ -1,5 +1,0 @@
-envoyer un mail quand on rajoute un user
-mettre un lien faire la home page pour pouvoir se logguer
-mettre les noms au lieu des logins dans la partie workflow
-trier correctement sur les dates
-rajouter une entrée dans la combobox de la recherche/attributs
