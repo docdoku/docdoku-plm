@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="DocDoku-war-swing" default="sign-all" basedir=".">
+    <description>Sign DocDoku Desktop Client.</description>
+    
+    <target name="sign-all" depends="sign-lib-jars, sign-apps-jars">
+    </target>
+
+    <target name="sign-lib-jars" depends="init">
+        <apply executable="pack200" parallel="false">
+            <arg value="-J-Xmx256M"/>
+            <arg value="--repack"/>
+            <arg value="--segment-limit=-1"/>
+            <srcfile/>
+            <fileset dir="web/apps/lib" includes="**/*.jar" />
+        </apply>
+
+        <signjar alias="docdoku4" storepass="changeit">
+            <path>
+                <fileset dir="web/apps/lib" includes="**/*.jar" />
+            </path>
+        </signjar>
+
+        <apply executable="pack200" parallel="false" dest="web/apps/lib">
+            <arg value="-J-Xmx256M"/>
+            <arg value="--segment-limit=-1"/>
+            <targetfile/>
+            <srcfile/>
+            <fileset dir="web/apps/lib" includes="**/*.jar" />
+            <mapper type="glob" from="*" to="*.pack.gz" />
+        </apply>
+    </target>
+
+    <target name="sign-apps-jars" depends="init">
+        <copy file="../../DocDoku-Client/dist/DocDoku-Client.jar" tofile="web/apps/docdoku_client.jar"/>
+        <copy file="../../DocDoku-Common/dist/DocDoku-Common.jar" tofile="web/apps/docdoku_common.jar"/>
+
+        <apply executable="pack200" parallel="false">
+            <arg value="-J-Xmx256M"/>
+            <arg value="--repack"/>
+            <arg value="--segment-limit=-1"/>
+            <srcfile/>
+            <filelist dir="web/apps">
+                <file name="docdoku_client.jar"/>
+                <file name="docdoku_common.jar"/>
+            </filelist>
+        </apply>
+
+        <signjar jar="web/apps/docdoku_client.jar" alias="docdoku4" storepass="changeit"/>
+        <signjar jar="web/apps/docdoku_common.jar" alias="docdoku4" storepass="changeit"/>
+
+        <apply executable="pack200" parallel="false" dest="web/apps">
+            <arg value="-J-Xmx256M"/>
+            <arg value="--segment-limit=-1"/>
+            <targetfile/>
+            <srcfile/>
+            <filelist dir="web/apps">
+                <file name="docdoku_client.jar"/>
+                <file name="docdoku_common.jar"/>
+            </filelist>
+            <mapper type="glob" from="*" to="*.pack.gz" />
+        </apply>
+    </target>
+</project>

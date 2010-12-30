@@ -1,0 +1,55 @@
+/* 
+    Document   : docdoku-widgets
+    Created on : 27 août 2009, 12:23:37
+    Author     : Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
+    Description:
+        default style sheet for Docdoku-widgets module
+*/
+
+
+
+.docdoku-editableLabel{
+    padding : 2px ;
+    margin : 4px;
+    border : none;
+}
+
+.docdoku-editableLabel-selected{
+    border: #6694E3 2px solid ;
+    margin:2px;
+    background-color: white;
+}
+
+.docdoku-editableLabel-over{
+    border: #6694E3 2px solid ;
+    margin:2px;
+    background-color: #C3D9FF;
+}
+
+.itemMenu-notSelected{
+    background-color:white;
+    cursor:pointer ;
+    padding:2px;
+}
+
+.itemMenu-selected{
+    border: 2px solid #6694E3;
+    background: #C3D9FF;
+    cursor:pointer ;
+}
+
+.docdoku-spinBox{
+    border:none;
+    padding:2px;
+    background-color:#C3D9FF;
+}
+
+.myTable-header {
+    background-color: #C3D9FF;
+    font-weight: bold;
+}
+
+.myTable-selected {
+    background-color: #FFFFCC;
+    color: black;
+}

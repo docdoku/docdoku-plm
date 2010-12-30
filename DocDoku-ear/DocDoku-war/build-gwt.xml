@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="DocDoku-war-gwt" default="compile-gwt" basedir=".">
+    <description>Generates Javascript for DocDoku-war.</description>
+    
+    <target name="compile-gwt">
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
+              classname="com.google.gwt.dev.Compiler" fork="true"
+              jvmargs="-Xmx256M -Xss1M">
+            <arg value="-war"/>
+            <arg path="${build.web.dir}/"/>
+            <arg value="com.docdoku.gwt.explorer.Explorer"/>
+        </java>
+    </target>
+
+     <target name="launchDevMode" depends="init">
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
+            jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.DevMode" fork="true">
+            <arg value="-noserver"/>
+<!--            <arg value="-port"/>
+            <arg value="8080"/>-->
+            <arg value="-startupUrl"/>
+            <arg value="http://localhost:8080/"/>
+            <arg value="-war"/>
+            <arg path="${build.web.dir}/"/>
+            <arg value="com.docdoku.gwt.explorer.Explorer"/>
+        </java>
+    </target>
+
+    <target name="sync i18n" depends="init">
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
+            jvmargs="-Xmx256M" classname="com.google.gwt.i18n.tools.I18NSync" fork="true">
+            <arg value="-out"/>
+            <arg path="${src.dir}/"/>
+            <arg value="com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants"/>
+        </java>
+    </target>
+
+</project>
