@@ -2,6 +2,43 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
   <persistence-unit name="DocDoku-PU">
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
+    <class>com.docdoku.core.entities.ACL</class>
+    <class>com.docdoku.core.entities.ACLUserEntry</class>
+    <class>com.docdoku.core.entities.ACLUserGroupEntry</class>
+    <class>com.docdoku.core.entities.Account</class>
+    <class>com.docdoku.core.entities.Activity</class>
+    <class>com.docdoku.core.entities.ActivityModel</class>
+    <class>com.docdoku.core.entities.BinaryResource</class>
+    <class>com.docdoku.core.entities.Credential</class>
+    <class>com.docdoku.core.entities.Document</class>
+    <class>com.docdoku.core.entities.DocumentToDocumentLink</class>
+    <class>com.docdoku.core.entities.Folder</class>
+    <class>com.docdoku.core.entities.InstanceAttribute</class>
+    <class>com.docdoku.core.entities.InstanceAttributeTemplate</class>
+    <class>com.docdoku.core.entities.InstanceBooleanAttribute</class>
+    <class>com.docdoku.core.entities.InstanceDateAttribute</class>
+    <class>com.docdoku.core.entities.InstanceNumberAttribute</class>
+    <class>com.docdoku.core.entities.InstanceTextAttribute</class>
+    <class>com.docdoku.core.entities.InstanceURLAttribute</class>
+    <class>com.docdoku.core.entities.IterationChangeSubscription</class>
+    <class>com.docdoku.core.entities.MasterDocument</class>
+    <class>com.docdoku.core.entities.MasterDocumentTemplate</class>
+    <class>com.docdoku.core.entities.ParallelActivity</class>
+    <class>com.docdoku.core.entities.ParallelActivityModel</class>
+    <class>com.docdoku.core.entities.SerialActivity</class>
+    <class>com.docdoku.core.entities.SerialActivityModel</class>
+    <class>com.docdoku.core.entities.StateChangeSubscription</class>
+    <class>com.docdoku.core.entities.Tag</class>
+    <class>com.docdoku.core.entities.Task</class>
+    <class>com.docdoku.core.entities.TaskModel</class>
+    <class>com.docdoku.core.entities.User</class>
+    <class>com.docdoku.core.entities.UserGroup</class>
+    <class>com.docdoku.core.entities.UserGroupMapping</class>
+    <class>com.docdoku.core.entities.Workflow</class>
+    <class>com.docdoku.core.entities.WorkflowModel</class>
+    <class>com.docdoku.core.entities.Workspace</class>
+    <class>com.docdoku.core.entities.WorkspaceUserGroupMembership</class>
+    <class>com.docdoku.core.entities.WorkspaceUserMembership</class>
     <properties>
       <property name="toplink.logging.level" value="FINE"/>
       <property name="toplink.ddl-generation" value="create-tables"/>

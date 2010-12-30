@@ -143,6 +143,13 @@ public class Folder implements Serializable, Comparable<Folder> {
         }
         return folders;
     }
+
+    public void changeName(String pNewName) {
+        if (!isRoot() && !isHome()){
+            int index = completePath.lastIndexOf('/');
+            completePath = completePath.substring(0, index + 1) + pNewName;
+        }
+    }
     
     public String getShortName() {
         if(isRoot())
@@ -185,6 +192,7 @@ public class Folder implements Serializable, Comparable<Folder> {
         return folder.completePath.equals(completePath);
     }
     
+    @Override
     public int compareTo(Folder pFolder) {
         return completePath.compareTo(pFolder.completePath);
     }

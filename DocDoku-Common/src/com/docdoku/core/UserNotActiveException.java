@@ -45,6 +45,7 @@ public class UserNotActiveException extends ApplicationException {
         mName=pName;
     }
     
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mName);     
