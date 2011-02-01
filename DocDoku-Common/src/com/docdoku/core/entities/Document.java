@@ -155,6 +155,7 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         attachedFiles.add(pBinaryResource);
     }
     
+    @Override
     public Set<BinaryResource> getAttachedFiles() {
         return attachedFiles;
     }
