@@ -712,6 +712,9 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         Document beforeLastDocument = mdoc.getLastIteration();
 
         Document newDoc = mdoc.createNextIteration(user);
+        //We persist the doc as a workaround for a bug which was introduced
+        //since glassfish 3 that set the DTYPE to null in the instance attribute table
+        em.persist(newDoc);
         Date now = new Date();
         newDoc.setCreationDate(now);
         mdoc.setCheckOutUser(user);
@@ -726,8 +729,6 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                 BinaryResource targetFile = new BinaryResource(fullName, length);
                 binDAO.createBinaryResource(targetFile);
                 newDoc.addFile(targetFile);
-                //TODO create a hardlink or at least a softlink when available in Java 7
-                //dataManager.copyData(sourceFile, targetFile);
             }
 
             Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
@@ -738,14 +739,18 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             }
             newDoc.setLinkedDocuments(links);
 
+            InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : beforeLastDocument.getInstanceAttributes().values()) {
                 InstanceAttribute newAttr = attr.clone();
                 newAttr.setDocument(newDoc);
+                //Workaround for the NULL DTYPE bug
+                attrDAO.createAttribute(newAttr);
                 attrs.put(newAttr.getName(), newAttr);
             }
             newDoc.setInstanceAttributes(attrs);
         }
+        
         return mdoc;
     }
 
