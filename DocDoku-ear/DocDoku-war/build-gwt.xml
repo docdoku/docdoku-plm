@@ -13,7 +13,7 @@
         </java>
     </target>
 
-     <target name="launchDevMode" depends="init">
+     <target name="launch-dev-mode" depends="init">
         <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
             jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.DevMode" fork="true">
             <arg value="-noserver"/>
@@ -27,7 +27,7 @@
         </java>
     </target>
 
-    <target name="sync i18n" depends="init">
+    <target name="sync-i18n" depends="init">
         <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
             jvmargs="-Xmx256M" classname="com.google.gwt.i18n.tools.I18NSync" fork="true">
             <arg value="-out"/>
