@@ -22,7 +22,7 @@ package com.docdoku.client.ui.tag;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 import javax.swing.*;
 import java.awt.*;

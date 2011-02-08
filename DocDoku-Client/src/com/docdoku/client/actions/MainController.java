@@ -19,12 +19,31 @@
  */
 package com.docdoku.client.actions;
 
+import com.docdoku.core.services.ApplicationException;
+import com.docdoku.core.services.WorkflowModelNotFoundException;
+import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.services.IUploadDownloadWS;
+import com.docdoku.core.services.ICommandWS;
+import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.TagKey;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.document.DocumentKey;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.TaskKey;
+import com.docdoku.core.common.User;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.client.data.*;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.ProgressMonitorFileDataSource;
-import com.docdoku.core.*;
-import com.docdoku.core.entities.*;
-import com.docdoku.core.entities.keys.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.sun.xml.ws.developer.JAXWSProperties;

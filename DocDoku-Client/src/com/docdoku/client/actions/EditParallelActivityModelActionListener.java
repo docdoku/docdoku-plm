@@ -21,8 +21,8 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.EditParallelActivityModelDialog;
-import com.docdoku.core.entities.ParallelActivityModel;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.ParallelActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

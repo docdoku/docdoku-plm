@@ -25,7 +25,7 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.ElementsTable;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MDocSelection;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;

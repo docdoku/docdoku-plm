@@ -26,10 +26,10 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import javax.swing.*;
-import com.docdoku.core.entities.Activity;
-import com.docdoku.core.entities.ParallelActivity;
-import com.docdoku.core.entities.SerialActivity;
-import com.docdoku.core.entities.Workflow;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.ParallelActivity;
+import com.docdoku.core.workflow.SerialActivity;
+import com.docdoku.core.workflow.Workflow;
 
 
 

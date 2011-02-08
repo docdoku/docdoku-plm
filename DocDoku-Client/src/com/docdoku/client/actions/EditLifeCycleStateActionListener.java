@@ -21,8 +21,8 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.LifeCycleStateCanvas;
-import com.docdoku.core.entities.ActivityModel;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

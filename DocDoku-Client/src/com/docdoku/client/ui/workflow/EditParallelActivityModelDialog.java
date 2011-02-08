@@ -22,7 +22,7 @@ package com.docdoku.client.ui.workflow;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.ParallelActivityModel;
+import com.docdoku.core.workflow.ParallelActivityModel;
 
 import javax.swing.*;
 import java.awt.*;

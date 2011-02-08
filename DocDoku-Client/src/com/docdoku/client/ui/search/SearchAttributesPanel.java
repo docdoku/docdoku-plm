@@ -30,9 +30,9 @@ import javax.swing.*;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.entities.InstanceAttributeTemplate;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.SearchQuery;
+import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.SearchQuery;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;

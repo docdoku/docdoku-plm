@@ -28,8 +28,8 @@ import java.awt.Insets;
 import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import com.docdoku.core.entities.SerialActivityModel;
-import com.docdoku.core.entities.TaskModel;
+import com.docdoku.core.workflow.SerialActivityModel;
+import com.docdoku.core.workflow.TaskModel;
 
 
 public abstract class SerialActivityModelCanvas extends JPanel{

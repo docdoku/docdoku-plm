@@ -20,7 +20,7 @@
 
 package com.docdoku.client.ui.common;
 
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;

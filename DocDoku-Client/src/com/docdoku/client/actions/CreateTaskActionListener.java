@@ -22,9 +22,9 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.EditActivityModelPanel;
 import com.docdoku.client.ui.workflow.CreateTaskModelDialog;
-import com.docdoku.core.entities.ActivityModel;
-import com.docdoku.core.entities.TaskModel;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.common.User;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

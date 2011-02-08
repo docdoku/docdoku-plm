@@ -21,8 +21,8 @@
 package com.docdoku.client.ui.workflow;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.ActivityModel;
-import com.docdoku.core.entities.TaskModel;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.TaskModel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;

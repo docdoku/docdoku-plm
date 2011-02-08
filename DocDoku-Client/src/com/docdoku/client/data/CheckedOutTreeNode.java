@@ -20,7 +20,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 public class CheckedOutTreeNode extends FolderTreeNode {
 

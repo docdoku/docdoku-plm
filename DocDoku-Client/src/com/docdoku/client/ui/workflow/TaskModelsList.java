@@ -20,7 +20,7 @@
 
 package com.docdoku.client.ui.workflow;
 
-import com.docdoku.core.entities.TaskModel;
+import com.docdoku.core.workflow.TaskModel;
 
 import javax.swing.*;
 import java.util.Collection;

@@ -20,7 +20,7 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 
 public class WorkflowModelTreeNode extends FolderTreeNode {

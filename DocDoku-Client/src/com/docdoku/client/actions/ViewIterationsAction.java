@@ -21,7 +21,7 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.doc.ViewIterationsDialog;
 

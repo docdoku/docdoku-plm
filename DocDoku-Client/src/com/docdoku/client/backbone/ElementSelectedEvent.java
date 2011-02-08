@@ -21,11 +21,11 @@
 package com.docdoku.client.backbone;
 
 import com.docdoku.client.data.FolderTreeNode;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
 import java.util.EventObject;
 
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.WorkflowModel;
 
 public class ElementSelectedEvent extends EventObject {
 

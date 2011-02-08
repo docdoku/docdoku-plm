@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.entities.Document;
+import com.docdoku.core.document.Document;
 
 import javax.swing.*;
 import java.awt.*;

@@ -22,9 +22,9 @@ package com.docdoku.client.ui.workflow;
 
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.TaskModel;
-import com.docdoku.core.entities.SerialActivity;
-import com.docdoku.core.entities.Task;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.workflow.SerialActivity;
+import com.docdoku.core.workflow.Task;
 import java.awt.*;
 import java.util.Iterator;
 

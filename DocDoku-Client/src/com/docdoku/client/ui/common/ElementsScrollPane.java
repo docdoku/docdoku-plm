@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.common;
 
 import com.docdoku.client.data.ElementsTableModel;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 import javax.swing.*;
 

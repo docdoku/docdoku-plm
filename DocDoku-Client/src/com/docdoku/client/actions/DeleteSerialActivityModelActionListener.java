@@ -26,7 +26,7 @@ import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
 

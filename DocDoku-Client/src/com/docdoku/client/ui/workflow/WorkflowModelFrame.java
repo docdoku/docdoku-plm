@@ -22,7 +22,7 @@ package com.docdoku.client.ui.workflow;
 
 
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;

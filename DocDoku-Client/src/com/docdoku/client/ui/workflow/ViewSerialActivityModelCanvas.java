@@ -20,7 +20,7 @@
 
 package com.docdoku.client.ui.workflow;
 
-import com.docdoku.core.entities.SerialActivityModel;
+import com.docdoku.core.workflow.SerialActivityModel;
 
 
 public class ViewSerialActivityModelCanvas extends SerialActivityModelCanvas {

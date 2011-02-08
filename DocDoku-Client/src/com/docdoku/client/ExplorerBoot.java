@@ -20,6 +20,8 @@
 
 package com.docdoku.client;
 
+import com.docdoku.core.services.IUploadDownloadWS;
+import com.docdoku.core.services.ICommandWS;
 import com.docdoku.client.actions.LoginActionListener;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.ui.login.LoginFrame;

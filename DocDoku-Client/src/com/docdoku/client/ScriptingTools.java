@@ -20,8 +20,8 @@
 
 package com.docdoku.client;
 
-import com.docdoku.core.ICommandWS;
-import com.docdoku.core.IUploadDownloadWS;
+import com.docdoku.core.services.ICommandWS;
+import com.docdoku.core.services.IUploadDownloadWS;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import java.net.MalformedURLException;
 import java.net.URL;

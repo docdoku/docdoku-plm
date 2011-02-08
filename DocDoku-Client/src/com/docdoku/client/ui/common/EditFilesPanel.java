@@ -19,8 +19,8 @@
  */
 package com.docdoku.client.ui.common;
 
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.FileHolder;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;

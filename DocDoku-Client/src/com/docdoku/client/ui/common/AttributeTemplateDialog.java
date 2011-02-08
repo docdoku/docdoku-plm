@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.common;
 
 
-import com.docdoku.core.entities.InstanceAttributeTemplate;
+import com.docdoku.core.document.InstanceAttributeTemplate;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;

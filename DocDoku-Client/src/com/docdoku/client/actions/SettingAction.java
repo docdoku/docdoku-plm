@@ -20,7 +20,7 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.core.entities.User;
+import com.docdoku.core.common.User;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

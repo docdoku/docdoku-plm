@@ -20,7 +20,7 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 public class TagTreeNode extends FolderTreeNode {
     

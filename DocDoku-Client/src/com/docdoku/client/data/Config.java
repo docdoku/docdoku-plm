@@ -20,9 +20,9 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentTemplate;
 import java.io.*;
 import java.net.Proxy;
 import java.net.ProxySelector;

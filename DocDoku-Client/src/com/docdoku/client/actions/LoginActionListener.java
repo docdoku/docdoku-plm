@@ -23,8 +23,8 @@ package com.docdoku.client.actions;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.login.LoginFrame;
-import com.docdoku.core.UserNotActiveException;
-import com.docdoku.core.UserNotFoundException;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.UserNotFoundException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

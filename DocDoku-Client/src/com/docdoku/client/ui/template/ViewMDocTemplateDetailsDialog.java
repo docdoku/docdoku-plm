@@ -23,7 +23,7 @@ package com.docdoku.client.ui.template;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.client.ui.common.ViewFilesPanel;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
 
 import java.awt.*;
 import java.awt.event.ActionListener;

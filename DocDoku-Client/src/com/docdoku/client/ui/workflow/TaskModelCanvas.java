@@ -32,7 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.entities.TaskModel;
+import com.docdoku.core.workflow.TaskModel;
 
 
 public class TaskModelCanvas extends JPanel{

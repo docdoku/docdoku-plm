@@ -20,19 +20,21 @@
 
 package com.docdoku.client.data;
 
+import com.docdoku.core.services.IUploadDownloadWS;
+import com.docdoku.core.services.ICommandWS;
 import com.docdoku.core.*;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.Folder;
-import com.docdoku.core.entities.keys.BasicElementKey;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.keys.TagKey;
-import com.docdoku.core.entities.keys.Version;
-import com.docdoku.core.entities.WorkflowModel;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.TagKey;
+import com.docdoku.core.document.Version;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.util.Tools;
 import java.awt.Component;
 import java.io.BufferedInputStream;
@@ -46,8 +48,8 @@ import javax.swing.*;
 import java.util.*;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.InstanceAttribute;
-import com.docdoku.core.entities.SearchQuery;
+import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.document.SearchQuery;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.ws.developer.StreamingDataHandler;
 import java.io.InterruptedIOException;

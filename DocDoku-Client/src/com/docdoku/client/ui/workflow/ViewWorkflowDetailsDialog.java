@@ -25,7 +25,7 @@ import com.docdoku.client.ui.common.CloseButton;
 import javax.swing.*;
 import java.awt.*;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.Workflow;
+import com.docdoku.core.workflow.Workflow;
 
 public class ViewWorkflowDetailsDialog extends JDialog {
     

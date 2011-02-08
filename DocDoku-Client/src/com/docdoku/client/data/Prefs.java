@@ -20,8 +20,8 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.MasterDocument;
 import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

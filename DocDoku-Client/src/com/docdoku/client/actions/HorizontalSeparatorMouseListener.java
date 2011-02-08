@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.ui.workflow.EditableWorkflowModelCanvas;
 import com.docdoku.client.ui.workflow.HorizontalSeparatorCanvas;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

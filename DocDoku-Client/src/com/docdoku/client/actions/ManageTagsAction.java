@@ -21,7 +21,7 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.tag.ManageTagsDialog;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;

@@ -20,14 +20,14 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.Folder;
-import com.docdoku.core.entities.Tag;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.WorkflowModel;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.document.Tag;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.common.User;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.common.Workspace;
 import java.lang.ref.*;
 
 

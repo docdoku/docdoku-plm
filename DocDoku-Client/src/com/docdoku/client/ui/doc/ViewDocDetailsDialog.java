@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.ViewFilesPanel;
-import com.docdoku.core.entities.Document;
+import com.docdoku.core.document.Document;
 
 import javax.swing.*;
 import java.awt.*;

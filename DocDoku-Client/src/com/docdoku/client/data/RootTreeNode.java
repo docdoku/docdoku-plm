@@ -20,7 +20,7 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.Folder;
+import com.docdoku.core.document.Folder;
 
 public class RootTreeNode extends FolderTreeNode {
     

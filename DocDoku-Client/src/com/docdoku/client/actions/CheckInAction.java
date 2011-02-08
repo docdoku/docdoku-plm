@@ -22,10 +22,10 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
 import java.io.File;

@@ -24,7 +24,7 @@ package com.docdoku.client.ui.approval;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.entities.Task;
+import com.docdoku.core.workflow.Task;
 import java.util.Collection;
 
 import javax.swing.*;

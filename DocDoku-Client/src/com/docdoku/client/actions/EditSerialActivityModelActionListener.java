@@ -21,8 +21,8 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.EditSerialActivityModelDialog;
-import com.docdoku.core.entities.SerialActivityModel;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.SerialActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

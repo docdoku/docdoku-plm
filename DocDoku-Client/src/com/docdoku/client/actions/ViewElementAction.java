@@ -22,9 +22,9 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.template.ViewMDocTemplateDetailsDialog;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.ViewWorkflowModelDetailsDialog;
 import com.docdoku.client.ui.doc.ViewDocDetailsDialog;

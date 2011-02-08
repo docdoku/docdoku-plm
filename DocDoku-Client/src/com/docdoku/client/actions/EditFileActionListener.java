@@ -22,10 +22,10 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.ui.common.EditFilesPanel;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.FileHolder;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.common.FileHolder;
+import com.docdoku.core.document.MasterDocumentTemplate;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

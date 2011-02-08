@@ -21,8 +21,8 @@
 package com.docdoku.client.ui.approval;
 
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.Task;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.Task;
 import java.util.Collection;
 
 import javax.swing.*;

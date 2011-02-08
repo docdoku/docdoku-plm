@@ -23,9 +23,9 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.WorkflowModel;
-import com.docdoku.core.entities.Folder;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.document.Folder;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

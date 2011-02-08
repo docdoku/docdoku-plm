@@ -23,11 +23,11 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.DocumentToDocumentLink;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentToDocumentLink;
 
-import com.docdoku.core.entities.InstanceAttribute;
+import com.docdoku.core.document.InstanceAttribute;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

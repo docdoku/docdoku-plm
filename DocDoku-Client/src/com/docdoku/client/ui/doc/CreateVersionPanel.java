@@ -23,9 +23,9 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.WorkflowModel;
-import com.docdoku.core.entities.keys.Version;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.document.Version;
 
 import javax.swing.*;
 import java.awt.*;

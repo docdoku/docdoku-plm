@@ -22,9 +22,9 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.entities.BinaryResource;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import java.awt.event.ActionEvent;
 import java.io.InterruptedIOException;
 
@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.core.entities.Document;
+import com.docdoku.core.document.Document;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import java.io.File;
 import javax.swing.JFileChooser;

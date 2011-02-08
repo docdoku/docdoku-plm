@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.workflow;
 
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.common.User;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;

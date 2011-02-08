@@ -22,7 +22,7 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;

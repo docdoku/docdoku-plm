@@ -21,11 +21,11 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.common.User;
+import com.docdoku.core.workflow.WorkflowModel;
 import java.util.Date;
 
 import javax.swing.table.*;

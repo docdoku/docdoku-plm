@@ -22,12 +22,12 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.ParallelActivityModel;
-import com.docdoku.core.entities.SerialActivityModel;
-import com.docdoku.core.entities.TaskModel;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.WorkflowModel;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.workflow.ParallelActivityModel;
+import com.docdoku.core.workflow.SerialActivityModel;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.common.User;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.common.Workspace;
 
 
 public class DefaultValueFactory {

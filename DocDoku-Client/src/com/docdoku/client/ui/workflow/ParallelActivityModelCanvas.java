@@ -30,8 +30,8 @@ import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import com.docdoku.core.entities.ParallelActivityModel;
-import com.docdoku.core.entities.TaskModel;
+import com.docdoku.core.workflow.ParallelActivityModel;
+import com.docdoku.core.workflow.TaskModel;
 
 
 public abstract class ParallelActivityModelCanvas extends JPanel{

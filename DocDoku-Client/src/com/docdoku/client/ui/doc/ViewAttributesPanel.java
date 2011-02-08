@@ -22,11 +22,11 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.WebLink;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.InstanceAttribute;
-import com.docdoku.core.entities.InstanceBooleanAttribute;
-import com.docdoku.core.entities.InstanceDateAttribute;
-import com.docdoku.core.entities.InstanceURLAttribute;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.document.InstanceBooleanAttribute;
+import com.docdoku.core.document.InstanceDateAttribute;
+import com.docdoku.core.document.InstanceURLAttribute;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

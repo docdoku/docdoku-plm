@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
 

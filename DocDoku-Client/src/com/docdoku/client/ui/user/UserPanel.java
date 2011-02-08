@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.user;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.common.User;
 import com.docdoku.client.ui.common.GUIConstants;
 
 import javax.swing.*;

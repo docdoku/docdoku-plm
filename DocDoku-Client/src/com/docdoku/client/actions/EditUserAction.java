@@ -29,7 +29,7 @@ import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.user.EditUserDialog;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.common.User;
 import javax.swing.JOptionPane;
 
 public class EditUserAction extends ClientAbstractAction {

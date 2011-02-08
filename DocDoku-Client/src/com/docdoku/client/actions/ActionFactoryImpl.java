@@ -28,7 +28,7 @@ import com.docdoku.client.data.TagRootTreeNode;
 import com.docdoku.client.data.TagTreeNode;
 import com.docdoku.client.data.TemplateTreeNode;
 import com.docdoku.client.data.WorkflowModelTreeNode;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.common.User;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ import com.docdoku.client.backbone.ElementSelectedEvent.ElementType;
 import com.docdoku.client.ui.ActionFactory;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 
 public class ActionFactoryImpl implements ActionFactory {
     

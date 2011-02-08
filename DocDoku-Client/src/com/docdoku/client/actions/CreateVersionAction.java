@@ -25,9 +25,9 @@ import com.docdoku.client.data.MainModel;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.doc.CreateVersionDialog;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.BinaryResource;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import java.awt.Cursor;
 import java.io.InterruptedIOException;
 

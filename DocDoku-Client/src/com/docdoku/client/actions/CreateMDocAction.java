@@ -22,9 +22,9 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.entities.BinaryResource;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import java.awt.Cursor;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
@@ -38,7 +38,7 @@ import javax.swing.KeyStroke;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.doc.CreateMDocDialog;
-import com.docdoku.core.entities.Folder;
+import com.docdoku.core.document.Folder;
 
 public class CreateMDocAction extends ClientAbstractAction {
     

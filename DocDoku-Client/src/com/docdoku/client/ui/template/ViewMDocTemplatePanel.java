@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.template;
 
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
 
 import javax.swing.*;
 import java.awt.*;

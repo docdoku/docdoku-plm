@@ -19,7 +19,7 @@
  */
 
 package com.docdoku.client.ui.workflow;
-import com.docdoku.core.entities.ParallelActivityModel;
+import com.docdoku.core.workflow.ParallelActivityModel;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

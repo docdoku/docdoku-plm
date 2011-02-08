@@ -22,7 +22,7 @@ package com.docdoku.client.ui.workflow;
 
 
 
-import com.docdoku.core.entities.SerialActivityModel;
+import com.docdoku.core.workflow.SerialActivityModel;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

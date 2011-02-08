@@ -20,8 +20,8 @@
 
 package com.docdoku.client.ui.common;
 
-import com.docdoku.core.entities.keys.Version;
-import com.docdoku.core.entities.keys.VersionFormatException;
+import com.docdoku.core.document.Version;
+import com.docdoku.core.document.VersionFormatException;
 
 import java.text.Format;
 import java.text.FieldPosition;

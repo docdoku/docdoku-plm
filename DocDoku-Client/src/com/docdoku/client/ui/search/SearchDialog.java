@@ -22,9 +22,9 @@ package com.docdoku.client.ui.search;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.SearchQuery;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.keys.Version;
+import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.Version;
 
 import javax.swing.*;
 import java.awt.*;

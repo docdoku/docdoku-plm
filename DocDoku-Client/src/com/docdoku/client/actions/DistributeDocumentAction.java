@@ -22,7 +22,7 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;
@@ -30,8 +30,8 @@ import javax.swing.*;
 import java.awt.event.*;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

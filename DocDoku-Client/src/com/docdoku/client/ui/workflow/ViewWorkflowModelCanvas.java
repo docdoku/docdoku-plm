@@ -20,10 +20,10 @@
 
 package com.docdoku.client.ui.workflow;
 
-import com.docdoku.core.entities.ActivityModel;
-import com.docdoku.core.entities.ParallelActivityModel;
-import com.docdoku.core.entities.SerialActivityModel;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.ParallelActivityModel;
+import com.docdoku.core.workflow.SerialActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
 

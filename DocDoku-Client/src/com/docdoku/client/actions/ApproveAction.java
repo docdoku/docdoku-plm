@@ -20,8 +20,8 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.Task;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.Task;
 import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;

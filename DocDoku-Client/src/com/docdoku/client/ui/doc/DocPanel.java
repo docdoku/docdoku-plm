@@ -21,8 +21,8 @@
 package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocument;
 import java.text.DateFormat;
 
 import javax.swing.*;

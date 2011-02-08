@@ -20,9 +20,9 @@
 
 package com.docdoku.client.ui.doc;
 
-import com.docdoku.core.entities.DocumentToDocumentLink;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
+import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentKey;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;

@@ -20,7 +20,7 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.entities.Folder;
+import com.docdoku.core.document.Folder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.tree.*;

@@ -23,18 +23,18 @@ import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.ui.template.EditMDocTemplateDialog;
-import com.docdoku.core.entities.Document;
+import com.docdoku.core.document.Document;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.MasterDocumentTemplate;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.client.ui.doc.EditDocDialog;
 import com.docdoku.client.localization.I18N;
 
-import com.docdoku.core.entities.InstanceAttribute;
+import com.docdoku.core.document.InstanceAttribute;
 import java.awt.Cursor;
 import javax.swing.*;
 

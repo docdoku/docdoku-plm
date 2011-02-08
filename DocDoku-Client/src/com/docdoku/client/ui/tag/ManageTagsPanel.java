@@ -22,7 +22,7 @@ package com.docdoku.client.ui.tag;
 
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.entities.Tag;
+import com.docdoku.core.document.Tag;
 import java.util.Collection;
 
 

@@ -20,7 +20,7 @@
 
 package com.docdoku.client.ui.workflow;
 
-import com.docdoku.core.entities.ParallelActivityModel;
+import com.docdoku.core.workflow.ParallelActivityModel;
 
 
 

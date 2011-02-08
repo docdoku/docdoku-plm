@@ -21,7 +21,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentTemplate;
 
 public class TemplateTreeNode extends FolderTreeNode {
 

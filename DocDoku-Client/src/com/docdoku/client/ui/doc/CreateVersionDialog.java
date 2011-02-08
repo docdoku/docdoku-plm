@@ -23,12 +23,12 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.document.MasterDocument;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 public class CreateVersionDialog extends JDialog implements ActionListener {
     private CreateVersionPanel mCreateVersionPanel;

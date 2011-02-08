@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.SaveWorkflowModelDialog;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
-import com.docdoku.core.entities.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
 import java.awt.event.*;
