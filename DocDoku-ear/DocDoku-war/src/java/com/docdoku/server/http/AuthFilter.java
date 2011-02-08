@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.common.Workspace;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
 
-import com.docdoku.core.entities.Account;
-import com.docdoku.core.AccountNotFoundException;
-import com.docdoku.core.IUserManagerLocal;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.services.AccountNotFoundException;
+import com.docdoku.core.services.IUserManagerLocal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

@@ -20,9 +20,12 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Account;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 import java.io.IOException;
 
 import javax.ejb.EJB;
@@ -33,7 +36,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
 import com.docdoku.core.*;
-import com.docdoku.core.entities.keys.BasicElementKey;
+import com.docdoku.core.common.BasicElementKey;
 import java.net.URLEncoder;
 
 public class AddUserServlet extends HttpServlet {

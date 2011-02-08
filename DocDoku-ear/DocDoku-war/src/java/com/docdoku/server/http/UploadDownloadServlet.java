@@ -19,7 +19,9 @@
  */
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.keys.*;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.document.DocumentKey;
+import com.docdoku.core.common.BasicElementKey;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 
-import com.docdoku.core.*;
 import javax.annotation.Resource;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;

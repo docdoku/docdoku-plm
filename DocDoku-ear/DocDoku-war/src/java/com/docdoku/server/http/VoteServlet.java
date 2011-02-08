@@ -19,8 +19,9 @@
  */
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.keys.TaskKey;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.workflow.TaskKey;
+import com.docdoku.core.common.User;
 import java.io.IOException;
 
 import javax.ejb.EJB;

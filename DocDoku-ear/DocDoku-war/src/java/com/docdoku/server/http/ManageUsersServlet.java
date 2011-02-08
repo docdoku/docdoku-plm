@@ -20,8 +20,13 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +39,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
 import com.docdoku.core.*;
-import com.docdoku.core.entities.UserGroup;
-import com.docdoku.core.entities.WorkspaceUserGroupMembership;
-import com.docdoku.core.entities.WorkspaceUserMembership;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.security.WorkspaceUserGroupMembership;
+import com.docdoku.core.security.WorkspaceUserMembership;
 import java.util.LinkedList;
 import java.util.List;
 

@@ -20,7 +20,12 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.services.UserGroupNotFoundException;
+import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.common.Workspace;
 import java.io.IOException;
 
 import javax.ejb.EJB;
@@ -31,8 +36,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
 import com.docdoku.core.*;
-import com.docdoku.core.entities.UserGroup;
-import com.docdoku.core.entities.keys.BasicElementKey;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.BasicElementKey;
 
 
 public class ManageUsersGroupServlet extends HttpServlet {

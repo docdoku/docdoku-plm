@@ -20,7 +20,8 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.common.Workspace;
 import java.io.IOException;
 
 import javax.ejb.EJB;
@@ -31,7 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
 import com.docdoku.core.*;
-import com.docdoku.core.entities.Account;
+import com.docdoku.core.common.Account;
 import java.util.Map;
 import java.util.Set;
 

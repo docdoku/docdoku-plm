@@ -20,8 +20,9 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Account;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
 import java.io.IOException;
 import java.util.HashMap;
 

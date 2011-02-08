@@ -20,7 +20,8 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Account;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.common.Account;
 import java.io.IOException;
 
 import javax.ejb.EJB;

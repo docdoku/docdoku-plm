@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.common.Workspace;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Map;

@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
 
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.common.Workspace;
 
 
 public class AdminWorkspaceFilter implements Filter {

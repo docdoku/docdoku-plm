@@ -20,8 +20,9 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.MasterDocument;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.MasterDocument;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.regex.Pattern;

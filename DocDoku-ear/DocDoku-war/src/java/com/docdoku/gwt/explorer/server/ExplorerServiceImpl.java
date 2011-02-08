@@ -19,10 +19,45 @@
  */
 package com.docdoku.gwt.explorer.server;
 
-import com.docdoku.core.ICommandLocal;
-import com.docdoku.core.IUserManagerLocal;
-import com.docdoku.core.entities.*;
-import com.docdoku.core.entities.keys.*;
+import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.security.WorkspaceUserGroupMembership;
+import com.docdoku.core.security.WorkspaceUserMembership;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.TagKey;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.document.Tag;
+import com.docdoku.core.document.InstanceTextAttribute;
+import com.docdoku.core.document.InstanceBooleanAttribute;
+import com.docdoku.core.document.InstanceDateAttribute;
+import com.docdoku.core.document.InstanceURLAttribute;
+import com.docdoku.core.document.InstanceNumberAttribute;
+import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.document.DocumentKey;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.workflow.TaskKey;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.ParallelActivity;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.ParallelActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.SerialActivityModel;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.gwt.explorer.shared.*;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
@@ -60,7 +95,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public String[] getFolders(String completePath) throws ApplicationException {
         try {
             return commandService.getFolders(completePath);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -69,7 +104,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public String[] getTags(String workspaceId) throws ApplicationException {
         try {
             return commandService.getTags(workspaceId);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -85,7 +120,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             }
 
             return data;
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -101,7 +136,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             }
 
             return data;
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -111,7 +146,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocument[] mdocs = commandService.getCheckedOutMDocs(workspaceId);
             return setupMDocNotifications(createDTO(mdocs), workspaceId);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -121,7 +156,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocument[] mdocs = commandService.findMDocsByFolder(completePath);
             return setupMDocNotifications(createDTO(mdocs), completePath.split("/")[0]);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -131,7 +166,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocument[] mdocs = commandService.findMDocsByTag(new TagKey(workspaceId, label));
             return setupMDocNotifications(createDTO(mdocs), workspaceId);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -140,7 +175,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void createFolder(String pParentFolder, String pFolder) throws ApplicationException {
         try {
             commandService.createFolder(pParentFolder, pFolder);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -151,7 +186,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocumentKey[] mdocKeys = commandService.delFolder(completePath);
             return createDTO(mdocKeys);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -162,7 +197,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocument mdoc = commandService.updateDoc(new DocumentKey(workspaceId, id, version, iteration), revisionNote, createObject(attributes), createObject(links));
             return createDTO(mdoc);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -173,7 +208,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocument mdoc = commandService.checkIn(new MasterDocumentKey(workspaceId, id, version));
             return createDTO(mdoc);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -184,7 +219,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocument mdoc = commandService.checkOut(new MasterDocumentKey(workspaceId, id, version));
             return createDTO(mdoc);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -195,7 +230,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocument mdoc = commandService.undoCheckOut(new MasterDocumentKey(workspaceId, id, version));
             return createDTO(mdoc);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -204,7 +239,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void delMDoc(String workspaceId, String id, String version) throws ApplicationException {
         try {
             commandService.delMDoc(new MasterDocumentKey(workspaceId, id, version));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -215,7 +250,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocument mdoc = commandService.moveMDoc(parentFolder, new MasterDocumentKey(workspaceId, id, version));
             return createDTO(mdoc);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -225,7 +260,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             User user = commandService.whoAmI(pWorkspaceId);
             return mapper.map(user, UserDTO.class);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -234,7 +269,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public String generateId(String workspaceId, String mdocTemplateId) throws ApplicationException {
         try {
             return commandService.generateId(workspaceId, mdocTemplateId);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -262,7 +297,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             }
             MasterDocument mdocs[] = commandService.createVersion(new MasterDocumentKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
             return setupMDocNotifications(createDTO(mdocs), pWorkspaceId);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -275,7 +310,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
                 mdoc = commandService.removeFileFromDocument(fullName);
             }
             return mdoc == null ? null : createDTO(mdoc);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -285,7 +320,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocument mdoc = commandService.removeFileFromDocument(pFullName);
             return createDTO(mdoc);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -295,7 +330,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocumentTemplate template = commandService.removeFileFromTemplate(pFullName);
             return createDTO(template);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -308,7 +343,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
                 template = commandService.removeFileFromTemplate(fullName);
             }
             return template == null ? null : createDTO(template);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -319,7 +354,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocument mdoc = commandService.getMDoc(new MasterDocumentKey(workspaceId, id, version));
             return createDTO(mdoc);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -330,7 +365,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             MasterDocumentTemplate template = commandService.getMDocTemplate(new BasicElementKey(workspaceId, id));
             return createDTO(template);
 
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -358,7 +393,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
             }
             MasterDocument mdoc = commandService.createMDoc(pParentFolder, pMDocID, pTitle, pDescription, pMDocTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
             return createDTO(mdoc);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -368,7 +403,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocumentTemplate template = commandService.createMDocTemplate(workspaceId, id, documentType, mask, createObject(attributeTemplates), idGenerated);
             return createDTO(template);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -377,7 +412,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void delMDocTemplate(String workspaceId, String id) throws ApplicationException {
         try {
             commandService.delMDocTemplate(new BasicElementKey(workspaceId, id));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -387,7 +422,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             MasterDocumentTemplate template = commandService.updateMDocTemplate(new BasicElementKey(workspaceId, id), documentType, mask, createObject(attributeTemplates), idGenerated);
             return createDTO(template);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -396,7 +431,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void delWorkflowModel(String workspaceId, String id) throws ApplicationException {
         try {
             commandService.delWorkflowModel(new BasicElementKey(workspaceId, id));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -405,7 +440,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public UserDTO[] getUsers(String pWorkspaceId) throws ApplicationException {
         try {
             return createDTO(commandService.getUsers(pWorkspaceId));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -414,7 +449,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void delTag(String workspaceId, String label) throws ApplicationException {
         try {
             commandService.delTag(new TagKey(workspaceId, label));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -423,7 +458,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void createTag(String workspaceId, String label) throws ApplicationException {
         try {
             commandService.createTag(workspaceId, label);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -432,7 +467,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO saveTags(String workspaceId, String id, String version, String[] tags) throws ApplicationException {
         try {
             return createDTO(commandService.saveTags(new MasterDocumentKey(workspaceId, id, version), tags));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -441,7 +476,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public WorkflowModelDTO createWorkflowModel(String workspaceId, String id, String finalLifeCycleState, ActivityModelDTO[] activityModels) throws ApplicationException {
         try {
             return createDTO(commandService.createWorkflowModel(workspaceId, id, finalLifeCycleState, createObject(activityModels)));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -450,7 +485,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO[] getIterationChangeEventSubscriptions(String workspaceId) throws ApplicationException {
         try {
             return createDTO(commandService.getIterationChangeEventSubscriptions(workspaceId));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -459,7 +494,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO[] getStateChangeEventSubscriptions(String workspaceId) throws ApplicationException {
         try {
             return createDTO(commandService.getStateChangeEventSubscriptions(workspaceId));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -468,7 +503,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void subscribeToIterationChangeEvent(String workspaceId, String id, String version) throws ApplicationException {
         try {
             commandService.subscribeToIterationChangeEvent(new MasterDocumentKey(workspaceId, id, version));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -477,7 +512,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void subscribeToStateChangeEvent(String workspaceId, String id, String version) throws ApplicationException {
         try {
             commandService.subscribeToStateChangeEvent(new MasterDocumentKey(workspaceId, id, version));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -486,7 +521,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void unsubscribeToIterationChangeEvent(String workspaceId, String id, String version) throws ApplicationException {
         try {
             commandService.unsubscribeToIterationChangeEvent(new MasterDocumentKey(workspaceId, id, version));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -495,7 +530,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public void unsubscribeToStateChangeEvent(String workspaceId, String id, String version) throws ApplicationException {
         try {
             commandService.unsubscribeToStateChangeEvent(new MasterDocumentKey(workspaceId, id, version));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -504,7 +539,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO approve(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException {
         try {
             return createDTO(commandService.approve(workspaceId, new TaskKey(workflowId, activityStep, num), comment));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -513,7 +548,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public MasterDocumentDTO reject(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException {
         try {
             return createDTO(commandService.reject(workspaceId, new TaskKey(workflowId, activityStep, num), comment));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -523,7 +558,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         try {
             SearchQuery query = new SearchQuery(workspaceId, mdocId, title, version, author, type, creationDateFrom, creationDateTo, createObject(attributes), tags, content);
             return setupMDocNotifications(createDTO(commandService.searchMDocs(query)), workspaceId);
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -613,7 +648,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public UserDTO[] getWorkspaceUserMemberships(String workspaceId) throws ApplicationException {
         try {
             return createDTO(userManager.getWorkspaceUserMemberships(workspaceId));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -622,7 +657,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     public UserGroupDTO[] getWorkspaceUserGroupMemberships(String workspaceId) throws ApplicationException {
         try {
             return createDTO(userManager.getWorkspaceUserGroupMemberships(workspaceId));
-        } catch (com.docdoku.core.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
@@ -1100,7 +1135,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         return obj;
     }
 
-    private MasterDocumentDTO[] setupMDocNotifications(MasterDocumentDTO[] mdocs, String workspaceId) throws com.docdoku.core.ApplicationException{
+    private MasterDocumentDTO[] setupMDocNotifications(MasterDocumentDTO[] mdocs, String workspaceId) throws com.docdoku.core.services.ApplicationException{
             List<MasterDocumentDTO> markedIteration = Arrays.asList(createDTO(commandService.getIterationChangeEventSubscriptions(workspaceId)));
             List<MasterDocumentDTO> markedState = Arrays.asList(createDTO(commandService.getStateChangeEventSubscriptions(workspaceId)));
 
