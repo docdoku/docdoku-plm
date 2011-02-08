@@ -19,6 +19,34 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.services.UserGroupNotFoundException;
+import com.docdoku.core.services.WorkspaceAlreadyExistsException;
+import com.docdoku.core.services.AccountNotFoundException;
+import com.docdoku.core.services.UserAlreadyExistsException;
+import com.docdoku.core.services.AccountAlreadyExistsException;
+import com.docdoku.core.services.UserGroupAlreadyExistsException;
+import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.services.FolderNotFoundException;
+import com.docdoku.core.services.FolderAlreadyExistsException;
+import com.docdoku.core.services.AccessRightException;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
+import com.docdoku.core.security.WorkspaceUserMembershipKey;
+import com.docdoku.core.security.WorkspaceUserMembership;
+import com.docdoku.core.security.WorkspaceUserGroupMembership;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.common.UserKey;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.*;
 import com.docdoku.core.entities.*;
 import com.docdoku.core.entities.keys.*;

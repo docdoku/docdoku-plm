@@ -20,10 +20,10 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.TaskNotFoundException;
-import com.docdoku.core.entities.Task;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.keys.TaskKey;
+import com.docdoku.core.services.TaskNotFoundException;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.common.User;
+import com.docdoku.core.workflow.TaskKey;
 import java.util.List;
 import java.util.Locale;
 

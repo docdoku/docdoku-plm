@@ -19,11 +19,11 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.CreationException;
-import com.docdoku.core.TagAlreadyExistsException;
-import com.docdoku.core.TagNotFoundException;
-import com.docdoku.core.entities.Tag;
-import com.docdoku.core.entities.keys.TagKey;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.TagAlreadyExistsException;
+import com.docdoku.core.services.TagNotFoundException;
+import com.docdoku.core.document.Tag;
+import com.docdoku.core.document.TagKey;
 import java.util.List;
 import java.util.Locale;
 

@@ -19,10 +19,13 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.services.FileAlreadyExistsException;
+import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.Document;
-import com.docdoku.core.entities.MasterDocumentTemplate;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocumentTemplate;
 import java.util.*;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

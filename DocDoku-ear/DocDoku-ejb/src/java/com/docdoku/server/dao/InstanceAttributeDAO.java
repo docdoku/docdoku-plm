@@ -20,7 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.entities.InstanceAttribute;
+import com.docdoku.core.document.InstanceAttribute;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 

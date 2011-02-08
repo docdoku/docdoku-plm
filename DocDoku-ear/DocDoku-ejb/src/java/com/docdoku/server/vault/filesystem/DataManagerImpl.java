@@ -20,8 +20,8 @@
 
 package com.docdoku.server.vault.filesystem;
 
-import com.docdoku.core.VaultException;
-import com.docdoku.core.entities.BinaryResource;
+import com.docdoku.core.services.VaultException;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.vault.DataManager;
 

@@ -20,7 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.entities.DocumentToDocumentLink;
+import com.docdoku.core.document.DocumentToDocumentLink;
 import javax.persistence.EntityManager;
 
 

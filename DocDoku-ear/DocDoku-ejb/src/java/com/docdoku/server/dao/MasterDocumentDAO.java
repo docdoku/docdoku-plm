@@ -19,16 +19,19 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.services.MasterDocumentNotFoundException;
+import com.docdoku.core.services.MasterDocumentAlreadyExistsException;
+import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
-import com.docdoku.core.entities.Activity;
-import com.docdoku.core.entities.InstanceAttribute;
-import com.docdoku.core.entities.Tag;
-import com.docdoku.core.entities.Task;
-import com.docdoku.core.entities.Workflow;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.SearchQuery;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.document.Tag;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.common.User;
 import java.util.*;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

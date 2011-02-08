@@ -20,7 +20,7 @@
 
 package com.docdoku.server.vault;
 
-import com.docdoku.core.entities.BinaryResource;
+import com.docdoku.core.common.BinaryResource;
 import java.io.File;
 
 

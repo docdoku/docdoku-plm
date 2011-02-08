@@ -20,9 +20,13 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.services.WorkspaceAlreadyExistsException;
+import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.FolderAlreadyExistsException;
+import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
-import com.docdoku.core.entities.Folder;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.common.Workspace;
 
 import java.util.Locale;
 import javax.persistence.EntityExistsException;

@@ -19,18 +19,16 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.*;
-import com.docdoku.core.WorkflowModelAlreadyExistsException;
-import com.docdoku.core.entities.*;
-import com.docdoku.core.entities.keys.BasicElementKey;
+import com.docdoku.core.services.WorkflowModelNotFoundException;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.services.WorkflowModelAlreadyExistsException;
+import com.docdoku.core.common.BasicElementKey;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Date;
 import java.util.Locale;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 

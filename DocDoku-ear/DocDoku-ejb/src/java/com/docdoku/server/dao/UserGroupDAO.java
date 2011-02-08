@@ -19,15 +19,15 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.CreationException;
-import com.docdoku.core.UserGroupAlreadyExistsException;
-import com.docdoku.core.UserGroupNotFoundException;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.entities.UserGroup;
-import com.docdoku.core.entities.Workspace;
-import com.docdoku.core.entities.WorkspaceUserGroupMembership;
-import com.docdoku.core.entities.keys.BasicElementKey;
-import com.docdoku.core.entities.keys.WorkspaceUserGroupMembershipKey;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.UserGroupAlreadyExistsException;
+import com.docdoku.core.services.UserGroupNotFoundException;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.security.WorkspaceUserGroupMembership;
+import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
 import java.util.List;
 import java.util.Locale;
 

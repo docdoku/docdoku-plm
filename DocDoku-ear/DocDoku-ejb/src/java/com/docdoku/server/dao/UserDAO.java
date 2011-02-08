@@ -19,20 +19,20 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.CreationException;
-import com.docdoku.core.FolderAlreadyExistsException;
-import com.docdoku.core.FolderNotFoundException;
-import com.docdoku.core.NotAllowedException;
-import com.docdoku.core.UserAlreadyExistsException;
-import com.docdoku.core.entities.Folder;
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.User;
-import com.docdoku.core.UserNotFoundException;
-import com.docdoku.core.entities.Workspace;
-import com.docdoku.core.entities.WorkspaceUserMembership;
-import com.docdoku.core.entities.keys.UserKey;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.FolderAlreadyExistsException;
+import com.docdoku.core.services.FolderNotFoundException;
+import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.services.UserAlreadyExistsException;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.common.User;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.security.WorkspaceUserMembership;
+import com.docdoku.core.common.UserKey;
 
-import com.docdoku.core.entities.keys.WorkspaceUserMembershipKey;
+import com.docdoku.core.security.WorkspaceUserMembershipKey;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityExistsException;

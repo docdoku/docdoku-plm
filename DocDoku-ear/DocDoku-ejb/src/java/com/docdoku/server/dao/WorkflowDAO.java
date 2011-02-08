@@ -20,8 +20,8 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.Workflow;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.Workflow;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 

@@ -19,8 +19,8 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.entities.BinaryResource;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.MasterDocumentKey;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;

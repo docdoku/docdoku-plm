@@ -20,10 +20,12 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.*;
-import com.docdoku.core.entities.*;
-import com.docdoku.core.entities.keys.MasterDocumentKey;
-import com.docdoku.core.entities.keys.SubscriptionKey;
+import com.docdoku.core.document.StateChangeSubscription;
+import com.docdoku.core.document.IterationChangeSubscription;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.SubscriptionKey;
 import java.util.*;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

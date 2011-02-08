@@ -19,19 +19,19 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.CreationException;
-import com.docdoku.core.FileAlreadyExistsException;
-import com.docdoku.core.FileNotFoundException;
-import com.docdoku.core.ICommandLocal;
-import com.docdoku.core.IUploadDownloadWS;
-import com.docdoku.core.MasterDocumentNotFoundException;
-import com.docdoku.core.MasterDocumentTemplateNotFoundException;
-import com.docdoku.core.NotAllowedException;
-import com.docdoku.core.UserNotActiveException;
-import com.docdoku.core.UserNotFoundException;
-import com.docdoku.core.WorkspaceNotFoundException;
-import com.docdoku.core.entities.keys.BasicElementKey;
-import com.docdoku.core.entities.keys.DocumentKey;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.FileAlreadyExistsException;
+import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IUploadDownloadWS;
+import com.docdoku.core.services.MasterDocumentNotFoundException;
+import com.docdoku.core.services.MasterDocumentTemplateNotFoundException;
+import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.document.DocumentKey;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;

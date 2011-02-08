@@ -20,11 +20,14 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.services.AccountNotFoundException;
+import com.docdoku.core.services.AccountAlreadyExistsException;
+import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
-import com.docdoku.core.entities.Account;
-import com.docdoku.core.entities.Credential;
-import com.docdoku.core.entities.UserGroupMapping;
-import com.docdoku.core.entities.Workspace;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.security.Credential;
+import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.common.Workspace;
 import java.util.*;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

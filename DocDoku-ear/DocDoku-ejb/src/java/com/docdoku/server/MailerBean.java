@@ -20,9 +20,9 @@
 
 package com.docdoku.server;
 
-import com.docdoku.core.entities.MasterDocument;
-import com.docdoku.core.entities.Task;
-import com.docdoku.core.entities.User;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.common.User;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Collection;
