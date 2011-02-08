@@ -19,7 +19,18 @@
  */
 package com.docdoku.core.util;
 
-import com.docdoku.core.entities.*;
+import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.Document;
+import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
 import java.text.ParseException;
 import javax.swing.text.MaskFormatter;
 
