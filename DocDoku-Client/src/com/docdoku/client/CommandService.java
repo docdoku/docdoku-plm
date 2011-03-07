@@ -34,7 +34,7 @@ import javax.xml.ws.WebServiceClient;
  *
  * @author Florent GARIN
  */
-@WebServiceClient(name = "CommandService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/webservices/DocDoku?wsdl")
+@WebServiceClient(name = "CommandService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/Command?wsdl")
 public class CommandService extends Service
 {
 
@@ -47,9 +47,9 @@ public class CommandService extends Service
         try {
             URL baseUrl;
             baseUrl = com.docdoku.client.CommandService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/webservices/DocDoku?wsdl");
+            url = new URL(baseUrl, "http://localhost:8080/services/Command?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/webservices/DocDoku?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/Command?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
         COMMANDSERVICE_WSDL_LOCATION = url;

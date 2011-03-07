@@ -53,7 +53,7 @@ public class ExplorerBoot {
                 webURL=new URL(new URL(args[0]),"/");
             else
                 webURL=new URL(new URL(args[0]),"/"+ webContext + "/");
-            URL commandServiceURL = new URL(webURL,"/webservices/DocDoku?wsdl");
+            URL commandServiceURL = new URL(webURL,"/services/Command?wsdl");
             URL uploadDownloadServiceURL = new URL(webURL,"/services/UploadDownload?wsdl");
             Config.setHTTPCodebase(webURL);
             MainController.init(lookupCommandWebService(commandServiceURL), lookupUploadDownloadWebService(uploadDownloadServiceURL));

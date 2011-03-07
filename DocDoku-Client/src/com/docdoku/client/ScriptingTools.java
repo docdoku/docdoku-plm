@@ -35,7 +35,7 @@ import javax.xml.ws.soap.MTOMFeature;
  */
 public class ScriptingTools {
     
-    public final static String DEFAULT_COMMAND_WSDL_LOCATION="http://localhost:8080/webservices/DocDoku?wsdl";
+    public final static String DEFAULT_COMMAND_WSDL_LOCATION="http://localhost:8080/services/Command?wsdl";
     public final static String DEFAULT_FILE_MANAGER_WSDL_LOCATION="http://localhost:8080/services/UploadDownload?wsdl";
     
     
