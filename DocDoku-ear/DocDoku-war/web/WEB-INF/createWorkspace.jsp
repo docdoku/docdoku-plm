@@ -11,7 +11,7 @@
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/docdoku.css" media="screen"/>
     </head>
     
-    <jsp:useBean id="selectedWorkspace" type="com.docdoku.core.entities.Workspace" scope="session"/>
+    <jsp:useBean id="selectedWorkspace" type="com.docdoku.core.common.Workspace" scope="session"/>
     <body>
         
         <div id="page">

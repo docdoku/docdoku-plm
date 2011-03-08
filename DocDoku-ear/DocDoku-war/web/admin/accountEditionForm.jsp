@@ -14,7 +14,7 @@
         <script src="<%=request.getContextPath()%>/js/docdoku.js" type="text/javascript"></script>
     </head>
     
-    <jsp:useBean id="account" type="com.docdoku.core.entities.Account" scope="session"/>
+    <jsp:useBean id="account" type="com.docdoku.core.common.Account" scope="session"/>
     
     <body>
         <div id="page">
