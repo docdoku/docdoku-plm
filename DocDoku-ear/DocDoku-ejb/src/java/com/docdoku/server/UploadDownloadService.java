@@ -37,20 +37,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.transaction.Status;
-import javax.transaction.UserTransaction;
 import javax.xml.bind.annotation.XmlMimeType;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.MTOM;
 
 /**
@@ -60,7 +54,7 @@ import javax.xml.ws.soap.MTOM;
 @MTOM
 @Local(IUploadDownloadWS.class)
 @Stateless(name = "UploadDownloadService")
-@WebService(serviceName = "UploadDownloadService", endpointInterface = "com.docdoku.core.IUploadDownloadWS")
+@WebService(serviceName = "UploadDownloadService", endpointInterface = "com.docdoku.core.services.IUploadDownloadWS")
 public class UploadDownloadService implements IUploadDownloadWS {
 
     @EJB

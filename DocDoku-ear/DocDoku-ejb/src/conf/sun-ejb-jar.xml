@@ -19,7 +19,7 @@
             </resource-ref>-->
             <webservice-endpoint>
                 <port-component-name>CommandBean</port-component-name>
-                <endpoint-address-uri>webservices/DocDoku</endpoint-address-uri>
+                <endpoint-address-uri>services/Command</endpoint-address-uri>
                 <login-config>
                     <auth-method>BASIC</auth-method>
                     <realm>docdokuRealm</realm>

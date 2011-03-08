@@ -97,7 +97,7 @@ import javax.persistence.NoResultException;
 @DeclareRoles("users")
 @Local(ICommandLocal.class)
 @Stateless(name = "CommandBean")
-@WebService(endpointInterface = "com.docdoku.core.ICommandWS")
+@WebService(endpointInterface = "com.docdoku.core.services.ICommandWS")
 public class CommandBean implements ICommandWS, ICommandLocal {
 
     @PersistenceContext
