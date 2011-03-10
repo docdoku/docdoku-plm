@@ -29,7 +29,6 @@ import com.docdoku.client.actions.MainController;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.data.Config;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.*;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import java.awt.Toolkit;
 import java.net.MalformedURLException;

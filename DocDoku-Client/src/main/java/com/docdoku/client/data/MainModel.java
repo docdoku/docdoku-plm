@@ -22,7 +22,6 @@ package com.docdoku.client.data;
 
 import com.docdoku.core.services.IUploadDownloadWS;
 import com.docdoku.core.services.ICommandWS;
-import com.docdoku.core.*;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.Folder;
@@ -48,7 +47,6 @@ import javax.swing.*;
 import java.util.*;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.InstanceAttribute;
 import com.docdoku.core.document.SearchQuery;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.ws.developer.StreamingDataHandler;
