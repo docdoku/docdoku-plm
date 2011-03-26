@@ -44,6 +44,7 @@ public class CreateMDocPanel extends FlexTable {
         m_backAction=new Label(i18n.btnBack());
         m_backAction.setStyleName("normalLinkAction");
         m_backAction.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
                 cmds.get("BackCommand").execute();
             }
@@ -51,6 +52,7 @@ public class CreateMDocPanel extends FlexTable {
         m_okBtn = new Button(i18n.btnCreate());
         m_okBtn.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 //ACLDTO acl=m_securityPanel.getACL();
                 ACLDTO acl=null;

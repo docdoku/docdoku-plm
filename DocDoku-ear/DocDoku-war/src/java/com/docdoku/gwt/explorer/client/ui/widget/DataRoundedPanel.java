@@ -26,9 +26,9 @@ public class DataRoundedPanel extends Composite {
         inputPanel.setCellSpacing(8);
         inputPanel.setStyleName("my-Input-Zone-Element");
         rp.setWidget(inputPanel);
-        rp.setHeight("100%");
+        //rp.setHeight("100%");
         initWidget(rp);
-        setHeight("100%");
+        //setHeight("100%");
     }
 
     public DataRoundedPanel(String header, int corners) {
@@ -48,9 +48,9 @@ public class DataRoundedPanel extends Composite {
         vp.add(rp);
         vp.add(inputPanel);
         vp.setStyleName("my-Input-Zone");
-        vp.setHeight("100%");
+        //vp.setHeight("100%");
         initWidget(vp);
-        setHeight("100%");
+        //setHeight("100%");
     }
     public DataRoundedPanel(String header) {
         this(header,RoundedPanel.TOP);

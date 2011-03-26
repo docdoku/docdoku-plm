@@ -63,6 +63,7 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
 
         m_addLink.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 addAttribute();
             }
@@ -70,6 +71,7 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
 
         m_delLink.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 removeAttributes();
             }
@@ -79,8 +81,6 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
     }
 
     public void setAttributes(Map<String, InstanceAttributeDTO> attrs) {
-
-
 
         int i = 1;
         m_attrs = attrs;

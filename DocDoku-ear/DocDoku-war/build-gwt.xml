@@ -13,14 +13,14 @@
         </java>
     </target>
 
-     <target name="launch-dev-mode" depends="init">
+     <target name="debug-gwt" depends="init">
         <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
             jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.DevMode" fork="true">
             <arg value="-noserver"/>
-<!--            <arg value="-port"/>
+            <!--<arg value="-port"/>
             <arg value="8080"/>-->
             <arg value="-startupUrl"/>
-            <arg value="http://localhost:8080/"/>
+            <arg value="http://localhost:8080"/>
             <arg value="-war"/>
             <arg path="${build.web.dir}/"/>
             <arg value="com.docdoku.gwt.explorer.Explorer"/>

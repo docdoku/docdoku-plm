@@ -31,7 +31,7 @@ public class DocMainPanel extends DataRoundedPanel {
     private Label m_lifeCycleStateLabel;
     private Label m_typeLabel;
     private TextBox m_revisionNoteTextBox;
-    private WorkflowGlassPanel m_workflowPanel ;
+    private WorkflowGlassPanel m_workflowPanel;
 
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
