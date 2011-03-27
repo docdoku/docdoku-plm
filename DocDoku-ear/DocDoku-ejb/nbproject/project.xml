@@ -10,10 +10,11 @@
             <included-library dirs="200">file.reference.poi-contrib-3.0.1-FINAL-20070705.jar</included-library>
             <included-library dirs="200">file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar</included-library>
             <source-roots>
-                <root id="src.dir"/>
+                <root id="src.java.dir"/>
+                <root id="src.resources.dir"/>
             </source-roots>
             <test-roots>
-                <root id="test.src.dir"/>
+                <root id="test.java.dir"/>
             </test-roots>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
