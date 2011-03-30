@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>DocDoku-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <included-library dirs="200">file.reference.poi-3.0.1-FINAL-20070705.jar</included-library>
             <included-library dirs="200">file.reference.lucene-core-3.0.3.jar</included-library>
             <included-library dirs="200">file.reference.poi-contrib-3.0.1-FINAL-20070705.jar</included-library>
