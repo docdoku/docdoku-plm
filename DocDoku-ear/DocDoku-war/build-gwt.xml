@@ -3,8 +3,8 @@
 <project name="DocDoku-war-gwt" default="compile-gwt" basedir=".">
     <description>Generates Javascript for DocDoku-war.</description>
     
-    <target name="compile-gwt">
-        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
+    <target name="compile-gwt" depends="init">
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.java.dir}:${src.resources.dir}" failonerror="true"
               classname="com.google.gwt.dev.Compiler" fork="true"
               jvmargs="-Xmx256M -Xss1M">
             <arg value="-war"/>
