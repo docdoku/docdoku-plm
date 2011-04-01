@@ -17,25 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.server;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.document.MasterDocument;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.common.User;
+import com.docdoku.core.services.IMailerLocal;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -44,25 +48,24 @@ import javax.mail.internet.MimeMessage;
  *
  * @author Florent.Garin
  */
-@Stateless(name="MailerBean")
-public class MailerBean {
-    
+@Local(IMailerLocal.class)
+@Stateless(name = "MailerBean")
+public class MailerBean implements IMailerLocal {
+
     private final static String BASE_NAME = "com.docdoku.server.templates.MailText";
-    
-    @Resource(name="mail/docdokuSMTP")
+    @Resource(name = "mail/docdokuSMTP")
     private Session mailSession;
-    
-    @Resource(name="codebase")
+    @Resource(name = "codebase")
     private String codebase;
-    
     private final static Logger LOGGER = Logger.getLogger(MailerBean.class.getName());
-    
+
     @Asynchronous
+    @Override
     public void sendStateNotification(User[] pSubscribers,
             MasterDocument pMasterDocument) {
         try {
             javax.mail.Message message = new MimeMessage(mailSession);
-            
+
             for (int i = 0; i < pSubscribers.length; i++) {
                 try {
                     message.addRecipient(javax.mail.Message.RecipientType.TO,
@@ -76,7 +79,7 @@ public class MailerBean {
                     Transport.send(message);
                     LOGGER.info("Sending state notification emails");
                     LOGGER.info("for the document " + pMasterDocument.getLastIteration());
-                    
+
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
                     LOGGER.warning(pUEEx.getMessage());
@@ -90,9 +93,10 @@ public class MailerBean {
     }
 
     @Asynchronous
+    @Override
     public void sendIterationNotification(User[] pSubscribers,
             MasterDocument pMasterDocument) {
-        try{
+        try {
             for (int i = 0; i < pSubscribers.length; i++) {
                 try {
                     javax.mail.Message message = new MimeMessage(mailSession);
@@ -107,7 +111,7 @@ public class MailerBean {
                     Transport.send(message);
                     LOGGER.info("Sending iteration notification emails");
                     LOGGER.info("for the document " + pMasterDocument.getLastIteration());
-                    
+
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
                     LOGGER.warning(pUEEx.getMessage());
@@ -121,10 +125,11 @@ public class MailerBean {
     }
 
     @Asynchronous
+    @Override
     public void sendApproval(Collection<Task> pRunningTasks,
             MasterDocument pMasterDocument) {
-        try{
-            for (Task task:pRunningTasks){
+        try {
+            for (Task task : pRunningTasks) {
                 try {
                     javax.mail.Message message = new MimeMessage(mailSession);
                     User worker = task.getWorker();
@@ -143,50 +148,79 @@ public class MailerBean {
                     LOGGER.warning(pUEEx.getMessage());
                 }
             }
-        }catch (MessagingException pMEx) {
+        } catch (MessagingException pMEx) {
             LOGGER.severe("Message format error.");
             LOGGER.severe("Approval can't be sent.");
             LOGGER.severe(pMEx.getMessage());
         }
     }
-    
+
+    @Asynchronous
+    @Override
+    public void sendPasswordRecovery(Account account) {
+        try {
+            javax.mail.Message message = new MimeMessage(mailSession);
+            message.setRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(account.getEmail(), account.getName()));
+            message.setSubject("Password recovery");
+            message.setSentDate(new Date());
+            message.setContent(getPasswordRecoveryMessage(account, new Locale(account.getLanguage())),
+                    "text/html; charset=utf-8");
+            message.setFrom();
+            Transport.send(message);
+            LOGGER.info("Sending recovery message");
+            LOGGER.info("for the user which login is " + account.getLogin());
+        } catch (UnsupportedEncodingException pUEEx) {
+            LOGGER.warning("Mail address format error.");
+            LOGGER.warning(pUEEx.getMessage());
+        } catch (MessagingException pMEx) {
+            LOGGER.severe("Message format error.");
+            LOGGER.severe("Recovery message can't be sent.");
+            LOGGER.severe(pMEx.getMessage());
+        }
+    }
+
+    private String getPasswordRecoveryMessage(Account account, Locale pLocale) {
+        String recoveryURL = codebase + "/action/recovery?id=" + UUID.randomUUID();
+        Object[] args = {recoveryURL, account.getLogin()};
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("Recovery_text"), args);
+    }
+
     private String getApprovalRequiredMessage(Task pTask,
             MasterDocument pMasterDocument, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
-        Object[] args =
-        {voteURL, pMasterDocument.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(),pTask.getNum(), pTask.getTitle(), getURL(pMasterDocument),pMasterDocument,pTask.getInstructions()};
+        Object[] args = {voteURL, pMasterDocument.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pMasterDocument), pMasterDocument, pTask.getInstructions()};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Approval_text"), args);
     }
-    
-    private String getIterationNotificationMessage(MasterDocument pMasterDocument, Locale pLocale){
-        
-        Object[] args =
-        {
+
+    private String getIterationNotificationMessage(MasterDocument pMasterDocument, Locale pLocale) {
+
+        Object[] args = {
             pMasterDocument,
             pMasterDocument.getLastIteration().getCreationDate(),
             new Integer(pMasterDocument.getLastIteration().getIteration()),
             pMasterDocument.getLastIteration().getAuthor(), getURL(pMasterDocument)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("IterationNotification_text"), args);
-        
+
     }
-    
-    private String getStateNotificationMessage(MasterDocument pMasterDocument, Locale pLocale){
-        
-        Object[] args =
-        {
+
+    private String getStateNotificationMessage(MasterDocument pMasterDocument, Locale pLocale) {
+
+        Object[] args = {
             pMasterDocument,
             pMasterDocument.getLastIteration().getCreationDate(),
             getURL(pMasterDocument)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("StateNotification_text"), args);
-        
+
     }
-    
+
     private String getURL(MasterDocument pMDoc) {
-        String workspace=pMDoc.getWorkspaceId();
-        String mdocID=pMDoc.getId();
+        String workspace = pMDoc.getWorkspaceId();
+        String mdocID = pMDoc.getId();
         return codebase + "/documents/" + workspace + "/" + mdocID + "/" + pMDoc.getVersion();
     }
 }

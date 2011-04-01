@@ -47,6 +47,8 @@ import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.security.PasswordRecoveryRequest;
+import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
@@ -76,7 +78,7 @@ public class UserManagerBean implements IUserManagerLocal {
     @Resource(name = "vaultPath")
     private String vaultPath;
     @EJB
-    private MailerBean mailer;
+    private IMailerLocal mailer;
     @EJB
     private IndexerBean indexer;
     private DataManager dataManager;
@@ -163,7 +165,6 @@ public class UserManagerBean implements IUserManagerLocal {
         return workspace;
     }
 
-    @RolesAllowed("users")
     @Override
     public Account getAccount(String pLogin) throws AccountNotFoundException {
         return new AccountDAO(em).loadAccount(pLogin);
@@ -352,6 +353,13 @@ public class UserManagerBean implements IUserManagerLocal {
         if (pPassword != null) {
             accountDAO.updateCredential(account.getLogin(), pPassword);
         }
+    }
+
+    @Override
+    public void recoverPassword(String pPasswdRRUuid, String pPassword){
+        PasswordRecoveryRequest passwdRR = em.find(PasswordRecoveryRequest.class, pPasswdRRUuid);
+        AccountDAO accountDAO = new AccountDAO(em);
+        accountDAO.updateCredential(passwdRR.getLogin(), pPassword);
     }
 
     @RolesAllowed("users")

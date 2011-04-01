@@ -67,6 +67,7 @@ import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.Task;
@@ -109,7 +110,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     @EJB
     private IUserManagerLocal userManager;
     @EJB
-    private MailerBean mailer;
+    private IMailerLocal mailer;
     @EJB
     private IndexerBean indexer;
     @EJB
