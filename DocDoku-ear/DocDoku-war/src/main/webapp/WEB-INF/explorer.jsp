@@ -10,7 +10,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=7" />
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/explorer.css">
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/explorer.css"/>
         <script type="text/javascript">
             var inputs = {
                 workspaceID: "${workspaceID}",

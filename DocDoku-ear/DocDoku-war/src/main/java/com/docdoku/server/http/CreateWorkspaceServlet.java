@@ -50,7 +50,7 @@ public class CreateWorkspaceServlet extends HttpServlet {
                 pRequest.setCharacterEncoding("UTF-8");
             
             String id = pRequest.getParameter("id");
-            Workspace.VaultType vaultType = Workspace.VaultType.DEMO;
+            Workspace.VaultType vaultType = Workspace.VaultType.UNLIMITED;
             String description = pRequest.getParameter("description");
             boolean folderLocked=Boolean.parseBoolean(pRequest.getParameter("folderLocked"));
             HttpSession sessionHTTP = pRequest.getSession();
