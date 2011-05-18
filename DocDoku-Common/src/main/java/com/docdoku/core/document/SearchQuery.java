@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 /**
  * Wraps data needed to perform a query on documents.
  * 
- * @author Florent GARIN
+ * @author Florent Garin
  * @version 2.0, 27/01/10
  * @since   V2.0
  */

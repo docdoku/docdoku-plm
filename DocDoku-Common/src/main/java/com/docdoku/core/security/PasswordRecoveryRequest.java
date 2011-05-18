@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -28,7 +28,7 @@ import java.util.UUID;
  * Represents a password recovery request. This class makes the link between
  * the UUID of the request and the user who asked it.
  * 
- * @author Florent GARIN
+ * @author Florent Garin
  * @version 1.0, 01/04/11
  * @since   V1.0
  */

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,7 +29,7 @@ import javax.persistence.ManyToOne;
  * Like in a regular file system, folder may contain
  * other folders or documents.  
  * 
- * @author Florent GARIN
+ * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since   V1.0
  */

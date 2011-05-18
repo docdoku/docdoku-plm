@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import java.util.Locale;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class WorkflowModelNotFoundException extends ApplicationException {
 
