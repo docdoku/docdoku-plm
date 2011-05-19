@@ -14,7 +14,7 @@
     </target>
 
      <target name="debug-gwt" depends="init">
-        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.dir}" failonerror="true"
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${javac.classpath}:${src.java.dir}:${src.resources.dir}" failonerror="true"
             jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.DevMode" fork="true">
             <arg value="-noserver"/>
             <!--<arg value="-port"/>
