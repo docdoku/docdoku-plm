@@ -18,7 +18,7 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.common;
 
 import java.io.Serializable;
 import java.util.LinkedList;

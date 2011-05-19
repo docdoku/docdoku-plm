@@ -21,7 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.Version;
+import com.docdoku.core.common.Version;
 import java.text.MessageFormat;
 import java.util.Locale;
 

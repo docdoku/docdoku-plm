@@ -20,6 +20,7 @@
 
 package com.docdoku.core.document;
 
+import com.docdoku.core.common.Version;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.ACL;
