@@ -7,7 +7,6 @@
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=7" />
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/explorer.css"/>

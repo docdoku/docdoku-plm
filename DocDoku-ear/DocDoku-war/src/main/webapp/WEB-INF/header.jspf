@@ -24,7 +24,7 @@
                     <fmt:message key="toplinks.notRegistered"/> <a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="toplinks.subscribe"/></a>
                 </c:when>
                 <c:otherwise>
-                    <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');"><fmt:message key="toplinks.workspace"/>&#9660;</a>
+                    <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');"><fmt:message key="toplinks.workspace"/><span style="font-size: 8px; margin-left: 2px;">&#9660;</span></a>
                     <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
                             <li>
                                 <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">

@@ -34,7 +34,7 @@
                                 <p><input type="submit" class="button" value="Login" name="auth" alt="Login"/>
                                 </p>
                                 <br/>
-<!--                                <p><a href="<%=request.getContextPath()%>/faces/recoveryForm.xhtml"><fmt:message key="login.recovery"/></a></p>-->
+                                <p><a href="<%=request.getContextPath()%>/faces/recoveryRequestForm.xhtml"><fmt:message key="login.recovery"/></a></p>
                                 <p><a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="login.subscribe"/></a></p>
                             </fieldset>
                         </form>

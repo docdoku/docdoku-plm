@@ -17,44 +17,48 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.security.PasswordRecoveryRequest;
 import com.docdoku.core.services.AccountNotFoundException;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import java.util.Locale;
-import javax.annotation.security.RunAs;
+import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.FacesContext;
 
-
-@Named(value="recoveryBean")
+@Named(value = "recoveryBean")
 @RequestScoped
 public class RecoveryBean {
 
     @EJB
     private IMailerLocal mailer;
-
     @EJB
     private IUserManagerLocal userManager;
-
     private String login;
+    private String newPassword;
+    private String passwordRRUuid;
 
     public RecoveryBean() {
     }
 
+    public String changePassword() throws PasswordRecoveryRequestNotFoundException {
+        if(passwordRRUuid==null)
+            passwordRRUuid="";
+        
+        userManager.recoverPassword(passwordRRUuid, newPassword);
+        return "/WEB-INF/recovery.xhtml";
+    }
 
-    public String sendRecoveryMessage() throws AccountNotFoundException{
+    public String sendRecoveryMessage() throws AccountNotFoundException {
         //Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         Account account = userManager.getAccount(login);
-        mailer.sendPasswordRecovery(account);
+        PasswordRecoveryRequest passwdRR = userManager.createPasswordRecoveryRequest(account.getLogin());
+        mailer.sendPasswordRecovery(account, passwdRR.getUuid());
 
-        return "/WEB-INF/recovery.xhtml";
+        return "/WEB-INF/recoveryRequested.xhtml";
     }
 
     public String getLogin() {
@@ -65,6 +69,20 @@ public class RecoveryBean {
         this.login = login;
     }
 
-    
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public String getPasswordRRUuid() {
+        return passwordRRUuid;
+    }
+
+    public void setPasswordRRUuid(String passwordRRUuid) {
+        this.passwordRRUuid = passwordRRUuid;
+    }
 
 }
