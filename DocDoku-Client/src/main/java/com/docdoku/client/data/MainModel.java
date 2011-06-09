@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.client.data;
 
 import com.docdoku.core.services.IUploadDownloadWS;
@@ -31,7 +30,7 @@ import com.docdoku.core.document.MasterDocument;
 import com.docdoku.core.document.MasterDocumentTemplate;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.TagKey;
-import com.docdoku.core.document.Version;
+import com.docdoku.core.common.Version;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.util.Tools;
@@ -51,6 +50,11 @@ import com.docdoku.core.document.SearchQuery;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.ws.developer.StreamingDataHandler;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
@@ -59,7 +63,6 @@ public class MainModel {
     public class ModelUpdater {
 
         private ModelUpdater() {
-
         }
 
         public void createFolder(String pParentFolder, String pShortName) {
@@ -166,8 +169,8 @@ public class MainModel {
             //is not the one that is stored on the model
             MainModel.this.getElementsTreeModel().fireTreeStructureChanged(path);
             MainModel.this.getElementsTreeModel().fireTreeNodesRemoved(path,
-                        childIndices, children);
-                mCache.removeFolder(pCompletePath);
+                    childIndices, children);
+            mCache.removeFolder(pCompletePath);
         }
 
         public void delTag(String pTag) {
@@ -404,7 +407,6 @@ public class MainModel {
         updater = new ModelUpdater();
     }
 
-
     public FolderTreeNode[] getFolderTreeNodes(FolderTreeNode pParent) {
         String completePath = pParent.getCompletePath();
         FolderTreeNode[] folderTreeNodes = mCache.getFolderTreeNodes(completePath);
@@ -435,7 +437,6 @@ public class MainModel {
         }
         return folderTreeNodes;
     }
-
 
     public WorkflowModel[] getWorkflowModels() {
         WorkflowModel[] models = mCache.getWorkflowModels();
@@ -787,7 +788,7 @@ public class MainModel {
             System.out.println("Retrieving generated master document id");
             generatedId = mCommandService.generateId(pWorkspaceId, pMDocTemplateId);
         } catch (Exception pEx) {
-        //TODO treat exception ?
+            //TODO treat exception ?
         }
         return generatedId;
     }
@@ -824,41 +825,44 @@ public class MainModel {
         }
         return mElementsTreeModel;
     }
-    /*
+
     private void downloadFileWithServlet(Component pParent, File pLocalFile, String pURL) throws IOException {
-    System.out.println("Downloading file");
-    ProgressMonitorInputStream in = null;
-    OutputStream out = null;
-    HttpURLConnection conn = null;
-    try {
-    out = new BufferedOutputStream(new FileOutputStream(pLocalFile), Config.BUFFER_CAPACITY);
-    URL url = new URL(pURL);
-    conn = (HttpURLConnection) url.openConnection();
-    conn.setUseCaches(false);
-    conn.setAllowUserInteraction(true);
-    conn.setRequestProperty("Connection", "Keep-Alive");
-    conn.setRequestMethod("GET");
-    byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((getLogin() + ":" + getPassword()).getBytes("ISO-8859-1"));
-    conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
-    conn.connect();
-    int code = conn.getResponseCode();
-    System.out.println("Download HTTP response code: " + code);
-    in = new ProgressMonitorInputStream(pParent, I18N.BUNDLE.getString("DownloadMsg_part1"), new BufferedInputStream(conn.getInputStream(), Config.BUFFER_CAPACITY));
-    ProgressMonitor pm = in.getProgressMonitor();
-    pm.setMaximum(conn.getContentLength());
-    byte[] data = new byte[Config.CHUNK_SIZE];
-    int length;
-    while ((length = in.read(data)) != -1) {
-    out.write(data, 0, length);
+        System.out.println("Downloading file from servlet");
+        ProgressMonitorInputStream in = null;
+        OutputStream out = null;
+        HttpURLConnection conn = null;
+        try {
+            //Hack for NTLM proxy
+            //perform a head method to negociate the NTLM proxy authentication
+            performHeadHTTPMethod(pURL);
+            
+            out = new BufferedOutputStream(new FileOutputStream(pLocalFile), Config.BUFFER_CAPACITY);
+            URL url = new URL(pURL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setUseCaches(false);
+            conn.setAllowUserInteraction(true);
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestMethod("GET");
+            byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((getLogin() + ":" + getPassword()).getBytes("ISO-8859-1"));
+            conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
+            conn.connect();
+            int code = conn.getResponseCode();
+            System.out.println("Download HTTP response code: " + code);
+            in = new ProgressMonitorInputStream(pParent, I18N.BUNDLE.getString("DownloadMsg_part1"), new BufferedInputStream(conn.getInputStream(), Config.BUFFER_CAPACITY));
+            ProgressMonitor pm = in.getProgressMonitor();
+            pm.setMaximum(conn.getContentLength());
+            byte[] data = new byte[Config.CHUNK_SIZE];
+            int length;
+            while ((length = in.read(data)) != -1) {
+                out.write(data, 0, length);
+            }
+            out.flush();
+        } finally {
+            out.close();
+            in.close();
+            conn.disconnect();
+        }
     }
-    out.flush();
-    } finally {
-    out.close();
-    in.close();
-    conn.disconnect();
-    }
-    }
-     */
 
     public FolderBasedElementsTableModel createElementsTableModel() {
         FolderBasedElementsTableModel elementsTableModel = new FolderBasedElementsTableModel();
@@ -872,13 +876,13 @@ public class MainModel {
 
     public MasterDocument[] searchMDocs(String pMDocId, String pTitle,
             Version pVersion, User pAuthor, String pType, Date pCreationDateFrom,
-            Date pCreationDateTo, SearchQuery.AbstractAttributeQuery[] pAttributes, String[] pTags, String pContent) throws Exception{
+            Date pCreationDateTo, SearchQuery.AbstractAttributeQuery[] pAttributes, String[] pTags, String pContent) throws Exception {
         MasterDocument[] mdocs = null;
         try {
             System.out.println("Searching for master document " + pMDocId + " version " + pVersion + " title " + pTitle + " author " + pAuthor + " creation date between " + pCreationDateFrom + " and " + pCreationDateTo + " tags " + pTags + " content " + pContent);
             mdocs = Tools.resetParentReferences(mCommandService.searchMDocs(new SearchQuery(getWorkspace().getId(), pMDocId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
                     pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent)));
-        //TODO cache mdocs ?
+            //TODO cache mdocs ?
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -905,29 +909,32 @@ public class MainModel {
         File localFile = new File(folder, pBin.getName());
 
         if (!localFile.exists()) {
-            MainModel model = MainModel.getInstance();
             folder.mkdirs();
             try {
-                StreamingDataHandler dh;
+                Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
                 try {
-                    dh = (StreamingDataHandler) mFileService.downloadFromDocument(model.getWorkspace().getId(), pDocument.getMasterDocumentId(), pDocument.getMasterDocumentVersion(), pDocument.getIteration(), pBin.getName());
+                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                        StreamingDataHandler dh = (StreamingDataHandler) mFileService.downloadFromDocument(getWorkspace().getId(), pDocument.getMasterDocumentId(), pDocument.getMasterDocumentVersion(), pDocument.getIteration(), pBin.getName());
+                        downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
+                    } else {
+                        //workaround mode
+                        downloadFileWithServlet(pParent, localFile, getServletURL(pDocument, pBin.getName()));
+                    }
                 } catch (Exception ex) {
                     if (ex.getCause() instanceof InterruptedIOException) {
                         throw ex;
                     }
-                    //error encountered, try again without chunked mode
-                    Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
                     if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                         System.out.println("Disabling chunked mode");
                         ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
-                        dh = (StreamingDataHandler) mFileService.downloadFromDocument(model.getWorkspace().getId(), pDocument.getMasterDocumentId(), pDocument.getMasterDocumentVersion(), pDocument.getIteration(), pBin.getName());
+                        downloadFileWithServlet(pParent, localFile, getServletURL(pDocument, pBin.getName()));
                     } else {
                         //we were already not using the chunked mode
                         //there's not much to do...
                         throw ex;
                     }
+
                 }
-                downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
             } catch (WebServiceException pWSEx) {
                 Throwable t = pWSEx.getCause();
                 if (t instanceof Exception) {
@@ -937,17 +944,7 @@ public class MainModel {
                 }
             }
 
-            /*
-            String url = Config.getHTTPCodebase()
-            + "files/"
-            + URLEncoder.encode(model.getWorkspace().getId(),"UTF-8") + "/"
-            + "documents/"
-            + URLEncoder.encode(pDocument.getMasterDocumentId(),"UTF-8") + "/"
-            + pDocument.getMasterDocumentVersion() + "/"
-            + pDocument.getIteration() + "/"
-            + URLEncoder.encode(pFileName,"UTF-8");
-            downloadFileWithServlet(pParent, localFile, url);
-             */
+
             if (readOnly) {
                 localFile.setReadOnly();
                 localFile.deleteOnExit();
@@ -957,6 +954,88 @@ public class MainModel {
         }
 
         return localFile;
+    }
+
+    public File getFile(Component pParent, MasterDocumentTemplate pTemplate, BinaryResource pBin) throws Exception {
+        File folder = Config.getCacheFolder(pTemplate);
+        File localFile = new File(folder, pBin.getName());
+
+        if (!localFile.exists()) {
+            MainModel model = MainModel.getInstance();
+            folder.mkdirs();
+            try {
+                Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
+                try {
+                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                        StreamingDataHandler dh = (StreamingDataHandler) mFileService.downloadFromTemplate(model.getWorkspace().getId(), pTemplate.getId(), pBin.getName());
+                        downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
+                    } else {
+                        //workaround mode
+                        downloadFileWithServlet(pParent, localFile, getServletURL(pTemplate, pBin.getName()));
+                    }
+
+                } catch (Exception ex) {
+                    if (ex.getCause() instanceof InterruptedIOException) {
+                        throw ex;
+                    }
+                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                        System.out.println("Disabling chunked mode");
+                        ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
+                        downloadFileWithServlet(pParent, localFile, getServletURL(pTemplate, pBin.getName()));
+                    } else {
+                        //we were already not using the chunked mode
+                        //there's not much to do...
+                        throw ex;
+                    }  
+                }
+            } catch (WebServiceException pWSEx) {
+                Throwable t = pWSEx.getCause();
+                if (t instanceof Exception) {
+                    throw (Exception) t;
+                } else {
+                    throw pWSEx;
+                }
+            }
+            localFile.deleteOnExit();
+        }
+        return localFile;
+    }
+
+
+    private String getServletURL(Document pDocument, String pRemoteFileName) throws UnsupportedEncodingException {
+        return Config.getHTTPCodebase()
+                + "files/"
+                + URLEncoder.encode(getWorkspace().getId(), "UTF-8") + "/"
+                + "documents/"
+                + URLEncoder.encode(pDocument.getMasterDocumentId(), "UTF-8") + "/"
+                + pDocument.getMasterDocumentVersion() + "/"
+                + pDocument.getIteration() + "/"
+                + URLEncoder.encode(pRemoteFileName, "UTF-8");
+
+
+    }
+
+    private String getServletURL(MasterDocumentTemplate pTemplate, String pRemoteFileName) throws UnsupportedEncodingException {
+        return Config.getHTTPCodebase()
+                + "files/"
+                + URLEncoder.encode(getWorkspace().getId(), "UTF-8")
+                + "/" + "templates/"
+                + URLEncoder.encode(pTemplate.getId(), "UTF-8")
+                + "/" + URLEncoder.encode(pRemoteFileName, "UTF-8");
+    }
+
+    private void performHeadHTTPMethod(String pURL) throws MalformedURLException, IOException {
+        URL url = new URL(pURL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setUseCaches(false);
+        conn.setAllowUserInteraction(true);
+        conn.setRequestProperty("Connection", "Keep-Alive");
+        byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((getLogin() + ":" + getPassword()).getBytes("ISO-8859-1"));
+        conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
+        conn.setRequestMethod("HEAD");
+        conn.connect();
+        int code = conn.getResponseCode();
+        System.out.println("Head HTTP response code: " + code);
     }
 
     private void downloadFile(Component pParent, File pLocalFile, int contentLength, InputStream inputStream) throws IOException {
@@ -982,57 +1061,7 @@ public class MainModel {
         }
     }
 
-    public File getFile(Component pParent, MasterDocumentTemplate pTemplate, BinaryResource pBin) throws Exception {
-        File folder = Config.getCacheFolder(pTemplate);
-        File localFile = new File(folder, pBin.getName());
-
-        if (!localFile.exists()) {
-            MainModel model = MainModel.getInstance();
-            folder.mkdirs();
-            try {
-                StreamingDataHandler dh;
-                try {
-                    dh = (StreamingDataHandler) mFileService.downloadFromTemplate(model.getWorkspace().getId(), pTemplate.getId(), pBin.getName());
-                } catch (Exception ex) {
-                    if (ex.getCause() instanceof InterruptedIOException) {
-                        throw ex;
-                    }
-                    //error encountered, try again without chunked mode
-                    Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
-                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
-                        System.out.println("Disabling chunked mode");
-                        ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
-                        dh = (StreamingDataHandler) mFileService.downloadFromTemplate(model.getWorkspace().getId(), pTemplate.getId(), pBin.getName());
-                    } else {
-                        //we were already not using the chunked mode
-                        //there's not much to do...
-                        throw ex;
-                    }
-                }
-                downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
-
-            } catch (WebServiceException pWSEx) {
-                Throwable t = pWSEx.getCause();
-                if (t instanceof Exception) {
-                    throw (Exception) t;
-                } else {
-                    throw pWSEx;
-                }
-            }
-            /*
-            String url = Config.getHTTPCodebase()
-            + "files/"
-            + URLEncoder.encode(model.getWorkspace().getId(),"UTF-8") + "/"
-            + "templates/"
-            + URLEncoder.encode(pTemplate.getId(),"UTF-8") + "/"
-            + URLEncoder.encode(pFileName,"UTF-8");
-            folder.mkdirs();
-            downloadFileWithServlet(pParent, localFile, url);
-             */
-            localFile.deleteOnExit();
-        }
-        return localFile;
-    }
+    
 
     private void showContinueOrExitDialog(String pMessage) {
         Object[] options = {I18N.BUNDLE.getString("Continue_label"), I18N.BUNDLE.getString("Exit_label")};

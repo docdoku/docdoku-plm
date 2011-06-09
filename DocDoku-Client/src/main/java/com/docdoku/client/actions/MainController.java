@@ -29,7 +29,7 @@ import com.docdoku.core.document.MasterDocumentTemplate;
 import com.docdoku.core.document.MasterDocumentKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.DocumentToDocumentLink;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -322,7 +322,7 @@ public class MainController {
 
     }
 
-    private String getServletURL(Document pDoc, File pLocalFile) throws UnsupportedEncodingException, NotAllowedException {
+    private String getServletURL(Document pDoc, File pLocalFile) throws UnsupportedEncodingException {
         MainModel model = MainModel.getInstance();
         return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "documents/" + URLEncoder.encode(pDoc.getMasterDocumentId(), "UTF-8") + "/" + pDoc.getMasterDocumentVersion() + "/" + pDoc.getIteration() + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
@@ -369,7 +369,7 @@ public class MainController {
         }
     }
 
-    private String getServletURL(MasterDocumentTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException, NotAllowedException {
+    private String getServletURL(MasterDocumentTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException {
         MainModel model = MainModel.getInstance();
         return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "templates/" + URLEncoder.encode(pTemplate.getId(), "UTF-8") + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }

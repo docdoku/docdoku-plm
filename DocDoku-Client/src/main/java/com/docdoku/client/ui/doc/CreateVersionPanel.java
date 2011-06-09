@@ -25,7 +25,7 @@ import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.core.document.MasterDocument;
 import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.document.Version;
+import com.docdoku.core.common.Version;
 
 import javax.swing.*;
 import java.awt.*;

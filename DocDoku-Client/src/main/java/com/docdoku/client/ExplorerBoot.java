@@ -79,7 +79,7 @@ public class ExplorerBoot {
         MTOMFeature feature = new MTOMFeature();
         UploadDownloadService service = new UploadDownloadService(pURL,new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
         IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class,feature);
-        ((BindingProvider)proxy).getRequestContext().put(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192); 
+        ((BindingProvider)proxy).getRequestContext().put(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);
         //Map context = ((BindingProvider)proxy).getRequestContext();
         return proxy;
     }

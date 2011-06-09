@@ -27,7 +27,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.DocumentToDocumentLink;
 
-import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

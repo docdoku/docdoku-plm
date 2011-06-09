@@ -24,7 +24,7 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.Version;
+import com.docdoku.core.common.Version;
 
 import javax.swing.*;
 import java.awt.*;

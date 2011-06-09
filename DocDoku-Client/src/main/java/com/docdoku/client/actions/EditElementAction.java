@@ -34,7 +34,7 @@ import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.client.ui.doc.EditDocDialog;
 import com.docdoku.client.localization.I18N;
 
-import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
 import java.awt.Cursor;
 import javax.swing.*;
 

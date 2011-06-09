@@ -28,7 +28,7 @@ import com.docdoku.client.ui.search.SearchResultDialog;
 import com.docdoku.core.document.MasterDocument;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.Version;
+import com.docdoku.core.common.Version;
 
 import java.awt.Cursor;
 import javax.swing.*;

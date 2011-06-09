@@ -32,7 +32,7 @@ import java.text.ParseException;
 import javax.swing.*;
 import java.awt.*;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.Version.VersionUnit;
+import com.docdoku.core.common.Version.VersionUnit;
 import com.docdoku.core.util.Tools;
 import javax.swing.text.MaskFormatter;
 

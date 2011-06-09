@@ -34,7 +34,7 @@ import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.core.document.MasterDocumentTemplate;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.Version;
+import com.docdoku.core.common.Version;
 import java.awt.Component;
 import java.util.LinkedHashSet;
 import java.util.Set;
