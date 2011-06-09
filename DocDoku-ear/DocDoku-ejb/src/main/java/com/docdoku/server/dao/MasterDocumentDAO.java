@@ -24,7 +24,7 @@ import com.docdoku.core.services.MasterDocumentAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
 import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.Tag;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
@@ -38,6 +38,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 public class MasterDocumentDAO {
 
@@ -72,30 +73,30 @@ public class MasterDocumentDAO {
             for(SearchQuery.AbstractAttributeQuery attr:pAttrs){
                 queryStr.append("AND EXISTS (");
                 if(attr instanceof SearchQuery.DateAttributeQuery){
-                    queryStr.append("SELECT attr" + i + " FROM InstanceDateAttribute attr" + i + " ");
-                    queryStr.append("WHERE attr" + i + ".dateValue BETWEEN :attrLValue" + i + " AND :attrUValue" + i + " ");
-                    queryStr.append("AND attr" + i + ".document = d ");
-                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceDateAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".dateValue BETWEEN :attrLValue").append(i).append(" AND :attrUValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }else if(attr instanceof SearchQuery.TextAttributeQuery){
-                    queryStr.append("SELECT attr" + i + " FROM InstanceTextAttribute attr" + i + " ");
-                    queryStr.append("WHERE attr" + i + ".textValue  = :attrValue" + i + " ");
-                    queryStr.append("AND attr" + i + ".document = d ");
-                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceTextAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".textValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }else if(attr instanceof SearchQuery.NumberAttributeQuery){
-                    queryStr.append("SELECT attr" + i + " FROM InstanceNumberAttribute attr" + i + " ");
-                    queryStr.append("WHERE attr" + i + ".numberValue  = :attrValue" + i + " ");
-                    queryStr.append("AND attr" + i + ".document = d ");
-                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceNumberAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".numberValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }else if(attr instanceof SearchQuery.BooleanAttributeQuery){
-                    queryStr.append("SELECT attr" + i + " FROM InstanceBooleanAttribute attr" + i + " ");
-                    queryStr.append("WHERE attr" + i + ".booleanValue  = :attrValue" + i + " ");
-                    queryStr.append("AND attr" + i + ".document = d ");
-                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceBooleanAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".booleanValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }else if(attr instanceof SearchQuery.URLAttributeQuery){
-                    queryStr.append("SELECT attr" + i + " FROM InstanceURLAttribute attr" + i + " ");
-                    queryStr.append("WHERE attr" + i + ".urlValue  = :attrValue" + i + " ");
-                    queryStr.append("AND attr" + i + ".document = d ");
-                    queryStr.append("AND attr" + i + ".name = :attrName" + (i++));
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceURLAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".urlValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }
                 queryStr.append(") ");
             }
@@ -110,12 +111,12 @@ public class MasterDocumentDAO {
 
         if (pTags != null && pTags.size() > 0) {
             for(int i =0 ;i<pTags.size();i++)
-                queryStr.append("AND :tag" + i + " MEMBER OF m.tags ");
+                queryStr.append("AND :tag").append(i).append(" MEMBER OF m.tags ");
         }
         queryStr.append("AND m.creationDate BETWEEN :lowerDate AND :upperDate ");
         queryStr.append("ORDER BY m.id, m.version");
 
-        Query query = em.createQuery(queryStr.toString());
+        TypedQuery<MasterDocument> query = em.createQuery(queryStr.toString(), MasterDocument.class);
         query.setParameter("workspaceId", pWorkspaceId);
         query.setParameter("id", pMDocID == null ? "%" : "%" + pMDocID + "%");
         query.setParameter("version", pVersion == null ? "%" : "%" + pVersion + "%");
@@ -185,19 +186,19 @@ public class MasterDocumentDAO {
     }
 
     public List<MasterDocument> findMDocsByFolder(String pCompletePath) {
-        Query query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE m.location.completePath = :completePath");
+        TypedQuery<MasterDocument> query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE m.location.completePath = :completePath", MasterDocument.class);
         query.setParameter("completePath", pCompletePath);
         return query.getResultList();
     }
 
     public List<MasterDocument> findMDocsByTag(Tag pTag) {
-        Query query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE :tag MEMBER OF m.tags");
+        TypedQuery<MasterDocument> query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE :tag MEMBER OF m.tags", MasterDocument.class);
         query.setParameter("tag", pTag);
         return query.getResultList();
     }
 
     public List<MasterDocument> findCheckedOutMDocs(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE m.checkOutUser = :user");
+        TypedQuery<MasterDocument> query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE m.checkOutUser = :user", MasterDocument.class);
         query.setParameter("user", pUser);
         return query.getResultList();
     }

@@ -72,7 +72,7 @@ public class DataManagerImpl implements DataManager {
             if(previous!=null)
                 return getDataFile(previous);
             else{
-                throw new VaultException(null);
+                throw new VaultException(new FileNotFoundException(realFile.toString()));
             }
         }
     }

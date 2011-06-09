@@ -19,59 +19,12 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.WorkspaceNotFoundException;
-import com.docdoku.core.services.WorkflowModelNotFoundException;
-import com.docdoku.core.services.WorkflowModelAlreadyExistsException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.TagNotFoundException;
-import com.docdoku.core.services.TaskNotFoundException;
-import com.docdoku.core.services.MasterDocumentTemplateNotFoundException;
-import com.docdoku.core.services.TagAlreadyExistsException;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.MasterDocumentTemplateAlreadyExistsException;
-import com.docdoku.core.services.MasterDocumentNotFoundException;
-import com.docdoku.core.services.MasterDocumentAlreadyExistsException;
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.FolderNotFoundException;
-import com.docdoku.core.services.FolderAlreadyExistsException;
-import com.docdoku.core.services.FileAlreadyExistsException;
-import com.docdoku.core.services.AccessRightException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.ICommandLocal;
-import com.docdoku.core.services.ICommandWS;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.document.SubscriptionKey;
-import com.docdoku.core.document.SearchQuery;
-import com.docdoku.core.document.StateChangeSubscription;
-import com.docdoku.core.document.MasterDocumentTemplate;
-import com.docdoku.core.document.IterationChangeSubscription;
-import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.Version;
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.TagKey;
-import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.Tag;
-import com.docdoku.core.document.InstanceAttribute;
-import com.docdoku.core.document.DocumentToDocumentLink;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.document.DocumentKey;
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.common.BasicElementKey;
-import com.docdoku.core.workflow.TaskKey;
-import com.docdoku.core.common.UserKey;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.Workflow;
+import com.docdoku.core.services.*;
+import com.docdoku.core.document.*;
+import com.docdoku.core.common.*;
+import com.docdoku.core.meta.*;
+import com.docdoku.core.security.*;
+import com.docdoku.core.workflow.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.dao.*;
@@ -544,7 +497,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
                 InstanceAttribute attr = attrTemplate.createInstanceAttribute();
-                attr.setDocument(newDoc);
+                //attr.setDocument(newDoc);
                 attrs.put(attr.getName(), attr);
             }
             newDoc.setInstanceAttributes(attrs);
@@ -565,7 +518,14 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
         if (pWorkflowModelId != null) {
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new BasicElementKey(user.getWorkspaceId(), pWorkflowModelId));
-            mdoc.setWorkflow(workflowModel.createWorkflow());
+            Workflow workflow = workflowModel.createWorkflow();
+            mdoc.setWorkflow(workflow);
+
+            Collection<Task> runningTasks = workflow.getRunningTasks();
+            for (Task runningTask : runningTasks) {
+                runningTask.start();
+            }
+            mailer.sendApproval(runningTasks, mdoc);
         }
 
         mdoc.setTitle(pTitle);
@@ -793,14 +753,14 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : beforeLastDocument.getInstanceAttributes().values()) {
                 InstanceAttribute newAttr = attr.clone();
-                newAttr.setDocument(newDoc);
+                //newAttr.setDocument(newDoc);
                 //Workaround for the NULL DTYPE bug
                 attrDAO.createAttribute(newAttr);
                 attrs.put(newAttr.getName(), newAttr);
             }
             newDoc.setInstanceAttributes(attrs);
         }
-        
+
         return mdoc;
     }
 
@@ -1057,30 +1017,49 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             }
 
             // set doc for all attributes
+            
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : pAttributes) {
-                attr.setDocument(doc);
+                //attr.setDocument(doc);
                 attrs.put(attr.getName(), attr);
             }
 
-            Set<InstanceAttribute> attrsToRemove = new HashSet<InstanceAttribute>(doc.getInstanceAttributes().values());
-            attrsToRemove.removeAll(attrs.values());
+            Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(doc.getInstanceAttributes().values());
+            //attrsToRemove.removeAll(attrs.values());
 
-            InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
+            for(InstanceAttribute attr:currentAttrs){
+                if(!attrs.containsKey(attr.getName())){
+                    doc.getInstanceAttributes().remove(attr.getName());
+                }
+            }
+
+            
+            //InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
+            /*
             for (InstanceAttribute attrToRemove : attrsToRemove) {
                 attrDAO.removeAttribute(attrToRemove);
             }
+            */
 
-            Set<InstanceAttribute> attrsToCreate = new HashSet<InstanceAttribute>(attrs.values());
-            attrsToCreate.removeAll(doc.getInstanceAttributes().values());
-
-            for (InstanceAttribute attrToCreate : attrsToCreate) {
-               attrDAO.createAttribute(attrToCreate);
+            for(InstanceAttribute attr:attrs.values()){
+                if(!doc.getInstanceAttributes().containsKey(attr.getName())){
+                    doc.getInstanceAttributes().put(attr.getName(), attr);
+                }else{
+                    doc.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
+                }
             }
+            
+            //Set<InstanceAttribute> attrsToCreate = new HashSet<InstanceAttribute>(attrs.values());
+            //attrsToCreate.removeAll(doc.getInstanceAttributes().values());
 
+            /*
+            for (InstanceAttribute attrToCreate : attrsToCreate) {
+                attrDAO.createAttribute(attrToCreate);
+            }
+            */
             doc.setRevisionNote(pRevisionNote);
             doc.setLinkedDocuments(links);
-            doc.setInstanceAttributes(attrs);
+            //doc.setInstanceAttributes(attrs);
             return mdoc;
 
         } else {
@@ -1138,7 +1117,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : lastDoc.getInstanceAttributes().values()) {
                 InstanceAttribute clonedAttribute = attr.clone();
-                clonedAttribute.setDocument(firstIte);
+                //clonedAttribute.setDocument(firstIte);
                 attrs.put(clonedAttribute.getName(), clonedAttribute);
             }
             firstIte.setInstanceAttributes(attrs);
@@ -1146,7 +1125,14 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
         if (pWorkflowModelId != null) {
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new BasicElementKey(user.getWorkspaceId(), pWorkflowModelId));
-            mdoc.setWorkflow(workflowModel.createWorkflow());
+            Workflow workflow = workflowModel.createWorkflow();
+            mdoc.setWorkflow(workflow);
+
+            Collection<Task> runningTasks = workflow.getRunningTasks();
+            for (Task runningTask : runningTasks) {
+                runningTask.start();
+            }
+            mailer.sendApproval(runningTasks, mdoc);
         }
         mdoc.setTitle(pTitle);
         mdoc.setDescription(pDescription);

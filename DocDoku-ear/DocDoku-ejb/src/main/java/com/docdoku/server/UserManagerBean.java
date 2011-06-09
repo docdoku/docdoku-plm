@@ -49,6 +49,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.PasswordRecoveryRequest;
 import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
@@ -88,7 +89,7 @@ public class UserManagerBean implements IUserManagerLocal {
     private void init() {
         dataManager = new DataManagerImpl(new File(vaultPath));
     }
-    
+
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
         Date now = new Date();
@@ -290,38 +291,18 @@ public class UserManagerBean implements IUserManagerLocal {
     @RolesAllowed("users")
     @Override
     public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
-        try {
-            Account account = checkAdmin(pWorkspaceId);
-            UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
-            for (String login : pLogins) {
-                MasterDocument[] mdocs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
-                for (MasterDocument mdoc : mdocs) {
-                    for (Document doc : mdoc.getDocumentIterations()) {
-                        for (BinaryResource file : doc.getAttachedFiles()) {
-                            indexer.removeFromIndex(file.getFullName());
-                            dataManager.delData(file);
-                        }
+        Account account = checkAdmin(pWorkspaceId);
+        UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
+        for (String login : pLogins) {
+            MasterDocument[] mdocs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
+            for (MasterDocument mdoc : mdocs) {
+                for (Document doc : mdoc.getDocumentIterations()) {
+                    for (BinaryResource file : doc.getAttachedFiles()) {
+                        indexer.removeFromIndex(file.getFullName());
+                        dataManager.delData(file);
                     }
                 }
             }
-        } catch (UserNotFoundException ex) {
-            ctx.setRollbackOnly();
-            throw ex;
-        } catch (NotAllowedException ex) {
-            ctx.setRollbackOnly();
-            throw ex;
-        } catch (AccessRightException ex) {
-            ctx.setRollbackOnly();
-            throw ex;
-        } catch (AccountNotFoundException ex) {
-            ctx.setRollbackOnly();
-            throw ex;
-        } catch (WorkspaceNotFoundException ex) {
-            ctx.setRollbackOnly();
-            throw ex;
-        } catch (FolderNotFoundException ex) {
-            ctx.setRollbackOnly();
-            throw ex;
         }
     }
 
@@ -356,10 +337,19 @@ public class UserManagerBean implements IUserManagerLocal {
     }
 
     @Override
-    public void recoverPassword(String pPasswdRRUuid, String pPassword){
-        PasswordRecoveryRequest passwdRR = em.find(PasswordRecoveryRequest.class, pPasswdRRUuid);
+    public void recoverPassword(String pPasswdRRUuid, String pPassword) throws PasswordRecoveryRequestNotFoundException {
+        PasswordRecoveryRequestDAO passwdRRequestDAO = new PasswordRecoveryRequestDAO(em);
+        PasswordRecoveryRequest passwdRR = passwdRRequestDAO.loadPasswordRecoveryRequest(pPasswdRRUuid);
         AccountDAO accountDAO = new AccountDAO(em);
         accountDAO.updateCredential(passwdRR.getLogin(), pPassword);
+        passwdRRequestDAO.removePasswordRecoveryRequest(passwdRR);
+    }
+
+    @Override
+    public PasswordRecoveryRequest createPasswordRecoveryRequest(String login) {
+        PasswordRecoveryRequest passwdRR = PasswordRecoveryRequest.createPasswordRecoveryRequest(login);
+        em.persist(passwdRR);
+        return passwdRR;
     }
 
     @RolesAllowed("users")

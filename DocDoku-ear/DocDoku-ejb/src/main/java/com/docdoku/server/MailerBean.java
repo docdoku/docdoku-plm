@@ -157,14 +157,14 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
-    public void sendPasswordRecovery(Account account) {
+    public void sendPasswordRecovery(Account account, String passwordRRUuid) {
         try {
             javax.mail.Message message = new MimeMessage(mailSession);
             message.setRecipient(javax.mail.Message.RecipientType.TO,
                     new InternetAddress(account.getEmail(), account.getName()));
             message.setSubject("Password recovery");
             message.setSentDate(new Date());
-            message.setContent(getPasswordRecoveryMessage(account, new Locale(account.getLanguage())),
+            message.setContent(getPasswordRecoveryMessage(account, passwordRRUuid, new Locale(account.getLanguage())),
                     "text/html; charset=utf-8");
             message.setFrom();
             Transport.send(message);
@@ -180,8 +180,8 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
-    private String getPasswordRecoveryMessage(Account account, Locale pLocale) {
-        String recoveryURL = codebase + "/action/recovery?id=" + UUID.randomUUID();
+    private String getPasswordRecoveryMessage(Account account, String pPasswordRRUuid, Locale pLocale) {
+        String recoveryURL = codebase + "/faces/recoveryForm.xhtml?id=" + pPasswordRRUuid;
         Object[] args = {recoveryURL, account.getLogin()};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Recovery_text"), args);
