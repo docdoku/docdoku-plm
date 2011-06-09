@@ -79,4 +79,9 @@ public abstract class ApplicationException extends Exception{
     
     @Override
      public abstract String getLocalizedMessage();
+
+    @Override
+    public String toString() {
+        return getMessage();
+    }
 }

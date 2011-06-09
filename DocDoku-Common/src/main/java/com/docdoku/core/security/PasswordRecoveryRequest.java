@@ -43,6 +43,7 @@ public class PasswordRecoveryRequest implements java.io.Serializable {
     
     public PasswordRecoveryRequest() {
     }
+    
 
     public static PasswordRecoveryRequest createPasswordRecoveryRequest(String login){
         PasswordRecoveryRequest passwdRR = new PasswordRecoveryRequest();

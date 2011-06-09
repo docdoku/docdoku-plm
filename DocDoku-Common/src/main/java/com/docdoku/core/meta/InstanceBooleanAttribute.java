@@ -18,7 +18,7 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
 
@@ -38,8 +38,8 @@ public class InstanceBooleanAttribute extends InstanceAttribute{
     public InstanceBooleanAttribute() {
     }
     
-    public InstanceBooleanAttribute(Document pDoc, String pName, boolean pValue) {
-        super(pDoc, pName);
+    public InstanceBooleanAttribute(String pName, boolean pValue) {
+        super(pName);
         setBooleanValue(pValue);
     }
 

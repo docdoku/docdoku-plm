@@ -18,7 +18,7 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
 
@@ -39,8 +39,8 @@ public class InstanceTextAttribute extends InstanceAttribute{
     public InstanceTextAttribute() {
     }
     
-    public InstanceTextAttribute(Document pDoc, String pName, String pValue) {
-        super(pDoc, pName);
+    public InstanceTextAttribute(String pName, String pValue) {
+        super(pName);
         setTextValue(pValue);
     }
 

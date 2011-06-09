@@ -89,7 +89,7 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date checkOutDate;
     
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
     
     @ManyToOne(fetch=FetchType.EAGER)

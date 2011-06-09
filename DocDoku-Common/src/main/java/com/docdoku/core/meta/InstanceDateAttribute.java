@@ -18,7 +18,7 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.meta;
 
 import java.util.Date;
 import javax.persistence.Entity;
@@ -40,8 +40,8 @@ public class InstanceDateAttribute extends InstanceAttribute{
     public InstanceDateAttribute() {
     }
     
-    public InstanceDateAttribute(Document pDoc, String pName, Date pValue) {
-        super(pDoc, pName);
+    public InstanceDateAttribute(String pName, Date pValue) {
+        super(pName);
         setDateValue(pValue);
     }
 

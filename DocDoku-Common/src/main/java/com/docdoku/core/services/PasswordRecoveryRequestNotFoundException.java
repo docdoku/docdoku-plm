@@ -17,29 +17,36 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
+
 package com.docdoku.core.services;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.workflow.Task;
-import java.util.Collection;
+import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
  *
  * @author Florent Garin
  */
-public interface IMailerLocal {
+public class PasswordRecoveryRequestNotFoundException extends ApplicationException {
 
-    void sendStateNotification(User[] pSubscribers,
-            MasterDocument pMasterDocument);
+    private String mPasswordRRUuid;
+    
+    
+    public PasswordRecoveryRequestNotFoundException(String pMessage) {
+        super(pMessage);
+    }
+    
+    public PasswordRecoveryRequestNotFoundException(Locale pLocale, String pPasswordRRUuid) {
+        this(pLocale, pPasswordRRUuid, null);
+    }
 
-    void sendIterationNotification(User[] pSubscribers,
-            MasterDocument pMasterDocument);
-
-    void sendApproval(Collection<Task> pRunningTasks,
-            MasterDocument pMasterDocument);
-
-    void sendPasswordRecovery(Account account, String passwordRRUuid);
+    public PasswordRecoveryRequestNotFoundException(Locale pLocale, String pPasswordRRUuid, Throwable pCause) {
+        super(pLocale, pCause);
+        mPasswordRRUuid=pPasswordRRUuid;
+    }
+    
+    public String getLocalizedMessage() {
+        String message = getBundleDefaultMessage();
+        return MessageFormat.format(message,mPasswordRRUuid);
+    }
 }

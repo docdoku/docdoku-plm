@@ -20,6 +20,7 @@
 
 package com.docdoku.core.document;
 
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.FileHolder;
@@ -81,7 +82,7 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
     @JoinTable(
     inverseJoinColumns={
-        @JoinColumn(name="ATTACHEDFILES_FULLNAME", referencedColumnName="FULLNAME")
+        @JoinColumn(name="ATTACHEDFILE_FULLNAME", referencedColumnName="FULLNAME")
     },
     joinColumns={
         @JoinColumn(name="DOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
@@ -106,8 +107,18 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     @OneToMany(mappedBy = "fromDocument", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<DocumentToDocumentLink> linkedDocuments=new HashSet<DocumentToDocumentLink>();
     
-    @OneToMany(mappedBy = "document", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @MapKey(name="name")
+    @JoinTable(
+    inverseJoinColumns={
+        @JoinColumn(name="INSTANCEATTRIBUTE_ID", referencedColumnName="ID")
+    },
+    joinColumns={
+        @JoinColumn(name="DOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="DOCUMENT_MASTERDOCUMENT_ID", referencedColumnName="MASTERDOCUMENT_ID"),
+        @JoinColumn(name="DOCUMENT_MASTERDOCUMENT_VERSION", referencedColumnName="MASTERDOCUMENT_VERSION"),
+        @JoinColumn(name="DOCUMENT_ITERATION", referencedColumnName="ITERATION")
+    })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
     public Document() {
@@ -311,7 +322,6 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
         for (InstanceAttribute attribute : instanceAttributes.values()) {
             InstanceAttribute clonedAttribute=attribute.clone();
-            clonedAttribute.setDocument(clone);
             clonedInstanceAttributes.put(clonedAttribute.getName(),clonedAttribute);
         }
         clone.instanceAttributes = clonedInstanceAttributes;

@@ -21,7 +21,7 @@ package com.docdoku.core.util;
 
 import com.docdoku.core.document.MasterDocumentTemplate;
 import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.DocumentToDocumentLink;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.MasterDocument;
@@ -69,10 +69,11 @@ public class Tools {
             link.setFromDocument(pDoc);
         }
 
+        /*
         for (InstanceAttribute attr : pDoc.getInstanceAttributes().values()) {
             attr.setDocument(pDoc);
         }
-
+        */
         return pDoc;
     }
 

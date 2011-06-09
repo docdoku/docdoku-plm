@@ -25,7 +25,7 @@ import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.document.MasterDocumentKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.document.DocumentKey;

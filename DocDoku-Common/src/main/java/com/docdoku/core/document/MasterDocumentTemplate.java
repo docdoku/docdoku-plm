@@ -63,7 +63,7 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
     @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
     @JoinTable(
         inverseJoinColumns={
-            @JoinColumn(name="ATTACHEDFILES_FULLNAME", referencedColumnName="FULLNAME")
+            @JoinColumn(name="ATTACHEDFILE_FULLNAME", referencedColumnName="FULLNAME")
         },
         joinColumns={
             @JoinColumn(name="MASTERDOCUMENTTEMPLATE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),

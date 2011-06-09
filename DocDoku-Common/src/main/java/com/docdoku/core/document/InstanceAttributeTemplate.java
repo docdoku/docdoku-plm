@@ -19,12 +19,12 @@
  */
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.InstanceTextAttribute;
-import com.docdoku.core.document.InstanceAttribute;
-import com.docdoku.core.document.InstanceNumberAttribute;
-import com.docdoku.core.document.InstanceBooleanAttribute;
-import com.docdoku.core.document.InstanceURLAttribute;
-import com.docdoku.core.document.InstanceDateAttribute;
+import com.docdoku.core.meta.InstanceTextAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceURLAttribute;
+import com.docdoku.core.meta.InstanceNumberAttribute;
+import com.docdoku.core.meta.InstanceBooleanAttribute;
+import com.docdoku.core.meta.InstanceDateAttribute;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

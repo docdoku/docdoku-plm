@@ -20,8 +20,8 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.InstanceAttribute;
-import com.docdoku.core.document.InstanceDateAttribute;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceDateAttribute;
 import java.io.Serializable;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlSeeAlso;
