@@ -3,6 +3,7 @@
     <target name="-init-cl-deployment-env" if="deploy.ant.enabled">
         <property file="${deploy.ant.properties.file}" />
         <available file="${deploy.ant.docbase.dir}/WEB-INF/sun-web.xml" property="sun.web.present"/>
+        <available file="${deploy.ant.docbase.dir}/WEB-INF/glassfish-web.xml" property="glassfish.web.present"/>
         <available file="${deploy.ant.resource.dir}" property="has.setup"/>
         <tempfile prefix="gfv3" property="gfv3.password.file" destdir="${java.io.tmpdir}"/>  <!-- do not forget to delete this! -->
         <echo message="AS_ADMIN_PASSWORD=${gfv3.password}" file="${gfv3.password.file}"/>
@@ -23,8 +24,34 @@
         <xmlproperty file="${temp.sun.web}" validate="false">
         </xmlproperty>    
         <delete file="${temp.sun.web}"/>
-        <property name="deploy.ant.client.url" value="${gfv3.url}${sun-web-app.context-root}"/>
-        <property name="deploy.context.root.argument" value="&amp;contextroot=${sun-web-app.context-root}"/>
+        <condition property="deploy.ant.client.url" value="${gfv3.url}${sun-web-app.context-root}" else="${gfv3.url}/${ant.project.name}">
+            <isset property="sun-web-app.context-root"/>
+        </condition>
+        <condition property="deploy.context.root.argument" value="&amp;contextroot=${sun-web-app.context-root}" else="/${ant.project.name}">
+            <isset property="sun-web-app.context-root"/>
+        </condition>
+    </target>
+    <target name="-parse-glassfish-web" depends="-init-cl-deployment-env" if="glassfish.web.present">
+        <tempfile prefix="gfv3" property="temp.gf.web" destdir="${java.io.tmpdir}"/>
+        <copy file="${deploy.ant.docbase.dir}/WEB-INF/glassfish-web.xml" tofile="${temp.gf.web}"/>
+        <!-- The doctype triggers resolution which can fail -->
+        <replace file="${temp.gf.web}">
+            <replacetoken><![CDATA[<!DOCTYPE]]></replacetoken>
+            <replacevalue><![CDATA[<!-- <!DOCTYPE]]></replacevalue>
+        </replace>
+        <replace file="${temp.gf.web}">
+            <replacetoken><![CDATA[<glassfish-web-app]]></replacetoken>
+            <replacevalue><![CDATA[--> <glassfish-web-app]]></replacevalue>
+        </replace>
+        <xmlproperty file="${temp.gf.web}" validate="false">
+        </xmlproperty>
+        <delete file="${temp.gf.web}"/>
+        <condition property="deploy.ant.client.url" value="${gfv3.url}${glassfish-web-app.context-root}" else="${gfv3.url}/${ant.project.name}">
+            <isset property="glassfish-web-app.context-root"/>
+        </condition>
+        <condition property="deploy.context.root.argument" value="&amp;contextroot=${glassfish-web-app.context-root}" else="/${ant.project.name}">
+            <isset property="glassfish-web-app.context-root"/>
+        </condition>
     </target>
     <target name="-no-parse-sun-web" depends="-init-cl-deployment-env" unless="sun.web.present">
         <property name="deploy.context.root.argument" value=""/>
@@ -33,7 +60,6 @@
         <tempfile prefix="gfv3" property="gfv3.resources.dir" destdir="${java.io.tmpdir}"/>
         <mkdir dir="${gfv3.resources.dir}"/>
         <mkdir dir="${gfv3.resources.dir}/META-INF"/>
-        <property name="gfv3.resources.file" value="${gfv3.resources.dir}/META-INF/sun-resources.xml"/>
         <copy todir="${gfv3.resources.dir}/META-INF">
             <fileset dir="${deploy.ant.resource.dir}"/>
         </copy>
@@ -42,7 +68,7 @@
         </jar>
         <delete dir="${gfv3.resources.dir}"/>
     </target>
-    <target name="-deploy-ant" depends="-parse-sun-web,-no-parse-sun-web,-add-resources" if="deploy.ant.enabled">
+    <target name="-deploy-ant" depends="-parse-glassfish-web, -parse-sun-web, -no-parse-sun-web,-add-resources" if="deploy.ant.enabled">
         <antcall target="-deploy-without-pw"/>
         <antcall target="-deploy-with-pw"/>
     </target>
