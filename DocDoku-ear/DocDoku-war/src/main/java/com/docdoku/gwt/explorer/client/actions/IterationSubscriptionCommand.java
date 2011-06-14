@@ -1,9 +1,7 @@
-package com.docdoku.gwt.explorer.client.actions;
-
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
- * 
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ *
  * This file is part of DocDoku.
  *
  * DocDoku is free software: you can redistribute it and/or modify
@@ -11,15 +9,16 @@ package com.docdoku.gwt.explorer.client.actions;
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDoku is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ * DocDoku is distributed in the hope that it will be useful,  
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+ * GNU General Public License for more details.  
+ *  
+ * You should have received a copy of the GNU General Public License  
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
+package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
@@ -39,6 +38,7 @@ public class IterationSubscriptionCommand implements Action {
         m_mainPage = mainPage;
     }
 
+    @Override
     public void execute(Object... userObject) {
             final SubscriptionIcon icon=(SubscriptionIcon) userObject[0];
             final boolean subscribe= (Boolean)userObject[1];
@@ -47,15 +47,15 @@ public class IterationSubscriptionCommand implements Action {
             String version = (String) userObject[4];
             AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
+            @Override
                 public void onSuccess(Void result) {
                     icon.setSubscribe(subscribe);
                 }
 
+            @Override
                 public void onFailure(Throwable caught) {
                     HTMLUtil.showError(caught.getMessage());
                 }
-
-
             };
             if(subscribe)
                 ServiceLocator.getInstance().getExplorerService().subscribeToIterationChangeEvent(workspaceId, id, version, callback);

@@ -1,7 +1,7 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
- * 
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ *
  * This file is part of DocDoku.
  *
  * DocDoku is free software: you can redistribute it and/or modify
@@ -9,14 +9,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDoku is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ * DocDoku is distributed in the hope that it will be useful,  
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+ * GNU General Public License for more details.  
+ *  
+ * You should have received a copy of the GNU General Public License  
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
+
 package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
@@ -45,6 +46,7 @@ public class DeleteElementCommand implements Action {
         m_mainPage = mainPage;
     }
 
+    @Override
     public void execute(Object... userObject) {
 
         List<MasterDocumentDTO> selectedMDocs=m_mainPage.getSelectedMDocs();
@@ -59,12 +61,14 @@ public class DeleteElementCommand implements Action {
             if(selectedFolder !=null){
                 AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
 
+                    @Override
                     public void onSuccess(MasterDocumentDTO[] mdocs) {
                         TreeItem parentItem=selectedItem.getParentItem();
                         m_mainPage.selectFolderTreeItem(parentItem);
                         m_mainPage.refreshTreeItem(parentItem);
                     }
 
+                    @Override
                     public void onFailure(Throwable caught) {
                         HTMLUtil.showError(caught.getMessage());
                     }
@@ -76,11 +80,13 @@ public class DeleteElementCommand implements Action {
             if(selectedTag !=null){
                 AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
+                    @Override
                     public void onSuccess(Void arg) {
                         m_mainPage.selectFolderTreeItem(selectedItem.getParentItem());
                         m_mainPage.refreshTags();
                     }
 
+                    @Override
                     public void onFailure(Throwable caught) {
                         HTMLUtil.showError(caught.getMessage());
                     }
@@ -96,10 +102,12 @@ public class DeleteElementCommand implements Action {
             String version = mdoc.getVersion();
             AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
+                @Override
                 public void onSuccess(Void arg) {
                     m_mainPage.refreshElementTable();
                 }
 
+                @Override
                 public void onFailure(Throwable caught) {
                     HTMLUtil.showError(caught.getMessage());
                 }
@@ -112,10 +120,12 @@ public class DeleteElementCommand implements Action {
             String id = template.getId();
             AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
+                @Override
                 public void onSuccess(Void arg) {
                     m_mainPage.refreshElementTable();
                 }
 
+                @Override
                 public void onFailure(Throwable caught) {
                     HTMLUtil.showError(caught.getMessage());
                 }
@@ -128,10 +138,12 @@ public class DeleteElementCommand implements Action {
             String id = workflow.getId();
             AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
+                @Override
                 public void onSuccess(Void arg) {
                     m_mainPage.refreshElementTable();
                 }
 
+                @Override
                 public void onFailure(Throwable caught) {
                     HTMLUtil.showError(caught.getMessage());
                 }
