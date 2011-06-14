@@ -3,22 +3,22 @@
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
         <Node id="help/workflowHelp.jsp" x="650" y="450" zoom="true"/>
-        <Node id="admin/workspaceCreationForm.jsp" x="150" y="600" zoom="true"/>
         <Node id="help/help.jsp" x="1150" y="150" zoom="true"/>
+        <Node id="admin/workspaceCreationForm.jsp" x="150" y="600" zoom="true"/>
         <Node id="help/documentHelp.jsp" x="900" y="300" zoom="true"/>
         <Node id="recoveryRequestForm.xhtml" x="1150" y="300" zoom="true"/>
-        <Node id="help/templateHelp.jsp" x="1400" y="150" zoom="true"/>
         <Node id="registrationForm.jsp" x="400" y="600" zoom="true"/>
         <Node id="help/adminHelp.jsp" x="150" y="300" zoom="true"/>
-        <Node id="admin/workspacesMenu.jsp" x="400" y="150" zoom="true"/>
+        <Node id="help/templateHelp.jsp" x="1400" y="150" zoom="true"/>
         <Node id="admin/workspace/groupCreationForm.jsp" x="650" y="300" zoom="true"/>
-        <Node id="download.jsp" x="400" y="450" zoom="true"/>
+        <Node id="admin/workspacesMenu.jsp" x="400" y="150" zoom="true"/>
         <Node id="recoveryForm.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="download.jsp" x="400" y="450" zoom="true"/>
         <Node id="admin/accountEditionForm.jsp" x="150" y="750" zoom="true"/>
         <Node id="help/aboutHelp.jsp" x="900" y="150" zoom="true"/>
+        <Node id="admin/workspace/userAddingForm.jsp" x="150" y="150" zoom="true"/>
         <Node id="help/tagHelp.jsp" x="650" y="150" zoom="true"/>
         <Node id="admin/logout.jsp" x="400" y="300" zoom="true"/>
-        <Node id="admin/workspace/userAddingForm.jsp" x="150" y="150" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>
 </Scene>

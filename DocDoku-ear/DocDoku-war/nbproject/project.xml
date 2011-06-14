@@ -16,24 +16,16 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.gwt-dnd-2.6.4.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
+                    <file>${file.reference.gwt-dnd-3.1.1.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.cobogw-1.3.1.jar}</file>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.gwttheme.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.gwt-incubator-20101117-r1766.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.org.cobogw.gwt-1.2.4.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.searchTheme.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.commons-beanutils-1.8.3.jar}</file>

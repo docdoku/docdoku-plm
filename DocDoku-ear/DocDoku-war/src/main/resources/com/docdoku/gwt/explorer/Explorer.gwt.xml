@@ -4,15 +4,15 @@
     <!-- Inherit the core Web Toolkit stuff.                  -->
     <inherits name="com.google.gwt.user.User"/>
     <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="com.google.gwt.activity.Activity"/>
+    <inherits name="com.google.gwt.place.Place"/>
 
     <inherits name='org.cobogw.gwt.user.User' />
-    <inherits name='com.google.gwt.gen2.selection.Selection' />
-    <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
-    <inherits name='com.google.gwt.libideas.LibIdeas' />
     <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
     <inherits name='com.docdoku.gwt.client.ui.Docdoku-widgets'/>
 
-   
+    <!-- Usefully to speed up compilation time in dev phase  -->
+    <set-property name='user.agent' value='safari'/>
 
     <!-- Specify the app entry point class.                   -->
     <entry-point class="com.docdoku.gwt.explorer.client.ExplorerEntryPoint"/>
@@ -27,6 +27,7 @@
     <!-- Inherit the default GWT style sheet.  You can change       -->
     <!-- the theme of your GWT application by uncommenting          -->
     <!-- any one of the following lines.                            -->
+    <!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/> -->
     <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
     <!-- <inherits name="com.google.gwt.user.theme.chrome.Chrome"/> -->
     <!-- <inherits name="com.google.gwt.user.theme.dark.Dark"/> -->

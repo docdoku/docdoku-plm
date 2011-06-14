@@ -13,15 +13,15 @@ import com.docdoku.gwt.explorer.shared.WorkflowDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.widgetideas.client.GlassPanel;
 
 /**
  *
  * @author Emmanuel Nhan
  */
-public class WorkflowGlassPanel extends GlassPanel implements ClickHandler, TaskListener {
+public class WorkflowGlassPanel extends PopupPanel implements ClickHandler, TaskListener {
 
     public final static double RATIO = 0.85;
     // note : this is a scroll size experimentaly build with Firefox & may not fit other browsers
@@ -36,6 +36,7 @@ public class WorkflowGlassPanel extends GlassPanel implements ClickHandler, Task
 
     public WorkflowGlassPanel(DocMainPanel owner) {
         super(true);
+        setGlassEnabled(true);
         parentPanel = owner;
         viewer = null;
         scroll = null;
