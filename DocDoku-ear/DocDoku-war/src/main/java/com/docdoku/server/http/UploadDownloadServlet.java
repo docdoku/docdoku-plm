@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -9,19 +9,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDoku is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ * DocDoku is distributed in the hope that it will be useful,  
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+ * GNU General Public License for more details.  
+ *  
+ * You should have received a copy of the GNU General Public License  
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
+
 package com.docdoku.server.http;
 
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.document.DocumentKey;
-import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.document.MasterDocumentTemplateKey;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -149,7 +150,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
         String fileName = null;
         DocumentKey docPK = null;
-        BasicElementKey templatePK = null;
+        MasterDocumentTemplateKey templatePK = null;
         File vaultFile = null;
 
         try {
@@ -165,7 +166,7 @@ public class UploadDownloadServlet extends HttpServlet {
             } else if (elementType.equals("templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
-                templatePK = new BasicElementKey(workspaceId, templateID);
+                templatePK = new MasterDocumentTemplateKey(workspaceId, templateID);
                 vaultFile = commandService.saveFileInTemplate(templatePK, fileName, 0);
             }
             vaultFile.getParentFile().mkdirs();

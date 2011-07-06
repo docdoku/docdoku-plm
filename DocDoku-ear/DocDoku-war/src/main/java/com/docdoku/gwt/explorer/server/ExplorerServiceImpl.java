@@ -44,10 +44,10 @@ import com.docdoku.core.document.DocumentKey;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.common.BasicElementKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.MasterDocumentTemplateKey;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.ParallelActivity;
 import com.docdoku.core.workflow.TaskModel;
@@ -59,6 +59,7 @@ import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.gwt.explorer.shared.*;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
@@ -363,7 +364,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     @Override
     public MasterDocumentTemplateDTO getMDocTemplate(String workspaceId, String id) throws ApplicationException {
         try {
-            MasterDocumentTemplate template = commandService.getMDocTemplate(new BasicElementKey(workspaceId, id));
+            MasterDocumentTemplate template = commandService.getMDocTemplate(new MasterDocumentTemplateKey(workspaceId, id));
             return createDTO(template);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -412,7 +413,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     @Override
     public void delMDocTemplate(String workspaceId, String id) throws ApplicationException {
         try {
-            commandService.delMDocTemplate(new BasicElementKey(workspaceId, id));
+            commandService.delMDocTemplate(new MasterDocumentTemplateKey(workspaceId, id));
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -421,7 +422,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     @Override
     public MasterDocumentTemplateDTO updateMDocTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates, boolean idGenerated) throws ApplicationException {
         try {
-            MasterDocumentTemplate template = commandService.updateMDocTemplate(new BasicElementKey(workspaceId, id), documentType, mask, createObject(attributeTemplates), idGenerated);
+            MasterDocumentTemplate template = commandService.updateMDocTemplate(new MasterDocumentTemplateKey(workspaceId, id), documentType, mask, createObject(attributeTemplates), idGenerated);
             return createDTO(template);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
@@ -431,7 +432,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     @Override
     public void delWorkflowModel(String workspaceId, String id) throws ApplicationException {
         try {
-            commandService.delWorkflowModel(new BasicElementKey(workspaceId, id));
+            commandService.delWorkflowModel(new WorkflowModelKey(workspaceId, id));
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }

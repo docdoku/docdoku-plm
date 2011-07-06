@@ -4,7 +4,7 @@
     <description>Generates Javascript for DocDoku-war.</description>
     
     <target name="compile-gwt" depends="init">
-        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${var.GWT_HOME}/validation-api-1.0.0.GA-sources.jar:${var.GWT_HOME}/validation-api-1.0.0.GA.jar:${javac.classpath}:${src.java.dir}:${src.resources.dir}" failonerror="true"
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${var.GWT_HOME}/validation-api-1.0.0.GA-sources.jar:${var.GWT_HOME}/validation-api-1.0.0.GA.jar:${javac.classpath}:${src.java.dir}:${src.resources.dir}:${build.classes.dir}" failonerror="true"
               classname="com.google.gwt.dev.Compiler" fork="true"
               jvmargs="-Xmx256M -Xss1M">
             <arg value="-war"/>
@@ -14,7 +14,7 @@
     </target>
 
      <target name="debug-gwt" depends="init">
-        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${var.GWT_HOME}/validation-api-1.0.0.GA-sources.jar:${var.GWT_HOME}/validation-api-1.0.0.GA.jar:${javac.classpath}:${src.java.dir}:${src.resources.dir}" failonerror="true"
+        <java classpath="${var.GWT_HOME}/gwt-dev.jar:${var.GWT_HOME}/gwt-user.jar:${var.GWT_HOME}/validation-api-1.0.0.GA-sources.jar:${var.GWT_HOME}/validation-api-1.0.0.GA.jar:${javac.classpath}:${src.java.dir}:${src.resources.dir}:${build.classes.dir}" failonerror="true"
             jvmargs="-Xmx512M -Xss1M -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jpda.address}" classname="com.google.gwt.dev.DevMode" fork="true">
             <arg value="-noserver"/>
             <!--<arg value="-port"/>

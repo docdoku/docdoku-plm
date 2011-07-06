@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -9,20 +9,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDoku is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ * DocDoku is distributed in the hope that it will be useful,  
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+ * GNU General Public License for more details.  
+ *  
+ * You should have received a copy of the GNU General Public License  
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
 package com.docdoku.gwt.explorer.shared;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class InstanceNumberAttributeDTO extends InstanceAttributeDTO{
 

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -9,13 +9,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDoku is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
+ * DocDoku is distributed in the hope that it will be useful,  
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+ * GNU General Public License for more details.  
+ *  
+ * You should have received a copy of the GNU General Public License  
+ * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
 package com.docdoku.server.http;
@@ -35,9 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
-import com.docdoku.core.*;
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.common.UserGroupKey;
 
 
 public class ManageUsersGroupServlet extends HttpServlet {
@@ -62,7 +61,7 @@ public class ManageUsersGroupServlet extends HttpServlet {
             if(logins!=null){
                 String action = pRequest.getParameter("action");
                 if(action.equals("remove")){
-                    userManager.removeUserFromGroup(new BasicElementKey(workspace.getId(),groupId),logins);
+                    userManager.removeUserFromGroup(new UserGroupKey(workspace.getId(),groupId),logins);
                 }
             }
             
@@ -94,7 +93,7 @@ public class ManageUsersGroupServlet extends HttpServlet {
     }
     
     private void displayView(HttpServletRequest pRequest, HttpServletResponse pResponse, String workspaceId, String groupId) throws UserNotFoundException, UserNotActiveException, IOException, ServletException, UserGroupNotFoundException, WorkspaceNotFoundException{
-        UserGroup group = userManager.getUserGroup(new BasicElementKey(workspaceId,groupId));
+        UserGroup group = userManager.getUserGroup(new UserGroupKey(workspaceId,groupId));
 
         pRequest.setAttribute("group",group);
         pRequest.getRequestDispatcher("/WEB-INF/admin/manageUsersGroup.jsp").forward(pRequest, pResponse);

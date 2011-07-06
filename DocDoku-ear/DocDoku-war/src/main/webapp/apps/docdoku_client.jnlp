@@ -6,7 +6,7 @@
     <vendor>DocDoku ltd</vendor>
     <homepage href="../"/>
     <description>Manage your documents</description>
-    <icon  href="DocDokuIcon.png" width="64" height="64"/>
+    <icon  href="DocDokuIcon.png" width="512" height="512"/>
     <icon kind="splash" href="DocDokuSplash.png"/>
     <shortcut online="true"><desktop/></shortcut>
   </information>

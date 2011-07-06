@@ -17,16 +17,17 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
+package com.docdoku.gwt.explorer.client;
 
-package com.docdoku.gwt.explorer.client.ui.workflow.editor;
-
-import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.place.shared.PlaceHistoryMapper;
+import com.google.gwt.place.shared.WithTokenizers;
 
 /**
  *
- * @author manu
+ * @author Florent Garin
  */
-public interface ActivityLinkHandler extends EventHandler {
-
-        void onAddActivityClicked(ActivityLinkEvent ev);
+@WithTokenizers({
+    NewDocumentPlace.Tokenizer.class, NewFolderPlace.Tokenizer.class,
+    NewTemplatePlace.Tokenizer.class, NewSearchPlace.Tokenizer.class, NewWorkflowPlace.Tokenizer.class})
+public interface ExplorerPlaceHistoryMapper extends PlaceHistoryMapper {
 }

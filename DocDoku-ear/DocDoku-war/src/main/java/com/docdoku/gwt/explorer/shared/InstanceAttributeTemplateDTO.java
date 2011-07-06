@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
+
 package com.docdoku.gwt.explorer.shared;
 
 import java.io.Serializable;

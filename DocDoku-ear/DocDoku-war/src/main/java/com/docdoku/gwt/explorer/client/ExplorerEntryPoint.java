@@ -23,9 +23,12 @@ package com.docdoku.gwt.explorer.client;
 import com.docdoku.gwt.explorer.client.actions.ActionMap;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
  *
@@ -37,6 +40,11 @@ public class ExplorerEntryPoint implements EntryPoint {
 
     private Dictionary m_inputs;
     private ExplorerPage m_mainPage;
+    
+    //private Place defaultPlace = new HelloPlace("World!");
+    private SimplePanel appWidget = new SimplePanel();
+    
+    
     public void onModuleLoad() {
     
         m_inputs = Dictionary.getDictionary("inputs");
@@ -47,7 +55,17 @@ public class ExplorerEntryPoint implements EntryPoint {
         m_mainPage=new ExplorerPage(workspaceID, login);
         cmds.init(m_mainPage);
         m_mainPage.init(cmds);
+        
+        
+        // Start PlaceHistoryHandler with our PlaceHistoryMapper
+        ExplorerPlaceHistoryMapper historyMapper= GWT.create(ExplorerPlaceHistoryMapper.class);
+        PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(historyMapper);
+        //historyHandler.register(placeController, eventBus, defaultPlace);
+
         RootPanel.get("content").add(m_mainPage);
+        //RootPanel.get("content").add(appWidget);
+        // Goes to the place represented on URL else default place
+        //historyHandler.handleCurrentHistory();
        
     }
 }

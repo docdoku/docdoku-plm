@@ -18,28 +18,42 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
+package com.docdoku.gwt.explorer.client;
 
-import java.util.EventObject;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceTokenizer;
 
 /**
- * 
- * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
+ *
+ * @author Florent Garin
  */
-public class TaskModelEvent extends EventObject{
-
-    private TaskModelModel realSource ;
-
-    public TaskModelEvent(TaskModelModel source) {
-        super(source);
-        realSource = source ;
-    }
-
-    public TaskModelModel getRealSource() {
-        return realSource;
-    }
-
+public class NewFolderPlace extends Place {
+ public String newFolderName;
     
+    public NewFolderPlace(String token){
+        this.newFolderName = token;
+    }
+    
+    public String getNewFolderName(){
+       return newFolderName; 
+    }
+    
+   public static class Tokenizer implements PlaceTokenizer<NewFolderPlace> {
+         
+        public Tokenizer(){
+            super();
+        }
+        
+        @Override
+        public NewFolderPlace getPlace(String token) {
+            return new NewFolderPlace(token);
+        }
 
-
+        @Override
+        public String getToken(NewFolderPlace p) {
+            return p.getNewFolderName();
+        }
+        
+    }   
+    
 }

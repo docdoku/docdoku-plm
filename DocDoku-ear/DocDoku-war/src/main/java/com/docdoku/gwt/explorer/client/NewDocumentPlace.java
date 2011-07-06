@@ -18,33 +18,41 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.gwt.explorer.client;
 
-import java.io.Serializable;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceTokenizer;
 
 /**
  *
  * @author Florent Garin
  */
-public abstract class InstanceAttributeDTO implements Serializable{
-
-    protected String name;
-
-    public InstanceAttributeDTO(){
-
-    }
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public abstract Object getValue();
-    public abstract boolean setValue(Object pValue);
-    
+public class NewDocumentPlace extends Place {
+    public String newDocumentName;
     
 
+    public NewDocumentPlace(String token){
+        this.newDocumentName = token;
+    }
+    
+    public String getNewDocumentName(){
+       return newDocumentName; 
+    }
+    
+    public static class Tokenizer implements PlaceTokenizer<NewDocumentPlace> {
+        public Tokenizer(){
+            super();
+        } 
+        
+        @Override
+        public NewDocumentPlace getPlace(String token) {
+            return new NewDocumentPlace(token);
+        }
+
+        @Override
+        public String getToken(NewDocumentPlace p) {
+            return p.getNewDocumentName();
+        }
+        
+    }
 }
