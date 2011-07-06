@@ -281,6 +281,7 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         return ((document.masterDocumentId.equals(masterDocumentId)) && (document.workspaceId.equals(workspaceId))  && (document.masterDocumentVersion.equals(masterDocumentVersion)) && (document.iteration==iteration));
     }
     
+    @Override
     public int compareTo(Document pDoc) {
         
         int wksComp = workspaceId.compareTo(pDoc.workspaceId);

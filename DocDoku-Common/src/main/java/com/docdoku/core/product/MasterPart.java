@@ -39,7 +39,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -89,13 +89,12 @@ public class MasterPart implements Serializable {
     @Lob
     private String description;
 
-    /*
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @OrderColumn(name="ITERATION")
-    private List<Part> partIterations = new ArrayList<Part>();
-    */
-
     
+    @OneToMany(mappedBy = "masterPart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderBy("iteration ASC")
+    private List<Part> partIterations = new ArrayList<Part>();
+   
+ 
 
     public MasterPart(){
 
@@ -193,5 +192,8 @@ public class MasterPart implements Serializable {
         this.description = description;
     }
     
+    public String getWorkspaceId(){
+        return workspace==null?"":workspace.getId();
+    }
     
 }

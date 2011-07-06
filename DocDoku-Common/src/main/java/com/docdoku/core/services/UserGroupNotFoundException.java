@@ -20,7 +20,8 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.common.BasicElementKey;
+
+import com.docdoku.core.common.UserGroupKey;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -30,17 +31,18 @@ import java.util.Locale;
  */
 public class UserGroupNotFoundException extends ApplicationException {
 
-    private BasicElementKey mKey;
+    private UserGroupKey mKey;
     
     public UserGroupNotFoundException(String pMessage) {
         super(pMessage);
     }
     
-    public UserGroupNotFoundException(Locale pLocale, BasicElementKey pKey) {
+    public UserGroupNotFoundException(Locale pLocale, UserGroupKey pKey) {
         super(pLocale);
         mKey=pKey;
     }
     
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mKey);     

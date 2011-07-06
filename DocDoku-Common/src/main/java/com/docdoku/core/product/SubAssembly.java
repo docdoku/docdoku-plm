@@ -24,9 +24,6 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 
 /**
- * This is the wrapper object that holds the data of a document.
- * From that object, we can navigate to all the iterations of the document,
- * its workflow or its binary data files.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11

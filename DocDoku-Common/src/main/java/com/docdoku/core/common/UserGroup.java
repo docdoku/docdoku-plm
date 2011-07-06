@@ -36,7 +36,7 @@ import javax.persistence.ManyToMany;
  * @version 1.1, 8/07/09
  * @since   V1.1
  */
-@javax.persistence.IdClass(com.docdoku.core.common.BasicElementKey.class)
+@javax.persistence.IdClass(com.docdoku.core.common.UserGroupKey.class)
 @javax.persistence.Entity
 public class UserGroup implements Serializable, Cloneable {
 

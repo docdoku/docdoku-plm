@@ -24,7 +24,6 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.common.BasicElementKey;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Date;
@@ -42,7 +41,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
-@javax.persistence.IdClass(com.docdoku.core.common.BasicElementKey.class)
+@javax.persistence.IdClass(com.docdoku.core.document.MasterDocumentTemplateKey.class)
 @javax.persistence.Entity
 public class MasterDocumentTemplate implements Serializable, FileHolder, Comparable<MasterDocumentTemplate> {
 
@@ -195,8 +194,8 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
         return workspaceId;
     }
     
-    public BasicElementKey getKey() {
-        return new BasicElementKey(workspaceId, id);
+    public MasterDocumentTemplateKey getKey() {
+        return new MasterDocumentTemplateKey(workspaceId, id);
     }
     
     @Override

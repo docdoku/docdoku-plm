@@ -20,6 +20,7 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.meta.InstanceAttribute;
 import java.io.Serializable;
@@ -29,7 +30,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
@@ -40,13 +44,30 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * This class represents the
+ * This class encapsulates the various states of a part whereas its unchanging
+ * attributes are hold on a <code>MasterPart</code>.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11
  * @since   V1.1
  */
-public class Part implements Serializable {
+@IdClass(com.docdoku.core.product.PartKey.class)
+@Entity
+public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneable {
+    
+    @Id
+    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name="MASTERPART_NUMBER", referencedColumnName="NUMBER"),
+        @JoinColumn(name="MASTERPART_VERSION", referencedColumnName="VERSION"),
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private MasterPart masterPart;
+    
+    @Id
+    private int iteration;
+    
+    
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(inverseJoinColumns = {
@@ -54,7 +75,7 @@ public class Part implements Serializable {
     },
     joinColumns = {
         @JoinColumn(name = "PART_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
-        @JoinColumn(name = "PART_MASTERPART_ID", referencedColumnName = "MASTERPART_ID"),
+        @JoinColumn(name = "PART_MASTERPART_NUMBER", referencedColumnName = "MASTERPART_NUMBER"),
         @JoinColumn(name = "PART_MASTERPART_VERSION", referencedColumnName = "MASTERPART_VERSION"),
         @JoinColumn(name = "PART_ITERATION", referencedColumnName = "ITERATION")
     })
@@ -72,7 +93,6 @@ public class Part implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-/*
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @MapKey(name="name")
     @JoinTable(
@@ -81,11 +101,71 @@ public class Part implements Serializable {
     },
     joinColumns={
         @JoinColumn(name="PART_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="PART_MASTERPART_ID", referencedColumnName="MASTERPART_ID"),
+        @JoinColumn(name="PART_MASTERPART_NUMBER", referencedColumnName="MASTERPART_NUMBER"),
         @JoinColumn(name="PART_MASTERPART_VERSION", referencedColumnName="MASTERPART_VERSION"),
         @JoinColumn(name="PART_ITERATION", referencedColumnName="ITERATION")
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
-    */
+
+    
+    @Override
+    public Set<BinaryResource> getAttachedFiles() {
+        return attachedFiles;
+    }
+    
+    public String getWorkspaceId() {
+        return masterPart==null?"":masterPart.getWorkspaceId();
+    }
+    
+    public String getMasterPartNumber() {
+        return masterPart==null?"":masterPart.getNumber();
+    }
+    
+    public String getMasterPartVersion() {
+        return masterPart==null?"":masterPart.getVersion();
+    }
+    
+    @Override
+    public int compareTo(Part pPart) {
+        
+        int wksComp = getWorkspaceId().compareTo(pPart.getWorkspaceId());
+        if (wksComp != 0)
+            return wksComp;
+        int mpartNumberComp = getMasterPartNumber().compareTo(pPart.getMasterPartNumber());
+        if (mpartNumberComp != 0)
+            return mpartNumberComp;
+        int mpartVersionComp = getMasterPartVersion().compareTo(pPart.getMasterPartVersion());
+        if (mpartVersionComp != 0)
+            return mpartVersionComp;
+        else
+            return iteration-pPart.iteration;
+    }
+    
+    /**
+     * perform a deep clone operation
+     */
+    @Override
+    public Part clone() {
+        Part clone = null;
+        try {
+            clone = (Part) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        //perform a deep copy
+        clone.attachedFiles = new HashSet<BinaryResource>(attachedFiles);
+        
+        //perform a deep copy
+        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
+        for (InstanceAttribute attribute : instanceAttributes.values()) {
+            InstanceAttribute clonedAttribute=attribute.clone();
+            clonedInstanceAttributes.put(clonedAttribute.getName(),clonedAttribute);
+        }
+        clone.instanceAttributes = clonedInstanceAttributes;
+        
+        if(creationDate!=null)
+            clone.creationDate = (Date) creationDate.clone();
+        return clone;
+    }
     
 }

@@ -22,7 +22,6 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.common.BasicElementKey;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
-@javax.persistence.IdClass(com.docdoku.core.common.BasicElementKey.class)
+@javax.persistence.IdClass(com.docdoku.core.workflow.WorkflowModelKey.class)
 @javax.persistence.Entity
 public class WorkflowModel implements Serializable, Cloneable {
     
@@ -192,8 +191,8 @@ public class WorkflowModel implements Serializable, Cloneable {
         return workspaceId;
     }
     
-    public BasicElementKey getKey() {
-        return new BasicElementKey(workspaceId, id);
+    public WorkflowModelKey getKey() {
+        return new WorkflowModelKey(workspaceId, id);
     }
     
     public List<String> getLifeCycle(){

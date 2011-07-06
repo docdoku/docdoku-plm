@@ -18,7 +18,7 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.common;
+package com.docdoku.core.product;
 
 import java.io.Serializable;
 
@@ -26,24 +26,24 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class BasicElementKey implements Serializable {
+public class PartKey implements Serializable {
     
-    private String workspaceId;
-    private String id;
+    private MasterPartKey masterPart;
+    private int iteration;
     
-    public BasicElementKey() {
+    public PartKey() {
     }
     
-    public BasicElementKey(String pWorkspaceId, String pId) {
-        workspaceId=pWorkspaceId;
-        id=pId;
+    public PartKey(MasterPartKey pMasterPartKey, int pIteration) {
+        masterPart=pMasterPartKey;
+        iteration=pIteration;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
+	hash = 31 * hash + masterPart.hashCode();
+        hash = 31 * hash + iteration;
 	return hash;
     }
     
@@ -52,31 +52,31 @@ public class BasicElementKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof BasicElementKey))
+        if (!(pObj instanceof PartKey))
             return false;
-        BasicElementKey key = (BasicElementKey) pObj;
-        return ((key.id.equals(id)) && (key.workspaceId.equals(workspaceId)));
+        PartKey key = (PartKey) pObj;
+        return ((key.masterPart.equals(masterPart)) && (key.iteration==iteration));
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + id;
+        return masterPart + "-" + iteration;
+    }
+
+    public MasterPartKey getMasterPart() {
+        return masterPart;
+    }
+
+    public void setMasterPart(MasterPartKey masterPartKey) {
+        this.masterPart = masterPartKey;
     }
     
-    public String getWorkspaceId() {
-        return workspaceId;
+    
+    public int getIteration(){
+        return iteration;
     }
     
-    public void setWorkspaceId(String pWorkspaceId) {
-        workspaceId = pWorkspaceId;
+    public void setIteration(int pIteration){
+        iteration=pIteration;
     }
-    
-    public String getId() {
-        return id;
-    }
-    
-    public void setId(String pId) {
-        id = pId;
-    }
-    
 }
