@@ -23,7 +23,7 @@ import com.docdoku.core.services.WorkflowModelNotFoundException;
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.services.WorkflowModelAlreadyExistsException;
-import com.docdoku.core.common.BasicElementKey;
+import com.docdoku.core.workflow.WorkflowModelKey;
 
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +42,7 @@ public class WorkflowModelDAO {
         mLocale = pLocale;
     }
 
-    public void removeWorkflowModel(BasicElementKey pKey) throws WorkflowModelNotFoundException {
+    public void removeWorkflowModel(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
         WorkflowModel model = loadWorkflowModel(pKey);
         em.remove(model);
     }
@@ -74,7 +74,7 @@ public class WorkflowModelDAO {
         }
     }
 
-    public WorkflowModel loadWorkflowModel(BasicElementKey pKey) throws WorkflowModelNotFoundException {
+    public WorkflowModel loadWorkflowModel(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
         WorkflowModel model = em.find(WorkflowModel.class, pKey);
         if (model == null) {
             throw new WorkflowModelNotFoundException(mLocale, pKey.getId());

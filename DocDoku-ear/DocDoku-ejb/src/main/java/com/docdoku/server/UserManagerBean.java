@@ -42,10 +42,10 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.common.BasicElementKey;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.PasswordRecoveryRequest;
 import com.docdoku.core.services.IMailerLocal;
@@ -100,7 +100,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed("users")
     @Override
-    public void addUserInGroup(BasicElementKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
+    public void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         Account account = checkAdmin(pGroupKey.getWorkspaceId());
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         User userToAdd = em.find(User.class, new UserKey(pGroupKey.getWorkspaceId(), pLogin));
@@ -134,7 +134,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed("users")
     @Override
-    public void removeUserFromGroup(BasicElementKey pGroupKey, String[] pLogins) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException {
+    public void removeUserFromGroup(UserGroupKey pGroupKey, String[] pLogins) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException {
         Account account = checkAdmin(pGroupKey.getWorkspaceId());
         UserGroup group = new UserGroupDAO(new Locale(account.getLanguage()), em).loadUserGroup(pGroupKey);
         for (String login : pLogins) {
@@ -199,7 +199,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed("users")
     @Override
-    public UserGroup getUserGroup(BasicElementKey pKey) throws WorkspaceNotFoundException, UserGroupNotFoundException, UserNotFoundException, UserNotActiveException {
+    public UserGroup getUserGroup(UserGroupKey pKey) throws WorkspaceNotFoundException, UserGroupNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = checkWorkspaceReadAccess(pKey.getWorkspaceId());
         return new UserGroupDAO(new Locale(user.getLanguage()), em).loadUserGroup(pKey);
     }
@@ -263,7 +263,7 @@ public class UserManagerBean implements IUserManagerLocal {
         Workspace workspace = em.getReference(Workspace.class, pWorkspaceId);
         UserGroupDAO groupDAO = new UserGroupDAO(new Locale(account.getLanguage()), em);
         for (String id : pGroupIds) {
-            UserGroup member = em.getReference(UserGroup.class, new BasicElementKey(pWorkspaceId, id));
+            UserGroup member = em.getReference(UserGroup.class, new UserGroupKey(pWorkspaceId, id));
             groupDAO.addUserGroupMembership(workspace, member);
         }
     }
@@ -312,7 +312,7 @@ public class UserManagerBean implements IUserManagerLocal {
         Account account = checkAdmin(pWorkspaceId);
         UserGroupDAO groupDAO = new UserGroupDAO(new Locale(account.getLanguage()), em);
         for (String id : pIds) {
-            groupDAO.removeUserGroup(new BasicElementKey(pWorkspaceId, id));
+            groupDAO.removeUserGroup(new UserGroupKey(pWorkspaceId, id));
         }
     }
 

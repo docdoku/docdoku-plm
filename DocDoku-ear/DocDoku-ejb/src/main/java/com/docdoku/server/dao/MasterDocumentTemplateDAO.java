@@ -21,8 +21,8 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.services.MasterDocumentTemplateNotFoundException;
-import com.docdoku.core.common.BasicElementKey;
 import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.MasterDocumentTemplateKey;
 import com.docdoku.core.services.MasterDocumentTemplateAlreadyExistsException;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class MasterDocumentTemplateDAO {
         em.merge(pTemplate);
     }
 
-    public MasterDocumentTemplate removeMDocTemplate(BasicElementKey pKey) throws MasterDocumentTemplateNotFoundException {
+    public MasterDocumentTemplate removeMDocTemplate(MasterDocumentTemplateKey pKey) throws MasterDocumentTemplateNotFoundException {
         MasterDocumentTemplate template = loadMDocTemplate(pKey);
         em.remove(template);
         return template;
@@ -69,7 +69,7 @@ public class MasterDocumentTemplateDAO {
         return templates;
     }
 
-    public MasterDocumentTemplate loadMDocTemplate(BasicElementKey pKey)
+    public MasterDocumentTemplate loadMDocTemplate(MasterDocumentTemplateKey pKey)
             throws MasterDocumentTemplateNotFoundException {
         MasterDocumentTemplate template = em.find(MasterDocumentTemplate.class, pKey);
         if (template == null) {

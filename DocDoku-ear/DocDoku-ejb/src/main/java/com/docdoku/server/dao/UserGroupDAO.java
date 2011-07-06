@@ -24,9 +24,9 @@ import com.docdoku.core.services.UserGroupAlreadyExistsException;
 import com.docdoku.core.services.UserGroupNotFoundException;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
-import com.docdoku.core.common.BasicElementKey;
 import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +52,7 @@ public class UserGroupDAO {
         mLocale = Locale.getDefault();
     }
 
-    public UserGroup loadUserGroup(BasicElementKey pKey) throws UserGroupNotFoundException {
+    public UserGroup loadUserGroup(UserGroupKey pKey) throws UserGroupNotFoundException {
         UserGroup group = em.find(UserGroup.class, pKey);
         if (group == null) {
             throw new UserGroupNotFoundException(mLocale, pKey);
@@ -124,7 +124,7 @@ public class UserGroupDAO {
         return memberships;
     }
 
-    public void removeUserGroup(BasicElementKey pKey) throws UserGroupNotFoundException {
+    public void removeUserGroup(UserGroupKey pKey) throws UserGroupNotFoundException {
         UserGroup group = loadUserGroup(pKey);
         removeUserGroupMembership(new WorkspaceUserGroupMembershipKey(pKey.getWorkspaceId(), pKey.getWorkspaceId(), pKey.getId()));
         em.remove(group);

@@ -78,7 +78,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public File saveFileInTemplate(BasicElementKey pMDocTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+    public File saveFileInTemplate(MasterDocumentTemplateKey pMDocTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pMDocTemplateKey.getWorkspaceId());
         //TODO checkWorkspaceWriteAccess ?
         if (!NamingConvention.correct(pName)) {
@@ -292,7 +292,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     public String generateId(String pWorkspaceId, String pMDocTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, MasterDocumentTemplateNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        MasterDocumentTemplate template = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(new BasicElementKey(user.getWorkspaceId(), pMDocTemplateId));
+        MasterDocumentTemplate template = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(new MasterDocumentTemplateKey(user.getWorkspaceId(), pMDocTemplateId));
 
         String newId = null;
         try {
@@ -377,7 +377,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public WorkflowModel getWorkflowModel(BasicElementKey pKey)
+    public WorkflowModel getWorkflowModel(WorkflowModelKey pKey)
             throws WorkspaceNotFoundException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         return new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(pKey);
@@ -385,7 +385,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate getMDocTemplate(BasicElementKey pKey)
+    public MasterDocumentTemplate getMDocTemplate(MasterDocumentTemplateKey pKey)
             throws WorkspaceNotFoundException, MasterDocumentTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         return new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(pKey);
@@ -408,7 +408,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate updateMDocTemplate(BasicElementKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateNotFoundException, UserNotFoundException {
+    public MasterDocumentTemplate updateMDocTemplate(MasterDocumentTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
 
         MasterDocumentTemplateDAO templateDAO = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em);
@@ -440,7 +440,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public void delWorkflowModel(BasicElementKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
+    public void delWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
     }
@@ -489,7 +489,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             //so the search will find it with the % character
             mdoc.setType("");
         } else {
-            MasterDocumentTemplate template = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(new BasicElementKey(user.getWorkspaceId(), pMDocTemplateId));
+            MasterDocumentTemplate template = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(new MasterDocumentTemplateKey(user.getWorkspaceId(), pMDocTemplateId));
             mdoc = new MasterDocument(user.getWorkspace(), pMDocID, user);
             mdoc.setType(template.getDocumentType());
             newDoc = mdoc.createNextIteration(user);
@@ -517,7 +517,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
 
         if (pWorkflowModelId != null) {
-            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new BasicElementKey(user.getWorkspaceId(), pWorkflowModelId));
+            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow();
             mdoc.setWorkflow(workflow);
 
@@ -541,7 +541,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
             if (pACLUserGroupEntries != null) {
                 for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
+                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
                 }
             }
             mdoc.setACL(acl);
@@ -949,7 +949,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public void delMDocTemplate(BasicElementKey pKey)
+    public void delMDocTemplate(MasterDocumentTemplateKey pKey)
             throws WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         MasterDocumentTemplateDAO templateDAO = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em);
@@ -1124,7 +1124,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
 
         if (pWorkflowModelId != null) {
-            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new BasicElementKey(user.getWorkspaceId(), pWorkflowModelId));
+            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow();
             mdoc.setWorkflow(workflow);
 
@@ -1146,7 +1146,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
             if (pACLUserGroupEntries != null) {
                 for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new BasicElementKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
+                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
                 }
             }
             mdoc.setACL(acl);
