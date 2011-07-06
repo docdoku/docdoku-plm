@@ -24,7 +24,6 @@ import com.docdoku.core.services.ICommandWS;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.common.BasicElementKey;
 import com.docdoku.core.document.MasterDocumentKey;
 import com.docdoku.core.document.MasterDocument;
 import com.docdoku.core.document.MasterDocumentTemplate;
@@ -46,7 +45,9 @@ import javax.swing.*;
 import java.util.*;
 
 import com.docdoku.client.localization.I18N;
+import com.docdoku.core.document.MasterDocumentTemplateKey;
 import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.workflow.WorkflowModelKey;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import com.sun.xml.ws.developer.StreamingDataHandler;
 import java.io.InterruptedIOException;
@@ -496,7 +497,7 @@ public class MainModel {
         if (template == null) {
             try {
                 System.out.println("Retrieving document template " + pId);
-                template = Tools.resetParentReferences(mCommandService.getMDocTemplate(new BasicElementKey(getWorkspace().getId(), pId)));
+                template = Tools.resetParentReferences(mCommandService.getMDocTemplate(new MasterDocumentTemplateKey(getWorkspace().getId(), pId)));
                 mCache.cacheMDocTemplate(template);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -524,7 +525,7 @@ public class MainModel {
         if (workflowModel == null) {
             try {
                 System.out.println("Retrieving workflow model " + pId);
-                workflowModel = Tools.resetParentReferences(mCommandService.getWorkflowModel(new BasicElementKey(getWorkspace().getId(), pId)));
+                workflowModel = Tools.resetParentReferences(mCommandService.getWorkflowModel(new WorkflowModelKey(getWorkspace().getId(), pId)));
                 mCache.cacheWorkflowModel(workflowModel);
             } catch (WebServiceException pWSEx) {
                 String message;
