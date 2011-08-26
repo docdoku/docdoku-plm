@@ -54,7 +54,7 @@ body {
     color: blue;
 }
 
-.myTable {
+.docdoku-TableWidget {
     width: 100%;
     color: #666;
     cursor: pointer;
@@ -66,7 +66,7 @@ body {
     padding: 10px 10px 10px 10px;
 }
 
-.myTable td {
+.docdoku-TableWidget td {
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-bottom-color: #CAD4E6;
@@ -321,20 +321,20 @@ body {
     background-color: #C3D9FF;
 }
 
-.docdoku-editableStateWidget{
-    padding:2px ;
+.editableState{
+    padding:2px;
     background-color: #C3D9FF;
     border:none;
 }
 
-.docdoku-editableStateWidget-selected{
+.editableState-selected{
     padding:0px;
     background-color: white;
     border:solid 2px #6694E3;
 
 }
 
-.docdoku-editableStateWidget-over{
+.editableState-hover{
     padding:0px;
     background-color: #C3D9FF;
     border:solid 2px #6694E3;
@@ -377,21 +377,23 @@ body {
     font-weight:bold;
 }
 
-.docAttributeName{
+
+
+.instanceAttributes{
     background-color:#EEEEEE;
-    border:none ;
+    border:none;
     margin:2px;
 }
 
-.docAttributeOver{
+.instanceAttributes-hover{
     border:solid 1px black;
     margin:1px;
 }
 
-.docAttributeEdit{
+.instanceAttributes-selected{
     border:solid 1px black;
     margin:1px;
-    background-color:white ;
+    background-color:white;
 }
 
 
