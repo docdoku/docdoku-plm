@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+  <persistence-unit name="DocDoku-PU" transaction-type="JTA">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>jdbc/docdokuPU</jta-data-source>
+    <class>com.docdoku.core.common.Account</class>
+    <class>com.docdoku.core.common.BinaryResource</class>
+    <class>com.docdoku.core.common.User</class>
+    <class>com.docdoku.core.common.UserGroup</class>
+    <class>com.docdoku.core.common.Workspace</class>
+    <class>com.docdoku.core.document.Document</class>
+    <class>com.docdoku.core.document.DocumentToDocumentLink</class>
+    <class>com.docdoku.core.document.Folder</class>
+    <class>com.docdoku.core.document.InstanceAttributeTemplate</class>
+    <class>com.docdoku.core.document.IterationChangeSubscription</class>
+    <class>com.docdoku.core.document.MasterDocument</class>
+    <class>com.docdoku.core.document.MasterDocumentTemplate</class>
+    <class>com.docdoku.core.document.StateChangeSubscription</class>
+    <class>com.docdoku.core.document.Tag</class>
+    <class>com.docdoku.core.meta.InstanceAttribute</class>
+    <class>com.docdoku.core.meta.InstanceBooleanAttribute</class>
+    <class>com.docdoku.core.meta.InstanceDateAttribute</class>
+    <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
+    <class>com.docdoku.core.meta.InstanceTextAttribute</class>
+    <class>com.docdoku.core.meta.InstanceURLAttribute</class>
+    <class>com.docdoku.core.product.MasterPart</class>
+    <class>com.docdoku.core.product.Part</class>
+    <class>com.docdoku.core.security.ACL</class>
+    <class>com.docdoku.core.security.ACLUserEntry</class>
+    <class>com.docdoku.core.security.ACLUserGroupEntry</class>
+    <class>com.docdoku.core.security.Credential</class>
+    <class>com.docdoku.core.security.PasswordRecoveryRequest</class>
+    <class>com.docdoku.core.security.UserGroupMapping</class>
+    <class>com.docdoku.core.security.WorkspaceUserGroupMembership</class>
+    <class>com.docdoku.core.security.WorkspaceUserMembership</class>
+    <class>com.docdoku.core.workflow.Activity</class>
+    <class>com.docdoku.core.workflow.ActivityModel</class>
+    <class>com.docdoku.core.workflow.ParallelActivity</class>
+    <class>com.docdoku.core.workflow.ParallelActivityModel</class>
+    <class>com.docdoku.core.workflow.SerialActivity</class>
+    <class>com.docdoku.core.workflow.SerialActivityModel</class>
+    <class>com.docdoku.core.workflow.Task</class>
+    <class>com.docdoku.core.workflow.TaskModel</class>
+    <class>com.docdoku.core.workflow.Workflow</class>
+    <class>com.docdoku.core.workflow.WorkflowModel</class>
+    <properties>
+      <property name="eclipselink.logging.level" value="FINE"/>
+      <property name="eclipselink.ddl-generation" value="create-tables"/>
+    </properties>
+  </persistence-unit>
+</persistence>
