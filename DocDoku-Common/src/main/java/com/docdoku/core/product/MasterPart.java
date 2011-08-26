@@ -143,7 +143,7 @@ public class MasterPart implements Serializable {
     public void setAlternatives(Set<MasterPart> alternatives) {
         this.alternatives = alternatives;
     }
-
+    
     public Date getCreationDate() {
         return creationDate;
     }

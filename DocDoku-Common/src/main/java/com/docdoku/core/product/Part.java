@@ -124,6 +124,53 @@ public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneab
     public String getMasterPartVersion() {
         return masterPart==null?"":masterPart.getVersion();
     }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public String getRevisionNote() {
+        return revisionNote;
+    }
+
+    public void setRevisionNote(String revisionNote) {
+        this.revisionNote = revisionNote;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Map<String, InstanceAttribute> getInstanceAttributes() {
+        return instanceAttributes;
+    }
+
+    public void setInstanceAttributes(Map<String, InstanceAttribute> instanceAttributes) {
+        this.instanceAttributes = instanceAttributes;
+    }
+
+    public int getIteration() {
+        return iteration;
+    }
+
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
+    }
+
+    
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+    
+    
     
     @Override
     public int compareTo(Part pPart) {
