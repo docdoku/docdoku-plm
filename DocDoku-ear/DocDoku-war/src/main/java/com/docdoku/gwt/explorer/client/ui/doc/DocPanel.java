@@ -45,7 +45,7 @@ import org.cobogw.gwt.user.client.ui.Button;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class DocPanel extends FlexTable {
 
@@ -66,18 +66,21 @@ public class DocPanel extends FlexTable {
         m_iterationNavigator = new IterationNavigator(cmds.get("ShowIterationCommand"));
         m_filesPanel.injectDeleteAction(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 cmds.get("DeleteDocFileCommand").execute(m_filesPanel.getSelectedFiles());
             }
         });
         m_filesPanel.injectUploadAction(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 cmds.get("UploadDocFileCommand").execute();
             }
         });
         m_filesPanel.injectFormHandler(new FormPanel.SubmitCompleteHandler() {
 
+            @Override
             public void onSubmitComplete(SubmitCompleteEvent event) {
                 cmds.get("UploadCompleteDocFileCommand").execute();
             }
@@ -90,6 +93,7 @@ public class DocPanel extends FlexTable {
         m_backAction.setStyleName("normalLinkAction");
         m_backAction.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 cmds.get("BackCommand").execute();
             }
@@ -113,7 +117,7 @@ public class DocPanel extends FlexTable {
         setWidget(1, 1, m_linksPanel);
 
         setWidget(2, 0, m_iterationNavigator);
-//        setWidget(2,0,buttonsPanel);
+
         setWidget(3, 0, buttonsPanel);
 
         cellFormatter.setColSpan(2, 0, 2);

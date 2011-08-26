@@ -40,6 +40,8 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
     private TextBox m_titleTextBox;
     private ListBox m_workflowListBox;
 
+    private final static int HEIGHT=200;
+    
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
     public CreateMDocMainPanel(){
@@ -47,6 +49,7 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
     }
 
     private void createLayout() {
+        setHeight(HEIGHT);
         inputPanel.setText(0,0,i18n.fieldLabelParentFolder());
         m_parentTextBox = new TextBox();
         inputPanel.setWidget(0,1,m_parentTextBox);

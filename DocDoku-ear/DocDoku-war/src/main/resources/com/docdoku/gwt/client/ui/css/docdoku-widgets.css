@@ -8,48 +8,48 @@
 
 
 
-.docdoku-editableLabel{
-    padding : 2px ;
+.docdoku-EditableLabel{
+    padding : 2px;
     margin : 4px;
     border : none;
 }
 
-.docdoku-editableLabel-selected{
-    border: #6694E3 2px solid ;
-    margin:2px;
+.docdoku-EditableLabel-selected{
+    border: #6694E3 2px solid;
+    margin: 2px;
     background-color: white;
 }
 
-.docdoku-editableLabel-over{
-    border: #6694E3 2px solid ;
+.docdoku-EditableLabel-hover{
+    border: #6694E3 2px solid;
     margin:2px;
     background-color: #C3D9FF;
 }
 
-.itemMenu-notSelected{
-    background-color:white;
-    cursor:pointer ;
-    padding:2px;
+.docdoku-LabelMenuItem{
+    background-color: white;
+    cursor: pointer;
+    padding: 2px;
 }
 
-.itemMenu-selected{
+.docdoku-LabelMenuItem-selected{
     border: 2px solid #6694E3;
     background: #C3D9FF;
-    cursor:pointer ;
+    padding: 0px;
 }
 
-.docdoku-spinBox{
+.docdoku-SpinBox{
     border:none;
     padding:2px;
     background-color:#C3D9FF;
 }
 
-.myTable-header {
+.docdoku-TableWidget-header {
     background-color: #C3D9FF;
     font-weight: bold;
 }
 
-.myTable-selected {
+.docdoku-TableWidget-selected {
     background-color: #FFFFCC;
     color: black;
 }

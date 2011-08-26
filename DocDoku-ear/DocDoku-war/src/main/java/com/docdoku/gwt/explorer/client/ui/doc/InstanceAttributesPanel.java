@@ -24,10 +24,10 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.data.ShortDateFormater;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
-import com.docdoku.gwt.client.ui.widget.input.DocdokuNumberLineEdit;
-import com.docdoku.gwt.client.ui.widget.input.DocdokuUrlLineEdit;
+import com.docdoku.gwt.client.ui.widget.input.NumberConstrainedTextBox;
+import com.docdoku.gwt.client.ui.widget.input.EditableURL;
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
-import com.docdoku.gwt.client.ui.widget.util.NotEmptyChecker;
+import com.docdoku.gwt.client.ui.widget.util.NotEmptyValidator;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
 import com.docdoku.gwt.explorer.shared.InstanceBooleanAttributeDTO;
@@ -41,6 +41,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -54,7 +55,7 @@ import java.util.Map;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class InstanceAttributesPanel extends DataRoundedPanel {
 
@@ -64,22 +65,31 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
     private Label m_addLink;
     private Label m_delLink;
 
+    private final static int HEIGHT=200;
+    
     public InstanceAttributesPanel() {
         super(ServiceLocator.getInstance().getExplorerI18NConstants().tabAttributes());
-
+        setHeight(HEIGHT);
         ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
         m_attributeList = new FlexTable();
-
-        ScrollPanel scroll = new ScrollPanel(m_attributeList);
-        scroll.setHeight("10em");
-        inputPanel.setWidget(0, 0, scroll);
 
         m_addLink = new Label(i18n.btnAdd());
         m_delLink = new Label(i18n.btnRemove());
 
         m_addLink.setStyleName("normalLinkAction");
         m_delLink.setStyleName("normalLinkAction");
+        
+        HorizontalPanel widgetFormPanel = new HorizontalPanel();
+        widgetFormPanel.setSpacing(5);
+        widgetFormPanel.add(m_addLink);
+        widgetFormPanel.add(m_delLink);
+        inputPanel.setWidget(0, 0, widgetFormPanel);
+        ScrollPanel scroll = new ScrollPanel(m_attributeList);
+        scroll.setHeight("10em");
+        inputPanel.setWidget(1, 0, scroll);
+
+        
 
         m_addLink.addClickHandler(new ClickHandler() {
 
@@ -105,8 +115,6 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
         int i = 1;
         m_attrs = attrs;
         m_attributeList.clear();
-        m_attributeList.setWidget(0, 0, m_addLink);
-        m_attributeList.setWidget(0, 1, m_delLink);
         m_addLink.setVisible(m_editionMode);
         m_delLink.setVisible(m_editionMode);
         for (Map.Entry<String, InstanceAttributeDTO> attr : attrs.entrySet()) {
@@ -115,9 +123,7 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
             m_attributeList.setWidget(i, 0, selectionBox);
 
             EditableLabel l = new EditableLabel();
-            l.setNormalStyle("docAttributeName");
-            l.setOverStyle("docAttributeOver");
-            l.setSelectedStyle("docAttributeEdit");
+            l.setStyleName("instanceAttributes");
             l.setText(attr.getKey());
             l.setEnabled(m_editionMode);
 
@@ -136,12 +142,12 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
                 dateBox.setValue((Date) attr.getValue().getValue());
                 attrWidget = dateBox;
             } else if (attr.getValue() instanceof InstanceNumberAttributeDTO) {
-                DocdokuNumberLineEdit numberBox = new DocdokuNumberLineEdit();
+                NumberConstrainedTextBox numberBox = new NumberConstrainedTextBox();
                 numberBox.setText(attr.getValue().getValue() == null ? "" : attr.getValue().getValue().toString());
                 numberBox.setEnabled(m_editionMode);
                 attrWidget = numberBox;
             } else if (attr.getValue() instanceof InstanceURLAttributeDTO) {
-                DocdokuUrlLineEdit urlEdit = new DocdokuUrlLineEdit();
+                EditableURL urlEdit = new EditableURL();
                 urlEdit.setText(attr.getValue() == null ? "" : attr.getValue().getValue().toString());
                 urlEdit.setEnabled(m_editionMode);
                 attrWidget = urlEdit;
@@ -171,13 +177,13 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
                     InstanceDateAttributeDTO tmp = new InstanceDateAttributeDTO() ;
                    tmp.setValue(((DateBox) attrWidget).getValue());
                    attribute = tmp ;
-                } else if (attrWidget instanceof DocdokuNumberLineEdit) {
+                } else if (attrWidget instanceof NumberConstrainedTextBox) {
                     InstanceNumberAttributeDTO tmp = new InstanceNumberAttributeDTO() ;
-                    tmp.setValue(((DocdokuNumberLineEdit) attrWidget).getText());
+                    tmp.setValue(((NumberConstrainedTextBox) attrWidget).getText());
                     attribute = tmp ;
-                } else if (attrWidget instanceof DocdokuUrlLineEdit) {
+                } else if (attrWidget instanceof EditableURL) {
                     InstanceURLAttributeDTO tmp = new InstanceURLAttributeDTO() ;
-                    tmp.setValue(((DocdokuUrlLineEdit) attrWidget).getText());
+                    tmp.setValue(((EditableURL) attrWidget).getText());
                     attribute = tmp ;
                 } else if (attrWidget instanceof TextBox) {
                     InstanceTextAttributeDTO tmp = new InstanceTextAttributeDTO() ;
@@ -227,11 +233,9 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
 
         CheckBox select = new CheckBox();
         EditableLabel l = new EditableLabel();
-        l.setChecker(new NotEmptyChecker());
+        l.setValidator(new NotEmptyValidator());
         l.setText(ServiceLocator.getInstance().getExplorerI18NConstants().newAttributeLabel());
-        l.setNormalStyle("docAttributeName");
-        l.setOverStyle("docAttributeOver");
-        l.setSelectedStyle("docAttributeEdit");
+        l.setStyleName("instanceAttributes");
         final AttributeTypeChooser choiceList = new AttributeTypeChooser();
 
         m_attributeList.setWidget(row, 0, select);
@@ -251,13 +255,13 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
                         toAdd = new DateBox();
                         break;
                     case NUMBER:
-                        toAdd = new DocdokuNumberLineEdit();
+                        toAdd = new NumberConstrainedTextBox();
                         break;
                     case TEXT:
                         toAdd = new TextBox();
                         break;
                     case URL:
-                        toAdd = new DocdokuUrlLineEdit() ;
+                        toAdd = new EditableURL() ;
                         break;
                 }
 

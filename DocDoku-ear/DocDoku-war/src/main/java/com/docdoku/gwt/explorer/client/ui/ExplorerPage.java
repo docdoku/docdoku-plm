@@ -173,7 +173,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
         });
 
         m_dndController.setTable(m_elementTable.getInnerTable());
-        m_elementTable.getInnerTable().setStyleName("myTable");
+        m_elementTable.getInnerTable().setStyleName("docdoku-TableWidget");
         m_elementTable.setWidth("100%");
 
         m_searchPanel = new SearchPanel(cmds, this);

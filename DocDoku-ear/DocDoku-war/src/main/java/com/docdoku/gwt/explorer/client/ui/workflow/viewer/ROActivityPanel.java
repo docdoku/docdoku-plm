@@ -32,5 +32,5 @@ public abstract class ROActivityPanel extends Composite {
     public ROActivityPanel() {
     }
 
-    abstract public void hideAllPopups() ;
+    abstract public void hideAllPopups();
 }

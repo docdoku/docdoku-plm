@@ -17,10 +17,9 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.gwt.client.ui.widget.input;
 
-import com.docdoku.gwt.client.ui.widget.util.DocdokuChecker;
+import com.docdoku.gwt.client.ui.widget.util.InputValidator;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -30,35 +29,37 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * DocdokuLineEdit is a simple TextBox providing checking features on input
- * A DocdokuLineEdit fires DocdokuLineEditEvent whenever its input state change.
+ * ConstrainedTextBox is a simple TextBox providing checking features on input
+ * A ConstrainedTextBox fires ConstrainedStateChangeEvent whenever its input state change.
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyPressHandler{
+public class ConstrainedTextBox extends TextBox implements ChangeHandler, KeyPressHandler {
 
-    private DocdokuChecker checker ;
-    private String backup ;
-    private Set<DocdokuLineEditListener> observers ;
-    private boolean hasAcceptableInput ;
-    public DocdokuLineEdit() {
-        backup = "" ;
-        checker = new DocdokuChecker() {
+    private InputValidator validator;
+    private String backup;
+    private Set<ConstrainedStateChangeListener> observers;
+    private boolean hasAcceptableInput;
 
-            public boolean check(String expressionToCheck) {
-                return true ;
+    public ConstrainedTextBox() {
+        backup = "";
+        validator = new InputValidator() {
+
+            @Override
+            public boolean validate(String expressionToCheck) {
+                return true;
             }
         };
         addChangeHandler(this);
-//        addKeyUpHandler(this);
         addKeyPressHandler(this);
-        observers = new HashSet<DocdokuLineEditListener>() ;
-        hasAcceptableInput = true ;
+        observers = new HashSet<ConstrainedStateChangeListener>();
+        hasAcceptableInput = true;
     }
 
+    @Override
     public void onChange(ChangeEvent event) {
-        if (!checker.check(super.getText())){
+        if (!validator.validate(super.getText())) {
             setText(backup);
-        }else{
+        } else {
             backup = super.getText();
         }
     }
@@ -72,10 +73,10 @@ public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyPressH
 
     @Override
     public String getText() {
-        if(checker.check(super.getText())){
+        if (validator.validate(super.getText())) {
             return super.getText();
-        }else{
-            return backup ;
+        } else {
+            return backup;
         }
     }
 
@@ -83,35 +84,34 @@ public class DocdokuLineEdit extends TextBox implements ChangeHandler, KeyPressH
         return backup;
     }
 
-    public void setChecker(DocdokuChecker checker) {
-        this.checker = checker;
+    public void setValidator(InputValidator validator) {
+        this.validator = validator;
     }
 
-    public boolean containsAcceptableInput(){
-        return checker.check(super.getText()) ;
+    public boolean containsAcceptableInput() {
+        return validator.validate(super.getText());
     }
 
-
-    public void addListener (DocdokuLineEditListener listener){
+    public void addListener(ConstrainedStateChangeListener listener) {
         observers.add(listener);
     }
 
-    public void removeListener(DocdokuLineEditListener listener){
+    public void removeListener(ConstrainedStateChangeListener listener) {
         observers.remove(listener);
     }
 
-    private void fireInputStateChange(){
-        DocdokuLineEditEvent event = new DocdokuLineEditEvent(this);
-        for (DocdokuLineEditListener observer : observers) {
+    private void fireInputStateChange() {
+        ConstrainedStateChangeEvent event = new ConstrainedStateChangeEvent(this);
+        for (ConstrainedStateChangeListener observer : observers) {
             observer.onInputStateChange(event);
         }
     }
 
+    @Override
     public void onKeyPress(KeyPressEvent event) {
-        if (checker.check(super.getText()) != hasAcceptableInput){
+        if (validator.validate(super.getText()) != hasAcceptableInput) {
             hasAcceptableInput = containsAcceptableInput();
             fireInputStateChange();
         }
     }
-
 }

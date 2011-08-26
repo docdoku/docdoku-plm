@@ -8,7 +8,7 @@
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/docdoku.css" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
     </head>
     
     <jsp:useBean id="selectedWorkspace" type="com.docdoku.core.common.Workspace" scope="session"/>

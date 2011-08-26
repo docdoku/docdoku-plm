@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
-import com.docdoku.gwt.client.ui.widget.util.NotEmptyChecker;
+import com.docdoku.gwt.client.ui.widget.util.NotEmptyValidator;
 import com.docdoku.gwt.explorer.client.ui.workflow.editor.model.TaskModelModel;
 import com.docdoku.gwt.explorer.shared.UserDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -170,7 +170,7 @@ public class TaskModelPanel extends Composite implements MouseOverHandler, Mouse
 
         taskImage = new Image(ServiceLocator.getInstance().getExplorerImageBundle().getTaskImage());
         taskName = new EditableLabel();
-        taskName.setChecker(new NotEmptyChecker());
+        taskName.setValidator(new NotEmptyValidator());
         taskName.setTextAlignment(EditableLabel.ALIGN_CENTER);
 //        role = new EditableLabel();
 //        role.setChecker(new NotEmptyChecker()) ;

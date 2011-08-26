@@ -33,8 +33,8 @@ import com.google.gwt.user.client.ui.Widget;
 import org.cobogw.gwt.user.client.ui.Button;
 
 /**
- * Button menu offers a way to display easily a popup menu when a button is clicked
- * The popup menu items must subclass Widget and implement MenuItem.
+ * Button menu offers a way to display easily a popup menu when a button
+ * is clicked the popup menu items must subclass Widget and implement MenuItem.
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class ButtonMenu extends Composite implements ClickHandler{
@@ -92,11 +92,13 @@ public class ButtonMenu extends Composite implements ClickHandler{
             setAutoHideEnabled(true);
         }
 
+        @Override
         public void onMouseOver(MouseOverEvent event) {
             MenuItem source = (MenuItem) event.getSource();
             source.setSelected(true);
         }
 
+        @Override
         public void onMouseOut(MouseOutEvent event) {
             MenuItem source = (MenuItem) event.getSource();
             source.setSelected(false);
@@ -117,6 +119,7 @@ public class ButtonMenu extends Composite implements ClickHandler{
             mainPanel.remove(i);
         }
 
+        @Override
         public void onMenuItemActivated(MenuItemActivatedEvent event) {
             this.hide();
         }

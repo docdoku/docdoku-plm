@@ -9,7 +9,7 @@
         <meta name="keywords" content="<fmt:message key="meta.keywords"/>" />
         <meta name="description" content="<fmt:message key="meta.description"/>" />
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/docdoku.css" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
     </head>
 
     <body>

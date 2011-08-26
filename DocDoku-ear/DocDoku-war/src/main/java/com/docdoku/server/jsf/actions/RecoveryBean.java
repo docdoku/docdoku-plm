@@ -27,10 +27,10 @@ import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.bean.ManagedBean;
 
-@Named(value = "recoveryBean")
+@ManagedBean(name= "recoveryBean")
 @RequestScoped
 public class RecoveryBean {
 

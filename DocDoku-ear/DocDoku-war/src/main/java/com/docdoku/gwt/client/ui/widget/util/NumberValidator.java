@@ -24,10 +24,11 @@ package com.docdoku.gwt.client.ui.widget.util;
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class URLChecker implements DocdokuChecker{
+public class NumberValidator implements InputValidator{
 
-    public boolean check(String expressionToCheck) {
-        return expressionToCheck.matches("^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?") ;
+    @Override
+    public boolean validate(String expressionToValidate) {
+        return expressionToValidate.matches("^[0-9]+(\\.|,)?[0-9]*") ;
     }
 
 }

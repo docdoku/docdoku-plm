@@ -36,14 +36,14 @@ import java.util.List;
  */
 public class ExplorerTable extends Composite{
 
-    private VerticalPanel mainPanel ;
+    private VerticalPanel mainPanel;
 
-    private TableWidget table ;
+    private TableWidget table;
 
     private ExplorerMenuBar menuBarTop;
-    private ExplorerMenuBar menuBarBottom ;
-    private ExplorerDocumentMenuBar docMenuBarTop ;
-    private ExplorerDocumentMenuBar docMenuBarBottom ;
+    private ExplorerMenuBar menuBarBottom;
+    private ExplorerDocumentMenuBar docMenuBarTop;
+    private ExplorerDocumentMenuBar docMenuBarBottom;
 
     public ExplorerTable(ExplorerMenuBar menuBarTop, ExplorerMenuBar menuBarBottom, ExplorerDocumentMenuBar docMenuBarTop, ExplorerDocumentMenuBar docMenuBarBottom, DocDragController dndController) {
         this.menuBarTop = menuBarTop;
@@ -101,7 +101,7 @@ public class ExplorerTable extends Composite{
     }
 
     public TableWidget getInnerTable(){
-        return table ;
+        return table;
     }
 
     public void setSelectionForRows(List<Integer> rows, boolean selected) {

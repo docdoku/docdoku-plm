@@ -18,17 +18,17 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.input;
-
-import java.util.EventObject;
+package com.docdoku.gwt.client.ui.widget.util;
 
 /**
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class DocdokuLineEditEvent extends EventObject{
+public class URLValidator implements InputValidator{
 
-    public DocdokuLineEditEvent(DocdokuLineEdit source) {
-        super(source);
+    @Override
+    public boolean validate(String expressionToValidate) {
+        return expressionToValidate.matches("^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?");
     }
+
 }

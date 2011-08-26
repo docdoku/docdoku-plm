@@ -18,25 +18,20 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.input;
-
-import java.util.EventListener;
+package com.docdoku.gwt.client.ui.widget.util;
 
 /**
+ * InputValidator provides validation capabilities on strings.
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public interface DocdokuLineEditListener extends EventListener{
+public abstract interface InputValidator {
 
     /**
-     * This method is called by a DocdokuLineEdit whenever its input state change.
-     * ie :
-     * <ul>
-     * <li>When changing from Acceptable input to Unacceptable input</li>
-     * <li>When changing from Unacceptable input to Acceptable input</li>
-     * </ul>
-     * @param event
+     * Returns true if the expression parameter matches allowed input
+     * @param expressionToValidate the expression to validate
+     * @return
      */
-    public void onInputStateChange(DocdokuLineEditEvent event) ;
+    boolean validate(String expressionToValidate);
 
 }

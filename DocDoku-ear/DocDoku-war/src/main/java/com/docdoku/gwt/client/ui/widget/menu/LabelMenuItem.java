@@ -25,41 +25,42 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 
 /**
- * This class is provided for conveniance and provides a way to add label to popupMenus
+ * This class is provided for convenience and offers a way to add label
+ * to popup menus.
+ * 
  * @author Emmanuel Nhan
  */
 public class LabelMenuItem extends AbstractMenuItem implements ClickHandler{
 
-    private Label label ;
+    private Label label;
 
     public LabelMenuItem(String text) {
-        label = new Label(text) ;
+        label = new Label(text);
         initWidget(label);
         label.addClickHandler(this);
-        setStyleName("itemMenu-notSelected");
+        setStyleName("docdoku-LabelMenuItem");
     }
 
     @Override
     protected boolean beforeCommandCall() {
-        return true ;
+        return true;
     }
 
     @Override
     protected void afterCommandCall() {       
     }
 
+    @Override
     public void setSelected(boolean selected) {
-        if(selected){
-            setStyleName("itemMenu-selected");
-        }else{
-            setStyleName("itemMenu-notSelected");
-        }
+        setStyleDependentName("selected", selected);
     }
 
+    @Override
     public void onClick(ClickEvent event) {
         activate();
     }
 
+    @Override
     public void onShowUp() {
         // nothing to do by default
     }

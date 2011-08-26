@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is a convinience class
+ * This is a convenience class
  * it is designed to help in coding a MenuItem
  * As it extends Composite, in sublasses, you must call initWidget in constructor
  * An AbstractMenuItem owns a Command, which is a generic way to handle actions through
@@ -45,26 +45,30 @@ import java.util.List;
  */
 public abstract class AbstractMenuItem extends Composite implements MenuItem{
 
-    private List<MenuItemListener> observers ;
-    private Command command ;
+    private List<MenuItemListener> observers;
+    private Command command;
 
     public AbstractMenuItem() {
         observers = new ArrayList<MenuItemListener>();
     }
 
+    @Override
     public void addListener(MenuItemListener l) {
         observers.add(l);
     }
 
+    @Override
     public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
         return addDomHandler(handler, MouseOverEvent.getType());
     }
 
+    @Override
     public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
         return addDomHandler(handler, MouseOutEvent.getType());
     }
 
 
+    @Override
     public void removeListener(MenuItemListener l) {
         observers.remove(l);
     }

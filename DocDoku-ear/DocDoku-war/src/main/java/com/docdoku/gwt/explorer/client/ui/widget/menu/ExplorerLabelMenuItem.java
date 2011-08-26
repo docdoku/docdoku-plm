@@ -22,20 +22,21 @@ package com.docdoku.gwt.explorer.client.ui.widget.menu;
 
 import com.docdoku.gwt.client.ui.widget.menu.LabelMenuItem;
 import com.docdoku.gwt.explorer.client.actions.Action;
-import com.docdoku.gwt.explorer.client.util.DocdokuCommand;
+import com.docdoku.gwt.explorer.client.util.CommandImpl;
 
 /**
- * This is a class provided for conveniance and usage with Docdoku GWT client side actions
- * The command in this AbstractMenuItem is a DocdokuCommand
+ * This is a class provided for convenience and usage with the exlorer client
+ * side actions.
+ * The command in this AbstractMenuItem is a CommandImpl
  * @author Emmanuel Nhan
  */
-public class DocdokuLabelMenuItem extends LabelMenuItem{
+public class ExplorerLabelMenuItem extends LabelMenuItem{
 
-    private DocdokuCommand command ;
+    private CommandImpl command;
 
-    public DocdokuLabelMenuItem(String text) {
+    public ExplorerLabelMenuItem(String text) {
         super(text);
-        command = new DocdokuCommand() ;
+        command = new CommandImpl();
         setCommand(command);
     }
 

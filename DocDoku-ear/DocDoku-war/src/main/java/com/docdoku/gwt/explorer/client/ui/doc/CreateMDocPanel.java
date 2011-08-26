@@ -49,6 +49,8 @@ public class CreateMDocPanel extends FlexTable {
     //private SecurityPanel m_securityPanel;
     private CreateMDocMainPanel m_mainPanel;
 
+    
+    
     public CreateMDocPanel(final Map<String, Action> cmds) {
         ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
         FlexCellFormatter cellFormatter = getFlexCellFormatter();

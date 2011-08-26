@@ -25,8 +25,8 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.menu.AbstractMenuItem;
 import com.docdoku.gwt.client.ui.widget.menu.ButtonMenu;
-import com.docdoku.gwt.explorer.client.ui.widget.menu.DocdokuLabelMenuItem;
-import com.docdoku.gwt.explorer.client.util.DocdokuCommand;
+import com.docdoku.gwt.explorer.client.ui.widget.menu.ExplorerLabelMenuItem;
+import com.docdoku.gwt.explorer.client.util.CommandImpl;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -197,14 +197,14 @@ public class ExplorerDocumentMenuBar extends Composite {
             public void onSuccess(String[] tags) {
                 m_tagActionsMenu.clear();
                 for (int i = 0; i < tags.length; i++) {
-                    DocdokuLabelMenuItem item = new DocdokuLabelMenuItem("+ " + tags[i]);
+                    ExplorerLabelMenuItem item = new ExplorerLabelMenuItem("+ " + tags[i]);
                     item.setAction(m_cmds.get("SaveTagsCommand"));
                     item.setParameters(false, true, tags[i]);
                     m_tagActionsMenu.addItem(item);
                 }
 
                 for (int i = 0; i < tags.length; i++) {
-                    DocdokuLabelMenuItem item = new DocdokuLabelMenuItem("- " + tags[i]);
+                    ExplorerLabelMenuItem item = new ExplorerLabelMenuItem("- " + tags[i]);
                     item.setAction(m_cmds.get("SaveTagsCommand"));
                     item.setParameters(false, false, tags[i]);
                     m_tagActionsMenu.addItem(item);
@@ -239,7 +239,7 @@ public class ExplorerDocumentMenuBar extends Composite {
             panel.add(labelField);
             panel.add(createButton);
             initWidget(panel);
-            DocdokuCommand command = new DocdokuCommand() ;
+            CommandImpl command = new CommandImpl() ;
             command.setAction(m_cmds.get("SaveTagsCommand"));
             setCommand(command);
             createButton.addClickHandler(new ClickHandler() {
@@ -259,7 +259,7 @@ public class ExplorerDocumentMenuBar extends Composite {
         protected boolean beforeCommandCall() {
             String tag = labelField.getText();
             if (tag != null && !tag.trim().equals("")) {
-                ((DocdokuCommand)getCommand()).setParameters(true, true, tag);
+                ((CommandImpl)getCommand()).setParameters(true, true, tag);
                 return true;
             } else {
                 return false;

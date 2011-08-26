@@ -18,24 +18,20 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.resources;
+package com.docdoku.gwt.client.ui.widget.input;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ImageResource;
+import com.docdoku.gwt.client.ui.widget.util.NumberValidator;
+import com.google.gwt.user.client.ui.TextBox;
 
 /**
  *
- * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
+ * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public interface WidgetRessourcesBundle extends ClientBundle{
+public class NumberConstrainedTextBox extends ConstrainedTextBox {
 
-    @Source("com/docdoku/gwt/client/ui/widget/resources/navigate_up_small.png")
-    ImageResource getSmallUpImage();
-
-    @Source("com/docdoku/gwt/client/ui/widget/resources/navigate_down_small.png")
-    ImageResource getSmallDownImage();
-
-    @Source("com/docdoku/gwt/client/ui/widget/resources/grippy.png")
-    ImageResource dragNDropIcon();
-
+    public NumberConstrainedTextBox() {
+        super();
+        setTextAlignment(TextBox.ALIGN_RIGHT);
+        setValidator(new NumberValidator());
+    }
 }

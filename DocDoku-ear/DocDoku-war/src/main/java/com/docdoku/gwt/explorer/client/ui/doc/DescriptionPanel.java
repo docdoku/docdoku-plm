@@ -32,13 +32,15 @@ public class DescriptionPanel extends DataRoundedPanel{
 
     private TextArea m_descriptionTextArea;
 
-
+    private final static int HEIGHT=200;
+    
     public DescriptionPanel(){
         super(ServiceLocator.getInstance().getExplorerI18NConstants().tabDescription());
         createLayout();
     }
 
     private void createLayout() {
+        setHeight(HEIGHT);
         m_descriptionTextArea = new TextArea();
         m_descriptionTextArea.setVisibleLines(8);
         m_descriptionTextArea.setCharacterWidth(25);

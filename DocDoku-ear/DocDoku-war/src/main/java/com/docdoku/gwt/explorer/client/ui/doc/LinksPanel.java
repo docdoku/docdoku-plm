@@ -28,7 +28,7 @@ import com.docdoku.gwt.explorer.shared.DocumentDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -38,20 +38,23 @@ import java.util.Set;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class LinksPanel extends DataRoundedPanel implements ClickHandler {
     
-    private Grid m_linkList;
+    private FlexTable m_linkList;
     private Label m_addLink;
     private Label m_delLink;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
     private boolean m_editionMode;
     private DocOracle oracle;
 
+    private final static int HEIGHT=200;
+    
     public LinksPanel() {
         super(ServiceLocator.getInstance().getExplorerI18NConstants().tabLinks());
-        m_linkList = new Grid();
+        setHeight(HEIGHT);
+        m_linkList = new FlexTable();
         m_delLink = new Label(i18n.btnRemove());
         m_delLink.setStyleName("normalLinkAction");
         m_delLink.addClickHandler(this);
@@ -100,7 +103,7 @@ public class LinksPanel extends DataRoundedPanel implements ClickHandler {
     public void setLinks(Set<DocumentDTO> links, String workspaceId) {
         oracle.setWorkspaceId(workspaceId);
         m_linkList.clear();
-        m_linkList.resize(links.size(), 2);
+        //m_linkList.resize(links.size(), 2);
         int i = 0;
         for (DocumentDTO link : links) {
             CheckBox linkCheckBox = new CheckBox();
@@ -138,6 +141,7 @@ public class LinksPanel extends DataRoundedPanel implements ClickHandler {
         this.oracle = oracle;
     }
 
+    @Override
     public void onClick(ClickEvent event) {
         if (event.getSource() == m_addLink) {
             addLinkPanel();

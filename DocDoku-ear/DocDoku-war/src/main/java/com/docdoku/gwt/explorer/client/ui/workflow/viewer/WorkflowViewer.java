@@ -43,14 +43,14 @@ public class WorkflowViewer extends Composite implements HasMouseOutHandlers, Mo
 
     private WorkflowDTO workflow;
     private FlexTable workflowViewer;
-    private String visitorName ;
-    private List<ROActivityPanel> panels ;
+    private String visitorName;
+    private List<ROActivityPanel> panels;
     
     public WorkflowViewer(WorkflowDTO workflow, String visitor, TaskListener l) {
         this.workflow = workflow;
-        this.visitorName = visitor ;
+        this.visitorName = visitor;
         workflowViewer = new FlexTable();
-        panels = new LinkedList<ROActivityPanel>() ;
+        panels = new LinkedList<ROActivityPanel>();
         addMouseOutHandler(this);
         initWidget(workflowViewer);
         setupUi(l);

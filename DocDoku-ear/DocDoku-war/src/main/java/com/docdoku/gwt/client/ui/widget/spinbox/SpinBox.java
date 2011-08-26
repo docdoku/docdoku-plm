@@ -21,7 +21,7 @@
 package com.docdoku.gwt.client.ui.widget.spinbox;
 
 import com.docdoku.gwt.client.ui.widget.WidgetServiceLocator;
-import com.docdoku.gwt.client.ui.widget.resources.WidgetRessourcesBundle;
+import com.docdoku.gwt.client.ui.widget.resources.WidgetResourcesBundle;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -39,13 +39,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- * SpinBox is a simple widget that allow to choose an integer value
+ * SpinBox is a simple widget that allows to choose an integer value
  * 
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
 public class SpinBox extends Composite implements ClickHandler, ChangeHandler, HasValueChangeHandlers<Integer> {
 
-    private static final String DEFAULT_STYLE = "docdoku-spinBox";
+    private static final String PRIMARY_STYLE = "docdoku-SpinBox";
     private int minValue;
     private int maxValue;
     private PushButton buttonUp;
@@ -75,11 +75,11 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler, H
         backupValue = value;
         setupUi();
         setupListeners();
-        inputField.setStyleName(DEFAULT_STYLE);
+        inputField.setStyleName(PRIMARY_STYLE);
     }
 
     /**
-     * Retrieve the maximum value
+     * Retrieves the maximum value
      * @return the maximum value accepted by the SpinBox
      */
     public int getMaxValue() {
@@ -124,9 +124,9 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler, H
     private void setupUi() {
         HorizontalPanel mainPanel = new HorizontalPanel();
         VerticalPanel buttonsPanel = new VerticalPanel();
-        WidgetRessourcesBundle images = WidgetServiceLocator.getInstance().getImages();
-        Image up = new Image(images.getSmallUpImage());
-        Image down = new Image(images.getSmallDownImage());
+        WidgetResourcesBundle images = WidgetServiceLocator.getInstance().getImages();
+        Image up = new Image(images.smallUpImage());
+        Image down = new Image(images.smallDownImage());
         buttonUp = new PushButton(up);
         buttonUp.setStyleName("spinbox-button");
         buttonDown = new PushButton(down);
@@ -220,6 +220,7 @@ public class SpinBox extends Composite implements ClickHandler, ChangeHandler, H
         onValueChanged();
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }

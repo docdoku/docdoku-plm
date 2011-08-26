@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.client.ui.widget.input;
 
-import com.docdoku.gwt.client.ui.widget.util.URLChecker;
+import com.docdoku.gwt.client.ui.widget.util.URLValidator;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -32,17 +32,17 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class DocdokuUrlLineEdit extends Composite{
+public class EditableURL extends Composite{
 
-    private DocdokuLineEdit lineEdit ;
-    private InlineLabel link ;
+    private ConstrainedTextBox lineEdit;
+    private InlineLabel link;
 
-    public DocdokuUrlLineEdit() {
-        lineEdit = new DocdokuLineEdit();
-        lineEdit.setChecker(new URLChecker());
+    public EditableURL() {
+        lineEdit = new ConstrainedTextBox();
+        lineEdit.setValidator(new URLValidator());
         link = new InlineLabel();
         VerticalPanel mainPanel = new VerticalPanel();
-        mainPanel.add(lineEdit) ;
+        mainPanel.add(lineEdit);
         mainPanel.add(link);
         initWidget(mainPanel);
         lineEdit.setVisible(true);
@@ -50,6 +50,7 @@ public class DocdokuUrlLineEdit extends Composite{
         link.setVisible(false);
         link.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 Window.open(link.getText(), link.getText(), "");
             }
@@ -67,7 +68,7 @@ public class DocdokuUrlLineEdit extends Composite{
         link.setText(text);
     }
 
-    public void removeListener(DocdokuLineEditListener listener) {
+    public void removeListener(ConstrainedStateChangeListener listener) {
         lineEdit.removeListener(listener);
     }
 
@@ -79,7 +80,7 @@ public class DocdokuUrlLineEdit extends Composite{
         return lineEdit.containsAcceptableInput();
     }
 
-    public void addListener(DocdokuLineEditListener listener) {
+    public void addListener(ConstrainedStateChangeListener listener) {
         lineEdit.addListener(listener);
     }
 

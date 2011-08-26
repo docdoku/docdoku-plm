@@ -33,14 +33,14 @@ import java.util.Set;
  */
 public class TableProfile {
 
-    static private final String DEFAULT_STYLE_PREFIX =  "myTable" ;
+    private final static String PRIMARY_STYLE =  "docdoku-TableWidget";
 
     private Map<Integer, TableDelegate> delegates ;
-    private String stylePrefix ;
-    private TableDelegate defaultDelegate ;
-    private boolean selectionEnabled ;
-    private boolean dndEnabled ;
-    private Set<Integer> columnsNotToEmitClick ;
+    private String stylePrefix;
+    private TableDelegate defaultDelegate;
+    private boolean selectionEnabled;
+    private boolean dndEnabled;
+    private Set<Integer> columnsNotToEmitClick;
 
     /**
      * Builds a default TableProfile
@@ -49,7 +49,7 @@ public class TableProfile {
     public TableProfile() {
         delegates = new HashMap<Integer, TableDelegate>();
         columnsNotToEmitClick = new HashSet<Integer>();
-        stylePrefix = DEFAULT_STYLE_PREFIX;
+        stylePrefix = PRIMARY_STYLE;
         defaultDelegate = new DefaultTableDelegate();
         selectionEnabled = true ;
         dndEnabled = false ;

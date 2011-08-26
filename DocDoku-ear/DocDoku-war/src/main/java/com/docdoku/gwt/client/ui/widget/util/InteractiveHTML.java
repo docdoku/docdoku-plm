@@ -52,10 +52,11 @@ public class InteractiveHTML extends HTML implements MouseOutHandler, MouseMoveH
     }
 
     public InteractiveHTML(String html, String tooltip[]){
-        this(html, tooltip, true) ;
+        this(html, tooltip, true);
     }
 
 
+    @Override
     public void onMouseMove(MouseMoveEvent event) {
 
         if (!tooltipPanel.isShowing()) {
@@ -63,10 +64,12 @@ public class InteractiveHTML extends HTML implements MouseOutHandler, MouseMoveH
         }
     }
 
+    @Override
     public void onMouseOut(MouseOutEvent event) {
         tooltipPanel.hide();
     }
 
+    @Override
     public void onClick(ClickEvent event) {
         tooltipPanel.hide();
     }

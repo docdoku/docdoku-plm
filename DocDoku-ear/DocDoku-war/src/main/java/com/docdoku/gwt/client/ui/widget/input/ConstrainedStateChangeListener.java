@@ -18,34 +18,25 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.client.util;
+package com.docdoku.gwt.client.ui.widget.input;
 
-import com.docdoku.gwt.explorer.client.actions.Action;
-import com.google.gwt.user.client.Command;
+import java.util.EventListener;
 
 /**
- * As actions in Docdoku have parameters,
- * this class encapsulate params & command call
- * for Actions.
- * It is usefull in ButtonMenu for instance, with a DocdokuLabelMenuItem
- * @author Emmanuel Nhan
+ *
+ * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class DocdokuCommand implements Command{
+public interface ConstrainedStateChangeListener extends EventListener{
 
-    private Action action ;
-    private Object parameters[] ;
-
-    @Override
-    public void execute() {
-        action.execute(parameters);
-    }
-
-    public void setParameters(Object... params){
-        parameters = params;
-    }
-
-    public void setAction(Action a){
-        action = a ;
-    }
+    /**
+     * This method is called by a ConstrainedTextBox whenever its input state change.
+     * ie :
+     * <ul>
+     * <li>When changing from Acceptable input to Unacceptable input</li>
+     * <li>When changing from Unacceptable input to Acceptable input</li>
+     * </ul>
+     * @param event
+     */
+    public void onInputStateChange(ConstrainedStateChangeEvent event);
 
 }

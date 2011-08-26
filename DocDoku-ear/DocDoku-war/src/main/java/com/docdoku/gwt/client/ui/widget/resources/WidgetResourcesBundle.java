@@ -18,15 +18,24 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.util;
+package com.docdoku.gwt.client.ui.widget.resources;
+
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
- * A checker that accepts input if it is not empty
- * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
+ *
+ * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class NotEmptyChecker implements DocdokuChecker{
+public interface WidgetResourcesBundle extends ClientBundle{
 
-    public boolean check(String expressionToCheck) {
-        return !expressionToCheck.trim().isEmpty();
-    }
+    @Source("com/docdoku/gwt/client/ui/widget/resources/navigate_up_small.png")
+    ImageResource smallUpImage();
+
+    @Source("com/docdoku/gwt/client/ui/widget/resources/navigate_down_small.png")
+    ImageResource smallDownImage();
+
+    @Source("com/docdoku/gwt/client/ui/widget/resources/grippy.png")
+    ImageResource dragNDropIcon();
+
 }

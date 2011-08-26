@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
 <module rename-to="gwtExplorer">
     
@@ -31,7 +32,7 @@
     <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
     <!-- <inherits name="com.google.gwt.user.theme.chrome.Chrome"/> -->
     <!-- <inherits name="com.google.gwt.user.theme.dark.Dark"/> -->
-    <inherits name="com.sensei.themes.mytheme.Mytheme"/>
+    <inherits name="com.sensei.themes.regulartheme.Regulartheme"/>
     <inherits name="com.sensei.themes.searchTheme.SearchTheme"/>
 
 </module>

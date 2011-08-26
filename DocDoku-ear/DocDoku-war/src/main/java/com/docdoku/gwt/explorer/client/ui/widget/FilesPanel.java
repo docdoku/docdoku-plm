@@ -57,10 +57,14 @@ public class FilesPanel extends DataRoundedPanel implements FormPanel.SubmitComp
     private HorizontalPanel m_loadingCmdPanel;
     private Label m_delLink;
     private boolean m_editionMode;
+    
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
+    private final static int HEIGHT=320;
+    
     public FilesPanel() {
         super(ServiceLocator.getInstance().getExplorerI18NConstants().tabFiles());
+        setHeight(HEIGHT);
         m_form = new FormPanel();
         m_placeHolder = new SimplePanel();
         m_fileList = new Grid();
@@ -87,6 +91,7 @@ public class FilesPanel extends DataRoundedPanel implements FormPanel.SubmitComp
         m_loading = new Label();
         m_loading.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 m_form.removeFromParent();
                 m_loading.removeStyleName("busy");
@@ -172,11 +177,13 @@ public class FilesPanel extends DataRoundedPanel implements FormPanel.SubmitComp
         return fullNames;
     }
 
+    @Override
     public void onSubmitComplete(SubmitCompleteEvent event) {
         m_loading.removeStyleName("busy");
         m_loading.setText("");
     }
 
+    @Override
     public void onSubmit(SubmitEvent event) {
         m_loading.addStyleName("busy");
         m_loading.setText(i18n.btnCancel());

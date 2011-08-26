@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class DocMainPanel extends DataRoundedPanel {
 
@@ -55,15 +55,18 @@ public class DocMainPanel extends DataRoundedPanel {
 
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
+    private final static int HEIGHT=320;
+    
     public DocMainPanel(final Map<String, Action> cmds) {
         createLayout();
         m_workflowPanel.setApproveAction(cmds.get("ApproveCommand")) ;
         m_workflowPanel.setRejectAction(cmds.get("RejectCommand"));
     }
 
+    
+    
     private void createLayout() {
-
-        
+        setHeight(HEIGHT);
         inputPanel.setText(0, 0, i18n.fieldLabelID());
         m_idLabel = new Label();
         inputPanel.setWidget(0, 1, m_idLabel);
@@ -148,14 +151,11 @@ public class DocMainPanel extends DataRoundedPanel {
     }
     public void setLifeCycleState(String lifeCycleState) {
         m_lifeCycleStateLabel.setText(lifeCycleState);
-        // on click
         m_lifeCycleStateLabel.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
-
-                if (!m_workflowPanel.isAttached()){
-                    RootPanel.get().add(m_workflowPanel,0,0);
-                }
+                m_workflowPanel.center();
             }
         });
 

@@ -81,7 +81,7 @@ public interface ExplorerService extends RemoteService{
 
     /*
     public Task[] getTasks(String pWorkspaceId) throws ApplicationException;
-    public WorkflowModelDTO getWorkflowModel(BasicElementKey pKey) throws ApplicationException;
+    public WorkflowModelDTO getWorkflowModel(WorkflowModelKey pKey) throws ApplicationException;
     public Workspace getWorkspace(String pWorkspaceId) throws ApplicationException;
     public User savePersonalInfo(String pWorkspaceId, String pName, String pEmail, String pLanguage) throws ApplicationException;
         

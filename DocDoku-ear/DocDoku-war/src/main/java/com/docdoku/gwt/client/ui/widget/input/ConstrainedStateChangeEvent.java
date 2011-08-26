@@ -18,16 +18,17 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.util;
+package com.docdoku.gwt.client.ui.widget.input;
+
+import java.util.EventObject;
 
 /**
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class NumberChecker implements DocdokuChecker{
+public class ConstrainedStateChangeEvent extends EventObject{
 
-    public boolean check(String expressionToCheck) {
-        return expressionToCheck.matches("^[0-9]+(\\.|,)?[0-9]*") ;
+    public ConstrainedStateChangeEvent(ConstrainedTextBox source) {
+        super(source);
     }
-
 }

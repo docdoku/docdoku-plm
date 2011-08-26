@@ -18,20 +18,16 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.input;
-
-import com.docdoku.gwt.client.ui.widget.util.NumberChecker;
-import com.google.gwt.user.client.ui.TextBox;
+package com.docdoku.gwt.client.ui.widget.util;
 
 /**
- *
+ * A validator that accepts input if it is not empty
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class DocdokuNumberLineEdit extends DocdokuLineEdit {
+public class NotEmptyValidator implements InputValidator{
 
-    public DocdokuNumberLineEdit() {
-        super();
-        setTextAlignment(TextBox.ALIGN_RIGHT);
-        setChecker(new NumberChecker());
+    @Override
+    public boolean validate(String expressionToValidate) {
+        return !expressionToValidate.trim().isEmpty();
     }
 }

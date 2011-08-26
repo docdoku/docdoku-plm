@@ -37,6 +37,8 @@ public class DataRoundedPanel extends Composite {
     protected Label headerLabel;
     protected VerticalPanel vp;
 
+    private final static int HEADER_HEIGHT=22;
+    
     public DataRoundedPanel() {
 
         rp = new RoundedPanel(RoundedPanel.ALL);
@@ -51,6 +53,17 @@ public class DataRoundedPanel extends Composite {
         //setHeight("100%");
     }
 
+    public void setHeight(int height){
+        if(getWidget()==rp){
+            inputPanel.setHeight(height+"px");
+        }
+        else{
+            rp.setHeight(HEADER_HEIGHT+"px");
+            inputPanel.setHeight((height-HEADER_HEIGHT)+"px");
+        }
+            
+    }
+    
     public DataRoundedPanel(String header, int corners) {
         
         vp = new VerticalPanel();
@@ -71,6 +84,7 @@ public class DataRoundedPanel extends Composite {
         //vp.setHeight("100%");
         initWidget(vp);
         //setHeight("100%");
+        
     }
     public DataRoundedPanel(String header) {
         this(header,RoundedPanel.TOP);

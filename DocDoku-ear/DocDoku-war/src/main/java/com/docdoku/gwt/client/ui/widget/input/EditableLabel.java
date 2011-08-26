@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.gwt.client.ui.widget.input;
 
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -36,74 +35,50 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
  */
-public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler, KeyDownHandler {
+public class EditableLabel extends ConstrainedTextBox implements MouseOverHandler, MouseOutHandler, BlurHandler, FocusHandler, KeyDownHandler {
 
-    private final static String DEFAULT_STYLE = "docdoku-editableLabel";
-    private final static String DEFAULT_FOCUS_STYLE = "docdoku-editableLabel-selected";
-    private final static String DEFAULT_OVER_STYLE = "docdoku-editableLabel-over";
-    private String normalStyle;
-    private String selectedStyle;
-    private String overStyle;
-    private boolean hasFocus ;
+    private final static String PRIMARY_STYLE = "docdoku-EditableLabel";
+    private final static String ON_FOCUS_DEPENDENT_STYLE = "selected";
+    private final static String ON_HOVER_DEPENDENT_STYLE = "hover";
+    private boolean hasFocus;
 
     public EditableLabel() {
-        normalStyle = DEFAULT_STYLE;
-        selectedStyle = DEFAULT_FOCUS_STYLE;
-        overStyle = DEFAULT_OVER_STYLE;
-        setStyleName(normalStyle);
+        setStyleName(PRIMARY_STYLE);
         addBlurHandler(this);
         addMouseOutHandler(this);
         addMouseOverHandler(this);
         addFocusHandler(this);
         addKeyDownHandler(this);
-        hasFocus =false ;
+        hasFocus = false;
     }
 
+    @Override
     public void onFocus(FocusEvent event) {
-        addStyleName(selectedStyle);
+        addStyleDependentName(ON_FOCUS_DEPENDENT_STYLE);
         this.selectAll();
-        removeStyleName(overStyle);
-        hasFocus = true ;
+        removeStyleDependentName(ON_HOVER_DEPENDENT_STYLE);
+        hasFocus = true;
     }
 
+    @Override
     public void onBlur(BlurEvent event) {
-        removeStyleName(selectedStyle);
-        hasFocus = false ;
-//        int x = event.getNativeEvent().getClientX();
-//        int y = event.getNativeEvent().getClientY() ;
-//
-//        if (x < getOffsetWidth() +  getAbsoluteLeft() && x > getAbsoluteLeft() && y < getOffsetHeight() + getAbsoluteTop() && y > getAbsoluteTop()){
-//            addStyleName(overStyle) ;
-//        }
+        removeStyleDependentName(ON_FOCUS_DEPENDENT_STYLE);
+        hasFocus = false;
     }
 
+    @Override
     public void onMouseOver(MouseOverEvent event) {
-        if (!hasFocus){
-            addStyleName(overStyle);
+        if (!hasFocus) {
+            addStyleDependentName(ON_HOVER_DEPENDENT_STYLE);
         }
     }
 
+    @Override
     public void onMouseOut(MouseOutEvent event) {
-        removeStyleName(overStyle);
+        removeStyleDependentName(ON_HOVER_DEPENDENT_STYLE);
     }
 
-    public String getNormalStyle() {
-        return normalStyle;
-    }
-
-    public void setNormalStyle(String normalStyle) {
-        this.normalStyle = normalStyle;
-        setStyleName(normalStyle);
-    }
-
-    public String getSelectedStyle() {
-        return selectedStyle;
-    }
-
-    public void setSelectedStyle(String selectedStyle) {
-        this.selectedStyle = selectedStyle;
-    }
-
+    @Override
     public void onKeyDown(KeyDownEvent event) {
         if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
             setText(getBackup());
@@ -111,13 +86,5 @@ public class EditableLabel extends DocdokuLineEdit implements MouseOverHandler, 
         } else if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
             setFocus(false);
         }
-    }
-
-    public String getOverStyle() {
-        return overStyle;
-    }
-
-    public void setOverStyle(String overStyle) {
-        this.overStyle = overStyle;
     }
 }

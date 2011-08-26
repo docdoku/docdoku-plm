@@ -18,20 +18,34 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.client.ui.widget.util;
+package com.docdoku.gwt.explorer.client.util;
+
+import com.docdoku.gwt.explorer.client.actions.Action;
+import com.google.gwt.user.client.Command;
 
 /**
- * DocdokuChecker provides check capabilities on strings.
- *
- * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
+ * As actions have parameters,
+ * this class encapsulate params & command call
+ * for Actions.
+ * It is useful in ButtonMenu for instance, with a ExplorerLabelMenuItem
+ * @author Emmanuel Nhan
  */
-public abstract interface DocdokuChecker {
+public class CommandImpl implements Command{
 
-    /**
-     * Returns true if the expression parameters matches allowed input
-     * @param expressionToCheck the expression to check
-     * @return
-     */
-    boolean check(String expressionToCheck) ;
+    private Action action;
+    private Object parameters[];
+
+    @Override
+    public void execute() {
+        action.execute(parameters);
+    }
+
+    public void setParameters(Object... params){
+        parameters = params;
+    }
+
+    public void setAction(Action a){
+        action = a;
+    }
 
 }

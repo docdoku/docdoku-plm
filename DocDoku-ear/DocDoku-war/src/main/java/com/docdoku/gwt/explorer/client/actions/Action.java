@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.actions;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public interface Action {
 

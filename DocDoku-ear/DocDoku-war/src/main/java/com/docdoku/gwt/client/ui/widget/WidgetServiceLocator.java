@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.client.ui.widget;
 
-import com.docdoku.gwt.client.ui.widget.resources.WidgetRessourcesBundle;
+import com.docdoku.gwt.client.ui.widget.resources.WidgetResourcesBundle;
 import com.google.gwt.core.client.GWT;
 
 /**
@@ -31,12 +31,12 @@ public class WidgetServiceLocator {
 
     private final static WidgetServiceLocator instance = new WidgetServiceLocator() ;
 
-    private final WidgetRessourcesBundle images = GWT.create(WidgetRessourcesBundle.class) ;
+    private final WidgetResourcesBundle images = GWT.create(WidgetResourcesBundle.class) ;
 
     private WidgetServiceLocator() {
     }
 
-    public WidgetRessourcesBundle getImages() {
+    public WidgetResourcesBundle getImages() {
         return images;
     }
 

@@ -21,7 +21,7 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
-import com.docdoku.gwt.client.ui.widget.util.NotEmptyChecker;
+import com.docdoku.gwt.client.ui.widget.util.NotEmptyValidator;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -45,11 +45,9 @@ public class StateWidget extends RoundedPanel implements ChangeHandler {
         p.setStyleName("editableState-Element");
         p.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         stateEdit = new EditableLabel();
-        stateEdit.setNormalStyle("docdoku-editableStateWidget");
-        stateEdit.setSelectedStyle("docdoku-editableStateWidget-selected");
-        stateEdit.setOverStyle("docdoku-editableStateWidget-over");
+        stateEdit.setStyleName("editableState");
         stateEdit.setTextAlignment(EditableLabel.ALIGN_CENTER);
-        stateEdit.setChecker(new NotEmptyChecker());
+        stateEdit.setValidator(new NotEmptyValidator());
         p.add(stateEdit);
 
         p.setWidth("100%");
@@ -74,6 +72,7 @@ public class StateWidget extends RoundedPanel implements ChangeHandler {
         return stateEdit;
     }
 
+    @Override
     public void onChange(ChangeEvent event) {
         if (stateEdit.getText().length() > stateEdit.getVisibleLength()) {
             while (stateEdit.getText().length() > stateEdit.getVisibleLength()) {
