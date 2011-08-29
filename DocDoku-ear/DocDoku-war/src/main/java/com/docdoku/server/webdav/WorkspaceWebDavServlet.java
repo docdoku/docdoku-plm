@@ -41,8 +41,8 @@ public class WorkspaceWebDavServlet extends HttpServlet {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
         
-        AuthenticationService authenticationService = new AuthenticationService();
-        authenticationService.setDisableDigest(true);
+        //AuthenticationService authenticationService = new AuthenticationService();
+        //authenticationService.setDisableDigest(true);
         
         ResourceFactory resourceFactory=new WorkspaceResourceFactory();
         HttpManager httpManager = new HttpManager(resourceFactory);
