@@ -174,13 +174,16 @@ public class MasterDocumentDAO {
         Query query = em.createQuery("SELECT m.id FROM MasterDocument m "
                 + "WHERE m.workspaceId = :workspaceId "
                 + "AND m.type = :type "
+                + "AND m.version = :version "
                 + "AND m.creationDate = ("
                 + "SELECT MAX(m2.creationDate) FROM MasterDocument m2 "
                 + "WHERE m2.workspaceId = :workspaceId "
-                + "AND m2.type = :type"
+                + "AND m2.type = :type "
+                + "AND m2.version = :version"
                 + ")");
         query.setParameter("workspaceId", pWorkspaceId);
         query.setParameter("type", pType);
+        query.setParameter("version", "A");
         mdocId = (String) query.getSingleResult();
         return mdocId;
     }
