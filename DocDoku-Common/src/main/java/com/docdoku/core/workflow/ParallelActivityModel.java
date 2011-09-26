@@ -68,9 +68,10 @@ public class ParallelActivityModel extends ActivityModel {
             tasksToComplete--;
     }
 
+    @Override
     public Activity createActivity() {
-        List<Task> tasks = new LinkedList<Task>();
-        Activity activity = new ParallelActivity(step, tasks, lifeCycleState, tasksToComplete);
+        Activity activity = new ParallelActivity(step, lifeCycleState, tasksToComplete);
+        List<Task> tasks = activity.getTasks();
         for(TaskModel model:taskModels){
             Task task = model.createTask();
             task.setActivity(activity);

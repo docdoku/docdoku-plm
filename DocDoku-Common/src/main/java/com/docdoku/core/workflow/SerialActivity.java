@@ -41,10 +41,11 @@ public class SerialActivity extends Activity {
 
     }
 
-    public SerialActivity(int pStep, List<Task> pTasks, String pLifeCycleState) {
-        super(pStep, pTasks, pLifeCycleState);
+    public SerialActivity(int pStep, String pLifeCycleState) {
+        super(pStep, pLifeCycleState);
     }
     
+    @Override
     public boolean isStopped() {
         for(Task task:tasks)
             if(task.isRejected())
@@ -53,6 +54,7 @@ public class SerialActivity extends Activity {
         return false;
     }
 
+    @Override
     public Collection<Task> getOpenTasks() {
         List<Task> runningTasks = new ArrayList<Task>();
         if (!isComplete() && !isStopped()) {          
@@ -66,6 +68,7 @@ public class SerialActivity extends Activity {
         return runningTasks;
     }
     
+    @Override
     public boolean isComplete() {
         for(Task task:tasks)
             if(!task.isApproved())

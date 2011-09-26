@@ -52,8 +52,8 @@ public class SerialActivityModel extends ActivityModel {
         
     @Override
     public Activity createActivity() {
-        List<Task> tasks = new LinkedList<Task>();
-        Activity activity = new SerialActivity(step, tasks, lifeCycleState);
+        Activity activity = new SerialActivity(step, lifeCycleState);
+        List<Task> tasks = activity.getTasks();
         for(TaskModel model:taskModels){
             Task task = model.createTask();
             task.setActivity(activity);

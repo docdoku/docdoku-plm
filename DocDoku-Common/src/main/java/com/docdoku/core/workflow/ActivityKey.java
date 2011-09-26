@@ -27,21 +27,21 @@ import java.io.Serializable;
  */
 public class ActivityKey implements Serializable {
 
-    private int workflowId;
+    private int workflow;
     private int step;
 
     public ActivityKey() {
     }
 
     public ActivityKey(int pWorkflowId, int pStep) {
-        workflowId = pWorkflowId;
+        workflow = pWorkflowId;
         step = pStep;
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + workflowId;
+        hash = 31 * hash + workflow;
         hash = 31 * hash + step;
         return hash;
     }
@@ -55,20 +55,20 @@ public class ActivityKey implements Serializable {
             return false;
         }
         ActivityKey key = (ActivityKey) pObj;
-        return ((key.workflowId == workflowId) && (key.step == step));
+        return ((key.workflow == workflow) && (key.step == step));
     }
 
     @Override
     public String toString() {
-        return workflowId + "-" + step;
+        return workflow + "-" + step;
     }
 
     public int getWorkflowId() {
-        return workflowId;
+        return workflow;
     }
 
     public void setWorkflowId(int workflowId) {
-        this.workflowId = workflowId;
+        this.workflow = workflowId;
     }
 
     public int getStep() {

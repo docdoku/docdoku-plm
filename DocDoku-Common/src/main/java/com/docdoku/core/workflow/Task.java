@@ -21,6 +21,7 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.util.Tools;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Task implements Serializable, Cloneable {
 
     
+    @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="ACTIVITY_STEP", referencedColumnName="STEP"),
@@ -47,13 +49,6 @@ public class Task implements Serializable, Cloneable {
     
     @Id
     private int num;
-    @javax.persistence.Column(name = "WORKFLOW_ID", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private int workflowId;
-    
-    @javax.persistence.Column(name = "ACTIVITY_STEP", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private int activityStep;
     
     private String title;
     
@@ -100,7 +95,15 @@ public class Task implements Serializable, Cloneable {
         return activity;
     }
 
+    public int getWorkflowId() {
+        return activity==null?0:activity.getWorkflowId();
+    }
 
+    public int getActivityStep() {
+        return activity==null?0:activity.getStep();
+    }
+    
+    
     public int getNum() {
         return num;
     }
@@ -112,8 +115,6 @@ public class Task implements Serializable, Cloneable {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
-        activityStep=activity.getStep();
-        workflowId=activity.getWorkflowId();
     }
 
     public void setStatus(Task.Status status) {
@@ -178,18 +179,8 @@ public class Task implements Serializable, Cloneable {
     }
     
     public TaskKey getKey() {
-        return new TaskKey(workflowId,activityStep,num);
+        return new TaskKey(new ActivityKey(getWorkflowId(), getActivityStep()),num);
     }
-
-    public int getActivityStep() {
-        return activityStep;
-    }
-
-    public int getWorkflowId() {
-        return workflowId;
-    }
-
-
     
     public Date getClosureDate(){
         return closureDate;
@@ -248,8 +239,7 @@ public class Task implements Serializable, Cloneable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workflowId;
-	hash = 31 * hash + activityStep;
+	hash = 31 * hash + (activity==null?0:activity.hashCode());
         hash = 31 * hash + num;
 	return hash;
     }
@@ -262,7 +252,7 @@ public class Task implements Serializable, Cloneable {
         if (!(pObj instanceof Task))
             return false;
         Task task = (Task) pObj;
-        return ((task.workflowId==workflowId) && (task.activityStep==activityStep) && (task.num==num));
+        return ((Tools.safeEquals(task.activity,activity)) && (task.num==num));
     }
     
     @Override

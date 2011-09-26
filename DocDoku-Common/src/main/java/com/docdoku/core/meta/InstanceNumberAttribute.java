@@ -44,6 +44,7 @@ public class InstanceNumberAttribute extends InstanceAttribute{
         setNumberValue(pValue);
     }
 
+    @Override
     public Float getValue() {
         return numberValue;
     }

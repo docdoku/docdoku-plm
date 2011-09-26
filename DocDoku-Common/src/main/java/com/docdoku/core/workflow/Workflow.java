@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.core.workflow;
 
 import java.io.Serializable;
@@ -38,54 +37,49 @@ import javax.persistence.Id;
 @javax.persistence.Entity
 public class Workflow implements Serializable, Cloneable {
 
-
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
-    
-    @OneToMany(mappedBy = "workflow", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("step ASC")
-    private List<Activity> activities=new LinkedList<Activity>();
-
+    private List<Activity> activities = new LinkedList<Activity>();
     private String finalLifeCycleState;
-    
-    
-    public Workflow(List<Activity> pActivities, String pFinalLifeCycleState) {
-        activities=pActivities;
-        finalLifeCycleState=pFinalLifeCycleState;
+
+    public Workflow(String pFinalLifeCycleState) {
+        finalLifeCycleState = pFinalLifeCycleState;
     }
-    
+
     public Workflow() {
-
     }
 
-    
-    public Collection<Task> getRunningTasks(){
-        
+    public Collection<Task> getRunningTasks() {
+
         Activity current = getCurrentActivity();
-        if(current!=null){
+        if (current != null) {
             return current.getOpenTasks();
-        }else
+        } else {
             return new ArrayList<Task>();
+        }
     }
-    
 
     public int getCurrentStep() {
         int i = 0;
         for (Activity activity : activities) {
-            if (activity.isComplete())
+            if (activity.isComplete()) {
                 i++;
-            else
+            } else {
                 break;
+            }
         }
         return i;
     }
 
     public Activity getCurrentActivity() {
-        if (getCurrentStep() < activities.size())
+        if (getCurrentStep() < activities.size()) {
             return getActivity(getCurrentStep());
-        else
+        } else {
             return null;
+        }
     }
 
     public String getFinalLifeCycleState() {
@@ -107,33 +101,33 @@ public class Workflow implements Serializable, Cloneable {
     public void setId(int id) {
         this.id = id;
     }
-    
 
     public void setFinalLifeCycleState(String finalLifeCycleState) {
         this.finalLifeCycleState = finalLifeCycleState;
     }
 
-    public int numberOfSteps(){
+    public int numberOfSteps() {
         return activities.size();
     }
-    
-    public List<String> getLifeCycle(){
-        List<String> lc=new LinkedList<String>();
-        for(Activity activity:activities)
+
+    public List<String> getLifeCycle() {
+        List<String> lc = new LinkedList<String>();
+        for (Activity activity : activities) {
             lc.add(activity.getLifeCycleState());
-        
+        }
+
         return lc;
     }
-    
+
     public String getLifeCycleState() {
         Activity current = getCurrentActivity();
-        return current==null?finalLifeCycleState:current.getLifeCycleState();
+        return current == null ? finalLifeCycleState : current.getLifeCycleState();
     }
 
     public Activity getActivity(int pIndex) {
         return activities.get(pIndex);
     }
-    
+
     /**
      * perform a deep clone operation
      */
@@ -148,12 +142,28 @@ public class Workflow implements Serializable, Cloneable {
         //perform a deep copy
         List<Activity> clonedActivities = new LinkedList<Activity>();
         for (Activity activity : activities) {
-            Activity clonedActivity=activity.clone();
+            Activity clonedActivity = activity.clone();
             clonedActivity.setWorkflow(clone);
             clonedActivities.add(clonedActivity);
         }
         clone.activities = clonedActivities;
         return clone;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Workflow)) {
+            return false;
+        }
+        Workflow workflow = (Workflow) obj;
+        return workflow.id == id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

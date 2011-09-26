@@ -128,8 +128,8 @@ public class WorkflowModel implements Serializable, Cloneable {
     }
 
     public Workflow createWorkflow() {
-        List<Activity> activities = new LinkedList<Activity>();
-        Workflow workflow = new Workflow(activities,finalLifeCycleState);
+        Workflow workflow = new Workflow(finalLifeCycleState);
+        List<Activity> activities = workflow.getActivities();
         for(ActivityModel model:activityModels){
             Activity activity = model.createActivity();
             activity.setWorkflow(workflow);
@@ -207,7 +207,7 @@ public class WorkflowModel implements Serializable, Cloneable {
         return id;
     }
     
-      @Override
+    @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {
             return true;

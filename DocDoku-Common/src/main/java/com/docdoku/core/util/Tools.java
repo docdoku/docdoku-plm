@@ -31,7 +31,9 @@ import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
+import java.text.Normalizer;
 import java.text.ParseException;
+import java.util.regex.Pattern;
 import javax.swing.text.MaskFormatter;
 
 /**
@@ -71,9 +73,9 @@ public class Tools {
 
         /*
         for (InstanceAttribute attr : pDoc.getInstanceAttributes().values()) {
-            attr.setDocument(pDoc);
+        attr.setDocument(pDoc);
         }
-        */
+         */
         return pDoc;
     }
 
@@ -133,6 +135,21 @@ public class Tools {
         }
 
         return pTemplate;
+    }
+
+    public static boolean safeEquals(Object o1, Object o2) {
+        if (o1 == null && o2 == null) {
+            return true;
+        } else if (o1 == null) {
+            return o2.equals(o1);
+        }
+        return o1.equals(o2);
+    }
+
+    public static String unAccent(String s) {
+        String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(temp).replaceAll("");
     }
 
     public static String increaseId(String id, String mask) throws ParseException {
@@ -247,11 +264,11 @@ public class Tools {
             }
         }
         return formatter.valueToString(newValue.reverse().toString());
-    }  
-            
-    public static String convertMask(String inputMask){
+    }
+
+    public static String convertMask(String inputMask) {
         StringBuilder maskBuilder = new StringBuilder();
-                    for(int i=0; i < inputMask.length(); i++) {
+        for (int i = 0; i < inputMask.length(); i++) {
             char currentChar = inputMask.charAt(i);
             switch (currentChar) {
                 case '#':

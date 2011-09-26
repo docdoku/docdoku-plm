@@ -44,11 +44,12 @@ public class ParallelActivity extends Activity {
 
     }
 
-    public ParallelActivity(int pStep, List<Task> pTasks, String pLifeCycleState, int pTasksToComplete) {
-        super(pStep, pTasks, pLifeCycleState);
+    public ParallelActivity(int pStep, String pLifeCycleState, int pTasksToComplete) {
+        super(pStep, pLifeCycleState);
         tasksToComplete=pTasksToComplete;
     }
 
+    @Override
     public boolean isStopped() {
         if (tasks.size() - numberOfRejected()
                 < tasksToComplete)
@@ -75,6 +76,7 @@ public class ParallelActivity extends Activity {
         return rejected;
     }
     
+    @Override
     public Collection<Task> getOpenTasks() {
         Set<Task> runningTasks = new HashSet<Task>();
         if (!isComplete() && !isStopped()) {           
@@ -95,6 +97,7 @@ public class ParallelActivity extends Activity {
         return tasksToComplete;
     }
 
+    @Override
     public boolean isComplete() {
         if (numberOfApproved() >= tasksToComplete)
             return true;

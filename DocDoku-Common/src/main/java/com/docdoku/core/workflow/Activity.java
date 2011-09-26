@@ -20,6 +20,7 @@
 
 package com.docdoku.core.workflow;
 
+import com.docdoku.core.util.Tools;
 import java.io.Serializable;
 import java.util.*;
 import javax.persistence.*;
@@ -44,14 +45,12 @@ import javax.xml.bind.annotation.XmlTransient;
 public abstract class Activity implements Serializable, Cloneable {
 
     
-    @javax.persistence.Id
+    @Id
     protected int step;
     
-    @javax.persistence.Column(name = "WORKFLOW_ID", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private int workflowId;
-    
+    @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
     protected Workflow workflow;
 
     @OneToMany(mappedBy="activity", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
@@ -62,8 +61,7 @@ public abstract class Activity implements Serializable, Cloneable {
     protected String lifeCycleState;
     
     
-    public Activity(int pStep, List<Task> pTasks, String pLifeCycleState){
-        tasks=pTasks;
+    public Activity(int pStep, String pLifeCycleState){
         step=pStep;
         lifeCycleState=pLifeCycleState;
     }
@@ -97,13 +95,8 @@ public abstract class Activity implements Serializable, Cloneable {
         return tasks;
     }
     
-    public int getWorkflowId() {
-        return workflowId;
-    }
-
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
-        workflowId=workflow.getId();
     }
 
     @XmlTransient
@@ -138,6 +131,35 @@ public abstract class Activity implements Serializable, Cloneable {
 
     public abstract boolean isComplete();
 
-    public abstract boolean isStopped(); 
+    public abstract boolean isStopped();
     
+    @Override
+    public boolean equals(Object pObj) {
+        if (this == pObj) {
+            return true;
+        }
+        if (!(pObj instanceof Activity))
+            return false;
+        Activity activity = (Activity) pObj;
+        return ((activity.step==step) && (Tools.safeEquals(activity.workflow, workflow)));
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 1;
+	hash = 31 * hash + (workflow==null?0:workflow.hashCode());
+	hash = 31 * hash + step;
+	return hash;
+    }
+    
+    
+    public int getWorkflowId() {
+        return workflow==null?0:workflow.getId();
+    }
+
+    public ActivityKey getKey() {
+        return new ActivityKey(getWorkflowId(), step);
+    }
+    
+
 }

@@ -29,24 +29,21 @@ import java.io.Serializable;
 public class TaskKey implements Serializable {
     
 
-    private int workflowId;
-    private int activityStep;
+    private ActivityKey activity;
     private int num;
     
     public TaskKey() {
     }
     
-    public TaskKey(int pActivityWorkflowId, int pActivityStep, int pNum) {
-        workflowId=pActivityWorkflowId;
-        activityStep=pActivityStep;
+    public TaskKey(ActivityKey pActivityKey, int pNum) {
+        activity=pActivityKey;
         num=pNum;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workflowId;
-	hash = 31 * hash + activityStep;
+	hash = 31 * hash + activity.hashCode();
         hash = 31 * hash + num;
 	return hash;
     }
@@ -59,33 +56,26 @@ public class TaskKey implements Serializable {
         if (!(pObj instanceof TaskKey))
             return false;
         TaskKey key = (TaskKey) pObj;
-        return ((key.workflowId==workflowId) && (key.activityStep==activityStep) && (key.num==num));
+        return ((key.activity.equals(activity)) && (key.num==num));
     }
     
     @Override
     public String toString() {
-        return workflowId + "-" + activityStep + "-" + num;
+        return activity.toString() + "-" + num;
     }
 
-    public int getActivityStep() {
-        return activityStep;
+    public ActivityKey getActivity() {
+        return activity;
     }
 
-    public int getActivityWorkflowId() {
-        return workflowId;
+    public void setActivity(ActivityKey activity) {
+        this.activity = activity;
     }
 
     public int getNum() {
         return num;
     }
 
-    public void setActivityStep(int activityStep) {
-        this.activityStep = activityStep;
-    }
-
-    public void setActivityWorkflowId(int activityWorkflowId) {
-        this.workflowId = activityWorkflowId;
-    }
 
     public void setNum(int num) {
         this.num = num;

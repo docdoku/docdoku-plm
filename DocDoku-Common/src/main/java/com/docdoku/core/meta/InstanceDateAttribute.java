@@ -45,6 +45,7 @@ public class InstanceDateAttribute extends InstanceAttribute{
         setDateValue(pValue);
     }
 
+    @Override
     public Date getValue() {
         return dateValue;
     }
