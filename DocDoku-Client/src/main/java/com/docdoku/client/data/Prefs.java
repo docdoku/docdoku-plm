@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -31,6 +31,8 @@ public class Prefs {
     private final static Preferences USER_ROOT=Preferences.userRoot().node("com.docdoku");
     private final static Preferences LOCALE_NODE=USER_ROOT.node("locale");
     private final static Preferences DOC_NODE=USER_ROOT.node("documents");
+    private final static Preferences CONNECTION_NODE=USER_ROOT.node("connection");
+    
     private Prefs(){}
     
     public static boolean getNumbered(){
@@ -39,6 +41,22 @@ public class Prefs {
     
     public static void setNumbered(boolean numberedNode){
         USER_ROOT.putBoolean("numbered node",numberedNode);
+    }
+    
+    public static String getLastWorkspace(){
+        return CONNECTION_NODE.get("last workspace", null);
+    }
+    
+    public static void setLastWorkspace(String lastWorkspaceNode){
+        CONNECTION_NODE.put("last workspace",lastWorkspaceNode);
+    }
+    
+    public static String getLastLogin(){
+        return CONNECTION_NODE.get("last login", null);
+    }
+    
+    public static void setLastLogin(String lastLoginNode){
+        CONNECTION_NODE.put("last login",lastLoginNode);
     }
     
     public static Locale getLocale(){

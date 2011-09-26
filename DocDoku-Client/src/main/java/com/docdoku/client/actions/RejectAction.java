@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -40,9 +40,11 @@ public class RejectAction extends ClientAbstractAction {
         putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("Reject_mnemonic_key")));
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         MasterDocument mdoc = mOwner.getSelectedMDoc();
         ActionListener action = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent pAE) {
                 TaskDialog source = (TaskDialog) pAE.getSource();
                 Task task = source.getTask();

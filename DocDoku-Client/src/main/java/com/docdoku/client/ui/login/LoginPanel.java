@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -40,6 +40,18 @@ public class LoginPanel extends JPanel {
     private JTextField mWorkspaceText;
     private JTextField mUserText;
     private JPasswordField mPasswordText;
+    
+    
+    public LoginPanel(String pWorkspace, String pLogin) {
+        this();
+        if(pWorkspace!=null){
+            mWorkspaceText.setText(pWorkspace);
+        }
+        if(pLogin!=null){
+            mUserText.setText(pLogin);
+        }
+        
+    }
 
     public LoginPanel() {
         mWorkspaceLabel = new JLabel(I18N.BUNDLE.getString("Workspace_label"));
@@ -67,6 +79,10 @@ public class LoginPanel extends JPanel {
         return mPasswordText.getPassword();
     }
 
+    public JTextField getPasswordText() {
+        return mPasswordText;
+    }
+    
     public void clear() {
         mUserText.setText("");
         mUserText.setCaretPosition(0);
