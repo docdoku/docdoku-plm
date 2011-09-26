@@ -48,6 +48,7 @@ import javax.persistence.PersistenceContext;
 import javax.annotation.security.DeclareRoles;
 import javax.persistence.NoResultException;
 
+
 @DeclareRoles("users")
 @Local(ICommandLocal.class)
 @Stateless(name = "CommandBean")
@@ -142,6 +143,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
     }
 
+    @LogDocument
     @RolesAllowed("users")
     @Override
     public File getDataFile(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
@@ -629,6 +631,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     }
 
     @RolesAllowed("users")
+    @CheckActivity
     @Override
     public MasterDocument approve(String pWorkspaceId, TaskKey pTaskKey, String pComment)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
@@ -671,6 +674,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     }
 
     @RolesAllowed("users")
+    @CheckActivity
     @Override
     public MasterDocument reject(String pWorkspaceId, TaskKey pTaskKey, String pComment)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {

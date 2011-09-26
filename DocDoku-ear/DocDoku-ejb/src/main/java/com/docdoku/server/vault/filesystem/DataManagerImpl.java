@@ -23,6 +23,7 @@ package com.docdoku.server.vault.filesystem;
 import com.docdoku.core.services.VaultException;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.vault.DataManager;
 
 import java.io.*;
@@ -59,12 +60,14 @@ public class DataManagerImpl implements DataManager {
     
     @Override
     public File getVaultFile(BinaryResource pBinaryResource) {
-        return new File(mBaseDir,pBinaryResource.getFullName());
+        String normalizedName = Tools.unAccent(pBinaryResource.getFullName());
+        return new File(mBaseDir,normalizedName);
     }
 
     @Override
     public File getDataFile(BinaryResource pBinaryResource){
-        File realFile = new File(mBaseDir,pBinaryResource.getFullName());
+        String normalizedName = Tools.unAccent(pBinaryResource.getFullName());
+        File realFile = new File(mBaseDir,normalizedName);
         if(realFile.exists())
             return realFile;
         else{

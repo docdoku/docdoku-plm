@@ -17,25 +17,42 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 public class WorkflowDAO {
-    
+
     private EntityManager em;
-    
+
     public WorkflowDAO(EntityManager pEM) {
         em = pEM;
     }
-    
-    public MasterDocument getTarget(Workflow pWorkflow) { 
-        Query query = em.createQuery("SELECT m FROM MasterDocument m WHERE m.workflow = :workflow");
-        return (MasterDocument) query.setParameter("workflow",pWorkflow).getSingleResult();
+
+    public void createWorkflow(Workflow pWf) {
+        //Hack to prevent a bug inside the JPA implementation (Eclipse Link)
+        List<Activity> activities = pWf.getActivities();
+        pWf.setActivities(null);
+        em.persist(pWf);
+        em.flush();
+        pWf.setActivities(activities);
+        /*for(Activity activity:activities){
+            List<Task> tasks = activity.getTasks();
+            activity.setTasks(null);
+            em.persist(activity);
+            em.flush();
+            activity.setTasks(tasks);     
+        }*/     
     }
 
+    public MasterDocument getTarget(Workflow pWorkflow) {
+        Query query = em.createQuery("SELECT m FROM MasterDocument m WHERE m.workflow = :workflow");
+        return (MasterDocument) query.setParameter("workflow", pWorkflow).getSingleResult();
+    }
 }

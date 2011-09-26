@@ -225,20 +225,14 @@ public class MasterDocumentDAO {
     }
 
     public void createMDoc(MasterDocument pMasterDocument) throws MasterDocumentAlreadyExistsException, CreationException {
-        try {
+        try {          
+            if(pMasterDocument.getWorkflow()!=null){
+                WorkflowDAO workflowDAO = new WorkflowDAO(em);
+                workflowDAO.createWorkflow(pMasterDocument.getWorkflow());
+            }
             //the EntityExistsException is thrown only when flush occurs
             em.persist(pMasterDocument);
             em.flush();
-            if (pMasterDocument.hasWorkflow()) {
-                //because of flush, the workflowId has been generated
-                Workflow wf = pMasterDocument.getWorkflow();
-                for (Activity activity : wf.getActivities()) {
-                    activity.setWorkflow(wf);
-                    for (Task task : activity.getTasks()) {
-                        task.setActivity(activity);
-                    }
-                }
-            }
         } catch (EntityExistsException pEEEx) {
             throw new MasterDocumentAlreadyExistsException(mLocale, pMasterDocument);
         } catch (PersistenceException pPEx) {
