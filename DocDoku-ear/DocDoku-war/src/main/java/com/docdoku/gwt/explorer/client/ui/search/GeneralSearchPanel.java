@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.gwt.explorer.client.ui.search;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
@@ -32,15 +31,14 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class GeneralSearchPanel extends FlexTable  {
+public class GeneralSearchPanel extends FlexTable {
 
     private TextBox refField;
     private TextBox titleField;
     private TextBox version;
     private ListBox authorList;
-    private SuggestBox typeField ;
-    private MultiWordSuggestOracle oracle ;
-    
+    private SuggestBox typeField;
+    private MultiWordSuggestOracle oracle;
     private String workspaceId;
 
     public GeneralSearchPanel(String workspaceId) {
@@ -64,7 +62,7 @@ public class GeneralSearchPanel extends FlexTable  {
     }
 
     private void setupUi() {
-        ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants() ;
+        ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
         refField = new TextBox();
         setText(0, 0, constants.referenceLabel());
         setWidget(0, 1, refField);
@@ -88,10 +86,12 @@ public class GeneralSearchPanel extends FlexTable  {
         // async calls :
         AsyncCallback<UserDTO[]> callback = new AsyncCallback<UserDTO[]>() {
 
+            @Override
             public void onFailure(Throwable caught) {
                 HTMLUtil.showError(caught.getMessage());
             }
 
+            @Override
             public void onSuccess(UserDTO[] result) {
                 authorList.addItem(ServiceLocator.getInstance().getExplorerI18NConstants().notSpecifiedOption());
                 for (UserDTO u : result) {
@@ -121,31 +121,31 @@ public class GeneralSearchPanel extends FlexTable  {
     }
 
     public String getType() {
-        if(typeField.getText().trim().isEmpty()){
+        if (typeField.getText().trim().isEmpty()) {
             return null;
         }
         return typeField.getText().trim();
     }
 
     public String getVersion() {
-        if (version.getText().trim().isEmpty()){
-            return null ;
+        if (version.getText().trim().isEmpty()) {
+            return null;
         }
         return version.getText().trim();
     }
 
-
-
     @Override
     public void setVisible(boolean visible) {
-        
+
         if (visible) {
             AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
 
+                @Override
                 public void onFailure(Throwable caught) {
                     HTMLUtil.showError(caught.getMessage());
                 }
 
+                @Override
                 public void onSuccess(MasterDocumentTemplateDTO[] result) {
                     for (MasterDocumentTemplateDTO template : result) {
                         oracle.add(template.getDocumentType());

@@ -59,6 +59,7 @@ import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.gwt.explorer.shared.*;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -76,7 +77,7 @@ import org.dozer.Mapper;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class ExplorerServiceImpl extends RemoteServiceServlet implements ExplorerService {
 
@@ -540,7 +541,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     @Override
     public MasterDocumentDTO approve(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException {
         try {
-            return createDTO(commandService.approve(workspaceId, new TaskKey(workflowId, activityStep, num), comment));
+            return createDTO(commandService.approve(workspaceId, new TaskKey(new ActivityKey(workflowId, activityStep), num), comment));
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
@@ -549,7 +550,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     @Override
     public MasterDocumentDTO reject(String workspaceId, int workflowId, int activityStep, int num, String comment) throws ApplicationException {
         try {
-            return createDTO(commandService.reject(workspaceId, new TaskKey(workflowId, activityStep, num), comment));
+            return createDTO(commandService.reject(workspaceId, new TaskKey(new ActivityKey(workflowId, activityStep), num), comment));
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }

@@ -27,6 +27,7 @@ import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -67,7 +68,7 @@ public class CompleteSearchPanel extends DataRoundedPanel {
         extended = new AdvancedSearchPanel();
         DisclosurePanel containerAdvanced = new DisclosurePanel(constants.advancedLabel());
         containerAdvanced.addStyleName("searchPanel");
-        containerAdvanced.setAnimationEnabled(true);
+        containerAdvanced.setAnimationEnabled(false);
         containerAdvanced.setContent(extended);
         containerAdvanced.setOpen(true);
         inputPanel.setWidget(0, 0, generalPanel);
@@ -75,7 +76,7 @@ public class CompleteSearchPanel extends DataRoundedPanel {
         scrollAttributes.setHeight("120px");
         DisclosurePanel containerAttributes = new DisclosurePanel(constants.attributesTitle());
         containerAttributes.addStyleName("searchPanel");
-        containerAttributes.setAnimationEnabled(true);
+        containerAttributes.setAnimationEnabled(false);
         containerAttributes.setContent(scrollAttributes);
         containerAttributes.setOpen(true);
         inputPanel.setWidget(0, 1, containerAttributes);
@@ -83,6 +84,7 @@ public class CompleteSearchPanel extends DataRoundedPanel {
         searchButton = new Button(ServiceLocator.getInstance().getExplorerI18NConstants().searchLabel());
         searchButton.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 m_cmds.get("SearchCommand").execute(workspaceId, generalPanel.getReference(),
                         generalPanel.getTitleField(), generalPanel.getVersion(), generalPanel.getAuthor(), generalPanel.getType(),
@@ -92,6 +94,7 @@ public class CompleteSearchPanel extends DataRoundedPanel {
         cancelButton = new Button(ServiceLocator.getInstance().getExplorerI18NConstants().cancelLabel());
         cancelButton.addClickHandler(new ClickHandler() {
 
+            @Override
             public void onClick(ClickEvent event) {
                 mainPage.showBasicSearchPanel();
             }

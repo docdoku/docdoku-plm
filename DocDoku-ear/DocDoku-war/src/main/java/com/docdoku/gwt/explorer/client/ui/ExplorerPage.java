@@ -191,7 +191,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
 
         VerticalPanel northPanel = new VerticalPanel();
         northPanel.setHorizontalAlignment(ALIGN_RIGHT);
-        northPanel.setWidth("100%");
+        //northPanel.setWidth("100%");
         northPanel.add(m_searchPanel);
         northPanel.add(m_completeSearchPanel);
         add(northPanel, DockPanel.NORTH);

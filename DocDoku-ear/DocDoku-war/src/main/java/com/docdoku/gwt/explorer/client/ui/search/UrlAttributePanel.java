@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.gwt.explorer.client.ui.search;
 
 import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
@@ -39,10 +38,10 @@ public class UrlAttributePanel extends AbstractAttributePanel {
 
     @Override
     public SearchQueryDTO.AbstractAttributeQueryDTO getAttribute() {
-        if (getNameValue().isEmpty()){
+        if (getNameValue().isEmpty()) {
             return null;
         }
-        SearchQueryDTO.URLAttributeQueryDTO result = new SearchQueryDTO.URLAttributeQueryDTO(getNameValue(),valueField.getText());
+        SearchQueryDTO.URLAttributeQueryDTO result = new SearchQueryDTO.URLAttributeQueryDTO(getNameValue(), valueField.getText());
         return result;
     }
 }

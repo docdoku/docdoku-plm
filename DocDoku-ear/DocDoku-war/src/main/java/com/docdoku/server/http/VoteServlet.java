@@ -21,6 +21,7 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 import java.io.IOException;
 
@@ -54,10 +55,10 @@ public class VoteServlet extends HttpServlet {
         try {
 
             if (action.equals("Approve")) {
-                commandService.approve(workspaceId, new TaskKey(activityWorkflowId, activityStep, index), comment);
+                commandService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment);
                 pRequest.getRequestDispatcher("/WEB-INF/taskApproved.jsp").forward(pRequest, pResponse);
             } else if (action.equals("Reject")) {
-                commandService.reject(workspaceId, new TaskKey(activityWorkflowId, activityStep, index), comment);
+                commandService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment);
                 pRequest.getRequestDispatcher("/WEB-INF/taskRejected.jsp").forward(pRequest, pResponse);
             }
 
