@@ -122,7 +122,10 @@ is divided into following sections:
     </target>
     <target depends="init" name="-init-cos">
         <condition else="false" property="build.deploy.on.save">
-            <istrue value="${j2ee.deploy.on.save}"/>
+            <or>
+                <istrue value="${j2ee.deploy.on.save}"/>
+                <istrue value="${j2ee.compile.on.save}"/>
+            </or>
         </condition>
     </target>
     <target name="post-init">
@@ -187,20 +190,10 @@ exists or setup the property manually. For example like this:
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.DocDoku-war}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.DocDoku-war-1}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
@@ -583,29 +576,14 @@ exists or setup the property manually. For example like this:
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.DocDoku-war}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>
-        <condition property="build.deploy.on.save" value="false">
-            <not>
-                <isset property="build.deploy.on.save"/>
-            </not>
-        </condition>
         <ant antfile="${project.DocDoku-war-1}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
