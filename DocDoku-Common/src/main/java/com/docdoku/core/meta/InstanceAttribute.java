@@ -46,7 +46,6 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
     @Id
     private int id;
 
-    @Column(length=50)
     protected String name = "";
 
     public InstanceAttribute() {

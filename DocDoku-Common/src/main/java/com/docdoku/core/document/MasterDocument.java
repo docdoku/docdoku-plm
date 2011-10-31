@@ -180,6 +180,11 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
     public MasterDocumentKey getKey() {
         return new MasterDocumentKey(workspaceId, id, version);
     }
+
+        
+    public String getVersion() {
+        return version;
+    }
     
     public Document createNextIteration(User pUser){
         Document lastDoc=getLastIteration();
@@ -188,9 +193,15 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         documentIterations.add(doc);
         return doc;
     }
+
     
-    public String getVersion() {
-        return version;
+    public void setDocumentIterations(List<Document> documentIterations) {
+        this.documentIterations = documentIterations;
+    }
+    
+
+    public List<Document> getDocumentIterations() {
+        return documentIterations;
     }
     
     public Document getLastIteration() {
@@ -370,14 +381,6 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         this.version = version;
     }
 
-    public void setDocumentIterations(List<Document> documentIterations) {
-        this.documentIterations = documentIterations;
-    }
-    
-
-    public List<Document> getDocumentIterations() {
-        return documentIterations;
-    }
     
     /**
      * perform a deep clone operation
