@@ -21,14 +21,33 @@
 
 package com.docdoku.core.product;
 
-import java.io.Serializable;
+import javax.persistence.Entity;
 
 /**
- *
+ * 
  * @author Florent Garin
- * @version 1.1, 18/05/11
+ * @version 1.1, 30/10/11
  * @since   V1.1
  */
-public class SubAssembly implements Serializable{
+@Entity
+public class SerialNumberBasedEffectivityContext extends EffectivityContext{
 
+    /**
+     * The serial number of the particular item specified by the context.
+     */
+    private String number;
+
+    public SerialNumberBasedEffectivityContext() {
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+    
+    
+    
 }

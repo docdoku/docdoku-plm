@@ -20,15 +20,15 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -36,40 +36,34 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
  * This class holds the unchanging aspects of a part.
- * It contains a collection of parts which wraps the subsequent changes
+ * It contains a collection of part revisions which themselves reference
+ * a collection of part iterations which wrap the subsequent changes
  * operated on the part.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11
  * @since   V1.1
  */
-@IdClass(MasterPartKey.class)
+@IdClass(PartMasterKey.class)
 @Entity
-public class MasterPart implements Serializable {
+public class PartMaster implements Serializable {
 
-
-
-    @Column(length=50)
+    @Column(length = 50)
     @Id
-    private String number="";
-
-    @Column(length=10)
-    @Id
-    private String version="";
-
+    private String number = "";
+    
     @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
-
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
@@ -77,54 +71,37 @@ public class MasterPart implements Serializable {
         @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private User author;
-
-    @ManyToMany
-    private Set<MasterPart> alternatives;
-
+    
+    @OrderColumn
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<PartAlternateLink> alternates = new LinkedList<PartAlternateLink>();
+    
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate;
-
+    
     private String name;
-
+    
     @Lob
     private String description;
-
     
-    @OneToMany(mappedBy = "masterPart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @OrderBy("iteration ASC")
-    private List<Part> partIterations = new ArrayList<Part>();
-   
- 
+    
+    @OneToMany(mappedBy = "partMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)    
+    @OrderBy("version ASC")
+    private List<PartRevision> partRevisions = new ArrayList<PartRevision>();
 
-    public MasterPart(){
 
+    public PartMaster() {
     }
 
-    public MasterPart(Workspace pWorkspace,
+    public PartMaster(Workspace pWorkspace,
             String pNumber,
-            String pStringVersion,
             User pAuthor) {
         this(pWorkspace, pNumber);
-        version=pStringVersion;
         author = pAuthor;
     }
 
-    public MasterPart(Workspace pWorkspace, String pNumber,
-            Version pVersion,
-            User pAuthor) {
-        this(pWorkspace, pNumber);
-        version=pVersion.toString();
-        author = pAuthor;
-    }
-
-    public MasterPart(Workspace pWorkspace, String pNumber, User pAuthor) {
-        this(pWorkspace, pNumber);
-        version = new Version().toString();
-        author = pAuthor;
-    }
-
-    private MasterPart(Workspace pWorkspace, String pNumber) {
-        number=pNumber;
+    private PartMaster(Workspace pWorkspace, String pNumber) {
+        number = pNumber;
         setWorkspace(pWorkspace);
     }
 
@@ -136,14 +113,6 @@ public class MasterPart implements Serializable {
         this.author = author;
     }
 
-    public Set<MasterPart> getAlternatives() {
-        return alternatives;
-    }
-
-    public void setAlternatives(Set<MasterPart> alternatives) {
-        this.alternatives = alternatives;
-    }
-    
     public Date getCreationDate() {
         return creationDate;
     }
@@ -160,14 +129,25 @@ public class MasterPart implements Serializable {
         this.number = number;
     }
 
-    public String getVersion() {
-        return version;
+  
+    public List<PartAlternateLink> getAlternates() {
+        return alternates;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setAlternates(List<PartAlternateLink> alternates) {
+        this.alternates = alternates;
     }
 
+
+    public List<PartRevision> getPartRevisions() {
+        return partRevisions;
+    }
+
+    public void setPartRevisions(List<PartRevision> partRevisions) {
+        this.partRevisions = partRevisions;
+    }
+    
+    
     public Workspace getWorkspace() {
         return workspace;
     }
@@ -184,6 +164,7 @@ public class MasterPart implements Serializable {
         this.name = name;
     }
 
+
     public String getDescription() {
         return description;
     }
@@ -191,9 +172,8 @@ public class MasterPart implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public String getWorkspaceId(){
-        return workspace==null?"":workspace.getId();
+
+    public String getWorkspaceId() {
+        return workspace == null ? "" : workspace.getId();
     }
-    
 }

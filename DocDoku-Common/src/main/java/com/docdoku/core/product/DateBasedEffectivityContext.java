@@ -21,14 +21,37 @@
 
 package com.docdoku.core.product;
 
-import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
- *
+ * 
  * @author Florent Garin
- * @version 1.1, 18/05/11
+ * @version 1.1, 30/10/11
  * @since   V1.1
  */
-public class MasterStructure implements Serializable{
+@Entity
+public class DateBasedEffectivityContext extends EffectivityContext{
 
+    /**
+     * The date and/or time of the context.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+
+    public DateBasedEffectivityContext() {
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    
+    
+    
 }

@@ -27,9 +27,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -40,29 +43,31 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * This class encapsulates the various states of a part whereas its unchanging
- * attributes are hold on a <code>MasterPart</code>.
+ * attributes are hold on a <code>PartMaster</code>.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11
  * @since   V1.1
  */
-@IdClass(com.docdoku.core.product.PartKey.class)
+@IdClass(com.docdoku.core.product.PartIterationKey.class)
 @Entity
-public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneable {
+public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration> {
     
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="MASTERPART_NUMBER", referencedColumnName="NUMBER"),
-        @JoinColumn(name="MASTERPART_VERSION", referencedColumnName="VERSION"),
+        @JoinColumn(name="PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
+        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION"),
         @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private MasterPart masterPart;
+    private PartRevision partRevision;
     
     @Id
     private int iteration;
@@ -71,17 +76,17 @@ public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneab
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(inverseJoinColumns = {
-        @JoinColumn(name = "ATTACHEDFILES_FULLNAME", referencedColumnName = "FULLNAME")
+        @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
     },
     joinColumns = {
-        @JoinColumn(name = "PART_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
-        @JoinColumn(name = "PART_MASTERPART_NUMBER", referencedColumnName = "MASTERPART_NUMBER"),
-        @JoinColumn(name = "PART_MASTERPART_VERSION", referencedColumnName = "MASTERPART_VERSION"),
-        @JoinColumn(name = "PART_ITERATION", referencedColumnName = "ITERATION")
+        @JoinColumn(name = "PARTITERATION_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+        @JoinColumn(name = "PARTITERATION_PARTMASTER_NUMBER", referencedColumnName = "PARTMASTER_NUMBER"),
+        @JoinColumn(name = "PARTITERATION_PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
+        @JoinColumn(name = "PARTITERATION_ITERATION", referencedColumnName = "ITERATION")
     })
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
 
-    private String revisionNote;
+    private String iterationNote;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
@@ -100,13 +105,35 @@ public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneab
         @JoinColumn(name="INSTANCEATTRIBUTE_ID", referencedColumnName="ID")
     },
     joinColumns={
-        @JoinColumn(name="PART_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="PART_MASTERPART_NUMBER", referencedColumnName="MASTERPART_NUMBER"),
-        @JoinColumn(name="PART_MASTERPART_VERSION", referencedColumnName="MASTERPART_VERSION"),
-        @JoinColumn(name="PART_ITERATION", referencedColumnName="ITERATION")
+        @JoinColumn(name="PARTITERATION_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTITERATION_PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
+        @JoinColumn(name="PARTITERATION_PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+        @JoinColumn(name="PARTITERATION_ITERATION", referencedColumnName="ITERATION")
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
+    @OrderColumn
+    @ElementCollection(fetch=FetchType.LAZY)
+    private List<PartUsageLink> components=new LinkedList<PartUsageLink>();
+    
+    /*
+    private Type type;
+    public enum Type {COMPONENT, INSEPARABLE_ASSEMBLY, SEPARABLE_ASSEMBLY}
+    */
+    
+    private Source source;   
+    public enum Source {MAKE, BUY}
+    
+    public PartIteration(){
+    }
+    
+    
+    public PartIteration(PartRevision pPartRevision, int pIteration, User pAuthor) {
+        setPartRevision(pPartRevision);
+        iteration = pIteration;
+        author = pAuthor;
+    }
+    
     
     @Override
     public Set<BinaryResource> getAttachedFiles() {
@@ -114,15 +141,15 @@ public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneab
     }
     
     public String getWorkspaceId() {
-        return masterPart==null?"":masterPart.getWorkspaceId();
+        return partRevision==null?"":partRevision.getWorkspaceId();
     }
     
-    public String getMasterPartNumber() {
-        return masterPart==null?"":masterPart.getNumber();
+    public String getPartNumber() {
+        return partRevision==null?"":partRevision.getPartNumber();
     }
     
-    public String getMasterPartVersion() {
-        return masterPart==null?"":masterPart.getVersion();
+    public String getPartVersion() {
+        return partRevision==null?"":partRevision.getVersion();
     }
 
     public User getAuthor() {
@@ -133,14 +160,15 @@ public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneab
         this.author = author;
     }
 
-    public String getRevisionNote() {
-        return revisionNote;
+    public String getIterationNote() {
+        return iterationNote;
     }
 
-    public void setRevisionNote(String revisionNote) {
-        this.revisionNote = revisionNote;
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
     }
 
+    
     public Date getCreationDate() {
         return creationDate;
     }
@@ -165,54 +193,54 @@ public class Part implements Serializable, FileHolder, Comparable<Part>, Cloneab
         this.iteration = iteration;
     }
 
+    @XmlTransient
+    public PartRevision getPartRevision() {
+        return partRevision;
+    }
+
+    public void setPartRevision(PartRevision partRevision) {
+        this.partRevision = partRevision;
+    }
+
     
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
+
+    public List<PartUsageLink> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<PartUsageLink> components) {
+        this.components = components;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }   
     
-    
+    public boolean isAssembly(){
+        return components==null?false:!components.isEmpty();
+    }
     
     @Override
-    public int compareTo(Part pPart) {
+    public int compareTo(PartIteration pPart) {
         
         int wksComp = getWorkspaceId().compareTo(pPart.getWorkspaceId());
         if (wksComp != 0)
             return wksComp;
-        int mpartNumberComp = getMasterPartNumber().compareTo(pPart.getMasterPartNumber());
+        int mpartNumberComp = getPartNumber().compareTo(pPart.getPartNumber());
         if (mpartNumberComp != 0)
             return mpartNumberComp;
-        int mpartVersionComp = getMasterPartVersion().compareTo(pPart.getMasterPartVersion());
+        int mpartVersionComp = getPartVersion().compareTo(pPart.getPartVersion());
         if (mpartVersionComp != 0)
             return mpartVersionComp;
         else
             return iteration-pPart.iteration;
-    }
-    
-    /**
-     * perform a deep clone operation
-     */
-    @Override
-    public Part clone() {
-        Part clone = null;
-        try {
-            clone = (Part) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        //perform a deep copy
-        clone.attachedFiles = new HashSet<BinaryResource>(attachedFiles);
-        
-        //perform a deep copy
-        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
-        for (InstanceAttribute attribute : instanceAttributes.values()) {
-            InstanceAttribute clonedAttribute=attribute.clone();
-            clonedInstanceAttributes.put(clonedAttribute.getName(),clonedAttribute);
-        }
-        clone.instanceAttributes = clonedInstanceAttributes;
-        
-        if(creationDate!=null)
-            clone.creationDate = (Date) creationDate.clone();
-        return clone;
     }
     
 }

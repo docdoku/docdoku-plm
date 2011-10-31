@@ -26,23 +26,23 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class PartKey implements Serializable {
+public class PartIterationKey implements Serializable {
     
-    private MasterPartKey masterPart;
+    private PartRevisionKey partRevision;
     private int iteration;
     
-    public PartKey() {
+    public PartIterationKey() {
     }
     
-    public PartKey(MasterPartKey pMasterPartKey, int pIteration) {
-        masterPart=pMasterPartKey;
+    public PartIterationKey(PartRevisionKey pPartRevisionKey, int pIteration) {
+        partRevision=pPartRevisionKey;
         iteration=pIteration;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + masterPart.hashCode();
+	hash = 31 * hash + partRevision.hashCode();
         hash = 31 * hash + iteration;
 	return hash;
     }
@@ -52,25 +52,25 @@ public class PartKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartKey))
+        if (!(pObj instanceof PartIterationKey))
             return false;
-        PartKey key = (PartKey) pObj;
-        return ((key.masterPart.equals(masterPart)) && (key.iteration==iteration));
+        PartIterationKey key = (PartIterationKey) pObj;
+        return ((key.partRevision.equals(partRevision)) && (key.iteration==iteration));
     }
     
     @Override
     public String toString() {
-        return masterPart + "-" + iteration;
+        return partRevision + "-" + iteration;
     }
 
-    public MasterPartKey getMasterPart() {
-        return masterPart;
+    public PartRevisionKey getPartRevision() {
+        return partRevision;
     }
 
-    public void setMasterPart(MasterPartKey masterPartKey) {
-        this.masterPart = masterPartKey;
+    public void setPartRevision(PartRevisionKey partRevision) {
+        this.partRevision = partRevision;
     }
-    
+
     
     public int getIteration(){
         return iteration;

@@ -26,31 +26,28 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class MasterPartKey implements Serializable, Comparable<MasterPartKey>, Cloneable {
+public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, Cloneable {
 
     private String workspace;
     private String number;
-    private String version;
 
 
-    public MasterPartKey() {
+    public PartMasterKey() {
     }
     
-    public MasterPartKey(String pWorkspaceId, String pNumber, String pVersion) {
+    public PartMasterKey(String pWorkspaceId, String pNumber) {
         workspace=pWorkspaceId;
         number=pNumber;
-        version = pVersion;
     }
 
-
-
-    public String getWorkspaceId() {
+    public String getWorkspace() {
         return workspace;
     }
-    
-    public void setWorkspaceId(String pWorkspaceId) {
-        workspace = pWorkspaceId;
+
+    public void setWorkspace(String workspace) {
+        this.workspace = workspace;
     }
+  
     
     public String getNumber() {
         return number;
@@ -60,17 +57,10 @@ public class MasterPartKey implements Serializable, Comparable<MasterPartKey>, C
         number = pNumber;
     }
     
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String pVersion){
-        version=pVersion;
-    }
     
     @Override
     public String toString() {
-        return workspace + "-" + number + "-" + version;
+        return workspace + "-" + number;
     }
 
     @Override
@@ -78,10 +68,10 @@ public class MasterPartKey implements Serializable, Comparable<MasterPartKey>, C
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterPartKey))
+        if (!(pObj instanceof PartMasterKey))
             return false;
-        MasterPartKey key = (MasterPartKey) pObj;
-        return ((key.number.equals(number)) && (key.workspace.equals(workspace)) && (key.version.equals(version)));
+        PartMasterKey key = (PartMasterKey) pObj;
+        return ((key.number.equals(number)) && (key.workspace.equals(workspace)));
     }
 
     @Override
@@ -89,26 +79,22 @@ public class MasterPartKey implements Serializable, Comparable<MasterPartKey>, C
         int hash = 1;
 	hash = 31 * hash + workspace.hashCode();
 	hash = 31 * hash + number.hashCode();
-        hash = 31 * hash + version.hashCode();
 	return hash;
     }
 
-    public int compareTo(MasterPartKey pMDocKey) {
-        int wksComp = workspace.compareTo(pMDocKey.workspace);
+    public int compareTo(PartMasterKey pKey) {
+        int wksComp = workspace.compareTo(pKey.workspace);
         if (wksComp != 0)
             return wksComp;
-        int idComp = number.compareTo(pMDocKey.number);
-        if (idComp != 0)
-            return idComp;
         else
-            return version.compareTo(pMDocKey.version);
+            return number.compareTo(pKey.number);
     }
     
     @Override
-    public MasterPartKey clone() {
-        MasterPartKey clone = null;
+    public PartMasterKey clone() {
+        PartMasterKey clone = null;
         try {
-            clone = (MasterPartKey) super.clone();
+            clone = (PartMasterKey) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
