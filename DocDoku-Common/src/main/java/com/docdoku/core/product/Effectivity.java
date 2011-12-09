@@ -58,6 +58,16 @@ public abstract class Effectivity implements Serializable{
     @ManyToOne(optional=true, fetch= FetchType.EAGER)
     private ConfigurationItem configurationItem;
     
+    /**
+     * Used to restrict the effectivity to a given product definition usage.
+     * However, the case when we need to manage different versions of a part
+     * in the same product structure may rarely happen.
+     */
+    @ManyToOne(optional=true, fetch= FetchType.EAGER)
+    private PartUsageLink usageLink;
+    
+    
+    
     public Effectivity() {
     }
 
@@ -91,6 +101,15 @@ public abstract class Effectivity implements Serializable{
     public ConfigurationItem getConfigurationItem() {
         return configurationItem;
     }
+
+    public PartUsageLink getUsageLink() {
+        return usageLink;
+    }
+
+    public void setUsageLink(PartUsageLink usageLink) {
+        this.usageLink = usageLink;
+    }
+
     
     
 }
