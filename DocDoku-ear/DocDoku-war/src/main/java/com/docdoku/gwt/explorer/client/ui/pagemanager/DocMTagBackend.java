@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,27 +20,27 @@
 
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
-import com.docdoku.gwt.explorer.client.data.MDocTableModel;
+import com.docdoku.gwt.explorer.client.data.DocMTableModel;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MDocResponse;
+import com.docdoku.gwt.explorer.shared.DocMResponse;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocTagBackend implements PageManagerBackend {
+public class DocMTagBackend implements PageManagerBackend {
 
-    private MDocTableModel model;
+    private DocMTableModel model;
     private String login;
     private String tagLabel ;
     private String workspaceId ;
     private PageManager frontend ;
     private InternalCallback callback ;
 
-    public MDocTagBackend(String login, String tagLabel, String workspaceId) {
+    public DocMTagBackend(String login, String tagLabel, String workspaceId) {
         this.login = login;
         this.tagLabel = tagLabel;
         this.workspaceId = workspaceId;
@@ -50,21 +50,21 @@ public class MDocTagBackend implements PageManagerBackend {
 
     public void fetchNextPage() {
         int startOffset = frontend.getOffsetForPageNumber(frontend.getCurrentPage() + 1) ;
-        ServiceLocator.getInstance().getExplorerService().findMDocsByTag(workspaceId, tagLabel, startOffset, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().findDocMsByTag(workspaceId, tagLabel, startOffset, frontend.getPageSize(), callback);
     }
 
     public void fetchPreviousPage() {
         int startOffset = frontend.getOffsetForPageNumber(frontend.getCurrentPage() -1) ;
-        ServiceLocator.getInstance().getExplorerService().findMDocsByTag(workspaceId, tagLabel, startOffset, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().findDocMsByTag(workspaceId, tagLabel, startOffset, frontend.getPageSize(), callback);
     }
 
     public void fetchFirstPage() {
-        ServiceLocator.getInstance().getExplorerService().findMDocsByTag(workspaceId, tagLabel, 0, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().findDocMsByTag(workspaceId, tagLabel, 0, frontend.getPageSize(), callback);
     }
 
     public void fetchLastPage() {
         int startOffset = frontend.getOffsetForPageNumber(frontend.getNumberOfPages() -1) ;
-        ServiceLocator.getInstance().getExplorerService().findMDocsByTag(workspaceId, tagLabel, startOffset, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().findDocMsByTag(workspaceId, tagLabel, startOffset, frontend.getPageSize(), callback);
     }
 
     public void setFrontend(PageManager pm) {
@@ -75,18 +75,18 @@ public class MDocTagBackend implements PageManagerBackend {
         return model ;
     }
 
-    private void notifyFrontend(MDocResponse result) {
+    private void notifyFrontend(DocMResponse result) {
         frontend.dataReady(result);
     }
 
-    private class InternalCallback implements AsyncCallback<MDocResponse> {
+    private class InternalCallback implements AsyncCallback<DocMResponse> {
 
         public void onFailure(Throwable caught) {
             HTMLUtil.showError(caught.getMessage());
         }
 
-        public void onSuccess(MDocResponse result) {
-            model = new MDocTableModel(result.getData(), login, true);
+        public void onSuccess(DocMResponse result) {
+            model = new DocMTableModel(result.getData(), login, true);
             notifyFrontend(result);
         }
     }

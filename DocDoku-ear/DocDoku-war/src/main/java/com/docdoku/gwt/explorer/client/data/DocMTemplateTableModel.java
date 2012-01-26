@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,19 +23,19 @@ package com.docdoku.gwt.explorer.client.data;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocTemplateTableModel implements TableModel{
+public class DocMTemplateTableModel implements TableModel{
 
     private String[] headers;
     private Object[][] data;
-    private MasterDocumentTemplateDTO[] templates;
+    private DocumentMasterTemplateDTO[] templates;
 
-    public MDocTemplateTableModel(MasterDocumentTemplateDTO[] templates) {
+    public DocMTemplateTableModel(DocumentMasterTemplateDTO[] templates) {
         this.templates = templates;
 
         // headers ;
@@ -77,7 +77,7 @@ public class MDocTemplateTableModel implements TableModel{
         return null ;
     }
 
-    public MasterDocumentTemplateDTO getValueAt(int row){
+    public DocumentMasterTemplateDTO getValueAt(int row){
       if (row >=0 && row < getRowCount()){
             return templates[row];
         }else{

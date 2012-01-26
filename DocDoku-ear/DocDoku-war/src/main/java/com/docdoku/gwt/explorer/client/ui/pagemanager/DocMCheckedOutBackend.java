@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,26 +20,26 @@
 
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
-import com.docdoku.gwt.explorer.client.data.MDocTableModel;
+import com.docdoku.gwt.explorer.client.data.DocMTableModel;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MDocResponse;
+import com.docdoku.gwt.explorer.shared.DocMResponse;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocCheckedOutBackend implements PageManagerBackend {
+public class DocMCheckedOutBackend implements PageManagerBackend {
 
     private PageManager frontend;
     private String login;
     private String workspaceId;
-    private MDocTableModel model;
+    private DocMTableModel model;
     private InternalCallback callback;
 
-    public MDocCheckedOutBackend(String login, String workspaceId) {
+    public DocMCheckedOutBackend(String login, String workspaceId) {
         this.login = login;
         this.workspaceId = workspaceId;
         callback = new InternalCallback();
@@ -47,21 +47,21 @@ public class MDocCheckedOutBackend implements PageManagerBackend {
 
     public void fetchNextPage() {
         int startPoint = frontend.getOffsetForPageNumber(frontend.getCurrentPage() + 1);
-        ServiceLocator.getInstance().getExplorerService().getCheckedOutMDocs(workspaceId, startPoint, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().getCheckedOutDocMs(workspaceId, startPoint, frontend.getPageSize(), callback);
     }
 
     public void fetchPreviousPage() {
         int startPoint = frontend.getOffsetForPageNumber(frontend.getCurrentPage() - 1);
-        ServiceLocator.getInstance().getExplorerService().getCheckedOutMDocs(workspaceId, startPoint, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().getCheckedOutDocMs(workspaceId, startPoint, frontend.getPageSize(), callback);
     }
 
     public void fetchFirstPage() {
-        ServiceLocator.getInstance().getExplorerService().getCheckedOutMDocs(workspaceId, 0, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().getCheckedOutDocMs(workspaceId, 0, frontend.getPageSize(), callback);
     }
 
     public void fetchLastPage() {
         int startPoint = frontend.getOffsetForPageNumber(frontend.getNumberOfPages() - 1);
-        ServiceLocator.getInstance().getExplorerService().getCheckedOutMDocs(workspaceId, startPoint, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().getCheckedOutDocMs(workspaceId, startPoint, frontend.getPageSize(), callback);
     }
 
     public void setFrontend(PageManager pm) {
@@ -72,18 +72,18 @@ public class MDocCheckedOutBackend implements PageManagerBackend {
         return model ;
     }
 
-    private void notifyFrontend(MDocResponse result) {
+    private void notifyFrontend(DocMResponse result) {
         frontend.dataReady(result);
     }
 
-    private class InternalCallback implements AsyncCallback<MDocResponse> {
+    private class InternalCallback implements AsyncCallback<DocMResponse> {
 
         public void onFailure(Throwable caught) {
             HTMLUtil.showError(caught.getMessage());
         }
 
-        public void onSuccess(MDocResponse result) {
-            model = new MDocTableModel(result.getData(), login, true);
+        public void onSuccess(DocMResponse result) {
+            model = new DocMTableModel(result.getData(), login, true);
             notifyFrontend(result);
         }
     }

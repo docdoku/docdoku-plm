@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -41,9 +41,9 @@ public class ActionMap extends HashMap<String,Action>{
         put("DeleteElementCommand", new DeleteElementCommand(mainPage));
         put("CreateFolderCommand", new CreateFolderCommand(mainPage));
         put("BackCommand", new BackCommand(mainPage));
-        put("CreateMDocCommand", new CreateMDocCommand(mainPage));
-        put("CreateMDocTemplateCommand", new CreateMDocTemplateCommand(mainPage));
-        put("UpdateMDocTemplateCommand", new UpdateMDocTemplateCommand(mainPage));
+        put("CreateDocMCommand", new CreateDocMCommand(mainPage));
+        put("CreateDocMTemplateCommand", new CreateDocMTemplateCommand(mainPage));
+        put("UpdateDocMTemplateCommand", new UpdateDocMTemplateCommand(mainPage));
         put("CreateVersionCommand", new CreateVersionCommand(mainPage));
         put("DeleteDocFileCommand", new DeleteDocFileCommand(mainPage));
         put("DeleteTemplateFileCommand", new DeleteTemplateFileCommand(mainPage));
@@ -57,7 +57,7 @@ public class ActionMap extends HashMap<String,Action>{
         put("SaveTagsCommand", new SaveTagsCommand(mainPage));
         put("SaveWorkflowModelCommand", new SaveWorkflowModelCommand(mainPage));
         put("SearchCommand", new SearchCommand(mainPage));
-        put("MoveCommand", new MoveMDocCommand(mainPage)) ;
+        put("MoveCommand", new MoveDocMCommand(mainPage)) ;
         put("ShowIterationCommand", new ShowDocumentIterationCommand(mainPage));
         put("ShowCreateVersionPanelCommand", new ShowCreateVersionPanelCommand(mainPage)) ;
         put("ApproveCommand", new ApprouveTaskCommand(mainPage));

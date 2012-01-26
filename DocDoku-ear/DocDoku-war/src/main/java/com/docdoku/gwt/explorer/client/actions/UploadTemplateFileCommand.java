@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -43,7 +43,7 @@ public class UploadTemplateFileCommand implements Action {
     public void execute(Object... userObject) {
         FileUpload upload = m_mainPage.getEditTemplateFilesPanel().getFileUpload();
         FormPanel form = m_mainPage.getEditTemplateFilesPanel().getForm();
-        MasterDocumentTemplateDTO template = m_mainPage.getLastOpenedMDocTemplate();
+        DocumentMasterTemplateDTO template = m_mainPage.getLastOpenedDocMTemplate();
 
         String webappContext = HTMLUtil.getWebContext();
         String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(template.getWorkspaceId()) + "/" + "templates/" + URL.encode(template.getId()) + "/" + URL.encode(upload.getFilename());

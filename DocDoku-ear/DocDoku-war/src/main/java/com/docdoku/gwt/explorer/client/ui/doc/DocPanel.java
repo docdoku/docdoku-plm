@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -26,7 +26,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.shared.DocumentDTO;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -142,50 +142,50 @@ public class DocPanel extends FlexTable {
         m_attributesPanel.setAttributes(attrs);
     }
 
-    public void setMDoc(final MasterDocumentDTO mdoc) {
-        setMDoc(mdoc, mdoc.getDocumentIterations().size() - 1);
+    public void setDocM(final DocumentMasterDTO docM) {
+        setDocM(docM, docM.getDocumentIterations().size() - 1);
     }
 
-    public void setMDoc(final MasterDocumentDTO mdoc, int it) {
-        m_mainPanel.setMDocAuthor(mdoc.getAuthor().getName());
+    public void setDocM(final DocumentMasterDTO docM, int it) {
+        m_mainPanel.setDocMAuthor(docM.getAuthor().getName());
         int iteration = 0;
         String revision = "";
 
-        if (it == mdoc.getDocumentIterations().size() - 1) {
-            if (mdoc.getLastIteration() != null) {
-                iteration = mdoc.getLastIteration().getIteration();
-                revision = mdoc.getLastIteration().getRevisionNote();
+        if (it == docM.getDocumentIterations().size() - 1) {
+            if (docM.getLastIteration() != null) {
+                iteration = docM.getLastIteration().getIteration();
+                revision = docM.getLastIteration().getRevisionNote();
             }
         } else {
             iteration = it + 1;
-            revision = mdoc.getDocumentIterations().get(it).getRevisionNote();
+            revision = docM.getDocumentIterations().get(it).getRevisionNote();
         }
 
         String webappContext = HTMLUtil.getWebContext();
-        String htmlLink = "<a href=\"/" + (webappContext==null?"":webappContext+"/") + "documents/" + mdoc.getWorkspaceId() + "/" + mdoc.getId() + "/" + mdoc.getVersion() + "\">" + i18n.permaLink() + "</a>";
+        String htmlLink = "<a href=\"/" + (webappContext==null?"":webappContext+"/") + "documents/" + docM.getWorkspaceId() + "/" + docM.getId() + "/" + docM.getVersion() + "\">" + i18n.permaLink() + "</a>";
         m_mainPanel.setPermaLink(htmlLink);
 
-        m_mainPanel.setDocID(mdoc.getId() + "-" + mdoc.getVersion() + "-" + iteration);
+        m_mainPanel.setDocID(docM.getId() + "-" + docM.getVersion() + "-" + iteration);
 
-        m_mainPanel.setCreationDate(mdoc.getCreationDate());
-        m_mainPanel.setModificationDate(mdoc.getCheckOutDate());
+        m_mainPanel.setCreationDate(docM.getCreationDate());
+        m_mainPanel.setModificationDate(docM.getCheckOutDate());
 
-        m_mainPanel.setCheckOutUser(mdoc.getCheckOutUser()==null?null:mdoc.getCheckOutUser().getName());
+        m_mainPanel.setCheckOutUser(docM.getCheckOutUser()==null?null:docM.getCheckOutUser().getName());
 
-        m_mainPanel.setMDocType(mdoc.getType());
-        m_mainPanel.setMDocTitle(mdoc.getTitle());
-        m_mainPanel.setLifeCycleState(mdoc.getLifeCycleState());
+        m_mainPanel.setDocMType(docM.getType());
+        m_mainPanel.setDocMTitle(docM.getTitle());
+        m_mainPanel.setLifeCycleState(docM.getLifeCycleState());
         m_mainPanel.setRevisionNote(revision);
-        m_mainPanel.setTags(mdoc.getTags() == null ? "" : Arrays.toString(mdoc.getTags()));
+        m_mainPanel.setTags(docM.getTags() == null ? "" : Arrays.toString(docM.getTags()));
 
 
         // iteration stuff
-        m_iterationNavigator.setIterationsNumber(it, mdoc.getDocumentIterations().size() - 1);
-        m_iterationNavigator.setVisible(mdoc.getDocumentIterations().size() != 1);
+        m_iterationNavigator.setIterationsNumber(it, docM.getDocumentIterations().size() - 1);
+        m_iterationNavigator.setVisible(docM.getDocumentIterations().size() != 1);
 
 
-        if (mdoc.getWorkflow() != null) {
-            m_mainPanel.setWorkflow(mdoc.getWorkflow());
+        if (docM.getWorkflow() != null) {
+            m_mainPanel.setWorkflow(docM.getWorkflow());
         }
 
     }

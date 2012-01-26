@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author Florent Garin
  */
-public class MasterDocumentTemplateDTO implements Serializable{
+public class DocumentMasterTemplateDTO implements Serializable{
     
     private String workspaceId;
     private String id;
@@ -42,11 +42,11 @@ public class MasterDocumentTemplateDTO implements Serializable{
     private Map<String,String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
     
-    public MasterDocumentTemplateDTO(){
+    public DocumentMasterTemplateDTO(){
         
     }
     
-    public MasterDocumentTemplateDTO(String workspaceId, String id, String documentType) {
+    public DocumentMasterTemplateDTO(String workspaceId, String id, String documentType) {
         this.workspaceId=workspaceId;
         this.id=id;
         this.documentType=documentType;

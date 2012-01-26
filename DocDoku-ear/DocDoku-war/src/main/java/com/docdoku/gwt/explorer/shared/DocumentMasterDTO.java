@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Florent Garin
  */
-public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumentDTO> {
+public class DocumentMasterDTO implements Serializable, Comparable<DocumentMasterDTO> {
 
     private String workspaceId;
     private String id;
@@ -46,10 +46,10 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
     private List<DocumentDTO> documentIterations;
     private WorkflowDTO workflow;
 
-    public MasterDocumentDTO() {
+    public DocumentMasterDTO() {
     }
 
-    public MasterDocumentDTO(String workspaceId, String id, String version) {
+    public DocumentMasterDTO(String workspaceId, String id, String version) {
         this.workspaceId = workspaceId;
         this.id = id;
         this.version = version;
@@ -211,11 +211,11 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterDocumentDTO)) {
+        if (!(pObj instanceof DocumentMasterDTO)) {
             return false;
         }
-        MasterDocumentDTO mdoc = (MasterDocumentDTO) pObj;
-        return ((mdoc.id.equals(id)) && (mdoc.workspaceId.equals(workspaceId)) && (mdoc.version.equals(version)));
+        DocumentMasterDTO docM = (DocumentMasterDTO) pObj;
+        return ((docM.id.equals(id)) && (docM.workspaceId.equals(workspaceId)) && (docM.version.equals(version)));
 
     }
 
@@ -228,16 +228,16 @@ public class MasterDocumentDTO implements Serializable, Comparable<MasterDocumen
         return hash;
     }
 
-    public int compareTo(MasterDocumentDTO pMDoc) {
-        int wksComp = workspaceId.compareTo(pMDoc.workspaceId);
+    public int compareTo(DocumentMasterDTO pDocM) {
+        int wksComp = workspaceId.compareTo(pDocM.workspaceId);
         if (wksComp != 0) {
             return wksComp;
         }
-        int idComp = id.compareTo(pMDoc.id);
+        int idComp = id.compareTo(pDocM.id);
         if (idComp != 0) {
             return idComp;
         } else {
-            return version.compareTo(pMDoc.version);
+            return version.compareTo(pDocM.version);
         }
     }
 }

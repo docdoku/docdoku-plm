@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -41,22 +41,22 @@ import org.cobogw.gwt.user.client.ui.Button;
  *
  * @author Florent GARIN
  */
-public class CreateMDocPanel extends FlexTable {
+public class CreateDocMPanel extends FlexTable {
 
     private Button m_okBtn;
     private Label m_backAction;
     private DescriptionPanel m_descriptionPanel;
     //private SecurityPanel m_securityPanel;
-    private CreateMDocMainPanel m_mainPanel;
+    private CreateDocMMainPanel m_mainPanel;
 
     
     
-    public CreateMDocPanel(final Map<String, Action> cmds) {
+    public CreateDocMPanel(final Map<String, Action> cmds) {
         ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
         FlexCellFormatter cellFormatter = getFlexCellFormatter();
         m_descriptionPanel = new DescriptionPanel();
         //m_securityPanel= new SecurityPanel();
-        m_mainPanel = new CreateMDocMainPanel();
+        m_mainPanel = new CreateDocMMainPanel();
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(5);
@@ -76,7 +76,7 @@ public class CreateMDocPanel extends FlexTable {
             public void onClick(ClickEvent event) {
                 //ACLDTO acl=m_securityPanel.getACL();
                 ACLDTO acl=null;
-                cmds.get("CreateMDocCommand").execute(m_mainPanel.getParentFolderText(),m_mainPanel.getMDocTitle(), m_mainPanel.getMDocId(), m_mainPanel.getTemplateId(), m_mainPanel.getWorkflowModelId(), m_descriptionPanel.getMDocDescription(),acl);
+                cmds.get("CreateDocMCommand").execute(m_mainPanel.getParentFolderText(),m_mainPanel.getDocMTitle(), m_mainPanel.getDocMId(), m_mainPanel.getTemplateId(), m_mainPanel.getWorkflowModelId(), m_descriptionPanel.getDocMDescription(),acl);
             }
         });
         buttonsPanel.add(m_backAction);
@@ -107,16 +107,16 @@ public class CreateMDocPanel extends FlexTable {
         m_mainPanel.setParentFolder(parentFolder);
     }
     
-    public void setTemplates(MasterDocumentTemplateDTO[] templates) {
+    public void setTemplates(DocumentMasterTemplateDTO[] templates) {
         m_mainPanel.setTemplates(templates);
     }
 
-    public void setMDocId(String mdocId){
-        m_mainPanel.setMDocId(mdocId);
+    public void setDocMId(String docMId){
+        m_mainPanel.setDocMId(docMId);
     }
 
-    public void setMDocIdMask(String mask) {
-        m_mainPanel.setMDocIdMask(mask);
+    public void setDocMIdMask(String mask) {
+        m_mainPanel.setDocMIdMask(mask);
     }
 
     public void setWorkflowModels(WorkflowModelDTO[] wks) {
@@ -133,7 +133,7 @@ public class CreateMDocPanel extends FlexTable {
     }
     */
     
-    public void setMDocIdEnabled(boolean b) {
-        m_mainPanel.setMDocIdEnabled(b) ;
+    public void setDocMIdEnabled(boolean b) {
+        m_mainPanel.setDocMIdEnabled(b) ;
     }
 }

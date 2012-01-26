@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.FilesPanel;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -41,10 +41,10 @@ import org.cobogw.gwt.user.client.ui.Button;
  *
  * @author Florent Garin
  */
-public class MDocTemplatePanel extends FlexTable {
+public class DocMTemplatePanel extends FlexTable {
 
     private Button m_okBtn;
-    private MDocTemplateMainPanel m_mainPanel;
+    private DocMTemplateMainPanel m_mainPanel;
     private FilesPanel m_filesPanel;
     private AttributesTemplatePanel m_attributesPanel;
     private Label m_backAction;
@@ -52,7 +52,7 @@ public class MDocTemplatePanel extends FlexTable {
 
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
-    public MDocTemplatePanel(final Map<String, Action> cmds) {
+    public DocMTemplatePanel(final Map<String, Action> cmds) {
         FlexCellFormatter cellFormatter = getFlexCellFormatter();
         m_filesPanel = new FilesPanel();
         m_filesPanel.setEditionMode(true);
@@ -75,7 +75,7 @@ public class MDocTemplatePanel extends FlexTable {
                 cmds.get("UploadCompleteTemplateFileCommand").execute();
             }
         });
-        m_mainPanel = new MDocTemplateMainPanel();
+        m_mainPanel = new DocMTemplateMainPanel();
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(5);
@@ -92,14 +92,14 @@ public class MDocTemplatePanel extends FlexTable {
 
             public void onClick(ClickEvent event) {
                 InstanceAttributeTemplateDTO[] attrs = m_attributesPanel.getAttributes().toArray(new InstanceAttributeTemplateDTO[m_attributesPanel.getAttributes().size()]);
-                String templateId=m_mainPanel.getMDocTemplateId();
+                String templateId=m_mainPanel.getDocMTemplateId();
                 String documentType= m_mainPanel.getDocumentType();
                 String mask=m_mainPanel.getMask();
-                boolean idGenerated=m_mainPanel.isMDocTemplateIdGenerated();
+                boolean idGenerated=m_mainPanel.isDocMTemplateIdGenerated();
                 if(m_creationMode)
-                    cmds.get("CreateMDocTemplateCommand").execute(templateId,documentType, mask, attrs, idGenerated);
+                    cmds.get("CreateDocMTemplateCommand").execute(templateId,documentType, mask, attrs, idGenerated);
                 else
-                    cmds.get("UpdateMDocTemplateCommand").execute(templateId,documentType, mask, attrs, idGenerated);
+                    cmds.get("UpdateDocMTemplateCommand").execute(templateId,documentType, mask, attrs, idGenerated);
             }
         });
         buttonsPanel.add(m_backAction);
@@ -142,12 +142,12 @@ public class MDocTemplatePanel extends FlexTable {
         m_filesPanel.setFiles(files);
     }
     
-    public void setTemplate(MasterDocumentTemplateDTO template) {
-        m_mainPanel.setMDocTemplateAuthor(template.getAuthor().getName());
-        m_mainPanel.setMDocTemplateGeneratedID(template.isIdGenerated());
-        m_mainPanel.setMDocTemplateID(template.getId());
-        m_mainPanel.setMDocTemplateMask(template.getMask());
-        m_mainPanel.setMDocTemplateType(template.getDocumentType());
+    public void setTemplate(DocumentMasterTemplateDTO template) {
+        m_mainPanel.setDocMTemplateAuthor(template.getAuthor().getName());
+        m_mainPanel.setDocMTemplateGeneratedId(template.isIdGenerated());
+        m_mainPanel.setDocMTemplateId(template.getId());
+        m_mainPanel.setDocMTemplateMask(template.getMask());
+        m_mainPanel.setDocMTemplateType(template.getDocumentType());
         m_attributesPanel.setAttributes(template.getAttributeTemplates());
         m_filesPanel.setFiles(template.getAttachedFiles());
     }

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,6 @@ package com.docdoku.server.http;
 import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import java.io.IOException;
@@ -35,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
-import com.docdoku.core.*;
 import com.docdoku.core.common.UserGroupKey;
 import java.net.URLEncoder;
 

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
@@ -41,10 +41,10 @@ public class ViewElementCommand implements Command {
 
     @Override
     public void execute() {
-        MasterDocumentDTO mdoc = m_mainPage.getLastOpenedMDoc();
-        String workspaceId = mdoc.getWorkspaceId();
-        String id = mdoc.getId();
-        String version = mdoc.getVersion();
+        DocumentMasterDTO docM = m_mainPage.getLastOpenedDocM();
+        String workspaceId = docM.getWorkspaceId();
+        String id = docM.getId();
+        String version = docM.getVersion();
 
         String webContext = GWT.getModuleBaseURL().split("/")[3];
         String webURL;

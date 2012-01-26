@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -46,8 +46,8 @@ public class CreateVersionPanel extends FlexTable{
     //private SecurityPanel m_securityPanel;
     private CreateVersionMainPanel m_mainPanel;
 
-    private String m_mdocId;
-    private String m_mdocVersion;
+    private String m_docMId;
+    private String m_docMVersion;
     private String m_workspaceId;
 
     
@@ -75,7 +75,7 @@ public class CreateVersionPanel extends FlexTable{
             public void onClick(ClickEvent event) {
                 //ACLDTO acl=m_securityPanel.getACL();
                 ACLDTO acl=null;
-                cmds.get("CreateVersionCommand").execute(m_workspaceId,m_mdocId,m_mdocVersion,m_mainPanel.getMDocTitle(),m_mainPanel.getWorkflowModelId(),m_descriptionPanel.getMDocDescription(),acl);
+                cmds.get("CreateVersionCommand").execute(m_workspaceId,m_docMId,m_docMVersion,m_mainPanel.getDocMTitle(),m_mainPanel.getWorkflowModelId(),m_descriptionPanel.getDocMDescription(),acl);
             }
         });
         buttonsPanel.add(m_backAction);
@@ -90,12 +90,12 @@ public class CreateVersionPanel extends FlexTable{
         //cellFormatter.setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
     }
 
-    public void setMDocId(String mdocId) {
-        this.m_mdocId = mdocId;
+    public void setDocMId(String docMId) {
+        this.m_docMId = docMId;
     }
 
-    public void setMDocVersion(String mdocVersion) {
-        this.m_mdocVersion = mdocVersion;
+    public void setDocMVersion(String docMVersion) {
+        this.m_docMVersion = docMVersion;
     }
 
     public void setWorkspaceId(String workspaceId) {

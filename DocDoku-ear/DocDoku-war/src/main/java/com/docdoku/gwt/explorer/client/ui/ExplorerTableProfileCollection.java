@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,8 +21,8 @@
 package com.docdoku.gwt.explorer.client.ui;
 
 import com.docdoku.gwt.explorer.client.ui.delegates.IterationDelegate;
-import com.docdoku.gwt.explorer.client.ui.delegates.MDocIdDelegate;
-import com.docdoku.gwt.explorer.client.ui.delegates.MDocTemplateIdDelegate;
+import com.docdoku.gwt.explorer.client.ui.delegates.DocMIdDelegate;
+import com.docdoku.gwt.explorer.client.ui.delegates.DocMTemplateIdDelegate;
 import com.docdoku.gwt.explorer.client.ui.delegates.StateDelegate;
 import com.docdoku.gwt.explorer.client.ui.delegates.VersionDelegate;
 import com.docdoku.gwt.explorer.client.ui.delegates.WorkflowIdDelegate;
@@ -42,8 +42,8 @@ public class ExplorerTableProfileCollection {
     public ExplorerTableProfileCollection(IconFactory iconFactory) {
         // create delegates :
         TableDelegate iterationDelegate = new IterationDelegate(iconFactory);
-        TableDelegate mdocIdDelegate = new MDocIdDelegate();
-        TableDelegate mdocTemplateIdDelegate = new MDocTemplateIdDelegate();
+        TableDelegate docMIdDelegate = new DocMIdDelegate();
+        TableDelegate docMTemplateIdDelegate = new DocMTemplateIdDelegate();
         TableDelegate stateDelegate = new StateDelegate(iconFactory);
         TableDelegate versionDelegate = new VersionDelegate(iconFactory);
         TableDelegate workflowIdDelegate = new WorkflowIdDelegate();
@@ -56,7 +56,7 @@ public class ExplorerTableProfileCollection {
         documents.setSelectionEnabled(true);
         documents.setDelegate(0, iterationDelegate);
         documents.setDelegate(1, stateDelegate);
-        documents.setDelegate(2, mdocIdDelegate);
+        documents.setDelegate(2, docMIdDelegate);
         documents.setDelegate(8, versionDelegate);
         documents.addColumnNotToEmitClick(0);
         documents.addColumnNotToEmitClick(1);
@@ -68,7 +68,7 @@ public class ExplorerTableProfileCollection {
         search.setSelectionEnabled(true);
         search.setDelegate(0, iterationDelegate);
         search.setDelegate(1, stateDelegate);
-        search.setDelegate(2, mdocIdDelegate);
+        search.setDelegate(2, docMIdDelegate);
         search.setDelegate(8, versionDelegate);
         search.addColumnNotToEmitClick(0);
         search.addColumnNotToEmitClick(1);
@@ -79,7 +79,7 @@ public class ExplorerTableProfileCollection {
         TableProfile templates = new TableProfile();
         templates.setSelectionEnabled(true);
         templates.setDndEnabled(false);
-        templates.setDelegate(0, mdocTemplateIdDelegate);
+        templates.setDelegate(0, docMTemplateIdDelegate);
 
         // workflow models profile
         TableProfile workflows = new TableProfile();

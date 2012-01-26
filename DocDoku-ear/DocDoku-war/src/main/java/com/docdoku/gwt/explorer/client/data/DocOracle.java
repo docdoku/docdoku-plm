@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,8 +21,8 @@
 package com.docdoku.gwt.explorer.client.data;
 
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MDocResponse;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocMResponse;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
@@ -53,23 +53,23 @@ public class DocOracle extends SuggestOracle {
     public void requestSuggestions(final Request request, final Callback callback) {
         // retrive info
 
-        AsyncCallback<MDocResponse> callbackServiceNew = new AsyncCallback<MDocResponse>() {
+        AsyncCallback<DocMResponse> callbackServiceNew = new AsyncCallback<DocMResponse>() {
 
             public void onFailure(Throwable caught) {
                 HTMLUtil.showError(caught.getMessage());
             }
 
-            public void onSuccess(MDocResponse resultS) {
-                MasterDocumentDTO[] result = resultS.getData();
+            public void onSuccess(DocMResponse resultS) {
+                DocumentMasterDTO[] result = resultS.getData();
                 // generate response :
-                SortedSet<MasterDocumentDTO> sorted = new TreeSet<MasterDocumentDTO>();
-                for (MasterDocumentDTO mdoc : result) {
-                    sorted.add(mdoc);
+                SortedSet<DocumentMasterDTO> sorted = new TreeSet<DocumentMasterDTO>();
+                for (DocumentMasterDTO docM : result) {
+                    sorted.add(docM);
                 }
 
                 List<DocOracleSuggestion> responseList = new LinkedList<DocOracleSuggestion>();
-                for (MasterDocumentDTO mdoc : sorted) {
-                    DocOracleSuggestion suggestion = new DocOracleSuggestionImpl(mdoc);
+                for (DocumentMasterDTO m : sorted) {
+                    DocOracleSuggestion suggestion = new DocOracleSuggestionImpl(m);
                     responseList.add(suggestion);
                 }
                 callback.onSuggestionsReady(request, new Response(responseList));
@@ -84,7 +84,7 @@ public class DocOracle extends SuggestOracle {
                 realQuery = realQuery.substring(0, realQuery.length() - 1);
             }
 
-            ServiceLocator.getInstance().getExplorerService().searchMDocs(workspaceId, realQuery, "", "", "", "", new Date(DEFAULT_FROM_DATE), new Date(), null, null, "", 0, REQUEST_SIZE, callbackServiceNew);
+            ServiceLocator.getInstance().getExplorerService().searchDocMs(workspaceId, realQuery, "", "", "", "", new Date(DEFAULT_FROM_DATE), new Date(), null, null, "", 0, REQUEST_SIZE, callbackServiceNew);
         } else {
             List<DocOracleSuggestion> responses = new LinkedList<DocOracleSuggestion>();
             callback.onSuggestionsReady(request, new Response(responses));
@@ -109,18 +109,18 @@ public class DocOracle extends SuggestOracle {
 
     public interface DocOracleSuggestion extends Suggestion {
 
-        MasterDocumentDTO getMDoc();
+        DocumentMasterDTO getDocM();
     }
 
     private class DocOracleSuggestionImpl implements DocOracleSuggestion {
 
-        private MasterDocumentDTO doc;
+        private DocumentMasterDTO doc;
 
-        public DocOracleSuggestionImpl(MasterDocumentDTO doc) {
+        public DocOracleSuggestionImpl(DocumentMasterDTO doc) {
             this.doc = doc;
         }
 
-        public MasterDocumentDTO getMDoc() {
+        public DocumentMasterDTO getDocM() {
             return doc;
         }
 

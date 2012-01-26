@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,8 +21,8 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.services.ICommandLocal;
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.regex.Pattern;
@@ -55,11 +55,11 @@ public class DocumentServlet extends HttpServlet {
                 offset=3;
             
             String workspaceId = URLDecoder.decode(pathInfos[offset],"UTF-8");
-            String mdocId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
-            String mdocVersion = pathInfos[offset+2];
+            String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
+            String docMVersion = pathInfos[offset+2];
 
-            MasterDocument mdoc = commandService.getMDoc(new MasterDocumentKey(workspaceId, mdocId, mdocVersion));
-            pRequest.setAttribute("mdoc", mdoc);
+            DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+            pRequest.setAttribute("docm", docM);
 
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
 

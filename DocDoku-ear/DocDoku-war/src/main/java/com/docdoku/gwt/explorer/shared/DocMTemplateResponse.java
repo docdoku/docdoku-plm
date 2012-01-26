@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -26,11 +26,10 @@ import java.io.Serializable;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocResponse extends ExplorerServiceResponse<MasterDocumentDTO> implements Serializable{
+public class DocMTemplateResponse extends ExplorerServiceResponse<DocumentMasterTemplateDTO> implements Serializable{
 
-    public MDocResponse() {
+    public DocMTemplateResponse() {
     }
 
     
-
 }

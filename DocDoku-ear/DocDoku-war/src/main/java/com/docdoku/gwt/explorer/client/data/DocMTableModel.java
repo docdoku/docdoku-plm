@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
 import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,11 +33,11 @@ import java.util.List;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocTableModel implements TableModel {
+public class DocMTableModel implements TableModel {
 
     private String headers[];
     private Object data[][];
-    private MasterDocumentDTO mdocs[];
+    private DocumentMasterDTO docMs[];
     private CheckOutStatus status[];
 
     public enum CheckOutStatus {
@@ -47,50 +47,50 @@ public class MDocTableModel implements TableModel {
         CHECKED_IN
     }
 
-    public MDocTableModel(MasterDocumentDTO[] mdocs, String login, boolean createVersionEnabled) {
-        this.mdocs = mdocs;
+    public DocMTableModel(DocumentMasterDTO[] docMs, String login, boolean createVersionEnabled) {
+        this.docMs = docMs;
         ExplorerI18NConstants explorerConstants = ServiceLocator.getInstance().getExplorerI18NConstants();
 
         headers = new String[]{null, null, explorerConstants.tableID(), explorerConstants.tableVersion(), explorerConstants.tableIteration(), explorerConstants.tableAuthor(), explorerConstants.tableTitle(), explorerConstants.tableCreationDate(), null};
 
         // data
-        status = new CheckOutStatus[mdocs.length];
-        data = new Object[mdocs.length][9];
-        for (int i = 0; i < mdocs.length; i++) {
-            data[i][0] = mdocs[i].isIterationSubscription();
-            data[i][1] = mdocs[i].isStateSubscription();
-            this.data[i][2] = mdocs[i].getId();
-            if (mdocs[i].getCheckOutUser() != null) {
-                if (mdocs[i].getCheckOutUser().getLogin().equals(login)) {
-//                    this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentEditRowIcon(), mdocs[i].getId());
+        status = new CheckOutStatus[docMs.length];
+        data = new Object[docMs.length][9];
+        for (int i = 0; i < docMs.length; i++) {
+            data[i][0] = docMs[i].isIterationSubscription();
+            data[i][1] = docMs[i].isStateSubscription();
+            this.data[i][2] = docMs[i].getId();
+            if (docMs[i].getCheckOutUser() != null) {
+                if (docMs[i].getCheckOutUser().getLogin().equals(login)) {
+//                    this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentEditRowIcon(), docMs[i].getId());
                     status[i] = CheckOutStatus.CHECKED_OUT_BY_USER;
                 } else {
-//                    this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentLockRowIcon(), mdocs[i].getId());
+//                    this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentLockRowIcon(), docMs[i].getId());
                     status[i] = CheckOutStatus.CHECKED_OUT_BY_OTHER;
                 }
             } else {
-//                this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentRowIcon(), mdocs[i].getId());
+//                this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentRowIcon(), docMs[i].getId());
                 status[i] = CheckOutStatus.CHECKED_IN;
             }
 
-            this.data[i][3] = mdocs[i].getVersion();
+            this.data[i][3] = docMs[i].getVersion();
 
-            DocumentDTO iteration = mdocs[i].getLastIteration();
+            DocumentDTO iteration = docMs[i].getLastIteration();
             int iterationNumber = 0;
             if (iteration != null) {
                 iterationNumber = iteration.getIteration();
             }
             this.data[i][4] = new String(iterationNumber + "");
-            this.data[i][5] = mdocs[i].getAuthor().getName();
-            this.data[i][6] = mdocs[i].getTitle();
-            this.data[i][7] = mdocs[i].getCreationDate();
+            this.data[i][5] = docMs[i].getAuthor().getName();
+            this.data[i][6] = docMs[i].getTitle();
+            this.data[i][7] = docMs[i].getCreationDate();
             this.data[i][8] = createVersionEnabled;
         }
 
     }
 
     public int getRowCount() {
-        return mdocs.length;
+        return docMs.length;
     }
 
     public int getColumnCount() {
@@ -106,9 +106,9 @@ public class MDocTableModel implements TableModel {
     }
 
     public String[] getTooltip(int row, int column) {
-        if (row >= 0 && row < mdocs.length && mdocs[row].getCheckOutUser() != null && column == 2) {
+        if (row >= 0 && row < docMs.length && docMs[row].getCheckOutUser() != null && column == 2) {
             ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
-            String tooltip = constants.checkedInBy() + " " + mdocs[row].getCheckOutUser().getName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(mdocs[row].getCheckOutDate());
+            String tooltip = constants.checkedInBy() + " " + docMs[row].getCheckOutUser().getName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(docMs[row].getCheckOutDate());
             String result[] = new String[1];
             result[0] = tooltip;
             return result;
@@ -125,9 +125,9 @@ public class MDocTableModel implements TableModel {
         }
     }
 
-    public MasterDocumentDTO getValueAt(int row) {
-        if (row >= 0 && row < mdocs.length) {
-            return mdocs[row];
+    public DocumentMasterDTO getValueAt(int row) {
+        if (row >= 0 && row < docMs.length) {
+            return docMs[row];
         } else {
             return null;
         }
@@ -147,8 +147,8 @@ public class MDocTableModel implements TableModel {
     public List<Integer> getCheckedInDocuments() {
         List<Integer> result = new LinkedList<Integer>();
         int i = 0;
-        for (MasterDocumentDTO masterDocumentDTO : mdocs) {
-            if (masterDocumentDTO.getCheckOutUser() != null) {
+        for (DocumentMasterDTO documentMasterDTO : docMs) {
+            if (documentMasterDTO.getCheckOutUser() != null) {
                 result.add(i);
             }
             i++;
@@ -159,8 +159,8 @@ public class MDocTableModel implements TableModel {
     public List<Integer> getCheckedOutDocuments() {
         List<Integer> result = new LinkedList<Integer>();
         int i = 0;
-        for (MasterDocumentDTO masterDocumentDTO : mdocs) {
-            if (masterDocumentDTO.getCheckOutUser() == null) {
+        for (DocumentMasterDTO documentMasterDTO : docMs) {
+            if (documentMasterDTO.getCheckOutUser() == null) {
                 result.add(i);
             }
             i++;

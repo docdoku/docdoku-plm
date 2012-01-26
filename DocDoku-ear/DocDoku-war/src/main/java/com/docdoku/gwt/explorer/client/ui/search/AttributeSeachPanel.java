@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -27,7 +27,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.AttributesTypesList;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -153,13 +153,13 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
             insertRow(0);
             setWidget(0, 1, l);
         } else {
-            AsyncCallback<MasterDocumentTemplateDTO> callback = new AsyncCallback<MasterDocumentTemplateDTO>() {
+            AsyncCallback<DocumentMasterTemplateDTO> callback = new AsyncCallback<DocumentMasterTemplateDTO>() {
 
                 public void onFailure(Throwable caught) {
                     HTMLUtil.showError(caught.getMessage());
                 }
 
-                public void onSuccess(MasterDocumentTemplateDTO result) {
+                public void onSuccess(DocumentMasterTemplateDTO result) {
                     removeAllLines();
                     if (result.getAttributeTemplates().size() > 1) {
                         int i = 0;
@@ -198,7 +198,7 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
                     }
                 }
             };
-            ServiceLocator.getInstance().getExplorerService().getMDocTemplate(workspaceId, templateName, callback);
+            ServiceLocator.getInstance().getExplorerService().getDocMTemplate(workspaceId, templateName, callback);
         }
 
     }
@@ -226,17 +226,17 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
     }
 
     private void fetchModelList(final String selectedItem) {
-        AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
+        AsyncCallback<DocumentMasterTemplateDTO[]> callback = new AsyncCallback<DocumentMasterTemplateDTO[]>() {
 
             public void onFailure(Throwable caught) {
                 HTMLUtil.showError(caught.getMessage());
             }
 
-            public void onSuccess(MasterDocumentTemplateDTO[] result) {
+            public void onSuccess(DocumentMasterTemplateDTO[] result) {
                 modelList.clear();
                 modelList.addItem(ServiceLocator.getInstance().getExplorerI18NConstants().notSpecifiedOption());
                 int i = 1;
-                for (MasterDocumentTemplateDTO template : result) {
+                for (DocumentMasterTemplateDTO template : result) {
                     modelList.addItem(template.getId());
                     if (template.getId().equals(selectedItem)) {
                         modelList.setSelectedIndex(i);
@@ -245,7 +245,7 @@ public class AttributeSeachPanel extends FlexTable implements ClickHandler, Chan
                 }
             }
         };
-        ServiceLocator.getInstance().getExplorerService().getMDocTemplates(workspaceId, callback);
+        ServiceLocator.getInstance().getExplorerService().getDocMTemplates(workspaceId, callback);
     }
 
 

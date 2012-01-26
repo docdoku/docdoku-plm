@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -32,58 +32,58 @@ public interface ExplorerServiceAsync {
     void getFolders(String parentFolder, AsyncCallback<String[]> callback);
     void getTags(String workspaceId, AsyncCallback<String[]> callback);
     void getWorkflowModels(String workspaceId, AsyncCallback<WorkflowModelDTO[]> callback);
-    void getMDocTemplates(String workspaceId, AsyncCallback<MasterDocumentTemplateDTO[]> callback);
-    void getCheckedOutMDocs(String workspaceId, AsyncCallback<MasterDocumentDTO[]> callback);
-    void findMDocsByFolder(String completePath, AsyncCallback<MasterDocumentDTO[]> callback);
-    void findMDocsByTag(String workspaceId, String label, AsyncCallback<MasterDocumentDTO[]> callback);
-    void delFolder(String completePath, AsyncCallback<MasterDocumentDTO[]> callback);
+    void getDocMTemplates(String workspaceId, AsyncCallback<DocumentMasterTemplateDTO[]> callback);
+    void getCheckedOutDocMs(String workspaceId, AsyncCallback<DocumentMasterDTO[]> callback);
+    void findDocMsByFolder(String completePath, AsyncCallback<DocumentMasterDTO[]> callback);
+    void findDocMsByTag(String workspaceId, String label, AsyncCallback<DocumentMasterDTO[]> callback);
+    void delFolder(String completePath, AsyncCallback<DocumentMasterDTO[]> callback);
     void createFolder(String pParentFolder, String pFolder, AsyncCallback<Void> callback);
-    void removeFileFromDocument(String pFullName, AsyncCallback<MasterDocumentDTO> callback);
-    void removeFilesFromDocument(String[] pFullNames, AsyncCallback<MasterDocumentDTO> callback);
-    void getMDoc(String workspaceId, String id, String version, AsyncCallback<MasterDocumentDTO> callback);
-    void checkIn(String workspaceId, String id, String version, AsyncCallback<MasterDocumentDTO> callback);
-    void checkOut(String workspaceId, String id, String version, AsyncCallback<MasterDocumentDTO> callback);
-    void undoCheckOut(String workspaceId, String id, String version, AsyncCallback<MasterDocumentDTO> callback);
-    void delMDoc(String workspaceId, String id, String version, AsyncCallback<Void> callback);
+    void removeFileFromDocument(String pFullName, AsyncCallback<DocumentMasterDTO> callback);
+    void removeFilesFromDocument(String[] pFullNames, AsyncCallback<DocumentMasterDTO> callback);
+    void getDocM(String workspaceId, String id, String version, AsyncCallback<DocumentMasterDTO> callback);
+    void checkIn(String workspaceId, String id, String version, AsyncCallback<DocumentMasterDTO> callback);
+    void checkOut(String workspaceId, String id, String version, AsyncCallback<DocumentMasterDTO> callback);
+    void undoCheckOut(String workspaceId, String id, String version, AsyncCallback<DocumentMasterDTO> callback);
+    void delDocM(String workspaceId, String id, String version, AsyncCallback<Void> callback);
     void whoAmI(String pWorkspaceId, AsyncCallback<UserDTO> callback);
-    void createMDoc(String parentFolder, String mdocId, String title, String description, String mdocTemplateId, String workflowModelId, ACLDTO acl, AsyncCallback<MasterDocumentDTO> callback);
-    void createVersion(String workspaceId, String id, String version, String title, String description, String workflowModelId, ACLDTO acl, AsyncCallback<MasterDocumentDTO[]> callback);
-    void updateDoc(String workspaceId, String id, String version, int iteration, String revisionNote, InstanceAttributeDTO[] attributes, DocumentDTO[] links, AsyncCallback<MasterDocumentDTO> callback);
-    void createMDocTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates, boolean idGenerated, AsyncCallback<MasterDocumentTemplateDTO> callback);
-    void delMDocTemplate(String workspaceId, String id, AsyncCallback<Void> callback);
-    void updateMDocTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates,  boolean idGenerated, AsyncCallback<MasterDocumentTemplateDTO> callback);
+    void createDocM(String parentFolder, String docMId, String title, String description, String docMTemplateId, String workflowModelId, ACLDTO acl, AsyncCallback<DocumentMasterDTO> callback);
+    void createVersion(String workspaceId, String id, String version, String title, String description, String workflowModelId, ACLDTO acl, AsyncCallback<DocumentMasterDTO[]> callback);
+    void updateDoc(String workspaceId, String id, String version, int iteration, String revisionNote, InstanceAttributeDTO[] attributes, DocumentDTO[] links, AsyncCallback<DocumentMasterDTO> callback);
+    void createDocMTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates, boolean idGenerated, AsyncCallback<DocumentMasterTemplateDTO> callback);
+    void delDocMTemplate(String workspaceId, String id, AsyncCallback<Void> callback);
+    void updateDocMTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates,  boolean idGenerated, AsyncCallback<DocumentMasterTemplateDTO> callback);
     void delTag(String workspaceId, String label,AsyncCallback<Void> callback);
     void createTag(String workspaceId, String label, AsyncCallback<Void> callback);
-    void generateId(String workspaceId, String mdocTemplateId, AsyncCallback<String> callback);
-    void saveTags(String workspaceId, String id, String version, String[] tags, AsyncCallback<MasterDocumentDTO> callback);
+    void generateId(String workspaceId, String docMTemplateId, AsyncCallback<String> callback);
+    void saveTags(String workspaceId, String id, String version, String[] tags, AsyncCallback<DocumentMasterDTO> callback);
     void delWorkflowModel(String workspaceId, String id, AsyncCallback<Void> callback);
     void getUsers(String pWorkspaceId, AsyncCallback<UserDTO[]> callback);
     void createWorkflowModel(String workspaceId, String id, String finalLifeCycleState, ActivityModelDTO[] activityModels, AsyncCallback<WorkflowModelDTO> callback);
-    void getIterationChangeEventSubscriptions(String workspaceId, AsyncCallback<MasterDocumentDTO[]> callback);
-    void getStateChangeEventSubscriptions(String workspaceId, AsyncCallback<MasterDocumentDTO[]> callback);
+    void getIterationChangeEventSubscriptions(String workspaceId, AsyncCallback<DocumentMasterDTO[]> callback);
+    void getStateChangeEventSubscriptions(String workspaceId, AsyncCallback<DocumentMasterDTO[]> callback);
     void subscribeToIterationChangeEvent(String workspaceId, String id, String version,AsyncCallback<Void> callback);
     void subscribeToStateChangeEvent(String workspaceId, String id, String version,AsyncCallback<Void> callback);
     void unsubscribeToIterationChangeEvent(String workspaceId, String id, String version,AsyncCallback<Void> callback);
     void unsubscribeToStateChangeEvent(String workspaceId, String id, String version,AsyncCallback<Void> callback);
 
-    void removeFileFromTemplate(String pFullName, AsyncCallback<MasterDocumentTemplateDTO> callback);
-    void removeFilesFromTemplate(String[] pFullNames, AsyncCallback<MasterDocumentTemplateDTO> callback);
-    void getMDocTemplate(String workspaceId, String id, AsyncCallback<MasterDocumentTemplateDTO> callback);
+    void removeFileFromTemplate(String pFullName, AsyncCallback<DocumentMasterTemplateDTO> callback);
+    void removeFilesFromTemplate(String[] pFullNames, AsyncCallback<DocumentMasterTemplateDTO> callback);
+    void getDocMTemplate(String workspaceId, String id, AsyncCallback<DocumentMasterTemplateDTO> callback);
 
-    void approve(String workspaceId, int workflowId, int activityStep, int num, String comment, AsyncCallback<MasterDocumentDTO> callback);
-    void reject(String workspaceId, int workflowId, int activityStep, int num, String comment, AsyncCallback<MasterDocumentDTO> callback);
-    void searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, AsyncCallback<MasterDocumentDTO[]> callback);
-    void moveMDoc(String parentFolder, String workspaceId, String id, String version, AsyncCallback<MasterDocumentDTO> callback);
+    void approve(String workspaceId, int workflowId, int activityStep, int num, String comment, AsyncCallback<DocumentMasterDTO> callback);
+    void reject(String workspaceId, int workflowId, int activityStep, int num, String comment, AsyncCallback<DocumentMasterDTO> callback);
+    void searchDocMs(String workspaceId, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, AsyncCallback<DocumentMasterDTO[]> callback);
+    void moveDocM(String parentFolder, String workspaceId, String id, String version, AsyncCallback<DocumentMasterDTO> callback);
     void getWorkspaceUserMemberships(String workspaceId, AsyncCallback<UserDTO[]> callback);
     void getWorkspaceUserGroupMemberships(String workspaceId, AsyncCallback<UserGroupDTO[]> callback);
 
 
     // services using ExplorerServiceResponse
-    void getCheckedOutMDocs(String workspaceId, int startOffset, int chunkSize, AsyncCallback<MDocResponse> callback) ;
-    void findMDocsByFolder(String completePath, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback);
-    void findMDocsByTag(String workspaceId, String label, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback);
-    void searchMDocs(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize,AsyncCallback<MDocResponse> callback);
+    void getCheckedOutDocMs(String workspaceId, int startOffset, int chunkSize, AsyncCallback<DocMResponse> callback);
+    void findDocMsByFolder(String completePath, int startOffset, int chunkSize,AsyncCallback<DocMResponse> callback);
+    void findDocMsByTag(String workspaceId, String label, int startOffset, int chunkSize,AsyncCallback<DocMResponse> callback);
+    void searchDocMs(String workspaceId, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content, int startOffset, int chunkSize,AsyncCallback<DocMResponse> callback);
 
-    void getMDocTemplates(String workspaceId, int startPoint, int chunkSize, AsyncCallback<MDocTemplateResponse> callback);
+    void getDocMTemplates(String workspaceId, int startPoint, int chunkSize, AsyncCallback<DocMTemplateResponse> callback);
     void getWorkflowModels(String workspaceId, int startPoint, int chunkSize, AsyncCallback<WorkflowResponse> callback);
 }

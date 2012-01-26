@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.ui.doc;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.TextBox;
  *
  * @author Florent GARIN
  */
-public class CreateMDocMainPanel extends DataRoundedPanel{
+public class CreateDocMMainPanel extends DataRoundedPanel{
 
     private TextBox m_parentTextBox;
     private ListBox m_templateListBox;
@@ -44,7 +44,7 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
     
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
-    public CreateMDocMainPanel(){
+    public CreateDocMMainPanel(){
         createLayout();
     }
 
@@ -74,10 +74,10 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
 
     }
 
-    public void setTemplates(MasterDocumentTemplateDTO[] templates){
+    public void setTemplates(DocumentMasterTemplateDTO[] templates){
         m_templateListBox.clear();
         m_templateListBox.addItem(ServiceLocator.getInstance().getExplorerI18NConstants().selectionNone());
-        for(MasterDocumentTemplateDTO template:templates){
+        for(DocumentMasterTemplateDTO template:templates){
             String label = template.getId();
             String type = template.getDocumentType();
 
@@ -96,16 +96,15 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
     }
 
 
-    public String getMDocId(){
+    public String getDocMId(){
         return m_idTextBox.getText();
     }
 
-    public void setMDocId(String mdocId){
-//        m_idTextBox.setText(mdocId);
-        m_idTextBox.setGeneratedId(mdocId);
+    public void setDocMId(String docMId){
+        m_idTextBox.setGeneratedId(docMId);
     }
 
-    public void setMDocIdMask(String mask){
+    public void setDocMIdMask(String mask){
         m_idTextBox.setMask(mask);
     }
 
@@ -119,7 +118,7 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
         return index<1?null:m_workflowListBox.getValue(index);
     }
 
-    public String getMDocTitle(){
+    public String getDocMTitle(){
         return m_titleTextBox.getText();
     }
 
@@ -141,7 +140,7 @@ public class CreateMDocMainPanel extends DataRoundedPanel{
         return m_templateListBox;
     }
 
-    void setMDocIdEnabled(boolean b) {
+    void setDocMIdEnabled(boolean b) {
         m_idTextBox.setText("");
         m_idTextBox.setMask("");
     }

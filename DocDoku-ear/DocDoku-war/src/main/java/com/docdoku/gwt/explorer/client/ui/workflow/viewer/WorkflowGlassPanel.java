@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.ui.doc.DocMainPanel;
 import com.docdoku.gwt.explorer.client.ui.workflow.viewer.TaskChangeEvent.Type;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.docdoku.gwt.explorer.shared.WorkflowDTO;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -110,7 +110,7 @@ public class WorkflowGlassPanel extends PopupPanel implements TaskListener {
         }
     }
 
-    public void updateAfterAcceptOrReject(MasterDocumentDTO result) {
+    public void updateAfterAcceptOrReject(DocumentMasterDTO result) {
         viewer.hideAllPopups();
         viewer.removeFromParent();
         parentPanel.setLifeCycleState(result.getLifeCycleState());

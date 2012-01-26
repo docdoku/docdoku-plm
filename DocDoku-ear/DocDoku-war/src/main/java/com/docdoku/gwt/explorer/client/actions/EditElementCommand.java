@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.shared.DocumentDTO;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -41,19 +41,19 @@ public class EditElementCommand implements Action {
     }
 
     public void execute(Object... userObject) {
-        MasterDocumentDTO mdoc=m_mainPage.getLastOpenedMDoc();
-        String workspaceId=mdoc.getWorkspaceId();
-        String id=mdoc.getId();
-        String version=mdoc.getVersion();
+        DocumentMasterDTO docM=m_mainPage.getLastOpenedDocM();
+        String workspaceId=docM.getWorkspaceId();
+        String id=docM.getId();
+        String version=docM.getVersion();
 
-        int iteration =mdoc.getLastIteration().getIteration();
+        int iteration =docM.getLastIteration().getIteration();
         String revisionNote=(String) userObject[0];
         InstanceAttributeDTO[] attributes=(InstanceAttributeDTO[]) userObject[1];
         DocumentDTO[] links=(DocumentDTO[]) userObject[2];
 
-        AsyncCallback<MasterDocumentDTO> callback = new AsyncCallback<MasterDocumentDTO>() {
+        AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
 
-            public void onSuccess(MasterDocumentDTO result) {
+            public void onSuccess(DocumentMasterDTO result) {
                 m_mainPage.refreshElementTable();
                 m_mainPage.showTablePanel();
             }

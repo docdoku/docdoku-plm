@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -52,7 +52,7 @@ public class DescriptionPanel extends DataRoundedPanel{
         m_descriptionTextArea.setText("");
     }
 
-    public String getMDocDescription(){
+    public String getDocMDescription(){
         return m_descriptionTextArea.getText();
     }
 }

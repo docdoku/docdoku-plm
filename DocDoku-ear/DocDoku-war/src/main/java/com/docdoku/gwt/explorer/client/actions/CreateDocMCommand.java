@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,43 +23,41 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.ACLDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 
 /**
  *
  * @author Florent GARIN
  */
-public class UpdateMDocTemplateCommand implements Action {
+public class CreateDocMCommand implements Action {
 
     private ExplorerPage m_mainPage;
 
-    public UpdateMDocTemplateCommand(ExplorerPage mainPage) {
+    public CreateDocMCommand(ExplorerPage mainPage) {
         m_mainPage = mainPage;
     }
 
-    @Override
     public void execute(Object... userObject) {
-        AsyncCallback<MasterDocumentTemplateDTO> callback = new AsyncCallback<MasterDocumentTemplateDTO>() {
-
-            @Override
-            public void onSuccess(MasterDocumentTemplateDTO mdoc) {
+        AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
+            public void onSuccess(DocumentMasterDTO docM) {
                 m_mainPage.refreshElementTable();
             }
 
-            @Override
             public void onFailure(Throwable caught) {
                 HTMLUtil.showError(caught.getMessage());
             }
         };
-        String workspaceId = m_mainPage.getWorkspaceId();
-        String templateId = (String) userObject[0];
-        String documentType = (String) userObject[1];
-        String mask = (String) userObject[2];
-        InstanceAttributeTemplateDTO[] attributeTemplates = (InstanceAttributeTemplateDTO[]) userObject[3];
-        boolean idGenerated = (Boolean) userObject[4];
-        ServiceLocator.getInstance().getExplorerService().updateMDocTemplate(workspaceId, templateId, documentType, mask, attributeTemplates, idGenerated, callback);
+        String parentFolder=(String) userObject[0];
+        String title = (String) userObject[1];
+        String docMId = (String) userObject[2];
+        String templateId = (String) userObject[3];
+        String workflowModelId = (String) userObject[4];
+        String description = (String) userObject[5];
+        ACLDTO acl=(ACLDTO) userObject[6];
+        ServiceLocator.getInstance().getExplorerService().createDocM(parentFolder, docMId, title, description, templateId, workflowModelId, acl, callback);
         m_mainPage.showTablePanel();
 
     }

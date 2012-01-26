@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -37,10 +37,10 @@ public class ShowCreateVersionPanelCommand implements Action{
     @Override
     public void execute(Object... userObject) {
         String workspaceId = (String) userObject[0] ;
-        String mdocId = (String) userObject[1] ;
+        String docMId = (String) userObject[1] ;
         String version = (String) userObject[2] ;
 
-        m_mainPage.showCreateVersionPanel(workspaceId, mdocId, version);
+        m_mainPage.showCreateVersionPanel(workspaceId, docMId, version);
 
 
     }

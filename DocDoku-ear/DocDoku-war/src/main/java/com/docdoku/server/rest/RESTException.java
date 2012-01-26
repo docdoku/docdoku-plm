@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -18,18 +18,19 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest;
 
-import java.io.Serializable;
 
-/**
- *
- * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
- */
-public class MDocTemplateResponse extends ExplorerServiceResponse<MasterDocumentTemplateDTO> implements Serializable{
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-    public MDocTemplateResponse() {
+
+
+public class RESTException extends WebApplicationException {
+
+    public RESTException(String technicalDetail, String userMessage) {
+        super(Response.status(Status.BAD_REQUEST).header("Reason-Phrase",
+                userMessage).entity(technicalDetail).build());
     }
-
-    
 }

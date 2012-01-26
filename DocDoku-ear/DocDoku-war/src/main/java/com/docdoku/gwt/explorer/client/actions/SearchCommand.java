@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
-import com.docdoku.gwt.explorer.client.ui.pagemanager.MDocSearchBackend;
+import com.docdoku.gwt.explorer.client.ui.pagemanager.DocMSearchBackend;
 import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import java.util.Date;
 
@@ -39,7 +39,7 @@ public class SearchCommand implements Action {
 
     public void execute(Object... userObject) {
         String workspaceId= (String) userObject[0];
-        String mdocId= (String) userObject[1];
+        String docMId= (String) userObject[1];
         String title= (String) userObject[2];
         String version= (String) userObject[3];
         String author= (String) userObject[4];
@@ -50,7 +50,7 @@ public class SearchCommand implements Action {
         String[] tags= (String[]) userObject[9];
         String content= (String) userObject[10];
 
-         m_mainPage.showSearchResult(new MDocSearchBackend(m_mainPage.getLogin(), workspaceId, mdocId, title, version, author, type, fromDate, toDate, attributes, tags, content));
+         m_mainPage.showSearchResult(new DocMSearchBackend(m_mainPage.getLogin(), workspaceId, docMId, title, version, author, type, fromDate, toDate, attributes, tags, content));
 
     }
 }

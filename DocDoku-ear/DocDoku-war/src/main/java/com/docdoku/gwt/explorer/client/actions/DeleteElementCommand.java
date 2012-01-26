@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,8 +24,8 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -49,20 +49,20 @@ public class DeleteElementCommand implements Action {
     @Override
     public void execute(Object... userObject) {
 
-        List<MasterDocumentDTO> selectedMDocs=m_mainPage.getSelectedMDocs();
-        List<MasterDocumentTemplateDTO> selectedTemplates= m_mainPage.getSelectedMDocTemplates();
+        List<DocumentMasterDTO> selectedDocMs=m_mainPage.getSelectedDocMs();
+        List<DocumentMasterTemplateDTO> selectedTemplates= m_mainPage.getSelectedDocMTemplates();
         List<WorkflowModelDTO> selectedWorkflows = m_mainPage.getSelectedWorkflowModels();
         
         final TreeItem selectedItem = m_mainPage.getSelectedFolderTreeItem();
         String selectedFolder = m_mainPage.getSelectedFolderPath();
         String selectedTag = m_mainPage.getSelectedTag();
 
-        if(selectedMDocs.isEmpty() && selectedTemplates.isEmpty() && selectedWorkflows.isEmpty()){
+        if(selectedDocMs.isEmpty() && selectedTemplates.isEmpty() && selectedWorkflows.isEmpty()){
             if(selectedFolder !=null){
-                AsyncCallback<MasterDocumentDTO[]> callback = new AsyncCallback<MasterDocumentDTO[]>() {
+                AsyncCallback<DocumentMasterDTO[]> callback = new AsyncCallback<DocumentMasterDTO[]>() {
 
                     @Override
-                    public void onSuccess(MasterDocumentDTO[] mdocs) {
+                    public void onSuccess(DocumentMasterDTO[] docMs) {
                         TreeItem parentItem=selectedItem.getParentItem();
                         m_mainPage.selectFolderTreeItem(parentItem);
                         m_mainPage.refreshTreeItem(parentItem);
@@ -96,10 +96,10 @@ public class DeleteElementCommand implements Action {
                     ServiceLocator.getInstance().getExplorerService().delTag(m_mainPage.getWorkspaceId(),selectedTag, callback);
             }
         }
-        for (MasterDocumentDTO mdoc : selectedMDocs) {
-            String workspaceId = mdoc.getWorkspaceId();
-            String id = mdoc.getId();
-            String version = mdoc.getVersion();
+        for (DocumentMasterDTO docM : selectedDocMs) {
+            String workspaceId = docM.getWorkspaceId();
+            String id = docM.getId();
+            String version = docM.getVersion();
             AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
                 @Override
@@ -112,10 +112,10 @@ public class DeleteElementCommand implements Action {
                     HTMLUtil.showError(caught.getMessage());
                 }
             };
-            ServiceLocator.getInstance().getExplorerService().delMDoc(workspaceId, id, version, callback);
+            ServiceLocator.getInstance().getExplorerService().delDocM(workspaceId, id, version, callback);
         }
 
-        for (MasterDocumentTemplateDTO template : selectedTemplates) {
+        for (DocumentMasterTemplateDTO template : selectedTemplates) {
             String workspaceId = template.getWorkspaceId();
             String id = template.getId();
             AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -130,7 +130,7 @@ public class DeleteElementCommand implements Action {
                     HTMLUtil.showError(caught.getMessage());
                 }
             };
-            ServiceLocator.getInstance().getExplorerService().delMDocTemplate(workspaceId, id, callback);
+            ServiceLocator.getInstance().getExplorerService().delDocMTemplate(workspaceId, id, callback);
         }
 
         for (WorkflowModelDTO workflow : selectedWorkflows) {

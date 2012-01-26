@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.ui.search;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.docdoku.gwt.explorer.shared.UserDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -44,7 +44,7 @@ public class GeneralSearchPanel extends FlexTable {
     public GeneralSearchPanel(String workspaceId) {
         this.workspaceId = workspaceId;
         setupUi();
-        AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
+        AsyncCallback<DocumentMasterTemplateDTO[]> callback = new AsyncCallback<DocumentMasterTemplateDTO[]>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -52,13 +52,13 @@ public class GeneralSearchPanel extends FlexTable {
             }
 
             @Override
-            public void onSuccess(MasterDocumentTemplateDTO[] result) {
-                for (MasterDocumentTemplateDTO template : result) {
+            public void onSuccess(DocumentMasterTemplateDTO[] result) {
+                for (DocumentMasterTemplateDTO template : result) {
                     oracle.add(template.getDocumentType());
                 }
             }
         };
-        ServiceLocator.getInstance().getExplorerService().getMDocTemplates(workspaceId, callback);
+        ServiceLocator.getInstance().getExplorerService().getDocMTemplates(workspaceId, callback);
     }
 
     private void setupUi() {
@@ -138,7 +138,7 @@ public class GeneralSearchPanel extends FlexTable {
     public void setVisible(boolean visible) {
 
         if (visible) {
-            AsyncCallback<MasterDocumentTemplateDTO[]> callback = new AsyncCallback<MasterDocumentTemplateDTO[]>() {
+            AsyncCallback<DocumentMasterTemplateDTO[]> callback = new AsyncCallback<DocumentMasterTemplateDTO[]>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -146,14 +146,14 @@ public class GeneralSearchPanel extends FlexTable {
                 }
 
                 @Override
-                public void onSuccess(MasterDocumentTemplateDTO[] result) {
-                    for (MasterDocumentTemplateDTO template : result) {
+                public void onSuccess(DocumentMasterTemplateDTO[] result) {
+                    for (DocumentMasterTemplateDTO template : result) {
                         oracle.add(template.getDocumentType());
                     }
                 }
             };
             oracle.clear();
-            ServiceLocator.getInstance().getExplorerService().getMDocTemplates(workspaceId, callback);
+            ServiceLocator.getInstance().getExplorerService().getDocMTemplates(workspaceId, callback);
             super.setVisible(visible);
         }
     }

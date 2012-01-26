@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -43,7 +43,7 @@ public class UploadDocFileCommand implements Action {
     public void execute(Object... userObject) {
         FileUpload upload = m_mainPage.getEditDocFilesPanel().getFileUpload();
         FormPanel form = m_mainPage.getEditDocFilesPanel().getForm();
-        MasterDocumentDTO mdoc = m_mainPage.getLastOpenedMDoc();
+        DocumentMasterDTO docM = m_mainPage.getLastOpenedDocM();
         //TODO make it relative
         String fileName=upload.getFilename();
         int index=fileName.lastIndexOf('/');
@@ -54,7 +54,7 @@ public class UploadDocFileCommand implements Action {
             fileName=fileName.substring(index+1);
 
         String webappContext = HTMLUtil.getWebContext();
-        String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(mdoc.getWorkspaceId()) + "/" + "documents/" + URL.encode(mdoc.getId()) + "/" + mdoc.getVersion() + "/" + mdoc.getLastIteration().getIteration() + "/" + URL.encode(fileName);
+        String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(docM.getWorkspaceId()) + "/" + "documents/" + URL.encode(docM.getId()) + "/" + docM.getVersion() + "/" + docM.getLastIteration().getIteration() + "/" + URL.encode(fileName);
         form.setAction(url);
         form.submit();
     }

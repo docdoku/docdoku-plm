@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.gwt.explorer.client.ui.delegates;
 
 import com.docdoku.gwt.explorer.client.ui.*;
-import com.docdoku.gwt.explorer.client.data.MDocTableModel;
+import com.docdoku.gwt.explorer.client.data.DocMTableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableDelegate;
 import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
 import com.docdoku.gwt.client.ui.widget.table.TableWidget;
@@ -42,7 +42,7 @@ public class IterationDelegate implements TableDelegate{
 
     public void render(TableModelIndex index, int row, int column, TableWidget table, String[] tooltip) {
         Object value = table.getTableModel().getValueAt(index);
-        MDocTableModel model = (MDocTableModel) table.getTableModel();
+        DocMTableModel model = (DocMTableModel) table.getTableModel();
         if (value instanceof Boolean) {
             Boolean castedValue = (Boolean) value;
             Image icon = null;

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -32,8 +32,8 @@ import java.util.Set;
 public class DocumentDTO implements Serializable {
     
     private String workspaceId;
-    private String masterDocumentId;
-    private String masterDocumentVersion;
+    private String documentMasterId;
+    private String documentMasterVersion;
     private int iteration;
 
     private Date creationDate;
@@ -48,10 +48,10 @@ public class DocumentDTO implements Serializable {
     public DocumentDTO() {
     }
     
-    public DocumentDTO(String pWorkspaceId, String pMasterDocumentId, String pMasterDocumentVersion, int pIteration) {
+    public DocumentDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
         workspaceId=pWorkspaceId;
-        masterDocumentId=pMasterDocumentId;
-        masterDocumentVersion=pMasterDocumentVersion;
+        documentMasterId=pDocumentMasterId;
+        documentMasterVersion=pDocumentMasterVersion;
         iteration=pIteration;
     }
 
@@ -108,7 +108,7 @@ public class DocumentDTO implements Serializable {
 
     @Override
     public String toString() {
-        return workspaceId + "-" + masterDocumentId + "-" + masterDocumentVersion + "-" + iteration;
+        return workspaceId + "-" + documentMasterId + "-" + documentMasterVersion + "-" + iteration;
     }
     
     public String getWorkspaceId() {
@@ -119,20 +119,20 @@ public class DocumentDTO implements Serializable {
         workspaceId = pWorkspaceId;
     }
     
-    public String getMasterDocumentId() {
-        return masterDocumentId;
+    public String getDocumentMasterId() {
+        return documentMasterId;
     }
     
-    public void setMasterDocumentId(String pMasterDocumentId) {
-        masterDocumentId = pMasterDocumentId;
+    public void setDocumentMasterId(String pDocumentMasterId) {
+        documentMasterId = pDocumentMasterId;
     }
 
-    public String getMasterDocumentVersion() {
-        return masterDocumentVersion;
+    public String getDocumentMasterVersion() {
+        return documentMasterVersion;
     }
 
-    public void setMasterDocumentVersion(String pMasterDocumentVersion) {
-        this.masterDocumentVersion = pMasterDocumentVersion;
+    public void setDocumentMasterVersion(String pDocumentMasterVersion) {
+        this.documentMasterVersion = pDocumentMasterVersion;
     }
     
     

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -115,7 +115,7 @@ public class DocMainPanel extends DataRoundedPanel {
         m_revisionNoteTextBox.setEnabled(editionMode);
     }
 
-    public void setMDocAuthor(String pName) {
+    public void setDocMAuthor(String pName) {
         m_authorLabel.setText(pName);
     }
     public void setCheckOutUser(String user) {
@@ -143,10 +143,10 @@ public class DocMainPanel extends DataRoundedPanel {
     }
 
 
-    public void setMDocType(String type) {
+    public void setDocMType(String type) {
         m_typeLabel.setText(type);
     }
-    public void setMDocTitle(String title) {
+    public void setDocMTitle(String title) {
         m_titleLabel.setText(title);
     }
     public void setLifeCycleState(String lifeCycleState) {

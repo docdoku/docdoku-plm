@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MasterDocumentTemplateDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -40,10 +40,10 @@ public class UploadCompleteTemplateFileCommand implements Action {
 
     @Override
     public void execute(Object... userObject) {
-        AsyncCallback<MasterDocumentTemplateDTO> callback = new AsyncCallback<MasterDocumentTemplateDTO>() {
+        AsyncCallback<DocumentMasterTemplateDTO> callback = new AsyncCallback<DocumentMasterTemplateDTO>() {
 
             @Override
-            public void onSuccess(MasterDocumentTemplateDTO template) {
+            public void onSuccess(DocumentMasterTemplateDTO template) {
                 m_mainPage.setEditTemplateFiles(template.getAttachedFiles());
             }
 
@@ -52,8 +52,8 @@ public class UploadCompleteTemplateFileCommand implements Action {
                 HTMLUtil.showError(caught.getMessage());
             }
         };
-        MasterDocumentTemplateDTO template = m_mainPage.getLastOpenedMDocTemplate();
-        ServiceLocator.getInstance().getExplorerService().getMDocTemplate(template.getWorkspaceId(), template.getId(), callback);
+        DocumentMasterTemplateDTO template = m_mainPage.getLastOpenedDocMTemplate();
+        ServiceLocator.getInstance().getExplorerService().getDocMTemplate(template.getWorkspaceId(), template.getId(), callback);
 
     }
 }

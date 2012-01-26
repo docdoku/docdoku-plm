@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,13 +20,13 @@
 
 package com.docdoku.gwt.explorer.client.ui.pagemanager;
 
-import com.docdoku.gwt.explorer.client.data.MDocSearchTableModel;
-import com.docdoku.gwt.explorer.client.data.MDocTableModel;
+import com.docdoku.gwt.explorer.client.data.DocMSearchTableModel;
+import com.docdoku.gwt.explorer.client.data.DocMTableModel;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.shared.MDocResponse;
+import com.docdoku.gwt.explorer.shared.DocMResponse;
 import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
@@ -39,30 +39,30 @@ import java.util.Date;
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}
  */
-public class MDocSearchBackend implements PageManagerBackend{
+public class DocMSearchBackend implements PageManagerBackend{
 
-    private MDocTableModel model ;
-    private PageManager frontend ;
+    private DocMTableModel model;
+    private PageManager frontend;
     private String login ;
-    private InternalCallback callback ;
+    private InternalCallback callback;
 
     // search :
-    private String workspaceId ;
-    private String mdocId;
+    private String workspaceId;
+    private String docMId;
     private String title;
-    private String version ;
-    private String author ;
-    private String type ;
+    private String version;
+    private String author;
+    private String type;
     private Date creationFrom;
-    private Date creationTo ;
+    private Date creationTo;
     private SearchQueryDTO.AbstractAttributeQueryDTO[] attributes;
-    private String[] tags ;
-    private String content ;
+    private String[] tags;
+    private String content;
 
-    public MDocSearchBackend(String login, String workspaceId, String mdocId, String title, String version, String author, String type, Date creationFrom, Date creationTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content) {
+    public DocMSearchBackend(String login, String workspaceId, String docMId, String title, String version, String author, String type, Date creationFrom, Date creationTo, SearchQueryDTO.AbstractAttributeQueryDTO[] attributes, String[] tags, String content) {
         this.login = login;
         this.workspaceId = workspaceId;
-        this.mdocId = mdocId;
+        this.docMId = docMId;
         this.title = title;
         this.version = version;
         this.author = author;
@@ -81,21 +81,21 @@ public class MDocSearchBackend implements PageManagerBackend{
 
     public void fetchNextPage() {
         int startPoint = frontend.getOffsetForPageNumber(frontend.getCurrentPage() +1 ) ;
-        ServiceLocator.getInstance().getExplorerService().searchMDocs(workspaceId, mdocId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, startPoint, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().searchDocMs(workspaceId, docMId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, startPoint, frontend.getPageSize(), callback);
     }
 
     public void fetchPreviousPage() {
         int startPoint = frontend.getOffsetForPageNumber(frontend.getCurrentPage() -1 ) ;
-        ServiceLocator.getInstance().getExplorerService().searchMDocs(workspaceId, mdocId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, startPoint, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().searchDocMs(workspaceId, docMId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, startPoint, frontend.getPageSize(), callback);
     }
 
     public void fetchFirstPage() {   
-        ServiceLocator.getInstance().getExplorerService().searchMDocs(workspaceId, mdocId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, 0, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().searchDocMs(workspaceId, docMId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, 0, frontend.getPageSize(), callback);
     }
 
     public void fetchLastPage() {
         int startPoint = frontend.getOffsetForPageNumber(frontend.getNumberOfPages() -1 ) ;
-        ServiceLocator.getInstance().getExplorerService().searchMDocs(workspaceId, mdocId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, startPoint, frontend.getPageSize(), callback);
+        ServiceLocator.getInstance().getExplorerService().searchDocMs(workspaceId, docMId, title, version, author, type, creationFrom, creationTo, attributes, tags, content, startPoint, frontend.getPageSize(), callback);
     }
 
     public void setFrontend(PageManager pm) {
@@ -106,18 +106,18 @@ public class MDocSearchBackend implements PageManagerBackend{
         return model ;
     }
 
-    private void notifyFrontend(MDocResponse response) {
+    private void notifyFrontend(DocMResponse response) {
         frontend.dataReady(response);
     }
 
-    private class InternalCallback implements AsyncCallback<MDocResponse> {
+    private class InternalCallback implements AsyncCallback<DocMResponse> {
 
         public void onFailure(Throwable caught) {
             HTMLUtil.showError(caught.getMessage());
         }
 
-        public void onSuccess(MDocResponse result) {
-            model = new MDocSearchTableModel(result.getData(), login, true) ;
+        public void onSuccess(DocMResponse result) {
+            model = new DocMSearchTableModel(result.getData(), login, true) ;
             notifyFrontend(result);
         }
     }

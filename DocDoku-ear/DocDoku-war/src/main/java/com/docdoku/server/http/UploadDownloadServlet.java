@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.document.DocumentKey;
-import com.docdoku.core.document.MasterDocumentTemplateKey;
+import com.docdoku.core.document.DocumentMasterTemplateKey;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -79,11 +79,11 @@ public class UploadDownloadServlet extends HttpServlet {
             String fullName = null;
 
             if (elementType.equals("documents")) {
-                String mdocID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String mdocVersion = pathInfos[offset + 3];
+                String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                fullName = workspaceId + "/" + elementType + "/" + mdocID + "/" + mdocVersion + "/" + iteration + "/" + fileName;
+                fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
             } else if (elementType.equals("templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
@@ -150,23 +150,23 @@ public class UploadDownloadServlet extends HttpServlet {
 
         String fileName = null;
         DocumentKey docPK = null;
-        MasterDocumentTemplateKey templatePK = null;
+        DocumentMasterTemplateKey templatePK = null;
         File vaultFile = null;
 
         try {
             utx.begin();
             if (elementType.equals("documents")) {
-                String mdocID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String mdocVersion = pathInfos[offset + 3];
+                String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                docPK = new DocumentKey(workspaceId, mdocID, mdocVersion, iteration);
+                docPK = new DocumentKey(workspaceId, docMId, docMVersion, iteration);
                 vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
 
             } else if (elementType.equals("templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
-                templatePK = new MasterDocumentTemplateKey(workspaceId, templateID);
+                templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
                 vaultFile = commandService.saveFileInTemplate(templatePK, fileName, 0);
             }
             vaultFile.getParentFile().mkdirs();

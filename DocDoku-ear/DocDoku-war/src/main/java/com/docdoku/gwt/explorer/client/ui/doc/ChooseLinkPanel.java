@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -45,9 +45,9 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 public class ChooseLinkPanel extends Composite implements SelectionHandler<SuggestOracle.Suggestion>, KeyUpHandler {
 
     private final int DEFAULT_SUGGEST_SIZE = 10;
-    private SuggestBox mdocSuggest;
+    private SuggestBox docMSuggest;
     private HorizontalPanel mainPanel;
-    private MasterDocumentDTO masterDoc;
+    private DocumentMasterDTO masterDoc;
     private SpinBox iterationsSpin;
     private int suggestSize;
     private String workspaceId;
@@ -55,40 +55,40 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
     public ChooseLinkPanel(DocOracle oracle, final DocumentDTO doc) {
         this(oracle);
 
-        AsyncCallback<MasterDocumentDTO> callback = new AsyncCallback<MasterDocumentDTO>() {
+        AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
 
             public void onFailure(Throwable caught) {
                 HTMLUtil.showError(caught.getMessage());
             }
 
-            public void onSuccess(MasterDocumentDTO result) {
+            public void onSuccess(DocumentMasterDTO result) {
                 masterDoc = result;
                 iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
                 iterationsSpin.setMinValue(1);
                 iterationsSpin.setValue(doc.getIteration());
                 iterationsSpin.setVisible(true);
-                mdocSuggest.setText(result.getId() + "-" + result.getVersion());
+                docMSuggest.setText(result.getId() + "-" + result.getVersion());
             }
         };
-        ServiceLocator.getInstance().getExplorerService().getMDoc(doc.getWorkspaceId(), doc.getMasterDocumentId(), doc.getMasterDocumentVersion(), callback);
+        ServiceLocator.getInstance().getExplorerService().getDocM(doc.getWorkspaceId(), doc.getDocumentMasterId(), doc.getDocumentMasterVersion(), callback);
 
     }
 
     public ChooseLinkPanel(DocOracle oracle) {
-        mdocSuggest = new SuggestBox(oracle);
+        docMSuggest = new SuggestBox(oracle);
         iterationsSpin = new SpinBox();
 
         // composite main panel :
         mainPanel = new HorizontalPanel();
-        mainPanel.add(mdocSuggest);
+        mainPanel.add(docMSuggest);
         mainPanel.add(iterationsSpin);
         initWidget(mainPanel);
         iterationsSpin.setVisible(false);
 
-        mdocSuggest.addKeyUpHandler(this);
-        mdocSuggest.addSelectionHandler(this);
+        docMSuggest.addKeyUpHandler(this);
+        docMSuggest.addSelectionHandler(this);
         suggestSize = DEFAULT_SUGGEST_SIZE;
-        mdocSuggest.setLimit(suggestSize);
+        docMSuggest.setLimit(suggestSize);
         workspaceId = oracle.getWorkspaceId();
     }
 
@@ -103,7 +103,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
     public void onSelection(SelectionEvent<Suggestion> event) {
         iterationsSpin.setVisible(true);
         DocOracle.DocOracleSuggestion selection = (DocOracle.DocOracleSuggestion) event.getSelectedItem();
-        masterDoc = selection.getMDoc();
+        masterDoc = selection.getDocM();
         iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
         iterationsSpin.setMinValue(1);
         iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
@@ -114,9 +114,9 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
             iterationsSpin.setVisible(false);
             masterDoc = null;
         } else {
-            if (!mdocSuggest.isSuggestionListShowing()) {
+            if (!docMSuggest.isSuggestionListShowing()) {
                 // perform a search
-                String splitted[] = mdocSuggest.getText().split("-");
+                String splitted[] = docMSuggest.getText().split("-");
                 if (splitted.length > 1) {
                     String version = splitted[splitted.length - 1];
                     String fullName = "";
@@ -125,13 +125,13 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
                     }
                     fullName = fullName.substring(0, fullName.length()-1) ;
 
-                    AsyncCallback<MasterDocumentDTO> callback = new AsyncCallback<MasterDocumentDTO>() {
+                    AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
 
                         public void onFailure(Throwable caught) {
                             HTMLUtil.showError(caught.getMessage());
                         }
 
-                        public void onSuccess(MasterDocumentDTO result) {
+                        public void onSuccess(DocumentMasterDTO result) {
                             if (result != null) {
                                 iterationsSpin.setVisible(true);
                                 masterDoc = result;
@@ -145,7 +145,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
                         }
                     };
 
-                    ServiceLocator.getInstance().getExplorerService().getMDoc(workspaceId, fullName, version, callback);
+                    ServiceLocator.getInstance().getExplorerService().getDocM(workspaceId, fullName, version, callback);
 
                 }
 
@@ -159,6 +159,6 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
 
     public void setSuggestSize(int suggestSize) {
         this.suggestSize = suggestSize;
-        mdocSuggest.setLimit(suggestSize);
+        docMSuggest.setLimit(suggestSize);
     }
 }

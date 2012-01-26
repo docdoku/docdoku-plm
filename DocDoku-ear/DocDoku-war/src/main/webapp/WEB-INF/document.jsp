@@ -18,7 +18,7 @@
             <div id="content">
                 <div id="sidebar">
                         <h3><fmt:message key="sidebar.title1"/></h3>
-                        <c:forEach var="item" varStatus="status" items="${mdoc.lastIteration.attachedFiles}">
+                        <c:forEach var="item" varStatus="status" items="${docm.lastIteration.attachedFiles}">
                             <c:set scope="request" var="context" value="<%=request.getContextPath()%>" />
                             <c:set scope="request" var="filePath" value="${context}/files/${item.fullName}" />
                             <c:set scope="request" var="fileName" value="${item.name}" />
@@ -47,54 +47,54 @@
 
                         <h3><fmt:message key="sidebar.title2"/></h3>
                         <p>
-                            <c:forEach var="item" items="${mdoc.lastIteration.linkedDocuments}">
-                                <a href="<%=request.getContextPath()%>/documents/${item.toDocumentWorkspaceId}/${item.toDocumentMasterDocumentId}/${item.toDocumentMasterDocumentVersion}">${item.toDocumentMasterDocumentId}-${item.toDocumentMasterDocumentVersion}-${item.toDocumentIteration}</a><br/>
+                            <c:forEach var="item" items="${docm.lastIteration.linkedDocuments}">
+                                <a href="<%=request.getContextPath()%>/documents/${item.toDocumentWorkspaceId}/${item.toDocumentDocumentMasterId}/${item.toDocumentDocumentMasterVersion}">${item.toDocumentDocumentMasterId}-${item.toDocumentDocumentMasterVersion}-${item.toDocumentIteration}</a><br/>
                             </c:forEach>
                         </p>
                 </div>
             </div>
 
             <div id="main">
-                <h2>${mdoc}</h2>
+                <h2>${docm}</h2>
 
                 <h3><fmt:message key="section1.title"/></h3>
 
                 <table>
                     <tr>
                         <th scope="row"><fmt:message key="section1.author"/>:</th>
-                        <td>${mdoc.author.name}</td>
+                        <td>${docm.author.name}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.date"/>:</th>
-                        <td><fmt:formatDate type="both" value="${mdoc.creationDate}"/></td>
+                        <td><fmt:formatDate type="both" value="${docm.creationDate}"/></td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.type"/>:</th>
-                        <td>${mdoc.type}</td>
+                        <td>${docm.type}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.titledoc"/>:</th>
-                        <td>${mdoc.title}</td>
+                        <td>${docm.title}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.checkout_user"/>:</th>
-                        <td>${mdoc.checkOutUser.name}</td>
+                        <td>${docm.checkOutUser.name}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.checkout_date"/>:</th>
-                        <td><fmt:formatDate type="both" value="${mdoc.checkOutDate}"/></td>
+                        <td><fmt:formatDate type="both" value="${docm.checkOutDate}"/></td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.state"/>:</th>
-                        <td>${mdoc.lifeCycleState}</td>
+                        <td>${docm.lifeCycleState}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.tag"/>:</th>
-                        <td>${mdoc.tags}</td>
+                        <td>${docm.tags}</td>
                     </tr>
                     <tr>
                         <th scope="row"><fmt:message key="section1.description"/>:</th>
-                        <td><textarea name="" rows="5" cols="35" readonly="readonly">${mdoc.description}</textarea></td>
+                        <td><textarea name="" rows="5" cols="35" readonly="readonly">${docm.description}</textarea></td>
                     </tr>
                 </table>
             </div>
@@ -104,19 +104,19 @@
             <table>
                 <tr>
                     <th scope="row"><fmt:message key="section2.iteration"/>:</th>
-                    <td>${mdoc.lastIteration.iteration}</td>
+                    <td>${docm.lastIteration.iteration}</td>
                 </tr>
                 <tr>
                     <th scope="row"><fmt:message key="section2.author"/>:</th>
-                    <td>${mdoc.lastIteration.author.name}</td>
+                    <td>${docm.lastIteration.author.name}</td>
                 </tr>
                 <tr>
                     <th scope="row"><fmt:message key="section2.date"/>:</th>
-                    <td><fmt:formatDate type="both" value="${mdoc.lastIteration.creationDate}"/></td>
+                    <td><fmt:formatDate type="both" value="${docm.lastIteration.creationDate}"/></td>
                 </tr>
                 <tr>
                     <th scope="row"><fmt:message key="section2.revisionNote"/>:</th>
-                    <td>${mdoc.lastIteration.revisionNote}</td>
+                    <td>${docm.lastIteration.revisionNote}</td>
                 </tr>
             </table>
         </div>

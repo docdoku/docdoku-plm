@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.TextBox;
  *
  * @author Florent Garin
  */
-public class MDocTemplateMainPanel extends DataRoundedPanel{
+public class DocMTemplateMainPanel extends DataRoundedPanel{
 
     private Label m_authorLabel;
     private TextBox m_idTextBox;
@@ -40,7 +40,7 @@ public class MDocTemplateMainPanel extends DataRoundedPanel{
     private CheckBox m_generated;
     private final ExplorerI18NConstants i18n = ServiceLocator.getInstance().getExplorerI18NConstants();
 
-    public MDocTemplateMainPanel(){
+    public DocMTemplateMainPanel(){
         createLayout();
     }
 
@@ -78,7 +78,7 @@ public class MDocTemplateMainPanel extends DataRoundedPanel{
 
 
 
-    public String getMDocTemplateId(){
+    public String getDocMTemplateId(){
         return m_idTextBox.getText();
     }
 
@@ -90,7 +90,7 @@ public class MDocTemplateMainPanel extends DataRoundedPanel{
         return m_typeTextBox.getText();
     }
 
-    public boolean isMDocTemplateIdGenerated(){
+    public boolean isDocMTemplateIdGenerated(){
         return m_generated.getValue();
     }
 
@@ -102,19 +102,19 @@ public class MDocTemplateMainPanel extends DataRoundedPanel{
         m_generated.setValue(false);
     }
 
-    public void setMDocTemplateAuthor(String author){
+    public void setDocMTemplateAuthor(String author){
         m_authorLabel.setText(author);
     }
-    public void setMDocTemplateID(String id){
+    public void setDocMTemplateId(String id){
         m_idTextBox.setText(id);
     }
-    public void setMDocTemplateMask(String mask){
+    public void setDocMTemplateMask(String mask){
         m_maskTextBox.setText(mask);
     }
-    public void setMDocTemplateType(String type){
+    public void setDocMTemplateType(String type){
         m_typeTextBox.setText(type);
     }
-    public void setMDocTemplateGeneratedID(boolean generatedID){
+    public void setDocMTemplateGeneratedId(boolean generatedID){
         m_generated.setValue(generatedID);
     }
 }

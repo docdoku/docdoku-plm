@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -392,8 +392,8 @@ public interface ExplorerI18NConstants extends com.google.gwt.i18n.client.Consta
    * @return translated "Create document"
    */
   @DefaultStringValue("Create document")
-  @Key("createMDocTitle")
-  String createMDocTitle();
+  @Key("createDocMTitle")
+  String createDocMTitle();
 
   /**
    * Translated "Create version".

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.MasterDocumentDTO;
+import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -39,13 +39,13 @@ public class CheckOutCommand implements Action {
     }
 
     public void execute(Object... userObject) {
-        for (MasterDocumentDTO mdoc : m_mainPage.getSelectedMDocs()) {
-            String workspaceId = mdoc.getWorkspaceId();
-            String id = mdoc.getId();
-            String version = mdoc.getVersion();
-            AsyncCallback<MasterDocumentDTO> callback = new AsyncCallback<MasterDocumentDTO>() {
+        for (DocumentMasterDTO docM : m_mainPage.getSelectedDocMs()) {
+            String workspaceId = docM.getWorkspaceId();
+            String id = docM.getId();
+            String version = docM.getVersion();
+            AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
 
-                public void onSuccess(MasterDocumentDTO mdoc) {
+                public void onSuccess(DocumentMasterDTO docM) {
                     m_mainPage.refreshElementTable();
                 }
 

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -69,7 +69,7 @@ public class CreateVersionMainPanel extends DataRoundedPanel{
         return index<1?null:m_workflowListBox.getValue(index);
     }
 
-    public String getMDocTitle(){
+    public String getDocMTitle(){
         return m_titleTextBox.getText();
     }
 

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.explorer.client.ui;
 
-import com.docdoku.gwt.explorer.client.data.MDocTableModel;
+import com.docdoku.gwt.explorer.client.data.DocMTableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableClickHandler;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableProfile;
@@ -64,7 +64,7 @@ public class ExplorerTable extends Composite{
         mainPanel.clear();
         docMenuBarBottom.removeStyleName("myMenuBarSearch");
         docMenuBarTop.removeStyleName("myMenuBarSearch");
-        if (model instanceof MDocTableModel){
+        if (model instanceof DocMTableModel){
             mainPanel.add(docMenuBarTop);
             mainPanel.add(table);
             mainPanel.add(docMenuBarBottom);
@@ -80,7 +80,7 @@ public class ExplorerTable extends Composite{
         mainPanel.clear();
         docMenuBarTop.addStyleName("myMenuBarSearch");
         docMenuBarBottom.addStyleName("myMenuBarSearch");
-        if (model instanceof MDocTableModel){
+        if (model instanceof DocMTableModel){
             mainPanel.add(docMenuBarTop);
             mainPanel.add(table);
             mainPanel.add(docMenuBarBottom);
