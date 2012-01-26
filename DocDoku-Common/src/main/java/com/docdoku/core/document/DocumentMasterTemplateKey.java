@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -26,15 +26,15 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class MasterDocumentTemplateKey implements Serializable {
+public class DocumentMasterTemplateKey implements Serializable {
     
     private String workspaceId;
     private String id;
     
-    public MasterDocumentTemplateKey() {
+    public DocumentMasterTemplateKey() {
     }
     
-    public MasterDocumentTemplateKey(String pWorkspaceId, String pId) {
+    public DocumentMasterTemplateKey(String pWorkspaceId, String pId) {
         workspaceId=pWorkspaceId;
         id=pId;
     }
@@ -52,9 +52,9 @@ public class MasterDocumentTemplateKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterDocumentTemplateKey))
+        if (!(pObj instanceof DocumentMasterTemplateKey))
             return false;
-        MasterDocumentTemplateKey key = (MasterDocumentTemplateKey) pObj;
+        DocumentMasterTemplateKey key = (DocumentMasterTemplateKey) pObj;
         return ((key.id.equals(id)) && (key.workspaceId.equals(workspaceId)));
     }
     

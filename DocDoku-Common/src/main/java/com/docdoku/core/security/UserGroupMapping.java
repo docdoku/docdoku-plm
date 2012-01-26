@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -36,7 +36,7 @@ public class UserGroupMapping implements java.io.Serializable {
     
     private String groupName;
     
-    private final static String REGULAR_USER_ROLE_ID="users";
+    public final static String REGULAR_USER_ROLE_ID="users";
     
     public UserGroupMapping() {
     }

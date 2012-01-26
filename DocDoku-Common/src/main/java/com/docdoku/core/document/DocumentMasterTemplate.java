@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -32,18 +32,18 @@ import javax.persistence.*;
 
 /**
  * A model object from which we can create a
- * <a href="MasterDocument.html">MasterDocument</a>.
+ * <a href="DocumentMaster.html">DocumentMaster</a>.
  * Creating a document through a model offers the ability to enforce a input
  * mask for the document ID, as well as some insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.
  * 
  * @author Florent Garin
- * @version 1.0, 02/06/08
+ * @version 1.1, 23/01/12
  * @since   V1.0
  */
-@javax.persistence.IdClass(com.docdoku.core.document.MasterDocumentTemplateKey.class)
+@javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterTemplateKey.class)
 @javax.persistence.Entity
-public class MasterDocumentTemplate implements Serializable, FileHolder, Comparable<MasterDocumentTemplate> {
+public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
 
     @Column(length=50)
     @javax.persistence.Id
@@ -65,14 +65,14 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
             @JoinColumn(name="ATTACHEDFILE_FULLNAME", referencedColumnName="FULLNAME")
         },
         joinColumns={
-            @JoinColumn(name="MASTERDOCUMENTTEMPLATE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-            @JoinColumn(name="MASTERDOCUMENTTEMPLATE_ID", referencedColumnName="ID")
+            @JoinColumn(name="DOCUMENTMASTERTEMPLATE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
         }
     )
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
     
     
-    @OneToMany(mappedBy = "masterDocumentTemplate", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "documentMasterTemplate", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
     
     @ManyToOne(fetch=FetchType.EAGER)
@@ -88,10 +88,10 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
     
-    public MasterDocumentTemplate() {
+    public DocumentMasterTemplate() {
     }
     
-    public MasterDocumentTemplate(Workspace pWorkspace, String pId, User pAuthor, String pDocumentType, String pMask) {
+    public DocumentMasterTemplate(Workspace pWorkspace, String pId, User pAuthor, String pDocumentType, String pMask) {
         id=pId;
         setWorkspace(pWorkspace);
         author = pAuthor;
@@ -194,8 +194,8 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
         return workspaceId;
     }
     
-    public MasterDocumentTemplateKey getKey() {
-        return new MasterDocumentTemplateKey(workspaceId, id);
+    public DocumentMasterTemplateKey getKey() {
+        return new DocumentMasterTemplateKey(workspaceId, id);
     }
     
     @Override
@@ -203,9 +203,9 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterDocumentTemplate))
+        if (!(pObj instanceof DocumentMasterTemplate))
             return false;
-        MasterDocumentTemplate template = (MasterDocumentTemplate) pObj;
+        DocumentMasterTemplate template = (DocumentMasterTemplate) pObj;
         return ((template.id.equals(id)) && (template.workspaceId.equals(workspaceId)));
     }
     
@@ -222,7 +222,7 @@ public class MasterDocumentTemplate implements Serializable, FileHolder, Compara
         return id;
     }
     
-    public int compareTo(MasterDocumentTemplate pTemplate) {
+    public int compareTo(DocumentMasterTemplate pTemplate) {
         int wksComp = workspaceId.compareTo(pTemplate.workspaceId);
         if (wksComp != 0)
             return wksComp;

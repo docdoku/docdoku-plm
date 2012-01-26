@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -28,27 +28,27 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class MasterDocumentAlreadyExistsException extends ApplicationException {
+public class DocumentMasterAlreadyExistsException extends ApplicationException {
 
-    private MasterDocument mMDoc;
+    private DocumentMaster mDocM;
     
     
-    public MasterDocumentAlreadyExistsException(String pMessage) {
+    public DocumentMasterAlreadyExistsException(String pMessage) {
         super(pMessage);
     }
     
     
-    public MasterDocumentAlreadyExistsException(Locale pLocale, MasterDocument pMDoc) {
-        this(pLocale, pMDoc, null);
+    public DocumentMasterAlreadyExistsException(Locale pLocale, DocumentMaster pDocM) {
+        this(pLocale, pDocM, null);
     }
 
-    public MasterDocumentAlreadyExistsException(Locale pLocale, MasterDocument pMDoc, Throwable pCause) {
+    public DocumentMasterAlreadyExistsException(Locale pLocale, DocumentMaster pDocM, Throwable pCause) {
         super(pLocale, pCause);
-        mMDoc=pMDoc;
+        mDocM=pDocM;
     }
     
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mMDoc);     
+        return MessageFormat.format(message,mDocM);     
     }
 }

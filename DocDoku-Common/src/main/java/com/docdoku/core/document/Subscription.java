@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import java.io.Serializable;
 import javax.persistence.FetchType;
@@ -49,11 +49,11 @@ public abstract class Subscription implements Serializable{
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="OBSERVEDMASTERDOCUMENT_ID", referencedColumnName="ID"),
-        @JoinColumn(name="OBSERVEDMASTERDOCUMENT_VERSION", referencedColumnName="VERSION"),
-        @JoinColumn(name="OBSERVEDMASTERDOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+        @JoinColumn(name="OBSERVEDDOCUMENTMASTER_ID", referencedColumnName="ID"),
+        @JoinColumn(name="OBSERVEDDOCUMENTMASTER_VERSION", referencedColumnName="VERSION"),
+        @JoinColumn(name="OBSERVEDDOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    protected MasterDocument observedMasterDocument;
+    protected DocumentMaster observedDocumentMaster;
     
     @javax.persistence.Column(name = "SUBSCRIBER_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
@@ -64,33 +64,33 @@ public abstract class Subscription implements Serializable{
     private String subscriberLogin="";
     
     
-    @javax.persistence.Column(name = "OBSERVEDMASTERDOCUMENT_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "OBSERVEDDOCUMENTMASTER_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String observedMasterDocumentWorkspaceId="";
+    private String observedDocumentMasterWorkspaceId="";
     
-    @javax.persistence.Column(name = "OBSERVEDMASTERDOCUMENT_VERSION", length=10, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "OBSERVEDDOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String observedMasterDocumentVersion="";
+    private String observedDocumentMasterVersion="";
     
-    @javax.persistence.Column(name = "OBSERVEDMASTERDOCUMENT_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "OBSERVEDDOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String observedMasterDocumentId="";
+    private String observedDocumentMasterId="";
     
     
     public Subscription() {
     }
     
-    public Subscription (User pSubscriber, MasterDocument pObservedElement){
+    public Subscription (User pSubscriber, DocumentMaster pObservedElement){
         setSubscriber(pSubscriber);
-        setObservedMasterDocument(pObservedElement);
+        setObservedDocumentMaster(pObservedElement);
     }
 
     public SubscriptionKey getKey(){
-    return new SubscriptionKey(subscriberWorkspaceId, subscriberLogin, observedMasterDocumentWorkspaceId, observedMasterDocumentId, observedMasterDocumentVersion);
+    return new SubscriptionKey(subscriberWorkspaceId, subscriberLogin, observedDocumentMasterWorkspaceId, observedDocumentMasterId, observedDocumentMasterVersion);
     }
     
-    public MasterDocument getObservedMasterDocument() {
-        return observedMasterDocument;
+    public DocumentMaster getObservedDocumentMaster() {
+        return observedDocumentMaster;
     }
 
     public User getSubscriber() {
@@ -106,24 +106,24 @@ public abstract class Subscription implements Serializable{
         return subscriberWorkspaceId;
     }
 
-    public String getObservedMasterDocumentId() {
-        return observedMasterDocumentId;
+    public String getObservedDocumentMasterId() {
+        return observedDocumentMasterId;
     }
 
-    public String getObservedMasterDocumentVersion() {
-        return observedMasterDocumentVersion;
+    public String getObservedDocumentMasterVersion() {
+        return observedDocumentMasterVersion;
     }
 
-    public String getObservedMasterDocumentWorkspaceId() {
-        return observedMasterDocumentWorkspaceId;
+    public String getObservedDocumentMasterWorkspaceId() {
+        return observedDocumentMasterWorkspaceId;
     }
 
 
-    public void setObservedMasterDocument(MasterDocument pObservedMasterDocument) {
-        observedMasterDocument = pObservedMasterDocument;
-        observedMasterDocumentId=observedMasterDocument.getId();
-        observedMasterDocumentVersion=observedMasterDocument.getVersion();
-        observedMasterDocumentWorkspaceId=observedMasterDocument.getWorkspaceId();
+    public void setObservedDocumentMaster(DocumentMaster pObservedDocumentMaster) {
+        observedDocumentMaster = pObservedDocumentMaster;
+        observedDocumentMasterId=observedDocumentMaster.getId();
+        observedDocumentMasterVersion=observedDocumentMaster.getVersion();
+        observedDocumentMasterWorkspaceId=observedDocumentMaster.getWorkspaceId();
         
     }
 

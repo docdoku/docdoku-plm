@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.Task;
 import java.util.Collection;
 import java.util.Locale;
@@ -32,14 +32,11 @@ import java.util.Locale;
  */
 public interface IMailerLocal {
 
-    void sendStateNotification(User[] pSubscribers,
-            MasterDocument pMasterDocument);
+    void sendStateNotification(User[] pSubscribers, DocumentMaster pDocumentMaster);
 
-    void sendIterationNotification(User[] pSubscribers,
-            MasterDocument pMasterDocument);
+    void sendIterationNotification(User[] pSubscribers, DocumentMaster pDocumentMaster);
 
-    void sendApproval(Collection<Task> pRunningTasks,
-            MasterDocument pMasterDocument);
+    void sendApproval(Collection<Task> pRunningTasks, DocumentMaster pDocumentMaster);
 
     void sendPasswordRecovery(Account account, String passwordRRUuid);
 }

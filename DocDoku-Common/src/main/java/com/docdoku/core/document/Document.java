@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -57,22 +57,22 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="MASTERDOCUMENT_ID", referencedColumnName="ID"),
-        @JoinColumn(name="MASTERDOCUMENT_VERSION", referencedColumnName="VERSION"),
+        @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="ID"),
+        @JoinColumn(name="DOCUMENTMASTER_VERSION", referencedColumnName="VERSION"),
         @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private MasterDocument masterDocument;
+    private DocumentMaster documentMaster;
     
     @javax.persistence.Id
     private int iteration;
     
-    @javax.persistence.Column(name = "MASTERDOCUMENT_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String masterDocumentId="";
+    private String documentMasterId="";
     
-    @javax.persistence.Column(name = "MASTERDOCUMENT_VERSION", length=10, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String masterDocumentVersion="";
+    private String documentMasterVersion="";
     
     @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
@@ -86,8 +86,8 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     },
     joinColumns={
         @JoinColumn(name="DOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="DOCUMENT_MASTERDOCUMENT_ID", referencedColumnName="MASTERDOCUMENT_ID"),
-        @JoinColumn(name="DOCUMENT_MASTERDOCUMENT_VERSION", referencedColumnName="MASTERDOCUMENT_VERSION"),
+        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
         @JoinColumn(name="DOCUMENT_ITERATION", referencedColumnName="ITERATION")
     })
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
@@ -115,8 +115,8 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     },
     joinColumns={
         @JoinColumn(name="DOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="DOCUMENT_MASTERDOCUMENT_ID", referencedColumnName="MASTERDOCUMENT_ID"),
-        @JoinColumn(name="DOCUMENT_MASTERDOCUMENT_VERSION", referencedColumnName="MASTERDOCUMENT_VERSION"),
+        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
         @JoinColumn(name="DOCUMENT_ITERATION", referencedColumnName="ITERATION")
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
@@ -125,17 +125,17 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     }
     
     
-    public Document(MasterDocument pMasterDocument, int pIteration, User pAuthor) {
-        setMasterDocument(pMasterDocument);
+    public Document(DocumentMaster pDocumentMaster, int pIteration, User pAuthor) {
+        setDocumentMaster(pDocumentMaster);
         iteration = pIteration;
         author = pAuthor;
     }
     
-    public void setMasterDocument(MasterDocument pMasterDocument) {
-        masterDocument = pMasterDocument;
-        masterDocumentId=pMasterDocument.getId();
-        masterDocumentVersion=pMasterDocument.getVersion();
-        workspaceId=pMasterDocument.getWorkspaceId();
+    public void setDocumentMaster(DocumentMaster pDocumentMaster) {
+        documentMaster = pDocumentMaster;
+        documentMasterId=pDocumentMaster.getId();
+        documentMasterVersion=pDocumentMaster.getVersion();
+        workspaceId=pDocumentMaster.getWorkspaceId();
     }
     
     public int getIteration() {
@@ -174,15 +174,15 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     }
     
     public DocumentKey getKey() {
-        return new DocumentKey(workspaceId, masterDocumentId, masterDocumentVersion, iteration);
+        return new DocumentKey(workspaceId, documentMasterId, documentMasterVersion, iteration);
     }
     
-    public String getMasterDocumentId() {
-        return masterDocumentId;
+    public String getDocumentMasterId() {
+        return documentMasterId;
     }
     
-    public String getMasterDocumentVersion() {
-        return masterDocumentVersion;
+    public String getDocumentMasterVersion() {
+        return documentMasterVersion;
     }
 
     public String getWorkspaceId() {
@@ -198,8 +198,8 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     }
     
     @XmlTransient
-    public MasterDocument getMasterDocument() {
-        return masterDocument;
+    public DocumentMaster getDocumentMaster() {
+        return documentMaster;
     }
     
     public void setCreationDate(Date pCreationDate) {
@@ -257,15 +257,15 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     
     @Override
     public String toString() {
-        return masterDocumentId + "-" + masterDocumentVersion + "-" + iteration;
+        return documentMasterId + "-" + documentMasterVersion + "-" + iteration;
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
 	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + masterDocumentId.hashCode();
-        hash = 31 * hash + masterDocumentVersion.hashCode();
+	hash = 31 * hash + documentMasterId.hashCode();
+        hash = 31 * hash + documentMasterVersion.hashCode();
         hash = 31 * hash + iteration;
 	return hash;
     }
@@ -278,7 +278,7 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         if (!(pObj instanceof Document))
             return false;
         Document document = (Document) pObj;
-        return ((document.masterDocumentId.equals(masterDocumentId)) && (document.workspaceId.equals(workspaceId))  && (document.masterDocumentVersion.equals(masterDocumentVersion)) && (document.iteration==iteration));
+        return ((document.documentMasterId.equals(documentMasterId)) && (document.workspaceId.equals(workspaceId))  && (document.documentMasterVersion.equals(documentMasterVersion)) && (document.iteration==iteration));
     }
     
     @Override
@@ -287,12 +287,12 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         int wksComp = workspaceId.compareTo(pDoc.workspaceId);
         if (wksComp != 0)
             return wksComp;
-        int mdocIdComp = masterDocumentId.compareTo(pDoc.masterDocumentId);
-        if (mdocIdComp != 0)
-            return mdocIdComp;
-        int mdocVersionComp = masterDocumentVersion.compareTo(pDoc.masterDocumentVersion);
-        if (mdocVersionComp != 0)
-            return mdocVersionComp;
+        int docmIdComp = documentMasterId.compareTo(pDoc.documentMasterId);
+        if (docmIdComp != 0)
+            return docmIdComp;
+        int docmVersionComp = documentMasterVersion.compareTo(pDoc.documentMasterVersion);
+        if (docmVersionComp != 0)
+            return docmVersionComp;
         else
             return iteration-pDoc.iteration;
     }

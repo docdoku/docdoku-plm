@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -46,8 +46,8 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="FROMDOCUMENT_ITERATION", referencedColumnName="ITERATION"),
-        @JoinColumn(name="FROMDOCUMENT_MASTERDOCUMENT_ID", referencedColumnName="MASTERDOCUMENT_ID"),
-        @JoinColumn(name="FROMDOCUMENT_MASTERDOCUMENT_VERSION", referencedColumnName="MASTERDOCUMENT_VERSION"),
+        @JoinColumn(name="FROMDOCUMENT_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+        @JoinColumn(name="FROMDOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
         @JoinColumn(name="FROMDOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private Document fromDocument;
@@ -56,13 +56,13 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     @javax.persistence.Id
     private int fromDocumentIteration;
     
-    @Column(name = "FROMDOCUMENT_MASTERDOCUMENT_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "FROMDOCUMENT_DOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String fromDocumentMasterDocumentId="";
+    private String fromDocumentDocumentMasterId="";
     
-    @Column(name = "FROMDOCUMENT_MASTERDOCUMENT_VERSION", length=10, nullable = false, insertable = false, updatable = false)
+    @Column(name = "FROMDOCUMENT_DOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String fromDocumentMasterDocumentVersion="";
+    private String fromDocumentDocumentMasterVersion="";
     
     @Column(name = "FROMDOCUMENT_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
@@ -74,13 +74,13 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     @javax.persistence.Id
     private int toDocumentIteration;
 
-    @Column(name = "TODOCUMENT_MASTERDOCUMENT_ID", length=50)
+    @Column(name = "TODOCUMENT_DOCUMENTMASTER_ID", length=50)
     @javax.persistence.Id
-    private String toDocumentMasterDocumentId="";
+    private String toDocumentDocumentMasterId="";
 
-    @Column(name = "TODOCUMENT_MASTERDOCUMENT_VERSION", length=10)
+    @Column(name = "TODOCUMENT_DOCUMENTMASTER_VERSION", length=10)
     @javax.persistence.Id
-    private String toDocumentMasterDocumentVersion="";
+    private String toDocumentDocumentMasterVersion="";
 
     @Column(name = "TODOCUMENT_WORKSPACE_ID", length=50)
     @javax.persistence.Id
@@ -104,7 +104,7 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     }
 
     public DocumentKey getToDocumentKey(){
-        return new DocumentKey(toDocumentWorkspaceId,toDocumentMasterDocumentId,toDocumentMasterDocumentVersion,toDocumentIteration);
+        return new DocumentKey(toDocumentWorkspaceId,toDocumentDocumentMasterId,toDocumentDocumentMasterVersion,toDocumentIteration);
     }
     
     public String getComment() {
@@ -120,12 +120,12 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
         return fromDocumentIteration;
     }
 
-    public String getFromDocumentMasterDocumentId() {
-        return fromDocumentMasterDocumentId;
+    public String getFromDocumentDocumentMasterId() {
+        return fromDocumentDocumentMasterId;
     }
 
-    public String getFromDocumentMasterDocumentVersion() {
-        return fromDocumentMasterDocumentVersion;
+    public String getFromDocumentDocumentMasterVersion() {
+        return fromDocumentDocumentMasterVersion;
     }
 
     public String getFromDocumentWorkspaceId() {
@@ -136,12 +136,12 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
         return toDocumentIteration;
     }
 
-    public String getToDocumentMasterDocumentId() {
-        return toDocumentMasterDocumentId;
+    public String getToDocumentDocumentMasterId() {
+        return toDocumentDocumentMasterId;
     }
 
-    public String getToDocumentMasterDocumentVersion() {
-        return toDocumentMasterDocumentVersion;
+    public String getToDocumentDocumentMasterVersion() {
+        return toDocumentDocumentMasterVersion;
     }
 
     public String getToDocumentWorkspaceId() {
@@ -156,12 +156,12 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
         this.toDocumentIteration = toDocumentIteration;
     }
 
-    public void setToDocumentMasterDocumentId(String toDocumentMasterDocumentId) {
-        this.toDocumentMasterDocumentId = toDocumentMasterDocumentId;
+    public void setToDocumentDocumentMasterId(String toDocumentDocumentMasterId) {
+        this.toDocumentDocumentMasterId = toDocumentDocumentMasterId;
     }
 
-    public void setToDocumentMasterDocumentVersion(String toDocumentMasterDocumentVersion) {
-        this.toDocumentMasterDocumentVersion = toDocumentMasterDocumentVersion;
+    public void setToDocumentDocumentMasterVersion(String toDocumentDocumentMasterVersion) {
+        this.toDocumentDocumentMasterVersion = toDocumentDocumentMasterVersion;
     }
 
     public void setToDocumentWorkspaceId(String toDocumentWorkspaceId) {
@@ -173,28 +173,28 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     public void setFromDocument(Document pFromDocument) {
         fromDocument = pFromDocument;
         fromDocumentIteration=fromDocument.getIteration();
-        fromDocumentMasterDocumentId=fromDocument.getMasterDocumentId();
-        fromDocumentMasterDocumentVersion=fromDocument.getMasterDocumentVersion();
+        fromDocumentDocumentMasterId=fromDocument.getDocumentMasterId();
+        fromDocumentDocumentMasterVersion=fromDocument.getDocumentMasterVersion();
         fromDocumentWorkspaceId=fromDocument.getWorkspaceId();
     }
     
     public void setToDocument(Document pToDocument) {
         toDocumentIteration=pToDocument.getIteration();
-        toDocumentMasterDocumentId=pToDocument.getMasterDocumentId();
-        toDocumentMasterDocumentVersion=pToDocument.getMasterDocumentVersion();
+        toDocumentDocumentMasterId=pToDocument.getDocumentMasterId();
+        toDocumentDocumentMasterVersion=pToDocument.getDocumentMasterVersion();
         toDocumentWorkspaceId=pToDocument.getWorkspaceId();
     }
     
     public void setToDocument(DocumentKey pToDocumentKey) {
         toDocumentIteration=pToDocumentKey.getIteration();
-        toDocumentMasterDocumentId=pToDocumentKey.getMasterDocumentId();
-        toDocumentMasterDocumentVersion=pToDocumentKey.getMasterDocumentVersion();
+        toDocumentDocumentMasterId=pToDocumentKey.getDocumentMasterId();
+        toDocumentDocumentMasterVersion=pToDocumentKey.getDocumentMasterVersion();
         toDocumentWorkspaceId=pToDocumentKey.getWorkspaceId();
     }
     
     @Override
     public String toString() {
-        return toDocumentMasterDocumentId  + "-" + toDocumentMasterDocumentVersion + "-" + toDocumentIteration;
+        return toDocumentDocumentMasterId  + "-" + toDocumentDocumentMasterVersion + "-" + toDocumentIteration;
     }
     
     @Override
@@ -206,12 +206,12 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
             return false;
         DocumentToDocumentLink link = (DocumentToDocumentLink) pObj;
         return ((link.fromDocumentWorkspaceId.equals(fromDocumentWorkspaceId))
-        && (link.fromDocumentMasterDocumentId.equals(fromDocumentMasterDocumentId))
-        && (link.fromDocumentMasterDocumentVersion.equals(fromDocumentMasterDocumentVersion))
+        && (link.fromDocumentDocumentMasterId.equals(fromDocumentDocumentMasterId))
+        && (link.fromDocumentDocumentMasterVersion.equals(fromDocumentDocumentMasterVersion))
         && (link.fromDocumentIteration==fromDocumentIteration)
         && (link.toDocumentWorkspaceId.equals(toDocumentWorkspaceId))
-        && (link.toDocumentMasterDocumentId.equals(toDocumentMasterDocumentId))
-        && (link.toDocumentMasterDocumentVersion.equals(toDocumentMasterDocumentVersion))
+        && (link.toDocumentDocumentMasterId.equals(toDocumentDocumentMasterId))
+        && (link.toDocumentDocumentMasterVersion.equals(toDocumentDocumentMasterVersion))
         && (link.toDocumentIteration==toDocumentIteration));
     }
 
@@ -219,12 +219,12 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     public int hashCode() {
         int hash = 1;
 	hash = 31 * hash + fromDocumentWorkspaceId.hashCode();
-	hash = 31 * hash + fromDocumentMasterDocumentId.hashCode();
-        hash = 31 * hash + fromDocumentMasterDocumentVersion.hashCode();
+	hash = 31 * hash + fromDocumentDocumentMasterId.hashCode();
+        hash = 31 * hash + fromDocumentDocumentMasterVersion.hashCode();
         hash = 31 * hash + fromDocumentIteration;
         hash = 31 * hash + toDocumentWorkspaceId.hashCode();
-	hash = 31 * hash + toDocumentMasterDocumentId.hashCode();
-        hash = 31 * hash + toDocumentMasterDocumentVersion.hashCode();
+	hash = 31 * hash + toDocumentDocumentMasterId.hashCode();
+        hash = 31 * hash + toDocumentDocumentMasterVersion.hashCode();
         hash = 31 * hash + toDocumentIteration;
 	return hash;
     }

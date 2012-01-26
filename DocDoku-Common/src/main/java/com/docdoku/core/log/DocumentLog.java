@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -37,7 +37,7 @@ import javax.persistence.NamedQuery;
  */
 @javax.persistence.Entity
 @NamedQueries ({
-    @NamedQuery(name="findLogByDocumentAndUserAndEvent", query="SELECT l FROM DocumentLog l WHERE l.userLogin = :userLogin AND l.documentWorkspaceId = :documentWorkspaceId AND l.documentMasterDocumentId = :documentMasterDocumentId AND l.documentMasterDocumentVersion = :documentMasterDocumentVersion AND l.documentIteration = :documentIteration and l.event = :event ORDER BY l.logDate")
+    @NamedQuery(name="findLogByDocumentAndUserAndEvent", query="SELECT l FROM DocumentLog l WHERE l.userLogin = :userLogin AND l.documentWorkspaceId = :documentWorkspaceId AND l.documentDocumentMasterId = :documentDocumentMasterId AND l.documentDocumentMasterVersion = :documentDocumentMasterVersion AND l.documentIteration = :documentIteration and l.event = :event ORDER BY l.logDate")
 })
 public class DocumentLog implements Serializable, Cloneable {
 
@@ -47,8 +47,8 @@ public class DocumentLog implements Serializable, Cloneable {
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date logDate;
     private String documentWorkspaceId;
-    private String documentMasterDocumentId;
-    private String documentMasterDocumentVersion;
+    private String documentDocumentMasterId;
+    private String documentDocumentMasterVersion;
     private int documentIteration;
     private String userLogin;
     private String event;
@@ -66,20 +66,20 @@ public class DocumentLog implements Serializable, Cloneable {
         this.documentIteration = documentIteration;
     }
 
-    public String getDocumentMasterDocumentId() {
-        return documentMasterDocumentId;
+    public String getDocumentDocumentMasterId() {
+        return documentDocumentMasterId;
     }
 
-    public void setDocumentMasterDocumentId(String documentMasterDocumentId) {
-        this.documentMasterDocumentId = documentMasterDocumentId;
+    public void setDocumentDocumentMasterId(String documentDocumentMasterId) {
+        this.documentDocumentMasterId = documentDocumentMasterId;
     }
 
-    public String getDocumentMasterDocumentVersion() {
-        return documentMasterDocumentVersion;
+    public String getDocumentDocumentMasterVersion() {
+        return documentDocumentMasterVersion;
     }
 
-    public void setDocumentMasterDocumentVersion(String documentMasterDocumentVersion) {
-        this.documentMasterDocumentVersion = documentMasterDocumentVersion;
+    public void setDocumentDocumentMasterVersion(String documentDocumentMasterVersion) {
+        this.documentDocumentMasterVersion = documentDocumentMasterVersion;
     }
 
     public String getDocumentWorkspaceId() {

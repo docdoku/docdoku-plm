@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,31 +29,31 @@ public class SubscriptionKey implements Serializable {
 
     private String subscriberWorkspaceId;
     private String subscriberLogin;
-    private String observedMasterDocumentWorkspaceId;
-    private String observedMasterDocumentVersion;
-    private String observedMasterDocumentId;
+    private String observedDocumentMasterWorkspaceId;
+    private String observedDocumentMasterVersion;
+    private String observedDocumentMasterId;
 
     public SubscriptionKey() {
     }
 
-    public SubscriptionKey(String pSubscriberWorkspaceId, String pSubscriberLogin, String pObservedMasterDocumentWorkspaceId, String pObservedMasterDocumentId, String pObservedMasterDocumentVersion) {
+    public SubscriptionKey(String pSubscriberWorkspaceId, String pSubscriberLogin, String pObservedDocumentMasterWorkspaceId, String pObservedDocumentMasterId, String pObservedDocumentMasterVersion) {
         subscriberWorkspaceId = pSubscriberWorkspaceId;
         subscriberLogin = pSubscriberLogin;
-        observedMasterDocumentWorkspaceId = pObservedMasterDocumentWorkspaceId;
-        observedMasterDocumentId = pObservedMasterDocumentId;
-        observedMasterDocumentVersion = pObservedMasterDocumentVersion;
+        observedDocumentMasterWorkspaceId = pObservedDocumentMasterWorkspaceId;
+        observedDocumentMasterId = pObservedDocumentMasterId;
+        observedDocumentMasterVersion = pObservedDocumentMasterVersion;
     }
 
-    public String getObservedMasterDocumentId() {
-        return observedMasterDocumentId;
+    public String getObservedDocumentMasterId() {
+        return observedDocumentMasterId;
     }
 
-    public String getObservedMasterDocumentVersion() {
-        return observedMasterDocumentVersion;
+    public String getObservedDocumentMasterVersion() {
+        return observedDocumentMasterVersion;
     }
 
-    public String getObservedMasterDocumentWorkspaceId() {
-        return observedMasterDocumentWorkspaceId;
+    public String getObservedDocumentMasterWorkspaceId() {
+        return observedDocumentMasterWorkspaceId;
     }
 
     public String getSubscriberLogin() {
@@ -64,16 +64,16 @@ public class SubscriptionKey implements Serializable {
         return subscriberWorkspaceId;
     }
 
-    public void setObservedMasterDocumentId(String observedMasterDocumentId) {
-        this.observedMasterDocumentId = observedMasterDocumentId;
+    public void setObservedDocumentMasterId(String observedDocumentMasterId) {
+        this.observedDocumentMasterId = observedDocumentMasterId;
     }
 
-    public void setObservedMasterDocumentVersion(String observedMasterDocumentVersion) {
-        this.observedMasterDocumentVersion = observedMasterDocumentVersion;
+    public void setObservedDocumentMasterVersion(String observedDocumentMasterVersion) {
+        this.observedDocumentMasterVersion = observedDocumentMasterVersion;
     }
 
-    public void setObservedMasterDocumentWorkspaceId(String observedMasterDocumentWorkspaceId) {
-        this.observedMasterDocumentWorkspaceId = observedMasterDocumentWorkspaceId;
+    public void setObservedDocumentMasterWorkspaceId(String observedDocumentMasterWorkspaceId) {
+        this.observedDocumentMasterWorkspaceId = observedDocumentMasterWorkspaceId;
     }
 
     public void setSubscriberLogin(String subscriberLogin) {
@@ -86,7 +86,7 @@ public class SubscriptionKey implements Serializable {
 
     @Override
     public String toString() {
-        return subscriberWorkspaceId + "-" + subscriberLogin + "/" + observedMasterDocumentWorkspaceId + "-" + observedMasterDocumentId + "-" + observedMasterDocumentVersion;
+        return subscriberWorkspaceId + "-" + subscriberLogin + "/" + observedDocumentMasterWorkspaceId + "-" + observedDocumentMasterId + "-" + observedDocumentMasterVersion;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class SubscriptionKey implements Serializable {
             return false;
         }
         SubscriptionKey key = (SubscriptionKey) pObj;
-        return ((key.subscriberWorkspaceId.equals(subscriberWorkspaceId)) && (key.subscriberLogin.equals(subscriberLogin)) && (key.observedMasterDocumentId.equals(observedMasterDocumentId)) && (key.observedMasterDocumentWorkspaceId.equals(observedMasterDocumentWorkspaceId)) && (key.observedMasterDocumentVersion.equals(observedMasterDocumentVersion)));
+        return ((key.subscriberWorkspaceId.equals(subscriberWorkspaceId)) && (key.subscriberLogin.equals(subscriberLogin)) && (key.observedDocumentMasterId.equals(observedDocumentMasterId)) && (key.observedDocumentMasterWorkspaceId.equals(observedDocumentMasterWorkspaceId)) && (key.observedDocumentMasterVersion.equals(observedDocumentMasterVersion)));
     }
 
     @Override
@@ -106,9 +106,9 @@ public class SubscriptionKey implements Serializable {
         int hash = 1;
         hash = 31 * hash + subscriberWorkspaceId.hashCode();
         hash = 31 * hash + subscriberLogin.hashCode();
-        hash = 31 * hash + observedMasterDocumentWorkspaceId.hashCode();
-        hash = 31 * hash + observedMasterDocumentId.hashCode();
-        hash = 31 * hash + observedMasterDocumentVersion.hashCode();
+        hash = 31 * hash + observedDocumentMasterWorkspaceId.hashCode();
+        hash = 31 * hash + observedDocumentMasterId.hashCode();
+        hash = 31 * hash + observedDocumentMasterVersion.hashCode();
         return hash;
     }
 }

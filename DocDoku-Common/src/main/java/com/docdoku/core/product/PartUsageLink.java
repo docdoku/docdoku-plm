@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,7 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 
@@ -34,9 +38,14 @@ import javax.persistence.OrderColumn;
  * @version 1.1, 15/10/11
  * @since   V1.1
  */
-@Embeddable
+@Entity
 public class PartUsageLink implements Serializable {
 
+    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    private int id;
+    
     private double amount;
     private String unit;
     

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -31,16 +31,16 @@ import javax.persistence.*;
 
 /**
  * This is the wrapper object that holds the data of a document.
- * From that object, we can navigate to all the iterations of the document,
- * its workflow or its binary data files.
+ * From that object, we can navigate to all the revisions and then
+ * the iterations of the document, its workflow or its binary data files.
  * 
  * @author Florent Garin
- * @version 1.0, 02/06/08
+ * @version 1.1, 23/01/12
  * @since   V1.0
  */
-@javax.persistence.IdClass(com.docdoku.core.document.MasterDocumentKey.class)
+@javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @javax.persistence.Entity
-public class MasterDocument implements Serializable, Comparable<MasterDocument>, Cloneable {
+public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
     
     
     @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
@@ -75,7 +75,7 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
     @Lob
     private String description;
     
-    @OneToMany(mappedBy = "masterDocument", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "documentMaster", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("iteration ASC")
     private List<Document> documentIterations = new ArrayList<Document>();
     
@@ -102,19 +102,19 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")        
     },
     joinColumns={
-        @JoinColumn(name="MASTERDOCUMENT_ID", referencedColumnName="ID"),
-        @JoinColumn(name="MASTERDOCUMENT_VERSION", referencedColumnName="VERSION"),
-        @JoinColumn(name="MASTERDOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+        @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="ID"),
+        @JoinColumn(name="DOCUMENTMASTER_VERSION", referencedColumnName="VERSION"),
+        @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private Set<Tag> tags=new HashSet<Tag>();
     
     @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
 
-    public MasterDocument() {
+    public DocumentMaster() {
     }
     
-    public MasterDocument(Workspace pWorkspace,
+    public DocumentMaster(Workspace pWorkspace,
             String pId,
             String pStringVersion,
             User pAuthor) {
@@ -123,7 +123,7 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         author = pAuthor;
     }
     
-    public MasterDocument(Workspace pWorkspace, String pId,
+    public DocumentMaster(Workspace pWorkspace, String pId,
             Version pVersion,
             User pAuthor) {
         this(pWorkspace, pId);
@@ -131,13 +131,13 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         author = pAuthor;
     }
     
-    public MasterDocument(Workspace pWorkspace, String pId, User pAuthor) {
+    public DocumentMaster(Workspace pWorkspace, String pId, User pAuthor) {
         this(pWorkspace, pId);
         version = new Version().toString();
         author = pAuthor;
     }
     
-    private MasterDocument(Workspace pWorkspace, String pId) {
+    private DocumentMaster(Workspace pWorkspace, String pId) {
         id=pId;
         setWorkspace(pWorkspace);
     }
@@ -177,8 +177,8 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
 
     
 
-    public MasterDocumentKey getKey() {
-        return new MasterDocumentKey(workspaceId, id, version);
+    public DocumentMasterKey getKey() {
+        return new DocumentMasterKey(workspaceId, id, version);
     }
 
         
@@ -337,10 +337,10 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterDocument))
+        if (!(pObj instanceof DocumentMaster))
             return false;
-        MasterDocument mdoc = (MasterDocument) pObj;
-        return ((mdoc.id.equals(id)) && (mdoc.workspaceId.equals(workspaceId)) && (mdoc.version.equals(version)));
+        DocumentMaster docM = (DocumentMaster) pObj;
+        return ((docM.id.equals(id)) && (docM.workspaceId.equals(workspaceId)) && (docM.version.equals(version)));
         
     }
     
@@ -353,15 +353,15 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
 	return hash;
     }
 
-    public int compareTo(MasterDocument pMDoc) {
-        int wksComp = workspaceId.compareTo(pMDoc.workspaceId);
+    public int compareTo(DocumentMaster pDocM) {
+        int wksComp = workspaceId.compareTo(pDocM.workspaceId);
         if (wksComp != 0)
             return wksComp;
-        int idComp = id.compareTo(pMDoc.id);
+        int idComp = id.compareTo(pDocM.id);
         if (idComp != 0)
             return idComp;
         else
-            return version.compareTo(pMDoc.version);
+            return version.compareTo(pDocM.version);
     }
     
     public Folder getLocation() {
@@ -386,10 +386,10 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
      * perform a deep clone operation
      */
     @Override
-    public MasterDocument clone() {
-        MasterDocument clone = null;
+    public DocumentMaster clone() {
+        DocumentMaster clone = null;
         try {
-            clone = (MasterDocument) super.clone();
+            clone = (DocumentMaster) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
@@ -397,7 +397,7 @@ public class MasterDocument implements Serializable, Comparable<MasterDocument>,
         List<Document> clonedDocumentIterations = new ArrayList<Document>();
         for (Document document : documentIterations) {
             Document clonedDocument=document.clone();
-            clonedDocument.setMasterDocument(clone);
+            clonedDocument.setDocumentMaster(clone);
             clonedDocumentIterations.add(clonedDocument);
         }
         clone.documentIterations = clonedDocumentIterations;

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -113,7 +113,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
     @OrderColumn
-    @ElementCollection(fetch=FetchType.LAZY)
+    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<PartUsageLink> components=new LinkedList<PartUsageLink>();
     
     /*

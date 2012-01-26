@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -36,12 +36,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * This class which is a part of
- * <a href="MasterDocumentTemplate.html">MasterDocumentTemplate</a>
+ * <a href="DocumentMasterTemplate.html">DocumentMasterTemplate</a>
  * hold the definition of the custom attribute of the documents
  * created by the template.
  * 
  * @author Florent Garin
- * @version 1.0, 02/06/08
+ * @version 1.1, 23/01/12
  * @since   V1.0
  */
 @javax.persistence.IdClass(com.docdoku.core.document.InstanceAttributeTemplateKey.class)
@@ -51,17 +51,17 @@ public class InstanceAttributeTemplate implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
-        @JoinColumn(name = "MASTERDOCUMENTTEMPLATE_ID", referencedColumnName = "ID")
+        @JoinColumn(name = "DOCUMENTMASTERTEMPLATE_ID", referencedColumnName = "ID")
     })
-    private MasterDocumentTemplate masterDocumentTemplate;
+    private DocumentMasterTemplate documentMasterTemplate;
 
     @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId = "";
 
-    @javax.persistence.Column(name = "MASTERDOCUMENTTEMPLATE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTERTEMPLATE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
-    private String masterDocumentTemplateId = "";
+    private String documentMasterTemplateId = "";
     
     @Column(length=50)
     @javax.persistence.Id
@@ -77,26 +77,26 @@ public class InstanceAttributeTemplate implements Serializable {
     public InstanceAttributeTemplate() {
     }
 
-    public InstanceAttributeTemplate(MasterDocumentTemplate pMasterDocumentTemplate, String pName, AttributeType pAttributeType) {
-        setMasterDocumentTemplate(pMasterDocumentTemplate);
+    public InstanceAttributeTemplate(DocumentMasterTemplate pDocumentMasterTemplate, String pName, AttributeType pAttributeType) {
+        setDocumentMasterTemplate(pDocumentMasterTemplate);
         name = pName;
         attributeType = pAttributeType;
     }
 
-    public void setMasterDocumentTemplate(MasterDocumentTemplate pMasterDocumentTemplate) {
-        masterDocumentTemplate = pMasterDocumentTemplate;
-        masterDocumentTemplateId = masterDocumentTemplate.getId();
-        workspaceId = masterDocumentTemplate.getWorkspaceId();
+    public void setDocumentMasterTemplate(DocumentMasterTemplate pDocumentMasterTemplate) {
+        documentMasterTemplate = pDocumentMasterTemplate;
+        documentMasterTemplateId = documentMasterTemplate.getId();
+        workspaceId = documentMasterTemplate.getWorkspaceId();
 
     }
 
     @XmlTransient
-    public MasterDocumentTemplate getMasterDocumentTemplate() {
-        return masterDocumentTemplate;
+    public DocumentMasterTemplate getDocumentMasterTemplate() {
+        return documentMasterTemplate;
     }
 
-    public String getMasterDocumentTemplateId() {
-        return masterDocumentTemplateId;
+    public String getDocumentMasterTemplateId() {
+        return documentMasterTemplateId;
     }
 
     public String getName() {
@@ -150,7 +150,7 @@ public class InstanceAttributeTemplate implements Serializable {
     public int hashCode() {
         int hash = 1;
         hash = 31 * hash + workspaceId.hashCode();
-        hash = 31 * hash + masterDocumentTemplateId.hashCode();
+        hash = 31 * hash + documentMasterTemplateId.hashCode();
         hash = 31 * hash + name.hashCode();
         return hash;
     }
@@ -164,7 +164,7 @@ public class InstanceAttributeTemplate implements Serializable {
             return false;
         }
         InstanceAttributeTemplate attr = (InstanceAttributeTemplate) pObj;
-        return ((attr.masterDocumentTemplateId.equals(masterDocumentTemplateId)) && (attr.workspaceId.equals(workspaceId)) && (attr.name.equals(name)));
+        return ((attr.documentMasterTemplateId.equals(documentMasterTemplateId)) && (attr.workspaceId.equals(workspaceId)) && (attr.name.equals(name)));
     }
 
     @Override

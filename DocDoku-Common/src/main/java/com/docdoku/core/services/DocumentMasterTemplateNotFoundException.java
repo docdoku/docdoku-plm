@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,6 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.document.MasterDocumentTemplate;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -28,27 +27,28 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class MasterDocumentTemplateAlreadyExistsException extends ApplicationException {
+public class DocumentMasterTemplateNotFoundException extends ApplicationException {
 
-    private MasterDocumentTemplate mMDocTemplate;
+
+    private String mDocMTemplateId;
+
     
-    
-    public MasterDocumentTemplateAlreadyExistsException(String pMessage) {
+    public DocumentMasterTemplateNotFoundException(String pMessage) {
         super(pMessage);
     }
     
     
-    public MasterDocumentTemplateAlreadyExistsException(Locale pLocale, MasterDocumentTemplate pMDocTemplate) {
-        this(pLocale, pMDocTemplate, null);
+    public DocumentMasterTemplateNotFoundException(Locale pLocale, String pDocMTemplateID) {
+        this(pLocale, pDocMTemplateID, null);
     }
 
-    public MasterDocumentTemplateAlreadyExistsException(Locale pLocale, MasterDocumentTemplate pMDocTemplate, Throwable pCause) {
+    public DocumentMasterTemplateNotFoundException(Locale pLocale, String pDocMTemplateId, Throwable pCause) {
         super(pLocale, pCause);
-        mMDocTemplate=pMDocTemplate;
+        mDocMTemplateId=pDocMTemplateId;
     }
     
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mMDocTemplate);     
+        return MessageFormat.format(message,mDocMTemplateId);     
     }
 }

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public class SearchQuery implements Serializable{
     
     private String workspaceId;
-    private String mdocId;
+    private String docMId;
     private String title;
     private String version;
     private String author;
@@ -52,9 +52,9 @@ public class SearchQuery implements Serializable{
         
     }
 
-    public SearchQuery(String workspaceId, String mdocId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
+    public SearchQuery(String workspaceId, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
         this.workspaceId=workspaceId;
-        this.mdocId=mdocId;
+        this.docMId=docMId;
         this.title=title;
         this.version=version;
         this.author=author;
@@ -86,8 +86,8 @@ public class SearchQuery implements Serializable{
         this.creationDateTo = creationDateTo;
     }
 
-    public void setMDocId(String mdocId) {
-        this.mdocId = mdocId;
+    public void setDocMId(String docMId) {
+        this.docMId = docMId;
     }
 
     public void setTags(String[] tags) {
@@ -131,8 +131,8 @@ public class SearchQuery implements Serializable{
         return creationDateTo;
     }
 
-    public String getMDocId() {
-        return mdocId;
+    public String getDocMId() {
+        return docMId;
     }
 
     public String[] getTags() {

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,17 +29,17 @@ import java.io.Serializable;
 public class DocumentKey implements Serializable {
     
     private String workspaceId;
-    private String masterDocumentId;
-    private String masterDocumentVersion;
+    private String documentMasterId;
+    private String documentMasterVersion;
     private int iteration;
     
     public DocumentKey() {
     }
     
-    public DocumentKey(String pWorkspaceId, String pMasterDocumentId, String pMasterDocumentVersion, int pIteration) {
+    public DocumentKey(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
         workspaceId=pWorkspaceId;
-        masterDocumentId=pMasterDocumentId;
-        masterDocumentVersion=pMasterDocumentVersion;
+        documentMasterId=pDocumentMasterId;
+        documentMasterVersion=pDocumentMasterVersion;
         iteration=pIteration;
     }
     
@@ -47,8 +47,8 @@ public class DocumentKey implements Serializable {
     public int hashCode() {
         int hash = 1;
 	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + masterDocumentId.hashCode();
-        hash = 31 * hash + masterDocumentVersion.hashCode();
+	hash = 31 * hash + documentMasterId.hashCode();
+        hash = 31 * hash + documentMasterVersion.hashCode();
         hash = 31 * hash + iteration;
 	return hash;
     }
@@ -61,12 +61,12 @@ public class DocumentKey implements Serializable {
         if (!(pObj instanceof DocumentKey))
             return false;
         DocumentKey key = (DocumentKey) pObj;
-        return ((key.masterDocumentId.equals(masterDocumentId)) && (key.workspaceId.equals(workspaceId))  && (key.masterDocumentVersion.equals(masterDocumentVersion)) && (key.iteration==iteration));
+        return ((key.documentMasterId.equals(documentMasterId)) && (key.workspaceId.equals(workspaceId))  && (key.documentMasterVersion.equals(documentMasterVersion)) && (key.iteration==iteration));
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + masterDocumentId + "-" + masterDocumentVersion + "-" + iteration;
+        return workspaceId + "-" + documentMasterId + "-" + documentMasterVersion + "-" + iteration;
     }
     
     public String getWorkspaceId() {
@@ -77,20 +77,20 @@ public class DocumentKey implements Serializable {
         workspaceId = pWorkspaceId;
     }
     
-    public String getMasterDocumentId() {
-        return masterDocumentId;
+    public String getDocumentMasterId() {
+        return documentMasterId;
     }
     
-    public void setMasterDocumentId(String pMasterDocumentId) {
-        masterDocumentId = pMasterDocumentId;
+    public void setDocumentMasterId(String pDocumentMasterId) {
+        documentMasterId = pDocumentMasterId;
     }
 
-    public String getMasterDocumentVersion() {
-        return masterDocumentVersion;
+    public String getDocumentMasterVersion() {
+        return documentMasterVersion;
     }
 
-    public void setMasterDocumentVersion(String pMasterDocumentVersion) {
-        this.masterDocumentVersion = pMasterDocumentVersion;
+    public void setDocumentMasterVersion(String pDocumentMasterVersion) {
+        this.documentMasterVersion = pDocumentMasterVersion;
     }
     
     

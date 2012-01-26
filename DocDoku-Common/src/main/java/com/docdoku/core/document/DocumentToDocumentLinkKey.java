@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -30,27 +30,27 @@ public class DocumentToDocumentLinkKey implements Serializable{
     
    
     private int fromDocumentIteration;
-    private String fromDocumentMasterDocumentId;
-    private String fromDocumentMasterDocumentVersion;
+    private String fromDocumentDocumentMasterId;
+    private String fromDocumentDocumentMasterVersion;
     private String fromDocumentWorkspaceId;
     
     private int toDocumentIteration;
-    private String toDocumentMasterDocumentId;
-    private String toDocumentMasterDocumentVersion;
+    private String toDocumentDocumentMasterId;
+    private String toDocumentDocumentMasterVersion;
     private String toDocumentWorkspaceId;
     
     public DocumentToDocumentLinkKey() {
     }
     
-    public DocumentToDocumentLinkKey(String pFromDocumentWorkspaceId, String pFromDocumentMasterDocumentId, String pFromDocumentMasterDocumentVersion, int pFromDocumentIteration, String pToDocumentWorkspaceId, String pToDocumentMasterDocumentId, String pToDocumentMasterDocumentVersion, int pToDocumentIteration) {
+    public DocumentToDocumentLinkKey(String pFromDocumentWorkspaceId, String pFromDocumentDocumentMasterId, String pFromDocumentDocumentMasterVersion, int pFromDocumentIteration, String pToDocumentWorkspaceId, String pToDocumentDocumentMasterId, String pToDocumentDocumentMasterVersion, int pToDocumentIteration) {
         fromDocumentWorkspaceId=pFromDocumentWorkspaceId;
-        fromDocumentMasterDocumentId=pFromDocumentMasterDocumentId;
-        fromDocumentMasterDocumentVersion=pFromDocumentMasterDocumentVersion;
+        fromDocumentDocumentMasterId=pFromDocumentDocumentMasterId;
+        fromDocumentDocumentMasterVersion=pFromDocumentDocumentMasterVersion;
         fromDocumentIteration=pFromDocumentIteration;
         
         toDocumentWorkspaceId=pToDocumentWorkspaceId;
-        toDocumentMasterDocumentId=pToDocumentMasterDocumentId;
-        toDocumentMasterDocumentVersion=pToDocumentMasterDocumentVersion;
+        toDocumentDocumentMasterId=pToDocumentDocumentMasterId;
+        toDocumentDocumentMasterVersion=pToDocumentDocumentMasterVersion;
         toDocumentIteration=pToDocumentIteration;
     }
 
@@ -58,12 +58,12 @@ public class DocumentToDocumentLinkKey implements Serializable{
         return fromDocumentIteration;
     }
 
-    public String getFromDocumentMasterDocumentId() {
-        return fromDocumentMasterDocumentId;
+    public String getFromDocumentDocumentMasterId() {
+        return fromDocumentDocumentMasterId;
     }
 
-    public String getFromDocumentMasterDocumentVersion() {
-        return fromDocumentMasterDocumentVersion;
+    public String getFromDocumentDocumentMasterVersion() {
+        return fromDocumentDocumentMasterVersion;
     }
 
     public String getFromDocumentWorkspaceId() {
@@ -74,12 +74,12 @@ public class DocumentToDocumentLinkKey implements Serializable{
         return toDocumentIteration;
     }
 
-    public String getToDocumentMasterDocumentId() {
-        return toDocumentMasterDocumentId;
+    public String getToDocumentDocumentMasterId() {
+        return toDocumentDocumentMasterId;
     }
 
-    public String getToDocumentMasterDocumentVersion() {
-        return toDocumentMasterDocumentVersion;
+    public String getToDocumentDocumentMasterVersion() {
+        return toDocumentDocumentMasterVersion;
     }
 
     public String getToDocumentWorkspaceId() {
@@ -90,12 +90,12 @@ public class DocumentToDocumentLinkKey implements Serializable{
         this.fromDocumentIteration = fromDocumentIteration;
     }
 
-    public void setFromDocumentMasterDocumentId(String fromDocumentMasterDocumentId) {
-        this.fromDocumentMasterDocumentId = fromDocumentMasterDocumentId;
+    public void setFromDocumentDocumentMasterId(String fromDocumentDocumentMasterId) {
+        this.fromDocumentDocumentMasterId = fromDocumentDocumentMasterId;
     }
 
-    public void setFromDocumentMasterDocumentVersion(String fromDocumentMasterDocumentVersion) {
-        this.fromDocumentMasterDocumentVersion = fromDocumentMasterDocumentVersion;
+    public void setFromDocumentDocumentMasterVersion(String fromDocumentDocumentMasterVersion) {
+        this.fromDocumentDocumentMasterVersion = fromDocumentDocumentMasterVersion;
     }
 
     public void setFromDocumentWorkspaceId(String fromDocumentWorkspaceId) {
@@ -106,12 +106,12 @@ public class DocumentToDocumentLinkKey implements Serializable{
         this.toDocumentIteration = toDocumentIteration;
     }
 
-    public void setToDocumentMasterDocumentId(String toDocumentMasterDocumentId) {
-        this.toDocumentMasterDocumentId = toDocumentMasterDocumentId;
+    public void setToDocumentDocumentMasterId(String toDocumentDocumentMasterId) {
+        this.toDocumentDocumentMasterId = toDocumentDocumentMasterId;
     }
 
-    public void setToDocumentMasterDocumentVersion(String toDocumentMasterDocumentVersion) {
-        this.toDocumentMasterDocumentVersion = toDocumentMasterDocumentVersion;
+    public void setToDocumentDocumentMasterVersion(String toDocumentDocumentMasterVersion) {
+        this.toDocumentDocumentMasterVersion = toDocumentDocumentMasterVersion;
     }
 
     public void setToDocumentWorkspaceId(String toDocumentWorkspaceId) {
@@ -123,7 +123,7 @@ public class DocumentToDocumentLinkKey implements Serializable{
     
     @Override
     public String toString() {
-        return fromDocumentWorkspaceId + "-" + fromDocumentMasterDocumentId  + "-" + fromDocumentMasterDocumentVersion + "-" + fromDocumentIteration + "/" + toDocumentWorkspaceId + "-" + toDocumentMasterDocumentId  + "-" + toDocumentMasterDocumentVersion + "-" + toDocumentIteration;
+        return fromDocumentWorkspaceId + "-" + fromDocumentDocumentMasterId  + "-" + fromDocumentDocumentMasterVersion + "-" + fromDocumentIteration + "/" + toDocumentWorkspaceId + "-" + toDocumentDocumentMasterId  + "-" + toDocumentDocumentMasterVersion + "-" + toDocumentIteration;
     }
 
     @Override
@@ -134,19 +134,19 @@ public class DocumentToDocumentLinkKey implements Serializable{
         if (!(pObj instanceof DocumentToDocumentLinkKey))
             return false;
         DocumentToDocumentLinkKey key = (DocumentToDocumentLinkKey) pObj;
-        return ((key.fromDocumentWorkspaceId.equals(fromDocumentWorkspaceId)) && (key.fromDocumentMasterDocumentId.equals(fromDocumentMasterDocumentId)) && (key.fromDocumentMasterDocumentVersion.equals(fromDocumentMasterDocumentVersion)) && (key.fromDocumentIteration==fromDocumentIteration) && (key.toDocumentWorkspaceId.equals(toDocumentWorkspaceId)) && (key.toDocumentMasterDocumentId.equals(toDocumentMasterDocumentId)) && (key.toDocumentMasterDocumentVersion.equals(toDocumentMasterDocumentVersion)) && (key.toDocumentIteration==toDocumentIteration));
+        return ((key.fromDocumentWorkspaceId.equals(fromDocumentWorkspaceId)) && (key.fromDocumentDocumentMasterId.equals(fromDocumentDocumentMasterId)) && (key.fromDocumentDocumentMasterVersion.equals(fromDocumentDocumentMasterVersion)) && (key.fromDocumentIteration==fromDocumentIteration) && (key.toDocumentWorkspaceId.equals(toDocumentWorkspaceId)) && (key.toDocumentDocumentMasterId.equals(toDocumentDocumentMasterId)) && (key.toDocumentDocumentMasterVersion.equals(toDocumentDocumentMasterVersion)) && (key.toDocumentIteration==toDocumentIteration));
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
 	hash = 31 * hash + fromDocumentWorkspaceId.hashCode();
-	hash = 31 * hash + fromDocumentMasterDocumentId.hashCode();
-        hash = 31 * hash + fromDocumentMasterDocumentVersion.hashCode();
+	hash = 31 * hash + fromDocumentDocumentMasterId.hashCode();
+        hash = 31 * hash + fromDocumentDocumentMasterVersion.hashCode();
         hash = 31 * hash + fromDocumentIteration;
         hash = 31 * hash + toDocumentWorkspaceId.hashCode();
-	hash = 31 * hash + toDocumentMasterDocumentId.hashCode();
-        hash = 31 * hash + toDocumentMasterDocumentVersion.hashCode();
+	hash = 31 * hash + toDocumentDocumentMasterId.hashCode();
+        hash = 31 * hash + toDocumentDocumentMasterVersion.hashCode();
         hash = 31 * hash + toDocumentIteration;
 	return hash;
     }

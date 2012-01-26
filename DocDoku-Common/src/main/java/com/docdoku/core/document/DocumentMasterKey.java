@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -26,17 +26,17 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class MasterDocumentKey implements Serializable, Comparable<MasterDocumentKey>, Cloneable {
+public class DocumentMasterKey implements Serializable, Comparable<DocumentMasterKey>, Cloneable {
 
     private String workspaceId;
     private String id;
     private String version;
 
 
-    public MasterDocumentKey() {
+    public DocumentMasterKey() {
     }
     
-    public MasterDocumentKey(String pWorkspaceId, String pId, String pVersion) {
+    public DocumentMasterKey(String pWorkspaceId, String pId, String pVersion) {
         workspaceId=pWorkspaceId;
         id=pId;
         version = pVersion;
@@ -78,9 +78,9 @@ public class MasterDocumentKey implements Serializable, Comparable<MasterDocumen
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof MasterDocumentKey))
+        if (!(pObj instanceof DocumentMasterKey))
             return false;
-        MasterDocumentKey key = (MasterDocumentKey) pObj;
+        DocumentMasterKey key = (DocumentMasterKey) pObj;
         return ((key.id.equals(id)) && (key.workspaceId.equals(workspaceId)) && (key.version.equals(version)));
     }
 
@@ -93,22 +93,22 @@ public class MasterDocumentKey implements Serializable, Comparable<MasterDocumen
 	return hash;
     }
 
-    public int compareTo(MasterDocumentKey pMDocKey) {
-        int wksComp = workspaceId.compareTo(pMDocKey.workspaceId);
+    public int compareTo(DocumentMasterKey pDocMKey) {
+        int wksComp = workspaceId.compareTo(pDocMKey.workspaceId);
         if (wksComp != 0)
             return wksComp;
-        int idComp = id.compareTo(pMDocKey.id);
+        int idComp = id.compareTo(pDocMKey.id);
         if (idComp != 0)
             return idComp;
         else
-            return version.compareTo(pMDocKey.version);
+            return version.compareTo(pDocMKey.version);
     }
     
     @Override
-    public MasterDocumentKey clone() {
-        MasterDocumentKey clone = null;
+    public DocumentMasterKey clone() {
+        DocumentMasterKey clone = null;
         try {
-            clone = (MasterDocumentKey) super.clone();
+            clone = (DocumentMasterKey) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }

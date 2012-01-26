@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import javax.persistence.Entity;
 
@@ -40,7 +40,7 @@ public class IterationChangeSubscription extends Subscription{
     public IterationChangeSubscription() {
     }
     
-    public IterationChangeSubscription (User pSubscriber, MasterDocument pObservedElement){
+    public IterationChangeSubscription (User pSubscriber, DocumentMaster pObservedElement){
         super(pSubscriber,pObservedElement);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -36,7 +36,7 @@ import javax.persistence.OneToMany;
 
 /**
  * This class can be attached to a
- * <a href="MasterDocument.html">MasterDocument</a> so that an access control
+ * <a href="DocumentMaster.html">DocumentMaster</a> so that an access control
  * list will be applied.
  * In that way, the default access rights defined at the workspace level will be
  * overridden.

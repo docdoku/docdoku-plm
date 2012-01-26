@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -19,12 +19,12 @@
  */
 package com.docdoku.core.util;
 
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.DocumentToDocumentLink;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -45,25 +45,25 @@ public class Tools {
     private Tools() {
     }
 
-    public static MasterDocument resetParentReferences(MasterDocument pMDoc) {
-        for (Document doc : pMDoc.getDocumentIterations()) {
-            doc.setMasterDocument(pMDoc);
+    public static DocumentMaster resetParentReferences(DocumentMaster pDocM) {
+        for (Document doc : pDocM.getDocumentIterations()) {
+            doc.setDocumentMaster(pDocM);
             resetParentReferences(doc);
         }
 
-        if (pMDoc.getWorkflow() != null) {
-            resetParentReferences(pMDoc.getWorkflow());
+        if (pDocM.getWorkflow() != null) {
+            resetParentReferences(pDocM.getWorkflow());
         }
 
-        return pMDoc;
+        return pDocM;
     }
 
-    public static MasterDocument[] resetParentReferences(MasterDocument[] pMDocs) {
-        for (MasterDocument mdoc : pMDocs) {
-            resetParentReferences(mdoc);
+    public static DocumentMaster[] resetParentReferences(DocumentMaster[] pDocMs) {
+        for (DocumentMaster docM : pDocMs) {
+            resetParentReferences(docM);
         }
 
-        return pMDocs;
+        return pDocMs;
     }
 
     private static Document resetParentReferences(Document pDoc) {
@@ -121,17 +121,17 @@ public class Tools {
         return pActivity;
     }
 
-    public static MasterDocumentTemplate[] resetParentReferences(MasterDocumentTemplate[] pTemplates) {
-        for (MasterDocumentTemplate template : pTemplates) {
+    public static DocumentMasterTemplate[] resetParentReferences(DocumentMasterTemplate[] pTemplates) {
+        for (DocumentMasterTemplate template : pTemplates) {
             resetParentReferences(template);
         }
 
         return pTemplates;
     }
 
-    public static MasterDocumentTemplate resetParentReferences(MasterDocumentTemplate pTemplate) {
+    public static DocumentMasterTemplate resetParentReferences(DocumentMasterTemplate pTemplate) {
         for (InstanceAttributeTemplate attr : pTemplate.getAttributeTemplates()) {
-            attr.setMasterDocumentTemplate(pTemplate);
+            attr.setDocumentMasterTemplate(pTemplate);
         }
 
         return pTemplate;

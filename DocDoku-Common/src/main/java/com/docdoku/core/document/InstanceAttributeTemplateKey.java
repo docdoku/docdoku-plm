@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,15 +29,15 @@ import java.io.Serializable;
 public class InstanceAttributeTemplateKey implements Serializable {
     
     private String workspaceId;
-    private String masterDocumentTemplateId;
+    private String documentMasterTemplateId;
     private String name;
     
     public InstanceAttributeTemplateKey() {
     }
     
-    public InstanceAttributeTemplateKey(String pWorkspaceId, String pMasterDocumentTemplateId, String pName) {
+    public InstanceAttributeTemplateKey(String pWorkspaceId, String pDocumentMasterTemplateId, String pName) {
         workspaceId=pWorkspaceId;
-        masterDocumentTemplateId=pMasterDocumentTemplateId;
+        documentMasterTemplateId=pDocumentMasterTemplateId;
         name=pName;
     }
     
@@ -45,7 +45,7 @@ public class InstanceAttributeTemplateKey implements Serializable {
     public int hashCode() {
         int hash = 1;
 	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + masterDocumentTemplateId.hashCode();
+	hash = 31 * hash + documentMasterTemplateId.hashCode();
         hash = 31 * hash + name.hashCode();
 	return hash;
     }
@@ -58,12 +58,12 @@ public class InstanceAttributeTemplateKey implements Serializable {
         if (!(pObj instanceof InstanceAttributeTemplateKey))
             return false;
         InstanceAttributeTemplateKey key = (InstanceAttributeTemplateKey) pObj;
-        return ((key.masterDocumentTemplateId.equals(masterDocumentTemplateId)) && (key.workspaceId.equals(workspaceId)) && (key.name.equals(name)));
+        return ((key.documentMasterTemplateId.equals(documentMasterTemplateId)) && (key.workspaceId.equals(workspaceId)) && (key.name.equals(name)));
     }
     
     @Override
     public String toString() {
-        return workspaceId + "-" + masterDocumentTemplateId + "-" + name;
+        return workspaceId + "-" + documentMasterTemplateId + "-" + name;
     }
     
     public String getWorkspaceId() {
@@ -74,16 +74,16 @@ public class InstanceAttributeTemplateKey implements Serializable {
         workspaceId = pWorkspaceId;
     }
 
-    public String getMasterDocumentTemplateId() {
-        return masterDocumentTemplateId;
+    public String getDocumentMasterTemplateId() {
+        return documentMasterTemplateId;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setMasterDocumentTemplateId(String masterDocumentTemplateId) {
-        this.masterDocumentTemplateId = masterDocumentTemplateId;
+    public void setDocumentMasterTemplateId(String documentMasterTemplateId) {
+        this.documentMasterTemplateId = documentMasterTemplateId;
     }
 
     public void setName(String name) {
