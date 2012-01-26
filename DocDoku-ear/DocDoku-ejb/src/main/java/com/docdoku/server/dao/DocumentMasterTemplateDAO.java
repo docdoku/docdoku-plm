@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,10 +20,10 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.MasterDocumentTemplateNotFoundException;
-import com.docdoku.core.document.MasterDocumentTemplate;
-import com.docdoku.core.document.MasterDocumentTemplateKey;
-import com.docdoku.core.services.MasterDocumentTemplateAlreadyExistsException;
+import com.docdoku.core.services.DocumentMasterTemplateNotFoundException;
+import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.services.DocumentMasterTemplateAlreadyExistsException;
 
 import java.util.List;
 import java.util.Locale;
@@ -32,60 +32,60 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
-public class MasterDocumentTemplateDAO {
+public class DocumentMasterTemplateDAO {
 
     private EntityManager em;
     private Locale mLocale;
 
-    public MasterDocumentTemplateDAO(Locale pLocale, EntityManager pEM) {
+    public DocumentMasterTemplateDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
     }
 
-    public MasterDocumentTemplateDAO(EntityManager pEM) {
+    public DocumentMasterTemplateDAO(EntityManager pEM) {
         em = pEM;
         mLocale = Locale.getDefault();
     }
 
-    public void updateMDocTemplate(MasterDocumentTemplate pTemplate) {
+    public void updateDocMTemplate(DocumentMasterTemplate pTemplate) {
         em.merge(pTemplate);
     }
 
-    public MasterDocumentTemplate removeMDocTemplate(MasterDocumentTemplateKey pKey) throws MasterDocumentTemplateNotFoundException {
-        MasterDocumentTemplate template = loadMDocTemplate(pKey);
+    public DocumentMasterTemplate removeDocMTemplate(DocumentMasterTemplateKey pKey) throws DocumentMasterTemplateNotFoundException {
+        DocumentMasterTemplate template = loadDocMTemplate(pKey);
         em.remove(template);
         return template;
     }
 
-    public MasterDocumentTemplate[] findAllMDocTemplates(String pWorkspaceId) {
-        MasterDocumentTemplate[] templates;
-        Query query = em.createQuery("SELECT DISTINCT t FROM MasterDocumentTemplate t WHERE t.workspaceId = :workspaceId");
+    public DocumentMasterTemplate[] findAllDocMTemplates(String pWorkspaceId) {
+        DocumentMasterTemplate[] templates;
+        Query query = em.createQuery("SELECT DISTINCT t FROM DocumentMasterTemplate t WHERE t.workspaceId = :workspaceId");
         List listTemplates = query.setParameter("workspaceId", pWorkspaceId).getResultList();
-        templates = new MasterDocumentTemplate[listTemplates.size()];
+        templates = new DocumentMasterTemplate[listTemplates.size()];
         for (int i = 0; i < listTemplates.size(); i++) {
-            templates[i] = (MasterDocumentTemplate) listTemplates.get(i);
+            templates[i] = (DocumentMasterTemplate) listTemplates.get(i);
         }
 
         return templates;
     }
 
-    public MasterDocumentTemplate loadMDocTemplate(MasterDocumentTemplateKey pKey)
-            throws MasterDocumentTemplateNotFoundException {
-        MasterDocumentTemplate template = em.find(MasterDocumentTemplate.class, pKey);
+    public DocumentMasterTemplate loadDocMTemplate(DocumentMasterTemplateKey pKey)
+            throws DocumentMasterTemplateNotFoundException {
+        DocumentMasterTemplate template = em.find(DocumentMasterTemplate.class, pKey);
         if (template == null) {
-            throw new MasterDocumentTemplateNotFoundException(mLocale, pKey.getId());
+            throw new DocumentMasterTemplateNotFoundException(mLocale, pKey.getId());
         } else {
             return template;
         }
     }
 
-    public void createMDocTemplate(MasterDocumentTemplate pTemplate) throws MasterDocumentTemplateAlreadyExistsException, CreationException {
+    public void createDocMTemplate(DocumentMasterTemplate pTemplate) throws DocumentMasterTemplateAlreadyExistsException, CreationException {
         try {
             //the EntityExistsException is thrown only when flush occurs
             em.persist(pTemplate);
             em.flush();
         } catch (EntityExistsException pEEEx) {
-            throw new MasterDocumentTemplateAlreadyExistsException(mLocale, pTemplate);
+            throw new DocumentMasterTemplateAlreadyExistsException(mLocale, pTemplate);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be

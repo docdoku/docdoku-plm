@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.common.User;
 import com.docdoku.core.services.IMailerLocal;
@@ -62,7 +62,7 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendStateNotification(User[] pSubscribers,
-            MasterDocument pMasterDocument) {
+            DocumentMaster pDocumentMaster) {
         try {
             javax.mail.Message message = new MimeMessage(mailSession);
 
@@ -73,12 +73,12 @@ public class MailerBean implements IMailerLocal {
                             pSubscribers[i].getName()));
                     message.setSubject("State notification");
                     message.setSentDate(new Date());
-                    message.setContent(getStateNotificationMessage(pMasterDocument, new Locale(pSubscribers[i].getLanguage())),
+                    message.setContent(getStateNotificationMessage(pDocumentMaster, new Locale(pSubscribers[i].getLanguage())),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
                     LOGGER.info("Sending state notification emails");
-                    LOGGER.info("for the document " + pMasterDocument.getLastIteration());
+                    LOGGER.info("for the document " + pDocumentMaster.getLastIteration());
 
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
@@ -95,7 +95,7 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendIterationNotification(User[] pSubscribers,
-            MasterDocument pMasterDocument) {
+            DocumentMaster pDocumentMaster) {
         try {
             for (int i = 0; i < pSubscribers.length; i++) {
                 try {
@@ -105,12 +105,12 @@ public class MailerBean implements IMailerLocal {
                             pSubscribers[i].getName()));
                     message.setSubject("Iteration notification");
                     message.setSentDate(new Date());
-                    message.setContent(getIterationNotificationMessage(pMasterDocument, new Locale(pSubscribers[i].getLanguage())),
+                    message.setContent(getIterationNotificationMessage(pDocumentMaster, new Locale(pSubscribers[i].getLanguage())),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
                     LOGGER.info("Sending iteration notification emails");
-                    LOGGER.info("for the document " + pMasterDocument.getLastIteration());
+                    LOGGER.info("for the document " + pDocumentMaster.getLastIteration());
 
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
@@ -127,7 +127,7 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendApproval(Collection<Task> pRunningTasks,
-            MasterDocument pMasterDocument) {
+            DocumentMaster pDocumentMaster) {
         try {
             for (Task task : pRunningTasks) {
                 try {
@@ -137,12 +137,12 @@ public class MailerBean implements IMailerLocal {
                             new InternetAddress(worker.getEmail(), worker.getName()));
                     message.setSubject("Approval required");
                     message.setSentDate(new Date());
-                    message.setContent(getApprovalRequiredMessage(task, pMasterDocument, new Locale(worker.getLanguage())),
+                    message.setContent(getApprovalRequiredMessage(task, pDocumentMaster, new Locale(worker.getLanguage())),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
                     LOGGER.info("Sending approval required emails");
-                    LOGGER.info("for the document " + pMasterDocument.getLastIteration());
+                    LOGGER.info("for the document " + pDocumentMaster.getLastIteration());
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
                     LOGGER.warning(pUEEx.getMessage());
@@ -188,39 +188,39 @@ public class MailerBean implements IMailerLocal {
     }
 
     private String getApprovalRequiredMessage(Task pTask,
-            MasterDocument pMasterDocument, Locale pLocale) {
+            DocumentMaster pDocumentMaster, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
-        Object[] args = {voteURL, pMasterDocument.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pMasterDocument), pMasterDocument, pTask.getInstructions()};
+        Object[] args = {voteURL, pDocumentMaster.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentMaster), pDocumentMaster, pTask.getInstructions()};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Approval_text"), args);
     }
 
-    private String getIterationNotificationMessage(MasterDocument pMasterDocument, Locale pLocale) {
+    private String getIterationNotificationMessage(DocumentMaster pDocumentMaster, Locale pLocale) {
 
         Object[] args = {
-            pMasterDocument,
-            pMasterDocument.getLastIteration().getCreationDate(),
-            new Integer(pMasterDocument.getLastIteration().getIteration()),
-            pMasterDocument.getLastIteration().getAuthor(), getURL(pMasterDocument)};
+            pDocumentMaster,
+            pDocumentMaster.getLastIteration().getCreationDate(),
+            new Integer(pDocumentMaster.getLastIteration().getIteration()),
+            pDocumentMaster.getLastIteration().getAuthor(), getURL(pDocumentMaster)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("IterationNotification_text"), args);
 
     }
 
-    private String getStateNotificationMessage(MasterDocument pMasterDocument, Locale pLocale) {
+    private String getStateNotificationMessage(DocumentMaster pDocumentMaster, Locale pLocale) {
 
         Object[] args = {
-            pMasterDocument,
-            pMasterDocument.getLastIteration().getCreationDate(),
-            getURL(pMasterDocument)};
+            pDocumentMaster,
+            pDocumentMaster.getLastIteration().getCreationDate(),
+            getURL(pDocumentMaster)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("StateNotification_text"), args);
 
     }
 
-    private String getURL(MasterDocument pMDoc) {
-        String workspace = pMDoc.getWorkspaceId();
-        String mdocID = pMDoc.getId();
-        return codebase + "/documents/" + workspace + "/" + mdocID + "/" + pMDoc.getVersion();
+    private String getURL(DocumentMaster pDocM) {
+        String workspace = pDocM.getWorkspaceId();
+        String docMId = pDocM.getId();
+        return codebase + "/documents/" + workspace + "/" + docMId + "/" + pDocM.getVersion();
     }
 }

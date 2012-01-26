@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -56,7 +56,7 @@ public class TagDAO {
     }
 
     public void deleteOrphanTags(String pWorkspaceId) {
-        Query query = em.createQuery("SELECT t FROM Tag t WHERE t.workspaceId = :workspaceId AND t.label <> ALL (SELECT t2.label FROM MasterDocument m, IN (m.tags) t2 WHERE t2.workspaceId = :workspaceId)");
+        Query query = em.createQuery("SELECT t FROM Tag t WHERE t.workspaceId = :workspaceId AND t.label <> ALL (SELECT t2.label FROM DocumentMaster m, IN (m.tags) t2 WHERE t2.workspaceId = :workspaceId)");
         List tags = query.setParameter("workspaceId", pWorkspaceId).getResultList();
         for (Object t : tags) {
             em.remove(t);

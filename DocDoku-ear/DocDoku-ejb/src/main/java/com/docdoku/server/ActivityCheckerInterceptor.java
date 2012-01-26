@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.workflow.Task;
@@ -54,13 +54,13 @@ public class ActivityCheckerInterceptor {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        MasterDocument mdoc = new WorkflowDAO(em).getTarget(workflow);
-        Document doc = mdoc.getLastIteration();
+        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
+        Document doc = docM.getLastIteration();
         if (em.createNamedQuery("findLogByDocumentAndUserAndEvent").
                 setParameter("userLogin", user.getLogin()).
                 setParameter("documentWorkspaceId", doc.getWorkspaceId()).
-                setParameter("documentMasterDocumentId", doc.getMasterDocumentId()).
-                setParameter("documentMasterDocumentVersion", doc.getMasterDocumentVersion()).
+                setParameter("documentDocumentMasterId", doc.getDocumentMasterId()).
+                setParameter("documentDocumentMasterVersion", doc.getDocumentMasterVersion()).
                 setParameter("documentIteration", doc.getIteration()).
                 setParameter("event", "DOWNLOAD").
                 getResultList().isEmpty()) {

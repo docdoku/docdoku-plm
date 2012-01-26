@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,7 +24,7 @@ import com.docdoku.core.services.CreationException;
 import com.docdoku.core.services.FolderAlreadyExistsException;
 import com.docdoku.core.services.FolderNotFoundException;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -102,7 +102,7 @@ public class FolderDAO {
         return allSubFolders;
     }
     
-    public List<MasterDocument> removeFolder(String pCompletePath) throws FolderNotFoundException{
+    public List<DocumentMaster> removeFolder(String pCompletePath) throws FolderNotFoundException{
         Folder folder = em.find(Folder.class,pCompletePath);
         if(folder==null)
             throw new FolderNotFoundException(mLocale, pCompletePath);
@@ -110,48 +110,48 @@ public class FolderDAO {
         return removeFolder(folder);
     }
     
-    public List<MasterDocument> removeFolder(Folder pFolder){
-        MasterDocumentDAO mdocDAO=new MasterDocumentDAO(mLocale,em);
-        List<MasterDocument> allMDocs = new LinkedList<MasterDocument>();
-        List<MasterDocument> mdocs = mdocDAO.findMDocsByFolder(pFolder.getCompletePath());
-        allMDocs.addAll(mdocs);
+    public List<DocumentMaster> removeFolder(Folder pFolder){
+        DocumentMasterDAO docMDAO=new DocumentMasterDAO(mLocale,em);
+        List<DocumentMaster> allDocM = new LinkedList<DocumentMaster>();
+        List<DocumentMaster> docMs = docMDAO.findDocMsByFolder(pFolder.getCompletePath());
+        allDocM.addAll(docMs);
         
-        for(MasterDocument mdoc:allMDocs)
-            mdocDAO.removeMDoc(mdoc);
+        for(DocumentMaster docM:allDocM)
+            docMDAO.removeDocM(docM);
         
         Folder[] subFolders = getSubFolders(pFolder);
         for(Folder subFolder:subFolders)
-            allMDocs.addAll(removeFolder(subFolder));
+            allDocM.addAll(removeFolder(subFolder));
         
         em.remove(pFolder);
         //flush to insure the right delete order to avoid integrity constraint
         //violation on folder.
         em.flush();
         
-        return allMDocs;
+        return allDocM;
     }
 
-    public List<MasterDocument> moveFolder(Folder pFolder, Folder pNewFolder) throws FolderAlreadyExistsException, CreationException{
-        MasterDocumentDAO mdocDAO=new MasterDocumentDAO(mLocale,em);
-        List<MasterDocument> allMDocs = new LinkedList<MasterDocument>();
-        List<MasterDocument> mdocs = mdocDAO.findMDocsByFolder(pFolder.getCompletePath());
-        allMDocs.addAll(mdocs);
+    public List<DocumentMaster> moveFolder(Folder pFolder, Folder pNewFolder) throws FolderAlreadyExistsException, CreationException{
+        DocumentMasterDAO docMDAO=new DocumentMasterDAO(mLocale,em);
+        List<DocumentMaster> allDocMs = new LinkedList<DocumentMaster>();
+        List<DocumentMaster> docMs = docMDAO.findDocMsByFolder(pFolder.getCompletePath());
+        allDocMs.addAll(docMs);
 
-        for(MasterDocument mdoc:allMDocs){
-            mdoc.setLocation(pNewFolder);
+        for(DocumentMaster docM:allDocMs){
+            docM.setLocation(pNewFolder);
         }
 
         Folder[] subFolders = getSubFolders(pFolder);
         for(Folder subFolder:subFolders){
             Folder newSubFolder = new Folder(pNewFolder.getCompletePath(),subFolder.getShortName());
             createFolder(newSubFolder);
-            allMDocs.addAll(moveFolder(subFolder,newSubFolder));
+            allDocMs.addAll(moveFolder(subFolder,newSubFolder));
         }
         em.remove(pFolder);
         //flush to insure the right delete order to avoid integrity constraint
         //violation on folder.
         em.flush();
 
-        return allMDocs;
+        return allDocMs;
     }
 }

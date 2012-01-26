@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,9 +21,9 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.document.StateChangeSubscription;
 import com.docdoku.core.document.IterationChangeSubscription;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.SubscriptionKey;
 import java.util.*;
 import javax.persistence.EntityExistsException;
@@ -75,13 +75,13 @@ public class SubscriptionDAO {
         }
     }
 
-    public void removeAllSubscriptions(MasterDocument pMDoc) {
-        Query query = em.createQuery("DELETE FROM StateChangeSubscription s WHERE s.observedMasterDocument = :mdoc");
-        query.setParameter("mdoc", pMDoc);
+    public void removeAllSubscriptions(DocumentMaster pDocM) {
+        Query query = em.createQuery("DELETE FROM StateChangeSubscription s WHERE s.observedDocumentMaster = :docM");
+        query.setParameter("docM", pDocM);
         query.executeUpdate();
 
-        Query query2 = em.createQuery("DELETE FROM IterationChangeSubscription s WHERE s.observedMasterDocument = :mdoc");
-        query2.setParameter("mdoc", pMDoc);
+        Query query2 = em.createQuery("DELETE FROM IterationChangeSubscription s WHERE s.observedDocumentMaster = :docM");
+        query2.setParameter("docM", pDocM);
         query2.executeUpdate();
     }
 
@@ -95,38 +95,38 @@ public class SubscriptionDAO {
         query2.executeUpdate();
     }
 
-    public MasterDocumentKey[] getIterationChangeEventSubscriptions(User pUser) {
-        MasterDocumentKey[] mdocKeys;
-        Query query = em.createQuery("SELECT s.observedMasterDocumentWorkspaceId, s.observedMasterDocumentId, s.observedMasterDocumentVersion FROM IterationChangeSubscription s WHERE s.subscriber = :user");
-        List listMDocKeys = query.setParameter("user", pUser).getResultList();
-        mdocKeys = new MasterDocumentKey[listMDocKeys.size()];
-        for (int i = 0; i < listMDocKeys.size(); i++) {
-            Object[] values = (Object[]) listMDocKeys.get(i);
-            mdocKeys[i] = new MasterDocumentKey((String) values[0], (String) values[1], (String) values[2]);
+    public DocumentMasterKey[] getIterationChangeEventSubscriptions(User pUser) {
+        DocumentMasterKey[] docMKeys;
+        Query query = em.createQuery("SELECT s.observedDocumentMasterWorkspaceId, s.observedDocumentMasterId, s.observedDocumentMasterVersion FROM IterationChangeSubscription s WHERE s.subscriber = :user");
+        List listDocMKeys = query.setParameter("user", pUser).getResultList();
+        docMKeys = new DocumentMasterKey[listDocMKeys.size()];
+        for (int i = 0; i < listDocMKeys.size(); i++) {
+            Object[] values = (Object[]) listDocMKeys.get(i);
+            docMKeys[i] = new DocumentMasterKey((String) values[0], (String) values[1], (String) values[2]);
         }
 
 
-        return mdocKeys;
+        return docMKeys;
     }
 
-    public MasterDocumentKey[] getStateChangeEventSubscriptions(User pUser) {
-        MasterDocumentKey[] mdocKeys;
-        Query query = em.createQuery("SELECT s.observedMasterDocumentWorkspaceId, s.observedMasterDocumentId, s.observedMasterDocumentVersion FROM StateChangeSubscription s WHERE s.subscriber = :user");
-        List listMDocKeys = query.setParameter("user", pUser).getResultList();
-        mdocKeys = new MasterDocumentKey[listMDocKeys.size()];
-        for (int i = 0; i < listMDocKeys.size(); i++) {
-            Object[] values = (Object[]) listMDocKeys.get(i);
-            mdocKeys[i] = new MasterDocumentKey((String) values[0], (String) values[1], (String) values[2]);
+    public DocumentMasterKey[] getStateChangeEventSubscriptions(User pUser) {
+        DocumentMasterKey[] docMKeys;
+        Query query = em.createQuery("SELECT s.observedDocumentMasterWorkspaceId, s.observedDocumentMasterId, s.observedDocumentMasterVersion FROM StateChangeSubscription s WHERE s.subscriber = :user");
+        List listDocMKeys = query.setParameter("user", pUser).getResultList();
+        docMKeys = new DocumentMasterKey[listDocMKeys.size()];
+        for (int i = 0; i < listDocMKeys.size(); i++) {
+            Object[] values = (Object[]) listDocMKeys.get(i);
+            docMKeys[i] = new DocumentMasterKey((String) values[0], (String) values[1], (String) values[2]);
         }
 
 
-        return mdocKeys;
+        return docMKeys;
     }
 
-    public User[] getIterationChangeEventSubscribers(MasterDocument pMDoc) {
+    public User[] getIterationChangeEventSubscribers(DocumentMaster pDocM) {
         User[] users;
-        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedMasterDocument = :mdoc");
-        List listUsers = query.setParameter("mdoc", pMDoc).getResultList();
+        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentMaster = :docM");
+        List listUsers = query.setParameter("docM", pDocM).getResultList();
         users = new User[listUsers.size()];
         for (int i = 0; i < listUsers.size(); i++) {
             users[i] = (User) listUsers.get(i);
@@ -135,10 +135,10 @@ public class SubscriptionDAO {
         return users;
     }
 
-    public User[] getStateChangeEventSubscribers(MasterDocument pMDoc) {
+    public User[] getStateChangeEventSubscribers(DocumentMaster pDocM) {
         User[] users;
-        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedMasterDocument = :mdoc");
-        List listUsers = query.setParameter("mdoc", pMDoc).getResultList();
+        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedDocumentMaster = :docM");
+        List listUsers = query.setParameter("docM", pDocM).getResultList();
         users = new User[listUsers.size()];
         for (int i = 0; i < listUsers.size(); i++) {
             users[i] = (User) listUsers.get(i);

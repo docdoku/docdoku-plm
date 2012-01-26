@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -41,7 +41,7 @@ import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Account;
@@ -294,9 +294,9 @@ public class UserManagerBean implements IUserManagerLocal {
         Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         for (String login : pLogins) {
-            MasterDocument[] mdocs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
-            for (MasterDocument mdoc : mdocs) {
-                for (Document doc : mdoc.getDocumentIterations()) {
+            DocumentMaster[] docMs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
+            for (DocumentMaster docM : docMs) {
+                for (Document doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
                         dataManager.delData(file);

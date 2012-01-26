@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import java.util.*;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -90,10 +90,10 @@ public class BinaryResourceDAO {
         }
     }
 
-    public MasterDocumentTemplate getTemplateOwner(BinaryResource pBinaryResource) {
-        Query query = em.createQuery("SELECT t FROM MasterDocumentTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles");
+    public DocumentMasterTemplate getTemplateOwner(BinaryResource pBinaryResource) {
+        Query query = em.createQuery("SELECT t FROM DocumentMasterTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles");
         try {
-            return (MasterDocumentTemplate) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+            return (DocumentMasterTemplate) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {
             return null;
         }

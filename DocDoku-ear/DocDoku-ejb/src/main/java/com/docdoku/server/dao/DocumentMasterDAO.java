@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -19,8 +19,8 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.services.MasterDocumentNotFoundException;
-import com.docdoku.core.services.MasterDocumentAlreadyExistsException;
+import com.docdoku.core.services.DocumentMasterNotFoundException;
+import com.docdoku.core.services.DocumentMasterAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
 import com.docdoku.core.workflow.Activity;
@@ -28,8 +28,8 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.Tag;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.common.User;
 import java.util.*;
@@ -40,27 +40,27 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-public class MasterDocumentDAO {
+public class DocumentMasterDAO {
 
     private EntityManager em;
     private Locale mLocale;
     private final static int MAX_RESULTS = 500;
 
-    public MasterDocumentDAO(Locale pLocale, EntityManager pEM) {
+    public DocumentMasterDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
     }
 
-    public MasterDocumentDAO(EntityManager pEM) {
+    public DocumentMasterDAO(EntityManager pEM) {
         em = pEM;
         mLocale = Locale.getDefault();
     }
 
-    public List<MasterDocument> searchMDocs(String pWorkspaceId, String pMDocID, String pTitle,
+    public List<DocumentMaster> searchDocumentMasters(String pWorkspaceId, String pDocMId, String pTitle,
             String pVersion, String pAuthor, String pType, java.util.Date pCreationDateFrom,
             java.util.Date pCreationDateTo, Collection<Tag> pTags, Collection<SearchQuery.AbstractAttributeQuery> pAttrs) {
         StringBuilder queryStr = new StringBuilder();
-        queryStr.append("SELECT DISTINCT m FROM MasterDocument m ");
+        queryStr.append("SELECT DISTINCT m FROM DocumentMaster m ");
 
         if (pAttrs != null && pAttrs.size() > 0) {
             queryStr.append("JOIN m.documentIterations d ");
@@ -68,7 +68,7 @@ public class MasterDocumentDAO {
 
         queryStr.append("WHERE m.workspaceId = :workspaceId ");
         if (pAttrs != null && pAttrs.size() > 0) {
-            queryStr.append("AND d.iteration = (SELECT MAX(d2.iteration) FROM MasterDocument m2 JOIN m2.documentIterations d2 WHERE m2=m) ");
+            queryStr.append("AND d.iteration = (SELECT MAX(d2.iteration) FROM DocumentMaster m2 JOIN m2.documentIterations d2 WHERE m2=m) ");
             int i=0;
             for(SearchQuery.AbstractAttributeQuery attr:pAttrs){
                 queryStr.append("AND EXISTS (");
@@ -116,9 +116,9 @@ public class MasterDocumentDAO {
         queryStr.append("AND m.creationDate BETWEEN :lowerDate AND :upperDate ");
         queryStr.append("ORDER BY m.id, m.version");
 
-        TypedQuery<MasterDocument> query = em.createQuery(queryStr.toString(), MasterDocument.class);
+        TypedQuery<DocumentMaster> query = em.createQuery(queryStr.toString(), DocumentMaster.class);
         query.setParameter("workspaceId", pWorkspaceId);
-        query.setParameter("id", pMDocID == null ? "%" : "%" + pMDocID + "%");
+        query.setParameter("id", pDocMId == null ? "%" : "%" + pDocMId + "%");
         query.setParameter("version", pVersion == null ? "%" : "%" + pVersion + "%");
         query.setParameter("title", pTitle == null ? "%" : "%" + pTitle + "%");
         query.setParameter("type", pType == null ? "%" : "%" + pType + "%");
@@ -169,14 +169,14 @@ public class MasterDocumentDAO {
 
     }
 
-    public String findLatestMDocId(String pWorkspaceId, String pType) {
-        String mdocId;
-        Query query = em.createQuery("SELECT m.id FROM MasterDocument m "
+    public String findLatestDocMId(String pWorkspaceId, String pType) {
+        String docMId;
+        Query query = em.createQuery("SELECT m.id FROM DocumentMaster m "
                 + "WHERE m.workspaceId = :workspaceId "
                 + "AND m.type = :type "
                 + "AND m.version = :version "
                 + "AND m.creationDate = ("
-                + "SELECT MAX(m2.creationDate) FROM MasterDocument m2 "
+                + "SELECT MAX(m2.creationDate) FROM DocumentMaster m2 "
                 + "WHERE m2.workspaceId = :workspaceId "
                 + "AND m2.type = :type "
                 + "AND m2.version = :version"
@@ -184,57 +184,57 @@ public class MasterDocumentDAO {
         query.setParameter("workspaceId", pWorkspaceId);
         query.setParameter("type", pType);
         query.setParameter("version", "A");
-        mdocId = (String) query.getSingleResult();
-        return mdocId;
+        docMId = (String) query.getSingleResult();
+        return docMId;
     }
 
-    public List<MasterDocument> findMDocsByFolder(String pCompletePath) {
-        TypedQuery<MasterDocument> query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE m.location.completePath = :completePath", MasterDocument.class);
+    public List<DocumentMaster> findDocMsByFolder(String pCompletePath) {
+        TypedQuery<DocumentMaster> query = em.createQuery("SELECT DISTINCT m FROM DocumentMaster m WHERE m.location.completePath = :completePath", DocumentMaster.class);
         query.setParameter("completePath", pCompletePath);
         return query.getResultList();
     }
 
-    public List<MasterDocument> findMDocsByTag(Tag pTag) {
-        TypedQuery<MasterDocument> query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE :tag MEMBER OF m.tags", MasterDocument.class);
+    public List<DocumentMaster> findDocMsByTag(Tag pTag) {
+        TypedQuery<DocumentMaster> query = em.createQuery("SELECT DISTINCT m FROM DocumentMaster m WHERE :tag MEMBER OF m.tags", DocumentMaster.class);
         query.setParameter("tag", pTag);
         return query.getResultList();
     }
 
-    public List<MasterDocument> findCheckedOutMDocs(User pUser) {
-        TypedQuery<MasterDocument> query = em.createQuery("SELECT DISTINCT m FROM MasterDocument m WHERE m.checkOutUser = :user", MasterDocument.class);
+    public List<DocumentMaster> findCheckedOutDocMs(User pUser) {
+        TypedQuery<DocumentMaster> query = em.createQuery("SELECT DISTINCT m FROM DocumentMaster m WHERE m.checkOutUser = :user", DocumentMaster.class);
         query.setParameter("user", pUser);
         return query.getResultList();
     }
 
-    public MasterDocument loadMDoc(MasterDocumentKey pKey) throws MasterDocumentNotFoundException {
-        MasterDocument mdoc = em.find(MasterDocument.class, pKey);
-        if (mdoc == null) {
-            throw new MasterDocumentNotFoundException(mLocale, pKey);
+    public DocumentMaster loadDocM(DocumentMasterKey pKey) throws DocumentMasterNotFoundException {
+        DocumentMaster docM = em.find(DocumentMaster.class, pKey);
+        if (docM == null) {
+            throw new DocumentMasterNotFoundException(mLocale, pKey);
         } else {
-            return mdoc;
+            return docM;
         }
     }
 
-    public MasterDocument getMDocRef(MasterDocumentKey pKey) throws MasterDocumentNotFoundException {
+    public DocumentMaster getDocMRef(DocumentMasterKey pKey) throws DocumentMasterNotFoundException {
         try {
-            MasterDocument mdoc = em.getReference(MasterDocument.class, pKey);
-            return mdoc;
+            DocumentMaster docM = em.getReference(DocumentMaster.class, pKey);
+            return docM;
         } catch (EntityNotFoundException pENFEx) {
-            throw new MasterDocumentNotFoundException(mLocale, pKey);
+            throw new DocumentMasterNotFoundException(mLocale, pKey);
         }
     }
 
-    public void createMDoc(MasterDocument pMasterDocument) throws MasterDocumentAlreadyExistsException, CreationException {
+    public void createDocM(DocumentMaster pDocumentMaster) throws DocumentMasterAlreadyExistsException, CreationException {
         try {          
-            if(pMasterDocument.getWorkflow()!=null){
+            if(pDocumentMaster.getWorkflow()!=null){
                 WorkflowDAO workflowDAO = new WorkflowDAO(em);
-                workflowDAO.createWorkflow(pMasterDocument.getWorkflow());
+                workflowDAO.createWorkflow(pDocumentMaster.getWorkflow());
             }
             //the EntityExistsException is thrown only when flush occurs
-            em.persist(pMasterDocument);
+            em.persist(pDocumentMaster);
             em.flush();
         } catch (EntityExistsException pEEEx) {
-            throw new MasterDocumentAlreadyExistsException(mLocale, pMasterDocument);
+            throw new DocumentMasterAlreadyExistsException(mLocale, pDocumentMaster);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
@@ -243,9 +243,9 @@ public class MasterDocumentDAO {
         }
     }
 
-    public void removeMDoc(MasterDocument pMDoc) {
+    public void removeDocM(DocumentMaster pDocM) {
         SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
-        subscriptionDAO.removeAllSubscriptions(pMDoc);
-        em.remove(pMDoc);
+        subscriptionDAO.removeAllSubscriptions(pDocM);
+        em.remove(pDocM);
     }
 }

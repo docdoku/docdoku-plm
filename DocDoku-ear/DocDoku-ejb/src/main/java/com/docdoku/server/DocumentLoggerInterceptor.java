@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -60,8 +60,8 @@ public class DocumentLoggerInterceptor {
                     log.setUserLogin(userLogin);
                     log.setLogDate(new Date());
                     log.setDocumentWorkspaceId(document.getWorkspaceId());
-                    log.setDocumentMasterDocumentId(document.getMasterDocumentId());
-                    log.setDocumentMasterDocumentVersion(document.getMasterDocumentVersion());
+                    log.setDocumentDocumentMasterId(document.getDocumentMasterId());
+                    log.setDocumentDocumentMasterVersion(document.getDocumentMasterVersion());
                     log.setDocumentIteration(document.getIteration());
                     log.setEvent(EVENT);
                     log.setInfo(fullName);

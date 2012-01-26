@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.core.services.FolderNotFoundException;
 import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.UserAlreadyExistsException;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import com.docdoku.core.services.UserNotFoundException;
 import com.docdoku.core.common.Workspace;
@@ -111,19 +111,19 @@ public class UserDAO {
         return memberships;
     }
 
-    public MasterDocument[] removeUser(UserKey pKey) throws UserNotFoundException, NotAllowedException, FolderNotFoundException {
+    public DocumentMaster[] removeUser(UserKey pKey) throws UserNotFoundException, NotAllowedException, FolderNotFoundException {
         User user = loadUser(pKey);
         removeUserMembership(new WorkspaceUserMembershipKey(pKey.getWorkspaceId(), pKey.getWorkspaceId(), pKey.getLogin()));
         new SubscriptionDAO(em).removeAllSubscriptions(user);
         new UserGroupDAO(mLocale, em).removeUserFromAllGroups(user);
-        List<MasterDocument> mdocs = new FolderDAO(mLocale, em).removeFolder(user.getWorkspaceId() + "/~" + user.getLogin());
-        boolean author = isMDocAuthor(user) || isDocAuthor(user) || isMDocTemplateAuthor(user) || isWorkflowModelAuthor(user);
+        List<DocumentMaster> docMs = new FolderDAO(mLocale, em).removeFolder(user.getWorkspaceId() + "/~" + user.getLogin());
+        boolean author = isDocMAuthor(user) || isDocAuthor(user) || isDocMTemplateAuthor(user) || isWorkflowModelAuthor(user);
         boolean involved = isInvolvedInWFModel(user) || isInvolvedInWF(user);
         if (author || involved) {
             throw new NotAllowedException(mLocale, "NotAllowedException8");
         } else {
             em.remove(user);
-            return mdocs.toArray(new MasterDocument[mdocs.size()]);
+            return docMs.toArray(new DocumentMaster[docMs.size()]);
         }
     }
 
@@ -139,8 +139,8 @@ public class UserDAO {
         return !listUsers.isEmpty();
     }
 
-    public boolean isMDocAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT m FROM MasterDocument m WHERE m.author = u AND m.author = :user)");
+    public boolean isDocMAuthor(User pUser) {
+        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT m FROM DocumentMaster m WHERE m.author = u AND m.author = :user)");
         List listUsers = query.setParameter("user", pUser).getResultList();
         return !listUsers.isEmpty();
     }
@@ -151,8 +151,8 @@ public class UserDAO {
         return !listUsers.isEmpty();
     }
 
-    public boolean isMDocTemplateAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT t FROM MasterDocumentTemplate t WHERE t.author = u AND t.author = :user)");
+    public boolean isDocMTemplateAuthor(User pUser) {
+        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT t FROM DocumentMasterTemplate t WHERE t.author = u AND t.author = :user)");
         List listUsers = query.setParameter("user", pUser).getResultList();
         return !listUsers.isEmpty();
     }

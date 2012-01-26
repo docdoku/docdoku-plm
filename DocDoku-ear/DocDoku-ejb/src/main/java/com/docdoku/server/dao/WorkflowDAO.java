@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
@@ -51,8 +51,8 @@ public class WorkflowDAO {
         }*/     
     }
 
-    public MasterDocument getTarget(Workflow pWorkflow) {
-        Query query = em.createQuery("SELECT m FROM MasterDocument m WHERE m.workflow = :workflow");
-        return (MasterDocument) query.setParameter("workflow", pWorkflow).getSingleResult();
+    public DocumentMaster getTarget(Workflow pWorkflow) {
+        Query query = em.createQuery("SELECT m FROM DocumentMaster m WHERE m.workflow = :workflow");
+        return (DocumentMaster) query.setParameter("workflow", pWorkflow).getSingleResult();
     }
 }

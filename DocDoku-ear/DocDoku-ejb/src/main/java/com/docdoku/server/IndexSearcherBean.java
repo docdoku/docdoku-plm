@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.DocumentMasterKey;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -74,9 +74,9 @@ public class IndexSearcherBean {
         }
     }
 
-    public Set<MasterDocumentKey> searchInIndex(String pWorkspaceId, String pContent) {
+    public Set<DocumentMasterKey> searchInIndex(String pWorkspaceId, String pContent) {
         try {
-            Set<MasterDocumentKey> indexedKeys = new HashSet<MasterDocumentKey>();
+            Set<DocumentMasterKey> indexedKeys = new HashSet<DocumentMasterKey>();
 
             Query fullNameQuery = new WildcardQuery(new Term("fullName", pWorkspaceId + "/*"));
             Query contentQuery = new TermQuery(new Term("content", pContent));
@@ -95,7 +95,7 @@ public class IndexSearcherBean {
                 org.apache.lucene.document.Document doc = indexReader.document(hits[i].doc);
                 String fullName = doc.get("fullName");
                 String[] partRefs = BinaryResource.parseOwnerRef(fullName).split("/");
-                MasterDocumentKey key = new MasterDocumentKey(pWorkspaceId, partRefs[0], partRefs[1]);
+                DocumentMasterKey key = new DocumentMasterKey(pWorkspaceId, partRefs[0], partRefs[1]);
                 indexedKeys.add(key);
             }
    

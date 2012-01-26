@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -79,15 +79,15 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public File saveFileInTemplate(MasterDocumentTemplateKey pMDocTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocTemplateKey.getWorkspaceId());
+    public File saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMTemplateKey.getWorkspaceId());
         //TODO checkWorkspaceWriteAccess ?
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
-        MasterDocumentTemplateDAO templateDAO = new MasterDocumentTemplateDAO(em);
-        MasterDocumentTemplate template = templateDAO.loadMDocTemplate(pMDocTemplateKey);
+        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(em);
+        DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
         BinaryResource file = null;
         String fullName = template.getWorkspaceId() + "/templates/" + template.getId() + "/" + pName;
 
@@ -111,18 +111,18 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public File saveFileInDocument(DocumentKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+    public File saveFileInDocument(DocumentKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pDocPK.getWorkspaceId());
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(new MasterDocumentKey(pDocPK.getWorkspaceId(), pDocPK.getMasterDocumentId(), pDocPK.getMasterDocumentVersion()));
-        Document document = mdoc.getIteration(pDocPK.getIteration());
-        if (mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(user) && mdoc.getLastIteration().equals(document)) {
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(em);
+        DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentMasterVersion()));
+        Document document = docM.getIteration(pDocPK.getIteration());
+        if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
             BinaryResource file = null;
-            String fullName = mdoc.getWorkspaceId() + "/documents/" + mdoc.getId() + "/" + mdoc.getVersion() + "/" + document.getIteration() + "/" + pName;
+            String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/" + docM.getVersion() + "/" + document.getIteration() + "/" + pName;
 
             for (BinaryResource bin : document.getAttachedFiles()) {
                 if (bin.getFullName().equals(fullName)) {
@@ -154,10 +154,10 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
         Document document = binDAO.getDocumentOwner(file);
         if (document != null) {
-            MasterDocument mdoc = document.getMasterDocument();
-            String owner = mdoc.getLocation().getOwner();
+            DocumentMaster docM = document.getDocumentMaster();
+            String owner = docM.getLocation().getOwner();
 
-            if (((owner != null) && (!owner.equals(user.getLogin()))) || (mdoc.isCheckedOut() && !mdoc.getCheckOutUser().equals(user) && mdoc.getLastIteration().equals(document))) {
+            if (((owner != null) && (!owner.equals(user.getLogin()))) || (docM.isCheckedOut() && !docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document))) {
                 throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
             } else {
                 return dataManager.getDataFile(file);
@@ -195,77 +195,77 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument[] findMDocsByFolder(String pCompletePath) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster[] findDocumentMastersByFolder(String pCompletePath) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         String workspaceId = Folder.parseWorkspaceId(pCompletePath);
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        List<MasterDocument> mdocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findMDocsByFolder(pCompletePath);
-        ListIterator<MasterDocument> ite = mdocs.listIterator();
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocMsByFolder(pCompletePath);
+        ListIterator<DocumentMaster> ite = docMs.listIterator();
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
         while (ite.hasNext()) {
-            MasterDocument mdoc = ite.next();
-            if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasReadAccess(user)) {
+            DocumentMaster docM = ite.next();
+            if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
             }
-            if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc = mdoc.clone();
-                mdoc.removeLastIteration();
-                ite.set(mdoc);
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
+                ite.set(docM);
 
             }
         }
-        return mdocs.toArray(new MasterDocument[mdocs.size()]);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument[] findMDocsByTag(TagKey pKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster[] findDocumentMastersByTag(TagKey pKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         String workspaceId = pKey.getWorkspaceId();
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        List<MasterDocument> mdocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findMDocsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
-        ListIterator<MasterDocument> ite = mdocs.listIterator();
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocMsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
+        ListIterator<DocumentMaster> ite = docMs.listIterator();
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
         while (ite.hasNext()) {
-            MasterDocument mdoc = ite.next();
-            if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasReadAccess(user)) {
+            DocumentMaster docM = ite.next();
+            if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
             }
-            if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc = mdoc.clone();
-                mdoc.removeLastIteration();
-                ite.set(mdoc);
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
+                ite.set(docM);
 
             }
         }
-        return mdocs.toArray(new MasterDocument[mdocs.size()]);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument getMDoc(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, MasterDocumentNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocPK.getWorkspaceId());
-        MasterDocument mdoc = new MasterDocumentDAO(new Locale(user.getLanguage()), em).loadMDoc(pMDocPK);
-        String owner = mdoc.getLocation().getOwner();
+    public DocumentMaster getDocumentMaster(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+        DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).loadDocM(pDocMPK);
+        String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
-        if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-            mdoc = mdoc.clone();
-            mdoc.removeLastIteration();
+        if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+            docM = docM.clone();
+            docM.removeLastIteration();
         }
-        return mdoc;
+        return docM;
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument[] getCheckedOutMDocs(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster[] getCheckedOutDocumentMasters(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<MasterDocument> mdocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findCheckedOutMDocs(user);
-        return mdocs.toArray(new MasterDocument[mdocs.size()]);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findCheckedOutDocMs(user);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
     @RolesAllowed("users")
@@ -277,28 +277,28 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentKey[] getIterationChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMasterKey[] getIterationChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new SubscriptionDAO(em).getIterationChangeEventSubscriptions(user);
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentKey[] getStateChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMasterKey[] getStateChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new SubscriptionDAO(em).getStateChangeEventSubscriptions(user);
     }
 
     @RolesAllowed("users")
     @Override
-    public String generateId(String pWorkspaceId, String pMDocTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, MasterDocumentTemplateNotFoundException {
+    public String generateId(String pWorkspaceId, String pDocMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, DocumentMasterTemplateNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        MasterDocumentTemplate template = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(new MasterDocumentTemplateKey(user.getWorkspaceId(), pMDocTemplateId));
+        DocumentMasterTemplate template = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
 
         String newId = null;
         try {
-            String latestId = new MasterDocumentDAO(new Locale(user.getLanguage()), em).findLatestMDocId(pWorkspaceId, template.getDocumentType());
+            String latestId = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findLatestDocMId(pWorkspaceId, template.getDocumentType());
             String inputMask = template.getMask();
             String convertedMask = Tools.convertMask(inputMask);
             newId = Tools.increaseId(latestId, convertedMask);
@@ -313,7 +313,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument[] searchMDocs(SearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster[] searchDocumentMasters(SearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         //preparing tag filtering
         Set<Tag> tags = null;
@@ -326,41 +326,41 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             }
         }
 
-        List<MasterDocument> fetchedMDocs = new MasterDocumentDAO(new Locale(user.getLanguage()), em).searchMDocs(pQuery.getWorkspaceId(), pQuery.getMDocId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
+        List<DocumentMaster> fetchedDocMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).searchDocumentMasters(pQuery.getWorkspaceId(), pQuery.getDocMId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
                 pQuery.getCreationDateTo(), tags, pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null);
 
         //preparing fulltext filtering
-        Set<MasterDocumentKey> indexedKeys = null;
-        if (fetchedMDocs.size() > 0 && pQuery.getContent() != null && !pQuery.getContent().equals("")) {
+        Set<DocumentMasterKey> indexedKeys = null;
+        if (fetchedDocMs.size() > 0 && pQuery.getContent() != null && !pQuery.getContent().equals("")) {
             indexedKeys = indexSearcher.searchInIndex(pQuery.getWorkspaceId(), pQuery.getContent());
         }
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
-        ListIterator<MasterDocument> ite = fetchedMDocs.listIterator();
-        mdocBlock:
+        ListIterator<DocumentMaster> ite = fetchedDocMs.listIterator();
+        docMBlock:
         while (ite.hasNext()) {
-            MasterDocument mdoc = ite.next();
-            if (indexedKeys != null && (!indexedKeys.contains(mdoc.getKey()))) {
+            DocumentMaster docM = ite.next();
+            if (indexedKeys != null && (!indexedKeys.contains(docM.getKey()))) {
                 ite.remove();
-                continue mdocBlock;
+                continue docMBlock;
             }
 
-            //TODO search should not fetch back private mdoc
-            if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc = mdoc.clone();
-                mdoc.removeLastIteration();
-                ite.set(mdoc);
+            //TODO search should not fetch back private docM
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
+                ite.set(docM);
             }
 
             //Check acess rights
-            if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasReadAccess(user)) {
+            if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
             }
         }
-        return fetchedMDocs.toArray(new MasterDocument[fetchedMDocs.size()]);
+        return fetchedDocMs.toArray(new DocumentMaster[fetchedDocMs.size()]);
     }
 
     @RolesAllowed("users")
@@ -372,9 +372,9 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate[] getMDocTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMasterTemplate[] getDocumentMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).findAllMDocTemplates(pWorkspaceId);
+        return new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllDocMTemplates(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -387,10 +387,10 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate getMDocTemplate(MasterDocumentTemplateKey pKey)
-            throws WorkspaceNotFoundException, MasterDocumentTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMasterTemplate getDocumentMasterTemplate(DocumentMasterTemplateKey pKey)
+            throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
-        return new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(pKey);
+        return new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).loadDocMTemplate(pKey);
     }
 
     @RolesAllowed("users")
@@ -410,11 +410,11 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate updateMDocTemplate(MasterDocumentTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateNotFoundException, UserNotFoundException {
+    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
 
-        MasterDocumentTemplateDAO templateDAO = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em);
-        MasterDocumentTemplate template = templateDAO.loadMDocTemplate(pKey);
+        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
+        DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pKey);
         Date now = new Date();
         template.setCreationDate(now);
         template.setAuthor(user);
@@ -424,7 +424,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attr.setMasterDocumentTemplate(template);
+            attr.setDocumentMasterTemplate(template);
             attrs.add(attr);
         }
 
@@ -442,20 +442,20 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public void delWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
+    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
     }
 
     @RolesAllowed("users")
     @Override
-    public void delTag(TagKey pKey) throws WorkspaceNotFoundException, AccessRightException, TagNotFoundException, UserNotFoundException {
+    public void deleteTag(TagKey pKey) throws WorkspaceNotFoundException, AccessRightException, TagNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         Locale userLocale = new Locale(user.getLanguage());
         Tag tagToRemove = new Tag(user.getWorkspace(), pKey.getLabel());
-        List<MasterDocument> mdocs = new MasterDocumentDAO(userLocale, em).findMDocsByTag(tagToRemove);
-        for (MasterDocument mdoc : mdocs) {
-            mdoc.getTags().remove(tagToRemove);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(userLocale, em).findDocMsByTag(tagToRemove);
+        for (DocumentMaster docM : docMs) {
+            docM.getTags().remove(tagToRemove);
         }
 
         new TagDAO(userLocale, em).removeTag(pKey);
@@ -472,29 +472,29 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument createMDoc(String pParentFolder,
-            String pMDocID, String pTitle, String pDescription, String pMDocTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, WorkflowModelNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FolderNotFoundException, FileAlreadyExistsException, UserNotFoundException, CreationException {
+    public DocumentMaster createDocumentMaster(String pParentFolder,
+            String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, WorkflowModelNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, AccessRightException, DocumentMasterAlreadyExistsException, FolderNotFoundException, FileAlreadyExistsException, UserNotFoundException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
-        if (!NamingConvention.correct(pMDocID)) {
+        if (!NamingConvention.correct(pDocMId)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
         }
         Folder folder = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
         checkWritingRight(user, folder);
 
-        MasterDocument mdoc;
+        DocumentMaster docM;
         Document newDoc;
 
-        if (pMDocTemplateId == null) {
-            mdoc = new MasterDocument(user.getWorkspace(), pMDocID, user);
-            newDoc = mdoc.createNextIteration(user);
+        if (pDocMTemplateId == null) {
+            docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
+            newDoc = docM.createNextIteration(user);
             //specify an empty type instead of null
             //so the search will find it with the % character
-            mdoc.setType("");
+            docM.setType("");
         } else {
-            MasterDocumentTemplate template = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).loadMDocTemplate(new MasterDocumentTemplateKey(user.getWorkspaceId(), pMDocTemplateId));
-            mdoc = new MasterDocument(user.getWorkspace(), pMDocID, user);
-            mdoc.setType(template.getDocumentType());
-            newDoc = mdoc.createNextIteration(user);
+            DocumentMasterTemplate template = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
+            docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
+            docM.setType(template.getDocumentType());
+            newDoc = docM.createNextIteration(user);
 
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
@@ -509,7 +509,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
 
-                String fullName = mdoc.getWorkspaceId() + "/documents/" + mdoc.getId() + "/A/1/" + fileName;
+                String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/A/1/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length);
                 binDAO.createBinaryResource(targetFile);
 
@@ -521,17 +521,17 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         if (pWorkflowModelId != null) {
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow();
-            mdoc.setWorkflow(workflow);
+            docM.setWorkflow(workflow);
 
             Collection<Task> runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
-            mailer.sendApproval(runningTasks, mdoc);
+            mailer.sendApproval(runningTasks, docM);
         }
 
-        mdoc.setTitle(pTitle);
-        mdoc.setDescription(pDescription);
+        docM.setTitle(pTitle);
+        docM.setDescription(pDescription);
 
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
@@ -546,70 +546,70 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                     acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
                 }
             }
-            mdoc.setACL(acl);
+            docM.setACL(acl);
         }
         Date now = new Date();
-        mdoc.setCreationDate(now);
-        mdoc.setLocation(folder);
-        mdoc.setCheckOutUser(user);
-        mdoc.setCheckOutDate(now);
+        docM.setCreationDate(now);
+        docM.setLocation(folder);
+        docM.setCheckOutUser(user);
+        docM.setCheckOutDate(now);
         newDoc.setCreationDate(now);
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
 
-        mdocDAO.createMDoc(mdoc);
-        return mdoc;
+        docMDAO.createDocM(docM);
+        return docM;
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate createMDocTemplate(String pWorkspaceId, String pId, String pDocumentType,
-            String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
+    public DocumentMasterTemplate createDocumentMasterTemplate(String pWorkspaceId, String pId, String pDocumentType,
+            String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         if (!NamingConvention.correct(pId)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
         }
-        MasterDocumentTemplate template = new MasterDocumentTemplate(user.getWorkspace(), pId, user, pDocumentType, pMask);
+        DocumentMasterTemplate template = new DocumentMasterTemplate(user.getWorkspace(), pId, user, pDocumentType, pMask);
         Date now = new Date();
         template.setCreationDate(now);
         template.setIdGenerated(idGenerated);
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attr.setMasterDocumentTemplate(template);
+            attr.setDocumentMasterTemplate(template);
             attrs.add(attr);
         }
         template.setAttributeTemplates(attrs);
 
-        new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em).createMDocTemplate(template);
+        new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).createDocMTemplate(template);
         return template;
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument moveMDoc(String pParentFolder, MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, MasterDocumentNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster moveDocumentMaster(String pParentFolder, DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
         //TODO security check if both parameter belong to the same workspace
-        User user = userManager.checkWorkspaceWriteAccess(pMDocPK.getWorkspaceId());
+        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
         Folder newLocation = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
         checkWritingRight(user, newLocation);
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
-        //Check access rights on mdoc
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
+        //Check access rights on docM
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocMPK.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
+        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-        Folder oldLocation = mdoc.getLocation();
+        Folder oldLocation = docM.getLocation();
         String owner = oldLocation.getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException6");
         } else {
-            mdoc.setLocation(newLocation);
-            if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-                mdoc = mdoc.clone();
-                mdoc.removeLastIteration();
+            docM.setLocation(newLocation);
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
             }
-            return mdoc;
+            return docM;
         }
     }
 
@@ -633,14 +633,14 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public MasterDocument approve(String pWorkspaceId, TaskKey pTaskKey, String pComment)
+    public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        MasterDocument mdoc = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
 
 
         if (!task.getWorker().equals(user)) {
@@ -651,39 +651,39 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException15");
         }
 
-        if (mdoc.isCheckedOut()) {
+        if (docM.isCheckedOut()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
         }
 
         int previousStep = workflow.getCurrentStep();
-        task.approve(pComment, mdoc.getLastIteration().getIteration());
+        task.approve(pComment, docM.getLastIteration().getIteration());
         int currentStep = workflow.getCurrentStep();
 
-        User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(mdoc);
+        User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(docM);
 
         if (previousStep != currentStep && subscribers.length != 0) {
-            mailer.sendStateNotification(subscribers, mdoc);
+            mailer.sendStateNotification(subscribers, docM);
         }
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
         for (Task runningTask : runningTasks) {
             runningTask.start();
         }
-        mailer.sendApproval(runningTasks, mdoc);
-        return mdoc;
+        mailer.sendApproval(runningTasks, docM);
+        return docM;
     }
 
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public MasterDocument reject(String pWorkspaceId, TaskKey pTaskKey, String pComment)
+    public DocumentMaster reject(String pWorkspaceId, TaskKey pTaskKey, String pComment)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        MasterDocument mdoc = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
 
         if (!task.getWorker().equals(user)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
@@ -693,53 +693,53 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException15");
         }
 
-        if (mdoc.isCheckedOut()) {
+        if (docM.isCheckedOut()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
         }
 
-        task.reject(pComment, mdoc.getLastIteration().getIteration());
-        return mdoc;
+        task.reject(pComment, docM.getLastIteration().getIteration());
+        return docM;
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument checkOut(MasterDocumentKey pMDocPK)
-            throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, CreationException {
-        User user = userManager.checkWorkspaceWriteAccess(pMDocPK.getWorkspaceId());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
-        //Check access rights on mdoc
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
+    public DocumentMaster checkOut(DocumentMasterKey pDocMPK)
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, CreationException {
+        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
+        //Check access rights on docM
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocMPK.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
+        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-        String owner = mdoc.getLocation().getOwner();
+        String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
-        if (mdoc.isCheckedOut()) {
+        if (docM.isCheckedOut()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException37");
         }
 
-        Document beforeLastDocument = mdoc.getLastIteration();
+        Document beforeLastDocument = docM.getLastIteration();
 
-        Document newDoc = mdoc.createNextIteration(user);
+        Document newDoc = docM.createNextIteration(user);
         //We persist the doc as a workaround for a bug which was introduced
         //since glassfish 3 that set the DTYPE to null in the instance attribute table
         em.persist(newDoc);
         Date now = new Date();
         newDoc.setCreationDate(now);
-        mdoc.setCheckOutUser(user);
-        mdoc.setCheckOutDate(now);
+        docM.setCheckOutUser(user);
+        docM.setCheckOutDate(now);
 
         if (beforeLastDocument != null) {
             BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
             for (BinaryResource sourceFile : beforeLastDocument.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
-                String fullName = mdoc.getWorkspaceId() + "/documents/" + mdoc.getId() + "/" + mdoc.getVersion() + "/" + newDoc.getIteration() + "/" + fileName;
+                String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/" + docM.getVersion() + "/" + newDoc.getIteration() + "/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length);
                 binDAO.createBinaryResource(targetFile);
                 newDoc.addFile(targetFile);
@@ -765,18 +765,18 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             newDoc.setInstanceAttributes(attrs);
         }
 
-        return mdoc;
+        return docM;
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument saveTags(MasterDocumentKey pMDocPK, String[] pTags)
-            throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pMDocPK.getWorkspaceId());
+    public DocumentMaster saveTags(DocumentMasterKey pDocMPK, String[] pTags)
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
         Locale userLocale = new Locale(user.getLanguage());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(userLocale, em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
-        String owner = mdoc.getLocation().getOwner();
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(userLocale, em);
+        DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
+        String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
@@ -802,33 +802,33 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             }
         }
 
-        mdoc.setTags(tags);
+        docM.setTags(tags);
 
-        if ((mdoc.isCheckedOut()) && (!mdoc.getCheckOutUser().equals(user))) {
-            mdoc = mdoc.clone();
-            mdoc.removeLastIteration();
+        if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+            docM = docM.clone();
+            docM.removeLastIteration();
         }
-        return mdoc;
+        return docM;
     }
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument undoCheckOut(MasterDocumentKey pMDocPK)
-            throws WorkspaceNotFoundException, MasterDocumentNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocPK.getWorkspaceId());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
-        if (mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(user)) {
-            Document doc = mdoc.removeLastIteration();
+    public DocumentMaster undoCheckOut(DocumentMasterKey pDocMPK)
+            throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
+        if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
+            Document doc = docM.removeLastIteration();
             for (BinaryResource file : doc.getAttachedFiles()) {
                 dataManager.delData(file);
             }
 
             DocumentDAO docDAO = new DocumentDAO(em);
             docDAO.removeDoc(doc);
-            mdoc.setCheckOutDate(null);
-            mdoc.setCheckOutUser(null);
-            return mdoc;
+            docM.setCheckOutDate(null);
+            docM.setCheckOutUser(null);
+            return docM;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException19");
         }
@@ -836,33 +836,33 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument checkIn(MasterDocumentKey pMDocPK)
-            throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pMDocPK.getWorkspaceId());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
-        //Check access rights on mdoc
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
+    public DocumentMaster checkIn(DocumentMasterKey pDocMPK)
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
+        //Check access rights on docM
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocMPK.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
+        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-        if (mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(user)) {
-            User[] subscribers = new SubscriptionDAO(em).getIterationChangeEventSubscribers(mdoc);
+        if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
+            User[] subscribers = new SubscriptionDAO(em).getIterationChangeEventSubscribers(docM);
 
-            mdoc.setCheckOutDate(null);
-            mdoc.setCheckOutUser(null);
+            docM.setCheckOutDate(null);
+            docM.setCheckOutUser(null);
 
             if (subscribers.length != 0) {
-                mailer.sendIterationNotification(subscribers, mdoc);
+                mailer.sendIterationNotification(subscribers, docM);
             }
 
-            for (BinaryResource bin : mdoc.getLastIteration().getAttachedFiles()) {
+            for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
                 File physicalFile = dataManager.getDataFile(bin);
                 indexer.addToIndex(bin.getFullName(), physicalFile.getPath());
             }
 
-            return mdoc;
+            return docM;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
         }
@@ -870,7 +870,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentKey[] delFolder(String pCompletePath)
+    public DocumentMasterKey[] deleteFolder(String pCompletePath)
             throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
@@ -880,12 +880,12 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         if (((owner != null) && (!owner.equals(user.getLogin()))) || (folder.isRoot()) || folder.isHome()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException21");
         } else {
-            List<MasterDocument> mdocs = folderDAO.removeFolder(folder);
-            MasterDocumentKey[] pks = new MasterDocumentKey[mdocs.size()];
+            List<DocumentMaster> docMs = folderDAO.removeFolder(folder);
+            DocumentMasterKey[] pks = new DocumentMasterKey[docMs.size()];
             int i = 0;
-            for (MasterDocument mdoc : mdocs) {
-                pks[i++] = mdoc.getKey();
-                for (Document doc : mdoc.getDocumentIterations()) {
+            for (DocumentMaster docM : docMs) {
+                pks[i++] = docM.getKey();
+                for (Document doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
                         dataManager.delData(file);
@@ -898,7 +898,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentKey[] moveFolder(String pCompletePath, String pDestParentFolder, String pDestFolder)
+    public DocumentMasterKey[] moveFolder(String pCompletePath, String pDestParentFolder, String pDestFolder)
             throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, CreationException, FolderAlreadyExistsException {
         //TODO security check if both parameter belong to the same workspace
         String workspace = Folder.parseWorkspaceId(pCompletePath);
@@ -913,11 +913,11 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException23");
         } else {
             Folder newFolder = createFolder(pDestParentFolder, pDestFolder);
-            List<MasterDocument> mdocs = folderDAO.moveFolder(folder, newFolder);
-            MasterDocumentKey[] pks = new MasterDocumentKey[mdocs.size()];
+            List<DocumentMaster> docMs = folderDAO.moveFolder(folder, newFolder);
+            DocumentMasterKey[] pks = new DocumentMasterKey[docMs.size()];
             int i = 0;
-            for (MasterDocument mdoc : mdocs) {
-                pks[i++] = mdoc.getKey();
+            for (DocumentMaster docM : docMs) {
+                pks[i++] = docM.getKey();
             }
             return pks;
         }
@@ -925,25 +925,25 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public void delMDoc(MasterDocumentKey pMDocPK)
-            throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pMDocPK.getWorkspaceId());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(pMDocPK);
+    public void deleteDocumentMaster(DocumentMasterKey pDocMPK)
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
         //Check access rights on
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pMDocPK.getWorkspaceId());
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocMPK.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin && mdoc.getACL() != null && !mdoc.getACL().hasWriteAccess(user)) {
+        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-        String owner = mdoc.getLocation().getOwner();
+        String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException22");
         }
 
-        mdocDAO.removeMDoc(mdoc);
+        docMDAO.removeDocM(docM);
 
-        for (Document doc : mdoc.getDocumentIterations()) {
+        for (Document doc : docM.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
                 indexer.removeFromIndex(file.getFullName());
                 dataManager.delData(file);
@@ -953,11 +953,11 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public void delMDocTemplate(MasterDocumentTemplateKey pKey)
-            throws WorkspaceNotFoundException, AccessRightException, MasterDocumentTemplateNotFoundException, UserNotFoundException {
+    public void deleteDocumentMasterTemplate(DocumentMasterTemplateKey pKey)
+            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
-        MasterDocumentTemplateDAO templateDAO = new MasterDocumentTemplateDAO(new Locale(user.getLanguage()), em);
-        MasterDocumentTemplate template = templateDAO.removeMDocTemplate(pKey);
+        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
+        DocumentMasterTemplate template = templateDAO.removeDocMTemplate(pKey);
         for (BinaryResource file : template.getAttachedFiles()) {
             dataManager.delData(file);
         }
@@ -965,20 +965,20 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument removeFileFromDocument(String pFullName) throws WorkspaceNotFoundException, MasterDocumentNotFoundException, NotAllowedException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster removeFileFromDocument(String pFullName) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         Document document = binDAO.getDocumentOwner(file);
-        MasterDocument mdoc = document.getMasterDocument();
-        //check access rights on mdoc ?
-        if (mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(user) && mdoc.getLastIteration().equals(document)) {
+        DocumentMaster docM = document.getDocumentMaster();
+        //check access rights on docM ?
+        if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
             dataManager.delData(file);
             document.removeFile(file);
             binDAO.removeBinaryResource(file);
-            return mdoc;
+            return docM;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException24");
         }
@@ -986,13 +986,13 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocumentTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, MasterDocumentTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         //TODO checkWorkspaceWriteAccess ?
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        MasterDocumentTemplate template = binDAO.getTemplateOwner(file);
+        DocumentMasterTemplate template = binDAO.getTemplateOwner(file);
         dataManager.delData(file);
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
@@ -1001,13 +1001,13 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument updateDoc(DocumentKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, AccessRightException, UserNotFoundException {
+    public DocumentMaster updateDocument(DocumentKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument mdoc = mdocDAO.loadMDoc(new MasterDocumentKey(pKey.getWorkspaceId(), pKey.getMasterDocumentId(), pKey.getMasterDocumentVersion()));
-        //check access rights on mdoc ?
-        if (mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(user) && mdoc.getLastIteration().getKey().equals(pKey)) {
-            Document doc = mdoc.getLastIteration();
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pKey.getWorkspaceId(), pKey.getDocumentMasterId(), pKey.getDocumentMasterVersion()));
+        //check access rights on docM ?
+        if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().getKey().equals(pKey)) {
+            Document doc = docM.getLastIteration();
             Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
             for (DocumentKey key : pLinkKeys) {
                 links.add(new DocumentToDocumentLink(doc, key));
@@ -1064,7 +1064,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             doc.setRevisionNote(pRevisionNote);
             doc.setLinkedDocuments(links);
             //doc.setInstanceAttributes(attrs);
-            return mdoc;
+            return docM;
 
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException25");
@@ -1074,36 +1074,36 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public MasterDocument[] createVersion(MasterDocumentKey pOriginalMDocPK,
-            String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, WorkflowModelNotFoundException, AccessRightException, MasterDocumentAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, CreationException {
-        User user = userManager.checkWorkspaceWriteAccess(pOriginalMDocPK.getWorkspaceId());
-        MasterDocumentDAO mdocDAO = new MasterDocumentDAO(new Locale(user.getLanguage()), em);
-        MasterDocument originalMDoc = mdocDAO.loadMDoc(pOriginalMDocPK);
-        Folder folder = originalMDoc.getLocation();
+    public DocumentMaster[] createVersion(DocumentMasterKey pOriginalDocMPK,
+            String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, CreationException {
+        User user = userManager.checkWorkspaceWriteAccess(pOriginalDocMPK.getWorkspaceId());
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster originalDocM = docMDAO.loadDocM(pOriginalDocMPK);
+        Folder folder = originalDocM.getLocation();
         checkWritingRight(user, folder);
 
-        if (originalMDoc.isCheckedOut()) {
+        if (originalDocM.isCheckedOut()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException26");
         }
 
-        if (originalMDoc.getNumberOfIterations() == 0) {
+        if (originalDocM.getNumberOfIterations() == 0) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException27");
         }
 
-        Version version = new Version(originalMDoc.getVersion());
+        Version version = new Version(originalDocM.getVersion());
         version.increase();
-        MasterDocument mdoc = new MasterDocument(originalMDoc.getWorkspace(), originalMDoc.getId(), version, user);
-        mdoc.setType(originalMDoc.getType());
-        //create the first iteration which is a copy of the last one of the original mdoc
+        DocumentMaster docM = new DocumentMaster(originalDocM.getWorkspace(), originalDocM.getId(), version, user);
+        docM.setType(originalDocM.getType());
+        //create the first iteration which is a copy of the last one of the original docM
         //of course we duplicate the iteration only if it exists !
-        Document lastDoc = originalMDoc.getLastIteration();
-        Document firstIte = mdoc.createNextIteration(user);
+        Document lastDoc = originalDocM.getLastIteration();
+        Document firstIte = docM.createNextIteration(user);
         if (lastDoc != null) {
             BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
             for (BinaryResource sourceFile : lastDoc.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
-                String fullName = mdoc.getWorkspaceId() + "/documents/" + mdoc.getId() + "/" + version + "/1/" + fileName;
+                String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/" + version + "/1/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length);
                 binDAO.createBinaryResource(targetFile);
                 firstIte.addFile(targetFile);
@@ -1130,16 +1130,16 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         if (pWorkflowModelId != null) {
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow();
-            mdoc.setWorkflow(workflow);
+            docM.setWorkflow(workflow);
 
             Collection<Task> runningTasks = workflow.getRunningTasks();
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
-            mailer.sendApproval(runningTasks, mdoc);
+            mailer.sendApproval(runningTasks, docM);
         }
-        mdoc.setTitle(pTitle);
-        mdoc.setDescription(pDescription);
+        docM.setTitle(pTitle);
+        docM.setDescription(pDescription);
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
             if (pACLUserEntries != null) {
@@ -1153,58 +1153,58 @@ public class CommandBean implements ICommandWS, ICommandLocal {
                     acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
                 }
             }
-            mdoc.setACL(acl);
+            docM.setACL(acl);
         }
         Date now = new Date();
-        mdoc.setCreationDate(now);
-        mdoc.setLocation(folder);
-        mdoc.setCheckOutUser(user);
-        mdoc.setCheckOutDate(now);
+        docM.setCreationDate(now);
+        docM.setLocation(folder);
+        docM.setCheckOutUser(user);
+        docM.setCheckOutDate(now);
         firstIte.setCreationDate(now);
 
-        mdocDAO.createMDoc(mdoc);
-        return new MasterDocument[]{originalMDoc, mdoc};
+        docMDAO.createDocM(docM);
+        return new DocumentMaster[]{originalDocM, docM};
     }
 
     @RolesAllowed("users")
     @Override
-    public void subscribeToStateChangeEvent(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocPK.getWorkspaceId());
-        MasterDocument mdoc = new MasterDocumentDAO(new Locale(user.getLanguage()), em).loadMDoc(pMDocPK);
-        String owner = mdoc.getLocation().getOwner();
+    public void subscribeToStateChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+        DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).loadDocM(pDocMPK);
+        String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException30");
         }
 
-        new SubscriptionDAO(em).createStateChangeSubscription(new StateChangeSubscription(user, mdoc));
+        new SubscriptionDAO(em).createStateChangeSubscription(new StateChangeSubscription(user, docM));
     }
 
     @RolesAllowed("users")
     @Override
-    public void unsubscribeToStateChangeEvent(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocPK.getWorkspaceId());
-        SubscriptionKey key = new SubscriptionKey(user.getWorkspaceId(), user.getLogin(), pMDocPK.getWorkspaceId(), pMDocPK.getId(), pMDocPK.getVersion());
+    public void unsubscribeToStateChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+        SubscriptionKey key = new SubscriptionKey(user.getWorkspaceId(), user.getLogin(), pDocMPK.getWorkspaceId(), pDocMPK.getId(), pDocMPK.getVersion());
         new SubscriptionDAO(em).removeStateChangeSubscription(key);
     }
 
     @RolesAllowed("users")
     @Override
-    public void subscribeToIterationChangeEvent(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocPK.getWorkspaceId());
-        MasterDocument mdoc = new MasterDocumentDAO(new Locale(user.getLanguage()), em).getMDocRef(pMDocPK);
-        String owner = mdoc.getLocation().getOwner();
+    public void subscribeToIterationChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+        DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).getDocMRef(pDocMPK);
+        String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException30");
         }
 
-        new SubscriptionDAO(em).createIterationChangeSubscription(new IterationChangeSubscription(user, mdoc));
+        new SubscriptionDAO(em).createIterationChangeSubscription(new IterationChangeSubscription(user, docM));
     }
 
     @RolesAllowed("users")
     @Override
-    public void unsubscribeToIterationChangeEvent(MasterDocumentKey pMDocPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pMDocPK.getWorkspaceId());
-        SubscriptionKey key = new SubscriptionKey(user.getWorkspaceId(), user.getLogin(), pMDocPK.getWorkspaceId(), pMDocPK.getId(), pMDocPK.getVersion());
+    public void unsubscribeToIterationChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+        SubscriptionKey key = new SubscriptionKey(user.getWorkspaceId(), user.getLogin(), pDocMPK.getWorkspaceId(), pDocMPK.getId(), pDocMPK.getVersion());
         new SubscriptionDAO(em).removeIterationChangeSubscription(key);
     }
 

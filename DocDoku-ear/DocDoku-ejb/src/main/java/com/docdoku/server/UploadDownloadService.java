@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,14 +24,14 @@ import com.docdoku.core.services.FileAlreadyExistsException;
 import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.MasterDocumentNotFoundException;
-import com.docdoku.core.services.MasterDocumentTemplateNotFoundException;
+import com.docdoku.core.services.DocumentMasterNotFoundException;
+import com.docdoku.core.services.DocumentMasterTemplateNotFoundException;
 import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.UserNotActiveException;
 import com.docdoku.core.services.UserNotFoundException;
 import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.core.document.DocumentKey;
-import com.docdoku.core.document.MasterDocumentTemplateKey;
+import com.docdoku.core.document.DocumentMasterTemplateKey;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,8 +64,8 @@ public class UploadDownloadService implements IUploadDownloadWS {
     public
     @XmlMimeType("application/octet-stream")
     @Override
-    DataHandler downloadFromDocument(String workspaceId, String mdocID, String mdocVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        String fullName = workspaceId + "/documents/" + mdocID + "/" + mdocVersion + "/" + iteration + "/" + fileName;
+    DataHandler downloadFromDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        String fullName = workspaceId + "/documents/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
         File dataFile = commandService.getDataFile(fullName);
 
         return new DataHandler(new FileDataSource(dataFile));
@@ -84,12 +84,12 @@ public class UploadDownloadService implements IUploadDownloadWS {
 
     @RolesAllowed("users")
     @Override
-    public void uploadToDocument(String workspaceId, String mdocID, String mdocVersion, int iteration, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, MasterDocumentNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
+    public void uploadToDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName,
+            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
         DocumentKey docPK = null;
         File vaultFile = null;
 
-        docPK = new DocumentKey(workspaceId, mdocID, mdocVersion, iteration);
+        docPK = new DocumentKey(workspaceId, docMId, docMVersion, iteration);
 
         vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
 
@@ -108,11 +108,11 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @Override
     public void uploadToTemplate(String workspaceId, String templateID, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, MasterDocumentTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
-        MasterDocumentTemplateKey templatePK = null;
+            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
+        DocumentMasterTemplateKey templatePK = null;
         File vaultFile = null;
 
-        templatePK = new MasterDocumentTemplateKey(workspaceId, templateID);
+        templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
         vaultFile = commandService.saveFileInTemplate(templatePK, fileName, 0);
         vaultFile.getParentFile().mkdirs();
         vaultFile.createNewFile();
