@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,12 +22,12 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.Prefs;
-import com.docdoku.client.ui.template.EditMDocTemplateDialog;
+import com.docdoku.client.ui.template.EditDocMTemplateDialog;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
@@ -55,11 +55,11 @@ public class EditElementAction extends ClientAbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent pAE) {
-        final MasterDocument mdoc = mOwner.getSelectedMDoc();
-        MasterDocumentTemplate template = mOwner.getSelectedMDocTemplate();
+        final DocumentMaster docM = mOwner.getSelectedDocM();
+        DocumentMasterTemplate template = mOwner.getSelectedDocMTemplate();
         WorkflowModel wfModel = mOwner.getSelectedWorkflowModel();
 
-        if (mdoc != null) {
+        if (docM != null) {
             final ActionListener okAction = new ActionListener() {
 
                 @Override
@@ -76,19 +76,19 @@ public class EditElementAction extends ClientAbstractAction {
                                 // it's better to gather all in one
                                 for (BinaryResource fileToRemove : source.getFilesToRemove()) {
                                     controller.removeFileFromDocument(fileToRemove);
-                                    new File(Config.getCheckOutFolder(doc.getMasterDocument()), fileToRemove.getName()).delete();
-                                    Prefs.removeDocInfo(doc.getMasterDocument(), fileToRemove.getName());
+                                    new File(Config.getCheckOutFolder(doc.getDocumentMaster()), fileToRemove.getName()).delete();
+                                    Prefs.removeDocInfo(doc.getDocumentMaster(), fileToRemove.getName());
                                 }
 
                                 for (File fileToAdd : source.getFilesToAdd()) {
                                     try {
                                         controller.saveFile(source, doc, fileToAdd);
-                                        File destFolder = Config.getCheckOutFolder(doc.getMasterDocument());
+                                        File destFolder = Config.getCheckOutFolder(doc.getDocumentMaster());
                                         destFolder.mkdirs();
                                         File destFile = new File(destFolder, fileToAdd.getName());
 
                                         FileIO.copyFile(fileToAdd, destFile);
-                                        Prefs.storeDocInfo(mdoc, destFile.getName(), destFile.lastModified());
+                                        Prefs.storeDocInfo(docM, destFile.getName(), destFile.lastModified());
                                     } catch (InterruptedIOException pIIOEx) {
                                     }
                                 }
@@ -114,8 +114,8 @@ public class EditElementAction extends ClientAbstractAction {
             final ActionListener addAttributeAction = new AddAttributeActionListener();
             final ActionListener addLinkAction = new AddLinkActionListener();
             final ActionListener scanAction = new ScanActionListener();
-            if (mdoc.isCheckedOut()) {
-                new EditDocDialog(mOwner, mdoc.getLastIteration(), okAction,
+            if (docM.isCheckedOut()) {
+                new EditDocDialog(mOwner, docM.getLastIteration(), okAction,
                         editAction, scanAction, addAttributeAction, addLinkAction);
             } else if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
                     mOwner,
@@ -129,11 +129,11 @@ public class EditElementAction extends ClientAbstractAction {
                     public void run() {
                         try {
                             mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                            final MasterDocument newMDoc = MainController.getInstance().checkOut(mdoc);
-                            FileIO.rmDir(Config.getCheckOutFolder(newMDoc));
-                            for (BinaryResource remoteFile : newMDoc.getLastIteration().getAttachedFiles()) {
+                            final DocumentMaster newDocM = MainController.getInstance().checkOut(docM);
+                            FileIO.rmDir(Config.getCheckOutFolder(newDocM));
+                            for (BinaryResource remoteFile : newDocM.getLastIteration().getAttachedFiles()) {
                                 try {
-                                    MainModel.getInstance().getFile(mOwner, newMDoc.getLastIteration(), remoteFile);
+                                    MainModel.getInstance().getFile(mOwner, newDocM.getLastIteration(), remoteFile);
                                 } catch (InterruptedIOException pIIOEx) {
                                 }
                             }
@@ -141,7 +141,7 @@ public class EditElementAction extends ClientAbstractAction {
 
                                 @Override
                                 public void run() {
-                                    new EditDocDialog(mOwner, newMDoc.getLastIteration(), okAction,
+                                    new EditDocDialog(mOwner, newDocM.getLastIteration(), okAction,
                                     editAction, addAttributeAction, addLinkAction, scanAction);
                                 }
                             });
@@ -164,13 +164,13 @@ public class EditElementAction extends ClientAbstractAction {
 
                 @Override
                 public void actionPerformed(ActionEvent pAE) {
-                    final EditMDocTemplateDialog source = (EditMDocTemplateDialog) pAE.getSource();
+                    final EditDocMTemplateDialog source = (EditDocMTemplateDialog) pAE.getSource();
                     Thread worker = new Thread(new Runnable() {
 
                         @Override
                         public void run() {
                             MainController controller = MainController.getInstance();
-                            MasterDocumentTemplate template = source.getEditedTemplate();
+                            DocumentMasterTemplate template = source.getEditedTemplate();
                             try {
                                 // TODO the operation is split in 3 Tx may be
                                 // it's better to gather all in one
@@ -203,7 +203,7 @@ public class EditElementAction extends ClientAbstractAction {
                                     }
                                 }
 
-                                controller.updateMDocTemplate(template, source.getDocumentType(), source.getMask(), source.getAttributeTemplates(), source.isIdGenerated());
+                                controller.updateDocMTemplate(template, source.getDocumentType(), source.getMask(), source.getAttributeTemplates(), source.isIdGenerated());
                                 source.dispose();
                             } catch (Exception pEx) {
                                 String message = pEx.getMessage() == null ? I18N.BUNDLE.getString("Error_unknown") : pEx.getMessage();
@@ -220,7 +220,7 @@ public class EditElementAction extends ClientAbstractAction {
             final ActionListener editFileAction = new EditFileActionListener();
             final ActionListener scanAction = new ScanActionListener();
             final ActionListener addAttributeTemplateAction = new AddAttributeTemplateActionListener();
-            new EditMDocTemplateDialog(mOwner, action, editFileAction, scanAction, addAttributeTemplateAction, template);
+            new EditDocMTemplateDialog(mOwner, action, editFileAction, scanAction, addAttributeTemplateAction, template);
         } else if (wfModel != null) {
             final WorkflowModel clonedModel = wfModel.clone();
             final ActionListener saveAsWorkflowModelAction = new SaveAsWorkflowModelActionListener();

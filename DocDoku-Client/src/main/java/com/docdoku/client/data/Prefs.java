@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,8 +20,8 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
 import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -63,27 +63,27 @@ public class Prefs {
         return Locale.getDefault();
     }
     
-    public static void storeDocInfo(MasterDocument pMDoc, String pKey, String pValue){
-        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pMDoc.getId()+"-"+pMDoc.getVersion());
+    public static void storeDocInfo(DocumentMaster pDocM, String pKey, String pValue){
+        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pDocM.getId()+"-"+pDocM.getVersion());
         node.put(pKey, pValue);
     }
     
-    public static void storeDocInfo(MasterDocument pMDoc, String pKey, long pValue){
-        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pMDoc.getId()+"-"+pMDoc.getVersion());
+    public static void storeDocInfo(DocumentMaster pDocM, String pKey, long pValue){
+        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pDocM.getId()+"-"+pDocM.getVersion());
         node.putLong(pKey, pValue);
     }
     
-    public static void removeDocInfo(MasterDocument pMDoc, String pKey){
-        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pMDoc.getId()+"-"+pMDoc.getVersion());
+    public static void removeDocInfo(DocumentMaster pDocM, String pKey){
+        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pDocM.getId()+"-"+pDocM.getVersion());
         node.remove(pKey);
     }
     
-    public static void removeDocNode(MasterDocument pMDoc){
-        removeDocNode(pMDoc.getKey());
+    public static void removeDocNode(DocumentMaster pDocM){
+        removeDocNode(pDocM.getKey());
     }
     
-    public static void removeDocNode(MasterDocumentKey pMDocPK){
-        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pMDocPK.getId()+"-"+pMDocPK.getVersion());
+    public static void removeDocNode(DocumentMasterKey pDocMPK){
+        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pDocMPK.getId()+"-"+pDocMPK.getVersion());
         try {
             node.removeNode();
         } catch (BackingStoreException pEx) {
@@ -91,13 +91,13 @@ public class Prefs {
         }
     }
     
-    public static String getDocInfo(MasterDocument pMDoc, String pKey){
-        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pMDoc.getId()+"-"+pMDoc.getVersion());
+    public static String getDocInfo(DocumentMaster pDocM, String pKey){
+        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pDocM.getId()+"-"+pDocM.getVersion());
         return node.get(pKey, null);
     }
     
-    public static long getLongDocInfo(MasterDocument pMDoc, String pKey){
-        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pMDoc.getId()+"-"+pMDoc.getVersion());
+    public static long getLongDocInfo(DocumentMaster pDocM, String pKey){
+        Preferences node=DOC_NODE.node(MainModel.getInstance().getWorkspace().getId()).node(pDocM.getId()+"-"+pDocM.getVersion());
         return node.getLong(pKey, 0);
     }
     

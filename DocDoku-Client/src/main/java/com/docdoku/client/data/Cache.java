@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,9 +22,9 @@ package com.docdoku.client.data;
 
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.document.Tag;
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.common.Workspace;
@@ -35,20 +35,20 @@ import java.util.*;
 
 public class Cache {
     
-    private Map<MasterDocumentKey, MasterDocument> mPK2MDoc;
-    private Map<String, Collection<MasterDocumentKey>> mPath2PKs;
+    private Map<DocumentMasterKey, DocumentMaster> mPK2DocM;
+    private Map<String, Collection<DocumentMasterKey>> mPath2PKs;
     private Map<String, Collection<FolderTreeNode>> mPath2Folders;
-    private Map<String, Collection<MasterDocumentKey>> mTag2PKs;
-    private SoftReference<Collection<MasterDocumentKey>> mCheckedOutPKs;
+    private Map<String, Collection<DocumentMasterKey>> mTag2PKs;
+    private SoftReference<Collection<DocumentMasterKey>> mCheckedOutPKs;
     private SoftReference<Collection<String>> mWorkflowModels;
     private Map<String,WorkflowModel> mID2WorkflowModel;
-    private SoftReference<Collection<String>> mMDocTemplates;
-    private Map<String,MasterDocumentTemplate> mID2MDocTemplate;
+    private SoftReference<Collection<String>> mDocMTemplates;
+    private Map<String,DocumentMasterTemplate> mID2DocMTemplate;
     private SoftReference<Collection<String>> mUsers;
     private SoftReference<Collection<String>> mTags;
     private Map<String,User> mLogin2User;
-    private SoftReference<Collection<MasterDocumentKey>> mIterationSubscriptions;
-    private SoftReference<Collection<MasterDocumentKey>> mStateSubscriptions;
+    private SoftReference<Collection<DocumentMasterKey>> mIterationSubscriptions;
+    private SoftReference<Collection<DocumentMasterKey>> mStateSubscriptions;
     
     private final String mLogin;
     private final String mPassword;
@@ -59,36 +59,36 @@ public class Cache {
         mLogin = pLogin;
         mPassword = pPassword;
         
-        mPK2MDoc = new SoftValueHashMap<MasterDocumentKey, MasterDocument>();
-        mPath2PKs = new SoftValueHashMap<String, Collection<MasterDocumentKey>>();
-        mTag2PKs = new SoftValueHashMap<String, Collection<MasterDocumentKey>>();
+        mPK2DocM = new SoftValueHashMap<DocumentMasterKey, DocumentMaster>();
+        mPath2PKs = new SoftValueHashMap<String, Collection<DocumentMasterKey>>();
+        mTag2PKs = new SoftValueHashMap<String, Collection<DocumentMasterKey>>();
         mPath2Folders = new SoftValueHashMap<String, Collection<FolderTreeNode>>();
         mID2WorkflowModel = new SoftValueHashMap<String,WorkflowModel>();
-        mID2MDocTemplate = new SoftValueHashMap<String,MasterDocumentTemplate>();
+        mID2DocMTemplate = new SoftValueHashMap<String,DocumentMasterTemplate>();
         mLogin2User = new SoftValueHashMap<String,User>();
     }
     
     
-    public MasterDocument getMDoc(MasterDocumentKey pPK) {
-        return mPK2MDoc.get(pPK);
+    public DocumentMaster getDocM(DocumentMasterKey pPK) {
+        return mPK2DocM.get(pPK);
     }
     
-    public MasterDocumentKey cacheMDoc(MasterDocument pMDoc) {
-        MasterDocumentKey pk =pMDoc.getKey();
+    public DocumentMasterKey cacheDocM(DocumentMaster pDocM) {
+        DocumentMasterKey pk =pDocM.getKey();
         
-        MasterDocument oldMDoc=mPK2MDoc.get(pk);
-        //firstable we remove all references of the old mdoc
-        if(oldMDoc!=null)
-            removeMDoc(oldMDoc);
+        DocumentMaster oldDocM=mPK2DocM.get(pk);
+        //firstable we remove all references of the old docM
+        if(oldDocM!=null)
+            removeDocM(oldDocM);
         
-        mPK2MDoc.put(pk, pMDoc);
+        mPK2DocM.put(pk, pDocM);
         
-        Collection<MasterDocumentKey> pks = mPath2PKs.get(pMDoc.getLocation().getCompletePath());
+        Collection<DocumentMasterKey> pks = mPath2PKs.get(pDocM.getLocation().getCompletePath());
         if (pks != null) {
             pks.add(pk);
         }
         
-        for(Tag tag:pMDoc.getTags()){
+        for(Tag tag:pDocM.getTags()){
             pks = mTag2PKs.get(tag.getLabel());
             if (pks != null) {
                 pks.add(pk);
@@ -96,42 +96,42 @@ public class Cache {
         }
         
         
-        if(pMDoc.isCheckedOutBy(mLogin)){
+        if(pDocM.isCheckedOutBy(mLogin)){
             if (mCheckedOutPKs != null) {
-                Collection<MasterDocumentKey> checkedOutPKs = mCheckedOutPKs.get();
+                Collection<DocumentMasterKey> checkedOutPKs = mCheckedOutPKs.get();
                 if (checkedOutPKs != null) {
                     checkedOutPKs.add(pk);
                 }
             }
         }
         
-        for(Tag tag:pMDoc.getTags())
+        for(Tag tag:pDocM.getTags())
             cacheTag(tag.getLabel());
         
-        System.out.println("Caching master document " + pMDoc);
+        System.out.println("Caching document master " + pDocM);
         return pk;
     }
     
-    public void removeMDoc(MasterDocument pMDoc) {
-        Collection<MasterDocumentKey> pks = mPath2PKs.get(pMDoc.getLocation().getCompletePath());
+    public void removeDocM(DocumentMaster pDocM) {
+        Collection<DocumentMasterKey> pks = mPath2PKs.get(pDocM.getLocation().getCompletePath());
         if (pks != null)
-            pks.remove(pMDoc.getKey());
+            pks.remove(pDocM.getKey());
         
-        for(Tag tag:pMDoc.getTags()){
+        for(Tag tag:pDocM.getTags()){
             pks = mTag2PKs.get(tag.getLabel());
             if (pks != null) {
-                pks.remove(pMDoc.getKey());
+                pks.remove(pDocM.getKey());
             }
         }
         
         if (mCheckedOutPKs != null) {
-            Collection<MasterDocumentKey> checkedOutPKs = mCheckedOutPKs.get();
+            Collection<DocumentMasterKey> checkedOutPKs = mCheckedOutPKs.get();
             if (checkedOutPKs != null) {
-                checkedOutPKs.remove(pMDoc.getKey());
+                checkedOutPKs.remove(pDocM.getKey());
             }
         }
-        mPK2MDoc.remove(pMDoc.getKey());
-        System.out.println("Removing from cache master document " + pMDoc);
+        mPK2DocM.remove(pDocM.getKey());
+        System.out.println("Removing from cache document master " + pDocM);
     }
 
     public void moveFolder(String pCompletePath, FolderTreeNode pNewFolderTreeNode){
@@ -146,12 +146,12 @@ public class Cache {
             parentFolderSubFolders.remove(new FolderTreeNode(pCompletePath, null));
             parentFolderSubFolders.add(pNewFolderTreeNode);
         }
-        Collection<MasterDocumentKey> pks = mPath2PKs.get(pCompletePath);
+        Collection<DocumentMasterKey> pks = mPath2PKs.get(pCompletePath);
         if (pks != null) {
-            for(MasterDocumentKey pk:pks){
-                MasterDocument mdoc = mPK2MDoc.get(pk);
-                if(mdoc!=null)
-                  mdoc.setLocation(pNewFolderTreeNode.getFolder());
+            for(DocumentMasterKey pk:pks){
+                DocumentMaster docM = mPK2DocM.get(pk);
+                if(docM!=null)
+                  docM.setLocation(pNewFolderTreeNode.getFolder());
 
             }
         }
@@ -183,23 +183,23 @@ public class Cache {
         if (parentFolderSubFolders != null) {
             parentFolderSubFolders.remove(new FolderTreeNode(pCompletePath, null));
         }
-        Collection<MasterDocumentKey> pks = mPath2PKs.get(pCompletePath);
+        Collection<DocumentMasterKey> pks = mPath2PKs.get(pCompletePath);
         if (pks != null) {
             if (mCheckedOutPKs != null) {
-                Collection<MasterDocumentKey> checkedOutPKs = mCheckedOutPKs.get();
+                Collection<DocumentMasterKey> checkedOutPKs = mCheckedOutPKs.get();
                 if (checkedOutPKs != null) {
                     checkedOutPKs.removeAll(pks);
                 }
             }
-            Iterator<Collection<MasterDocumentKey>> ite=mTag2PKs.values().iterator();
+            Iterator<Collection<DocumentMasterKey>> ite=mTag2PKs.values().iterator();
             while(ite.hasNext()){
-                Collection<MasterDocumentKey> taggedPKs =ite.next();
+                Collection<DocumentMasterKey> taggedPKs =ite.next();
                 if (taggedPKs != null) {
                     taggedPKs.removeAll(pks);
                 }
             }
-            for(MasterDocumentKey pk:pks)
-                mPK2MDoc.remove(pk);
+            for(DocumentMasterKey pk:pks)
+                mPK2DocM.remove(pk);
         }
         mPath2PKs.remove(pCompletePath);
         
@@ -221,12 +221,12 @@ public class Cache {
                 tags.remove(pTag);
             }
         }
-        Collection<MasterDocumentKey> pks = mTag2PKs.remove(pTag);
+        Collection<DocumentMasterKey> pks = mTag2PKs.remove(pTag);
         if (pks != null) {
-            for(MasterDocumentKey pk:pks){
-                MasterDocument mdoc=getMDoc(pk);
-                if (mdoc != null){
-                    mdoc.removeTag(new Tag(mdoc.getWorkspace(),pTag));
+            for(DocumentMasterKey pk:pks){
+                DocumentMaster docM=getDocM(pk);
+                if (docM != null){
+                    docM.removeTag(new Tag(docM.getWorkspace(),pTag));
                 }
             }
                 
@@ -245,122 +245,122 @@ public class Cache {
         System.out.println("Removing from cache workflow model " + pWorkflowModel);
     }
     
-    public void removeMDocTemplate(MasterDocumentTemplate pTemplate) {
-        if (mMDocTemplates != null) {
-            Collection<String> ids = mMDocTemplates.get();
+    public void removeDocMTemplate(DocumentMasterTemplate pTemplate) {
+        if (mDocMTemplates != null) {
+            Collection<String> ids = mDocMTemplates.get();
             if (ids != null) {
                 ids.remove(pTemplate.getId());
             }
         }
-        mID2MDocTemplate.remove(pTemplate.getId());
-        System.out.println("Removing from cache master document template " + pTemplate);
+        mID2DocMTemplate.remove(pTemplate.getId());
+        System.out.println("Removing from cache document master template " + pTemplate);
     }
     
-    public MasterDocument[] findMDocsByFolder(String pCompletePath) {
-        Collection<MasterDocumentKey> pks = mPath2PKs.get(pCompletePath);
+    public DocumentMaster[] findDocMsByFolder(String pCompletePath) {
+        Collection<DocumentMasterKey> pks = mPath2PKs.get(pCompletePath);
         if (pks != null) {
-            MasterDocument[] mdocs = new MasterDocument[pks.size()];
+            DocumentMaster[] docMs = new DocumentMaster[pks.size()];
             int i = 0;
-            for (MasterDocumentKey pk:pks) {
-                MasterDocument mdoc=getMDoc(pk);
-                if (mdoc == null)
+            for (DocumentMasterKey pk:pks) {
+                DocumentMaster docM=getDocM(pk);
+                if (docM == null)
                     return null;
                 else
-                    mdocs[i++]=mdoc;
+                    docMs[i++]=docM;
             }
-            return mdocs;
+            return docMs;
         }
         return null;
     }
     
-    public MasterDocument[] findMDocsByTag(String pTag) {
-        Collection<MasterDocumentKey> pks = mTag2PKs.get(pTag);
+    public DocumentMaster[] findDocMsByTag(String pTag) {
+        Collection<DocumentMasterKey> pks = mTag2PKs.get(pTag);
         if (pks != null) {
-            MasterDocument[] mdocs = new MasterDocument[pks.size()];
+            DocumentMaster[] docMs = new DocumentMaster[pks.size()];
             int i = 0;
-            for (MasterDocumentKey pk:pks) {
-                MasterDocument mdoc=getMDoc(pk);
-                if (mdoc == null)
+            for (DocumentMasterKey pk:pks) {
+                DocumentMaster docM=getDocM(pk);
+                if (docM == null)
                     return null;
                 else
-                    mdocs[i++]=mdoc;
+                    docMs[i++]=docM;
             }
-            return mdocs;
+            return docMs;
         }
         return null;
     }
     
-    public void cacheMDocsByFolder(String pCompletePath, MasterDocument[] pMDocs) {
-        Set<MasterDocumentKey> pks = new HashSet<MasterDocumentKey>();
-        for (MasterDocument mdoc:pMDocs) {
-            pks.add(cacheMDoc(mdoc));
+    public void cacheDocMsByFolder(String pCompletePath, DocumentMaster[] pDocMs) {
+        Set<DocumentMasterKey> pks = new HashSet<DocumentMasterKey>();
+        for (DocumentMaster docM:pDocMs) {
+            pks.add(cacheDocM(docM));
         }
         mPath2PKs.put(pCompletePath, pks);
-        System.out.println("Caching master documents by folder " + pCompletePath);
+        System.out.println("Caching document masters by folder " + pCompletePath);
     }
     
-    public void cacheMDocsByTag(String pTag, MasterDocument[] pMDocs) {
-        Set<MasterDocumentKey> pks = new HashSet<MasterDocumentKey>();
-        for (MasterDocument mdoc:pMDocs) {
-            pks.add(cacheMDoc(mdoc));
+    public void cacheDocMsByTag(String pTag, DocumentMaster[] pDocMs) {
+        Set<DocumentMasterKey> pks = new HashSet<DocumentMasterKey>();
+        for (DocumentMaster docM:pDocMs) {
+            pks.add(cacheDocM(docM));
         }
         mTag2PKs.put(pTag, pks);
-        System.out.println("Caching master documents by tag " + pTag);
+        System.out.println("Caching document masters by tag " + pTag);
     }
     
-    public MasterDocument[] getCheckedOutMDocs() {
+    public DocumentMaster[] getCheckedOutDocMs() {
         if (mCheckedOutPKs != null) {
-            Collection<MasterDocumentKey> pks = mCheckedOutPKs.get();
+            Collection<DocumentMasterKey> pks = mCheckedOutPKs.get();
             if (pks != null) {
-                MasterDocument[] mdocs = new MasterDocument[pks.size()];
+                DocumentMaster[] docMs = new DocumentMaster[pks.size()];
                 int i = 0;
-                for (MasterDocumentKey pk:pks) {
-                    MasterDocument mdoc=getMDoc(pk);
-                    if (mdoc == null)
+                for (DocumentMasterKey pk:pks) {
+                    DocumentMaster docM=getDocM(pk);
+                    if (docM == null)
                         return null;
                     else
-                        mdocs[i++]=mdoc;
+                        docMs[i++]=docM;
                 }
-                return mdocs;
+                return docMs;
             }
         }
         return null;
     }
     
-    public MasterDocumentKey[] getIterationSubscriptions() {
+    public DocumentMasterKey[] getIterationSubscriptions() {
         if (mIterationSubscriptions != null) {
-            Collection<MasterDocumentKey> subs = mIterationSubscriptions.get();
-            return subs==null?null:subs.toArray(new MasterDocumentKey[subs.size()]);
+            Collection<DocumentMasterKey> subs = mIterationSubscriptions.get();
+            return subs==null?null:subs.toArray(new DocumentMasterKey[subs.size()]);
         }
         return null;
     }
     
-    public MasterDocumentKey[] getStateSubscriptions() {
+    public DocumentMasterKey[] getStateSubscriptions() {
         if (mStateSubscriptions != null) {
-            Collection<MasterDocumentKey> subs = mStateSubscriptions.get();
-            return subs==null?null:subs.toArray(new MasterDocumentKey[subs.size()]);
+            Collection<DocumentMasterKey> subs = mStateSubscriptions.get();
+            return subs==null?null:subs.toArray(new DocumentMasterKey[subs.size()]);
         }
         return null;
     }
     
-    public void cacheIterationSubscriptions(MasterDocumentKey[] pSubKeys) {
-        mIterationSubscriptions = new SoftReference<Collection<MasterDocumentKey>>(new HashSet<MasterDocumentKey>(Arrays.asList(pSubKeys)));
+    public void cacheIterationSubscriptions(DocumentMasterKey[] pSubKeys) {
+        mIterationSubscriptions = new SoftReference<Collection<DocumentMasterKey>>(new HashSet<DocumentMasterKey>(Arrays.asList(pSubKeys)));
         System.out.println("Caching iteration subscriptions");
     }
     
-    public void cacheStateSubscriptions(MasterDocumentKey[] pSubKeys) {
-        mStateSubscriptions = new SoftReference<Collection<MasterDocumentKey>>(new HashSet<MasterDocumentKey>(Arrays.asList(pSubKeys)));
+    public void cacheStateSubscriptions(DocumentMasterKey[] pSubKeys) {
+        mStateSubscriptions = new SoftReference<Collection<DocumentMasterKey>>(new HashSet<DocumentMasterKey>(Arrays.asList(pSubKeys)));
         System.out.println("Caching state subscriptions");
     }
     
-    public void cacheCheckedOutMDocs(MasterDocument[] pMDocs) {
-        Set<MasterDocumentKey> pks = new HashSet<MasterDocumentKey>();
-        for (MasterDocument mdoc:pMDocs) {
-            pks.add(cacheMDoc(mdoc));
+    public void cacheCheckedOutDocMs(DocumentMaster[] pDocMs) {
+        Set<DocumentMasterKey> pks = new HashSet<DocumentMasterKey>();
+        for (DocumentMaster docM:pDocMs) {
+            pks.add(cacheDocM(docM));
         }
         
-        mCheckedOutPKs = new SoftReference<Collection<MasterDocumentKey>>(pks);
-        System.out.println("Caching checked out master documents");
+        mCheckedOutPKs = new SoftReference<Collection<DocumentMasterKey>>(pks);
+        System.out.println("Caching checked out document masters");
     }
     
     public WorkflowModel[] getWorkflowModels() {
@@ -382,14 +382,14 @@ public class Cache {
         return null;
     }
     
-    public MasterDocumentTemplate[] getMDocTemplates() {
-        if (mMDocTemplates != null) {
-            Collection<String> ids = mMDocTemplates.get();
+    public DocumentMasterTemplate[] getDocMTemplates() {
+        if (mDocMTemplates != null) {
+            Collection<String> ids = mDocMTemplates.get();
             if (ids != null) {
-                MasterDocumentTemplate[] templates = new MasterDocumentTemplate[ids.size()];
+                DocumentMasterTemplate[] templates = new DocumentMasterTemplate[ids.size()];
                 int i = 0;
                 for (String id:ids) {
-                    MasterDocumentTemplate template = getMDocTemplate(id);
+                    DocumentMasterTemplate template = getDocMTemplate(id);
                     if (template == null)
                         return null;
                     else
@@ -455,9 +455,9 @@ public class Cache {
         System.out.println("Caching tag " + pTag);
     }
     
-    public void cacheIterationSubscription(MasterDocumentKey pSubKey) {
+    public void cacheIterationSubscription(DocumentMasterKey pSubKey) {
         if (mIterationSubscriptions != null) {
-            Collection<MasterDocumentKey> subKeys = mIterationSubscriptions.get();
+            Collection<DocumentMasterKey> subKeys = mIterationSubscriptions.get();
             if (subKeys != null) {
                 subKeys.add(pSubKey);
             }
@@ -465,9 +465,9 @@ public class Cache {
         System.out.println("Caching iteration subscription " + pSubKey);
     }
     
-    public void cacheStateSubscription(MasterDocumentKey pSubKey) {
+    public void cacheStateSubscription(DocumentMasterKey pSubKey) {
         if (mStateSubscriptions != null) {
-            Collection<MasterDocumentKey> subKeys = mStateSubscriptions.get();
+            Collection<DocumentMasterKey> subKeys = mStateSubscriptions.get();
             if (subKeys != null) {
                 subKeys.add(pSubKey);
             }
@@ -475,9 +475,9 @@ public class Cache {
         System.out.println("Caching state subscription " + pSubKey);
     }
     
-    public void removeIterationSubscription(MasterDocumentKey pSubKey) {
+    public void removeIterationSubscription(DocumentMasterKey pSubKey) {
         if (mIterationSubscriptions != null) {
-            Collection<MasterDocumentKey> subKeys = mIterationSubscriptions.get();
+            Collection<DocumentMasterKey> subKeys = mIterationSubscriptions.get();
             if (subKeys != null) {
                 subKeys.remove(pSubKey);
             }
@@ -485,9 +485,9 @@ public class Cache {
         System.out.println("Removing from cache iteration subscription " + pSubKey);
     }
     
-    public void removeStateSubscription(MasterDocumentKey pSubKey) {
+    public void removeStateSubscription(DocumentMasterKey pSubKey) {
         if (mStateSubscriptions != null) {
-            Collection<MasterDocumentKey> subKeys = mStateSubscriptions.get();
+            Collection<DocumentMasterKey> subKeys = mStateSubscriptions.get();
             if (subKeys != null) {
                 subKeys.remove(pSubKey);
             }
@@ -501,15 +501,15 @@ public class Cache {
         for (WorkflowModel model:pModels)
             ids.add(cacheWorkflowModel(model));
         mWorkflowModels = new SoftReference<Collection<String>>(ids);
-        System.out.println("Caching work flow models");
+        System.out.println("Caching workflow models");
     }
     
-    public void cacheMDocTemplates(MasterDocumentTemplate[] pTemplates) {
+    public void cacheDocMTemplates(DocumentMasterTemplate[] pTemplates) {
         Set<String> ids = new LinkedHashSet<String>();
-        for (MasterDocumentTemplate template:pTemplates)
-            ids.add(cacheMDocTemplate(template));
-        mMDocTemplates = new SoftReference<Collection<String>>(ids);
-        System.out.println("Caching master document templates");
+        for (DocumentMasterTemplate template:pTemplates)
+            ids.add(cacheDocMTemplate(template));
+        mDocMTemplates = new SoftReference<Collection<String>>(ids);
+        System.out.println("Caching document master templates");
     }
     
     public void cacheUsers(User[] pUsers) {
@@ -524,22 +524,22 @@ public class Cache {
         return mID2WorkflowModel.get(pID);
     }
     
-    public MasterDocumentTemplate getMDocTemplate(String pID) {
-        return mID2MDocTemplate.get(pID);
+    public DocumentMasterTemplate getDocMTemplate(String pID) {
+        return mID2DocMTemplate.get(pID);
     }
     
-    public String cacheMDocTemplate(MasterDocumentTemplate pTemplate) {
+    public String cacheDocMTemplate(DocumentMasterTemplate pTemplate) {
         String id = pTemplate.getId();
-        mID2MDocTemplate.put(id, pTemplate);
+        mID2DocMTemplate.put(id, pTemplate);
         
-        if (mMDocTemplates != null) {
-            Collection<String> ids = mMDocTemplates.get();
+        if (mDocMTemplates != null) {
+            Collection<String> ids = mDocMTemplates.get();
             if (ids != null) {
                 ids.add(id);
             }
         }
         
-        System.out.println("Caching master document template " + pTemplate);
+        System.out.println("Caching document master template " + pTemplate);
         return id;
     }
     
@@ -610,17 +610,17 @@ public class Cache {
     public void clear() {
         mCheckedOutPKs = null;
         mWorkflowModels = null;
-        mMDocTemplates = null;
+        mDocMTemplates = null;
         mUsers = null;
         mTags = null;
         mIterationSubscriptions = null;
         mStateSubscriptions = null;
-        mPK2MDoc.clear();
+        mPK2DocM.clear();
         mPath2PKs.clear();
         mTag2PKs.clear();
         mPath2Folders.clear();
         mID2WorkflowModel.clear();
-        mID2MDocTemplate.clear();
+        mID2DocMTemplate.clear();
         mLogin2User.clear();
         System.out.println("Cleaning out cache");
     }

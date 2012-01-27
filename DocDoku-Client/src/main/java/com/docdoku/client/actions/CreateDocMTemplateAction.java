@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -33,15 +33,15 @@ import javax.swing.JOptionPane;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.ui.template.CreateMDocTemplateDialog;
+import com.docdoku.client.ui.template.CreateDocMTemplateDialog;
 
-public class CreateMDocTemplateAction extends ClientAbstractAction {
+public class CreateDocMTemplateAction extends ClientAbstractAction {
     
-    public CreateMDocTemplateAction(ExplorerFrame pOwner) {
-        super(I18N.BUNDLE.getString("MDocTemplateCreation_title"), "/com/docdoku/client/resources/icons/document_notebook_new.png", pOwner);
-        putValue(Action.SHORT_DESCRIPTION, I18N.BUNDLE.getString("MDocTemplateCreation_short_desc"));
-        putValue(Action.LONG_DESCRIPTION, I18N.BUNDLE.getString("MDocTemplateCreation_long_desc"));
-        putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("MDocTemplateCreation_mnemonic_key")));
+    public CreateDocMTemplateAction(ExplorerFrame pOwner) {
+        super(I18N.BUNDLE.getString("DocMTemplateCreation_title"), "/com/docdoku/client/resources/icons/document_notebook_new.png", pOwner);
+        putValue(Action.SHORT_DESCRIPTION, I18N.BUNDLE.getString("DocMTemplateCreation_short_desc"));
+        putValue(Action.LONG_DESCRIPTION, I18N.BUNDLE.getString("DocMTemplateCreation_long_desc"));
+        putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("DocMTemplateCreation_mnemonic_key")));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CreateMDocTemplateAction extends ClientAbstractAction {
         ActionListener action = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pAE) {
-                final CreateMDocTemplateDialog source = (CreateMDocTemplateDialog) pAE.getSource();
+                final CreateDocMTemplateDialog source = (CreateDocMTemplateDialog) pAE.getSource();
                 Thread worker = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -59,7 +59,7 @@ public class CreateMDocTemplateAction extends ClientAbstractAction {
                             // TODO the operation is split in 3 Tx may be
                             // it's
                             // better to gather all in one
-                            MasterDocumentTemplate template=controller.createMDocTemplate(source.getMDocTemplateID(),source.getDocumentType(),source.getMask(), source.getAttributeTemplates(), source.isIdGenerated());
+                            DocumentMasterTemplate template=controller.createDocMTemplate(source.getDocMTemplateId(),source.getDocumentType(),source.getMask(), source.getAttributeTemplates(), source.isIdGenerated());
                             for(File fileToAdd:source.getFilesToAdd()){
                                 try{
                                     controller.saveFile(source, template, fileToAdd);
@@ -74,7 +74,7 @@ public class CreateMDocTemplateAction extends ClientAbstractAction {
                             }
                             //Force reload to cache template
                             //TODO remove this call it's a dirty patch
-                            controller.updateMDocTemplate(template,source.getDocumentType(), source.getMask(), source.getAttributeTemplates(), source.isIdGenerated());
+                            controller.updateDocMTemplate(template,source.getDocumentType(), source.getMask(), source.getAttributeTemplates(), source.isIdGenerated());
                             source.dispose();
                         } catch (Exception pEx) {
                             String message = pEx.getMessage()==null?I18N.BUNDLE
@@ -93,6 +93,6 @@ public class CreateMDocTemplateAction extends ClientAbstractAction {
         ActionListener editFileAction = new EditFileActionListener();
         ActionListener scanAction = new ScanActionListener();
         ActionListener addAttributeAction = new AddAttributeTemplateActionListener();
-        new CreateMDocTemplateDialog(mOwner, action, editFileAction, scanAction, addAttributeAction);
+        new CreateDocMTemplateDialog(mOwner, action, editFileAction, scanAction, addAttributeAction);
     }
 }

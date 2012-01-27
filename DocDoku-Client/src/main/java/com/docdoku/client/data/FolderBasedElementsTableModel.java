@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,8 +22,8 @@ package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.WorkflowModel;
 import java.util.Date;
@@ -32,7 +32,7 @@ import javax.swing.table.*;
 
 public class FolderBasedElementsTableModel extends AbstractTableModel implements ElementsTableModel {
     
-    private final static String MDOC_COLUMN_NAME[] =
+    private final static String DOCM_COLUMN_NAME[] =
     {
         I18N.BUNDLE.getString("Id_column_label"),
         I18N.BUNDLE.getString("Version_column_label"),
@@ -68,7 +68,7 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
     
     
     public FolderBasedElementsTableModel() {
-        mColumnName=MDOC_COLUMN_NAME;
+        mColumnName=DOCM_COLUMN_NAME;
     }
     
     @Override
@@ -100,36 +100,36 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
     @Override
     public Object getValueAt(int pRowIndex, int pColumnIndex) {
         Object element = mFolder.getElementChild(pRowIndex);       
-        if (element instanceof MasterDocument) {
-            MasterDocument mdoc = (MasterDocument)element;
-            Document doc = mdoc.getLastIteration();
+        if (element instanceof DocumentMaster) {
+            DocumentMaster docM = (DocumentMaster)element;
+            Document doc = docM.getLastIteration();
             switch (pColumnIndex) {
                 case 0 :
-                    return mdoc.getId();
+                    return docM.getId();
                 case 1 :
-                    return mdoc.getVersion();
+                    return docM.getVersion();
                 case 2 :
                     return new Integer((doc == null) ? 0 : doc.getIteration());
                 case 3 :
-                    String type = mdoc.getType();
+                    String type = docM.getType();
                     return type==null?"":type;
                 case 4 :
-                    String title=mdoc.getTitle();
+                    String title=docM.getTitle();
                     return title==null?"":title;
                 case 5 :
-                    return mdoc.getAuthor().getName();
+                    return docM.getAuthor().getName();
                 case 6 :
                     return doc == null ? "":doc.getCreationDate();
                 case 7 :
-                    return mdoc.getCreationDate();
+                    return docM.getCreationDate();
                 case 8 :
-                    User checkOutUser = mdoc.getCheckOutUser();
+                    User checkOutUser = docM.getCheckOutUser();
                     return checkOutUser==null?"":checkOutUser.getName();
                 case 9 :
-                    Date checkOutDate = mdoc.getCheckOutDate();
+                    Date checkOutDate = docM.getCheckOutDate();
                     return checkOutDate==null?"":checkOutDate;
                 case 10 :
-                    String lc = mdoc.getLifeCycleState();
+                    String lc = docM.getLifeCycleState();
                     return lc==null?"":lc;
             }
         } else if (element instanceof WorkflowModel) {
@@ -143,8 +143,8 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
                     return wfModel.getCreationDate();
             }
             
-        }else if (element instanceof MasterDocumentTemplate) {
-            MasterDocumentTemplate template=(MasterDocumentTemplate)element;
+        }else if (element instanceof DocumentMasterTemplate) {
+            DocumentMasterTemplate template=(DocumentMasterTemplate)element;
             switch (pColumnIndex) {
                 case 0 :
                     return template.getId();
@@ -187,7 +187,7 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
         else if(pFolder instanceof TemplateTreeNode)
             newColumnName=TEMPLATE_COLUMN_NAME;
         else
-            newColumnName=MDOC_COLUMN_NAME;
+            newColumnName=DOCM_COLUMN_NAME;
 
         mFolder = pFolder;
         if(!mColumnName.equals(newColumnName)){

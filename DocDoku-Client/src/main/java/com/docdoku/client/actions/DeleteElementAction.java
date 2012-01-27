@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,9 +24,9 @@ import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.data.TagTreeNode;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
@@ -52,14 +52,14 @@ public class DeleteElementAction extends ClientAbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent pAE) {
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
+        DocumentMaster docM = mOwner.getSelectedDocM();
         WorkflowModel wfModel = mOwner.getSelectedWorkflowModel();
         FolderTreeNode folderTreeNode = mOwner.getSelectedFolder();
-        MasterDocumentTemplate template=mOwner.getSelectedMDocTemplate();
+        DocumentMasterTemplate template=mOwner.getSelectedDocMTemplate();
         MainController controller = MainController.getInstance();
         
         try {
-            if (mdoc == null && wfModel == null && template == null && folderTreeNode != null) {
+            if (docM == null && wfModel == null && template == null && folderTreeNode != null) {
                 if(folderTreeNode instanceof TagTreeNode){
                     String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_tag"),folderTreeNode.getName());
                     if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
@@ -68,21 +68,21 @@ public class DeleteElementAction extends ClientAbstractAction {
                 }else{
                     String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_folder"),folderTreeNode.getCompletePath());
                     if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
-                        MasterDocumentKey[] pks=controller.delFolder(folderTreeNode.getCompletePath());
-                        for(MasterDocumentKey pk:pks){
+                        DocumentMasterKey[] pks=controller.delFolder(folderTreeNode.getCompletePath());
+                        for(DocumentMasterKey pk:pks){
                             FileIO.rmDir(Config.getCheckOutFolder(pk));
                             FileIO.rmDir(Config.getCacheFolder(pk));
                             Prefs.removeDocNode(pk);
                         }
                     }
                 }
-            } else if (mdoc != null){
-                String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_document"),mdoc);
+            } else if (docM != null){
+                String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_document"),docM);
                 if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner,questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
-                    controller.delMDoc(mdoc);
-                    FileIO.rmDir(Config.getCheckOutFolder(mdoc));
-                    FileIO.rmDir(Config.getCacheFolder(mdoc));
-                    Prefs.removeDocNode(mdoc);
+                    controller.delDocM(docM);
+                    FileIO.rmDir(Config.getCheckOutFolder(docM));
+                    FileIO.rmDir(Config.getCacheFolder(docM));
+                    Prefs.removeDocNode(docM);
                 }
             } else if (wfModel != null){
                 String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_workflow"),wfModel);
@@ -92,7 +92,7 @@ public class DeleteElementAction extends ClientAbstractAction {
             } else if (template != null){
                 String questionMsg = MessageFormat.format(I18N.BUNDLE.getString("DeleteElement_question_template"),template);               
                 if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner, questionMsg,I18N.BUNDLE.getString("DeleteElement_question_title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
-                    controller.delMDocTemplate(template);
+                    controller.delDocMTemplate(template);
                     FileIO.rmDir(Config.getCacheFolder(template));
                 }
             }

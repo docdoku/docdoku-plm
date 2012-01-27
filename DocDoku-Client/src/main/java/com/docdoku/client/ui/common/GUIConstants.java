@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -28,7 +28,7 @@ import java.awt.datatransfer.DataFlavor;
 
 public interface GUIConstants {
 
-    public final static String MDOC_FLAVOR = DataFlavor.javaJVMLocalObjectMimeType +  ";class=com.docdoku.core.document.MasterDocument";
+    public final static String DOCM_FLAVOR = DataFlavor.javaJVMLocalObjectMimeType +  ";class=com.docdoku.core.document.DocumentMaster";
     public final static Insets INSETS = new Insets(2, 5, 2, 5);
     public final static Insets MENU_INSETS = new Insets(0, 10, 0, 3);
     public final static String LARGE_ICON = "LargeIcon";

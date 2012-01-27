@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.client.ui.ExplorerFrame;
 
@@ -41,12 +41,12 @@ public class ApproveAction extends ClientAbstractAction {
     }
     
     public void actionPerformed(ActionEvent pAE) {
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
+        DocumentMaster docM = mOwner.getSelectedDocM();
         ActionListener action = new ActionListener() {
             public void actionPerformed(ActionEvent pAE) {
                 TaskDialog source = (TaskDialog) pAE.getSource();
                 Task task = source.getTask();
-                MasterDocument mdoc = source.getMDoc();
+                DocumentMaster docM = source.getDocM();
                 String comment = source.getComment();
                 MainController controller = MainController.getInstance();
                 if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mOwner, I18N.BUNDLE.getString("Approve_question"), I18N.BUNDLE.getString("Confirm_label"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)){
@@ -64,6 +64,6 @@ public class ApproveAction extends ClientAbstractAction {
                 }
             }
         };
-        new TaskDialog(mOwner, I18N.BUNDLE.getString("ApproveTask_title"), mdoc, action);
+        new TaskDialog(mOwner, I18N.BUNDLE.getString("ApproveTask_title"), docM, action);
     }
 }

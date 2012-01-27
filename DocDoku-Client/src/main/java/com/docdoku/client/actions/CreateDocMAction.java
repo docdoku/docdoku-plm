@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,7 +24,7 @@ import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import java.awt.Cursor;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
@@ -37,16 +37,16 @@ import javax.swing.KeyStroke;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.ui.doc.CreateMDocDialog;
+import com.docdoku.client.ui.doc.CreateDocMDialog;
 import com.docdoku.core.document.Folder;
 
-public class CreateMDocAction extends ClientAbstractAction {
+public class CreateDocMAction extends ClientAbstractAction {
     
-    public CreateMDocAction(ExplorerFrame pOwner) {
-        super(I18N.BUNDLE.getString("MDocCreation_title"), "/com/docdoku/client/resources/icons/document_new.png", pOwner);
-        putValue(Action.SHORT_DESCRIPTION, I18N.BUNDLE.getString("MDocCreation_short_desc"));
-        putValue(Action.LONG_DESCRIPTION, I18N.BUNDLE.getString("MDocCreation_long_desc"));
-        putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("MDocCreation_mnemonic_key")));
+    public CreateDocMAction(ExplorerFrame pOwner) {
+        super(I18N.BUNDLE.getString("DocMCreation_title"), "/com/docdoku/client/resources/icons/document_new.png", pOwner);
+        putValue(Action.SHORT_DESCRIPTION, I18N.BUNDLE.getString("DocMCreation_short_desc"));
+        putValue(Action.LONG_DESCRIPTION, I18N.BUNDLE.getString("DocMCreation_long_desc"));
+        putValue(Action.MNEMONIC_KEY, new Integer(I18N.getCharBundle("DocMCreation_mnemonic_key")));
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('N', Event.CTRL_MASK));
         setLargeIcon("/com/docdoku/client/resources/icons/document_new_large.png");
     }
@@ -56,19 +56,19 @@ public class CreateMDocAction extends ClientAbstractAction {
         ActionListener action = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pAE) {
-                final CreateMDocDialog source = (CreateMDocDialog) pAE.getSource();           
+                final CreateDocMDialog source = (CreateDocMDialog) pAE.getSource();           
                 Thread worker = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                             MainController controller = MainController.getInstance();
-                            MasterDocument newMDoc = controller.createMDoc(source.getDestinationFolder().getCompletePath(), source.getMDocID(), source.getMDocTitle(), source.getDescription(), source.getMDocTemplate(), source.getWorkflowModel());
-                            if(newMDoc.isCheckedOut()){
-                                FileIO.rmDir(Config.getCheckOutFolder(newMDoc));
-                                for(BinaryResource remoteFile:newMDoc.getLastIteration().getAttachedFiles()){
+                            DocumentMaster newDocM = controller.createDocM(source.getDestinationFolder().getCompletePath(), source.getDocMId(), source.getDocMTitle(), source.getDescription(), source.getDocMTemplate(), source.getWorkflowModel());
+                            if(newDocM.isCheckedOut()){
+                                FileIO.rmDir(Config.getCheckOutFolder(newDocM));
+                                for(BinaryResource remoteFile:newDocM.getLastIteration().getAttachedFiles()){
                                     try{
-                                        MainModel.getInstance().getFile(mOwner,newMDoc.getLastIteration(),remoteFile);
+                                        MainModel.getInstance().getFile(mOwner,newDocM.getLastIteration(),remoteFile);
                                     } catch(InterruptedIOException pIIOEx){
                                         
                                     }
@@ -90,6 +90,6 @@ public class CreateMDocAction extends ClientAbstractAction {
             }
         };
         Folder destinationFolder = new Folder(mOwner.getSelectedFolder().getCompletePath());
-        new CreateMDocDialog(mOwner, destinationFolder, action);
+        new CreateDocMDialog(mOwner, destinationFolder, action);
     }
 }

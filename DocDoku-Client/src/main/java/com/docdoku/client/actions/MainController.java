@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,8 +25,8 @@ import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.IUploadDownloadWS;
 import com.docdoku.core.services.ICommandWS;
 import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.MasterDocumentTemplate;
-import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -36,7 +36,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.document.DocumentKey;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.ActivityModel;
@@ -89,14 +89,14 @@ public class MainController {
         mFileService = pFileService;
     }
 
-    public MasterDocument approve(TaskKey pTaskKey, String pComment) throws Exception {
+    public DocumentMaster approve(TaskKey pTaskKey, String pComment) throws Exception {
         try {
             System.out.println("Approving task " + pTaskKey);
-            MasterDocument newMasterDocument;
+            DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newMasterDocument = Tools.resetParentReferences(mCommandService.approve(workspaceId, pTaskKey, pComment));
-            MainModel.getInstance().updater.updateMDoc(newMasterDocument);
-            return newMasterDocument;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.approve(workspaceId, pTaskKey, pComment));
+            MainModel.getInstance().updater.updateDocM(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -107,14 +107,14 @@ public class MainController {
         }
     }
 
-    public MasterDocument reject(TaskKey pTaskKey, String pComment) throws Exception {
+    public DocumentMaster reject(TaskKey pTaskKey, String pComment) throws Exception {
         try {
             System.out.println("Rejecting task " + pTaskKey);
-            MasterDocument newMasterDocument;
+            DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newMasterDocument = Tools.resetParentReferences(mCommandService.reject(workspaceId, pTaskKey, pComment));
-            MainModel.getInstance().updater.updateMDoc(newMasterDocument);
-            return newMasterDocument;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.reject(workspaceId, pTaskKey, pComment));
+            MainModel.getInstance().updater.updateDocM(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -125,13 +125,13 @@ public class MainController {
         }
     }
 
-    public MasterDocument saveTags(MasterDocument pMasterDocument, String[] pTags) throws Exception {
+    public DocumentMaster saveTags(DocumentMaster pDocumentMaster, String[] pTags) throws Exception {
         try {
-            System.out.println("Saving tags of master document " + pMasterDocument);
-            MasterDocument newMasterDocument;
-            newMasterDocument = Tools.resetParentReferences(mCommandService.saveTags(pMasterDocument.getKey(), pTags));
-            MainModel.getInstance().updater.updateMDoc(newMasterDocument);
-            return newMasterDocument;
+            System.out.println("Saving tags of document master " + pDocumentMaster);
+            DocumentMaster newDocumentMaster;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.saveTags(pDocumentMaster.getKey(), pTags));
+            MainModel.getInstance().updater.updateDocM(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -142,13 +142,13 @@ public class MainController {
         }
     }
 
-    public MasterDocument checkIn(MasterDocument pMasterDocument) throws Exception {
+    public DocumentMaster checkIn(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Checking In master document " + pMasterDocument);
-            MasterDocument newMasterDocument;
-            newMasterDocument = Tools.resetParentReferences(mCommandService.checkIn(pMasterDocument.getKey()));
-            MainModel.getInstance().updater.checkIn(newMasterDocument);
-            return newMasterDocument;
+            System.out.println("Checking In document master " + pDocumentMaster);
+            DocumentMaster newDocumentMaster;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.checkIn(pDocumentMaster.getKey()));
+            MainModel.getInstance().updater.checkIn(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -159,13 +159,13 @@ public class MainController {
         }
     }
 
-    public MasterDocument checkOut(MasterDocument pMasterDocument) throws Exception {
+    public DocumentMaster checkOut(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Checking Out master document " + pMasterDocument);
-            MasterDocument newMasterDocument;
-            newMasterDocument = Tools.resetParentReferences(mCommandService.checkOut(pMasterDocument.getKey()));
-            MainModel.getInstance().updater.checkOut(newMasterDocument);
-            return newMasterDocument;
+            System.out.println("Checking Out document master " + pDocumentMaster);
+            DocumentMaster newDocumentMaster;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.checkOut(pDocumentMaster.getKey()));
+            MainModel.getInstance().updater.checkOut(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -176,13 +176,13 @@ public class MainController {
         }
     }
 
-    public MasterDocument undoCheckOut(MasterDocument pMasterDocument) throws Exception {
+    public DocumentMaster undoCheckOut(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Undoing Check Out master document " + pMasterDocument);
-            MasterDocument newMasterDocument;
-            newMasterDocument = Tools.resetParentReferences(mCommandService.undoCheckOut(pMasterDocument.getKey()));
-            MainModel.getInstance().updater.undoCheckOut(newMasterDocument);
-            return newMasterDocument;
+            System.out.println("Undoing Check Out document master " + pDocumentMaster);
+            DocumentMaster newDocumentMaster;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.undoCheckOut(pDocumentMaster.getKey()));
+            MainModel.getInstance().updater.undoCheckOut(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -193,11 +193,11 @@ public class MainController {
         }
     }
 
-    public void delMDoc(MasterDocument pMasterDocument) throws Exception {
+    public void delDocM(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Deleting master document " + pMasterDocument);
-            mCommandService.delMDoc(pMasterDocument.getKey());
-            MainModel.getInstance().updater.delMDoc(pMasterDocument);
+            System.out.println("Deleting document master " + pDocumentMaster);
+            mCommandService.deleteDocumentMaster(pDocumentMaster.getKey());
+            MainModel.getInstance().updater.delDocM(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -208,11 +208,11 @@ public class MainController {
         }
     }
 
-    public void delMDocTemplate(MasterDocumentTemplate pMDocTemplate) throws Exception {
+    public void delDocMTemplate(DocumentMasterTemplate pDocMTemplate) throws Exception {
         try {
-            System.out.println("Deleting master document template " + pMDocTemplate);
-            mCommandService.delMDocTemplate(pMDocTemplate.getKey());
-            MainModel.getInstance().updater.delMDocTemplate(pMDocTemplate);
+            System.out.println("Deleting document master template " + pDocMTemplate);
+            mCommandService.deleteDocumentMasterTemplate(pDocMTemplate.getKey());
+            MainModel.getInstance().updater.delDocMTemplate(pDocMTemplate);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -223,13 +223,13 @@ public class MainController {
         }
     }
 
-    public MasterDocument moveMDoc(String pParentFolder, MasterDocument pMasterDocument) throws Exception {
+    public DocumentMaster moveDocM(String pParentFolder, DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Moving master document " + pMasterDocument);
-            MasterDocument newMasterDocument;
-            newMasterDocument = Tools.resetParentReferences(mCommandService.moveMDoc(pParentFolder, pMasterDocument.getKey()));
-            MainModel.getInstance().updater.moveMDoc(newMasterDocument);
-            return newMasterDocument;
+            System.out.println("Moving document master " + pDocumentMaster);
+            DocumentMaster newDocumentMaster;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.moveDocumentMaster(pParentFolder, pDocumentMaster.getKey()));
+            MainModel.getInstance().updater.moveDocM(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -256,10 +256,10 @@ public class MainController {
         }
     }
     
-    public MasterDocumentKey[] delFolder(String pFolder) throws Exception {
+    public DocumentMasterKey[] delFolder(String pFolder) throws Exception {
         try {
             System.out.println("Deleting folder " + pFolder);
-            MasterDocumentKey[] pks = mCommandService.delFolder(pFolder);
+            DocumentMasterKey[] pks = mCommandService.deleteFolder(pFolder);
             MainModel.getInstance().updater.delFolder(pFolder);
             return pks;
         } catch (WebServiceException pWSEx) {
@@ -283,7 +283,7 @@ public class MainController {
             Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
             try {
                 if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
-                    mFileService.uploadToDocument(model.getWorkspace().getId(), pDocument.getMasterDocumentId(), pDocument.getMasterDocumentVersion(), pDocument.getIteration(), pLocalFile.getName(), data);
+                    mFileService.uploadToDocument(model.getWorkspace().getId(), pDocument.getDocumentMasterId(), pDocument.getDocumentMasterVersion(), pDocument.getIteration(), pLocalFile.getName(), data);
                 } else {
                     //workaround mode
                     uploadFileWithServlet(pParent, pLocalFile, getServletURL(pDocument, pLocalFile));
@@ -324,10 +324,10 @@ public class MainController {
 
     private String getServletURL(Document pDoc, File pLocalFile) throws UnsupportedEncodingException {
         MainModel model = MainModel.getInstance();
-        return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "documents/" + URLEncoder.encode(pDoc.getMasterDocumentId(), "UTF-8") + "/" + pDoc.getMasterDocumentVersion() + "/" + pDoc.getIteration() + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
+        return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "documents/" + URLEncoder.encode(pDoc.getDocumentMasterId(), "UTF-8") + "/" + pDoc.getDocumentMasterVersion() + "/" + pDoc.getIteration() + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
 
-    public void saveFile(Component pParent, MasterDocumentTemplate pTemplate, File pLocalFile) throws Exception {
+    public void saveFile(Component pParent, DocumentMasterTemplate pTemplate, File pLocalFile) throws Exception {
         if (!NamingConvention.correct(pLocalFile.getName())) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
@@ -369,7 +369,7 @@ public class MainController {
         }
     }
 
-    private String getServletURL(MasterDocumentTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException {
+    private String getServletURL(DocumentMasterTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException {
         MainModel model = MainModel.getInstance();
         return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "templates/" + URLEncoder.encode(pTemplate.getId(), "UTF-8") + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
@@ -467,22 +467,22 @@ public class MainController {
         }
     }
 
-    public MasterDocument createMDoc(String pParentFolder,
-            String pMDocID,
+    public DocumentMaster createDocM(String pParentFolder,
+            String pDocMId,
             String pTitle,
             String pDescription,
-            MasterDocumentTemplate pTemplate,
+            DocumentMasterTemplate pTemplate,
             WorkflowModel pWorkflowModel) throws Exception {
         try {
-            System.out.println("Saving master document " + pMDocID + " version " + "A" + " with title " + pTitle + ", template " + pTemplate + " and description " + pDescription + " in " + pParentFolder);
-            MasterDocument newMasterDocument;
+            System.out.println("Saving document master " + pDocMId + " version " + "A" + " with title " + pTitle + ", template " + pTemplate + " and description " + pDescription + " in " + pParentFolder);
+            DocumentMaster newDocumentMaster;
             //TODO ACL
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            newMasterDocument = Tools.resetParentReferences(mCommandService.createMDoc(pParentFolder, pMDocID, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
-            MainModel.getInstance().updater.createMDocInFolder(newMasterDocument);
-            return newMasterDocument;
+            newDocumentMaster = Tools.resetParentReferences(mCommandService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            MainModel.getInstance().updater.createDocMInFolder(newDocumentMaster);
+            return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -493,14 +493,14 @@ public class MainController {
         }
     }
 
-    public MasterDocumentTemplate createMDocTemplate(String pId, String pDocumentType,
+    public DocumentMasterTemplate createDocMTemplate(String pId, String pDocumentType,
             String pMask, Set<InstanceAttributeTemplate> pAttributeTemplates, boolean pIdGenerated) throws Exception {
         try {
-            System.out.println("Saving master document template " + pId + " with mask " + pMask);
+            System.out.println("Saving document master template " + pId + " with mask " + pMask);
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            MasterDocumentTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mCommandService.createMDocTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
-            MainModel.getInstance().updater.createMDocTemplate(newTemplate);
+            DocumentMasterTemplate newTemplate;
+            newTemplate = Tools.resetParentReferences(mCommandService.createDocumentMasterTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+            MainModel.getInstance().updater.createDocMTemplate(newTemplate);
             return newTemplate;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -512,12 +512,12 @@ public class MainController {
         }
     }
 
-    public MasterDocumentTemplate updateMDocTemplate(MasterDocumentTemplate pTemplate, String pDocumentType, String pMask, Set<InstanceAttributeTemplate> pAttributeTemplates, boolean pIdGenerated) throws Exception {
+    public DocumentMasterTemplate updateDocMTemplate(DocumentMasterTemplate pTemplate, String pDocumentType, String pMask, Set<InstanceAttributeTemplate> pAttributeTemplates, boolean pIdGenerated) throws Exception {
         try {
-            System.out.println("Saving master document template " + pTemplate);
-            MasterDocumentTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mCommandService.updateMDocTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
-            MainModel.getInstance().updater.updateMDocTemplate(newTemplate);
+            System.out.println("Saving document master template " + pTemplate);
+            DocumentMasterTemplate newTemplate;
+            newTemplate = Tools.resetParentReferences(mCommandService.updateDocumentMasterTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+            MainModel.getInstance().updater.updateDocMTemplate(newTemplate);
             return newTemplate;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -529,19 +529,19 @@ public class MainController {
         }
     }
 
-    public MasterDocument[] createVersion(MasterDocument pMasterDocument,
+    public DocumentMaster[] createVersion(DocumentMaster pDocumentMaster,
             String pTitle,
             String pDescription,
             WorkflowModel pWorkflowModel) throws Exception {
         try {
-            System.out.println("Creating new version to master document " + pMasterDocument + " with title " + pTitle + " and description " + pDescription);
+            System.out.println("Creating new version to document master " + pDocumentMaster + " with title " + pTitle + " and description " + pDescription);
             //TODO ACL
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            MasterDocument[] originalAndNewMDoc = Tools.resetParentReferences(mCommandService.createVersion(pMasterDocument.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
-            MainModel.getInstance().updater.makeNewVersion(originalAndNewMDoc);
-            return originalAndNewMDoc;
+            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mCommandService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            MainModel.getInstance().updater.makeNewVersion(originalAndNewDocM);
+            return originalAndNewDocM;
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -569,11 +569,11 @@ public class MainController {
         }
     }
 
-    public void subscribeStateNotification(MasterDocument pMasterDocument) throws Exception {
+    public void subscribeStateNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Subscribe state notification on master document " + pMasterDocument);
-            mCommandService.subscribeToStateChangeEvent(pMasterDocument.getKey());
-            MainModel.getInstance().updater.addStateNotification(pMasterDocument);
+            System.out.println("Subscribe state notification on document master " + pDocumentMaster);
+            mCommandService.subscribeToStateChangeEvent(pDocumentMaster.getKey());
+            MainModel.getInstance().updater.addStateNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -584,11 +584,11 @@ public class MainController {
         }
     }
 
-    public void unsubscribeStateNotification(MasterDocument pMasterDocument) throws Exception {
+    public void unsubscribeStateNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Unsubscribe state notification on master document " + pMasterDocument);
-            mCommandService.unsubscribeToStateChangeEvent(pMasterDocument.getKey());
-            MainModel.getInstance().updater.removeStateNotification(pMasterDocument);
+            System.out.println("Unsubscribe state notification on document master " + pDocumentMaster);
+            mCommandService.unsubscribeToStateChangeEvent(pDocumentMaster.getKey());
+            MainModel.getInstance().updater.removeStateNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -599,11 +599,11 @@ public class MainController {
         }
     }
 
-    public void subscribeIterationNotification(MasterDocument pMasterDocument) throws Exception {
+    public void subscribeIterationNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Subscribe iteration notification on master document " + pMasterDocument);
-            mCommandService.subscribeToIterationChangeEvent(pMasterDocument.getKey());
-            MainModel.getInstance().updater.addIterationNotification(pMasterDocument);
+            System.out.println("Subscribe iteration notification on document master " + pDocumentMaster);
+            mCommandService.subscribeToIterationChangeEvent(pDocumentMaster.getKey());
+            MainModel.getInstance().updater.addIterationNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -614,11 +614,11 @@ public class MainController {
         }
     }
 
-    public void unsubscribeIterationNotification(MasterDocument pMasterDocument) throws Exception {
+    public void unsubscribeIterationNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
-            System.out.println("Unsubscribe iteration notification on master document " + pMasterDocument);
-            mCommandService.unsubscribeToIterationChangeEvent(pMasterDocument.getKey());
-            MainModel.getInstance().updater.removeIterationNotification(pMasterDocument);
+            System.out.println("Unsubscribe iteration notification on document master " + pDocumentMaster);
+            mCommandService.unsubscribeToIterationChangeEvent(pDocumentMaster.getKey());
+            MainModel.getInstance().updater.removeIterationNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -632,7 +632,7 @@ public class MainController {
     public void delWorkflowModel(WorkflowModel pWorkflowModel) throws Exception {
         try {
             System.out.println("Deleting workflow model " + pWorkflowModel);
-            mCommandService.delWorkflowModel(pWorkflowModel.getKey());
+            mCommandService.deleteWorkflowModel(pWorkflowModel.getKey());
             MainModel.getInstance().updater.delWorkflowModel(pWorkflowModel);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -648,7 +648,7 @@ public class MainController {
         try {
             System.out.println("Deleting tag " + pTag);
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            mCommandService.delTag(new TagKey(workspaceId, pTag));
+            mCommandService.deleteTag(new TagKey(workspaceId, pTag));
             MainModel.getInstance().updater.delTag(pTag);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -667,7 +667,7 @@ public class MainController {
 
             //TODO remove and create in the same tx
             try {
-                mCommandService.delWorkflowModel(pWorkflowModel.getKey());
+                mCommandService.deleteWorkflowModel(pWorkflowModel.getKey());
             } catch (WorkflowModelNotFoundException pWNFEx) {
             }
             ActivityModel[] activityModels = pWorkflowModel.getActivityModels().toArray(new ActivityModel[pWorkflowModel.getActivityModels().size()]);
@@ -687,9 +687,9 @@ public class MainController {
     public void removeFileFromDocument(BinaryResource pFile) throws Exception {
         try {
             System.out.println("Removing file " + pFile + " from document");
-            MasterDocument newMDoc;
-            newMDoc = Tools.resetParentReferences(mCommandService.removeFileFromDocument(pFile.getFullName()));
-            MainModel.getInstance().updater.updateMDoc(newMDoc);
+            DocumentMaster newDocM;
+            newDocM = Tools.resetParentReferences(mCommandService.removeFileFromDocument(pFile.getFullName()));
+            MainModel.getInstance().updater.updateDocM(newDocM);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -703,9 +703,9 @@ public class MainController {
     public void removeFileFromTemplate(BinaryResource pFile) throws Exception {
         try {
             System.out.println("Removing file " + pFile + " from document template");
-            MasterDocumentTemplate newTemplate;
+            DocumentMasterTemplate newTemplate;
             newTemplate = Tools.resetParentReferences(mCommandService.removeFileFromTemplate(pFile.getFullName()));
-            MainModel.getInstance().updater.updateMDocTemplate(newTemplate);
+            MainModel.getInstance().updater.updateDocMTemplate(newTemplate);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -719,7 +719,7 @@ public class MainController {
     public Document updateDoc(Document pDocument, String pComment, InstanceAttribute[] pAttributes, DocumentToDocumentLink[] pLinks) throws Exception {
         try {
             System.out.println("Updating document " + pDocument);
-            MasterDocument newMDoc;
+            DocumentMaster newDocM;
             DocumentKey docKey = pDocument.getKey();
 
             DocumentKey[] linkKeys = new DocumentKey[pLinks.length];
@@ -727,9 +727,9 @@ public class MainController {
                 linkKeys[i] = pLinks[i].getToDocumentKey();
             }
 
-            newMDoc = Tools.resetParentReferences(mCommandService.updateDoc(docKey, pComment, pAttributes, linkKeys));
-            MainModel.getInstance().updater.updateMDoc(newMDoc);
-            return newMDoc.getIteration(docKey.getIteration());
+            newDocM = Tools.resetParentReferences(mCommandService.updateDocument(docKey, pComment, pAttributes, linkKeys));
+            MainModel.getInstance().updater.updateDocM(newDocM);
+            return newDocM.getIteration(docKey.getIteration());
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
 
@@ -45,12 +45,12 @@ public class UndoCheckOutAction extends ClientAbstractAction {
     }
     
     public void actionPerformed(ActionEvent pAE) {
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
+        DocumentMaster docM = mOwner.getSelectedDocM();
         MainController controller = MainController.getInstance();
         try {
-            MasterDocument newMDoc = controller.undoCheckOut(mdoc);
-            FileIO.rmDir(Config.getCheckOutFolder(newMDoc));
-            Prefs.removeDocNode(newMDoc);
+            DocumentMaster newDocM = controller.undoCheckOut(docM);
+            FileIO.rmDir(Config.getCheckOutFolder(newDocM));
+            Prefs.removeDocNode(newDocM);
         } catch (Exception pEx) {
             String message = pEx.getMessage()==null?I18N.BUNDLE
                     .getString("Error_unknown"):pEx.getMessage();

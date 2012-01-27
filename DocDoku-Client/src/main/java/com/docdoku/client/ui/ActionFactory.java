@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -27,8 +27,8 @@ import javax.swing.*;
 public interface ActionFactory extends ElementSelectedListener{
 
     public ActionFactory clone(ExplorerFrame pOwner);
-    public Action getCreateMDocAction();
-    public Action getCreateMDocTemplateAction();
+    public Action getCreateDocMAction();
+    public Action getCreateDocMTemplateAction();
     public Action getCheckInAction();
     public Action getCheckOutAction();
     public Action getUndoCheckOutAction();

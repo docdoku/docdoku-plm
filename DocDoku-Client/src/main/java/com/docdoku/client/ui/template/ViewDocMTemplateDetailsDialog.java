@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,32 +23,32 @@ package com.docdoku.client.ui.template;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.client.ui.common.ViewFilesPanel;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 
-public class ViewMDocTemplateDetailsDialog extends MDocTemplateDialog{
+public class ViewDocMTemplateDetailsDialog extends DocMTemplateDialog{
 
     private CloseButton mCloseButton;
     private ViewFilesPanel mFilesPanel;
     private ViewAttributesPanel mAttributesPanel;
-    private ViewMDocTemplatePanel mMDocTemplatePanel;
+    private ViewDocMTemplatePanel mDocMTemplatePanel;
             
-    public ViewMDocTemplateDetailsDialog(Frame pOwner, MasterDocumentTemplate pTemplate, ActionListener pDownloadAction, ActionListener pOpenAction) {
-        super(pOwner, I18N.BUNDLE.getString("ViewMDocTemplateDetailsDialog_title"));
+    public ViewDocMTemplateDetailsDialog(Frame pOwner, DocumentMasterTemplate pTemplate, ActionListener pDownloadAction, ActionListener pOpenAction) {
+        super(pOwner, I18N.BUNDLE.getString("ViewDocMTemplateDetailsDialog_title"));
         init(pTemplate, pDownloadAction, pOpenAction);
     }
 
-    public ViewMDocTemplateDetailsDialog(Dialog pOwner, MasterDocumentTemplate pTemplate, ActionListener pDownloadAction, ActionListener pOpenAction) {
-        super(pOwner, I18N.BUNDLE.getString("ViewMDocTemplateDetailsDialog_title"));
+    public ViewDocMTemplateDetailsDialog(Dialog pOwner, DocumentMasterTemplate pTemplate, ActionListener pDownloadAction, ActionListener pOpenAction) {
+        super(pOwner, I18N.BUNDLE.getString("ViewDocMTemplateDetailsDialog_title"));
         init(pTemplate, pDownloadAction, pOpenAction);
     }
 
-    protected void init(MasterDocumentTemplate pTemplate, ActionListener pDownloadAction, ActionListener pOpenAction){
-        mMDocTemplatePanel = new ViewMDocTemplatePanel(pTemplate);
+    protected void init(DocumentMasterTemplate pTemplate, ActionListener pDownloadAction, ActionListener pOpenAction){
+        mDocMTemplatePanel = new ViewDocMTemplatePanel(pTemplate);
         mFilesPanel = new ViewFilesPanel(pTemplate,pDownloadAction,pOpenAction);
         mAttributesPanel = new ViewAttributesPanel(pTemplate);
         createLayout();
@@ -70,7 +70,7 @@ public class ViewMDocTemplateDetailsDialog extends MDocTemplateDialog{
         return mAttributesPanel;
     }
 
-    protected JPanel getMDocTemplatePanel() {
-        return mMDocTemplatePanel;
+    protected JPanel getDocMTemplatePanel() {
+        return mDocMTemplatePanel;
     }
 }

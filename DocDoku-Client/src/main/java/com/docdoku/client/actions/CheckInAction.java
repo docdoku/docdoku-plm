@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.client.data.Prefs;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
 import java.io.File;
@@ -52,16 +52,16 @@ public class CheckInAction extends ClientAbstractAction {
     }
     
     public void actionPerformed(ActionEvent pAE) {
-        final MasterDocument mdoc = mOwner.getSelectedMDoc();
+        final DocumentMaster docM = mOwner.getSelectedDocM();
         Thread worker = new Thread(new Runnable() {
             public void run() {
                 try {
                     MainController controller = MainController.getInstance();
-                    Document doc = mdoc.getLastIteration();
+                    Document doc = docM.getLastIteration();
                     for(BinaryResource fileToUpload:doc.getAttachedFiles()){
                         try{
-                            File localFile = new File(Config.getCheckOutFolder(mdoc),fileToUpload.getName());
-                            long creationDate=Prefs.getLongDocInfo(mdoc, localFile.getName());
+                            File localFile = new File(Config.getCheckOutFolder(docM),fileToUpload.getName());
+                            long creationDate=Prefs.getLongDocInfo(docM, localFile.getName());
                             if(localFile.exists() && localFile.lastModified()>creationDate){
                                 controller.saveFile(mOwner, doc, localFile);
                             }
@@ -69,9 +69,9 @@ public class CheckInAction extends ClientAbstractAction {
                             
                         }
                     }
-                    MasterDocument newMDoc = controller.checkIn(mdoc);
-                    FileIO.rmDir(Config.getCheckOutFolder(newMDoc));
-                    Prefs.removeDocNode(newMDoc);
+                    DocumentMaster newDocM = controller.checkIn(docM);
+                    FileIO.rmDir(Config.getCheckOutFolder(newDocM));
+                    Prefs.removeDocNode(newDocM);
                 }  catch (Exception pEx) {
                     String message = pEx.getMessage()==null?I18N.BUNDLE
                             .getString("Error_unknown"):pEx.getMessage();

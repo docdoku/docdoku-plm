@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.doc.ViewIterationsDialog;
 
@@ -41,7 +41,7 @@ public class ViewIterationsAction extends ClientAbstractAction {
         ActionListener downloadAction = new DownloadActionListener();
         ActionListener openAction = new OpenActionListener();
 
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
-        new ViewIterationsDialog(mOwner, mdoc, downloadAction, openAction);
+        DocumentMaster docM = mOwner.getSelectedDocM();
+        new ViewIterationsDialog(mOwner, docM, downloadAction, openAction);
     }
 }

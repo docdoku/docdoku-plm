@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.tag.ManageTagsDialog;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;
@@ -41,16 +41,16 @@ public class ManageTagsAction extends ClientAbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent pAE) {
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
+        DocumentMaster docM = mOwner.getSelectedDocM();
         ActionListener action = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pAE) {
                 ManageTagsDialog source = (ManageTagsDialog) pAE.getSource();
-                MasterDocument mdoc = source.getMDoc();
+                DocumentMaster docM = source.getDocM();
                 String[] tags = source.getTags();
                 MainController controller = MainController.getInstance();
                 try{
-                    controller.saveTags(mdoc, tags);
+                    controller.saveTags(docM, tags);
                 }catch (Exception pEx) {
                     String message = pEx.getMessage()==null?I18N.BUNDLE
                             .getString("Error_unknown"):pEx.getMessage();
@@ -62,6 +62,6 @@ public class ManageTagsAction extends ClientAbstractAction {
                 ExplorerFrame.unselectElementInAllFrame();
             }
         };
-        new ManageTagsDialog(mOwner, mdoc, action);
+        new ManageTagsDialog(mOwner, docM, action);
     }
 }

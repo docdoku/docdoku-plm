@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,8 +21,8 @@
 package com.docdoku.client.ui.doc;
 
 import com.docdoku.core.document.DocumentToDocumentLink;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentKey;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
@@ -58,8 +58,8 @@ public class ViewLinksPanel extends JPanel {
         mViewDocButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pAE) {
                 Dialog dialog = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, ViewLinksPanel.this);
-                MasterDocument mdoc = MainModel.getInstance().getMDoc(getSelectedLink());
-                new ViewDocDetailsDialog(dialog, mdoc.getLastIteration(),pDownloadAction,pOpenAction);
+                DocumentMaster docM = MainModel.getInstance().getDocM(getSelectedLink());
+                new ViewDocDetailsDialog(dialog, docM.getLastIteration(),pDownloadAction,pOpenAction);
             }
         });
         createLayout();
@@ -73,12 +73,12 @@ public class ViewLinksPanel extends JPanel {
         }
     }
 
-    private MasterDocumentKey getSelectedLink() {
+    private DocumentMasterKey getSelectedLink() {
         DocumentToDocumentLink link=(DocumentToDocumentLink) mLinksList.getSelectedValue();
-        String mdocId=link.getToDocumentMasterDocumentId();
-        String mdocVersion=link.getToDocumentMasterDocumentVersion();
+        String docMId=link.getToDocumentDocumentMasterId();
+        String docMVersion=link.getToDocumentDocumentMasterVersion();
         String workspaceId=link.getToDocumentWorkspaceId();
-        return new MasterDocumentKey(workspaceId,mdocId,mdocVersion);
+        return new DocumentMasterKey(workspaceId,docMId,docMVersion);
     }
 
     private void createListener() {

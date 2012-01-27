@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,9 +20,9 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import java.io.*;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -53,37 +53,37 @@ public class Config {
         return new File(Config.LOCAL_TEMP_SCAN, MainModel.getInstance().getWorkspace() + File.separator + fileName);
     }
 
-    public static File getCheckOutFolder(MasterDocumentKey pMDocPK){
-        return new File(LOCAL_CHECKOUT_FOLDER,MainModel.getInstance().getWorkspace() + File.separator + pMDocPK.getId() + "-" + pMDocPK.getVersion());
+    public static File getCheckOutFolder(DocumentMasterKey pDocMPK){
+        return new File(LOCAL_CHECKOUT_FOLDER,MainModel.getInstance().getWorkspace() + File.separator + pDocMPK.getId() + "-" + pDocMPK.getVersion());
     }
 
-    public static File getCacheFolder(MasterDocumentKey pMDocPK){
-        return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "documents" + File.separator + pMDocPK.getId() + "-" + pMDocPK.getVersion());
+    public static File getCacheFolder(DocumentMasterKey pDocMPK){
+        return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "documents" + File.separator + pDocMPK.getId() + "-" + pDocMPK.getVersion());
     }
 
-    public static File getCacheFolder(MasterDocument pMDoc){
-        return getCacheFolder(pMDoc.getKey());
+    public static File getCacheFolder(DocumentMaster pDocM){
+        return getCacheFolder(pDocM.getKey());
     }
 
-    public static File getCacheFolder(MasterDocumentTemplate pTemplate){
+    public static File getCacheFolder(DocumentMasterTemplate pTemplate){
         return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "templates" + File.separator + pTemplate.getId());
     }
 
-    public static String getPermaLink(MasterDocument pMDoc){
+    public static String getPermaLink(DocumentMaster pDocM){
         String file = null;
         try {
             file = "documents/"
                     + URLEncoder.encode(MainModel.getInstance().getWorkspace().getId(),"UTF-8") + "/"
-                    + URLEncoder.encode(pMDoc.getId(),"UTF-8") + "/"
-                    + pMDoc.getVersion();
+                    + URLEncoder.encode(pDocM.getId(),"UTF-8") + "/"
+                    + pDocM.getVersion();
         } catch (UnsupportedEncodingException pEx) {
             System.err.println(pEx.getMessage());
         }
         return getHTTPCodebase().toString() + file;
     }
 
-    public static File getCheckOutFolder(MasterDocument pMDoc){
-        return getCheckOutFolder(pMDoc.getKey());
+    public static File getCheckOutFolder(DocumentMaster pDocM){
+        return getCheckOutFolder(pDocM.getKey());
     }
 
     public static Proxy getProxy(URI pURI){

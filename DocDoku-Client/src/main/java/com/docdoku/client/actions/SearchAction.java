@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.search.SearchDialog;
 import com.docdoku.client.ui.search.SearchResultDialog;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
@@ -57,7 +57,7 @@ public class SearchAction extends ClientAbstractAction {
                 try{                   
                     source.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));          
                     String id = source.getId();
-                    String title = source.getMDocTitle();
+                    String title = source.getDocMTitle();
                     String type = source.getType();
                     Version version = source.getVersion();
                     User author = source.getAuthor();
@@ -70,12 +70,12 @@ public class SearchAction extends ClientAbstractAction {
                         @Override
                         public void actionPerformed(ActionEvent pAE) {
                             SearchResultDialog source = (SearchResultDialog) pAE.getSource();
-                            MasterDocument mdoc = source.getSelectedMDocs()[0];
-                            mOwner.showMDoc(mdoc);
+                            DocumentMaster docM = source.getSelectedDocMs()[0];
+                            mOwner.showDocM(docM);
                         }
                     };         
-                    MasterDocument[] mdocs = MainModel.getInstance().searchMDocs(id, title, version, author, type, creationDateFrom, creationDateTo, attrs, tags, content);
-                    new SearchResultDialog(source, mdocs, resultAction, false);
+                    DocumentMaster[] docMs = MainModel.getInstance().searchDocMs(id, title, version, author, type, creationDateFrom, creationDateTo, attrs, tags, content);
+                    new SearchResultDialog(source, docMs, resultAction, false);
                 }catch (Exception pEx) {
                     String message = pEx.getMessage()==null?I18N.BUNDLE
                             .getString("Error_unknown"):pEx.getMessage();

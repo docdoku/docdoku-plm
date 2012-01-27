@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.template;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 
 import javax.swing.*;
 
@@ -34,12 +34,12 @@ public class ViewAttributesPanel extends JPanel{
     private JList mAttributesList;
     private DefaultListModel mAttributesListModel;    
     
-    public ViewAttributesPanel(MasterDocumentTemplate pEditedMDocTemplate) {
+    public ViewAttributesPanel(DocumentMasterTemplate pEditedDocMTemplate) {
         mAttributesListModel = new DefaultListModel();
         mAttributesScrollPane = new JScrollPane();
         mAttributesList = new JList(mAttributesListModel);
         
-        for(InstanceAttributeTemplate attr:pEditedMDocTemplate.getAttributeTemplates()) {
+        for(InstanceAttributeTemplate attr:pEditedDocMTemplate.getAttributeTemplates()) {
             mAttributesListModel.addElement(attr);
         }
         createLayout();

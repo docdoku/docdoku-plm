@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,14 +34,14 @@ public class ViewIterationsDialog extends JDialog {
     private ViewIterationsPanel mIterationsPanel;
     private CloseButton mCloseButton;
     private JButton mViewDocButton;
-    private MasterDocument mWatchedMDoc;
+    private DocumentMaster mWatchedDocM;
 
     public ViewIterationsDialog(
             Frame pOwner,
-            MasterDocument pWatchedMDoc, final ActionListener pDownloadAction, final ActionListener pOpenAction) {
+            DocumentMaster pWatchedDocM, final ActionListener pDownloadAction, final ActionListener pOpenAction) {
         super(pOwner, I18N.BUNDLE.getString("ViewIterationsDialog_title"), true);
         setLocationRelativeTo(pOwner);
-        mWatchedMDoc = pWatchedMDoc;
+        mWatchedDocM = pWatchedDocM;
         mCloseButton = new CloseButton(this, I18N.BUNDLE.getString("Close_button"));
 
         Image img =
@@ -56,7 +56,7 @@ public class ViewIterationsDialog extends JDialog {
                 new ViewDocDetailsDialog(ViewIterationsDialog.this, doc, pDownloadAction, pOpenAction);
             }
         });
-        mIterationsPanel = new ViewIterationsPanel(mWatchedMDoc);
+        mIterationsPanel = new ViewIterationsPanel(mWatchedDocM);
         createLayout();
         setVisible(true);
     }

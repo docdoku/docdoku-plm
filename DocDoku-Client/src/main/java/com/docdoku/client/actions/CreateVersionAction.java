@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -27,7 +27,7 @@ import com.docdoku.client.ui.doc.CreateVersionDialog;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import java.awt.Cursor;
 import java.io.InterruptedIOException;
 
@@ -56,16 +56,16 @@ public class CreateVersionAction extends ClientAbstractAction {
                         try {
                             mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                             MainController controller = MainController.getInstance();
-                            MasterDocument[] originalAndNewMDoc = controller
-                                    .createVersion(source.getOriginMDoc(),
-                                    source.getMDocTitle(),
+                            DocumentMaster[] originalAndNewDocM = controller
+                                    .createVersion(source.getOriginDocM(),
+                                    source.getDocMTitle(),
                                     source.getDescription(),
                                     source.getWorkflowModel());
-                            if(originalAndNewMDoc[1].isCheckedOut()){
-                                FileIO.rmDir(Config.getCheckOutFolder(originalAndNewMDoc[1]));
-                                for(BinaryResource remoteFile:originalAndNewMDoc[1].getLastIteration().getAttachedFiles()){
+                            if(originalAndNewDocM[1].isCheckedOut()){
+                                FileIO.rmDir(Config.getCheckOutFolder(originalAndNewDocM[1]));
+                                for(BinaryResource remoteFile:originalAndNewDocM[1].getLastIteration().getAttachedFiles()){
                                     try{
-                                        MainModel.getInstance().getFile(mOwner,originalAndNewMDoc[1].getLastIteration(),remoteFile);
+                                        MainModel.getInstance().getFile(mOwner,originalAndNewDocM[1].getLastIteration(),remoteFile);
                                     } catch(InterruptedIOException pIIOEx){
                                         
                                     }
@@ -88,7 +88,7 @@ public class CreateVersionAction extends ClientAbstractAction {
                 
             }
         };
-        new CreateVersionDialog(mOwner, mOwner.getSelectedMDoc(), action);
+        new CreateVersionDialog(mOwner, mOwner.getSelectedDocM(), action);
         
     }
 }

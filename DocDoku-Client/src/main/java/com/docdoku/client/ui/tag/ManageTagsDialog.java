@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.tag;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,13 +33,13 @@ public class ManageTagsDialog extends JDialog implements ActionListener {
     private ManageTagsPanel mManageTagsPanel;
     private OKCancelPanel mOKCancelPanel;
     private ActionListener mAction;
-    private MasterDocument mEditedMDoc;
+    private DocumentMaster mEditedDocM;
 
-    public ManageTagsDialog(Frame pOwner, MasterDocument pEditedMDoc, ActionListener pAction) {
+    public ManageTagsDialog(Frame pOwner, DocumentMaster pEditedDocM, ActionListener pAction) {
         super(pOwner, I18N.BUNDLE.getString("ManageTagsDialog_title"), true);
         setLocationRelativeTo(pOwner);
-        mEditedMDoc=pEditedMDoc;
-        mManageTagsPanel = new ManageTagsPanel(mEditedMDoc.getTags());
+        mEditedDocM=pEditedDocM;
+        mManageTagsPanel = new ManageTagsPanel(mEditedDocM.getTags());
         mOKCancelPanel = new OKCancelPanel(this, this);
         mAction = pAction;
         createLayout();
@@ -61,8 +61,8 @@ public class ManageTagsDialog extends JDialog implements ActionListener {
         
     }
 
-    public MasterDocument getMDoc() {
-        return mEditedMDoc;
+    public DocumentMaster getDocM() {
+        return mEditedDocM;
     }
 
     public String[] getTags() {

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.awt.*;
 import com.docdoku.client.localization.I18N;
 
-public abstract class MDocTemplatePanel extends JPanel {
+public abstract class DocMTemplatePanel extends JPanel {
     
     private JLabel mAuthorLabel;
     protected JLabel mIDLabel;
@@ -39,14 +39,14 @@ public abstract class MDocTemplatePanel extends JPanel {
     private HelpButton mHelp;
     
     
-    public MDocTemplatePanel() {
+    public DocMTemplatePanel() {
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
         mAuthorValueLabel = new JLabel(MainModel.getInstance().getUser().getName());
         
         mIDLabel = new JLabel(I18N.BUNDLE.getString("IDMandatory_label"));
         mDocumentTypeLabel = new JLabel(I18N.BUNDLE.getString("DocumentType_label"));
         mMaskLabel = new JLabel(I18N.BUNDLE.getString("Mask_label"));
-        mHelp=new HelpButton(I18N.BUNDLE.getString("EditMDocTemplatePanel_tiptooltext"));
+        mHelp=new HelpButton(I18N.BUNDLE.getString("EditDocMTemplatePanel_tiptooltext"));
         mIdGenerated = new JCheckBox(I18N.BUNDLE.getString("IDGenerated_label"));
         createLayout();
     }
@@ -56,7 +56,7 @@ public abstract class MDocTemplatePanel extends JPanel {
     }
     
     private void createLayout() {
-        setBorder(BorderFactory.createTitledBorder(I18N.BUNDLE.getString("MDocTemplatePanel_border")));
+        setBorder(BorderFactory.createTitledBorder(I18N.BUNDLE.getString("DocMTemplatePanel_border")));
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.weighty = 0;

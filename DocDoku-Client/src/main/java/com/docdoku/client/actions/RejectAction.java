@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.core.workflow.Task;
 
@@ -42,7 +42,7 @@ public class RejectAction extends ClientAbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent pAE) {
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
+        DocumentMaster docM = mOwner.getSelectedDocM();
         ActionListener action = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent pAE) {
@@ -65,6 +65,6 @@ public class RejectAction extends ClientAbstractAction {
                 }
             }
         };
-        new TaskDialog(mOwner, I18N.BUNDLE.getString("RejectTask_title"), mdoc, action);
+        new TaskDialog(mOwner, I18N.BUNDLE.getString("RejectTask_title"), docM, action);
     }
 }

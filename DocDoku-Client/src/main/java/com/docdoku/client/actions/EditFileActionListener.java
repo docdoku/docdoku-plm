@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -25,7 +25,7 @@ import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.common.FileHolder;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,7 +55,7 @@ public class EditFileActionListener implements ActionListener {
                         if(holder instanceof Document)
                             localFile = MainModel.getInstance().getFile(source,(Document)holder,remoteFile);
                         else
-                            localFile = MainModel.getInstance().getFile(source,(MasterDocumentTemplate)holder,remoteFile);
+                            localFile = MainModel.getInstance().getFile(source,(DocumentMasterTemplate)holder,remoteFile);
 
                         if(source.getFilesToUpdate().get(remoteFile)==null)
                             source.getFilesToUpdate().put(remoteFile,localFile.lastModified());

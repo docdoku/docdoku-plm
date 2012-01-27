@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -40,7 +40,7 @@ public class LoginActionListener implements ActionListener {
     public void actionPerformed(ActionEvent pAE) {
         LoginFrame source = (LoginFrame) pAE.getSource();
         if(authenticate(source)){
-            ExplorerFrame explorerFrame = new ExplorerFrame(new MDocTransferHandler(), new EditFolderActionListener());
+            ExplorerFrame explorerFrame = new ExplorerFrame(new DocMTransferHandler(), new EditFolderActionListener());
             ActionFactoryImpl connector = new ActionFactoryImpl(explorerFrame);
             explorerFrame.addElementSelectedListener(connector);
             explorerFrame.setActions(connector);

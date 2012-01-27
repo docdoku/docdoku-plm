@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,9 +24,9 @@ import com.docdoku.core.services.ICommandWS;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.MasterDocumentKey;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.common.Version;
@@ -45,7 +45,7 @@ import javax.swing.*;
 import java.util.*;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.MasterDocumentTemplateKey;
+import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.sun.xml.ws.developer.JAXWSProperties;
@@ -78,18 +78,18 @@ public class MainModel {
                     childIndices, children);
         }
 
-        public void createMDocInFolder(MasterDocument pMasterDocument) {
-            mCache.cacheMDoc(pMasterDocument);
-            insertIntoTables(pMasterDocument);
+        public void createDocMInFolder(DocumentMaster pDocumentMaster) {
+            mCache.cacheDocM(pDocumentMaster);
+            insertIntoTables(pDocumentMaster);
         }
 
-        public void createMDocTemplate(MasterDocumentTemplate pTemplate) {
-            mCache.cacheMDocTemplate(pTemplate);
+        public void createDocMTemplate(DocumentMasterTemplate pTemplate) {
+            mCache.cacheDocMTemplate(pTemplate);
             insertIntoTables(pTemplate);
         }
 
-        public void updateMDocTemplate(MasterDocumentTemplate pTemplate) {
-            mCache.cacheMDocTemplate(pTemplate);
+        public void updateDocMTemplate(DocumentMasterTemplate pTemplate) {
+            mCache.cacheDocMTemplate(pTemplate);
         }
 
         public void saveWorkflowModel(WorkflowModel pWorkflowModel) {
@@ -102,8 +102,8 @@ public class MainModel {
             }
         }
 
-        public void updateMDoc(MasterDocument pMDoc) {
-            mCache.cacheMDoc(pMDoc);
+        public void updateDocM(DocumentMaster pDocM) {
+            mCache.cacheDocM(pDocM);
             MainModel.this.getElementsTreeModel().fireTagTreeStructureChanged();
         }
 
@@ -111,16 +111,16 @@ public class MainModel {
             mCache.cacheUser(pUser);
         }
 
-        public void delMDoc(MasterDocument pMasterDocument) {
-            List<Integer> indexes = indexesOfElement(pMasterDocument);
+        public void delDocM(DocumentMaster pDocumentMaster) {
+            List<Integer> indexes = indexesOfElement(pDocumentMaster);
             int i = 0;
-            mCache.removeMDoc(pMasterDocument);
+            mCache.removeDocM(pDocumentMaster);
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
                 FolderBasedElementsTableModel model = (FolderBasedElementsTableModel) iti.next();
                 String completePath = model.getFolderCompletePath();
                 if (completePath != null && completePath.equals(
-                        pMasterDocument.getLocation().getCompletePath())) {
+                        pDocumentMaster.getLocation().getCompletePath())) {
                     int row = indexes.get(i++);
                     model.fireTableRowsDeleted(row, row);
                 }
@@ -128,10 +128,10 @@ public class MainModel {
             }
         }
 
-        public void delMDocTemplate(MasterDocumentTemplate pTemplate) {
+        public void delDocMTemplate(DocumentMasterTemplate pTemplate) {
             List<Integer> indexes = indexesOfElement(pTemplate);
             int i = 0;
-            mCache.removeMDocTemplate(pTemplate);
+            mCache.removeDocMTemplate(pTemplate);
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
                 FolderBasedElementsTableModel model = (FolderBasedElementsTableModel) iti.next();
@@ -144,9 +144,9 @@ public class MainModel {
             }
         }
 
-        public void moveMDoc(MasterDocument pTargetMDoc) {
-            insertIntoTables(pTargetMDoc);
-            mCache.cacheMDoc(pTargetMDoc);
+        public void moveDocM(DocumentMaster pTargetDocM) {
+            insertIntoTables(pTargetDocM);
+            mCache.cacheDocM(pTargetDocM);
         }
 
         public void renameFolder(String pCompletePath, String pNewName) {
@@ -201,7 +201,6 @@ public class MainModel {
                 if (completePath != null && completePath.equals(
                         WorkflowModelTreeNode.WORKFLOW_MODEL_PATH)) {
                     int row = indexes.get(i++);
-                    System.out.println("ROW: " + row);
                     model.fireTableRowsDeleted(row, row);
 
                 }
@@ -210,42 +209,42 @@ public class MainModel {
             }
         }
 
-        public void checkIn(MasterDocument pMasterDocument) {
-            mCache.cacheMDoc(pMasterDocument);
-            updateTables(pMasterDocument);
+        public void checkIn(DocumentMaster pDocumentMaster) {
+            mCache.cacheDocM(pDocumentMaster);
+            updateTables(pDocumentMaster);
         }
 
-        public void checkOut(MasterDocument pMasterDocument) {
-            mCache.cacheMDoc(pMasterDocument);
-            updateTables(pMasterDocument);
+        public void checkOut(DocumentMaster pDocumentMaster) {
+            mCache.cacheDocM(pDocumentMaster);
+            updateTables(pDocumentMaster);
         }
 
-        public void makeNewVersion(MasterDocument[] pOriginalAndNewMDoc) {
-            mCache.cacheMDoc(pOriginalAndNewMDoc[0]);
-            updateTables(pOriginalAndNewMDoc[0]);
-            mCache.cacheMDoc(pOriginalAndNewMDoc[1]);
-            insertIntoTables(pOriginalAndNewMDoc[1]);
+        public void makeNewVersion(DocumentMaster[] pOriginalAndNewDocM) {
+            mCache.cacheDocM(pOriginalAndNewDocM[0]);
+            updateTables(pOriginalAndNewDocM[0]);
+            mCache.cacheDocM(pOriginalAndNewDocM[1]);
+            insertIntoTables(pOriginalAndNewDocM[1]);
         }
 
-        public void undoCheckOut(MasterDocument pMasterDocument) {
-            mCache.cacheMDoc(pMasterDocument);
-            updateTables(pMasterDocument);
+        public void undoCheckOut(DocumentMaster pDocumentMaster) {
+            mCache.cacheDocM(pDocumentMaster);
+            updateTables(pDocumentMaster);
         }
 
-        public void addStateNotification(MasterDocument pMasterDocument) {
-            mCache.cacheStateSubscription(pMasterDocument.getKey());
+        public void addStateNotification(DocumentMaster pDocumentMaster) {
+            mCache.cacheStateSubscription(pDocumentMaster.getKey());
         }
 
-        public void removeStateNotification(MasterDocument pMasterDocument) {
-            mCache.removeStateSubscription(pMasterDocument.getKey());
+        public void removeStateNotification(DocumentMaster pDocumentMaster) {
+            mCache.removeStateSubscription(pDocumentMaster.getKey());
         }
 
-        public void addIterationNotification(MasterDocument pMasterDocument) {
-            mCache.cacheIterationSubscription(pMasterDocument.getKey());
+        public void addIterationNotification(DocumentMaster pDocumentMaster) {
+            mCache.cacheIterationSubscription(pDocumentMaster.getKey());
         }
 
-        public void removeIterationNotification(MasterDocument pMasterDocument) {
-            mCache.removeIterationSubscription(pMasterDocument.getKey());
+        public void removeIterationNotification(DocumentMaster pDocumentMaster) {
+            mCache.removeIterationSubscription(pDocumentMaster.getKey());
         }
 
         public void refreshTree() {
@@ -257,14 +256,14 @@ public class MainModel {
             MainModel.this.getElementsTreeModel().fireAllTreeStructureChanged();
         }
 
-        private void updateTables(MasterDocument pMasterDocument) {
+        private void updateTables(DocumentMaster pDocumentMaster) {
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
                 FolderBasedElementsTableModel model = (FolderBasedElementsTableModel) iti.next();
                 String completePath = model.getFolderCompletePath();
                 if (completePath != null && completePath.equals(
-                        pMasterDocument.getLocation().getCompletePath())) {
-                    int row = model.getIndexOfElement(pMasterDocument);
+                        pDocumentMaster.getLocation().getCompletePath())) {
+                    int row = model.getIndexOfElement(pDocumentMaster);
                     model.fireTableRowsUpdated(row, row);
                 }
             }
@@ -296,7 +295,7 @@ public class MainModel {
             }
         }
 
-        private void insertIntoTables(MasterDocumentTemplate pTemplate) {
+        private void insertIntoTables(DocumentMasterTemplate pTemplate) {
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
                 FolderBasedElementsTableModel model = (FolderBasedElementsTableModel) iti.next();
@@ -309,28 +308,28 @@ public class MainModel {
             }
         }
 
-        private void insertIntoTables(MasterDocument pMasterDocument) {
+        private void insertIntoTables(DocumentMaster pDocumentMaster) {
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
                 FolderBasedElementsTableModel model = (FolderBasedElementsTableModel) iti.next();
                 String completePath = model.getFolderCompletePath();
                 if (completePath != null && completePath.equals(
-                        pMasterDocument.getLocation().getCompletePath())) {
-                    int row = model.getIndexOfElement(pMasterDocument);
+                        pDocumentMaster.getLocation().getCompletePath())) {
+                    int row = model.getIndexOfElement(pDocumentMaster);
                     model.fireTableRowsInserted(row, row);
                 }
             }
         }
 
-        private List<Integer> indexesOfElement(MasterDocument pMasterDocument) {
+        private List<Integer> indexesOfElement(DocumentMaster pDocumentMaster) {
             List<Integer> indexes = new LinkedList<Integer>();
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
                 FolderBasedElementsTableModel model = (FolderBasedElementsTableModel) iti.next();
                 String completePath = model.getFolderCompletePath();
                 if (completePath != null && completePath.equals(
-                        pMasterDocument.getLocation().getCompletePath())) {
-                    int row = model.getIndexOfElement(pMasterDocument);
+                        pDocumentMaster.getLocation().getCompletePath())) {
+                    int row = model.getIndexOfElement(pDocumentMaster);
                     indexes.add(row);
                 }
             }
@@ -352,7 +351,7 @@ public class MainModel {
             return indexes;
         }
 
-        private List<Integer> indexesOfElement(MasterDocumentTemplate pTemplate) {
+        private List<Integer> indexesOfElement(DocumentMasterTemplate pTemplate) {
             List<Integer> indexes = new LinkedList<Integer>();
             Iterator iti = getElementTableModels().iterator();
             while (iti.hasNext()) {
@@ -465,14 +464,14 @@ public class MainModel {
         return models;
     }
 
-    public MasterDocumentTemplate[] getMDocTemplates() {
-        MasterDocumentTemplate[] templates = mCache.getMDocTemplates();
+    public DocumentMasterTemplate[] getDocMTemplates() {
+        DocumentMasterTemplate[] templates = mCache.getDocMTemplates();
 
         if (templates == null) {
             try {
                 System.out.println("Retrieving templates");
-                templates = Tools.resetParentReferences(mCommandService.getMDocTemplates(getWorkspace().getId()));
-                mCache.cacheMDocTemplates(templates);
+                templates = Tools.resetParentReferences(mCommandService.getDocumentMasterTemplates(getWorkspace().getId()));
+                mCache.cacheDocMTemplates(templates);
             } catch (WebServiceException pWSEx) {
                 String message;
                 Throwable t = pWSEx.getCause();
@@ -491,14 +490,14 @@ public class MainModel {
         return templates;
     }
 
-    public MasterDocumentTemplate getMDocTemplate(String pId) {
-        MasterDocumentTemplate template = mCache.getMDocTemplate(pId);
+    public DocumentMasterTemplate getDocMTemplate(String pId) {
+        DocumentMasterTemplate template = mCache.getDocMTemplate(pId);
 
         if (template == null) {
             try {
                 System.out.println("Retrieving document template " + pId);
-                template = Tools.resetParentReferences(mCommandService.getMDocTemplate(new MasterDocumentTemplateKey(getWorkspace().getId(), pId)));
-                mCache.cacheMDocTemplate(template);
+                template = Tools.resetParentReferences(mCommandService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(getWorkspace().getId(), pId)));
+                mCache.cacheDocMTemplate(template);
             } catch (WebServiceException pWSEx) {
                 String message;
                 Throwable t = pWSEx.getCause();
@@ -547,14 +546,14 @@ public class MainModel {
         return workflowModel;
     }
 
-    public MasterDocument getMDoc(MasterDocumentKey pMDocPK) {
-        MasterDocument mdoc = mCache.getMDoc(pMDocPK);
+    public DocumentMaster getDocM(DocumentMasterKey pDocMPK) {
+        DocumentMaster docM = mCache.getDocM(pDocMPK);
 
-        if (mdoc == null) {
+        if (docM == null) {
             try {
-                System.out.println("Retrieving master document " + pMDocPK);
-                mdoc = Tools.resetParentReferences(mCommandService.getMDoc(pMDocPK));
-                mCache.cacheMDoc(mdoc);
+                System.out.println("Retrieving document master " + pDocMPK);
+                docM = Tools.resetParentReferences(mCommandService.getDocumentMaster(pDocMPK));
+                mCache.cacheDocM(docM);
             } catch (WebServiceException pWSEx) {
                 String message;
                 Throwable t = pWSEx.getCause();
@@ -572,11 +571,11 @@ public class MainModel {
                         JOptionPane.ERROR_MESSAGE);
             }
         }
-        return mdoc;
+        return docM;
     }
 
-    public MasterDocumentKey[] getStateChangeEventSubscriptions() {
-        MasterDocumentKey[] subKeys = mCache.getStateSubscriptions();
+    public DocumentMasterKey[] getStateChangeEventSubscriptions() {
+        DocumentMasterKey[] subKeys = mCache.getStateSubscriptions();
 
         if (subKeys == null) {
             try {
@@ -601,18 +600,18 @@ public class MainModel {
         return subKeys;
     }
 
-    public boolean hasIterationChangeEventSubscription(MasterDocument pMDoc) {
-        MasterDocumentKey[] subKeys = getIterationChangeEventSubscriptions();
-        return Arrays.asList(subKeys).contains(pMDoc.getKey());
+    public boolean hasIterationChangeEventSubscription(DocumentMaster pDocM) {
+        DocumentMasterKey[] subKeys = getIterationChangeEventSubscriptions();
+        return Arrays.asList(subKeys).contains(pDocM.getKey());
     }
 
-    public boolean hasStateChangeEventSubscription(MasterDocument pMDoc) {
-        MasterDocumentKey[] subKeys = getStateChangeEventSubscriptions();
-        return Arrays.asList(subKeys).contains(pMDoc.getKey());
+    public boolean hasStateChangeEventSubscription(DocumentMaster pDocM) {
+        DocumentMasterKey[] subKeys = getStateChangeEventSubscriptions();
+        return Arrays.asList(subKeys).contains(pDocM.getKey());
     }
 
-    public MasterDocumentKey[] getIterationChangeEventSubscriptions() {
-        MasterDocumentKey[] subKeys = mCache.getIterationSubscriptions();
+    public DocumentMasterKey[] getIterationChangeEventSubscriptions() {
+        DocumentMasterKey[] subKeys = mCache.getIterationSubscriptions();
 
         if (subKeys == null) {
             try {
@@ -637,14 +636,14 @@ public class MainModel {
         return subKeys;
     }
 
-    public MasterDocument[] getCheckedOutMDocs() {
-        MasterDocument[] mdocs = mCache.getCheckedOutMDocs();
+    public DocumentMaster[] getCheckedOutDocMs() {
+        DocumentMaster[] docMs = mCache.getCheckedOutDocMs();
 
-        if (mdocs == null) {
+        if (docMs == null) {
             try {
-                System.out.println("Retrieving personnal checked out master documents");
-                mdocs = Tools.resetParentReferences(mCommandService.getCheckedOutMDocs(getWorkspace().getId()));
-                mCache.cacheCheckedOutMDocs(mdocs);
+                System.out.println("Retrieving personnal checked out document masters");
+                docMs = Tools.resetParentReferences(mCommandService.getCheckedOutDocumentMasters(getWorkspace().getId()));
+                mCache.cacheCheckedOutDocMs(docMs);
             } catch (WebServiceException pWSEx) {
                 String message;
                 Throwable t = pWSEx.getCause();
@@ -660,17 +659,17 @@ public class MainModel {
                 showContinueOrExitDialog(message);
             }
         }
-        return mdocs;
+        return docMs;
     }
 
-    public MasterDocument[] findMDocsByTag(String pTag) {
-        MasterDocument[] mdocs = mCache.findMDocsByTag(pTag);
+    public DocumentMaster[] findDocMsByTag(String pTag) {
+        DocumentMaster[] docMs = mCache.findDocMsByTag(pTag);
 
-        if (mdocs == null) {
+        if (docMs == null) {
             try {
-                System.out.println("Searching master documents by tag " + pTag);
-                mdocs = Tools.resetParentReferences(mCommandService.findMDocsByTag(new TagKey(getWorkspace().getId(), pTag)));
-                mCache.cacheMDocsByTag(pTag, mdocs);
+                System.out.println("Searching document masters by tag " + pTag);
+                docMs = Tools.resetParentReferences(mCommandService.findDocumentMastersByTag(new TagKey(getWorkspace().getId(), pTag)));
+                mCache.cacheDocMsByTag(pTag, docMs);
             } catch (WebServiceException pWSEx) {
                 String message;
                 Throwable t = pWSEx.getCause();
@@ -686,17 +685,17 @@ public class MainModel {
                 showContinueOrExitDialog(message);
             }
         }
-        return mdocs;
+        return docMs;
     }
 
-    public MasterDocument[] findMDocsByFolder(String pCompletePath) {
-        MasterDocument[] mdocs = mCache.findMDocsByFolder(pCompletePath);
+    public DocumentMaster[] findDocMsByFolder(String pCompletePath) {
+        DocumentMaster[] docMs = mCache.findDocMsByFolder(pCompletePath);
 
-        if (mdocs == null) {
+        if (docMs == null) {
             try {
-                System.out.println("Searching master documents by folder " + pCompletePath);
-                mdocs = Tools.resetParentReferences(mCommandService.findMDocsByFolder(pCompletePath));
-                mCache.cacheMDocsByFolder(pCompletePath, mdocs);
+                System.out.println("Searching document masters by folder " + pCompletePath);
+                docMs = Tools.resetParentReferences(mCommandService.findDocumentMastersByFolder(pCompletePath));
+                mCache.cacheDocMsByFolder(pCompletePath, docMs);
             } catch (WebServiceException pWSEx) {
                 String message;
                 Throwable t = pWSEx.getCause();
@@ -712,7 +711,7 @@ public class MainModel {
                 showContinueOrExitDialog(message);
             }
         }
-        return mdocs;
+        return docMs;
     }
 
     public String getLogin() {
@@ -783,11 +782,11 @@ public class MainModel {
         return users;
     }
 
-    public String getGeneratedId(String pWorkspaceId, String pMDocTemplateId) {
+    public String getGeneratedId(String pWorkspaceId, String pDocMTemplateId) {
         String generatedId = null;
         try {
-            System.out.println("Retrieving generated master document id");
-            generatedId = mCommandService.generateId(pWorkspaceId, pMDocTemplateId);
+            System.out.println("Retrieving generated document master id");
+            generatedId = mCommandService.generateId(pWorkspaceId, pDocMTemplateId);
         } catch (Exception pEx) {
             //TODO treat exception ?
         }
@@ -875,15 +874,15 @@ public class MainModel {
         return mElementTableModels;
     }
 
-    public MasterDocument[] searchMDocs(String pMDocId, String pTitle,
+    public DocumentMaster[] searchDocMs(String pDocMId, String pTitle,
             Version pVersion, User pAuthor, String pType, Date pCreationDateFrom,
             Date pCreationDateTo, SearchQuery.AbstractAttributeQuery[] pAttributes, String[] pTags, String pContent) throws Exception {
-        MasterDocument[] mdocs = null;
+        DocumentMaster[] docMs = null;
         try {
-            System.out.println("Searching for master document " + pMDocId + " version " + pVersion + " title " + pTitle + " author " + pAuthor + " creation date between " + pCreationDateFrom + " and " + pCreationDateTo + " tags " + pTags + " content " + pContent);
-            mdocs = Tools.resetParentReferences(mCommandService.searchMDocs(new SearchQuery(getWorkspace().getId(), pMDocId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
+            System.out.println("Searching for document master " + pDocMId + " version " + pVersion + " title " + pTitle + " author " + pAuthor + " creation date between " + pCreationDateFrom + " and " + pCreationDateTo + " tags " + pTags + " content " + pContent);
+            docMs = Tools.resetParentReferences(mCommandService.searchDocumentMasters(new SearchQuery(getWorkspace().getId(), pDocMId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
                     pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent)));
-            //TODO cache mdocs ?
+            //TODO cache docMs ?
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {
@@ -892,18 +891,18 @@ public class MainModel {
                 throw pWSEx;
             }
         }
-        return mdocs;
+        return docMs;
     }
 
     public File getFile(Component pParent, Document pDocument, BinaryResource pBin) throws Exception {
-        MasterDocument mdoc = pDocument.getMasterDocument();
+        DocumentMaster docM = pDocument.getDocumentMaster();
         File folder = null;
         boolean readOnly;
-        if (!mdoc.isCheckedOut() || !mdoc.getCheckOutUser().equals(getUser()) || !mdoc.getLastIteration().equals(pDocument)) {
-            folder = new File(Config.getCacheFolder(mdoc), pDocument.getIteration() + "");
+        if (!docM.isCheckedOut() || !docM.getCheckOutUser().equals(getUser()) || !docM.getLastIteration().equals(pDocument)) {
+            folder = new File(Config.getCacheFolder(docM), pDocument.getIteration() + "");
             readOnly = true;
         } else {
-            folder = Config.getCheckOutFolder(mdoc);
+            folder = Config.getCheckOutFolder(docM);
             readOnly = false;
         }
 
@@ -915,7 +914,7 @@ public class MainModel {
                 Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
                 try {
                     if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
-                        StreamingDataHandler dh = (StreamingDataHandler) mFileService.downloadFromDocument(getWorkspace().getId(), pDocument.getMasterDocumentId(), pDocument.getMasterDocumentVersion(), pDocument.getIteration(), pBin.getName());
+                        StreamingDataHandler dh = (StreamingDataHandler) mFileService.downloadFromDocument(getWorkspace().getId(), pDocument.getDocumentMasterId(), pDocument.getDocumentMasterVersion(), pDocument.getIteration(), pBin.getName());
                         downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
                     } else {
                         //workaround mode
@@ -950,14 +949,14 @@ public class MainModel {
                 localFile.setReadOnly();
                 localFile.deleteOnExit();
             } else {
-                Prefs.storeDocInfo(mdoc, localFile.getName(), localFile.lastModified());
+                Prefs.storeDocInfo(docM, localFile.getName(), localFile.lastModified());
             }
         }
 
         return localFile;
     }
 
-    public File getFile(Component pParent, MasterDocumentTemplate pTemplate, BinaryResource pBin) throws Exception {
+    public File getFile(Component pParent, DocumentMasterTemplate pTemplate, BinaryResource pBin) throws Exception {
         File folder = Config.getCacheFolder(pTemplate);
         File localFile = new File(folder, pBin.getName());
 
@@ -1008,15 +1007,15 @@ public class MainModel {
                 + "files/"
                 + URLEncoder.encode(getWorkspace().getId(), "UTF-8") + "/"
                 + "documents/"
-                + URLEncoder.encode(pDocument.getMasterDocumentId(), "UTF-8") + "/"
-                + pDocument.getMasterDocumentVersion() + "/"
+                + URLEncoder.encode(pDocument.getDocumentMasterId(), "UTF-8") + "/"
+                + pDocument.getDocumentMasterVersion() + "/"
                 + pDocument.getIteration() + "/"
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
 
 
     }
 
-    private String getServletURL(MasterDocumentTemplate pTemplate, String pRemoteFileName) throws UnsupportedEncodingException {
+    private String getServletURL(DocumentMasterTemplate pTemplate, String pRemoteFileName) throws UnsupportedEncodingException {
         return Config.getHTTPCodebase()
                 + "files/"
                 + URLEncoder.encode(getWorkspace().getId(), "UTF-8")

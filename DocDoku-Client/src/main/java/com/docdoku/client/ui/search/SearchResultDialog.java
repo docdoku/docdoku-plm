@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.search;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
@@ -31,19 +31,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.docdoku.client.data.SearchMDocsResultTableModel;
+import com.docdoku.client.data.SearchDocMsResultTableModel;
 import com.docdoku.client.ui.common.ElementsScrollPane;
 
 public class SearchResultDialog extends JDialog implements ActionListener {
     private ElementsScrollPane mSearchResultPanel;
     private OKCancelPanel mOKCancelPanel;
     private ActionListener mAction;
-    private MasterDocument[] mSelectedMDocs;
+    private DocumentMaster[] mSelectedDocMs;
 
-    public SearchResultDialog(JDialog pOwner, MasterDocument[] pMDocs, ActionListener pAction, boolean pMultipleSelection) {
+    public SearchResultDialog(JDialog pOwner, DocumentMaster[] pDocMs, ActionListener pAction, boolean pMultipleSelection) {
         super(pOwner, I18N.BUNDLE.getString("SearchResult_title"), true);
         setLocationRelativeTo(pOwner);
-        mSearchResultPanel = new ElementsScrollPane(new SearchMDocsResultTableModel(pMDocs),null);
+        mSearchResultPanel = new ElementsScrollPane(new SearchDocMsResultTableModel(pDocMs),null);
         
         mOKCancelPanel = new OKCancelPanel(this, this);
         mAction = pAction;
@@ -64,8 +64,8 @@ public class SearchResultDialog extends JDialog implements ActionListener {
         pack();
     }
 
-    public MasterDocument[] getSelectedMDocs() {
-        return mSelectedMDocs;
+    public DocumentMaster[] getSelectedDocMs() {
+        return mSelectedDocMs;
     }
 
     private void setMultipleSelection(boolean pMulti){
@@ -82,9 +82,9 @@ public class SearchResultDialog extends JDialog implements ActionListener {
                     public void valueChanged(ListSelectionEvent pE) {
                         Object[] selectedElements = mSearchResultPanel.getSelectedElements();
                         mOKCancelPanel.setEnabled(selectedElements.length>0);
-                        mSelectedMDocs = new MasterDocument[selectedElements.length];
+                        mSelectedDocMs = new DocumentMaster[selectedElements.length];
                         for (int i = 0; i < selectedElements.length; i++) {
-                            mSelectedMDocs[i] = (MasterDocument) selectedElements[i];
+                            mSelectedDocMs[i] = (DocumentMaster) selectedElements[i];
                         }
                     }
                 });

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -31,7 +31,7 @@ import javax.swing.*;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.SearchQuery;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -97,19 +97,19 @@ public class SearchAttributesPanel extends JPanel {
         });
         
         mTemplateLabel = new JLabel(I18N.BUNDLE.getString("Template_label"));
-        MasterDocumentTemplate[] templates=MainModel.getInstance().getMDocTemplates();
+        DocumentMasterTemplate[] templates=MainModel.getInstance().getDocMTemplates();
         Object[] comboBoxTemplateValues = new Object[templates.length + 1];
         comboBoxTemplateValues[0] = I18N.BUNDLE.getString("Not_specified");
         int i = 1;
-        for (MasterDocumentTemplate template : templates)
+        for (DocumentMasterTemplate template : templates)
             comboBoxTemplateValues[i++] = template;
         
         mTemplateList = new JComboBox(comboBoxTemplateValues);
 
         mTemplateList.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if(mTemplateList.getSelectedItem() instanceof MasterDocumentTemplate){
-                    MasterDocumentTemplate template = (MasterDocumentTemplate) mTemplateList.getSelectedItem();
+                if(mTemplateList.getSelectedItem() instanceof DocumentMasterTemplate){
+                    DocumentMasterTemplate template = (DocumentMasterTemplate) mTemplateList.getSelectedItem();
 
                     mAttributePanels.clear();
                     mCenterPanel.removeAll();

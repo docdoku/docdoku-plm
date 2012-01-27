@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,9 +21,9 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.client.ui.template.ViewMDocTemplateDetailsDialog;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.client.ui.template.ViewDocMTemplateDetailsDialog;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.ViewWorkflowModelDetailsDialog;
@@ -46,18 +46,18 @@ public class ViewElementAction extends ClientAbstractAction {
     public void actionPerformed(ActionEvent pAE) {
 
         WorkflowModel wfModel = mOwner.getSelectedWorkflowModel();
-        MasterDocument mdoc = mOwner.getSelectedMDoc();
-        MasterDocumentTemplate template = mOwner.getSelectedMDocTemplate();
-        if(mdoc !=null){
+        DocumentMaster docM = mOwner.getSelectedDocM();
+        DocumentMasterTemplate template = mOwner.getSelectedDocMTemplate();
+        if(docM !=null){
             ActionListener downloadAction = new DownloadActionListener();
             ActionListener openAction = new OpenActionListener();
-            new ViewDocDetailsDialog(mOwner, mdoc.getLastIteration(), downloadAction, openAction);
+            new ViewDocDetailsDialog(mOwner, docM.getLastIteration(), downloadAction, openAction);
         }else if(wfModel != null){
             new ViewWorkflowModelDetailsDialog(mOwner, wfModel);
         }else if(template != null){
             ActionListener downloadAction = new DownloadActionListener();
             ActionListener openAction = new OpenActionListener();
-            new ViewMDocTemplateDetailsDialog(mOwner, template,downloadAction, openAction);
+            new ViewDocMTemplateDetailsDialog(mOwner, template,downloadAction, openAction);
         }
 
 

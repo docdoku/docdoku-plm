@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -50,7 +50,7 @@ public class ExplorerMenu extends JMenuBar {
     private ButtonMenu mUndoCheckOut;
     private ButtonMenu mDeleteElement;
     private ButtonMenu mEditDoc;
-    private ButtonMenu mVersionMDoc;
+    private ButtonMenu mVersionDocM;
     private ButtonMenu mApprove;
     private ButtonMenu mReject;
 
@@ -135,7 +135,7 @@ public class ExplorerMenu extends JMenuBar {
         mUndoCheckOut = new ButtonMenu(pStatusLabel);
         mDeleteElement = new ButtonMenu(pStatusLabel);
         mEditDoc = new ButtonMenu(pStatusLabel);
-        mVersionMDoc = new ButtonMenu(pStatusLabel);
+        mVersionDocM = new ButtonMenu(pStatusLabel);
         mApprove = new ButtonMenu(pStatusLabel);
         mReject = new ButtonMenu(pStatusLabel);
         mDistributeDocument = new ButtonMenu(pStatusLabel);
@@ -148,7 +148,7 @@ public class ExplorerMenu extends JMenuBar {
         action.addSeparator();
         action.add(mDeleteElement);
         action.add(mEditDoc);
-        action.add(mVersionMDoc);
+        action.add(mVersionDocM);
         action.addSeparator();
         action.add(mApprove);
         action.add(mReject);
@@ -192,10 +192,10 @@ public class ExplorerMenu extends JMenuBar {
     }
     
     public void setActions(ActionFactory pActionFactory) {
-        mNewDoc.setAction(pActionFactory.getCreateMDocAction());
+        mNewDoc.setAction(pActionFactory.getCreateDocMAction());
         mNewFolder.setAction(pActionFactory.getCreateFolderAction());
         mNewWorkflow.setAction(pActionFactory.getCreateWorkflowModelAction());
-        mNewTemplate.setAction(pActionFactory.getCreateMDocTemplateAction());
+        mNewTemplate.setAction(pActionFactory.getCreateDocMTemplateAction());
         mNewWin.setAction(pActionFactory.getNewWinAction());
         mExport.setAction(pActionFactory.getExportAction());
         mClose.setAction(pActionFactory.getCloseWinAction());
@@ -212,7 +212,7 @@ public class ExplorerMenu extends JMenuBar {
         mUndoCheckOut.setAction(pActionFactory.getUndoCheckOutAction());
         mDeleteElement.setAction(pActionFactory.getDeleteElementAction());
         mEditDoc.setAction(pActionFactory.getEditElementAction());
-        mVersionMDoc.setAction(pActionFactory.getCreateVersionAction());
+        mVersionDocM.setAction(pActionFactory.getCreateVersionAction());
         mApprove.setAction(pActionFactory.getApproveAction());
         mReject.setAction(pActionFactory.getRejectAction());
         mDistributeDocument.setAction(pActionFactory.getDistributeDocumentAction());

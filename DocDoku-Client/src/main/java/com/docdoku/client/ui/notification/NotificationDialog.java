@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.ui.notification;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 
 import javax.swing.*;
@@ -35,17 +35,17 @@ public class NotificationDialog extends JDialog implements ActionListener {
     private NotificationPanel mNotificationPanel;
     private OKCancelPanel mOKCancelPanel;
     private ActionListener mAction;
-    private MasterDocument mNotifiedMDoc;
+    private DocumentMaster mNotifiedDocM;
 
-    public NotificationDialog(Frame pOwner, MasterDocument pNotifiedMDoc, ActionListener pAction) {
+    public NotificationDialog(Frame pOwner, DocumentMaster pNotifiedDocM, ActionListener pAction) {
         super(pOwner, I18N.BUNDLE.getString("NotificationDialog_title"), true);
         setLocationRelativeTo(pOwner);
         MainModel model = MainModel.getInstance();
         User user = model.getUser();
 
-        mNotifiedMDoc=pNotifiedMDoc;
-        boolean iterationStatus = MainModel.getInstance().hasIterationChangeEventSubscription(pNotifiedMDoc);
-        boolean stateStatus = MainModel.getInstance().hasStateChangeEventSubscription(pNotifiedMDoc);
+        mNotifiedDocM=pNotifiedDocM;
+        boolean iterationStatus = MainModel.getInstance().hasIterationChangeEventSubscription(pNotifiedDocM);
+        boolean stateStatus = MainModel.getInstance().hasStateChangeEventSubscription(pNotifiedDocM);
         mNotificationPanel = new NotificationPanel(iterationStatus, stateStatus);
         mOKCancelPanel = new OKCancelPanel(this, this);
         mAction = pAction;
@@ -62,8 +62,8 @@ public class NotificationDialog extends JDialog implements ActionListener {
         pack();
     }
 
-    public MasterDocument getMDoc() {
-       return mNotifiedMDoc;
+    public DocumentMaster getDocM() {
+       return mNotifiedDocM;
     }
 
     public void actionPerformed(ActionEvent pAE) {

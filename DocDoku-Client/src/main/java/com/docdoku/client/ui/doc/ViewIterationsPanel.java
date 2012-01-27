@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.data.DocsTableModel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
 
@@ -31,8 +31,8 @@ public class ViewIterationsPanel extends JScrollPane {
 
     private DocsTable mDocsTable;
 
-    public ViewIterationsPanel(MasterDocument pMDoc) {
-        mDocsTable = new DocsTable(new DocsTableModel(pMDoc));
+    public ViewIterationsPanel(DocumentMaster pDocM) {
+        mDocsTable = new DocsTable(new DocsTableModel(pDocM));
 
         createLayout();
     }

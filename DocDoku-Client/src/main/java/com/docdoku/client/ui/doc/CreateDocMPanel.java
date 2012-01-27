@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -36,7 +36,7 @@ import com.docdoku.core.common.Version.VersionUnit;
 import com.docdoku.core.util.Tools;
 import javax.swing.text.MaskFormatter;
 
-public class CreateMDocPanel extends JPanel {
+public class CreateDocMPanel extends JPanel {
     
     private JLabel mTemplateLabel;
     private JLabel mAuthorLabel;
@@ -53,7 +53,7 @@ public class CreateMDocPanel extends JPanel {
     private JComboBox mWorkflowModelList;
     private JComboBox mTemplateList;
     
-    public CreateMDocPanel() {
+    public CreateDocMPanel() {
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
         mTemplateLabel = new JLabel(I18N.BUNDLE.getString("Template_label"));
         mAuthorValueLabel = new JLabel(MainModel.getInstance().getUser().getName());
@@ -72,11 +72,11 @@ public class CreateMDocPanel extends JPanel {
         
         mWorkflowModelList = new JComboBox(comboBoxValues);
         
-        MasterDocumentTemplate[] templates=MainModel.getInstance().getMDocTemplates();
+        DocumentMasterTemplate[] templates=MainModel.getInstance().getDocMTemplates();
         comboBoxValues = new Object[templates.length + 1];
         comboBoxValues[0] = I18N.BUNDLE.getString("None_label");
         i = 1;
-        for (MasterDocumentTemplate template : templates)
+        for (DocumentMasterTemplate template : templates)
             comboBoxValues[i++] = template;
              
         mTemplateList = new JComboBox(comboBoxValues);
@@ -86,8 +86,8 @@ public class CreateMDocPanel extends JPanel {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component renderer = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
                 String label;
-                if(value instanceof MasterDocumentTemplate){
-                    MasterDocumentTemplate template = (MasterDocumentTemplate)value;
+                if(value instanceof DocumentMasterTemplate){
+                    DocumentMasterTemplate template = (DocumentMasterTemplate)value;
                     String type = template.getDocumentType();                   
                     label = template.getId();
                     if(type!=null && type.length()>0)
@@ -112,7 +112,7 @@ public class CreateMDocPanel extends JPanel {
         createListener();
     }
     
-    public String getID() {
+    public String getId() {
         return mIDText.getText();
     }
     
@@ -129,10 +129,10 @@ public class CreateMDocPanel extends JPanel {
             return null;
     }
     
-    public MasterDocumentTemplate getMDocTemplate() {
+    public DocumentMasterTemplate getDocMTemplate() {
         Object selectedItem = mTemplateList.getSelectedItem();
-        if (selectedItem instanceof MasterDocumentTemplate)
-            return (MasterDocumentTemplate) selectedItem;
+        if (selectedItem instanceof DocumentMasterTemplate)
+            return (DocumentMasterTemplate) selectedItem;
         else
             return null;
     }
@@ -149,7 +149,7 @@ public class CreateMDocPanel extends JPanel {
         mTemplateList.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                MasterDocumentTemplate template = getMDocTemplate();
+                DocumentMasterTemplate template = getDocMTemplate();
                 if(template!=null &&  !template.getMask().equals("")){
                     String inputMask = template.getMask();
                     String convertedMask = Tools.convertMask(inputMask);

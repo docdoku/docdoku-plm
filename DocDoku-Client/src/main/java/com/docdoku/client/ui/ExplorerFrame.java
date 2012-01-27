@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -32,8 +32,8 @@ import com.docdoku.client.data.TemplateTreeNode;
 import com.docdoku.client.data.WorkflowModelTreeNode;
 import com.docdoku.client.ui.common.ElementsScrollPane;
 import com.docdoku.client.ui.help.ShortcutsPanel;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -60,9 +60,9 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
     private JLabel mStatusLabel;
     private JButton mGuideBtn;
     private FolderTreeNode mSelectedFolder;
-    private MasterDocument mSelectedMDoc;
+    private DocumentMaster mSelectedDocM;
     private WorkflowModel mSelectedWorkflowModel;
-    private MasterDocumentTemplate mSelectedMDocTemplate;
+    private DocumentMasterTemplate mSelectedDocMTemplate;
     private ActionFactory mActionFactory;
     private TransferHandler mTransferHandler;
     private ActionListener mEditFolderListener;
@@ -268,32 +268,32 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
             @Override
             public void valueChanged(ListSelectionEvent pE) {
                 Object element = mRightScrollPane.getSelectedElement();
-                if (element instanceof MasterDocument) {
-                    mSelectedMDoc = (MasterDocument) element;
+                if (element instanceof DocumentMaster) {
+                    mSelectedDocM = (DocumentMaster) element;
                     mSelectedWorkflowModel = null;
-                    mSelectedMDocTemplate = null;
-                    fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,mSelectedMDoc));
+                    mSelectedDocMTemplate = null;
+                    fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,mSelectedDocM));
                 } else if (element instanceof WorkflowModel) {
                     mSelectedWorkflowModel = (WorkflowModel) element;
-                    mSelectedMDoc = null;
-                    mSelectedMDocTemplate = null;
+                    mSelectedDocM = null;
+                    mSelectedDocMTemplate = null;
                     fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,mSelectedWorkflowModel));
-                }else if (element instanceof MasterDocumentTemplate) {
-                    mSelectedMDocTemplate = (MasterDocumentTemplate) element;
-                    mSelectedMDoc = null;
+                }else if (element instanceof DocumentMasterTemplate) {
+                    mSelectedDocMTemplate = (DocumentMasterTemplate) element;
+                    mSelectedDocM = null;
                     mSelectedWorkflowModel = null;
-                    fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,mSelectedMDocTemplate));
+                    fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,mSelectedDocMTemplate));
                 } else {
-                    if(mSelectedMDoc!=null)
-                        fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,(MasterDocument)null));
+                    if(mSelectedDocM!=null)
+                        fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,(DocumentMaster)null));
                     else if(mSelectedWorkflowModel!=null)
                         fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,(WorkflowModel)null));
-                    else if(mSelectedMDocTemplate!=null)
-                        fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,(MasterDocumentTemplate)null));
+                    else if(mSelectedDocMTemplate!=null)
+                        fireElementSelected(new ElementSelectedEvent(ExplorerFrame.this,(DocumentMasterTemplate)null));
                     
-                    mSelectedMDoc = null;
+                    mSelectedDocM = null;
                     mSelectedWorkflowModel = null;
-                    mSelectedMDocTemplate = null;
+                    mSelectedDocMTemplate = null;
                     
                 }
             }
@@ -330,12 +330,12 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         mRightScrollPane.unselectElement();
     }
     
-    public MasterDocument getSelectedMDoc() {
-        return mSelectedMDoc;
+    public DocumentMaster getSelectedDocM() {
+        return mSelectedDocM;
     }
     
-    public MasterDocumentTemplate getSelectedMDocTemplate() {
-        return mSelectedMDocTemplate;
+    public DocumentMasterTemplate getSelectedDocMTemplate() {
+        return mSelectedDocMTemplate;
     }
     
     public WorkflowModel getSelectedWorkflowModel() {
@@ -351,12 +351,12 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         mGuideBtn.setAction(pActionFactory.getDisplayShortcutsAction());
     }
     
-    public void showMDoc(MasterDocument pMDoc){
-        FolderTreeNode[] path=MainModel.getInstance().getElementsTreeModel().getPath(pMDoc.getLocation().getCompletePath());
+    public void showDocM(DocumentMaster pDocM){
+        FolderTreeNode[] path=MainModel.getInstance().getElementsTreeModel().getPath(pDocM.getLocation().getCompletePath());
         TreePath treePath=new TreePath(path);
         mFolderTree.expandPath(treePath);
         mFolderTree.setSelectionPath(treePath);
-        mRightScrollPane.selectElement(pMDoc);
+        mRightScrollPane.selectElement(pDocM);
     }
     
     public void duplicate() {

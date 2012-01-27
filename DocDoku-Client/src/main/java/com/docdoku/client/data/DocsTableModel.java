@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,16 +22,16 @@ package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import javax.swing.table.*;
 
 public class DocsTableModel extends AbstractTableModel {
 
     private final static String COLUMNN_NAME[] = {I18N.BUNDLE.getString("Iteration_column_label"), I18N.BUNDLE.getString("Author_column_label"), I18N.BUNDLE.getString("RevisionNote_column_label"), I18N.BUNDLE.getString("ModificationDate_column_label")};
-    private MasterDocument mMDoc;
+    private DocumentMaster mDocM;
 
-    public DocsTableModel(MasterDocument pMDoc) {
-        mMDoc = pMDoc;
+    public DocsTableModel(DocumentMaster pDocM) {
+        mDocM = pDocM;
     }
 
     public int getColumnCount() {
@@ -44,11 +44,11 @@ public class DocsTableModel extends AbstractTableModel {
     }
 
     public int getRowCount() {
-        return mMDoc.getNumberOfIterations();
+        return mDocM.getNumberOfIterations();
     }
 
     public Document getDocAt(int pRowIndex) {
-        return mMDoc.getIteration(pRowIndex + 1);
+        return mDocM.getIteration(pRowIndex + 1);
     }
 
     public Object getValueAt(int pRowIndex, int pColumnIndex) {

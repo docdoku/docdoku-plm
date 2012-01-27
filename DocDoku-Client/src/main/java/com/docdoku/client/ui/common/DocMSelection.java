@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,38 +20,38 @@
 
 package com.docdoku.client.ui.common;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-public class MDocSelection implements Transferable {
+public class DocMSelection implements Transferable {
 
-    private DataFlavor mMDocFlavor;
-    private MasterDocument mMDoc;
+    private DataFlavor mDocMFlavor;
+    private DocumentMaster mDocM;
 
-    public MDocSelection(MasterDocument pMDoc) {
-        mMDoc = pMDoc;
+    public DocMSelection(DocumentMaster pDocM) {
+        mDocM = pDocM;
         try {
-            mMDocFlavor = new DataFlavor(GUIConstants.MDOC_FLAVOR);
+            mDocMFlavor = new DataFlavor(GUIConstants.DOCM_FLAVOR);
         } catch (ClassNotFoundException pCNFEx) {
             throw new RuntimeException("Unexpected error: unrecognized data flavor", pCNFEx);
         }
     }
 
     public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[]{mMDocFlavor, DataFlavor.javaFileListFlavor};
+        return new DataFlavor[]{mDocMFlavor, DataFlavor.javaFileListFlavor};
     }
 
     public boolean isDataFlavorSupported(DataFlavor pFlavor) {
-        return (pFlavor.equals(mMDocFlavor) || pFlavor.equals(DataFlavor.javaFileListFlavor));
+        return (pFlavor.equals(mDocMFlavor) || pFlavor.equals(DataFlavor.javaFileListFlavor));
     }
 
     public Object getTransferData(DataFlavor pFlavor) throws UnsupportedFlavorException, IOException {
-        if (pFlavor.equals(mMDocFlavor)) {
-            return mMDoc;
+        if (pFlavor.equals(mDocMFlavor)) {
+            return mDocM;
         } else if (pFlavor.equals(DataFlavor.javaFileListFlavor)) {
             //TODO javaFileListFlavor
             return null;

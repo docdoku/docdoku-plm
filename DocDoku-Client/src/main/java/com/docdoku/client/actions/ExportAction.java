@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,7 +24,7 @@ import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import java.awt.event.ActionEvent;
 import java.io.InterruptedIOException;
 
@@ -80,18 +80,18 @@ public class ExportAction extends ClientAbstractAction {
     private void downloadFolder(FolderTreeNode folder, File directory) throws Exception {
         for (int i = 0; i < folder.elementSize(); i++) {
             Object element = folder.getElementChild(i);
-            if (element instanceof MasterDocument) {
-                MasterDocument mdoc = (MasterDocument) element;
+            if (element instanceof DocumentMaster) {
+                DocumentMaster docM = (DocumentMaster) element;
                 Document doc = null;
-                if(mdoc.isCheckedOut() && mdoc.getCheckOutUser().equals(MainModel.getInstance().getUser())){
-                    int iteration = mdoc.getNumberOfIterations()-1;
+                if(docM.isCheckedOut() && docM.getCheckOutUser().equals(MainModel.getInstance().getUser())){
+                    int iteration = docM.getNumberOfIterations()-1;
                     if(iteration >0)
-                        doc = mdoc.getIteration(iteration);
+                        doc = docM.getIteration(iteration);
                 }else
-                    doc = mdoc.getLastIteration();
+                    doc = docM.getLastIteration();
                 if(doc!=null){
                     for (BinaryResource bin : doc.getAttachedFiles()) {
-                        File destFolder=new File(directory, folder.getCompletePath().replace('/', File.separatorChar) + File.separator + mdoc.getId() + "-" + mdoc.getVersion() + File.separator + doc.getIteration());
+                        File destFolder=new File(directory, folder.getCompletePath().replace('/', File.separatorChar) + File.separator + docM.getId() + "-" + docM.getVersion() + File.separator + doc.getIteration());
                         File destFile = new File(destFolder, bin.getName());
                         if(!destFile.exists()){
                             File localFile = MainModel.getInstance().getFile(mOwner, doc, bin);

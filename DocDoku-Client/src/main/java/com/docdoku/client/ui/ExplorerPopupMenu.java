@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -31,7 +31,7 @@ public class ExplorerPopupMenu extends JPopupMenu {
     }
 
     public void setActions(ActionFactory pActionFactory) {
-        add(pActionFactory.getCreateMDocAction());
+        add(pActionFactory.getCreateDocMAction());
         add(pActionFactory.getCreateFolderAction());
         addSeparator();
         add(pActionFactory.getCheckInAction());

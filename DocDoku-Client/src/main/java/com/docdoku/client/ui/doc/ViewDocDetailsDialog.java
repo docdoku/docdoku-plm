@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -33,7 +33,7 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
 public class ViewDocDetailsDialog extends JDialog {
-    private ViewMDocPanel mMDocPanel;
+    private ViewDocMPanel mDocMPanel;
     private ViewDocPanel mDocPanel;
     private ViewFilesPanel mFilesPanel;
     private ViewAttributesPanel mAttributesPanel;
@@ -57,13 +57,13 @@ public class ViewDocDetailsDialog extends JDialog {
     
     private void init(Document pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
         mWatchedDoc = pWatchedDoc;
-        mMDocPanel = new ViewMDocPanel(mWatchedDoc.getMasterDocument());
+        mDocMPanel = new ViewDocMPanel(mWatchedDoc.getDocumentMaster());
         mDocPanel = new ViewDocPanel(mWatchedDoc);
         mCloseButton = new CloseButton(this, I18N.BUNDLE.getString("Close_button"));
         mFilesPanel = new ViewFilesPanel(mWatchedDoc,pDownloadAction,pOpenAction);
         mAttributesPanel = new ViewAttributesPanel(mWatchedDoc);
         mLinksPanel = new ViewLinksPanel(mWatchedDoc.getLinkedDocuments(),pDownloadAction,pOpenAction);
-        mDescriptionValueArea = new JTextArea(new MaxLengthDocument(4096), mWatchedDoc.getMasterDocument().getDescription(),5,35);
+        mDescriptionValueArea = new JTextArea(new MaxLengthDocument(4096), mWatchedDoc.getDocumentMaster().getDescription(),5,35);
         mDescriptionValueArea.setLineWrap(true);
         mDescriptionValueArea.setWrapStyleWord(true);
         mDescriptionValueArea.setEditable(false);
@@ -78,17 +78,17 @@ public class ViewDocDetailsDialog extends JDialog {
         
         JXTaskPaneContainer taskPane = new JXTaskPaneContainer();
         taskPane.setBackground(Color.LIGHT_GRAY);
-        JXTaskPane mdocActionPane = new JXTaskPane();
-        mdocActionPane.setTitle(I18N.BUNDLE.getString("ViewDocDetailsTaskPane_document_title"));
-        mTabbedPane.add(I18N.BUNDLE.getString("Main_border"), mMDocPanel);
+        JXTaskPane docMActionPane = new JXTaskPane();
+        docMActionPane.setTitle(I18N.BUNDLE.getString("ViewDocDetailsTaskPane_document_title"));
+        mTabbedPane.add(I18N.BUNDLE.getString("Main_border"), mDocMPanel);
         mTabbedPane.add(I18N.BUNDLE.getString("Description_border"), new JScrollPane(mDescriptionValueArea));
-        mdocActionPane.add(mTabbedPane);
+        docMActionPane.add(mTabbedPane);
         
         JXTaskPane docActionPane = new JXTaskPane();
         docActionPane.setTitle(I18N.BUNDLE.getString("ViewDocDetailsTaskPane_iteration_title"));
         docActionPane.add(mDocPanel);
         
-        taskPane.add(mdocActionPane);
+        taskPane.add(docMActionPane);
         taskPane.add(docActionPane);
         
         mainPanel.add(taskPane, BorderLayout.NORTH);

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 public class CheckedOutTreeNode extends FolderTreeNode {
 
@@ -47,9 +47,9 @@ public class CheckedOutTreeNode extends FolderTreeNode {
 
     @Override
     public Object getElementChild(int pIndex) {
-        MasterDocument[] mdocs = MainModel.getInstance().getCheckedOutMDocs();
-        if (pIndex < mdocs.length) {
-            return mdocs[pIndex];
+        DocumentMaster[] docMs = MainModel.getInstance().getCheckedOutDocMs();
+        if (pIndex < docMs.length) {
+            return docMs[pIndex];
         } else {
             return null;
         }
@@ -57,7 +57,7 @@ public class CheckedOutTreeNode extends FolderTreeNode {
 
     @Override
     public int elementSize() {
-        MasterDocument[] mdocs = MainModel.getInstance().getCheckedOutMDocs();
-        return mdocs.length;
+        DocumentMaster[] docMs = MainModel.getInstance().getCheckedOutDocMs();
+        return docMs.length;
     }
 }

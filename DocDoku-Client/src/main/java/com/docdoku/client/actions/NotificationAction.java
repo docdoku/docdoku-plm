@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -45,14 +45,14 @@ public class NotificationAction extends ClientAbstractAction {
                     String command = pAE.getActionCommand();
 
                     if (command.equals("subscribeIteration"))
-                        controller.subscribeIterationNotification(source.getMDoc());
+                        controller.subscribeIterationNotification(source.getDocM());
                     else if (command.equals("unsubscribeIteration"))
-                        controller.unsubscribeIterationNotification(source.getMDoc());
+                        controller.unsubscribeIterationNotification(source.getDocM());
 
                     if (command.equals("subscribeState"))
-                        controller.subscribeStateNotification(source.getMDoc());
+                        controller.subscribeStateNotification(source.getDocM());
                     else if (command.equals("unsubscribeState"))
-                        controller.unsubscribeStateNotification(source.getMDoc());
+                        controller.unsubscribeStateNotification(source.getDocM());
                 }catch (Exception pEx) {
             String message = pEx.getMessage()==null?I18N.BUNDLE
                     .getString("Error_unknown"):pEx.getMessage();
@@ -64,6 +64,6 @@ public class NotificationAction extends ClientAbstractAction {
             }
         };
 
-        new NotificationDialog(mOwner, mOwner.getSelectedMDoc(), action);
+        new NotificationDialog(mOwner, mOwner.getSelectedDocM(), action);
     }
 }

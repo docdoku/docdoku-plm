@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -48,7 +48,7 @@ public class ShortcutsPanel extends JPanel {
 
     private WebLink mCloseLink;
     private ImageIcon mWorkflowShortcut;
-    private ImageIcon mMDocShortcut;
+    private ImageIcon mDocMShortcut;
     private ImageIcon mTemplateShortcut;
     private ImageIcon mFolderShortcut;
     private ImageIcon mFindShortcut;
@@ -58,9 +58,9 @@ public class ShortcutsPanel extends JPanel {
     private WebLink mSCTemplate;
     private WebLink mSCWorkflow;
     private WebLink mSCFolder;
-    private WebLink mSCMDoc;
+    private WebLink mSCDocM;
     private ElementSelectedListener mCreateFolderAction;
-    private ElementSelectedListener mCreateMDocAction;
+    private ElementSelectedListener mCreateDocMAction;
 
     public ShortcutsPanel(ActionListener pCloseActionListener, HasElementSelectedListeners pSelectionDispatcher) {
         mCloseActionListener = pCloseActionListener;
@@ -69,7 +69,7 @@ public class ShortcutsPanel extends JPanel {
         mWorkflowShortcut = new ImageIcon(img);
 
         img = Toolkit.getDefaultToolkit().getImage(ShortcutsPanel.class.getResource("/com/docdoku/client/resources/icons/document_new_big.png"));
-        mMDocShortcut = new ImageIcon(img);
+        mDocMShortcut = new ImageIcon(img);
 
         img = Toolkit.getDefaultToolkit().getImage(ShortcutsPanel.class.getResource("/com/docdoku/client/resources/icons/document_notebook_big.png"));
         mTemplateShortcut = new ImageIcon(img);
@@ -111,7 +111,7 @@ public class ShortcutsPanel extends JPanel {
 
             }
         });
-        mCreateMDocAction = new ElementSelectedListener() {
+        mCreateDocMAction = new ElementSelectedListener() {
 
             @Override
             public void elementSelected(ElementSelectedEvent pElementSelectedEvent) {
@@ -120,7 +120,7 @@ public class ShortcutsPanel extends JPanel {
                 if (type == ElementSelectedEvent.ElementType.FOLDER_TREE_NODE && selection != null) {
                     if (selection.getClass().equals(RootTreeNode.class) || selection.getClass().equals(FolderTreeNode.class)) {
                         try {
-                            pActionFactory.getCreateMDocAction().actionPerformed(new ActionEvent(this, 0, null));
+                            pActionFactory.getCreateDocMAction().actionPerformed(new ActionEvent(this, 0, null));
                         } finally {
                             mSelectionDispatcher.removeElementSelectedListener(this);
                         }
@@ -128,13 +128,13 @@ public class ShortcutsPanel extends JPanel {
                 }
             }
         };
-        mSCMDoc.addMouseListener(new MouseAdapter() {
+        mSCDocM.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent pEvent) {
                 JOptionPane.showMessageDialog(null,
-                        I18N.BUNDLE.getString("Shortcuts_folder_selection"), I18N.BUNDLE.getString("CreateMDocDialog_title"), JOptionPane.INFORMATION_MESSAGE);
-                mSelectionDispatcher.addElementSelectedListener(mCreateMDocAction);
+                        I18N.BUNDLE.getString("Shortcuts_folder_selection"), I18N.BUNDLE.getString("CreateDocMDialog_title"), JOptionPane.INFORMATION_MESSAGE);
+                mSelectionDispatcher.addElementSelectedListener(mCreateDocMAction);
 
             }
         });
@@ -149,7 +149,7 @@ public class ShortcutsPanel extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent pEvent) {
-                pActionFactory.getCreateMDocTemplateAction().actionPerformed(new ActionEvent(this, 0, null));
+                pActionFactory.getCreateDocMTemplateAction().actionPerformed(new ActionEvent(this, 0, null));
             }
         });
         mSCWorkflow.addMouseListener(new MouseAdapter() {
@@ -187,15 +187,15 @@ public class ShortcutsPanel extends JPanel {
 
         linksPanel.add(new JPanel());
 
-        mSCMDoc = new WebLink(I18N.BUNDLE.getString("Shortcut_mdoc"), mMDocShortcut);
-        mSCMDoc.addMouseListener(new MouseAdapter() {
+        mSCDocM = new WebLink(I18N.BUNDLE.getString("Shortcut_docm"), mDocMShortcut);
+        mSCDocM.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent pEvent) {
                 mCloseActionListener.actionPerformed(new ActionEvent(this, 0, null));
             }
         });
-        linksPanel.add(mSCMDoc);
+        linksPanel.add(mSCDocM);
 
         linksPanel.add(new JPanel());
 

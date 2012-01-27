@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.common;
 
 import com.docdoku.client.data.ElementsTableModel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
 
@@ -58,8 +58,8 @@ public class ElementsScrollPane extends JScrollPane {
         mElementsTable.clearSelection();
     }
     
-    public void selectElement(MasterDocument pMDoc){
-        int index = mElementsTable.convertRowIndexToView(getModel().getIndexOfElement(pMDoc));
+    public void selectElement(DocumentMaster pDocM){
+        int index = mElementsTable.convertRowIndexToView(getModel().getIndexOfElement(pDocM));
         if(index !=-1)
             getSelectionModel().setSelectionInterval(index,index);
     }

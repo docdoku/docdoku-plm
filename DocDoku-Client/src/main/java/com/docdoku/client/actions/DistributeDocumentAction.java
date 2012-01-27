@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;
@@ -50,12 +50,12 @@ public class DistributeDocumentAction extends ClientAbstractAction {
     @Override
     public void actionPerformed(ActionEvent pAE) {
         try {
-            MasterDocument mdoc = mOwner.getSelectedMDoc();
-            String subject=mdoc +"";
-            String body = Config.getPermaLink(mdoc) + "%0D%0A" + I18N.BUNDLE.getString("Distribution_message");
+            DocumentMaster docM = mOwner.getSelectedDocM();
+            String subject=docM +"";
+            String body = Config.getPermaLink(docM) + "%0D%0A" + I18N.BUNDLE.getString("Distribution_message");
             body = body.replace(" ","%20");
             
-            Document doc = mdoc.getLastIteration();
+            Document doc = docM.getLastIteration();
             if(doc!=null && !doc.getAttachedFiles().isEmpty()){
                 FileTransferable ft = new FileTransferable();
 

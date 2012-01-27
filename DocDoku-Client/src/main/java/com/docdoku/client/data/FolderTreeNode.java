@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 public class FolderTreeNode implements Comparable<FolderTreeNode> {
 
@@ -45,9 +45,9 @@ public class FolderTreeNode implements Comparable<FolderTreeNode> {
     }
 
     public Object getElementChild(int pIndex) {
-        MasterDocument[] mdocs = MainModel.getInstance().findMDocsByFolder(mFolder.getCompletePath());
-        if(pIndex<mdocs.length)
-            return mdocs[pIndex];
+        DocumentMaster[] docMs = MainModel.getInstance().findDocMsByFolder(mFolder.getCompletePath());
+        if(pIndex<docMs.length)
+            return docMs[pIndex];
         else 
             return null;
     }
@@ -66,9 +66,9 @@ public class FolderTreeNode implements Comparable<FolderTreeNode> {
     }
 
     public int elementSize() {
-        MasterDocument[] mdocs = MainModel.getInstance().findMDocsByFolder(
+        DocumentMaster[] docMs = MainModel.getInstance().findDocMsByFolder(
                 mFolder.getCompletePath());
-        return mdocs.length;
+        return docMs.length;
     }
 
     public String getPosition() {

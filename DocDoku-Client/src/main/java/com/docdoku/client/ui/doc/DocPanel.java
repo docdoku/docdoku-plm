@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import java.text.DateFormat;
 
 import javax.swing.*;
@@ -38,14 +38,14 @@ public abstract class DocPanel extends JPanel {
     private JLabel mCreationDateLabel;
     private JLabel mCreationDateValueLabel;
 
-    public DocPanel(MasterDocument pMDoc) {
+    public DocPanel(DocumentMaster pDocM) {
         DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
-        mAuthorValueLabel = new JLabel(pMDoc.getAuthor().getName());
+        mAuthorValueLabel = new JLabel(pDocM.getAuthor().getName());
         mIDLabel = new JLabel(I18N.BUNDLE.getString("ID_label"));
-        mIDValueLabel = new JLabel(pMDoc.toString());
+        mIDValueLabel = new JLabel(pDocM.toString());
         mCreationDateLabel = new JLabel(I18N.BUNDLE.getString("CreationDate_label"));
-        mCreationDateValueLabel = new JLabel(format.format(pMDoc.getCreationDate()));
+        mCreationDateValueLabel = new JLabel(format.format(pDocM.getCreationDate()));
         createLayout();
     }
 

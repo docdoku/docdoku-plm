@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -29,7 +29,7 @@ import com.docdoku.core.document.Document;
 import com.docdoku.core.document.DocumentToDocumentLink;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 import com.docdoku.core.document.SearchQuery;
 import javax.swing.*;
@@ -52,7 +52,7 @@ public class AddLinkActionListener implements ActionListener {
                 try {
                     source.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     String id = source.getId();
-                    String title = source.getMDocTitle();
+                    String title = source.getDocMTitle();
                     Version version = source.getVersion();
                     User author = source.getAuthor();
                     String type = source.getType();
@@ -66,14 +66,14 @@ public class AddLinkActionListener implements ActionListener {
                         @Override
                         public void actionPerformed(ActionEvent pAE) {
                             SearchResultDialog source = (SearchResultDialog) pAE.getSource();
-                            for (MasterDocument mdoc : source.getSelectedMDocs()) {
+                            for (DocumentMaster docM : source.getSelectedDocMs()) {
                                 Document fromDoc = sourcePanel.getEditedDoc();
-                                sourcePanel.getLinksListModel().addElement(new DocumentToDocumentLink(fromDoc, mdoc.getLastIteration(), null));
+                                sourcePanel.getLinksListModel().addElement(new DocumentToDocumentLink(fromDoc, docM.getLastIteration(), null));
                             }
                         }
                     };
-                    MasterDocument[] mdocs = MainModel.getInstance().searchMDocs(id, title, version, author, type, creationDateFrom, creationDateTo, attrs, tags, content);
-                    new SearchResultDialog(source, mdocs, action, true);
+                    DocumentMaster[] docMs = MainModel.getInstance().searchDocMs(id, title, version, author, type, creationDateFrom, creationDateTo, attrs, tags, content);
+                    new SearchResultDialog(source, docMs, action, true);
                 } catch (Exception pEx) {
                     String message = pEx.getMessage() == null ? I18N.BUNDLE.getString("Error_unknown") : pEx.getMessage();
                     JOptionPane.showMessageDialog(null,

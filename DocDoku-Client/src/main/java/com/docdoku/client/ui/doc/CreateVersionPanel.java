@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.common.Version;
 
@@ -45,17 +45,17 @@ public class CreateVersionPanel extends JPanel {
     private JTextField mTitleText;
     private JComboBox mWorkflowModelList;
 
-    public CreateVersionPanel(MasterDocument pOriginMDoc) {
+    public CreateVersionPanel(DocumentMaster pOriginDocM) {
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
         mVersionLabel = new JLabel(I18N.BUNDLE.getString("Version_label"));
         mIDLabel = new JLabel(I18N.BUNDLE.getString("ID_label"));
         mTitleLabel = new JLabel(I18N.BUNDLE.getString("Title_label"));
         mWorkflowModelLabel = new JLabel(I18N.BUNDLE.getString("Workflow_label"));
         mAuthorValueLabel = new JLabel(MainModel.getInstance().getUser().getName());
-        Version nextVersion=new Version(pOriginMDoc.getVersion());
+        Version nextVersion=new Version(pOriginDocM.getVersion());
         nextVersion.increase();
         mVersionValueLabel = new JLabel(nextVersion.toString());
-        mIDValueLabel = new JLabel(pOriginMDoc.getId());
+        mIDValueLabel = new JLabel(pOriginDocM.getId());
         WorkflowModel[] models=MainModel.getInstance().getWorkflowModels();      
         Object[] comboBoxValues = new Object[models.length + 1];
         comboBoxValues[0] = I18N.BUNDLE.getString("None_label");

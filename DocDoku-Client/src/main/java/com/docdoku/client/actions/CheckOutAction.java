@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -32,7 +32,7 @@ import java.io.InterruptedIOException;
 import javax.swing.*;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 public class CheckOutAction extends ClientAbstractAction {
     
@@ -47,18 +47,18 @@ public class CheckOutAction extends ClientAbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent pAE) {
-        final MasterDocument mdoc = mOwner.getSelectedMDoc();
+        final DocumentMaster docM = mOwner.getSelectedDocM();
         Thread worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     MainController controller = MainController.getInstance();
-                    MasterDocument newMDoc = controller.checkOut(mdoc);
-                    FileIO.rmDir(Config.getCheckOutFolder(newMDoc));
-                    for(BinaryResource remoteFile:newMDoc.getLastIteration().getAttachedFiles()){
+                    DocumentMaster newDocM = controller.checkOut(docM);
+                    FileIO.rmDir(Config.getCheckOutFolder(newDocM));
+                    for(BinaryResource remoteFile:newDocM.getLastIteration().getAttachedFiles()){
                         try{
-                            MainModel.getInstance().getFile(mOwner,newMDoc.getLastIteration(),remoteFile);
+                            MainModel.getInstance().getFile(mOwner,newDocM.getLastIteration(),remoteFile);
                         } catch(InterruptedIOException pIIOEx){
                             
                         }

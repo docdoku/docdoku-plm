@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -24,21 +24,21 @@ import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.ElementsTable;
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.client.ui.common.MDocSelection;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.client.ui.common.DocMSelection;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
 
-public class MDocTransferHandler extends TransferHandler {
+public class DocMTransferHandler extends TransferHandler {
     
-    private DataFlavor mMDocFlavor;
+    private DataFlavor mDocMFlavor;
     
-    public MDocTransferHandler() {
+    public DocMTransferHandler() {
         try {
-            mMDocFlavor = new DataFlavor(GUIConstants.MDOC_FLAVOR);
+            mDocMFlavor = new DataFlavor(GUIConstants.DOCM_FLAVOR);
         } catch (ClassNotFoundException pCNFEx) {
             throw new RuntimeException("Unexpected error: unrecognized data flavor", pCNFEx);
         }
@@ -50,7 +50,7 @@ public class MDocTransferHandler extends TransferHandler {
         
         if (pComp instanceof JTree) {
             for (DataFlavor flavor : pTransferFlavors) {
-                if (flavor.equals(mMDocFlavor))
+                if (flavor.equals(mDocMFlavor))
                     return true;
             }
         } else {
@@ -80,11 +80,11 @@ public class MDocTransferHandler extends TransferHandler {
             pTransferable) {
         try {
             if (pComp instanceof JTree) {
-                MasterDocument mdoc = (MasterDocument) pTransferable.getTransferData(mMDocFlavor);
+                DocumentMaster docM = (DocumentMaster) pTransferable.getTransferData(mDocMFlavor);
                 JTree tree = (JTree) pComp;
                 tree.getSelectionPath();
                 String path = ((FolderTreeNode) tree.getLastSelectedPathComponent()).getCompletePath();
-                MainController.getInstance().moveMDoc(path, mdoc);
+                MainController.getInstance().moveDocM(path, docM);
                 return true;
             } else {
                 
@@ -108,9 +108,9 @@ public class MDocTransferHandler extends TransferHandler {
         if (pComp instanceof JTable) {
             ElementsTable table = (ElementsTable) pComp;
             Object element = table.getSelectedElement();
-            if (element instanceof MasterDocument) {
-                MasterDocument mdoc = (MasterDocument) element;
-                return new MDocSelection(mdoc);
+            if (element instanceof DocumentMaster) {
+                DocumentMaster docM = (DocumentMaster) element;
+                return new DocMSelection(docM);
             }
         }
         return null;

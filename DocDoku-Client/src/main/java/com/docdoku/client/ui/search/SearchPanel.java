@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -32,7 +32,7 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.VersionFormat;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import java.awt.Component;
@@ -75,10 +75,10 @@ public class SearchPanel extends JPanel {
         mTitleText = new JTextField(new MaxLengthDocument(50), "", 10);
 
         mTypeLabel = new JLabel(I18N.BUNDLE.getString("Type_label"));
-        MasterDocumentTemplate[] templates = model.getMDocTemplates();
+        DocumentMasterTemplate[] templates = model.getDocMTemplates();
         Set<String> comboBoxTypeValues = new LinkedHashSet<String>();
         comboBoxTypeValues.add(I18N.BUNDLE.getString("Not_specified"));
-        for (MasterDocumentTemplate template : templates){
+        for (DocumentMasterTemplate template : templates){
             String type=template.getDocumentType();
             if(type!=null && !type.equals(""))
                 comboBoxTypeValues.add(type);

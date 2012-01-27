@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -20,7 +20,7 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 public class TagTreeNode extends FolderTreeNode {
     
@@ -46,17 +46,17 @@ public class TagTreeNode extends FolderTreeNode {
 
     @Override
     public Object getElementChild(int pIndex) {
-        MasterDocument[] mdocs = MainModel.getInstance().findMDocsByTag(mFolder.getShortName());
-        if(pIndex<mdocs.length)
-            return mdocs[pIndex];
+        DocumentMaster[] docMs = MainModel.getInstance().findDocMsByTag(mFolder.getShortName());
+        if(pIndex<docMs.length)
+            return docMs[pIndex];
         else 
             return null;
     }
 
     @Override
     public int elementSize() {
-        MasterDocument[] mdocs = MainModel.getInstance().findMDocsByTag(
+        DocumentMaster[] docMs = MainModel.getInstance().findDocMsByTag(
                 mFolder.getShortName());
-        return mdocs.length;
+        return docMs.length;
     }
 }

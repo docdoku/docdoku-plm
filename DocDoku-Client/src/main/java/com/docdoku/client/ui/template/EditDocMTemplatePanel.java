@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,30 +21,40 @@
 package com.docdoku.client.ui.template;
 
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.client.ui.common.MaxLengthDocument;
+import com.docdoku.core.document.DocumentMasterTemplate;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ViewMDocTemplatePanel extends MDocTemplatePanel{
+public class EditDocMTemplatePanel extends DocMTemplatePanel{
     
     private JLabel mIDValueLabel;
-    private JLabel mDocumentTypeValueLabel;
-    private JLabel mMaskValueLabel;
+    private JTextField mDocumentTypeText;
+    private JTextField mMaskText;
     
-    public ViewMDocTemplatePanel(MasterDocumentTemplate pTemplate) {
+    public EditDocMTemplatePanel(DocumentMasterTemplate pTemplate) {
         super();
         mIDValueLabel = new JLabel(pTemplate.getId());
-        mDocumentTypeValueLabel = new JLabel(pTemplate.getDocumentType());
-        mMaskValueLabel = new JLabel(pTemplate.getMask());
+        mDocumentTypeText = new JTextField(new MaxLengthDocument(50), pTemplate.getDocumentType(), 10);
+        mMaskText = new JTextField(new MaxLengthDocument(50), pTemplate.getMask(), 10);
         mIdGenerated.setSelected(pTemplate.isIdGenerated());
-        mIdGenerated.setEnabled(false);
+        
         createLayout();
     }
     
+    public String getMask() {
+        return mMaskText.getText();
+    }
+    
+    public String getDocumentType() {
+        return mDocumentTypeText.getText();
+    }
     
     private void createLayout() {   
         GridBagConstraints constraints = new GridBagConstraints();
+        mDocumentTypeLabel.setLabelFor(mDocumentTypeText);        
+        mMaskLabel.setLabelFor(mMaskText);
         constraints.weighty = 0;
         constraints.anchor = GridBagConstraints.EAST;
         constraints.insets = GUIConstants.INSETS;
@@ -58,7 +68,7 @@ public class ViewMDocTemplatePanel extends MDocTemplatePanel{
         add(mIDValueLabel, constraints);
         
         constraints.gridy = GridBagConstraints.RELATIVE;
-        add(mDocumentTypeValueLabel, constraints); 
-        add(mMaskValueLabel, constraints);       
+        add(mDocumentTypeText, constraints);        
+        add(mMaskText, constraints);
     }
 }

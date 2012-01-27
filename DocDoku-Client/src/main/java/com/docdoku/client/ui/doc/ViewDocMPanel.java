@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.WebLink;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import java.text.DateFormat;
 
@@ -36,7 +36,7 @@ import com.docdoku.client.data.Config;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.workflow.Workflow;
 
-public class ViewMDocPanel extends DocPanel {
+public class ViewDocMPanel extends DocPanel {
 
     private JLabel mTitleLabel;
     private JLabel mTitleValueLabel;
@@ -53,37 +53,37 @@ public class ViewMDocPanel extends DocPanel {
     private WebLink mWorkFlowLink;
     private WebLink mPermaLink;
 
-    public ViewMDocPanel(final MasterDocument pWatchedMDoc) {
-        super(pWatchedMDoc);
+    public ViewDocMPanel(final DocumentMaster pWatchedDocM) {
+        super(pWatchedDocM);
         DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
         mTitleLabel = new JLabel(I18N.BUNDLE.getString("Title_label"));
-        mTitleValueLabel = new JLabel(pWatchedMDoc.getTitle());
+        mTitleValueLabel = new JLabel(pWatchedDocM.getTitle());
         mTypeLabel = new JLabel(I18N.BUNDLE.getString("Type_label"));
-        mTypeValueLabel = new JLabel(pWatchedMDoc.getType());
+        mTypeValueLabel = new JLabel(pWatchedDocM.getType());
         mCheckOutUserLabel = new JLabel(I18N.BUNDLE.getString("CheckoutUser_label"));
-        User checkOutUser = pWatchedMDoc.getCheckOutUser();
+        User checkOutUser = pWatchedDocM.getCheckOutUser();
         mCheckOutUserValueLabel = new JLabel(checkOutUser==null?"":checkOutUser.getName());
         mCheckedDateLabel = new JLabel(I18N.BUNDLE.getString("CheckoutDate_label"));
-        mCheckedDateValueLabel = new JLabel(pWatchedMDoc.getCheckOutDate()!=null?format.format(pWatchedMDoc.getCheckOutDate()):"");
+        mCheckedDateValueLabel = new JLabel(pWatchedDocM.getCheckOutDate()!=null?format.format(pWatchedDocM.getCheckOutDate()):"");
         mLifeCycleStateLabel = new JLabel(I18N.BUNDLE.getString("LifeCycleState_label"));
         mLifeCycleStateValueLabel =
-                new JLabel(pWatchedMDoc.getLifeCycleState());
+                new JLabel(pWatchedDocM.getLifeCycleState());
 
-        mPermaLink = new WebLink(I18N.BUNDLE.getString("Permalink_label"),Config.getPermaLink(pWatchedMDoc));
+        mPermaLink = new WebLink(I18N.BUNDLE.getString("Permalink_label"),Config.getPermaLink(pWatchedDocM));
 
-        final Workflow workflow = pWatchedMDoc.getWorkflow();
+        final Workflow workflow = pWatchedDocM.getWorkflow();
         if (workflow != null) {
             mWorkFlowLink = new WebLink(I18N.BUNDLE.getString("Details_label"));
             mWorkFlowLink.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent pEvent) {
-                    Dialog owner = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, ViewMDocPanel.this);
+                    Dialog owner = (Dialog) SwingUtilities.getAncestorOfClass(Dialog.class, ViewDocMPanel.this);
                     new ViewWorkflowDetailsDialog(owner, workflow);
                 }
             });
         }
         mTagsLabel = new JLabel(I18N.BUNDLE.getString("Tags_label"));
-        mTagsValueLabel = new JLabel(pWatchedMDoc.getTags().size()!=0?pWatchedMDoc.getTags().toString():"");
+        mTagsValueLabel = new JLabel(pWatchedDocM.getTags().size()!=0?pWatchedDocM.getTags().toString():"");
         createLayout();
 
     }

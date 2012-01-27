@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 
 public class TemplateTreeNode extends FolderTreeNode {
 
@@ -48,7 +48,7 @@ public class TemplateTreeNode extends FolderTreeNode {
 
     @Override
     public Object getElementChild(int pIndex) {
-        MasterDocumentTemplate[] templates = MainModel.getInstance().getMDocTemplates();
+        DocumentMasterTemplate[] templates = MainModel.getInstance().getDocMTemplates();
         if(pIndex<templates.length)
             return templates[pIndex];
         else 
@@ -57,7 +57,7 @@ public class TemplateTreeNode extends FolderTreeNode {
 
     @Override
     public int elementSize(){
-        MasterDocumentTemplate[] templates = MainModel.getInstance().getMDocTemplates();
+        DocumentMasterTemplate[] templates = MainModel.getInstance().getDocMTemplates();
         return templates.length;
     }
 }

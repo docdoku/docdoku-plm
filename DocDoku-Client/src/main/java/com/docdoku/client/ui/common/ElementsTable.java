@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,8 +23,8 @@ package com.docdoku.client.ui.common;
 import com.docdoku.client.data.ElementsTableModel;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.MasterDocument;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
@@ -168,10 +168,10 @@ public class ElementsTable extends JXTable {
 
 
 
-            if(element instanceof MasterDocument){
-                MasterDocument mdoc = (MasterDocument) element;
-                if (mdoc.isCheckedOut()) {
-                    if (mdoc
+            if(element instanceof DocumentMaster){
+                DocumentMaster docM = (DocumentMaster) element;
+                if (docM.isCheckedOut()) {
+                    if (docM
                             .getCheckOutUser()
                             .equals(MainModel.getInstance().getUser()))
                         setIcon(CHECKED_ICON);
@@ -181,17 +181,17 @@ public class ElementsTable extends JXTable {
                     setToolTipText(
                             I18N.BUNDLE.getString("ElementsTable_toolTipText1")
                             + " "
-                            + mdoc.getCheckOutUser().getName()
+                            + docM.getCheckOutUser().getName()
                             + " "
                             + I18N.BUNDLE.getString("ElementsTable_toolTipText2")
                             + " "
-                            + format.format(mdoc.getCheckOutDate()));
+                            + format.format(docM.getCheckOutDate()));
                 } else {
                     setIcon(DOC_ICON);
                 }
             }else if (element instanceof WorkflowModel){
                 setIcon(BRANCH_ICON);
-            }else if (element instanceof MasterDocumentTemplate){
+            }else if (element instanceof DocumentMasterTemplate){
                 setIcon(TEMPLATE_ICON);
             }
             return this;

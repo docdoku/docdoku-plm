@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.document.Folder;
 
@@ -34,19 +34,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CreateMDocDialog extends JDialog implements ActionListener {
-    private CreateMDocPanel mCreateMDocPanel;
+public class CreateDocMDialog extends JDialog implements ActionListener {
+    private CreateDocMPanel mCreateDocMPanel;
     private OKCancelPanel mOKCancelPanel;
     private ActionListener mAction;
     private JTextArea mDescriptionTextArea;
     private JTabbedPane mTabbedPane;
     private Folder mDestinationFolder;
 
-    public CreateMDocDialog(Frame pOwner, Folder pDestinationFolder, ActionListener pAction) {
-        super(pOwner, I18N.BUNDLE.getString("CreateMDocDialog_title"), true);
+    public CreateDocMDialog(Frame pOwner, Folder pDestinationFolder, ActionListener pAction) {
+        super(pOwner, I18N.BUNDLE.getString("CreateDocMDialog_title"), true);
         setLocationRelativeTo(pOwner);
         mDestinationFolder=pDestinationFolder;
-        mCreateMDocPanel = new CreateMDocPanel();
+        mCreateDocMPanel = new CreateDocMPanel();
         mOKCancelPanel = new OKCancelPanel(this, this);
         mTabbedPane = new JTabbedPane();
         mDescriptionTextArea=new JTextArea(new MaxLengthDocument(4096), "",10,35);
@@ -59,10 +59,10 @@ public class CreateMDocDialog extends JDialog implements ActionListener {
     private void createLayout() {
         getRootPane().setDefaultButton(mOKCancelPanel.getOKButton());
         JPanel mainPanel = new JPanel(new BorderLayout()); 
-        mainPanel.setBorder(BorderFactory.createTitledBorder(I18N.BUNDLE.getString("CreateMDocPanel_border")));
+        mainPanel.setBorder(BorderFactory.createTitledBorder(I18N.BUNDLE.getString("CreateDocMPanel_border")));
         mDescriptionTextArea.setLineWrap(true);
         mDescriptionTextArea.setWrapStyleWord(true);
-        mTabbedPane.add(I18N.BUNDLE.getString("Main_border"), mCreateMDocPanel);
+        mTabbedPane.add(I18N.BUNDLE.getString("Main_border"), mCreateDocMPanel);
         mTabbedPane.add(I18N.BUNDLE.getString("Description_border"), new JScrollPane(mDescriptionTextArea));
         mainPanel.add(mTabbedPane, BorderLayout.CENTER);
         mainPanel.add(mOKCancelPanel, BorderLayout.SOUTH);
@@ -89,19 +89,19 @@ public class CreateMDocDialog extends JDialog implements ActionListener {
             public void changedUpdate(DocumentEvent pDE) {
             }
         };
-        mCreateMDocPanel.getIDText().getDocument().addDocumentListener(docListener);
+        mCreateDocMPanel.getIDText().getDocument().addDocumentListener(docListener);
     }
 
     public Folder getDestinationFolder() {
         return mDestinationFolder;
     }
 
-    public String getMDocID() {
-        return mCreateMDocPanel.getID();
+    public String getDocMId() {
+        return mCreateDocMPanel.getId();
     }
 
-    public String getMDocTitle() {
-        return mCreateMDocPanel.getTitle();
+    public String getDocMTitle() {
+        return mCreateDocMPanel.getTitle();
     }
 
     public String getDescription() {
@@ -109,11 +109,11 @@ public class CreateMDocDialog extends JDialog implements ActionListener {
     }
     
     public WorkflowModel getWorkflowModel() {
-        return mCreateMDocPanel.getWorkflowModel();
+        return mCreateDocMPanel.getWorkflowModel();
     }
     
-    public MasterDocumentTemplate getMDocTemplate() {
-        return mCreateMDocPanel.getMDocTemplate();
+    public DocumentMasterTemplate getDocMTemplate() {
+        return mCreateDocMPanel.getDocMTemplate();
     }
 
     @Override

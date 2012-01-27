@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,10 +21,10 @@
 package com.docdoku.client.backbone;
 
 import com.docdoku.client.data.FolderTreeNode;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import java.util.EventObject;
 
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.WorkflowModel;
 
 public class ElementSelectedEvent extends EventObject {
@@ -34,13 +34,13 @@ public class ElementSelectedEvent extends EventObject {
 	
 	public enum ElementType{MASTER_DOCUMENT,MASTER_DOCUMENT_TEMPLATE,WORKFLOW_MODEL,FOLDER_TREE_NODE};
 	
-	public ElementSelectedEvent(Object pSource, MasterDocument pElement) {
+	public ElementSelectedEvent(Object pSource, DocumentMaster pElement) {
 		super(pSource);
 		mElement=pElement;
 		mType=ElementType.MASTER_DOCUMENT;
 	}
         
-        public ElementSelectedEvent(Object pSource, MasterDocumentTemplate pElement) {
+        public ElementSelectedEvent(Object pSource, DocumentMasterTemplate pElement) {
 		super(pSource);
 		mElement=pElement;
 		mType=ElementType.MASTER_DOCUMENT_TEMPLATE;

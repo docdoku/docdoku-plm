@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -26,15 +26,15 @@ import com.docdoku.client.ui.common.MaxLengthDocument;
 import javax.swing.*;
 import java.awt.*;
 
-public class CreateMDocTemplatePanel extends MDocTemplatePanel{
+public class CreateDocMTemplatePanel extends DocMTemplatePanel{
     
-    private JTextField mIDText;
+    private JTextField mIdText;
     private JTextField mDocumentTypeText;
     private JTextField mMaskText;
     
-    public CreateMDocTemplatePanel() {
+    public CreateDocMTemplatePanel() {
         super();
-        mIDText = new JTextField(new MaxLengthDocument(50), "", 10);
+        mIdText = new JTextField(new MaxLengthDocument(50), "", 10);
         mDocumentTypeText = new JTextField(new MaxLengthDocument(50), "", 10);
         mMaskText = new JTextField(new MaxLengthDocument(50), "", 10);
         
@@ -42,12 +42,12 @@ public class CreateMDocTemplatePanel extends MDocTemplatePanel{
     }
     
     
-    public String getID() {
-        return mIDText.getText();
+    public String getId() {
+        return mIdText.getText();
     }
     
-    public JTextField getIDText() {
-        return mIDText;
+    public JTextField getIdText() {
+        return mIdText;
     }
     
     public String getMask() {
@@ -59,7 +59,7 @@ public class CreateMDocTemplatePanel extends MDocTemplatePanel{
     }
     
     private void createLayout() {
-        mIDLabel.setLabelFor(mIDText);
+        mIDLabel.setLabelFor(mIdText);
         mDocumentTypeLabel.setLabelFor(mDocumentTypeText);        
         mMaskLabel.setLabelFor(mMaskText);
         
@@ -74,7 +74,7 @@ public class CreateMDocTemplatePanel extends MDocTemplatePanel{
         constraints.weightx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridy = 1;
-        add(mIDText, constraints);
+        add(mIdText, constraints);
         
         constraints.gridy = GridBagConstraints.RELATIVE;
         add(mDocumentTypeText, constraints);

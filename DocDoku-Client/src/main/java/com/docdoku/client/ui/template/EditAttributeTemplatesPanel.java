@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,7 +22,7 @@ package com.docdoku.client.ui.template;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -40,13 +40,13 @@ public class EditAttributeTemplatesPanel extends JPanel implements ActionListene
     private JButton mAddButton;
     private JButton mRemoveButton;
     private DefaultListModel mAttributesListModel;
-    private MasterDocumentTemplate mEditedMDocTemplate;
+    private DocumentMasterTemplate mEditedDocMTemplate;
     private ActionListener mAddAttributeAction;
 
-    public EditAttributeTemplatesPanel(MasterDocumentTemplate pEditedMDocTemplate,ActionListener pAddAttributeAction) {
+    public EditAttributeTemplatesPanel(DocumentMasterTemplate pEditedDocMTemplate,ActionListener pAddAttributeAction) {
         this(pAddAttributeAction);
-        mEditedMDocTemplate = pEditedMDocTemplate;
-        for(InstanceAttributeTemplate attr:mEditedMDocTemplate.getAttributeTemplates()) {
+        mEditedDocMTemplate = pEditedDocMTemplate;
+        for(InstanceAttributeTemplate attr:mEditedDocMTemplate.getAttributeTemplates()) {
             mAttributesListModel.addElement(attr);
         }
     }
@@ -106,8 +106,8 @@ public class EditAttributeTemplatesPanel extends JPanel implements ActionListene
         add(mRemoveButton, constraints);
     }
 
-    public MasterDocumentTemplate getEditedMDocTemplate() {
-        return mEditedMDocTemplate;
+    public DocumentMasterTemplate getEditedDocMTemplate() {
+        return mEditedDocMTemplate;
     }
 
 

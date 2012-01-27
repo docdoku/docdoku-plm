@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -39,16 +39,16 @@ import com.docdoku.client.backbone.ElementSelectedEvent.ElementType;
 import com.docdoku.client.ui.ActionFactory;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 
 public class ActionFactoryImpl implements ActionFactory {
     
     private ExplorerFrame mOwner;
     private boolean mFolderSelected;
     private boolean mTagSelected;
-    private boolean mMDocSelected;
+    private boolean mDocMSelected;
     private boolean mWorkflowModelSelected;
-    private boolean mMDocTemplateSelected;
+    private boolean mDocMTemplateSelected;
     private Map<String, Action> mActions;
     
     public ActionFactoryImpl(ExplorerFrame pOwner) {
@@ -62,22 +62,22 @@ public class ActionFactoryImpl implements ActionFactory {
     }
 
     @Override
-    public Action getCreateMDocAction() {
-        Action action = mActions.get("CreateMDocAction");
+    public Action getCreateDocMAction() {
+        Action action = mActions.get("CreateDocMAction");
         if (action == null) {
-            action = new CreateMDocAction(mOwner);
-            mActions.put("CreateMDocAction", action);
+            action = new CreateDocMAction(mOwner);
+            mActions.put("CreateDocMAction", action);
             action.setEnabled(false);
         }
         return action;
     }
 
     @Override
-    public Action getCreateMDocTemplateAction() {
-        Action action = mActions.get("CreateMDocTemplateAction");
+    public Action getCreateDocMTemplateAction() {
+        Action action = mActions.get("CreateDocMTemplateAction");
         if (action == null) {
-            action = new CreateMDocTemplateAction(mOwner);
-            mActions.put("CreateMDocTemplateAction", action);
+            action = new CreateDocMTemplateAction(mOwner);
+            mActions.put("CreateDocMTemplateAction", action);
         }
         return action;
     }
@@ -335,14 +335,14 @@ public class ActionFactoryImpl implements ActionFactory {
         switch (type) {
             case MASTER_DOCUMENT:
                 if (selection != null) {
-                    MasterDocument mdoc =((MasterDocument)selection);
-                    switchOnMDocActions(mdoc);
-                    mMDocSelected=true;
+                    DocumentMaster docM =((DocumentMaster)selection);
+                    switchOnDocMActions(docM);
+                    mDocMSelected=true;
                 } else {
-                    switchOffMDocActions();
+                    switchOffDocMActions();
                     if(!mFolderSelected  && !mTagSelected)
                         mActions.get("DeleteElementAction").setEnabled(false);
-                    mMDocSelected=false;
+                    mDocMSelected=false;
                 }
                 break;
             case WORKFLOW_MODEL:
@@ -358,13 +358,13 @@ public class ActionFactoryImpl implements ActionFactory {
                 break;
             case MASTER_DOCUMENT_TEMPLATE:
                 if (selection != null) {
-                    switchOnMDocTemplateActions();
-                    mMDocTemplateSelected=true;
+                    switchOnDocMTemplateActions();
+                    mDocMTemplateSelected=true;
                 } else {
-                    switchOffMDocTemplateActions();
+                    switchOffDocMTemplateActions();
                     if(!mFolderSelected && !mTagSelected)
                         mActions.get("DeleteElementAction").setEnabled(false);
-                    mMDocTemplateSelected=false;
+                    mDocMTemplateSelected=false;
                 }
                 break;
             case FOLDER_TREE_NODE:
@@ -393,7 +393,7 @@ public class ActionFactoryImpl implements ActionFactory {
                     
                 } else {
                     switchOffFolderActions();
-                    if(!mMDocSelected && !mWorkflowModelSelected &&!mMDocTemplateSelected)
+                    if(!mDocMSelected && !mWorkflowModelSelected &&!mDocMTemplateSelected)
                         mActions.get("DeleteElementAction").setEnabled(false);
                     mFolderSelected=false;
                     mTagSelected=false;
@@ -402,7 +402,7 @@ public class ActionFactoryImpl implements ActionFactory {
         }
     }
     
-    private void switchOffMDocActions(){
+    private void switchOffDocMActions(){
         mActions.get("CheckInAction").setEnabled(false);
         mActions.get("CheckOutAction").setEnabled(false);
         mActions.get("UndoCheckOutAction").setEnabled(false);
@@ -416,12 +416,12 @@ public class ActionFactoryImpl implements ActionFactory {
         mActions.get("EditElementAction").setEnabled(false);
         mActions.get("ViewElementAction").setEnabled(false);
     }
-    private void switchOnMDocActions(MasterDocument pMDoc){
-        boolean isCheckedOut = pMDoc.isCheckedOut();
-        boolean hasItereation = pMDoc.getNumberOfIterations()!=0;
-        boolean hasWorkflow = pMDoc.hasWorkflow();
+    private void switchOnDocMActions(DocumentMaster pDocM){
+        boolean isCheckedOut = pDocM.isCheckedOut();
+        boolean hasItereation = pDocM.getNumberOfIterations()!=0;
+        boolean hasWorkflow = pDocM.hasWorkflow();
         User currentUser= MainModel.getInstance().getUser();
-        boolean hasCheckedOut=currentUser.equals(pMDoc.getCheckOutUser());
+        boolean hasCheckedOut=currentUser.equals(pDocM.getCheckOutUser());
         
         mActions.get("CheckInAction").setEnabled(hasCheckedOut);
         mActions.get("CheckOutAction").setEnabled(!isCheckedOut);
@@ -452,74 +452,74 @@ public class ActionFactoryImpl implements ActionFactory {
         mActions.get("DeleteElementAction").setEnabled(true);
     }
     
-    private void switchOffMDocTemplateActions(){
+    private void switchOffDocMTemplateActions(){
         mActions.get("EditElementAction").setEnabled(false);
         mActions.get("ViewElementAction").setEnabled(false);
     }
-    private void switchOnMDocTemplateActions(){
+    private void switchOnDocMTemplateActions(){
         mActions.get("EditElementAction").setEnabled(true);
         mActions.get("ViewElementAction").setEnabled(true);
         mActions.get("DeleteElementAction").setEnabled(true);
     }
     
     private void switchOnRootFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(true);
+        mActions.get("CreateDocMAction").setEnabled(true);
         mActions.get("ExportAction").setEnabled(true);
         mActions.get("CreateFolderAction").setEnabled(true);
         mActions.get("DeleteElementAction").setEnabled(false);
     }
     
     private void switchOnHomeFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(true);
+        mActions.get("CreateDocMAction").setEnabled(true);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(true);
         mActions.get("DeleteElementAction").setEnabled(false);
     }
     
     private void switchOnWorkflowFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(false);
+        mActions.get("CreateDocMAction").setEnabled(false);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
         mActions.get("DeleteElementAction").setEnabled(false);
     }
     
     private void switchOnTemplateFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(false);
+        mActions.get("CreateDocMAction").setEnabled(false);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
         mActions.get("DeleteElementAction").setEnabled(false);
     }
     
     private void switchOnTagRootFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(false);
+        mActions.get("CreateDocMAction").setEnabled(false);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
         mActions.get("DeleteElementAction").setEnabled(false);
     }
     
     private void switchOnTagFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(false);
+        mActions.get("CreateDocMAction").setEnabled(false);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
         mActions.get("DeleteElementAction").setEnabled(true);
     }
     
     private void switchOnCheckedOutFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(false);
+        mActions.get("CreateDocMAction").setEnabled(false);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
         mActions.get("DeleteElementAction").setEnabled(false);
     }
     
     private void switchOnFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(true);
+        mActions.get("CreateDocMAction").setEnabled(true);
         mActions.get("ExportAction").setEnabled(true);
         mActions.get("CreateFolderAction").setEnabled(true);
         mActions.get("DeleteElementAction").setEnabled(true);
     }
     
     private void switchOffFolderActions(){
-        mActions.get("CreateMDocAction").setEnabled(false);
+        mActions.get("CreateDocMAction").setEnabled(false);
         mActions.get("ExportAction").setEnabled(false);
         mActions.get("CreateFolderAction").setEnabled(false);
     }

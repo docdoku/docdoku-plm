@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.core.document.Document;
 import com.docdoku.core.common.FileHolder;
-import com.docdoku.core.document.MasterDocumentTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.common.BinaryResource;
 import java.awt.event.ActionEvent;
@@ -56,7 +56,7 @@ public class DownloadActionListener implements ActionListener {
                         if(holder instanceof Document)
                             localFile = MainModel.getInstance().getFile(source,(Document)holder,remoteFile);
                         else
-                            localFile = MainModel.getInstance().getFile(source,(MasterDocumentTemplate)holder,remoteFile);
+                            localFile = MainModel.getInstance().getFile(source,(DocumentMasterTemplate)holder,remoteFile);
                         File destFile = mFileChooser.getSelectedFile();
                         FileIO.copyFile(localFile,destFile);
                     } catch(InterruptedIOException pIIOEx){

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.approval;
 
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.Task;
 import java.util.Collection;
 
@@ -34,16 +34,16 @@ public class TaskDialog extends JDialog implements ActionListener {
     private TaskPanel mTaskPanel;
     private OKCancelPanel mOKCancelPanel;
     private ActionListener mAction;
-    private MasterDocument mMDoc;
+    private DocumentMaster mDocM;
 
-    public TaskDialog(Frame pOwner, String pTitle, MasterDocument pMDoc, ActionListener pAction) {
+    public TaskDialog(Frame pOwner, String pTitle, DocumentMaster pDocM, ActionListener pAction) {
         super(pOwner, pTitle, true);
         setLocationRelativeTo(pOwner);
-        Collection<Task> runningTasks=pMDoc.getWorkflow().getRunningTasks();
+        Collection<Task> runningTasks=pDocM.getWorkflow().getRunningTasks();
         mTaskPanel=new TaskPanel(runningTasks);
         mOKCancelPanel = new OKCancelPanel(this, this);
         mAction = pAction;
-        mMDoc=pMDoc;
+        mDocM=pDocM;
         createLayout();
         setVisible(true);
     }
@@ -61,8 +61,8 @@ public class TaskDialog extends JDialog implements ActionListener {
         return mTaskPanel.getTask();
     }
 
-    public MasterDocument getMDoc() {
-        return mMDoc;
+    public DocumentMaster getDocM() {
+        return mDocM;
     }
     
     public String getComment() {

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,85 +23,65 @@ package com.docdoku.client.ui.template;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.common.OKCancelPanel;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.document.DocumentMasterTemplate;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.JPanel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 
-public class CreateMDocTemplateDialog extends MDocTemplateDialog implements ActionListener{
+public class EditDocMTemplateDialog extends DocMTemplateDialog implements ActionListener{
 
-    private CreateMDocTemplatePanel mCreateMDocTemplatePanel;
+    private DocumentMasterTemplate mTemplate;
+    private EditDocMTemplatePanel mEditDocMTemplatePanel;
     private EditFilesPanel mEditFilesPanel;
     private EditAttributeTemplatesPanel mAttributesPanel;
     private ActionListener mAction;
     private OKCancelPanel mOKCancelPanel;
     
-    public CreateMDocTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction) {
-        super(pOwner, I18N.BUNDLE.getString("CreateMDocTemplate_title"));
-        init(pOKAction,pEditFileAction, pScanAction, pAddAttributeAction);
+    public EditDocMTemplateDialog(Frame pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction, DocumentMasterTemplate pTemplate) {
+        super(pOwner, I18N.BUNDLE.getString("EditDocMTemplate_title"));
+        init(pOKAction, pEditFileAction, pScanAction, pAddAttributeAction, pTemplate);
     }
 
-    public CreateMDocTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction) {
-        super(pOwner, I18N.BUNDLE.getString("CreateMDocTemplate_title"));
-        init(pOKAction,pEditFileAction, pScanAction, pAddAttributeAction);
+    public EditDocMTemplateDialog(Dialog pOwner, ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction,DocumentMasterTemplate pTemplate) {
+        super(pOwner, I18N.BUNDLE.getString("EditDocMTemplate_title"));
+        init(pOKAction, pEditFileAction, pScanAction, pAddAttributeAction, pTemplate);
     }
 
-    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction){
-        mCreateMDocTemplatePanel = new CreateMDocTemplatePanel();
-        mEditFilesPanel = new EditFilesPanel(pEditFileAction, pScanAction);
-        mAttributesPanel = new EditAttributeTemplatesPanel(pAddAttributeAction);
+    protected void init(ActionListener pOKAction, ActionListener pEditFileAction, ActionListener pScanAction, ActionListener pAddAttributeAction, DocumentMasterTemplate pTemplate){
+        mTemplate=pTemplate;
+        mEditDocMTemplatePanel = new EditDocMTemplatePanel(mTemplate);
+        mEditFilesPanel = new EditFilesPanel(pTemplate, pEditFileAction, pScanAction);
+        mAttributesPanel = new EditAttributeTemplatesPanel(pTemplate, pAddAttributeAction);
         mAction = pOKAction;
         mOKCancelPanel = new OKCancelPanel(this, this);
         getRootPane().setDefaultButton(mOKCancelPanel.getOKButton());
         createLayout();
-        mOKCancelPanel.setEnabled(false);
-        createListener();
         setVisible(true);
     }
-    
-    private void createListener() {
-        DocumentListener listener = new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent pDE) {
-                mOKCancelPanel.setEnabled(true);
-            }
-            
-            @Override
-            public void removeUpdate(DocumentEvent pDE) {
-                int length = pDE.getDocument().getLength();
-                if (length == 0)
-                    mOKCancelPanel.setEnabled(false);
-            }
-            
-            @Override
-            public void changedUpdate(DocumentEvent pDE) {
-            }
-        };
-        mCreateMDocTemplatePanel.getIDText().getDocument().addDocumentListener(listener);
-    }
-    
-    public String getMDocTemplateID() {
-        return mCreateMDocTemplatePanel.getID();
+
+    public DocumentMasterTemplate getEditedTemplate(){
+        return mTemplate;
     }
     
     public String getMask() {
-        return mCreateMDocTemplatePanel.getMask();
+        return mEditDocMTemplatePanel.getMask();
     }
     
     public String getDocumentType() {
-        return mCreateMDocTemplatePanel.getDocumentType();
+        return mEditDocMTemplatePanel.getDocumentType();
     }
-    
     public boolean isIdGenerated(){
-        return mCreateMDocTemplatePanel.isIdGenerated();
+        return mEditDocMTemplatePanel.isIdGenerated();
     }
     
     public Set<InstanceAttributeTemplate> getAttributeTemplates() {
@@ -112,34 +92,35 @@ public class CreateMDocTemplateDialog extends MDocTemplateDialog implements Acti
         return attrs;
     }
     
+    public Collection<BinaryResource> getFilesToRemove() {
+        return mEditFilesPanel.getFilesToRemove();
+    }
+    
     public Collection<File> getFilesToAdd() {
         return mEditFilesPanel.getFilesToAdd();
     }
     
+    public Map<BinaryResource, Long> getFilesToUpdate() {
+        return mEditFilesPanel.getFilesToUpdate();
+    }
     
-    @Override
     public void actionPerformed(ActionEvent pAE) {
         mAction.actionPerformed(new ActionEvent(this, 0, null));
     }
-
-    @Override
+    
     protected JPanel getSouthPanel() {
         return mOKCancelPanel;
     }
     
-    @Override
     protected JPanel getFilesPanel() {
         return mEditFilesPanel;
     }
     
-    @Override
     protected JPanel getAttributesPanel() {
         return mAttributesPanel;
     }
 
-    @Override
-    protected JPanel getMDocTemplatePanel() {
-        return mCreateMDocTemplatePanel;
+    protected JPanel getDocMTemplatePanel() {
+        return mEditDocMTemplatePanel;
     }
-    
 }

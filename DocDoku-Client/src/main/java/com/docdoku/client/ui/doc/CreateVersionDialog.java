@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,13 +36,13 @@ public class CreateVersionDialog extends JDialog implements ActionListener {
     private ActionListener mAction;
     private JTextArea mDescriptionTextArea;
     private JTabbedPane mTabbedPane;
-    private MasterDocument mOriginMDoc;
+    private DocumentMaster mOriginDocM;
 
-    public CreateVersionDialog(Frame pOwner, MasterDocument pOriginMDoc, ActionListener pAction) {
+    public CreateVersionDialog(Frame pOwner, DocumentMaster pOriginDocM, ActionListener pAction) {
         super(pOwner, I18N.BUNDLE.getString("CreateVersionDialog_title"), true);
         setLocationRelativeTo(pOwner);
-        mOriginMDoc=pOriginMDoc;
-        mCreateVersionPanel = new CreateVersionPanel(pOriginMDoc);
+        mOriginDocM=pOriginDocM;
+        mCreateVersionPanel = new CreateVersionPanel(pOriginDocM);
         mOKCancelPanel = new OKCancelPanel(this, this);
         mTabbedPane = new JTabbedPane();
         mDescriptionTextArea=new JTextArea(new MaxLengthDocument(4096), "",10,35);
@@ -54,7 +54,7 @@ public class CreateVersionDialog extends JDialog implements ActionListener {
     private void createLayout() {
         getRootPane().setDefaultButton(mOKCancelPanel.getOKButton());
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createTitledBorder(I18N.BUNDLE.getString("CreateMDocPanel_border")));
+        mainPanel.setBorder(BorderFactory.createTitledBorder(I18N.BUNDLE.getString("CreateDocMPanel_border")));
         mDescriptionTextArea.setLineWrap(true);
         mDescriptionTextArea.setWrapStyleWord(true);
         mTabbedPane.add(I18N.BUNDLE.getString("Main_border"), mCreateVersionPanel);
@@ -66,7 +66,7 @@ public class CreateVersionDialog extends JDialog implements ActionListener {
         pack();
     }
 
-    public String getMDocTitle() {
+    public String getDocMTitle() {
         return mCreateVersionPanel.getTitle();
     }
     
@@ -78,8 +78,8 @@ public class CreateVersionDialog extends JDialog implements ActionListener {
         return mCreateVersionPanel.getWorkflowModel();
     }
 
-    public MasterDocument getOriginMDoc() {
-        return mOriginMDoc;
+    public DocumentMaster getOriginDocM() {
+        return mOriginDocM;
     }
 
 

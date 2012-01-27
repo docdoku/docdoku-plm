@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006, 2007, 2008, 2009, 2010, 2011 DocDoku SARL
+ * Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 DocDoku SARL
  *
  * This file is part of DocDoku.
  *
@@ -22,13 +22,13 @@ package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.Document;
-import com.docdoku.core.document.MasterDocument;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import java.util.Date;
 
 import javax.swing.table.*;
 
-public class SearchMDocsResultTableModel extends AbstractTableModel implements ElementsTableModel {
+public class SearchDocMsResultTableModel extends AbstractTableModel implements ElementsTableModel {
 
     private final static String COLUMN_NAME[] =
             {
@@ -44,10 +44,10 @@ public class SearchMDocsResultTableModel extends AbstractTableModel implements E
         I18N.BUNDLE.getString("CheckOutDate_column_label"),
         I18N.BUNDLE.getString("LifeCycleState_column_label")
     };
-    private MasterDocument[] mMDocs;
+    private DocumentMaster[] mDocMs;
 
-    public SearchMDocsResultTableModel(MasterDocument[] pMDocs) {
-        mMDocs = pMDocs;
+    public SearchDocMsResultTableModel(DocumentMaster[] pDocMs) {
+        mDocMs = pDocMs;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SearchMDocsResultTableModel extends AbstractTableModel implements E
 
     @Override
     public int getRowCount() {
-        return mMDocs.length;
+        return mDocMs.length;
     }
 
     @Override
@@ -78,43 +78,43 @@ public class SearchMDocsResultTableModel extends AbstractTableModel implements E
 
     @Override
     public Object getValueAt(int pRowIndex, int pColumnIndex) {
-        MasterDocument mdoc = mMDocs[pRowIndex];
-        Document doc = mdoc.getLastIteration();
+        DocumentMaster docM = mDocMs[pRowIndex];
+        Document doc = docM.getLastIteration();
         switch (pColumnIndex) {
             case 0:
-                return mdoc.getId();
+                return docM.getId();
             case 1:
-                return mdoc.getVersion();
+                return docM.getVersion();
             case 2:
-                String type = mdoc.getType();
+                String type = docM.getType();
                 return type == null ? "" : type;
             case 3:
-                String title = mdoc.getTitle();
+                String title = docM.getTitle();
                 return title == null ? "" : title;
             case 4:
-                return mdoc.getAuthor().getName();                
+                return docM.getAuthor().getName();                
             case 5:
                 return doc == null ? "" : doc.getCreationDate();
             case 6:
-                return mdoc.getCreationDate();
+                return docM.getCreationDate();
             case 7:
-                return mdoc.getLocation();
+                return docM.getLocation();
             case 8:
-                User checkOutUser = mdoc.getCheckOutUser();
+                User checkOutUser = docM.getCheckOutUser();
                 return checkOutUser == null ? "" : checkOutUser.getName();
             case 9:
-                Date checkOutDate = mdoc.getCheckOutDate();
+                Date checkOutDate = docM.getCheckOutDate();
                 return checkOutDate == null ? "" : checkOutDate;
             case 10:
-                String lc = mdoc.getLifeCycleState();
+                String lc = docM.getLifeCycleState();
                 return lc == null ? "" : lc;
         }
         return null;
     }
 
     @Override
-    public MasterDocument getElementAt(int pRowIndex) {
-        return mMDocs[pRowIndex];
+    public DocumentMaster getElementAt(int pRowIndex) {
+        return mDocMs[pRowIndex];
     }
 
     @Override
