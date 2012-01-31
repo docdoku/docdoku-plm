@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest;
 
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
