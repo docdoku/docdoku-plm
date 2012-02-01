@@ -62,10 +62,11 @@ public class FolderResource {
      * @return the array of sub-folders
      */
     @GET
-    @Path("{completePath:.*}")
+   @Path("{parentFolder:.*}/{folderName}")
     @Produces("application/json;charset=UTF-8")
-    public String[] getJson(@PathParam("completePath") String completePath) {
+    public String[] getJson(@PathParam("parentFolder") String parentFolder, @PathParam("folderName") String folderName) {
         try {
+            String completePath = parentFolder +"/" + folderName;
             return commandService.getFolders(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
@@ -93,10 +94,11 @@ public class FolderResource {
      * @return the array of the documents that have also been deleted
      */
     @DELETE
-    @Path("{completePath:.*}")
+   @Path("{parentFolder:.*}/{folderName}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterKey[] deleteJson(@PathParam("completePath") String completePath) {
+    public DocumentMasterKey[] deleteJson(@PathParam("parentFolder") String parentFolder, @PathParam("folderName") String folderName) {
         try {
+            String completePath = parentFolder +"/" + folderName;
             return commandService.deleteFolder(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
