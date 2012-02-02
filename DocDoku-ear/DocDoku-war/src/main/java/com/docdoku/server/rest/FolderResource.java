@@ -62,17 +62,19 @@ public class FolderResource {
      * @return the array of sub-folders
      */    
     @GET
-    @Path("{workspace}/{folderPath:.*}")
+    //@Path("{workspace}/{folderPath:.*}")
+    @Path("{completePath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public String[] getJson(@PathParam("workspace") String workspace, @PathParam("folderPath") String folderPath) {
+    public String[] getJson(@PathParam("completePath") String completePath) {
         try {
-            String completePath=workspace;
-            if(!"".equals(folderPath)){
-                completePath += "/" + folderPath;
+            /*
+            String completePath=parentFolder;
+            if(!"".equals(folderName)){
+                completePath += "/" + folderName;
             }
             if(completePath.charAt(completePath.length()-1)=='/')
                 completePath=completePath.substring(0,completePath.length()-1);
-            
+            */
             return commandService.getFolders(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
@@ -84,9 +86,12 @@ public class FolderResource {
      * @param parent folder path and name of the folder to create
      */
     @PUT
-    @Path("{parentFolder:.*}/{folderName}")
-    public void putJson(@PathParam("parentFolder") String parentFolder, @PathParam("folderName") String folderName) {
+    @Path("{completePath:.*}")
+    public void putJson(@PathParam("completePath") String completePath) {
         try {
+            int lastSlash=completePath.lastIndexOf('/');
+            String parentFolder = completePath.substring(0,lastSlash);
+            String folderName = completePath.substring(lastSlash+1, completePath.length());
             commandService.createFolder(parentFolder, folderName);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
@@ -99,11 +104,10 @@ public class FolderResource {
      * @return the array of the documents that have also been deleted
      */
     @DELETE
-    @Path("{workspace}/{folderPath:.*}")
+    @Path("{completePath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterKey[] deleteJson(@PathParam("workspace") String workspace, @PathParam("folderPath") String folderPath) {
-        try {
-            String completePath=workspace + "/" + folderPath;
+    public DocumentMasterKey[] deleteJson(@PathParam("completePath") String completePath) {
+        try {       
             return commandService.deleteFolder(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
