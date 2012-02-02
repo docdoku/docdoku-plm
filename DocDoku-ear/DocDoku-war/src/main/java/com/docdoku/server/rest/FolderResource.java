@@ -60,19 +60,24 @@ public class FolderResource {
      * Retrieves representation of an instance of FolderResource
      * @param parent folder path
      * @return the array of sub-folders
-     */
+     */    
     @GET
-   @Path("{parentFolder:.*}/{folderName}")
+    @Path("{workspace}/{folderPath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public String[] getJson(@PathParam("parentFolder") String parentFolder, @PathParam("folderName") String folderName) {
+    public String[] getJson(@PathParam("workspace") String workspace, @PathParam("folderPath") String folderPath) {
         try {
-            String completePath = parentFolder +"/" + folderName;
+            String completePath=workspace;
+            if(!"".equals(folderPath)){
+                completePath += "/" + folderPath;
+            }
+            if(completePath.charAt(completePath.length()-1)=='/')
+                completePath=completePath.substring(0,completePath.length()-1);
+            
             return commandService.getFolders(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
 
     /**
      * PUT method for updating or creating an instance of FolderResource
@@ -94,11 +99,11 @@ public class FolderResource {
      * @return the array of the documents that have also been deleted
      */
     @DELETE
-   @Path("{parentFolder:.*}/{folderName}")
+    @Path("{workspace}/{folderPath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterKey[] deleteJson(@PathParam("parentFolder") String parentFolder, @PathParam("folderName") String folderName) {
+    public DocumentMasterKey[] deleteJson(@PathParam("workspace") String workspace, @PathParam("folderPath") String folderPath) {
         try {
-            String completePath = parentFolder +"/" + folderName;
+            String completePath=workspace + "/" + folderPath;
             return commandService.deleteFolder(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
