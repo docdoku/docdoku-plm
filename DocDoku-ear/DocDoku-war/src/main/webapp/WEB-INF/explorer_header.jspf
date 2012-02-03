@@ -1,0 +1,88 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<script type="text/javascript">
+    <!--
+    function switchMenu(objet){
+        var el = document.getElementById(objet);
+        if ( el.style.display != 'none' ) {
+            el.style.display = 'none';
+        }
+        else {
+            el.style.display = '';
+        }
+    }
+    //-->
+</script>
+<fmt:bundle basename="com.docdoku.server.localization.header_footer_resource">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="#">
+                    document<strong>Management</strong>
+                </a>
+                <ul class="nav" id="left_nav_container">
+                    <li>
+                        <a href="<%=request.getContextPath()%>/" id="home_link"><!----></a>
+                    </li>
+                    <li class="dropdown" id="workspace_container">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <fmt:message key="toplinks.workspace"/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>                                
+                                <a href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
+                                    <i class="icon-cog"></i>
+                                    <fmt:message key="toplinks.admin"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <c:forEach var="item" items="${administeredWorkspaces}">
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/explorer/${item.value.id}">
+                                        ${item.value.id}
+                                    </a>
+                                </li>
+                            </c:forEach>
+                            <c:forEach var="item" items="${regularWorkspaces}">
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/explorer/${item.id}">
+                                        ${item.id}
+                                    </a>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li class="dropdown" id="account_name_node">
+                        <a href="#" class="dropdown-toggle" id="account_name_link" data-toggle="dropdown">
+                            ${sessionScope.account.name}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="<%=request.getContextPath()%>/admin/accountEditionForm.jsp">
+                                    <i class="icon-user"></i>
+                                    <fmt:message key="toplinks.account"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<%=request.getContextPath()%>/admin/logout.jsp">
+                                    <i class="icon-off"></i>
+                                    <fmt:message key="toplinks.logout"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="<%=request.getContextPath()%>/download.jsp" target="_blank" id="download_link"><!----></a>
+                    </li>
+                    <li>
+                        <a href="<%=request.getContextPath()%>/help/help.jsp" target="_blank" id="help_link"><!----></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</fmt:bundle>
