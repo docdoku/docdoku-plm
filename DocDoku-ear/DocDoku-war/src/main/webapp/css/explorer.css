@@ -1,6 +1,13 @@
-body {
-    font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
+body{
+    font-family: "Helvetica Neue","Trebuchet MS", "Lucida Grande", arial, sans-serif;
     font-size: 0.8em;
+    background: white;
+    padding-top: 40px;
+    background: /*#F1F3F8*/ white url('../images/sidebar_bg_2.png') repeat-y;
+}
+
+[class^="icon-"] {
+    background-image: url('../images/glyphicons-halflings.png');    
 }
 
 .cbg-ButtonContent{
@@ -148,13 +155,13 @@ body {
 
 
 
-#page {
+/*#page {
     text-align: left;
     padding: 0 20px 30px 20px;
     overflow: hidden;
     background: #fff;
     color: #666;
-}
+}*/
 
 
 #header {
