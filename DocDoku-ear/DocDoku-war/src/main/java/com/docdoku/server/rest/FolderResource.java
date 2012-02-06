@@ -62,19 +62,11 @@ public class FolderResource {
      * @return the array of sub-folders
      */    
     @GET
-    //@Path("{workspace}/{folderPath:.*}")
     @Path("{completePath:.*}")
     @Produces("application/json;charset=UTF-8")
     public String[] getJson(@PathParam("completePath") String completePath) {
         try {
-            /*
-            String completePath=parentFolder;
-            if(!"".equals(folderName)){
-                completePath += "/" + folderName;
-            }
-            if(completePath.charAt(completePath.length()-1)=='/')
-                completePath=completePath.substring(0,completePath.length()-1);
-            */
+            completePath=Tools.stripTrailingSlash(completePath);
             return commandService.getFolders(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
@@ -108,6 +100,7 @@ public class FolderResource {
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterKey[] deleteJson(@PathParam("completePath") String completePath) {
         try {       
+            completePath=Tools.stripTrailingSlash(completePath);
             return commandService.deleteFolder(completePath);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());

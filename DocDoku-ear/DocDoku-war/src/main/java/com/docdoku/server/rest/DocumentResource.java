@@ -22,7 +22,10 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.core.Context;
@@ -34,9 +37,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 @Stateless
 @Path("documents")
+@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
+@RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentResource {
 
     @EJB
@@ -55,21 +61,15 @@ public class DocumentResource {
      */
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMaster getJson() {
-        //TODO return proper representation object
-        throw new UnsupportedOperationException();
-    }
-    /*
-    @Override
-    public DocumentMasterDTO[] findDocMsByFolder(String completePath) throws ApplicationException {
+    public DocumentMaster[] getJson(@QueryParam("folder") String completePath) {
         try {
-            DocumentMaster[] docMs = commandService.findDocMsByFolder(completePath);
-            return setupDocMNotifications(createDTO(docMs), completePath.split("/")[0]);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new ApplicationException(ex.getMessage());
+            completePath=Tools.stripTrailingSlash(Tools.stripLeadingSlash(completePath));
+            return commandService.findDocumentMastersByFolder(completePath);
+        }catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
+    /*
     @Override
     public DocumentMasterDTO[] findDocMsByTag(String workspaceId, String label) throws ApplicationException {
         try {
