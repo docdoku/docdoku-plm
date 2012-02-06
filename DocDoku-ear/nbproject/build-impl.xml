@@ -282,7 +282,6 @@ exists or setup the property manually. For example like this:
         <!-- Task to deploy to the Access Manager runtime. -->
         <ant antfile="${project.DocDoku-ejb}/build.xml" inheritall="false" target="-run-deploy-am"/>
         <ant antfile="${project.DocDoku-war}/build.xml" inheritall="false" target="-run-deploy-am"/>
-        <ant antfile="${project.DocDoku-war-1}/build.xml" inheritall="false" target="-run-deploy-am"/>
     </target>
     <target depends="-init-cos,dist-directory-deploy,pre-run-deploy,-pre-nbmodule-run-deploy,-run-deploy-nb,-init-deploy-ant,-deploy-ant,-run-deploy-am,-post-nbmodule-run-deploy,post-run-deploy" name="run-deploy"/>
     <target if="netbeans.home" name="-run-deploy-nb">

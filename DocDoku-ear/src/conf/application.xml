@@ -7,7 +7,7 @@
   <module>
     <web>
       <web-uri>DocDoku-war.war</web-uri>
-      <context-root>/DocDoku-war</context-root>
+      <context-root>/</context-root>
     </web>
   </module>
 </application>
