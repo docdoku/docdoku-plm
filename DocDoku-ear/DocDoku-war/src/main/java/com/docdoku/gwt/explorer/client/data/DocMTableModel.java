@@ -23,8 +23,8 @@ package com.docdoku.gwt.explorer.client.data;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
-import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +60,7 @@ public class DocMTableModel implements TableModel {
             data[i][0] = docMs[i].isIterationSubscription();
             data[i][1] = docMs[i].isStateSubscription();
             this.data[i][2] = docMs[i].getId();
+            /*
             if (docMs[i].getCheckOutUser() != null) {
                 if (docMs[i].getCheckOutUser().getLogin().equals(login)) {
 //                    this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentEditRowIcon(), docMs[i].getId());
@@ -72,7 +73,7 @@ public class DocMTableModel implements TableModel {
 //                this.data[i][2] = HTMLUtil.imageItemHTML(imageBundle.documentRowIcon(), docMs[i].getId());
                 status[i] = CheckOutStatus.CHECKED_IN;
             }
-
+             
             this.data[i][3] = docMs[i].getVersion();
 
             DocumentDTO iteration = docMs[i].getLastIteration();
@@ -84,13 +85,13 @@ public class DocMTableModel implements TableModel {
             this.data[i][5] = docMs[i].getAuthor().getName();
             this.data[i][6] = docMs[i].getTitle();
             this.data[i][7] = docMs[i].getCreationDate();
-            this.data[i][8] = createVersionEnabled;
+            this.data[i][8] = createVersionEnabled;*/
         }
 
     }
 
     public int getRowCount() {
-        return docMs.length;
+        return 0;//docMs.length;
     }
 
     public int getColumnCount() {
@@ -106,9 +107,9 @@ public class DocMTableModel implements TableModel {
     }
 
     public String[] getTooltip(int row, int column) {
-        if (row >= 0 && row < docMs.length && docMs[row].getCheckOutUser() != null && column == 2) {
+        if (row >= 0 && row < docMs.length /*&& docMs[row].getCheckOutUser() != null && column == 2*/) {
             ExplorerI18NConstants constants = ServiceLocator.getInstance().getExplorerI18NConstants();
-            String tooltip = constants.checkedInBy() + " " + docMs[row].getCheckOutUser().getName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(docMs[row].getCheckOutDate());
+            String tooltip = null;//constants.checkedInBy() + " " + docMs[row].getCheckOutUser().getName() + " " + constants.onLabel() + " " + DateTimeFormat.getShortDateTimeFormat().format(docMs[row].getCheckOutDate());
             String result[] = new String[1];
             result[0] = tooltip;
             return result;
@@ -147,24 +148,26 @@ public class DocMTableModel implements TableModel {
     public List<Integer> getCheckedInDocuments() {
         List<Integer> result = new LinkedList<Integer>();
         int i = 0;
+        /*
         for (DocumentMasterDTO documentMasterDTO : docMs) {
             if (documentMasterDTO.getCheckOutUser() != null) {
                 result.add(i);
             }
             i++;
-        }
+        }*/
         return result;
     }
 
     public List<Integer> getCheckedOutDocuments() {
         List<Integer> result = new LinkedList<Integer>();
         int i = 0;
+        /*
         for (DocumentMasterDTO documentMasterDTO : docMs) {
             if (documentMasterDTO.getCheckOutUser() == null) {
                 result.add(i);
             }
             i++;
-        }
+        }*/
         return result;
     }
 }

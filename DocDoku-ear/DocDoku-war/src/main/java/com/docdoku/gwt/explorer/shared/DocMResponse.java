@@ -20,6 +20,7 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import java.io.Serializable;
 
 /**

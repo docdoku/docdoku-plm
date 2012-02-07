@@ -20,6 +20,8 @@
 
 package com.docdoku.gwt.explorer.client.ui;
 
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.DocMTableModel;
@@ -319,12 +321,12 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             elementTableDecPanel.removeStyleName("searchTable");
         }
         showBasicSearchPanel();
-        DocumentDTO iteration = m_lastOpenedDocM.getLastIteration();
+        DocumentDTO iteration = null;//m_lastOpenedDocM.getLastIteration();
         if (iteration != null) {
             inputPanel.clear();
             m_docPanel.clearInputs();
             m_docPanel.setDocM(m_lastOpenedDocM);
-            m_docPanel.setEditionMode(m_lastOpenedDocM.getCheckOutUser() != null && m_login.equals(m_lastOpenedDocM.getCheckOutUser().getLogin()));
+            //m_docPanel.setEditionMode(m_lastOpenedDocM.getCheckOutUser() != null && m_login.equals(m_lastOpenedDocM.getCheckOutUser().getLogin()));
             m_docPanel.setFiles(iteration.getAttachedFiles());
             m_docPanel.setAttributes(iteration.getInstanceAttributes());
             m_docPanel.setLinks(iteration.getLinkedDocuments(), m_lastOpenedDocM.getWorkspaceId());
@@ -338,6 +340,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             elementTableDecPanel.removeStyleName("searchTable");
         }
         showBasicSearchPanel();
+        /*
         if (iter != m_lastOpenedDocM.getDocumentIterations().size() - 1) {
             DocumentDTO iteration = m_lastOpenedDocM.getDocumentIterations().get(iter);
             if (iteration != null) {
@@ -352,7 +355,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             }
         } else {
             showEditDocPanel();
-        }
+        }*/
 
     }
 

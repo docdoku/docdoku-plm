@@ -20,6 +20,8 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.WorkspaceMembership;
+import com.docdoku.server.rest.dto.UserDTO;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;

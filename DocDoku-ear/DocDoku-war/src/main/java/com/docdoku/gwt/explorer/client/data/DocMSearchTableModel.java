@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.explorer.client.data;
 
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 
 /**
  *

@@ -20,6 +20,7 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.UserDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

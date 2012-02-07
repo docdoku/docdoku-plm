@@ -23,9 +23,9 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -46,7 +46,7 @@ public class EditElementCommand implements Action {
         String id=docM.getId();
         String version=docM.getVersion();
 
-        int iteration =docM.getLastIteration().getIteration();
+        int iteration =0;//docM.getLastIteration().getIteration();
         String revisionNote=(String) userObject[0];
         InstanceAttributeDTO[] attributes=(InstanceAttributeDTO[]) userObject[1];
         DocumentDTO[] links=(DocumentDTO[]) userObject[2];

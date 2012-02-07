@@ -25,7 +25,7 @@ import com.docdoku.gwt.explorer.client.data.DocMTableModel;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.shared.DocMResponse;
 import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;

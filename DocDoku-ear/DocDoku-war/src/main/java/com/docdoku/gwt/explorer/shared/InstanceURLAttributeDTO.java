@@ -20,6 +20,8 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+
 /**
  *
  * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>

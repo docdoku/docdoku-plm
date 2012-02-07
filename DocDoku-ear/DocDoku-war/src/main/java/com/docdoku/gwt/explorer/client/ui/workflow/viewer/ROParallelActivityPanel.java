@@ -21,8 +21,8 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
 import com.docdoku.gwt.explorer.client.ui.workflow.*;
-import com.docdoku.gwt.explorer.shared.ParallelActivityDTO;
-import com.docdoku.gwt.explorer.shared.TaskDTO;
+import com.docdoku.server.rest.dto.ParallelActivityDTO;
+import com.docdoku.server.rest.dto.TaskDTO;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;

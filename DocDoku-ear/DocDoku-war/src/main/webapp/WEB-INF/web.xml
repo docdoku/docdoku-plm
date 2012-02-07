@@ -135,10 +135,6 @@
         </init-param>
     </servlet>
     <servlet>
-        <servlet-name>ExplorerGWTServlet</servlet-name>
-        <servlet-class>com.docdoku.gwt.explorer.server.ExplorerServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>RegistrationForm</servlet-name>
         <jsp-file>/registrationForm.jsp</jsp-file>
     </servlet>
@@ -146,10 +142,6 @@
         <servlet-name>HelpPage</servlet-name>
         <jsp-file>/help/help.jsp</jsp-file>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>ExplorerGWTServlet</servlet-name>
-        <url-pattern>/gwtExplorer/service</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>JnlpDownloadServlet</servlet-name>
         <url-pattern>/apps/*</url-pattern>
@@ -218,7 +210,7 @@
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-<!--    <security-constraint>
+    <!--    <security-constraint>
         <display-name>Web App Pages</display-name>
         <web-resource-collection>
             <web-resource-name>Pages</web-resource-name>
@@ -255,17 +247,6 @@
             <role-name>users</role-name>
         </auth-constraint>
     </security-constraint>
-    <security-constraint>
-        <display-name>GWT Services</display-name>
-        <web-resource-collection>
-            <web-resource-name>Services</web-resource-name>
-            <url-pattern>/gwtExplorer/service</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <description/>
-            <role-name>users</role-name>
-        </auth-constraint>
-    </security-constraint>
     <login-config>
         <auth-method>BASIC</auth-method>
         <realm-name>docdokuRealm</realm-name>
@@ -277,7 +258,7 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-<!--
+    <!--
 <login-config>
     <auth-method>FORM</auth-method>
     <realm-name>docdokuRealm</realm-name>

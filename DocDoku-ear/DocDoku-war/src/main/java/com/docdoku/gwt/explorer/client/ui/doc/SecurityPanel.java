@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
-import com.docdoku.gwt.explorer.shared.UserDTO;
+import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.gwt.explorer.shared.UserGroupDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;

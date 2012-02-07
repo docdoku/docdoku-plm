@@ -24,8 +24,8 @@ import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.ui.doc.DocMainPanel;
 import com.docdoku.gwt.explorer.client.ui.workflow.viewer.TaskChangeEvent.Type;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
-import com.docdoku.gwt.explorer.shared.WorkflowDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.WorkflowDTO;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -113,8 +113,8 @@ public class WorkflowGlassPanel extends PopupPanel implements TaskListener {
     public void updateAfterAcceptOrReject(DocumentMasterDTO result) {
         viewer.hideAllPopups();
         viewer.removeFromParent();
-        parentPanel.setLifeCycleState(result.getLifeCycleState());
-        setWorkflow(result.getWorkflow());
+        //parentPanel.setLifeCycleState(result.getLifeCycleState());
+        //setWorkflow(result.getWorkflow());
     }
 
     public void setApproveAction(Action command) {

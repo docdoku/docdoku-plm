@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collections;
 import java.util.HashSet;

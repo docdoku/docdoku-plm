@@ -23,8 +23,8 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class DeleteDocFileCommand implements Action {
         AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
 
             public void onSuccess(DocumentMasterDTO docM) {
-                DocumentDTO iteration = docM.getLastIteration();
+                DocumentDTO iteration = null;//docM.getLastIteration();
                 if(iteration!=null)
                     m_mainPage.setDocFiles(iteration.getAttachedFiles());
             }

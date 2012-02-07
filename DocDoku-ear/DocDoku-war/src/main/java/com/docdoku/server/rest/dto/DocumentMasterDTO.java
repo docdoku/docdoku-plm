@@ -18,7 +18,7 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -60,13 +60,14 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         return author;
     }
 
+    public UserDTO getCheckOutUser() {
+        return checkOutUser;
+    }
+        
     public Date getCheckOutDate() {
         return checkOutDate;
     }
 
-    public UserDTO getCheckOutUser() {
-        return checkOutUser;
-    }
 
     public Date getCreationDate() {
         return creationDate;
@@ -171,10 +172,6 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         this.documentIterations = documentIterations;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public DocumentDTO getLastIteration() {
         int index = documentIterations.size() - 1;
         if (index < 0) {
@@ -184,7 +181,10 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         }
     }
 
-  
+    public void setId(String id) {
+        this.id = id;
+    }
+      
     public boolean isIterationSubscription() {
         return iterationSubscription;
     }

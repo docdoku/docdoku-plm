@@ -28,7 +28,7 @@ import com.docdoku.gwt.client.ui.widget.input.NumberConstrainedTextBox;
 import com.docdoku.gwt.client.ui.widget.input.EditableURL;
 import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
 import com.docdoku.gwt.client.ui.widget.util.NotEmptyValidator;
-import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
 import com.docdoku.gwt.explorer.shared.InstanceBooleanAttributeDTO;
 import com.docdoku.gwt.explorer.shared.InstanceDateAttributeDTO;

@@ -24,6 +24,9 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -38,6 +41,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 @Stateless
 @Path("documents")
@@ -51,8 +56,15 @@ public class DocumentResource {
     
     @Context
     private UriInfo context;
+    
+    private Mapper mapper;
 
     public DocumentResource() {
+    }
+    
+    @PostConstruct
+    public void init(){
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     /**
@@ -61,10 +73,15 @@ public class DocumentResource {
      */
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMaster[] getJson(@QueryParam("folder") String completePath) {
+    public DocumentMasterDTO[] getJson(@QueryParam("folder") String completePath) {
         try {
             completePath=Tools.stripTrailingSlash(Tools.stripLeadingSlash(completePath));
-            return commandService.findDocumentMastersByFolder(completePath);
+            DocumentMaster[] docM = commandService.findDocumentMastersByFolder(completePath);
+            DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
+            for(int i = 0; i<docM.length;i++)
+                dtos[i]= mapper.map(docM[i], DocumentMasterDTO.class);
+           
+            return dtos;
         }catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }

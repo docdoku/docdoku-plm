@@ -18,12 +18,13 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
-import java.io.Serializable;
-
-public class SerialActivityDTO extends ActivityDTO implements Serializable {
-
-    public SerialActivityDTO() {
-    }
+/**
+ *
+ * @author Florent Garin
+ */
+public enum WorkspaceMembership {
+    READ_ONLY,
+    FULL_ACCESS
 }

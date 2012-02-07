@@ -24,8 +24,8 @@ import com.docdoku.gwt.explorer.client.data.DocOracle;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -63,7 +63,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
 
             public void onSuccess(DocumentMasterDTO result) {
                 masterDoc = result;
-                iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
+               // iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
                 iterationsSpin.setMinValue(1);
                 iterationsSpin.setValue(doc.getIteration());
                 iterationsSpin.setVisible(true);
@@ -94,7 +94,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
 
     public DocumentDTO getSelectedDocument() {
         if (masterDoc != null) {
-            return masterDoc.getDocumentIterations().get(iterationsSpin.getValue() - 1);
+            return null;//masterDoc.getDocumentIterations().get(iterationsSpin.getValue() - 1);
         } else {
             return null;
         }
@@ -104,9 +104,9 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
         iterationsSpin.setVisible(true);
         DocOracle.DocOracleSuggestion selection = (DocOracle.DocOracleSuggestion) event.getSelectedItem();
         masterDoc = selection.getDocM();
-        iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
+        //iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
         iterationsSpin.setMinValue(1);
-        iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
+        //iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
     }
 
     public void onKeyUp(KeyUpEvent event) {
@@ -135,9 +135,9 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
                             if (result != null) {
                                 iterationsSpin.setVisible(true);
                                 masterDoc = result;
-                                iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
+                                //iterationsSpin.setMaxValue(masterDoc.getDocumentIterations().size());
                                 iterationsSpin.setMinValue(1);
-                                iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
+                                //iterationsSpin.setValue(masterDoc.getDocumentIterations().size());
                             } else {
                                 iterationsSpin.setVisible(false);
                                 masterDoc = null;

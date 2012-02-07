@@ -20,6 +20,16 @@
 
 package com.docdoku.gwt.explorer.server;
 
+import com.docdoku.server.rest.dto.TaskDTO;
+import com.docdoku.server.rest.dto.ActivityDTO;
+import com.docdoku.server.rest.dto.SerialActivityDTO;
+import com.docdoku.server.rest.dto.WorkspaceMembership;
+import com.docdoku.server.rest.dto.ParallelActivityDTO;
+import com.docdoku.server.rest.dto.WorkflowDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.UserDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.InstanceAttributeTemplate;
@@ -79,7 +89,7 @@ import org.dozer.Mapper;
  *
  * @author Florent Garin
  */
-public class ExplorerServiceImpl extends RemoteServiceServlet implements ExplorerService {
+public class ExplorerServiceImpl {
 
     @EJB
     private ICommandLocal commandService;
@@ -88,7 +98,7 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
     private IUserManagerLocal userManager;
 
     private Mapper mapper;
-    
+    /*
     @Override
     public void init(){
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
@@ -1202,5 +1212,5 @@ public class ExplorerServiceImpl extends RemoteServiceServlet implements Explore
         defaultResponse.setData(defaultChunk);
 
         return  defaultResponse;
-    }
+    }*/
 }

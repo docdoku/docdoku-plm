@@ -24,9 +24,9 @@ import com.docdoku.gwt.explorer.client.ui.widget.FilesPanel;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
-import com.docdoku.gwt.explorer.shared.DocumentDTO;
-import com.docdoku.gwt.explorer.shared.InstanceAttributeDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -143,14 +143,14 @@ public class DocPanel extends FlexTable {
     }
 
     public void setDocM(final DocumentMasterDTO docM) {
-        setDocM(docM, docM.getDocumentIterations().size() - 1);
+        //setDocM(docM, docM.getDocumentIterations().size() - 1);
     }
 
     public void setDocM(final DocumentMasterDTO docM, int it) {
-        m_mainPanel.setDocMAuthor(docM.getAuthor().getName());
+        //m_mainPanel.setDocMAuthor(docM.getAuthor().getName());
         int iteration = 0;
         String revision = "";
-
+/*
         if (it == docM.getDocumentIterations().size() - 1) {
             if (docM.getLastIteration() != null) {
                 iteration = docM.getLastIteration().getIteration();
@@ -160,7 +160,7 @@ public class DocPanel extends FlexTable {
             iteration = it + 1;
             revision = docM.getDocumentIterations().get(it).getRevisionNote();
         }
-
+*/
         String webappContext = HTMLUtil.getWebContext();
         String htmlLink = "<a href=\"/" + (webappContext==null?"":webappContext+"/") + "documents/" + docM.getWorkspaceId() + "/" + docM.getId() + "/" + docM.getVersion() + "\">" + i18n.permaLink() + "</a>";
         m_mainPanel.setPermaLink(htmlLink);
@@ -170,23 +170,23 @@ public class DocPanel extends FlexTable {
         m_mainPanel.setCreationDate(docM.getCreationDate());
         m_mainPanel.setModificationDate(docM.getCheckOutDate());
 
-        m_mainPanel.setCheckOutUser(docM.getCheckOutUser()==null?null:docM.getCheckOutUser().getName());
+        //m_mainPanel.setCheckOutUser(docM.getCheckOutUser()==null?null:docM.getCheckOutUser().getName());
 
         m_mainPanel.setDocMType(docM.getType());
         m_mainPanel.setDocMTitle(docM.getTitle());
-        m_mainPanel.setLifeCycleState(docM.getLifeCycleState());
+        //m_mainPanel.setLifeCycleState(docM.getLifeCycleState());
         m_mainPanel.setRevisionNote(revision);
         m_mainPanel.setTags(docM.getTags() == null ? "" : Arrays.toString(docM.getTags()));
 
 
         // iteration stuff
-        m_iterationNavigator.setIterationsNumber(it, docM.getDocumentIterations().size() - 1);
-        m_iterationNavigator.setVisible(docM.getDocumentIterations().size() != 1);
+        //m_iterationNavigator.setIterationsNumber(it, docM.getDocumentIterations().size() - 1);
+        //m_iterationNavigator.setVisible(docM.getDocumentIterations().size() != 1);
 
-
+/*
         if (docM.getWorkflow() != null) {
             m_mainPanel.setWorkflow(docM.getWorkflow());
-        }
+        }*/
 
     }
 

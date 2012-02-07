@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.actions;
 
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -54,7 +54,7 @@ public class UploadDocFileCommand implements Action {
             fileName=fileName.substring(index+1);
 
         String webappContext = HTMLUtil.getWebContext();
-        String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(docM.getWorkspaceId()) + "/" + "documents/" + URL.encode(docM.getId()) + "/" + docM.getVersion() + "/" + docM.getLastIteration().getIteration() + "/" + URL.encode(fileName);
+        String url = "/" + (webappContext==null?"":webappContext+"/") + "files/" + URL.encode(docM.getWorkspaceId()) + "/" + "documents/" + URL.encode(docM.getId()) + "/" + docM.getVersion() + "/" + /*docM.getLastIteration().getIteration() +*/ "/" + URL.encode(fileName);
         form.setAction(url);
         form.submit();
     }

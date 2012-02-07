@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.DocOracle;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
-import com.docdoku.gwt.explorer.shared.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;

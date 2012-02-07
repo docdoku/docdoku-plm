@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.viewer;
 
-import com.docdoku.gwt.explorer.shared.TaskDTO;
+import com.docdoku.server.rest.dto.TaskDTO;
 import java.util.EventObject;
 
 /**

@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.resources.icons.ExplorerImageBundle;
 import com.docdoku.gwt.explorer.client.ui.widget.DocdokuInfoPopupPanel;
-import com.docdoku.gwt.explorer.shared.TaskDTO;
+import com.docdoku.server.rest.dto.TaskDTO;
 import com.google.gwt.event.dom.client.HasMouseMoveHandlers;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;

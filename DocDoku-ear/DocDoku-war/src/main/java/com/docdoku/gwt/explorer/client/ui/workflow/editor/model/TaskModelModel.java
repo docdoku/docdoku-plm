@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.shared.TaskModelDTO;
-import com.docdoku.gwt.explorer.shared.UserDTO;
+import com.docdoku.server.rest.dto.UserDTO;
 import java.util.ArrayList;
 import java.util.List;
 

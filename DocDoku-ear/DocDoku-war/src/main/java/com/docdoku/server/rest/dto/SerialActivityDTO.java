@@ -18,33 +18,12 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Florent Garin
- */
-public abstract class InstanceAttributeDTO implements Serializable{
+public class SerialActivityDTO extends ActivityDTO implements Serializable {
 
-    protected String name;
-
-    public InstanceAttributeDTO(){
-
+    public SerialActivityDTO() {
     }
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public abstract Object getValue();
-    public abstract boolean setValue(Object pValue);
-    
-    
-
 }

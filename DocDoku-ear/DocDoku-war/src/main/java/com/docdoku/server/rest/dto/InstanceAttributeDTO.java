@@ -18,13 +18,33 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
+
+import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
-public enum WorkspaceMembership {
-    READ_ONLY,
-    FULL_ACCESS
+public abstract class InstanceAttributeDTO implements Serializable{
+
+    protected String name;
+
+    public InstanceAttributeDTO(){
+
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public abstract Object getValue();
+    public abstract boolean setValue(Object pValue);
+    
+    
+
 }

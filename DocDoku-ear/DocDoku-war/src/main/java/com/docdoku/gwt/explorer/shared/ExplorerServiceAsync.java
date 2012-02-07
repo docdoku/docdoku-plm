@@ -20,6 +20,10 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.UserDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
