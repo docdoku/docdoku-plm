@@ -77,7 +77,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     
     @OneToMany(mappedBy = "documentMaster", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("iteration ASC")
-    private List<Document> documentIterations = new ArrayList<Document>();
+    private List<DocumentIteration> documentIterations = new ArrayList<DocumentIteration>();
     
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
@@ -186,25 +186,25 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         return version;
     }
     
-    public Document createNextIteration(User pUser){
-        Document lastDoc=getLastIteration();
+    public DocumentIteration createNextIteration(User pUser){
+        DocumentIteration lastDoc=getLastIteration();
         int iteration = lastDoc==null?1:lastDoc.getIteration() + 1;
-        Document doc = new Document(this,iteration,pUser);
+        DocumentIteration doc = new DocumentIteration(this,iteration,pUser);
         documentIterations.add(doc);
         return doc;
     }
 
     
-    public void setDocumentIterations(List<Document> documentIterations) {
+    public void setDocumentIterations(List<DocumentIteration> documentIterations) {
         this.documentIterations = documentIterations;
     }
     
 
-    public List<Document> getDocumentIterations() {
+    public List<DocumentIteration> getDocumentIterations() {
         return documentIterations;
     }
     
-    public Document getLastIteration() {
+    public DocumentIteration getLastIteration() {
         int index = documentIterations.size()-1;
         if(index < 0)
             return null;
@@ -212,7 +212,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
             return documentIterations.get(index);
     }
     
-    public Document removeLastIteration() {
+    public DocumentIteration removeLastIteration() {
         int index = documentIterations.size()-1;
         if(index < 0)
             return null;
@@ -220,7 +220,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
             return documentIterations.remove(index);
     }
     
-    public Document getIteration(int pIteration) {
+    public DocumentIteration getIteration(int pIteration) {
         return documentIterations.get(pIteration-1);
     }
     
@@ -394,9 +394,9 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
             throw new InternalError();
         }
         //perform a deep copy
-        List<Document> clonedDocumentIterations = new ArrayList<Document>();
-        for (Document document : documentIterations) {
-            Document clonedDocument=document.clone();
+        List<DocumentIteration> clonedDocumentIterations = new ArrayList<DocumentIteration>();
+        for (DocumentIteration document : documentIterations) {
+            DocumentIteration clonedDocument=document.clone();
             clonedDocument.setDocumentMaster(clone);
             clonedDocumentIterations.add(clonedDocument);
         }

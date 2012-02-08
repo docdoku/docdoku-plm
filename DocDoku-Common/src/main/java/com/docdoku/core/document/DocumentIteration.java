@@ -42,7 +42,7 @@ import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * This <code>Document</code> class represents the iterated part of a document.
+ * This <code>DocumentIteration</code> class represents the iterated part of a document.
  * The iteration attribute indicates the order in which the modifications
  * have been made on the document.
  * 
@@ -50,9 +50,9 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
-@javax.persistence.IdClass(com.docdoku.core.document.DocumentKey.class)
+@javax.persistence.IdClass(com.docdoku.core.document.DocumentIterationKey.class)
 @javax.persistence.Entity
-public class Document implements Serializable, FileHolder, Comparable<Document>, Cloneable {
+public class DocumentIteration implements Serializable, FileHolder, Comparable<DocumentIteration>, Cloneable {
     
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
@@ -121,11 +121,11 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
-    public Document() {
+    public DocumentIteration() {
     }
     
     
-    public Document(DocumentMaster pDocumentMaster, int pIteration, User pAuthor) {
+    public DocumentIteration(DocumentMaster pDocumentMaster, int pIteration, User pAuthor) {
         setDocumentMaster(pDocumentMaster);
         iteration = pIteration;
         author = pAuthor;
@@ -173,8 +173,8 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         return attachedFiles;
     }
     
-    public DocumentKey getKey() {
-        return new DocumentKey(workspaceId, documentMasterId, documentMasterVersion, iteration);
+    public DocumentIterationKey getKey() {
+        return new DocumentIterationKey(workspaceId, documentMasterId, documentMasterVersion, iteration);
     }
     
     public String getDocumentMasterId() {
@@ -275,14 +275,14 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof Document))
+        if (!(pObj instanceof DocumentIteration))
             return false;
-        Document document = (Document) pObj;
+        DocumentIteration document = (DocumentIteration) pObj;
         return ((document.documentMasterId.equals(documentMasterId)) && (document.workspaceId.equals(workspaceId))  && (document.documentMasterVersion.equals(documentMasterVersion)) && (document.iteration==iteration));
     }
     
     @Override
-    public int compareTo(Document pDoc) {
+    public int compareTo(DocumentIteration pDoc) {
         
         int wksComp = workspaceId.compareTo(pDoc.workspaceId);
         if (wksComp != 0)
@@ -301,10 +301,10 @@ public class Document implements Serializable, FileHolder, Comparable<Document>,
      * perform a deep clone operation
      */
     @Override
-    public Document clone() {
-        Document clone = null;
+    public DocumentIteration clone() {
+        DocumentIteration clone = null;
         try {
-            clone = (Document) super.clone();
+            clone = (DocumentIteration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }

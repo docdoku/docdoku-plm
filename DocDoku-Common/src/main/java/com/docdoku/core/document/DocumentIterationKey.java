@@ -26,17 +26,17 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class DocumentKey implements Serializable {
+public class DocumentIterationKey implements Serializable {
     
     private String workspaceId;
     private String documentMasterId;
     private String documentMasterVersion;
     private int iteration;
     
-    public DocumentKey() {
+    public DocumentIterationKey() {
     }
     
-    public DocumentKey(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
+    public DocumentIterationKey(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
         workspaceId=pWorkspaceId;
         documentMasterId=pDocumentMasterId;
         documentMasterVersion=pDocumentMasterVersion;
@@ -58,9 +58,9 @@ public class DocumentKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentKey))
+        if (!(pObj instanceof DocumentIterationKey))
             return false;
-        DocumentKey key = (DocumentKey) pObj;
+        DocumentIterationKey key = (DocumentIterationKey) pObj;
         return ((key.documentMasterId.equals(documentMasterId)) && (key.workspaceId.equals(workspaceId))  && (key.documentMasterVersion.equals(documentMasterVersion)) && (key.iteration==iteration));
     }
     

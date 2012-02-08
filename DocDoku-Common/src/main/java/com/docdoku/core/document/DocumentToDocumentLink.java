@@ -29,7 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * This is a link class used to connect two Document objects.
+ * This is a link class used to connect two DocumentIteration objects.
  * Documents are not linked directly but rather through this class to get
  * a loosely coupling.  
  * 
@@ -50,7 +50,7 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
         @JoinColumn(name="FROMDOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
         @JoinColumn(name="FROMDOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private Document fromDocument;
+    private DocumentIteration fromDocument;
     
     @Column(name = "FROMDOCUMENT_ITERATION", nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
@@ -92,19 +92,19 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     public DocumentToDocumentLink() {
     }
     
-    public DocumentToDocumentLink(Document pFromDocument, Document pToDocument, String pComment){
+    public DocumentToDocumentLink(DocumentIteration pFromDocument, DocumentIteration pToDocument, String pComment){
         setFromDocument(pFromDocument);
         setToDocument(pToDocument);
         comment=pComment;
     }
     
-    public DocumentToDocumentLink(Document pFromDocument, DocumentKey pToDocumentKey){
+    public DocumentToDocumentLink(DocumentIteration pFromDocument, DocumentIterationKey pToDocumentKey){
         setFromDocument(pFromDocument);
         setToDocument(pToDocumentKey);
     }
 
-    public DocumentKey getToDocumentKey(){
-        return new DocumentKey(toDocumentWorkspaceId,toDocumentDocumentMasterId,toDocumentDocumentMasterVersion,toDocumentIteration);
+    public DocumentIterationKey getToDocumentKey(){
+        return new DocumentIterationKey(toDocumentWorkspaceId,toDocumentDocumentMasterId,toDocumentDocumentMasterVersion,toDocumentIteration);
     }
     
     public String getComment() {
@@ -112,7 +112,7 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     }
 
     @XmlTransient
-    public Document getFromDocument() {
+    public DocumentIteration getFromDocument() {
         return fromDocument;
     }
 
@@ -170,7 +170,7 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     
 
     
-    public void setFromDocument(Document pFromDocument) {
+    public void setFromDocument(DocumentIteration pFromDocument) {
         fromDocument = pFromDocument;
         fromDocumentIteration=fromDocument.getIteration();
         fromDocumentDocumentMasterId=fromDocument.getDocumentMasterId();
@@ -178,14 +178,14 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
         fromDocumentWorkspaceId=fromDocument.getWorkspaceId();
     }
     
-    public void setToDocument(Document pToDocument) {
+    public void setToDocument(DocumentIteration pToDocument) {
         toDocumentIteration=pToDocument.getIteration();
         toDocumentDocumentMasterId=pToDocument.getDocumentMasterId();
         toDocumentDocumentMasterVersion=pToDocument.getDocumentMasterVersion();
         toDocumentWorkspaceId=pToDocument.getWorkspaceId();
     }
     
-    public void setToDocument(DocumentKey pToDocumentKey) {
+    public void setToDocument(DocumentIterationKey pToDocumentKey) {
         toDocumentIteration=pToDocumentKey.getIteration();
         toDocumentDocumentMasterId=pToDocumentKey.getDocumentMasterId();
         toDocumentDocumentMasterVersion=pToDocumentKey.getDocumentMasterVersion();

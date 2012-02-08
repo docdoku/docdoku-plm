@@ -22,6 +22,7 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 
@@ -56,6 +58,7 @@ public class PartUsageLink implements Serializable {
     private PartMaster component;
     
     @OrderColumn
+    @CollectionTable(name="PARTUSAGELINK_PARTSUBSTITUTELINK")
     @ElementCollection(fetch=FetchType.LAZY)
     private List<PartSubstituteLink> substitutes=new LinkedList<PartSubstituteLink>();
 
