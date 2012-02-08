@@ -21,7 +21,7 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.services.ICommandLocal;
-import com.docdoku.core.document.DocumentKey;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -149,7 +149,7 @@ public class UploadDownloadServlet extends HttpServlet {
         String elementType = pathInfos[offset + 1];
 
         String fileName = null;
-        DocumentKey docPK = null;
+        DocumentIterationKey docPK = null;
         DocumentMasterTemplateKey templatePK = null;
         File vaultFile = null;
 
@@ -160,7 +160,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                docPK = new DocumentKey(workspaceId, docMId, docMVersion, iteration);
+                docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
                 vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
 
             } else if (elementType.equals("templates")) {
