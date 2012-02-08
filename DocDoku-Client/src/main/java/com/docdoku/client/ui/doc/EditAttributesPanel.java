@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceBooleanAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
@@ -76,7 +76,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
     private ActionListener mAddAttributeAction;
 
 
-    public EditAttributesPanel(Document pDoc, ActionListener pAddAttributeAction) {
+    public EditAttributesPanel(DocumentIteration pDoc, ActionListener pAddAttributeAction) {
         mAttributes = pDoc.getInstanceAttributes();
         mAttributesWorkingCopy.putAll(mAttributes);
         mAddAttributeAction =pAddAttributeAction;

@@ -21,7 +21,7 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.util.FileIO;
@@ -53,8 +53,8 @@ public class DownloadActionListener implements ActionListener {
                     try {
                         File localFile;
                         FileHolder holder = source.getFileHolder();
-                        if(holder instanceof Document)
-                            localFile = MainModel.getInstance().getFile(source,(Document)holder,remoteFile);
+                        if(holder instanceof DocumentIteration)
+                            localFile = MainModel.getInstance().getFile(source,(DocumentIteration)holder,remoteFile);
                         else
                             localFile = MainModel.getInstance().getFile(source,(DocumentMasterTemplate)holder,remoteFile);
                         File destFile = mFileChooser.getSelectedFile();

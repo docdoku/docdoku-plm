@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentToDocumentLink;
 
 
@@ -41,10 +41,10 @@ public class EditLinksPanel extends JPanel implements ActionListener {
     private JButton mAddButton;
     private JButton mRemoveButton;
     private DefaultListModel mLinksListModel;
-    private Document mEditedDoc;
+    private DocumentIteration mEditedDoc;
     private ActionListener mAddLinkAction;
 
-    public EditLinksPanel(Document pEditedDoc,ActionListener pAddLinkAction) {
+    public EditLinksPanel(DocumentIteration pEditedDoc,ActionListener pAddLinkAction) {
         mLinksListModel = new DefaultListModel();
         mAddLinkAction =pAddLinkAction;
         Image img =
@@ -102,7 +102,7 @@ public class EditLinksPanel extends JPanel implements ActionListener {
         add(mRemoveButton, constraints);
     }
 
-    public Document getEditedDoc() {
+    public DocumentIteration getEditedDoc() {
         return mEditedDoc;
     }
 

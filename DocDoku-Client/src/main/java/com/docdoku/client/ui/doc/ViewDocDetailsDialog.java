@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.ViewFilesPanel;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,23 +39,23 @@ public class ViewDocDetailsDialog extends JDialog {
     private ViewAttributesPanel mAttributesPanel;
     private ViewLinksPanel mLinksPanel;
     private CloseButton mCloseButton;
-    private Document mWatchedDoc;
+    private DocumentIteration mWatchedDoc;
     private JTabbedPane mTabbedPane;
     private JTextArea mDescriptionValueArea;
     
-    public ViewDocDetailsDialog(Dialog pOwner, Document pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
+    public ViewDocDetailsDialog(Dialog pOwner, DocumentIteration pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
         super(pOwner, I18N.BUNDLE.getString("ViewDocDetailsDialog_title"), true);
         init(pWatchedDoc,pDownloadAction,pOpenAction);
         setLocationRelativeTo(pOwner);
     }
     
-    public ViewDocDetailsDialog(Frame pOwner, Document pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
+    public ViewDocDetailsDialog(Frame pOwner, DocumentIteration pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
         super(pOwner, I18N.BUNDLE.getString("ViewDocDetailsDialog_title"), true);
         init(pWatchedDoc,pDownloadAction,pOpenAction);
         setLocationRelativeTo(pOwner);
     }
     
-    private void init(Document pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
+    private void init(DocumentIteration pWatchedDoc,ActionListener pDownloadAction, ActionListener pOpenAction) {
         mWatchedDoc = pWatchedDoc;
         mDocMPanel = new ViewDocMPanel(mWatchedDoc.getDocumentMaster());
         mDocPanel = new ViewDocPanel(mWatchedDoc);

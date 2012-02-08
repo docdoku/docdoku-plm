@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.CloseButton;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
@@ -52,7 +52,7 @@ public class ViewIterationsDialog extends JDialog {
         mViewDocButton = new JButton(I18N.BUNDLE.getString("View_button"), viewIcon);
         mViewDocButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent pAE) {
-                Document doc = mIterationsPanel.getSelectedDoc();
+                DocumentIteration doc = mIterationsPanel.getSelectedDoc();
                 new ViewDocDetailsDialog(ViewIterationsDialog.this, doc, pDownloadAction, pOpenAction);
             }
         });

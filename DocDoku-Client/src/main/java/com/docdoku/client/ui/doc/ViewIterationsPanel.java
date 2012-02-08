@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.data.DocsTableModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
@@ -42,7 +42,7 @@ public class ViewIterationsPanel extends JScrollPane {
         getViewport().add(mDocsTable);
     }
 
-    public Document getSelectedDoc() {
+    public DocumentIteration getSelectedDoc() {
         return mDocsTable.getSelectedDoc();
     }
 }

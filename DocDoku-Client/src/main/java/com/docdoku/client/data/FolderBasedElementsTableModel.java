@@ -21,7 +21,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
@@ -102,7 +102,7 @@ public class FolderBasedElementsTableModel extends AbstractTableModel implements
         Object element = mFolder.getElementChild(pRowIndex);       
         if (element instanceof DocumentMaster) {
             DocumentMaster docM = (DocumentMaster)element;
-            Document doc = docM.getLastIteration();
+            DocumentIteration doc = docM.getLastIteration();
             switch (pColumnIndex) {
                 case 0 :
                     return docM.getId();

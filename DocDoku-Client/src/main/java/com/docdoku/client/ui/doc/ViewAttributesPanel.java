@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.WebLink;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceBooleanAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
@@ -48,7 +48,7 @@ public class ViewAttributesPanel extends JPanel{
     private JScrollPane mAttributesScrollPane;
     private Map<String, InstanceAttribute> mAttributes=new HashMap<String, InstanceAttribute>();
     
-    public ViewAttributesPanel(Document pDoc) {
+    public ViewAttributesPanel(DocumentIteration pDoc) {
         mAttributes=pDoc.getInstanceAttributes();
         mAttributesScrollPane = new JScrollPane();
         createLayout();

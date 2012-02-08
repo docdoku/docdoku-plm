@@ -21,7 +21,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import javax.swing.table.*;
 
@@ -47,12 +47,12 @@ public class DocsTableModel extends AbstractTableModel {
         return mDocM.getNumberOfIterations();
     }
 
-    public Document getDocAt(int pRowIndex) {
+    public DocumentIteration getDocAt(int pRowIndex) {
         return mDocM.getIteration(pRowIndex + 1);
     }
 
     public Object getValueAt(int pRowIndex, int pColumnIndex) {
-        Document doc = getDocAt(pRowIndex);
+        DocumentIteration doc = getDocAt(pRowIndex);
         switch (pColumnIndex) {
             case 0:
                 return new Integer(doc.getIteration());

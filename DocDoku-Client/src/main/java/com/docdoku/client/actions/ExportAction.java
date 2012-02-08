@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -82,7 +82,7 @@ public class ExportAction extends ClientAbstractAction {
             Object element = folder.getElementChild(i);
             if (element instanceof DocumentMaster) {
                 DocumentMaster docM = (DocumentMaster) element;
-                Document doc = null;
+                DocumentIteration doc = null;
                 if(docM.isCheckedOut() && docM.getCheckOutUser().equals(MainModel.getInstance().getUser())){
                     int iteration = docM.getNumberOfIterations()-1;
                     if(iteration >0)

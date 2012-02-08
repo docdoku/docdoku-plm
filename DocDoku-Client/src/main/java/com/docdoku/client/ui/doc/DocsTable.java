@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.data.DocsTableModel;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import java.awt.Color;
 
 import java.awt.Component;
@@ -45,7 +45,7 @@ public class DocsTable extends JXTable {
         setHighlighters(new Highlighter[]{hl});
     }
 
-    public Document getSelectedDoc() {
+    public DocumentIteration getSelectedDoc() {
         return ((DocsTableModel) getModel()).getDocAt(getSelectedRow());
     }
 

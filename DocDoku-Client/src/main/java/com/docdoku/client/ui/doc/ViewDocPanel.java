@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +32,7 @@ public class ViewDocPanel extends DocPanel {
     private JLabel mRevisionNoteValueLabel;
     private JLabel mRevisionNoteLabel;
 
-    public ViewDocPanel(Document pWatchedDoc) {
+    public ViewDocPanel(DocumentIteration pWatchedDoc) {
         super(pWatchedDoc);
         mRevisionNoteValueLabel = new JLabel(pWatchedDoc.getRevisionNote());
         mRevisionNoteLabel = new JLabel(I18N.BUNDLE.getString("RevisionNote_label"));

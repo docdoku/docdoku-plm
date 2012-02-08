@@ -31,7 +31,7 @@ import java.awt.event.*;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -55,7 +55,7 @@ public class DistributeDocumentAction extends ClientAbstractAction {
             String body = Config.getPermaLink(docM) + "%0D%0A" + I18N.BUNDLE.getString("Distribution_message");
             body = body.replace(" ","%20");
             
-            Document doc = docM.getLastIteration();
+            DocumentIteration doc = docM.getLastIteration();
             if(doc!=null && !doc.getAttachedFiles().isEmpty()){
                 FileTransferable ft = new FileTransferable();
 

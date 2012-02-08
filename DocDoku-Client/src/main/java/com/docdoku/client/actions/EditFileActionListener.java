@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.document.DocumentMasterTemplate;
 
@@ -52,8 +52,8 @@ public class EditFileActionListener implements ActionListener {
                     if(selectedFile instanceof BinaryResource){
                         BinaryResource remoteFile = (BinaryResource)selectedFile;
                         FileHolder holder = source.getFileHolder();
-                        if(holder instanceof Document)
-                            localFile = MainModel.getInstance().getFile(source,(Document)holder,remoteFile);
+                        if(holder instanceof DocumentIteration)
+                            localFile = MainModel.getInstance().getFile(source,(DocumentIteration)holder,remoteFile);
                         else
                             localFile = MainModel.getInstance().getFile(source,(DocumentMasterTemplate)holder,remoteFile);
 

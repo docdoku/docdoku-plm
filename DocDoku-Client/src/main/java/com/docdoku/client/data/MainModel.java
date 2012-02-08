@@ -22,7 +22,7 @@ package com.docdoku.client.data;
 import com.docdoku.core.services.IUploadDownloadWS;
 import com.docdoku.core.services.ICommandWS;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentMaster;
@@ -894,7 +894,7 @@ public class MainModel {
         return docMs;
     }
 
-    public File getFile(Component pParent, Document pDocument, BinaryResource pBin) throws Exception {
+    public File getFile(Component pParent, DocumentIteration pDocument, BinaryResource pBin) throws Exception {
         DocumentMaster docM = pDocument.getDocumentMaster();
         File folder = null;
         boolean readOnly;
@@ -1002,7 +1002,7 @@ public class MainModel {
     }
 
 
-    private String getServletURL(Document pDocument, String pRemoteFileName) throws UnsupportedEncodingException {
+    private String getServletURL(DocumentIteration pDocument, String pRemoteFileName) throws UnsupportedEncodingException {
         return Config.getHTTPCodebase()
                 + "files/"
                 + URLEncoder.encode(getWorkspace().getId(), "UTF-8") + "/"

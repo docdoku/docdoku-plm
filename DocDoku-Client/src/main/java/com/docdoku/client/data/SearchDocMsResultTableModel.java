@@ -21,7 +21,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import java.util.Date;
@@ -79,7 +79,7 @@ public class SearchDocMsResultTableModel extends AbstractTableModel implements E
     @Override
     public Object getValueAt(int pRowIndex, int pColumnIndex) {
         DocumentMaster docM = mDocMs[pRowIndex];
-        Document doc = docM.getLastIteration();
+        DocumentIteration doc = docM.getLastIteration();
         switch (pColumnIndex) {
             case 0:
                 return docM.getId();

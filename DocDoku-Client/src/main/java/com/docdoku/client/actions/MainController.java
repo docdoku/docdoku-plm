@@ -33,9 +33,9 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.DocumentToDocumentLink;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.document.DocumentKey;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
@@ -272,7 +272,7 @@ public class MainController {
         }
     }
 
-    public void saveFile(Component pParent, Document pDocument, File pLocalFile) throws Exception {
+    public void saveFile(Component pParent, DocumentIteration pDocument, File pLocalFile) throws Exception {
         if (!NamingConvention.correct(pLocalFile.getName())) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
@@ -322,7 +322,7 @@ public class MainController {
 
     }
 
-    private String getServletURL(Document pDoc, File pLocalFile) throws UnsupportedEncodingException {
+    private String getServletURL(DocumentIteration pDoc, File pLocalFile) throws UnsupportedEncodingException {
         MainModel model = MainModel.getInstance();
         return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "documents/" + URLEncoder.encode(pDoc.getDocumentMasterId(), "UTF-8") + "/" + pDoc.getDocumentMasterVersion() + "/" + pDoc.getIteration() + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
@@ -716,13 +716,13 @@ public class MainController {
         }
     }
 
-    public Document updateDoc(Document pDocument, String pComment, InstanceAttribute[] pAttributes, DocumentToDocumentLink[] pLinks) throws Exception {
+    public DocumentIteration updateDoc(DocumentIteration pDocument, String pComment, InstanceAttribute[] pAttributes, DocumentToDocumentLink[] pLinks) throws Exception {
         try {
             System.out.println("Updating document " + pDocument);
             DocumentMaster newDocM;
-            DocumentKey docKey = pDocument.getKey();
+            DocumentIterationKey docKey = pDocument.getKey();
 
-            DocumentKey[] linkKeys = new DocumentKey[pLinks.length];
+            DocumentIterationKey[] linkKeys = new DocumentIterationKey[pLinks.length];
             for (int i = 0; i < pLinks.length; i++) {
                 linkKeys[i] = pLinks[i].getToDocumentKey();
             }

@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
@@ -57,7 +57,7 @@ public class CheckInAction extends ClientAbstractAction {
             public void run() {
                 try {
                     MainController controller = MainController.getInstance();
-                    Document doc = docM.getLastIteration();
+                    DocumentIteration doc = docM.getLastIteration();
                     for(BinaryResource fileToUpload:doc.getAttachedFiles()){
                         try{
                             File localFile = new File(Config.getCheckOutFolder(docM),fileToUpload.getName());

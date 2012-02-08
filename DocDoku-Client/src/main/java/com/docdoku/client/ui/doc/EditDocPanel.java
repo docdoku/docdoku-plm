@@ -23,7 +23,7 @@ package com.docdoku.client.ui.doc;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +33,7 @@ public class EditDocPanel extends DocPanel {
     private JLabel mCommentLabel;
     private JTextField mCommentText;
 
-    public EditDocPanel(Document pEditedDoc) {
+    public EditDocPanel(DocumentIteration pEditedDoc) {
         super(pEditedDoc);
         mCommentText =
                 new JTextField(

@@ -23,7 +23,7 @@ import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.ui.template.EditDocMTemplateDialog;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentMaster;
@@ -70,7 +70,7 @@ public class EditElementAction extends ClientAbstractAction {
                         @Override
                         public void run() {
                             MainController controller = MainController.getInstance();
-                            Document doc = source.getEditedDoc();
+                            DocumentIteration doc = source.getEditedDoc();
                             try {
                                 // TODO the operation is split in 3 Tx may be
                                 // it's better to gather all in one

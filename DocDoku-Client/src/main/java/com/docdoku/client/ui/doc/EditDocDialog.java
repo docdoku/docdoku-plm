@@ -24,7 +24,7 @@ import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentToDocumentLink;
 
 import com.docdoku.core.meta.InstanceAttribute;
@@ -42,12 +42,12 @@ public class EditDocDialog extends JDialog implements ActionListener {
     private EditAttributesPanel mAttributesPanel;
     private EditLinksPanel mLinksPanel;
     private OKCancelPanel mOKCancelPanel;
-    private Document mEditedDoc;
+    private DocumentIteration mEditedDoc;
     private ActionListener mOKAction;
 
     public EditDocDialog(
             Frame pOwner,
-            Document pEditedDoc,
+            DocumentIteration pEditedDoc,
             ActionListener pOKAction, ActionListener pEditFileAction,  ActionListener pScanAction, ActionListener pAddAttributeAction, ActionListener pAddLinkAction) {
         super(pOwner, I18N.BUNDLE.getString("EditDocDialog_title"), true);
         setLocationRelativeTo(pOwner);
@@ -92,7 +92,7 @@ public class EditDocDialog extends JDialog implements ActionListener {
         pack();
     }
 
-    public Document getEditedDoc() {
+    public DocumentIteration getEditedDoc() {
         return mEditedDoc;
     }
 

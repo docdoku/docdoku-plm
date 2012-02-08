@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import java.text.DateFormat;
 
@@ -49,7 +49,7 @@ public abstract class DocPanel extends JPanel {
         createLayout();
     }
 
-    public DocPanel(Document pDoc) {
+    public DocPanel(DocumentIteration pDoc) {
         DateFormat format=DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT);
         mAuthorLabel = new JLabel(I18N.BUNDLE.getString("Author_label"));
         mAuthorValueLabel = new JLabel(pDoc.getAuthor().getName());
