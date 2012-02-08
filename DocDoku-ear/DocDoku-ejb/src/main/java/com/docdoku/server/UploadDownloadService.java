@@ -30,7 +30,7 @@ import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.UserNotActiveException;
 import com.docdoku.core.services.UserNotFoundException;
 import com.docdoku.core.services.WorkspaceNotFoundException;
-import com.docdoku.core.document.DocumentKey;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -86,10 +86,10 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @Override
     public void uploadToDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName,
             @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
-        DocumentKey docPK = null;
+        DocumentIterationKey docPK = null;
         File vaultFile = null;
 
-        docPK = new DocumentKey(workspaceId, docMId, docMVersion, iteration);
+        docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
 
         vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
 

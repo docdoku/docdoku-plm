@@ -20,7 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import javax.persistence.EntityManager;
 
 
@@ -33,11 +33,11 @@ public class DocumentDAO {
         em=pEM;
     }
 
-    public void updateDoc(Document pDoc){
+    public void updateDoc(DocumentIteration pDoc){
         em.merge(pDoc);
     }
 
-    public void removeDoc(Document pDoc){
+    public void removeDoc(DocumentIteration pDoc){
         em.remove(pDoc);
     }
 }

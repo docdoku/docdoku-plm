@@ -111,7 +111,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public File saveFileInDocument(DocumentKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+    public File saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pDocPK.getWorkspaceId());
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
@@ -119,7 +119,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(em);
         DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentMasterVersion()));
-        Document document = docM.getIteration(pDocPK.getIteration());
+        DocumentIteration document = docM.getIteration(pDocPK.getIteration());
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
             BinaryResource file = null;
             String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/" + docM.getVersion() + "/" + document.getIteration() + "/" + pName;
@@ -152,7 +152,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        Document document = binDAO.getDocumentOwner(file);
+        DocumentIteration document = binDAO.getDocumentOwner(file);
         if (document != null) {
             DocumentMaster docM = document.getDocumentMaster();
             String owner = docM.getLocation().getOwner();
@@ -482,7 +482,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         checkWritingRight(user, folder);
 
         DocumentMaster docM;
-        Document newDoc;
+        DocumentIteration newDoc;
 
         if (pDocMTemplateId == null) {
             docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
@@ -723,9 +723,9 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException37");
         }
 
-        Document beforeLastDocument = docM.getLastIteration();
+        DocumentIteration beforeLastDocument = docM.getLastIteration();
 
-        Document newDoc = docM.createNextIteration(user);
+        DocumentIteration newDoc = docM.createNextIteration(user);
         //We persist the doc as a workaround for a bug which was introduced
         //since glassfish 3 that set the DTYPE to null in the instance attribute table
         em.persist(newDoc);
@@ -819,7 +819,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
-            Document doc = docM.removeLastIteration();
+            DocumentIteration doc = docM.removeLastIteration();
             for (BinaryResource file : doc.getAttachedFiles()) {
                 dataManager.delData(file);
             }
@@ -885,7 +885,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             int i = 0;
             for (DocumentMaster docM : docMs) {
                 pks[i++] = docM.getKey();
-                for (Document doc : docM.getDocumentIterations()) {
+                for (DocumentIteration doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
                         dataManager.delData(file);
@@ -943,7 +943,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
         docMDAO.removeDocM(docM);
 
-        for (Document doc : docM.getDocumentIterations()) {
+        for (DocumentIteration doc : docM.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
                 indexer.removeFromIndex(file.getFullName());
                 dataManager.delData(file);
@@ -971,7 +971,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        Document document = binDAO.getDocumentOwner(file);
+        DocumentIteration document = binDAO.getDocumentOwner(file);
         DocumentMaster docM = document.getDocumentMaster();
         //check access rights on docM ?
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
@@ -1001,15 +1001,15 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster updateDocument(DocumentKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
+    public DocumentMaster updateDocument(DocumentIterationKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pKey.getWorkspaceId(), pKey.getDocumentMasterId(), pKey.getDocumentMasterVersion()));
         //check access rights on docM ?
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().getKey().equals(pKey)) {
-            Document doc = docM.getLastIteration();
+            DocumentIteration doc = docM.getLastIteration();
             Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
-            for (DocumentKey key : pLinkKeys) {
+            for (DocumentIterationKey key : pLinkKeys) {
                 links.add(new DocumentToDocumentLink(doc, key));
             }
             Set<DocumentToDocumentLink> linksToRemove = new HashSet<DocumentToDocumentLink>(doc.getLinkedDocuments());
@@ -1096,8 +1096,8 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         docM.setType(originalDocM.getType());
         //create the first iteration which is a copy of the last one of the original docM
         //of course we duplicate the iteration only if it exists !
-        Document lastDoc = originalDocM.getLastIteration();
-        Document firstIte = docM.createNextIteration(user);
+        DocumentIteration lastDoc = originalDocM.getLastIteration();
+        DocumentIteration firstIte = docM.createNextIteration(user);
         if (lastDoc != null) {
             BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
             for (BinaryResource sourceFile : lastDoc.getAttachedFiles()) {

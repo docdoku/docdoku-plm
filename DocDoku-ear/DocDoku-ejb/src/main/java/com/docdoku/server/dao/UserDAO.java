@@ -146,7 +146,7 @@ public class UserDAO {
     }
 
     public boolean isDocAuthor(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT d FROM Document d WHERE d.author = u AND d.author = :user)");
+        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT d FROM DocumentIteration d WHERE d.author = u AND d.author = :user)");
         List listUsers = query.setParameter("user", pUser).getResultList();
         return !listUsers.isEmpty();
     }

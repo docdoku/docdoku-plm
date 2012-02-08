@@ -21,7 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.log.DocumentLog;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.server.dao.BinaryResourceDAO;
 import java.util.Date;
 import java.util.logging.Level;
@@ -54,7 +54,7 @@ public class DocumentLoggerInterceptor {
                 String userLogin = ejbCtx.getCallerPrincipal().toString();
                 BinaryResourceDAO binDAO = new BinaryResourceDAO(em);
                 BinaryResource file = binDAO.loadBinaryResource(fullName);
-                Document document = binDAO.getDocumentOwner(file);
+                DocumentIteration document = binDAO.getDocumentOwner(file);
                 if (document != null) {
                     DocumentLog log = new DocumentLog();
                     log.setUserLogin(userLogin);

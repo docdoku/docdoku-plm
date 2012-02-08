@@ -20,7 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.NotAllowedException;
@@ -55,7 +55,7 @@ public class ActivityCheckerInterceptor {
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
         Workflow workflow = task.getActivity().getWorkflow();
         DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
-        Document doc = docM.getLastIteration();
+        DocumentIteration doc = docM.getLastIteration();
         if (em.createNamedQuery("findLogByDocumentAndUserAndEvent").
                 setParameter("userLogin", user.getLogin()).
                 setParameter("documentWorkspaceId", doc.getWorkspaceId()).

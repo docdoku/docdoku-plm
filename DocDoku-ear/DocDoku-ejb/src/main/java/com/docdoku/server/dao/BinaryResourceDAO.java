@@ -24,7 +24,7 @@ import com.docdoku.core.services.FileAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import java.util.*;
 import javax.persistence.EntityExistsException;
@@ -81,10 +81,10 @@ public class BinaryResourceDAO {
         }
     }
 
-    public Document getDocumentOwner(BinaryResource pBinaryResource) {
-        Query query = em.createQuery("SELECT d FROM Document d WHERE :binaryResource MEMBER OF d.attachedFiles");
+    public DocumentIteration getDocumentOwner(BinaryResource pBinaryResource) {
+        Query query = em.createQuery("SELECT d FROM DocumentIteration d WHERE :binaryResource MEMBER OF d.attachedFiles");
         try {
-            return (Document) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+            return (DocumentIteration) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {
             return null;
         }

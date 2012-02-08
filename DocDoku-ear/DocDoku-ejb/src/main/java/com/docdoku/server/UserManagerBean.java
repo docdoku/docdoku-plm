@@ -40,7 +40,7 @@ import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.Document;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.User;
@@ -296,7 +296,7 @@ public class UserManagerBean implements IUserManagerLocal {
         for (String login : pLogins) {
             DocumentMaster[] docMs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
             for (DocumentMaster docM : docMs) {
-                for (Document doc : docM.getDocumentIterations()) {
+                for (DocumentIteration doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
                         dataManager.delData(file);
