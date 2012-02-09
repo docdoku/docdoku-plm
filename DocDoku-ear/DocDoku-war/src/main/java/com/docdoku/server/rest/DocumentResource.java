@@ -25,6 +25,7 @@ import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.ICommandWS;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.exceptions.ApplicationException;
 import javax.annotation.PostConstruct;
@@ -97,7 +98,7 @@ public class DocumentResource {
             return docMsDTO;
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new ApplicationException(ex.getMessage());
+            throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -116,23 +117,26 @@ public class DocumentResource {
             return checkedOutdocMsDTO;
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new ApplicationException(ex.getMessage());
+            throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
 
-/* 
-        @Override
-    public DocumentMasterDTO getDocM(String workspaceId, String id, String version) throws ApplicationException {
+
+    @GET
+    @Path("{workspaceId}/{docMsId}/{docMsVersion}")
+    @Produces("application/json;charset=UTF-8") 
+    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) throws ApplicationException {
         try {
-            DocumentMaster docM = commandService.getDocM(new DocumentMasterKey(workspaceId, id, version));
-            return createDTO(docM);
+            DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+
+            return mapper.map(docM, DocumentMasterDTO.class);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new ApplicationException(ex.getMessage());
+            throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
      
-     */
+ 
 
     /**
      * PUT method for updating or creating an instance of DocumentResource
