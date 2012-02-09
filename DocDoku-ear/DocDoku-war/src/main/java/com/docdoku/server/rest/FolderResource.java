@@ -21,9 +21,12 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.rest.dto.FolderDTO;
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -36,6 +39,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 @Stateless
 @Path("folders")
@@ -52,10 +57,17 @@ public class FolderResource {
     
     @Context
     private UriInfo context;
+    
+    private Mapper mapper;
 
     public FolderResource() {
     }
 
+    @PostConstruct
+    public void init(){
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
+        
     /**
      * Retrieves representation of an instance of FolderResource
      * @param parent folder path
@@ -64,10 +76,15 @@ public class FolderResource {
     @GET
     @Path("{completePath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public String[] getJson(@PathParam("completePath") String completePath) {
+    public FolderDTO[] getJson(@PathParam("completePath") String completePath) {
         try {
             completePath=Tools.stripTrailingSlash(completePath);
-            return commandService.getFolders(completePath);
+            Folder[] folders= commandService.getFolders(completePath);
+            FolderDTO[] folderDtos = new FolderDTO[folders.length];
+            for(int i = 0; i<folders.length;i++)
+                folderDtos[i]= mapper.map(folders[i], FolderDTO.class);
+           
+            return folderDtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
