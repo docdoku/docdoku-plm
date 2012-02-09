@@ -9,64 +9,55 @@
         <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/bootstrap.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/explorer.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/header-nav.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/sidebar-nav.css"/>
-        <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
-        <script src="<%=request.getContextPath()%>/js/lib/bootstrap.min.js"></script>
-    <script src="<%=request.getContextPath()%>/js/lib/underscore.js"></script>
-    <script src="<%=request.getContextPath()%>/js/lib/backbone.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                //                $("'.dropdown-toggle'").dropdown();
-            });
-            var inputs = {
-                workspaceID: "${workspaceID}",
-                login: "${login}"
-            };
-            
-        </script>   
+
+		<link rel="stylesheet/less" href="<%=request.getContextPath()%>/less/style.less">
+
+		<script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.1.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.0.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/workspace.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/app.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				app({
+					workspaceId: "${workspaceID}",
+					login: "${login}"
+				});
+			});
+		</script>   
     </head>    
     <body>
-
         <%@ include file="/WEB-INF/explorer_header.jspf" %>
-
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span2">
-                    <div class="sidebar-nav">
-                        <h1 id="workspace_name">${workspaceID}</h1>
-<!--                         <ul id="sidebar_filetree_container">
-                            
-                            <li class="closed_folder" id="account_home_folder">${login}</li>
- 
-                            <li class="open_folder">Formations                                                        
-                                <ul>
-                                    <li><a href="#" class="subfolder closed_folder">Subfolder 1</a></li>
-                                    <li><a href="#" class="subfolder closed_folder">Subfolder 2</a></li>
-                                    <li><a href="#" class="subfolder closed_folder">Subfolder 3</a></li>
-                                    <li><a href="#" class="subfolder closed_folder">Subfolder 4</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="closed_folder">Sico</li>
-
-                            <li class="closed_folder">Webinage</li>
-                            
-                        </ul> -->
-                    </div>                    
-                </div>
-                <div class="span7">
-                    <div class="content">
-
-                    </div>                     
-                </div>
-                <div class="span3"></div>               
-            </div>
+        <div id="workspace">
+			<nav>
+				<ul class="nav nav-list">
+					<li class="nav-header">Workspace</li>
+					<li id="folders">
+						<div id="folders-header" data-toggle="collapse" data-target="#folders-content">
+							Dossiers
+						</div>
+						<ul id="folders-content" class="collapse">
+						</ul>
+					</li>
+					<li>
+						<div data-toggle="collapse" data-target="#labels">Libellés</div>
+						<div class="collapse" id="labels">
+							<ul class="nav nav-list">
+							</ul>
+						</div>
+					</li>
+				</li>
+				<li>
+					<h1 class="nav-header">Autres</h1>
+				</ul>
+			</nav>
         </div>
     </body>
-
-    <script src="<%=request.getContextPath()%>/js/sidebar-nav.js"></script>
-
 </html>
