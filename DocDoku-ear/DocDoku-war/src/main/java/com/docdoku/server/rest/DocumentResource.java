@@ -22,8 +22,10 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.gwt.explorer.shared.ApplicationException;
 import com.docdoku.server.rest.dto.DocumentDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import javax.annotation.PostConstruct;
@@ -72,12 +74,14 @@ public class DocumentResource {
      * @return an instance of com.docdoku.core.document.DocumentMaster
      */
     @GET
+    @Path("{completePath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getJson(@QueryParam("folder") String completePath) {
+    public DocumentMasterDTO[] getJson(@PathParam("completePath") String completePath) {
         try {
             completePath=Tools.stripTrailingSlash(Tools.stripLeadingSlash(completePath));
             DocumentMaster[] docM = commandService.findDocumentMastersByFolder(completePath);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
+            
             for(int i = 0; i<docM.length;i++)
                 dtos[i]= mapper.map(docM[i], DocumentMasterDTO.class);
            
@@ -86,27 +90,45 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    /*
-    @Override
-    public DocumentMasterDTO[] findDocMsByTag(String workspaceId, String label) throws ApplicationException {
+
+    @GET
+    @Path("{workspaceId}/")
+    @Produces("application/json;charset=UTF-8")    
+    public DocumentMasterDTO[] findDocMsByTag(@PathParam("workspaceId")String workspaceId, @QueryParam("tag") String label) throws ApplicationException {
         try {
-            DocumentMaster[] docMs = commandService.findDocMsByTag(new TagKey(workspaceId, label));
-            return setupDocMNotifications(createDTO(docMs), workspaceId);
+            DocumentMaster[] docMs = commandService.findDocumentMastersByTag(new TagKey(workspaceId, label));
+            DocumentMasterDTO[] docMsDTO = new DocumentMasterDTO[docMs.length];
+            
+            for(int i = 0; i<docMs.length;i++)
+                docMsDTO[i]= mapper.map(docMs[i], DocumentMasterDTO.class);
+                        
+            return docMsDTO;
+            
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
     
-     @Override
-    public DocumentMasterDTO[] getCheckedOutDocMs(String workspaceId) throws ApplicationException {
+   
+    @GET
+    @Path("{workspaceId}/checkedout")
+    @Produces("application/json;charset=UTF-8") 
+    public DocumentMasterDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
         try {
-            DocumentMaster[] docMs = commandService.getCheckedOutDocMs(workspaceId);
-            return setupDocMNotifications(createDTO(docMs), workspaceId);
+            DocumentMaster[] checkedOutdocMs = commandService.getCheckedOutDocumentMasters(workspaceId);
+            DocumentMasterDTO[] checkedOutdocMsDTO = new DocumentMasterDTO[checkedOutdocMs.length];
+            
+            for(int i = 0; i<checkedOutdocMs.length;i++)
+                checkedOutdocMsDTO[i]= mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
+                        
+            return checkedOutdocMsDTO;
+            
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new ApplicationException(ex.getMessage());
         }
     }
-     
+
+/* 
         @Override
     public DocumentMasterDTO getDocM(String workspaceId, String id, String version) throws ApplicationException {
         try {
