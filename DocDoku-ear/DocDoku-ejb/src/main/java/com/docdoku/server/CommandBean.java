@@ -192,14 +192,6 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         }
         return shortNames;
     }
-    
-    @RolesAllowed("users")
-    @Override
-    public Folder[] getFoldersForGivenPath (String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(Folder.parseWorkspaceId(pCompletePath));
-        Folder[] subFolders = new FolderDAO(new Locale(user.getLanguage()), em).getSubFolders(pCompletePath);
-        return subFolders;
-    }    
 
     @RolesAllowed("users")
     @Override
