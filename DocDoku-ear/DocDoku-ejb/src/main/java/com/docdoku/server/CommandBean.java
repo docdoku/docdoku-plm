@@ -182,15 +182,15 @@ public class CommandBean implements ICommandWS, ICommandLocal {
 
     @RolesAllowed("users")
     @Override
-    public String[] getFolders(String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
+    public Folder[] getFolders(String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(Folder.parseWorkspaceId(pCompletePath));
         Folder[] subFolders = new FolderDAO(new Locale(user.getLanguage()), em).getSubFolders(pCompletePath);
-        String[] shortNames = new String[subFolders.length];
-        int i = 0;
-        for (Folder f : subFolders) {
-            shortNames[i++] = f.getShortName();
-        }
-        return shortNames;
+//        String[] shortNames = new String[subFolders.length];
+//        int i = 0;
+//        for (Folder f : subFolders) {
+//            shortNames[i++] = f.getShortName();
+//        }
+        return subFolders;
     }
 
     @RolesAllowed("users")
