@@ -18,6 +18,11 @@ public class FolderDTO implements Serializable{
     public FolderDTO() {
     
     }
+    
+    public FolderDTO(String parentFolder, String name) {
+        completePath=parentFolder+"/"+name;
+    }
+
 
     public String getCompletePath() {
         return completePath;

@@ -79,10 +79,10 @@ public class FolderResource {
     public FolderDTO[] getJson(@PathParam("completePath") String completePath) {
         try {
             completePath=Tools.stripTrailingSlash(completePath);
-            Folder[] folders= commandService.getFoldersForGivenPath(completePath);
-            FolderDTO[] folderDtos = new FolderDTO[folders.length];
-            for(int i = 0; i<folders.length;i++)
-                folderDtos[i]= mapper.map(folders[i], FolderDTO.class);
+            String[] folderNames = commandService.getFolders(completePath);
+            FolderDTO[] folderDtos = new FolderDTO[folderNames.length];
+            for(int i = 0; i<folderNames.length;i++)
+                folderDtos[i]= new FolderDTO(completePath,folderNames[i]);
            
             return folderDtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
