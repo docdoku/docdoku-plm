@@ -79,7 +79,7 @@ public class FolderResource {
     public FolderDTO[] getJson(@PathParam("completePath") String completePath) {
         try {
             completePath=Tools.stripTrailingSlash(completePath);
-            Folder[] folders= commandService.getFolders(completePath);
+            Folder[] folders= commandService.getFoldersForGivenPath(completePath);
             FolderDTO[] folderDtos = new FolderDTO[folders.length];
             for(int i = 0; i<folders.length;i++)
                 folderDtos[i]= mapper.map(folders[i], FolderDTO.class);
