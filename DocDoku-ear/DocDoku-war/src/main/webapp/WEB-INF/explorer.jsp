@@ -51,10 +51,10 @@
 			</nav>
         </div>
 		<script id="folder-tpl" type="text/html">
-			<span class="name" data-toggle="collapse"
+			<span class="icon" data-toggle="collapse"
 				data-target="#subfolders-{{view_cid}}">
-				{{name}}
 			</span>
+			<a class="name" href="">{{name}}</a>
 			<ul id="subfolders-{{view_cid}}" class="subfolders collapse"> </ul>
 		</script>
     </body>
