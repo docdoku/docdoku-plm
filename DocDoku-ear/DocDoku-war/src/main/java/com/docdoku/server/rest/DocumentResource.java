@@ -17,17 +17,26 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.document.TagKey;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.ICommandWS;
+import com.docdoku.gwt.explorer.shared.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.DocumentMasterLightDTO;
 import com.docdoku.server.rest.exceptions.ApplicationException;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -35,6 +44,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -47,153 +57,180 @@ public class DocumentResource {
 
     @EJB
     private ICommandLocal commandService;
-    
-    
     @Context
     private UriInfo context;
-    
     private Mapper mapper;
 
     public DocumentResource() {
     }
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     /**
-     * Retrieves representation of an instance of com.docdoku.server.rest.DocumentResource
+     * Retrieves representation of an instance of
+     * com.docdoku.server.rest.DocumentResource
+     *
      * @return an instance of com.docdoku.core.document.DocumentMaster
      */
     @GET
     @Path("{completePath:.*}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getJson(@PathParam("completePath") String completePath) {
+    public DocumentMasterLightDTO[] getJson(@PathParam("completePath") String completePath) {
         try {
-            completePath=Tools.stripTrailingSlash(Tools.stripLeadingSlash(completePath));
+            completePath = Tools.stripTrailingSlash(completePath);
             DocumentMaster[] docM = commandService.findDocumentMastersByFolder(completePath);
-            DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
+            DocumentMasterLightDTO[] dtos = new DocumentMasterLightDTO[docM.length];
             
-            for(int i = 0; i<docM.length;i++)
-                dtos[i]= mapper.map(docM[i], DocumentMasterDTO.class);
-           
+            for (int i = 0; i < docM.length; i++) {
+                dtos[i]= mapper.map(docM[i], DocumentMasterLightDTO.class);
+                dtos[i].setAuthorName(docM[i].getAuthor().getName());
+                
+                if(docM[i].getLastIteration()!=null){
+                    dtos[i].setLastIterationNumber(docM[i].getLastIteration().getIteration());
+                    dtos[i].setLastIterationDate(docM[i].getLastIteration().getCreationDate());
+                }
+                
+                if(docM[i].getLifeCycleState()!=null){
+                    dtos[i].setLifeCycleState(docM[i].getLifeCycleState());
+                }
+                 if(docM[i].getCheckOutUser()!=null){
+                    dtos[i].setCheckOutUserName(docM[i].getCheckOutUser().getName());                     
+                 }
+            }
+
             return dtos;
-        }catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
+
+    @GET
+    @Path("{workspaceId}")
+    @Produces("application/json;charset=UTF-8")
+    public DocumentMasterDTO[] findDocMsByTag(@PathParam("workspaceId") String workspaceId, @QueryParam("tag") String label) {
+        try {
+            DocumentMaster[] docMs = commandService.findDocumentMastersByTag(new TagKey(workspaceId, label));
+            DocumentMasterDTO[] docMsDTO = new DocumentMasterDTO[docMs.length];
+
+            for (int i = 0; i < docMs.length; i++) {
+                docMsDTO[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+            }
+
+            return docMsDTO;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
-    @Path("{workspaceId}/")
-    @Produces("application/json;charset=UTF-8")    
-    public DocumentMasterDTO[] findDocMsByTag(@PathParam("workspaceId")String workspaceId, @QueryParam("tag") String label) throws ApplicationException {
-        try {
-            DocumentMaster[] docMs = commandService.findDocumentMastersByTag(new TagKey(workspaceId, label));
-            DocumentMasterDTO[] docMsDTO = new DocumentMasterDTO[docMs.length];
-            
-            for(int i = 0; i<docMs.length;i++)
-                docMsDTO[i]= mapper.map(docMs[i], DocumentMasterDTO.class);
-                        
-            return docMsDTO;
-            
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
-        }
-    }
-    
-   
-    @GET
     @Path("{workspaceId}/checkedout")
-    @Produces("application/json;charset=UTF-8") 
+    @Produces("application/json;charset=UTF-8")
     public DocumentMasterDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
         try {
             DocumentMaster[] checkedOutdocMs = commandService.getCheckedOutDocumentMasters(workspaceId);
             DocumentMasterDTO[] checkedOutdocMsDTO = new DocumentMasterDTO[checkedOutdocMs.length];
-            
-            for(int i = 0; i<checkedOutdocMs.length;i++)
-                checkedOutdocMsDTO[i]= mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
-                        
+
+            for (int i = 0; i < checkedOutdocMs.length; i++) {
+                checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
+            }
+
             return checkedOutdocMsDTO;
-            
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
-        }
-    }
-
-
-    @GET
-    @Path("{workspaceId}/{docMsId}/{docMsVersion}")
-    @Produces("application/json;charset=UTF-8") 
-    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) throws ApplicationException {
-        try {
-            DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
-
-            return mapper.map(docM, DocumentMasterDTO.class);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-     
- 
+
+    
+/*Need to fix a bug about this WS, conflicts with completePath with getJson WS*/
+    
+    
+//    @GET
+//    @Path("{workspaceId}/{docMsId}/{docMsVersion}")
+//    @Produces("application/json;charset=UTF-8")
+//    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) throws ApplicationException {
+//        try {
+//            DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+//
+//            return mapper.map(docM, DocumentMasterDTO.class);
+//
+//        } catch (com.docdoku.core.services.ApplicationException ex) {
+//            throw new RESTException(ex.toString(), ex.getMessage());
+//        }
+//    }
 
     /**
      * PUT method for updating or creating an instance of DocumentResource
+     *
      * @param content representation for the resource
      * @return an HTTP response with content of the updated or created resource.
      */
-    @PUT
-    @Consumes("application/json;charset=UTF-8")
-    public void putJson(DocumentMaster content) {
-    }
-    /*
-    public DocumentMasterDTO createDocM(String pParentFolder, String pDocMID, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLDTO acl) throws ApplicationException {
-        try {
-            ACLUserEntry[] userEntries = null;
-            ACLUserGroupEntry[] userGroupEntries = null;
-            if (acl != null) {
-                String workspaceId = Folder.parseWorkspaceId(pParentFolder);
-                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries[i] = new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
-                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-                i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    userGroupEntries[i] = new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-            }
-            DocumentMaster docM = commandService.createDocM(pParentFolder, pDocMId, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-            return createDTO(docM);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new ApplicationException(ex.getMessage());
-        }
-    }
-    */
+
     
+    /*JSON WS To finish*/
+    
+    
+//    @PUT
+//    @Path("{completePath:.*}")
+//    @Consumes("application/json;charset=UTF-8")
+//    public void  putJson(@PathParam("completePath") String completePath, DocumentMasterDTO docMsDTO) throws ApplicationException {
+//        String pDocMID = docMsDTO.getId();
+//        String pTitle = docMsDTO.getTitle();
+//        String pDescription = docMsDTO.getDescription(); 
+//        String pParentFolder=Tools.stripTrailingSlash(completePath);
+//        
+//        /*Null values For test purpose only*/
+//        String pWorkflowModelId=null;
+//        String pDocMTemplateId=null;
+//        ACLDTO acl =null;
+//
+//        try {
+//            ACLUserEntry[] userEntries = null;
+//            ACLUserGroupEntry[] userGroupEntries = null;
+//            if (acl != null) {
+//                String workspaceId = Folder.parseWorkspaceId(pParentFolder);
+//                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+//                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+//                int i = 0;
+//                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+//                    userEntries[i] = new ACLUserEntry();
+//                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
+//                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+//                }
+//                i = 0;
+//                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+//                    userGroupEntries[i] = new ACLUserGroupEntry();
+//                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
+//                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+//                }
+//            }
+//            
+//            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+//
+//        } catch (com.docdoku.core.services.ApplicationException ex) {
+//            throw new ApplicationException(ex.getMessage());
+//        }
+//    }
+
     /**
      * DELETE method for deleting an instance of DocumentResource
+     *
      * @param parent folder path
      * @return the array of the documents that have also been deleted
      */
     @DELETE
     @Path("{workspaceId}/{docId}/{docVersion}")
     @Produces("application/json;charset=UTF-8")
-    public void deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+    public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
         try {
             commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, docId, docVersion));
+            return Response.status(Response.Status.OK).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
-    
-   
-
 }
