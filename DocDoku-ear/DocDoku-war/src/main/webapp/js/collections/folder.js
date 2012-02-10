@@ -4,9 +4,20 @@ var FolderList = Backbone.Collection.extend({
 		// adding folders' id from completePath
 		// done here because completePath is not reachable in initialize
 		var folders = [];
+		if (this.home != undefined) {
+			folders.push({
+				id: this.home,
+				name: "Home",
+				completePath: this.home
+			})
+		}
 		_.each(data, function (item) {
-			item.id = dirname(item.completePath)
-			folders.push(item);	    		
+			name = dirname(item.completePath)
+			folders.push({
+				id: name,
+				name: name,
+				completePath: item.completePath
+			});	    		
 		});
 		return folders;        			   	
 	}

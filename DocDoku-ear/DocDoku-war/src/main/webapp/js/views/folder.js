@@ -1,49 +1,46 @@
 var FolderView = Backbone.View.extend({
-	initialize: function () {
-		_.bindAll(this, "render");
-	},
-	render: function () {
-		console.debug('rendering folder ' + this.model.id);
-		$(this.el).html('<a href="#folders/' + this.model.id + '">' + this.model.id + '</a>');
-		return this;
-	}
-});
-
-var FoldersView = Backbone.View.extend({
-	events: {
-		"click #folders-header": "toggle",
-	},
+	tagName: 'li',
 	initialize: function () {
 		_.bindAll(this,
+			"template",
 			"render",
 			"onCollectionReset",
-			"toggle");
-		this.views = {};
+			"createFolderView",
+			"open");
+		this.render();
+		this.views = [];
 		this.collection.bind("reset", this.onCollectionReset);
+		this.collection.fetch();
+		$(this.el).children(".subfolders").on("show", this.open);
 	},
 	onCollectionReset: function () {
-		console.debug('fetching collection ' + this.collection.url);
-		var that = this;
-		this.collection.each(function (folder) {
-			if (that.views[folder.id] == undefined) {
-				console.debug('creating view for folder ' + folder.id);
-				view = new FolderView({
-					el: $('li'),
-					model: folder
-				})
-				that.views[folder.id] = view;
-				$("#folders-content").append(view.el);
-			}
+		_.each(this.views, function(view) {
+			view.remove();
 		});
-		this.render();
+		this.collection.each(this.createFolderView);
+	},
+	createFolderView: function (folder) {
+		folders = new FolderList();
+		folders.url = "/api/folders/" + folder.get("completePath");
+		view = new FolderView({
+			model: folder,
+			collection: folders
+		});
+		$(this.el).children(".subfolders").first().append(view.el);
+		this.views[folder.id] = view;
+	},
+	template: function(data) {
+		data.view_cid = this.cid;
+		return Mustache.render(
+			$("#folder-tpl").html(),
+			data
+		);
 	},
 	render: function () {
-		_.each(this.views, function(view) {
-			view.render();
-		});
+		$(this.el).html(this.template(this.model.toJSON()));
 		return this;
 	},
-	toggle : function () {
-		this.collection.fetch();
+	open : function () {
+		//this.collection.fetch();
 	}
 });

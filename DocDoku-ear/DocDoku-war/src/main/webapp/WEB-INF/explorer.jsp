@@ -39,19 +39,10 @@
 			<nav>
 				<ul class="nav nav-list">
 					<li class="nav-header">Workspace</li>
-					<li id="folders">
-						<div id="folders-header" data-toggle="collapse" data-target="#folders-content">
-							Dossiers
-						</div>
-						<ul id="folders-content" class="collapse">
-						</ul>
+					<li>
+						<ul id="folders"></ul>
 					</li>
 					<li>
-						<div data-toggle="collapse" data-target="#labels">Libellés</div>
-						<div class="collapse" id="labels">
-							<ul class="nav nav-list">
-							</ul>
-						</div>
 					</li>
 				</li>
 				<li>
@@ -59,5 +50,12 @@
 				</ul>
 			</nav>
         </div>
+		<script id="folder-tpl" type="text/html">
+			<span class="name" data-toggle="collapse"
+				data-target="#subfolders-{{view_cid}}">
+				{{name}}
+			</span>
+			<ul id="subfolders-{{view_cid}}" class="subfolders collapse"> </ul>
+		</script>
     </body>
 </html>

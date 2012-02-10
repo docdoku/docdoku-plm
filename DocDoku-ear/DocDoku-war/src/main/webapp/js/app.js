@@ -3,9 +3,15 @@ var dirname = function (path) {
 };
 var app = function (config) {
 	$('.collapse').collapse();
-	workspace = new Workspace({id: config.workspaceId});
-	foldersView = new FoldersView({
-		el: $("#folders"),
+	workspace = new Workspace({
+		id: config.workspaceId,
+		login: config.login
+	});
+	rootFolderView = new FolderView({
+		model: new Folder({
+			name: "Dossiers"
+		}),
 		collection: workspace.folders
 	});
+	$("#folders").append(rootFolderView.el);
 };
