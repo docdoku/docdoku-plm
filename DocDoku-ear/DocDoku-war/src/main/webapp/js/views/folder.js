@@ -2,6 +2,7 @@ var FolderView = Backbone.View.extend({
 	tagName: "li",
 	events: {
 		"click .name": "toggle",
+		"click  .actions .new-folder": "newFolder",
 		"click  .actions .delete": "delete",
 	},
 	initialize: function () {
@@ -10,7 +11,7 @@ var FolderView = Backbone.View.extend({
 			"onFolderListReset", "createFolderView",
 			"open", "close", "toggle",
 			"mouseenter", "mouseleave",
-			"delete");
+			"newFolder", "delete");
 		this.folderViews = [];
 		this.documentViews = [];
 		this.render();
@@ -82,11 +83,70 @@ var FolderView = Backbone.View.extend({
 		}
 		return false;
 	},
+	newFolder: function () {
+		console.log(this.model.id)
+		newView = new FolderNewView({model: this.model});
+		newView.parent = this;
+		return false;
+	},
 	delete: function () {
 		if (confirm("Supprimer le dossier " + this.model.name + "?")) {
 			this.model.destroy();
 			this.remove();
 		}
 		return false;
+	}
+});
+FolderNewView = Backbone.View.extend({
+	tagName: "div",
+	events: {
+		"submit form": "create",
+		"click .create": "create",
+		"click .cancel": "cancel",
+	},
+	initialize: function () {
+		_.bindAll(this,
+			"template", "render",
+			"create", "cancel",
+			"success", "error");
+		this.render();
+	},
+	template: function(data) {
+		return Mustache.render(
+			$("#folder-new-tpl").html(),
+			data
+		);
+	},
+	render: function () {
+		$(this.el).html(this.template({}));
+		$(this.el).modal("show");
+		// Hide the parent's actions menu to correct a display bug
+		this.parent.mouseleave();
+	},
+	create: function () {
+		console.log(this.model.get("completePath"))
+		var name = $(this.el).find("input.name").first().val();
+		if (name) {
+			newFolder = new Folder({
+				id: name,
+				completePath: this.model.get("completePath") + "/" + name
+			})
+			newFolder.url = this.model.url() + "/" + name;
+			newFolder.bind("sync", this.success);
+			newFolder.bind("error", this.error);
+			newFolder.save();
+		}
+	},
+	success: function () {
+		$(this.el).modal("hide");
+		this.remove();
+		this.parent.open();
+	},
+	error: function () {
+		console.error("error");
+	},
+	cancel: function () {
+		$(this.el).modal("hide");
+		this.remove();
 	}
 });

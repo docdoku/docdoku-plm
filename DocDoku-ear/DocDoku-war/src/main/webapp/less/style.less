@@ -41,6 +41,12 @@ body {
 		}
 		> .actions {
 			display: inline-block;
+			.new-folder a:before {
+				content: url("../images/folder-new.png");
+			}
+			.delete a:before {
+				content: url("../images/edit-delete.png");
+			}
 		}
 		.subfolders {
 			list-style-type: none;
@@ -56,5 +62,10 @@ body {
 	}
 	.folder.home > .name .icon {
 		background-image: url("../images/user-home.png");
+	}
+}
+.modal.new-folder {
+	h3:before {
+		content: url("../images/folder-new.png");
 	}
 }

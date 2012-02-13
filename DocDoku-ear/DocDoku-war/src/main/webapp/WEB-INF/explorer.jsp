@@ -68,10 +68,32 @@
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
+					<li class="new-folder"><a href="#">Nouveau dossier</a></li>
 					<li class="delete"><a href="#">Supprimer</a></li>
 				</ul>
 			</div>
 			<ul id="subfolders-{{view_cid}}" class="subfolders collapse"> </ul>
+		</script>
+		<script id="folder-new-tpl" type="text/html">
+			<div class="modal new-folder">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>Nouveau Dossier</h3>
+				</div>
+				<div class="modal-body">
+					<form id="new-folder-form">
+						<label>Nom&nbsp;:</label>
+						<input class="name" type="text" value=""
+							placeholder="Nom du dossier" />
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn create btn-primary" for="new-folder-form">
+						Créer
+					</button>
+					<button class="btn cancel">Annuler</button>
+				</div>
+			</div>
 		</script>
     </body>
 </html>
