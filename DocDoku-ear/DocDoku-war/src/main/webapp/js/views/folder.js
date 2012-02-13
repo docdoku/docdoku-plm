@@ -1,37 +1,37 @@
 var FolderView = Backbone.View.extend({
 	tagName: "li",
 	events: {
-		"click .icon": "toggle"
+		"click .name": "toggle",
 	},
 	initialize: function () {
 		_.bindAll(this,
 			"template",
 			"render",
-			"onCollectionReset",
+			"onFolderListReset",
 			"createFolderView",
+			"open",
+			"close",
 			"toggle");
-		this.views = [];
+		this.folderViews = [];
+		this.documentViews = [];
 		this.render();
-		this.collection.bind("reset", this.onCollectionReset);
-		// Fetch should not happen here but is buggy
-		//this.collection.fetch();
+		this.model.folders.bind("reset", this.onFolderListReset);
 	},
-	onCollectionReset: function () {
-		_.each(this.views, function(view) {
+	onFolderListReset: function () {
+		_.each(this.folderViews, function(view) {
 			view.remove();
 		});
-		this.collection.each(this.createFolderView);
+		this.model.folders.each(this.createFolderView);
 		$(this.el).children(".subfolders").first().collapse("show");
 	},
 	createFolderView: function (folder) {
-		folders = new FolderList();
-		folders.url = "/api/folders/" + folder.get("completePath");
-		view = new FolderView({
-			model: folder,
-			collection: folders
-		});
+		folder.folders = new FolderList();
+		folder.folders.url = "/api/folders/" + folder.get("completePath");
+		view = new FolderView({model:folder});
 		$(this.el).children(".subfolders").first().append(view.el);
-		this.views.push(view);
+		this.folderViews.push(view);
+	},
+	createDocumentView: function (doc) {
 	},
 	template: function(data) {
 		data.view_cid = this.cid;
@@ -43,18 +43,21 @@ var FolderView = Backbone.View.extend({
 	render: function () {
 		$(this.el).html(this.template(this.model.toJSON()));
 		$(this.el).addClass("folder");
+		if (this.model.get("isHome")) {
+			$(this.el).addClass("home");
+		}
 		return this;
 	},
+	open: function () {
+		$(this.el).addClass("open");
+		this.model.folders.fetch();
+	},
+	close: function () {
+		$(this.el).removeClass("open");
+		$(this.el).children(".subfolders").first().collapse("hide");
+	},
 	toggle : function () {
-		if ($(this.el).hasClass("open")) {
-			console.log(this.cid, "close");
-			$(this.el).removeClass("open");
-			$(this.el).children(".subfolders").first().collapse("hide");
-		} else {
-			console.log(this.cid, "open");
-			$(this.el).addClass("open");
-			this.collection.fetch();
-		}
+		$(this.el).hasClass("open") ? this.close() : this.open();
 		return false;
 	}
 });

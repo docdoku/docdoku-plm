@@ -8,7 +8,8 @@ var FolderList = Backbone.Collection.extend({
 			folders.push({
 				id: this.home,
 				name: "Home",
-				completePath: this.home
+				completePath: this.home,
+				isHome: true
 			})
 		}
 		_.each(data, function (item) {
@@ -16,7 +17,8 @@ var FolderList = Backbone.Collection.extend({
 			folders.push({
 				id: name,
 				name: name,
-				completePath: item.completePath
+				completePath: item.completePath,
+				isHome: false
 			});	    		
 		});
 		return folders;        			   	

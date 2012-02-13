@@ -20,7 +20,9 @@
 		<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.0.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
@@ -35,12 +37,13 @@
     </head>    
     <body>
         <%@ include file="/WEB-INF/explorer_header.jspf" %>
-        <div id="workspace">
-			<nav>
+        <div id="workspace" class="row">
+			<nav class="span4 well">
 				<ul class="nav nav-list">
 					<li class="nav-header">Workspace</li>
 					<li>
-						<ul id="folders"></ul>
+						<ul id="folders">
+						</ul>
 					</li>
 					<li>
 					</li>
@@ -49,12 +52,16 @@
 					<h1 class="nav-header">Autres</h1>
 				</ul>
 			</nav>
+			<div class="content span8 well">
+			</div>
         </div>
 		<script id="folder-tpl" type="text/html">
-			<span class="icon" data-toggle="collapse"
-				data-target="#subfolders-{{view_cid}}">
-			</span>
-			<a class="name" href="">{{name}}</a>
+			<a class="name" href="#folders/{{completePath}}"
+					data-toggle="collapse"
+					data-target="#subfolders-{{view_cid}}">
+				<span class="status"></span><span class="icon"></span>
+				{{name}}
+			</a>
 			<ul id="subfolders-{{view_cid}}" class="subfolders collapse"> </ul>
 		</script>
     </body>
