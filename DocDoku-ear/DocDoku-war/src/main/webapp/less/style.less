@@ -17,35 +17,44 @@ body {
 			}
 		}
 	}
-}
-.folder {
-	> .name {
-		display: inline-block;
-		padding: 4px;
-		.icon, .status {
+	.folder {
+		> .name {
 			display: inline-block;
-			background: no-repeat center;
-			height: 24px;
+			padding: 4px;
+			.icon, .status {
+				display: inline-block;
+				background: no-repeat center;
+				height: 24px;
+			}
+			.status {
+				background-image: url("../images/bullet-right.png");
+				width: 16px;
+			}
+			.icon {
+				background-image: url("../images/folder.png");
+				width: 24px;
+			}
 		}
-		.status {
-			background-image: url("../images/bullet-right.png");
-			width: 16px;
+		> .name:hover {
+			background-color: #EEEEEE;
+			text-decoration: none;
 		}
-		.icon {
-			background-image: url("../images/folder.png");
-			width: 24px;
+		> .actions {
+			display: inline-block;
+		}
+		.subfolders {
+			list-style-type: none;
 		}
 	}
-	> .name:hover {
-		background-color: #EEEEEE;
-		text-decoration: none;
+	.folder.open {
+		> .name .status {
+			background-image: url("../images/bullet-down.png");
+		}
+		> .subfolders {
+			overflow: visible;
+		}
 	}
-}
-.folder.open {
-	> .name .status {
-		background-image: url("../images/bullet-down.png");
+	.folder.home > .name .icon {
+		background-image: url("../images/user-home.png");
 	}
-}
-.folder.home > .name .icon {
-    background-image: url("../images/user-home.png");
 }
