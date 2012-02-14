@@ -59,8 +59,9 @@
 			<a class="name" href="#folders/{{completePath}}"
 					data-toggle="collapse"
 					data-target="#subfolders-{{view_cid}}">
-				<span class="status"></span><span class="icon"></span>
-				{{name}}
+				<span class="status"></span>
+				<span class="icon"></span>
+				<span class="text">{{name}}</span>
 			</a><div class="actions btn-group">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 					<span class="caret"></span>
