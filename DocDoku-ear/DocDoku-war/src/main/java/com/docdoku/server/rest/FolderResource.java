@@ -20,12 +20,9 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.FolderDTO;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -34,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -87,50 +83,37 @@ public class FolderResource {
     /**
      * PUT method for updating or creating an instance of FolderResource
      *
-     * @param parent folder path and name of the folder to create
+     * @param complete path of the folder to create or move
+     * and the folder to create or the destination folder in case of a move
+     * operation as an entity body (with its completePath attribute)
+     * 
      */
     @PUT
+    @Consumes("application/json;charset=UTF-8")
     @Path("{completePath:.*}")
-    public void putJson(@PathParam("completePath") String completePath) {
+    public void putJson(@PathParam("completePath") String completePath, FolderDTO folder) {
         try {
-            int lastSlash = completePath.lastIndexOf('/');
-            String parentFolder = completePath.substring(0, lastSlash);
-            String folderName = completePath.substring(lastSlash + 1, completePath.length());
-            commandService.createFolder(parentFolder, folderName);
+            completePath = Tools.stripTrailingSlash(completePath);
+            String newCompletePath = null;
+            if(folder !=null)
+                newCompletePath=Tools.stripTrailingSlash(folder.getCompletePath());
+            
+            if(newCompletePath==null || newCompletePath.equals(completePath)){
+                int lastSlash = completePath.lastIndexOf('/');
+                String parentFolder = completePath.substring(0, lastSlash);
+                String folderName = completePath.substring(lastSlash + 1, completePath.length());
+                commandService.createFolder(parentFolder, folderName);
+            }else{
+                int lastSlash = newCompletePath.lastIndexOf('/');
+                String parentFolder = newCompletePath.substring(0, lastSlash);
+                String folderName = newCompletePath.substring(lastSlash + 1, newCompletePath.length());
+                commandService.moveFolder(completePath, parentFolder, folderName);
+            }      
+            
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-
-    
-    /* JSON WS to rename a folder */
-    
-//    @POST
-//    @Path("{completePath:.*}")
-//    @Consumes("application/json;charset=UTF-8")
-//    public Response renameFolder(@PathParam("completePath") String completePath, FolderDTO folderDTO) {
-//        try {
-//            
-//            completePath = Tools.stripTrailingSlash(completePath);
-//            int lastSlash = completePath.lastIndexOf('/');
-//            String newFolderCompletePath = folderDTO.getCompletePath();
-//            String newFolderName = newFolderCompletePath.substring(lastSlash + 1, newFolderCompletePath.length());
-//
-//            //TODO
-//            commandService.renameFolder(completePath, newFolderName);
-//
-//            return Response.status(Response.Status.OK).build();
-//
-//        } catch (WorkspaceNotFoundException ex) {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        } catch (FolderNotFoundException ex) {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        } catch (UserNotFoundException ex) {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        } catch (UserNotActiveException ex) {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        }
-//    }
 
     /**
      * DELETE method for deleting an instance of FolderResource
