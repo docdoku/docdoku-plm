@@ -3,17 +3,20 @@ var FolderView = Backbone.View.extend({
 	events: {
 		"click .name": "toggle",
 		"click  .actions .new-folder": "newFolder",
+		"click  .actions .edit": "edit",
 		"click  .actions .delete": "delete",
 	},
 	initialize: function () {
 		_.bindAll(this,
 			"template", "render",
 			"onFolderListReset", "createFolderView",
-			"open", "close", "toggle",
+			"open", "opened", "close", "toggle",
 			"mouseenter", "mouseleave",
-			"newFolder", "delete");
+			"newFolder", "edit", "delete");
 		this.folderViews = [];
 		this.documentViews = [];
+		this.isOpen = false;
+		this.isHome = this.model.get("isHome");
 		this.render();
 		this.model.folders.bind("reset", this.onFolderListReset);
 	},
@@ -22,7 +25,7 @@ var FolderView = Backbone.View.extend({
 			view.remove();
 		});
 		this.model.folders.each(this.createFolderView);
-		$(this.el).children(".subfolders").first().collapse("show");
+		this.opened();
 	},
 	createFolderView: function (folder) {
 		folder.folders = new FolderList();
@@ -46,27 +49,31 @@ var FolderView = Backbone.View.extend({
 		$(this.el).addClass("folder");
 		$(this.el).children('.actions').hide();
 		$(this.el).hover(this.mouseenter, this.mouseleave);
-		if (this.model.get("isHome")) {
-			$(this.el).addClass("home");
-			// no delete action on home
+		if (this.isHome) $(this.el).addClass("home");
+		// No delete or no edit actions on root or home
+		if (this.model.parent == undefined || this.isHome) {
 			$(this.el).find(".actions .delete").remove();
+			$(this.el).find(".actions .edit").remove();
 		}
-		if (this.model.parent == undefined) {
-			// no delete action on root folder
-			$(this.el).find(".actions .delete").remove();
-		}
+		// If actions menu is empty
 		if ($(this.el).find('.dropdown-menu').children().length < 1) {
 			$(this.el).find(".actions").remove();
 		}
 		return this;
 	},
 	open: function () {
-		$(this.el).addClass("open");
 		this.model.folders.fetch();
+	},
+	// Launched at onFolderListReset end
+	opened: function () {
+		$(this.el).addClass("open");
+		$(this.el).children(".subfolders").first().collapse("show");
+		this.isOpen = true;
 	},
 	close: function () {
 		$(this.el).children(".subfolders").collapse("hide");
 		$(this.el).removeClass("open");
+		this.isOpen = false;
 	},
 	toggle : function () {
 		$(this.el).hasClass("open") ? this.close() : this.open();
@@ -84,14 +91,19 @@ var FolderView = Backbone.View.extend({
 		return false;
 	},
 	newFolder: function () {
-		console.log(this.model.id)
 		newView = new FolderNewView({model: this.model});
 		newView.parent = this;
 		newView.render();
 		return false;
 	},
+	edit: function () {
+		editView = new FolderEditView({model: this.model});
+		editView.parent = this;
+		editView.render();
+		return false;
+	},
 	delete: function () {
-		if (confirm("Supprimer le dossier " + this.model.name + "?")) {
+		if (confirm("Supprimer le dossier : " + this.model.get("name") + "?")) {
 			this.model.destroy();
 			this.remove();
 		}
@@ -124,7 +136,6 @@ FolderNewView = Backbone.View.extend({
 		this.parent.mouseleave();
 	},
 	create: function () {
-		console.log(this.model.get("completePath"))
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
 			newFolder = new Folder({
@@ -136,11 +147,12 @@ FolderNewView = Backbone.View.extend({
 			newFolder.bind("error", this.error);
 			newFolder.save();
 		}
+		return false;
 	},
 	success: function () {
 		$(this.el).modal("hide");
 		this.remove();
-		this.parent.open();
+		if (this.parent.isOpen) this.parent.open();
 	},
 	error: function () {
 		console.error("error");
@@ -148,5 +160,62 @@ FolderNewView = Backbone.View.extend({
 	cancel: function () {
 		$(this.el).modal("hide");
 		this.remove();
+		return false;
+	}
+});
+FolderEditView = Backbone.View.extend({
+	tagName: "div",
+	events: {
+		"submit form": "save",
+		"click .save": "save",
+		"click .cancel": "cancel",
+	},
+	initialize: function () {
+		_.bindAll(this,
+			"template", "render",
+			"save", "cancel",
+			"success", "error");
+	},
+	template: function(data) {
+		return Mustache.render(
+			$("#folder-edit-tpl").html(),
+			data
+		);
+	},
+	render: function () {
+		$(this.el).html(this.template({}));
+		$(this.el).find("input.name").first().val(this.model.get("name"));
+		$(this.el).modal("show");
+		// Hide the parent's actions menu to correct a display bug
+		this.parent.mouseleave();
+	},
+	save: function () {
+		var name = $(this.el).find("input.name").first().val();
+		if (name) {
+			completePath = basename(this.model.get("completePath")) + "/" + name
+			this.model.set({
+				id: name,
+				name: name,
+				completePath: completePath
+			});
+			this.model.bind("sync", this.success);
+			this.model.bind("error", this.error);
+			this.model.save();
+		}
+		return false;
+	},
+	success: function () {
+		this.parent.render();
+		if (this.parent.isOpen) this.parent.open();
+		$(this.el).modal("hide");
+		this.remove();
+	},
+	error: function () {
+		console.error("error");
+	},
+	cancel: function () {
+		$(this.el).modal("hide");
+		this.remove();
+		return false;
 	}
 });

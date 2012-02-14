@@ -61,14 +61,13 @@
 					data-target="#subfolders-{{view_cid}}">
 				<span class="status"></span><span class="icon"></span>
 				{{name}}
-			</a>
-			<div class="actions btn-group">
-
+			</a><div class="actions btn-group">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
 					<li class="new-folder"><a href="#">Nouveau dossier</a></li>
+					<li class="edit"><a href="#">Renomer</a></li>
 					<li class="delete"><a href="#">Supprimer</a></li>
 				</ul>
 			</div>
@@ -90,6 +89,27 @@
 				<div class="modal-footer">
 					<button class="btn create btn-primary" for="new-folder-form">
 						Créer
+					</button>
+					<button class="btn cancel">Annuler</button>
+				</div>
+			</div>
+		</script>
+		<script id="folder-edit-tpl" type="text/html">
+			<div class="modal edit-folder">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>Nouveau Dossier</h3>
+				</div>
+				<div class="modal-body">
+					<form id="edit-folder-form">
+						<label>Nom&nbsp;:</label>
+						<input class="name" type="text" value=""
+							placeholder="Nom du dossier" />
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn save btn-primary" for="edit-folder-form">
+						Enregistrer
 					</button>
 					<button class="btn cancel">Annuler</button>
 				</div>

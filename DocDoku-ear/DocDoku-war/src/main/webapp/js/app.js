@@ -1,6 +1,9 @@
 var dirname = function (path) {
 	return path.replace(/^.*\//g, '');
 };
+var basename = function (path) {
+	return path.replace(/\/[^\/]*$/g, '');
+};
 var app = function (config) {
 	FolderList.workspaceId = config.workspaceId
 	FolderList.login = config.login
