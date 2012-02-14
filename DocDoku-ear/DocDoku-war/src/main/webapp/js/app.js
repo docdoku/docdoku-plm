@@ -15,7 +15,6 @@ var app = function (config) {
 		login: config.login
 	});
 	rootFolder = new Folder({
-		id:"",
 		name:"Documents",
 		completePath: config.workspaceId,
 		
