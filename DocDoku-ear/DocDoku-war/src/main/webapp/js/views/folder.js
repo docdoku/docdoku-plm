@@ -190,17 +190,18 @@ FolderEditView = Backbone.View.extend({
 		if (name) {
 			completePath = basename(this.model.get("completePath")) + "/" + name
 			this.model.set({
-				id: name,
 				name: name,
 				completePath: completePath
 			});
 			this.model.bind("sync", this.success);
 			this.model.bind("error", this.error);
 			this.model.save();
+			console.log(this.model.url());
 		}
 		return false;
 	},
 	success: function () {
+		this.model.id = this.model.get("name");
 		this.parent.render();
 		if (this.parent.isOpen) this.parent.open();
 		$(this.el).modal("hide");
