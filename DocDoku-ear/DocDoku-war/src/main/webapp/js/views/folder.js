@@ -87,6 +87,7 @@ var FolderView = Backbone.View.extend({
 		console.log(this.model.id)
 		newView = new FolderNewView({model: this.model});
 		newView.parent = this;
+		newView.render();
 		return false;
 	},
 	delete: function () {
@@ -109,7 +110,6 @@ FolderNewView = Backbone.View.extend({
 			"template", "render",
 			"create", "cancel",
 			"success", "error");
-		this.render();
 	},
 	template: function(data) {
 		return Mustache.render(
