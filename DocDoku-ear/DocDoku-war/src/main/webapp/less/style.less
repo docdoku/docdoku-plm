@@ -15,11 +15,9 @@ body {
 	list-style-type: none;
 	.folder {
 		clear: both;
-		> .name {
-			display: block;
+		> .header {
 			float: left;
-			padding: 0 4px;
-			.icon, .status, .text {
+			.icon, .status {
 				display: block;
 				height: 28px;
 				line-height: 28px;
@@ -36,22 +34,40 @@ body {
 				background-image: url("../images/folder.png");
 				width: 24px;
 			}
+			.name {
+				display: block;
+				float: left;
+				padding: 0 4px;
+				line-height: 28px;
+			}
+			.actions {
+				display: none;
+			}
 		}
-		> .name:hover {
+		> .header:hover {
 			background-color: #EEEEEE;
-			text-decoration: none;
-		}
-		> .actions {
-			display: block;
-			float: left;
-			.new-folder a:before {
-				content: url("../images/folder-new.png");
-			}
-			.edit a:before {
-				content: url("../images/edit.png");
-			}
-			.delete a:before {
-				content: url("../images/edit-delete.png");
+			.actions {
+				display: block;
+				float: left;
+				border: none;
+				.dropdown-toggle {
+					border: solid #CCCCCC 1px;
+					box-shadow: none;
+					background: #CCCCCC;
+				}
+				.dropdown-toggle:hover {
+					background: #CCCCCC;
+					border-color: #AAAAAA;
+				}
+				.new-folder a:before {
+					content: url("../images/folder-new.png");
+				}
+				.edit a:before {
+					content: url("../images/edit.png");
+				}
+				.delete a:before {
+					content: url("../images/edit-delete.png");
+				}
 			}
 		}
 		.subfolders {

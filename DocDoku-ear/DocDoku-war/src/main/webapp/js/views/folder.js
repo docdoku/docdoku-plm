@@ -2,16 +2,17 @@ var FolderView = Backbone.View.extend({
 	tagName: "li",
 	events: {
 		"click .name": "toggle",
-		"click  .actions .new-folder": "newFolder",
-		"click  .actions .edit": "edit",
-		"click  .actions .delete": "delete",
+		"click .actions .new-folder": "newFolder",
+		"click .actions .edit": "edit",
+		"click .actions .delete": "delete",
+		"mouseleave .header": "mouseleave",
 	},
 	initialize: function () {
 		_.bindAll(this,
 			"template", "render",
 			"onFolderListReset", "createFolderView",
 			"open", "opened", "close", "toggle",
-			"mouseenter", "mouseleave",
+			"mouseleave",
 			"newFolder", "edit", "delete");
 		this.folderViews = [];
 		this.documentViews = [];
@@ -47,8 +48,6 @@ var FolderView = Backbone.View.extend({
 	render: function () {
 		$(this.el).html(this.template(this.model.toJSON()));
 		$(this.el).addClass("folder");
-		$(this.el).children('.actions').hide();
-		$(this.el).hover(this.mouseenter, this.mouseleave);
 		if (this.isHome) $(this.el).addClass("home");
 		// No delete or no edit actions on root or home
 		if (this.model.parent == undefined || this.isHome) {
@@ -79,12 +78,7 @@ var FolderView = Backbone.View.extend({
 		$(this.el).hasClass("open") ? this.close() : this.open();
 		return false;
 	},
-	mouseenter: function () {
-		$(this.el).children('.actions').show();
-		return false;
-	},
 	mouseleave: function () {
-		$(this.el).children('.actions').hide();
 		if ($(this.el).find(".actions").hasClass("open")) {
 			$(this.el).find(".actions").click();
 		}

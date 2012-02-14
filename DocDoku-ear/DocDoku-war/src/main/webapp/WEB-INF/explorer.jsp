@@ -56,21 +56,24 @@
 			</div>
         </div>
 		<script id="folder-tpl" type="text/html">
-			<a class="name" href="#folders/{{completePath}}"
-					data-toggle="collapse"
-					data-target="#subfolders-{{view_cid}}">
+			<div class="header">
 				<span class="status"></span>
 				<span class="icon"></span>
-				<span class="text">{{name}}</span>
-			</a><div class="actions btn-group">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-					<span class="caret"></span>
+				<a class="name" href="#folders/{{completePath}}"
+						data-toggle="collapse"
+						data-target="#subfolders-{{view_cid}}">
+					{{name}}
 				</a>
-				<ul class="dropdown-menu">
-					<li class="new-folder"><a href="#">Nouveau dossier</a></li>
-					<li class="edit"><a href="#">Renomer</a></li>
-					<li class="delete"><a href="#">Supprimer</a></li>
-				</ul>
+				<div class="actions btn-group">
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class="new-folder"><a href="#">Nouveau dossier</a></li>
+						<li class="edit"><a href="#">Renomer</a></li>
+						<li class="delete"><a href="#">Supprimer</a></li>
+					</ul>
+				</div>
 			</div>
 			<ul id="subfolders-{{view_cid}}" class="subfolders collapse"> </ul>
 		</script>
