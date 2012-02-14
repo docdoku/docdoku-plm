@@ -70,7 +70,7 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li class="new-folder"><a href="#">Nouveau dossier</a></li>
-						<li class="edit"><a href="#">Rennomer</a></li>
+						<li class="edit"><a href="#">Renommer</a></li>
 						<li class="delete"><a href="#">Supprimer</a></li>
 					</ul>
 				</div>

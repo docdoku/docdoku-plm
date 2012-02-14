@@ -99,7 +99,7 @@ var FolderView = Backbone.View.extend({
 		return false;
 	},
 	delete: function () {
-		if (confirm("Supprimer le dossier : " + this.model.get("name") + "?")) {
+		if (confirm("Supprimer le dossier : " + this.model.get("name") + " ?")) {
 			this.model.destroy();
 			this.remove();
 		}
