@@ -16,7 +16,7 @@ var FolderList = Backbone.Collection.extend({
 				id: name,
 				name: name,
 				completePath: item.completePath,
-				isHome: item.isHome ? item.isHome : false
+				home: item.home ? item.home : false
 			});	    		
 		});
 		return folders;        			   	
