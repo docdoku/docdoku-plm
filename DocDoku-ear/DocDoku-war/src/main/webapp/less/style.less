@@ -46,12 +46,6 @@ body {
 			}
 			> .actions {
 				display: none;
-			}
-		}
-		> .header:hover {
-			background-color: #DDDDDD;
-			.actions {
-				display: block;
 				float: left;
 				border: none;
 				.dropdown-toggle {
@@ -70,18 +64,25 @@ body {
 					}
 					.icon {
 						height: 24px;
+						width: 24px;
 						margin-right: 4px;
 					}
 					.new-folder .icon {
-						content: url("../images/folder-new.png");
+						background-image: url("../images/folder-new.png");
 					}
 					.edit .icon {
-						content: url("../images/edit.png");
+						background-image: url("../images/edit.png");
 					}
 					.delete .icon {
-						content: url("../images/edit-delete.png");
+						background-image: url("../images/edit-delete.png");
 					}
 				}
+			}
+		}
+		> .header:hover {
+			background-color: #DDDDDD;
+			.actions {
+				display: block;
 			}
 		}
 		.subfolders {
