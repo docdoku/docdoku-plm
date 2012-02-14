@@ -45,7 +45,7 @@ body {
 			}
 		}
 		> .header:hover {
-			background-color: #EEEEEE;
+			background-color: #DDDDDD;
 			.actions {
 				display: block;
 				float: left;
@@ -76,7 +76,7 @@ body {
 		}
 	}
 	.folder.open {
-		> .name .status {
+		> .header .status {
 			background-image: url("../images/bullet-down.png");
 		}
 		> .subfolders {
@@ -84,11 +84,11 @@ body {
 		}
 	}
 	> .folder:first-child {
-		> .name .icon {
+		> .header .icon {
 			background-image:  url("../images/documents.png");
 		}
 	}
-	.folder.home > .name .icon {
+	.folder.home > .header .icon {
 		background-image: url("../images/user-home.png");
 	}
 }
