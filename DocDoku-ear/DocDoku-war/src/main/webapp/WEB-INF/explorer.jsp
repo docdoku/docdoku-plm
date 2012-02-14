@@ -57,8 +57,8 @@
         </div>
 		<script id="folder-tpl" type="text/html">
 			<div class="header">
-				<span class="status"></span>
-				<span class="icon"></span>
+				<span class="icon status"></span>
+				<span class="icon type"></span>
 				<a class="name" href="#folders/{{completePath}}"
 						data-toggle="collapse"
 						data-target="#subfolders-{{view_cid}}">
@@ -69,9 +69,15 @@
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li class="new-folder"><a href="#">Nouveau dossier</a></li>
-						<li class="edit"><a href="#">Renommer</a></li>
-						<li class="delete"><a href="#">Supprimer</a></li>
+						<li class="new-folder">
+							<a href="#"><span class="icon"></span>Nouveau dossier</a>
+						</li>
+						<li class="edit">
+							<a href="#"><span class="icon"></span>Renommer</a>
+						</li>
+						<li class="delete">
+							<a href="#"><span class="icon"></span>Supprimer</a>
+						</li>
 					</ul>
 				</div>
 			</div>

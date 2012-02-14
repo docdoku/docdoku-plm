@@ -4,6 +4,7 @@
 body {
 	padding-top: 60px;
 }
+
 #workspace {
 	.container-fluid;
 	.nav-header {
@@ -13,6 +14,11 @@ body {
 
 #folders {
 	list-style-type: none;
+	.icon {
+		background: no-repeat center;
+		display: block;
+		float: left;
+	}
 	.folder {
 		clear: both;
 		> .header {
@@ -21,30 +27,24 @@ body {
 			.dropdown-toggle {
 				border-radius: 0 4px 4px 0;
 			}
-			.icon, .status {
-				display: block;
+			> .icon {
 				height: 28px;
-				line-height: 28px;
-				float: left;
 			}
-			.icon, .status {
-				background: no-repeat center;
-			}
-			.status {
+			> .status {
 				background-image: url("../images/bullet-right.png");
 				width: 16px;
 			}
-			.icon {
+			> .type {
 				background-image: url("../images/folder.png");
 				width: 24px;
 			}
-			.name {
+			> .name {
 				display: block;
 				float: left;
 				padding: 0 4px;
 				line-height: 28px;
 			}
-			.actions {
+			> .actions {
 				display: none;
 			}
 		}
@@ -65,15 +65,22 @@ body {
 				}
 				.dropdown-menu {
 					margin-top: -28px;
-				}
-				.new-folder a:before {
-					content: url("../images/folder-new.png");
-				}
-				.edit a:before {
-					content: url("../images/edit.png");
-				}
-				.delete a:before {
-					content: url("../images/edit-delete.png");
+					a {
+						line-height: 24px;
+					}
+					.icon {
+						height: 24px;
+						margin-right: 4px;
+					}
+					.new-folder .icon {
+						content: url("../images/folder-new.png");
+					}
+					.edit .icon {
+						content: url("../images/edit.png");
+					}
+					.delete .icon {
+						content: url("../images/edit-delete.png");
+					}
 				}
 			}
 		}
@@ -91,11 +98,11 @@ body {
 		}
 	}
 	> .folder:first-child {
-		> .header .icon {
+		> .header > .type {
 			background-image:  url("../images/documents.png");
 		}
 	}
-	.folder.home > .header .icon {
+	.folder.home > .header > .type {
 		background-image: url("../images/user-home.png");
 	}
 }
