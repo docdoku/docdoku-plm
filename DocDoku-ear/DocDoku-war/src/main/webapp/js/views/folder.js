@@ -61,6 +61,7 @@ var FolderView = Backbone.View.extend({
 		return this;
 	},
 	open: function () {
+		this.mouseleave();
 		this.model.folders.fetch();
 	},
 	// Launched at onFolderListReset end
@@ -70,6 +71,7 @@ var FolderView = Backbone.View.extend({
 		this.isOpen = true;
 	},
 	close: function () {
+		this.mouseleave();
 		$(this.el).children(".subfolders").collapse("hide");
 		$(this.el).removeClass("open");
 		this.isOpen = false;
