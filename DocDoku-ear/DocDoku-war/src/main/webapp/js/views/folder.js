@@ -17,7 +17,7 @@ var FolderView = Backbone.View.extend({
 		this.folderViews = [];
 		this.documentViews = [];
 		this.isOpen = false;
-		this.isHome = this.model.get("isHome");
+		this.isHome = this.model.get("home");
 		this.render();
 		this.model.folders.bind("reset", this.onFolderListReset);
 	},

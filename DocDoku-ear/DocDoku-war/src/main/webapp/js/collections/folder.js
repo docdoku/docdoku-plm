@@ -7,7 +7,7 @@ var FolderList = Backbone.Collection.extend({
 		if (this.home != undefined) {
 			data.unshift({
 				completePath: this.home,
-				isHome: true
+				home: true
 			});
 		}
 		_.each(data, function (item) {
