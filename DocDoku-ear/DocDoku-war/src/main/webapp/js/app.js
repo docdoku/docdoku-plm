@@ -17,9 +17,10 @@ var app = function (config) {
 	rootFolder = new Folder({
 		id:"",
 		name:"Documents",
-		completePath: config.workspaceId
+		completePath: config.workspaceId,
+		
 	});
-	rootFolder.url = function () { return workspace.folders.url }; // TODO: Hack. Must be fixed
+	rootFolder.urlRoot = workspace.folders.url;
 	rootFolder.folders = workspace.folders;
 	rootFolderView = new FolderView({model: rootFolder});
 	$("#folders").append(rootFolderView.el);
