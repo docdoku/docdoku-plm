@@ -27,7 +27,7 @@
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function () {
-				app({
+				app.init({
 					workspaceId: "${workspaceID}",
 					login: "${login}"
 				});

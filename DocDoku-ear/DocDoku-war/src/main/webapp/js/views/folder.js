@@ -29,14 +29,10 @@ var FolderView = Backbone.View.extend({
 		this.opened();
 	},
 	createFolderView: function (folder) {
-		folder.folders = new FolderList();
-		folder.folders.url = "/api/folders/" + folder.get("completePath");
 		folder.parent = this.model;
 		view = new FolderView({model:folder});
 		$(this.el).children(".subfolders").first().append(view.el);
 		this.folderViews.push(view);
-	},
-	createDocumentView: function (doc) {
 	},
 	template: function(data) {
 		data.view_cid = this.cid;
@@ -194,7 +190,7 @@ FolderEditView = Backbone.View.extend({
 	save: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
-			completePath = basename(this.model.get("completePath")) + "/" + name
+			completePath = app.basename(this.model.get("completePath")) + "/" + name
 			this.previousAttributes = this.model.toJSON();
 			this.model.bind("sync", this.success);
 			this.model.bind("error", this.error);
