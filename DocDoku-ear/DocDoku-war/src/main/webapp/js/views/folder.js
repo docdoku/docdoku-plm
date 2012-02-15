@@ -128,6 +128,7 @@ FolderNewView = Backbone.View.extend({
 	render: function () {
 		$(this.el).html(this.template({}));
 		$(this.el).modal("show");
+		$(this.el).find("input.name").first().focus();
 		// Hide the parent's actions menu to correct a display bug
 		this.parent.mouseleave();
 	},
@@ -186,6 +187,7 @@ FolderEditView = Backbone.View.extend({
 		$(this.el).html(this.template({}));
 		$(this.el).find("input.name").first().val(this.model.get("name"));
 		$(this.el).modal("show");
+		$(this.el).find("input.name").first().focus();
 		// Hide the parent's actions menu to correct a display bug
 		this.parent.mouseleave();
 	},
