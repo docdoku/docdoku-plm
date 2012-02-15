@@ -6,7 +6,6 @@
     <fmt:setBundle basename="com.docdoku.server.localization.explorer_resource"/>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-        <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
 
