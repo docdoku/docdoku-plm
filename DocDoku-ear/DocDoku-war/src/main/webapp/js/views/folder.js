@@ -1,7 +1,7 @@
 var FolderView = Backbone.View.extend({
 	tagName: "li",
 	events: {
-		"click .name": "toggle",
+		"click .name, .icon.status, .icon.type": "toggle",
 		"click .actions .new-folder": "newFolder",
 		"click .actions .edit": "edit",
 		"click .actions .delete": "delete",
