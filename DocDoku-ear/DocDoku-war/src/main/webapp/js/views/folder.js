@@ -150,8 +150,12 @@ FolderNewView = Backbone.View.extend({
 		this.remove();
 		if (this.parent.isOpen) this.parent.open();
 	},
-	error: function () {
-		console.error("error");
+	error: function (model, error) {
+		if (error.responseText) {
+			alert(error.responseText);
+		} else {
+			console.error(error);
+		}
 	},
 	cancel: function () {
 		$(this.el).modal("hide");
@@ -207,8 +211,12 @@ FolderEditView = Backbone.View.extend({
 		$(this.el).modal("hide");
 		this.remove();
 	},
-	error: function () {
-		console.error("error");
+	error: function (model, error) {
+		if (error.responseText) {
+			alert(error.responseText);
+		} else {
+			console.error(error);
+		}
 	},
 	cancel: function () {
 		$(this.el).modal("hide");
