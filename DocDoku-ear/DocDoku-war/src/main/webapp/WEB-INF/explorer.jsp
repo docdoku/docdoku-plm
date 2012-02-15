@@ -6,6 +6,7 @@
     <fmt:setBundle basename="com.docdoku.server.localization.explorer_resource"/>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
 
@@ -24,6 +25,7 @@
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function () {
@@ -51,7 +53,7 @@
 					<h1 class="nav-header">Autres</h1>
 				</ul>
 			</nav>
-			<div class="content span8 well">
+			<div class="content span8">
 			</div>
         </div>
 		<script id="folder-tpl" type="text/html">
@@ -123,6 +125,32 @@
 					<button class="btn cancel">Annuler</button>
 				</div>
 			</div>
+		</script>
+		<script id="document-list-tpl" type="text/html">
+			<thead>
+				<tr>
+					<th>Référence</th>
+					<th>Version</th>
+					<th>Itération</th>
+					<th>Type</th>
+					<th>Titre</th>
+					<th>Auteur</th>
+					<th>Date de Modification</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#items}}
+				<tr>
+					<td>{{id}}</td>
+					<td>{{version}}</td>
+					<td>{{lastIterationNumber}}</td>
+					<td>{{type}}</td>
+					<td>{{title}}</td>
+					<td>{{authorName}}</td>
+					<td>{{lastIterationDate}}</td>
+				</tr>
+				{{/items}}
+			</tbody>
 		</script>
     </body>
 </html>

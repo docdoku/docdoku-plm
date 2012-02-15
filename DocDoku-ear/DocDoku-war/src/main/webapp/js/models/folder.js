@@ -1,6 +1,8 @@
 var Folder = Backbone.Model.extend({
 	path: function() {
-		return this.get("completePath").replace(/^[^\/]*\//g, '');
+		var path = this.get("completePath").split("/");
+		path.shift();
+		return path.join("/");
 	}
 });
 // Folder.urlRoot getter an setter
@@ -26,4 +28,16 @@ Folder.prototype.__defineGetter__("folders", function() {
 }); 
 Folder.prototype.__defineSetter__("folders", function(value) {
 	this._folders = value;
+}); 
+// Folder.documents getter an setter
+Folder.prototype.__defineGetter__("documents", function() {
+	if (!this._documents) {
+		this._documents = new DocumentList();
+		this._documents.url = "/api/documents/" + app.workspaceId + "?path=" + this.path();
+	}
+	console.debug(this._documents.url);
+	return this._documents;
+}); 
+Folder.prototype.__defineSetter__("documents", function(value) {
+	this._documents = value
 }); 
