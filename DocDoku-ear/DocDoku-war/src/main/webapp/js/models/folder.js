@@ -35,7 +35,6 @@ Folder.prototype.__defineGetter__("documents", function() {
 		this._documents = new DocumentList();
 		this._documents.url = "/api/documents/" + app.workspaceId + "?path=" + this.path();
 	}
-	console.debug(this._documents.url);
 	return this._documents;
 }); 
 Folder.prototype.__defineSetter__("documents", function(value) {

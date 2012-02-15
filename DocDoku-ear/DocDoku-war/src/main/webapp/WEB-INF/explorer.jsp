@@ -127,30 +127,37 @@
 			</div>
 		</script>
 		<script id="document-list-tpl" type="text/html">
-			<thead>
-				<tr>
-					<th>Référence</th>
-					<th>Version</th>
-					<th>Itération</th>
-					<th>Type</th>
-					<th>Titre</th>
-					<th>Auteur</th>
-					<th>Date de Modification</th>
-				</tr>
-			</thead>
-			<tbody>
-				{{#items}}
-				<tr>
-					<td>{{id}}</td>
-					<td>{{version}}</td>
-					<td>{{lastIterationNumber}}</td>
-					<td>{{type}}</td>
-					<td>{{title}}</td>
-					<td>{{authorName}}</td>
-					<td>{{lastIterationDate}}</td>
-				</tr>
-				{{/items}}
-			</tbody>
+			<div class="actions">
+				<button class="btn delete" title="Supprimer"></button>
+			</div>
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Référence</th>
+						<th>Version</th>
+						<th>Itération</th>
+						<th>Type</th>
+						<th>Titre</th>
+						<th>Auteur</th>
+						<th>Date de Modification</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#items}}
+					<tr>
+						<td><input value="{{id}}" for="document-list-actions" type="checkbox" /></td>
+						<td>{{id}}</td>
+						<td>{{version}}</td>
+						<td>{{lastIterationNumber}}</td>
+						<td>{{type}}</td>
+						<td>{{title}}</td>
+						<td>{{authorName}}</td>
+						<td>{{lastIterationDate}}</td>
+					</tr>
+					{{/items}}
+				</tbody>
+			</table>
 		</script>
     </body>
 </html>
