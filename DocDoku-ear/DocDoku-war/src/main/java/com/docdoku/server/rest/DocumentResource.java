@@ -101,13 +101,13 @@ public class DocumentResource {
     @GET
     @Path("{workspaceId}/checkedout")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
+    public DocumentMasterLightDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
         try {
             DocumentMaster[] checkedOutdocMs = commandService.getCheckedOutDocumentMasters(workspaceId);
-            DocumentMasterDTO[] checkedOutdocMsDTO = new DocumentMasterDTO[checkedOutdocMs.length];
+            DocumentMasterLightDTO[] checkedOutdocMsDTO = new DocumentMasterLightDTO[checkedOutdocMs.length];
 
             for (int i = 0; i < checkedOutdocMs.length; i++) {
-                checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
+                checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterLightDTO.class);
             }
 
             return checkedOutdocMsDTO;
@@ -120,10 +120,10 @@ public class DocumentResource {
     @GET
     @Path("{workspaceId}/{docMsId}/{docMsVersion}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) throws ApplicationException {
+    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version){
         try {
             DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
-
+            
             return mapper.map(docM, DocumentMasterDTO.class);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -138,67 +138,65 @@ public class DocumentResource {
      * @return an HTTP response with content of the updated or created resource.
      */
     
-//    @PUT
-//    @Consumes("application/json;charset=UTF-8")    
-//    @Path("{completePath:.*}")
-//    public void putJson(@PathParam("completePath") String completePath, DocumentMasterDTO docMsDTO) throws ApplicationException {
-//        String pDocMID = docMsDTO.getId();
-//        String pTitle = docMsDTO.getTitle();
-//        String pDescription = docMsDTO.getDescription();
-//        String pParentFolder = Tools.stripTrailingSlash(completePath);
-//
-//        /*
-//         * Null values For test purpose only
-//         */
-//        String pWorkflowModelId = null;
-//        String pDocMTemplateId = null;
-//        ACLDTO acl = null;
-//
-//        try {
-//            ACLUserEntry[] userEntries = null;
-//            ACLUserGroupEntry[] userGroupEntries = null;
-//            if (acl != null) {
-//                String workspaceId = Folder.parseWorkspaceId(pParentFolder);
-//                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-//                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-//                int i = 0;
-//                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
-//                    userEntries[i] = new ACLUserEntry();
-//                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
-//                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-//                }
-//                i = 0;
-//                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
-//                    userGroupEntries[i] = new ACLUserGroupEntry();
-//                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-//                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-//                }
-//            }
-//
-//            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-//
-//        } catch (com.docdoku.core.services.ApplicationException ex) {
-//            throw new ApplicationException(ex.getMessage());
-//        }
-//    }
-//
-//    /**
-//     * DELETE method for deleting an instance of DocumentResource
-//     *
-//     * @param parent folder path
-//     * @return the array of the documents that have also been deleted
-//     */
-//    @DELETE
-//    @Path("{workspaceId}/{docId}/{docVersion}")
-//    @Produces("application/json;charset=UTF-8")
-//    public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
-//        try {
-//            commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, docId, docVersion));
-//            return Response.status(Response.Status.OK).build();
-//        } catch (com.docdoku.core.services.ApplicationException ex) {
-//            throw new RESTException(ex.toString(), ex.getMessage());
-//        }
-//    }
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}")
+    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentMasterDTO docMsDTO){
+               
+        String pDocMID = docMsDTO.getId();
+        String pTitle = docMsDTO.getTitle();
+        String pDescription = docMsDTO.getDescription();
+        String pPath = docMsDTO.getPath();
+        String pParentFolder = Tools.stripTrailingSlash(workspaceId+"/"+pPath);
+        ACLDTO acl = null;
+        String pWorkflowModelId = null;
+        String pDocMTemplateId = docMsDTO.getType();
+
+
+        try {
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] userGroupEntries = null;
+            if (acl != null) {
+                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+                int i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries[i] = new ACLUserEntry();
+                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
+                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+                i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    userGroupEntries[i] = new ACLUserGroupEntry();
+                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
+                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+            }
+
+            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    /**
+     * DELETE method for deleting an instance of DocumentResource
+     *
+     * @param parent folder path
+     * @return the array of the documents that have also been deleted
+     */
+    @DELETE
+    @Path("{workspaceId}/{docId}/{docVersion}")
+    @Produces("application/json;charset=UTF-8")
+    public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+        try {
+            commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, docId, docVersion));
+            return Response.status(Response.Status.OK).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
 
     /*
      *

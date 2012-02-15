@@ -45,6 +45,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private boolean stateSubscription;
     private List<DocumentDTO> documentIterations;
     private WorkflowDTO workflow;
+    private String path;
 
     public DocumentMasterDTO() {
     }
@@ -152,10 +153,6 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         this.workspaceId = workspaceID;
     }
 
-    public void setID(String id) {
-        this.id = id;
-    }
-
     public void setTags(String[] tags) {
         this.tags = tags;
     }
@@ -200,6 +197,15 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     public void setStateSubscription(boolean stateSubscription) {
         this.stateSubscription = stateSubscription;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
 
     @Override
     public String toString() {

@@ -12,4 +12,12 @@
                   <b>attachedFiles</b>
               </field>
           </mapping>
+          <mapping>
+              <class-a>com.docdoku.core.workflow.Workflow</class-a>
+              <class-b>com.docdoku.server.rest.dto.WorkflowDTO</class-b>
+              <field custom-converter="com.docdoku.server.rest.util.VectorToListDozerConverter">
+                  <a>activities</a>
+                  <b>activities</b>
+              </field>
+          </mapping>           
 </mappings>

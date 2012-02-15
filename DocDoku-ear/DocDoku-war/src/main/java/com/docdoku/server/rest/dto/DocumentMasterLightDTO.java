@@ -143,8 +143,8 @@ public class DocumentMasterLightDTO implements Serializable, Comparable<Document
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
- 
-    
+
+     
     @Override
     public int compareTo(DocumentMasterLightDTO pDocM) {
         int wksComp = workspaceId.compareTo(pDocM.workspaceId);
