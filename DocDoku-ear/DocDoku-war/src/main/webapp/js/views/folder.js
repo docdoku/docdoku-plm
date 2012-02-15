@@ -232,7 +232,7 @@ FolderEditView = Backbone.View.extend({
 		$(this.el).modal("hide");
 		this.remove();
 		return false;
-	}
+	},
 	comparator: function (folderA, folderB) {
 		nameA = folderA.get("name");
 		nameB = folderB.get("name");
@@ -241,5 +241,5 @@ FolderEditView = Backbone.View.extend({
 		if (folderA.isHome) return -1;
 		if (nameA == nameB) return 0;
 		return (nameA < nameB) ? -1 : 1;
-	},
+	}
 });
