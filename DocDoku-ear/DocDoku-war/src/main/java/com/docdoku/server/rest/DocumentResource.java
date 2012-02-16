@@ -148,9 +148,11 @@ public class DocumentResource {
         String pDescription = docMsDTO.getDescription();
         String pPath = docMsDTO.getPath();
         String pParentFolder = Tools.stripTrailingSlash(workspaceId+"/"+pPath);
+        
+        /* Null value for test purpose only */
         ACLDTO acl = null;
         String pWorkflowModelId = null;
-        String pDocMTemplateId = docMsDTO.getType();
+        String pDocMTemplateId = null;
 
 
         try {
