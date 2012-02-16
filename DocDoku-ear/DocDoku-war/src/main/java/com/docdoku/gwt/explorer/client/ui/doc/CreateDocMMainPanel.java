@@ -23,8 +23,8 @@ package com.docdoku.gwt.explorer.client.ui.doc;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
-import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
-import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
+import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 

@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.data;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.client.ui.widget.table.TableModel;
 import com.docdoku.gwt.client.ui.widget.table.TableModelIndex;
-import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 
 /**
  *

@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

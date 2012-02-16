@@ -18,29 +18,25 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
+import com.docdoku.server.rest.dto.ActivityModelDTO;
 import java.io.Serializable;
 
-public class SerialActivityModelDTO extends ActivityModelDTO implements Serializable {
 
-    public SerialActivityModelDTO() {
-        super();
+public class ParallelActivityModelDTO extends ActivityModelDTO implements Serializable {
+
+    private int tasksToComplete;
+
+    public ParallelActivityModelDTO() {
+
     }
 
-    public void moveUpTask(int index) {
-        if (index > 0) {
-            TaskModelDTO t = taskModels.get(index);
-            this.taskModels.remove(index);
-            this.taskModels.add(index - 1, t);
-        }
+    public int getTasksToComplete() {
+        return tasksToComplete;
     }
 
-    public void moveDownTask(int index) {
-        if (index < taskModels.size() - 1) {
-            TaskModelDTO t = taskModels.get(index);
-            this.taskModels.remove(index);
-            this.taskModels.add(index + 1, t);
-        }
+    public void setTasksToComplete(int tasksToComplete) {
+        this.tasksToComplete = tasksToComplete;
     }
 }

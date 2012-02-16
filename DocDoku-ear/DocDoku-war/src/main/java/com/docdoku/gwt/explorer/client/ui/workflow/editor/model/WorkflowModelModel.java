@@ -21,10 +21,10 @@
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
-import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
-import com.docdoku.gwt.explorer.shared.ParallelActivityModelDTO;
-import com.docdoku.gwt.explorer.shared.SerialActivityModelDTO;
-import com.docdoku.gwt.explorer.shared.WorkflowModelDTO;
+import com.docdoku.server.rest.dto.ActivityModelDTO;
+import com.docdoku.server.rest.dto.ParallelActivityModelDTO;
+import com.docdoku.server.rest.dto.SerialActivityModelDTO;
+import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

@@ -20,6 +20,8 @@
 
 package com.docdoku.gwt.explorer.client.ui;
 
+import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.DocumentDTO;
 import com.docdoku.gwt.explorer.client.actions.Action;

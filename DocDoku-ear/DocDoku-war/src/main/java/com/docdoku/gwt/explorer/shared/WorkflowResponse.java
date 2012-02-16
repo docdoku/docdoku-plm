@@ -20,6 +20,8 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.WorkflowModelDTO;
+
 /**
  *
  * @author Emmanuel Nhan {@literal <emmanuel.nhan@insa-lyon.fr>}

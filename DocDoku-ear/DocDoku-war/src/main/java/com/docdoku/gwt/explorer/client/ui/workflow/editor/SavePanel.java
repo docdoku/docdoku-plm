@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.ui.workflow.editor;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
-import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
+import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;

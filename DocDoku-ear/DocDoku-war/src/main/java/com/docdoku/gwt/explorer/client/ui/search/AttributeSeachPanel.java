@@ -27,7 +27,7 @@ import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.AttributesTypesList;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
 import com.docdoku.gwt.explorer.shared.InstanceAttributeTemplateDTO;
-import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.gwt.explorer.shared.SearchQueryDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;

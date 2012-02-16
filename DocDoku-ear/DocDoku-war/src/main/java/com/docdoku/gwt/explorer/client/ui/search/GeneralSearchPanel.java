@@ -22,7 +22,7 @@ package com.docdoku.gwt.explorer.client.ui.search;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.gwt.explorer.shared.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;

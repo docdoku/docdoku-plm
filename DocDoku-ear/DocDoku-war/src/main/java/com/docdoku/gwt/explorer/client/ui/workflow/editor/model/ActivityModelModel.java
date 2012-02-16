@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import com.docdoku.gwt.explorer.shared.ActivityModelDTO;
+import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.gwt.explorer.shared.TaskModelDTO;
 import com.google.gwt.event.shared.HandlerRegistration;
 import java.util.ArrayList;

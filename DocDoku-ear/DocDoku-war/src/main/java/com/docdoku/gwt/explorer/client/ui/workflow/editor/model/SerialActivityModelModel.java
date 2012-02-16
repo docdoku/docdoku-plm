@@ -20,7 +20,7 @@
 
 package com.docdoku.gwt.explorer.client.ui.workflow.editor.model;
 
-import com.docdoku.gwt.explorer.shared.SerialActivityModelDTO;
+import com.docdoku.server.rest.dto.SerialActivityModelDTO;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
