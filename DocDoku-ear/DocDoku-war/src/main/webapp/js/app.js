@@ -20,5 +20,11 @@ var app = {
 	},
 	dirname: function (path) {
 		return path.replace(/^.*\//g, '');
+	},
+	// Returns the rest of the given path
+	restpath: function(completePath) {
+		var path = completePath.split("/");
+		path.shift();
+		return path.join("/");
 	}
 }

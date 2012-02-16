@@ -70,6 +70,9 @@ body {
 					.new-folder .icon {
 						background-image: url("../images/folder-new.png");
 					}
+					.new-document .icon {
+						background-image: url("../images/document-new.png");
+					}
 					.edit .icon {
 						background-image: url("../images/edit.png");
 					}
@@ -110,10 +113,16 @@ body {
 
 #workspace .content {
 	.actions {
-		.delete {
+		.btn {
 			height: 32px;
 			width: 32px;
-			background: url("../images/edit-delete.png") center no-repeat;
+			background: center no-repeat;
+		}
+		.new {
+			background-image: url("../images/document-new.png");
+		}
+		.delete {
+			background-image: url("../images/edit-delete.png");
 		}
 	}
 }

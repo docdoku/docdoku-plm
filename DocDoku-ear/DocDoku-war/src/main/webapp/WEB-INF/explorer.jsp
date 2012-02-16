@@ -79,6 +79,10 @@
 						<li class="delete">
 							<a href="#"><span class="icon"></span>Supprimer</a>
 						</li>
+						<li class="divider"></li>
+						<li class="new-document">
+							<a href="#"><span class="icon"></span>Nouveau document</a>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -128,6 +132,7 @@
 		</script>
 		<script id="document-list-tpl" type="text/html">
 			<div class="actions">
+				<button class="btn new" title="Nouveau Document"></button>
 				<button class="btn delete" title="Supprimer"></button>
 			</div>
 			<table class="table table-striped table-condensed">
@@ -158,6 +163,33 @@
 					{{/items}}
 				</tbody>
 			</table>
+		</script>
+		<script id="document-new-tpl" type="text/html">
+			<div class="modal new-document">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>Nouveau Dossier</h3>
+				</div>
+				<div class="modal-body">
+					<form id="new-document-form">
+						<label>Référence&nbsp;:</label>
+						<input name="id" class="id" type="text" value=""
+							placeholder="Référence du document" />
+						<label>Titre&nbsp;:</label>
+						<input name="title" class="title" type="text" value=""
+							placeholder="Titre du document" />
+						<label>Description&nbsp;:</label>
+						<textarea name="description" class="description"
+							placeholder="Description du document"></textarea>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn create btn-primary" for="new-document-form">
+						Créer
+					</button>
+					<button class="btn cancel">Annuler</button>
+				</div>
+			</div>
 		</script>
     </body>
 </html>

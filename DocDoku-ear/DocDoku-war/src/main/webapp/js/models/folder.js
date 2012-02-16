@@ -1,8 +1,6 @@
 var Folder = Backbone.Model.extend({
 	path: function() {
-		var path = this.get("completePath").split("/");
-		path.shift();
-		return path.join("/");
+		return app.restpath(this.get("completePath"));
 	}
 });
 // Folder.urlRoot getter an setter

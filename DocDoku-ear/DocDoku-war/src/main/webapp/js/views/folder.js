@@ -3,6 +3,7 @@ var FolderView = Backbone.View.extend({
 	events: {
 		"click .name, .icon.status, .icon.type": "toggle",
 		"click .actions .new-folder": "newFolder",
+		"click .actions .new-document": "newDocument",
 		"click .actions .edit": "edit",
 		"click .actions .delete": "delete",
 		"mouseleave .header": "mouseleave",
@@ -13,7 +14,8 @@ var FolderView = Backbone.View.extend({
 			"onFolderListReset", "createFolderView",
 			"open", "opened", "close", "toggle",
 			"mouseleave",
-			"newFolder", "edit", "delete");
+			"newFolder","newDocument",
+			"edit", "delete");
 		this.folderViews = [];
 		this.isOpen = false;
 		this.isHome = this.model.get("home");
@@ -90,6 +92,13 @@ var FolderView = Backbone.View.extend({
 	newFolder: function () {
 		newView = new FolderNewView({model: this.model});
 		newView.parent = this;
+		this.mouseleave();
+		newView.render();
+		return false;
+	},
+	newDocument: function () {
+		newView = new DocumentNewView({model: this.model});
+		this.mouseleave();
 		newView.render();
 		return false;
 	},
@@ -130,8 +139,6 @@ FolderNewView = Backbone.View.extend({
 		$(this.el).html(this.template({}));
 		$(this.el).modal("show");
 		$(this.el).find("input.name").first().focus();
-		// Hide the parent's actions menu to correct a display bug
-		this.parent.mouseleave();
 	},
 	create: function () {
 		var name = $(this.el).find("input.name").first().val();
