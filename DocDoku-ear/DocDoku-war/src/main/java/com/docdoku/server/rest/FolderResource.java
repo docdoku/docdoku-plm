@@ -88,12 +88,13 @@ public class FolderResource {
      * operation as an entity body (with its completePath attribute)
      * 
      */
-    @PUT
+    
+    @POST
     @Consumes("application/json;charset=UTF-8")
-    @Path("{completePath:.*}")
-    public void putJson(@PathParam("completePath") String completePath, FolderDTO folder) {
+    @Path("{completeParentFolderPath:.*}")
+    public void putJson(@PathParam("completeParentFolderPath") String completeParentFolderPath, FolderDTO folder) {
         try {
-            completePath = Tools.stripTrailingSlash(completePath);
+            String completePath = Tools.stripTrailingSlash(completeParentFolderPath+"/"+folder.getName());
             String newCompletePath = null;
             if(folder !=null)
                 newCompletePath=Tools.stripTrailingSlash(folder.getCompletePath());
