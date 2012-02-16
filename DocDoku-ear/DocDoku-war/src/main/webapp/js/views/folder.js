@@ -11,7 +11,6 @@ var FolderView = Backbone.View.extend({
 		_.bindAll(this,
 			"template", "render",
 			"onFolderListReset", "createFolderView",
-			"onDocumentListReset",
 			"open", "opened", "close", "toggle",
 			"mouseleave",
 			"newFolder", "edit", "delete");
@@ -20,7 +19,6 @@ var FolderView = Backbone.View.extend({
 		this.isHome = this.model.get("home");
 		this.render();
 		this.model.folders.bind("reset", this.onFolderListReset);
-		this.model.documents.bind("reset", this.onDocumentListReset);
 	},
 	onFolderListReset: function () {
 		_.each(this.folderViews, function(view) {
@@ -36,14 +34,6 @@ var FolderView = Backbone.View.extend({
 		this.folderViews.push(view);
 	},
 	onDocumentListReset: function () {
-		if (this.documentsView) {
-			console.debug(this.documentsView);
-			this.documentsView.remove();
-		}
-		this.documentsView = new DocumentListView({
-			collection: this.model.documents
-		});
-		$("#workspace .content").html(this.documentsView.el);
 	},
 	template: function(data) {
 		data.view_cid = this.cid;
@@ -84,7 +74,10 @@ var FolderView = Backbone.View.extend({
 		this.isOpen = false;
 	},
 	toggle : function () {
-		this.model.documents.fetch();
+		if (this.documentsView) this.documentsView.remove();
+		this.documentsView = new DocumentListView({model:this.model});
+		$("#workspace .content").html(this.documentsView.el);
+
 		$(this.el).hasClass("open") ? this.close() : this.open();
 		return false;
 	},

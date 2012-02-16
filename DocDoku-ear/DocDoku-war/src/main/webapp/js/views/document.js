@@ -8,9 +8,11 @@ var DocumentListView = Backbone.View.extend({
 		_.bindAll(this,
 			"template", "render",
 			"itemSelectClicked",
+			"itemDeleted",
 			"deleteClicked", "deleteItem");
 		this.selectedIds = [];
-		this.render();
+		this.model.documents.bind("reset", this.render);
+		this.model.documents.fetch();
 	},
 	template: function(data) {
 		return Mustache.render(
@@ -20,7 +22,7 @@ var DocumentListView = Backbone.View.extend({
 	},
 	render: function () {
 		data = {
-			items: this.collection.toJSON()
+			items: this.model.documents.toJSON()
 		}
 		_.each(data.items, function (item) {
 			// Format date
@@ -50,10 +52,26 @@ var DocumentListView = Backbone.View.extend({
 		return false;
 	},
 	deleteItem: function (modelId) {
-		var model = this.collection.get(modelId)
-		model.url = function () { // TODO: Ugly hack to remove
-			return "/api/documents/" + app.workspaceId + "/" + model.id;
-		};
-		model.destroy();
+		var model = this.model.documents.get(modelId);
+		if (model.checkOutDate) {
+			// Do not try to delete reserved documents
+			this.selectedIds.pop(_.indexOf(this.selectedIds, modelId));
+		} else {
+			var revision = new DocumentRevision({
+				id: model.get("version")
+			});
+			revision.urlRoot = "/api/documents/" + app.workspaceId + "/" + model.id;
+			revision.documentId = modelId;
+			revision.bind("destroy", this.itemDeleted);
+			revision.destroy();
+		}
+	},
+	itemDeleted: function (model) {
+		console.debug("itemDeleted", model);
+		this.selectedIds.pop(_.indexOf(this.selectedIds, model.documentId));
+		// Refresh when all deletion are done
+		if (this.selectedIds.length == 0) {
+			this.model.documents.fetch();
+		}
 	}
 });
