@@ -34,6 +34,7 @@ import com.docdoku.core.services.UserNotActiveException;
 import com.docdoku.core.services.UserNotFoundException;
 import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentCreationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.DocumentMasterLightDTO;
 import com.docdoku.server.rest.exceptions.ApplicationException;
@@ -143,14 +144,24 @@ public class DocumentResource {
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}")
-    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentMasterDTO docMsDTO, @QueryParam("workflowModelId") String pWorkflowModelId , @QueryParam("documentMasterTemplateId") String pDocMTemplateId){
+    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO){
                       
-        String pDocMID = docMsDTO.getId();
-        String pTitle = docMsDTO.getTitle();
-        String pDescription = docMsDTO.getDescription();
-        String pPath = docMsDTO.getPath();
+        String pDocMID = docCreationDTO.getId();
+        String pTitle = docCreationDTO.getTitle();
+        String pDescription = docCreationDTO.getDescription();
+        String pPath = docCreationDTO.getParentFolderPath();
         String pParentFolder = Tools.stripTrailingSlash(workspaceId+"/"+pPath);
+        String pWorkflowModelId = null;
+        String pDocMTemplateId = null;
         
+        if(docCreationDTO.getWorkflowModel()!=null){
+            pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
+        }
+        
+        if(docCreationDTO.getDocumentMsTemplate()!=null){
+            pDocMTemplateId = docCreationDTO.getDocumentMsTemplate().getId();
+        }
+               
         /* Null value for test purpose only */
         ACLDTO acl = null;
 
