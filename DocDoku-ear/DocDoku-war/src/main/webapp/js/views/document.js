@@ -62,12 +62,10 @@ var DocumentListView = Backbone.View.extend({
 			});
 			revision.urlRoot = "/api/documents/" + app.workspaceId + "/" + model.id;
 			revision.documentId = modelId;
-			revision.bind("destroy", this.itemDeleted);
-			revision.destroy();
+			revision.destroy({success: this.itemDeleted});
 		}
 	},
 	itemDeleted: function (model) {
-		console.debug("itemDeleted", model);
 		this.selectedIds.pop(_.indexOf(this.selectedIds, model.documentId));
 		// Refresh when all deletion are done
 		if (this.selectedIds.length == 0) {
