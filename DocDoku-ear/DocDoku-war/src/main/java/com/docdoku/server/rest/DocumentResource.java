@@ -24,13 +24,15 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.DocumentMasterLightDTO;
@@ -141,8 +143,8 @@ public class DocumentResource {
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}")
-    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentMasterDTO docMsDTO){
-               
+    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentMasterDTO docMsDTO, @QueryParam("workflowModelId") String pWorkflowModelId , @QueryParam("documentMasterTemplateId") String pDocMTemplateId){
+                      
         String pDocMID = docMsDTO.getId();
         String pTitle = docMsDTO.getTitle();
         String pDescription = docMsDTO.getDescription();
@@ -151,10 +153,8 @@ public class DocumentResource {
         
         /* Null value for test purpose only */
         ACLDTO acl = null;
-        String pWorkflowModelId = null;
-        String pDocMTemplateId = null;
 
-
+        
         try {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] userGroupEntries = null;
@@ -175,7 +175,7 @@ public class DocumentResource {
                 }
             }
 
-            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);           
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
