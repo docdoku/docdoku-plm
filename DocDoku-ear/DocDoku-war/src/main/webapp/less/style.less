@@ -10,9 +10,14 @@ body {
 	.nav-header {
 		clear: both;
 	}
+	nav:hover {
+	}
 }
 
 #folders {
+	overflow: hidden;
+	max-height: 370px;
+	max-width: 370px;
 	list-style-type: none;
 	.icon {
 		background: no-repeat center;
@@ -109,6 +114,11 @@ body {
 	.folder.home > .header > .type {
 		background-image: url("../images/user-home.png");
 	}
+}
+#folders:hover {
+	overflow: visible;
+	max-height: none;
+	max-width: none;
 }
 
 #workspace .content {

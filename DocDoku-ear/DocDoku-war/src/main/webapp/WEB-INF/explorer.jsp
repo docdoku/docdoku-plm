@@ -46,11 +46,16 @@
 						<ul id="folders">
 						</ul>
 					</li>
+					<li class="nav-header">Références</li>
 					<li>
+						<a href="#workflows">Workflows</a>
+						<a href="#models">Modèles</a>
 					</li>
-				</li>
-				<li>
-					<h1 class="nav-header">Autres</h1>
+					<li class="nav-header">Liens</li>
+					<li>
+						<a href="#checkouts">Reservés</a>
+						<a href="#tasks">Tâches</a>
+					</li>
 				</ul>
 			</nav>
 			<div class="content span8">
