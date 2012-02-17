@@ -97,9 +97,9 @@ public class FolderResource {
             
             String completePath = Tools.stripTrailingSlash(completeFolderPath);
             int lastSlash = completePath.lastIndexOf('/');
-            String parentFolder = completePath.substring(0, lastSlash);
+            String destParentFolder = completePath.substring(0, lastSlash);
             String folderName = folder.getName();
-            commandService.moveFolder(completePath, parentFolder, folderName);            
+            commandService.moveFolder(completePath, destParentFolder, folderName);            
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
