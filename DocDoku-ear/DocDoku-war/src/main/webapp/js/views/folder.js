@@ -143,14 +143,14 @@ FolderNewView = Backbone.View.extend({
 	create: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
-			newFolder = new Folder({
-				id: name,
+			console.debug(this.model.folders.url);
+			this.model.folders.create({
+				name: name,
 				completePath: this.model.get("completePath") + "/" + name
-			})
-			newFolder.url = this.model.url() + "/" + name;
-			newFolder.bind("sync", this.success);
-			newFolder.bind("error", this.error);
-			newFolder.save();
+			}, {
+				success: this.success,
+				error: this.error
+			});
 		}
 		return false;
 	},
