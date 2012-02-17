@@ -29,10 +29,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ICommandLocal;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.*;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentCreationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
@@ -77,7 +74,6 @@ public class DocumentResource {
      *
      * @return an instance of com.docdoku.core.document.DocumentMaster
      */
-    
     @GET
     @Path("{workspaceId}")
     @Produces("application/json;charset=UTF-8")
@@ -93,7 +89,7 @@ public class DocumentResource {
             }
 
             //TODO if label and path not null            
-            
+
             return docMsResultDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -123,10 +119,10 @@ public class DocumentResource {
     @GET
     @Path("{workspaceId}/{docMsId}/{docMsVersion}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version){
+    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) {
         try {
             DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
-            
+
             return mapper.map(docM, DocumentMasterDTO.class);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -140,32 +136,97 @@ public class DocumentResource {
      * @param content representation for the resource
      * @return an HTTP response with content of the updated or created resource.
      */
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}/{docId}/{docVersion}/checkin")
+    public Response checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+        try {
+            commandService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
+            return Response.ok().build();
+            
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}/{docId}/{docVersion}/checkout")
+    public Response checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+        try {
+            commandService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}/{docId}/{docVersion}/undocheckout")
+    public Response undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+        try {
+            commandService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
     
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}/{docId}/{docVersion}/move")
+    public Response moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion, DocumentCreationDTO docCreationDTO) {
+        try {
+
+            String parentFolderPath = docCreationDTO.getPath();
+            String newCompletePath = Tools.stripTrailingSlash(workspaceId + "/" + parentFolderPath);
+            System.out.println("newCompletePath : " + newCompletePath);
+            
+            DocumentMasterKey docMsKey = new DocumentMasterKey(workspaceId, docId, docVersion);
+            commandService.moveDocumentMaster(newCompletePath, docMsKey);
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }    
+
+    /**
+     *
+     * POST method
+     *
+     */
+
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}")
-    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO){
-                      
+    public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO) {
+
         String pDocMID = docCreationDTO.getId();
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
-        String pPath = docCreationDTO.getParentFolderPath();
-        String pParentFolder = Tools.stripTrailingSlash(workspaceId+"/"+pPath);
+        String pPath = docCreationDTO.getPath();
+        String pParentFolder = Tools.stripTrailingSlash(workspaceId + "/" + pPath);
         String pWorkflowModelId = null;
         String pDocMTemplateId = null;
-        
-        if(docCreationDTO.getWorkflowModel()!=null){
+
+        if (docCreationDTO.getWorkflowModel() != null) {
             pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
         }
-        
-        if(docCreationDTO.getDocumentMsTemplate()!=null){
+
+        if (docCreationDTO.getDocumentMsTemplate() != null) {
             pDocMTemplateId = docCreationDTO.getDocumentMsTemplate().getId();
         }
-               
-        /* Null value for test purpose only */
+
+        /*
+         * Null value for test purpose only
+         */
         ACLDTO acl = null;
 
-        
+
         try {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] userGroupEntries = null;
@@ -186,7 +247,7 @@ public class DocumentResource {
                 }
             }
 
-            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);           
+            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
