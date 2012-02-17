@@ -89,27 +89,31 @@ public class FolderResource {
      * 
      */
     
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{completeFolderPath:.*}")
+    public void putJson(@PathParam("completeFolderPath") String completeFolderPath, FolderDTO folder) {
+        try {
+            
+            String completePath = Tools.stripTrailingSlash(completeFolderPath);
+            int lastSlash = completePath.lastIndexOf('/');
+            String parentFolder = completePath.substring(0, lastSlash);
+            String folderName = folder.getName();
+            commandService.moveFolder(completePath, parentFolder, folderName);            
+            
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }    
+    
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Path("{completeParentFolderPath:.*}")
-    public void putJson(@PathParam("completeParentFolderPath") String completeParentFolderPath, FolderDTO folder) {
+    public void postJson(@PathParam("completeParentFolderPath") String completeParentFolderPath, FolderDTO folder) {
         try {
-            String completePath = Tools.stripTrailingSlash(completeParentFolderPath+"/"+folder.getName());
-            String newCompletePath = null;
-            if(folder !=null)
-                newCompletePath=Tools.stripTrailingSlash(folder.getCompletePath());
-            
-            if(newCompletePath==null || newCompletePath.equals(completePath)){
-                int lastSlash = completePath.lastIndexOf('/');
-                String parentFolder = completePath.substring(0, lastSlash);
-                String folderName = completePath.substring(lastSlash + 1, completePath.length());
-                commandService.createFolder(parentFolder, folderName);
-            }else{
-                int lastSlash = newCompletePath.lastIndexOf('/');
-                String parentFolder = newCompletePath.substring(0, lastSlash);
-                String folderName = newCompletePath.substring(lastSlash + 1, newCompletePath.length());
-                commandService.moveFolder(completePath, parentFolder, folderName);
-            }      
+
+            String folderName = folder.getName();
+            commandService.createFolder(completeParentFolderPath, folderName);     
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
