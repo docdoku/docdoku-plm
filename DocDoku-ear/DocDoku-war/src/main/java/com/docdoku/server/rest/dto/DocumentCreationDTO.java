@@ -36,7 +36,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     private String description;
     private WorkflowModelDTO workflowModel;
     private DocumentMasterTemplateDTO documentMsTemplate;
-    private String parentFolderPath;
+    private String path;
 
     public DocumentCreationDTO() {
     }
@@ -109,14 +109,13 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         this.workflowModel = workflowModel;
     }
 
-    public String getParentFolderPath() {
-        return parentFolderPath;
+    public String getPath() {
+        return path;
     }
 
-    public void setParentFolderPath(String parentFolderPath) {
-        this.parentFolderPath = parentFolderPath;
+    public void setPath(String path) {
+        this.path = path;
     }
-
 
     @Override
     public String toString() {
