@@ -1,5 +1,6 @@
-var DocumentListView = Backbone.View.extend({
+var DocumentListView = BaseView.extend({
 	tagName: "div",
+	template_el: "#document-list-tpl",
 	events: {
 		"click tbody tr input": "itemSelectClicked",
 		"click .actions .new": "new",
@@ -14,12 +15,6 @@ var DocumentListView = Backbone.View.extend({
 		this.selectedIds = [];
 		this.model.documents.bind("reset", this.render);
 		this.model.documents.fetch({data: {path:this.model.path()}});
-	},
-	template: function(data) {
-		return Mustache.render(
-			$("#document-list-tpl").html(),
-			data
-		);
 	},
 	render: function () {
 		data = {

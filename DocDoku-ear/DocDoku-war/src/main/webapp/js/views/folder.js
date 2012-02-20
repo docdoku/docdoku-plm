@@ -1,5 +1,6 @@
-var FolderView = Backbone.View.extend({
+var FolderView = BaseView.extend({
 	tagName: "li",
+	template_el: "#folder-tpl",
 	events: {
 		"click .name, .icon.status, .icon.type": "toggle",
 		"click .actions .new-folder": "newFolder",
@@ -34,15 +35,6 @@ var FolderView = Backbone.View.extend({
 		view = new FolderView({model:folder});
 		$(this.el).children(".subfolders").first().append(view.el);
 		this.folderViews.push(view);
-	},
-	onDocumentListReset: function () {
-	},
-	template: function(data) {
-		data.view_cid = this.cid;
-		return Mustache.render(
-			$("#folder-tpl").html(),
-			data
-		);
 	},
 	render: function () {
 		$(this.el).html(this.template(this.model.toJSON()));
@@ -116,8 +108,9 @@ var FolderView = Backbone.View.extend({
 		return false;
 	}
 });
-FolderNewView = Backbone.View.extend({
+FolderNewView = BaseView.extend({
 	tagName: "div",
+	template_el: "#folder-new-tpl",
 	events: {
 		"submit form": "create",
 		"click .create": "create",
@@ -128,12 +121,6 @@ FolderNewView = Backbone.View.extend({
 			"template", "render",
 			"create", "cancel",
 			"success", "error");
-	},
-	template: function(data) {
-		return Mustache.render(
-			$("#folder-new-tpl").html(),
-			data
-		);
 	},
 	render: function () {
 		$(this.el).html(this.template({}));
@@ -172,8 +159,9 @@ FolderNewView = Backbone.View.extend({
 		return false;
 	}
 });
-FolderEditView = Backbone.View.extend({
+FolderEditView = BaseView.extend({
 	tagName: "div",
+	template_el: "#folder-edit-tpl",
 	events: {
 		"submit form": "save",
 		"click .save": "save",
@@ -184,12 +172,6 @@ FolderEditView = Backbone.View.extend({
 			"template", "render",
 			"save", "cancel",
 			"success", "error");
-	},
-	template: function(data) {
-		return Mustache.render(
-			$("#folder-edit-tpl").html(),
-			data
-		);
 	},
 	render: function () {
 		$(this.el).html(this.template({}));
