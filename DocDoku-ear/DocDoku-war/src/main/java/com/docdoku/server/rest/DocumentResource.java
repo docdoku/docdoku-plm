@@ -81,6 +81,7 @@ public class DocumentResource {
     @Path("{workspaceId}")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterLightDTO[] getJson(@PathParam("workspaceId") String workspaceId, @QueryParam("tag") String label, @QueryParam("path") String path) {
+        System.out.println(" GET documentMaster listing in workspace");
         try {
             DocumentMasterLightDTO[] docMsResultDTO = null;
             if (label != null) {
@@ -104,6 +105,8 @@ public class DocumentResource {
     @Path("{workspaceId}/checkedout")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterLightDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
+        
+        System.out.println(" GET checked out documentMaster");
         try {
             DocumentMaster[] checkedOutdocMs = commandService.getCheckedOutDocumentMasters(workspaceId);
             DocumentMasterLightDTO[] checkedOutdocMsDTO = new DocumentMasterLightDTO[checkedOutdocMs.length];
@@ -120,9 +123,18 @@ public class DocumentResource {
     }
 
     @GET
-    @Path("{workspaceId}/{docMsId}-{docMsVersion}")
+    @Path("{workspaceId}/{docKey}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) {
+    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        
+            System.out.println(" GET specific documentMaster");
+            
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash+1, docKey.length());            
+            System.out.println("docId : "+id);
+            System.out.println("docVersion : "+version);
+            
         try {
             DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
 
@@ -141,9 +153,14 @@ public class DocumentResource {
      */
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}-{docVersion}/checkin")
-    public Response checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+    @Path("{workspaceId}/{docKey}/checkin")
+    public Response checkInDocument(@PathParam("workspaceId") String workspaceId,@PathParam("docKey") String docKey) {
         try {
+            
+            int lastDash = docKey.lastIndexOf('-');
+            String docId = docKey.substring(0, lastDash);
+            String docVersion = docKey.substring(lastDash+1, docKey.length());             
+            
             commandService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
             return Response.ok().build();
             
@@ -154,9 +171,14 @@ public class DocumentResource {
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}-{docVersion}/checkout")
-    public Response checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+    @Path("{workspaceId}/{docKey}/checkout")
+    public Response checkOutDocument(@PathParam("workspaceId") String workspaceId,  @PathParam("docKey") String docKey) {
         try {
+            
+            int lastDash = docKey.lastIndexOf('-');
+            String docId = docKey.substring(0, lastDash);
+            String docVersion = docKey.substring(lastDash+1, docKey.length()); 
+            
             commandService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
             return Response.ok().build();
 
@@ -167,9 +189,14 @@ public class DocumentResource {
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}-{docVersion}/undocheckout")
-    public Response undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+    @Path("{workspaceId}/{docKey}/undocheckout")
+    public Response undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey){
         try {
+            
+            int lastDash = docKey.lastIndexOf('-');
+            String docId = docKey.substring(0, lastDash);
+            String docVersion = docKey.substring(lastDash+1, docKey.length()); 
+            
             commandService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
             return Response.ok().build();
 
@@ -180,13 +207,15 @@ public class DocumentResource {
     
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}-{docVersion}/move")
-    public Response moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion, DocumentCreationDTO docCreationDTO) {
+    @Path("{workspaceId}/{docKey}/move")
+    public Response moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, DocumentCreationDTO docCreationDTO) {
         try {
-
+            
+            int lastDash = docKey.lastIndexOf('-');
+            String docId = docKey.substring(0, lastDash);
+            String docVersion = docKey.substring(lastDash+1, docKey.length()); 
             String parentFolderPath = docCreationDTO.getPath();
             String newCompletePath = Tools.stripTrailingSlash(workspaceId + "/" + parentFolderPath);
-            System.out.println("newCompletePath : " + newCompletePath);
             
             DocumentMasterKey docMsKey = new DocumentMasterKey(workspaceId, docId, docVersion);
             commandService.moveDocumentMaster(newCompletePath, docMsKey);
@@ -195,8 +224,57 @@ public class DocumentResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
-    }    
+    }
+    
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}/{docKey}/newVersion")
+    public Response createNewVersion(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey,DocumentCreationDTO docCreationDTO) {
+        
+        int lastDash = docKey.lastIndexOf('-');
+        String pID = docKey.substring(0, lastDash);
+        String pVersion = docKey.substring(lastDash+1, docKey.length()); 
+        String pWorkspaceId = workspaceId;
+        String pTitle = docCreationDTO.getTitle();
+        String pDescription = docCreationDTO.getDescription();
+        String pWorkflowModelId = null;
 
+        if (docCreationDTO.getWorkflowModel() != null) {
+            pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
+        }
+                
+        /*
+         * Null value for test purpose only
+         */
+        ACLDTO acl = null;
+        
+        try {
+
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] userGroupEntries = null;
+            if (acl != null) {
+                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+                int i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries[i] = new ACLUserEntry();
+                    userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
+                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+                i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    userGroupEntries[i] = new ACLUserGroupEntry();
+                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
+                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+            }
+            commandService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
+            return Response.ok().build();            
+            
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
     /**
      *
      * POST method
@@ -264,11 +342,16 @@ public class DocumentResource {
      * @return the array of the documents that have also been deleted
      */
     @DELETE
-    @Path("{workspaceId}/{docId}-{docVersion}")
+    @Path("{workspaceId}/{docKey}")
     @Produces("application/json;charset=UTF-8")
-    public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
+    public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash+1, docKey.length()); 
+            
         try {
-            commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, docId, docVersion));
+            commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             return Response.status(Response.Status.OK).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
