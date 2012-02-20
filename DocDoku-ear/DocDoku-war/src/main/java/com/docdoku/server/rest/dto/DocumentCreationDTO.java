@@ -30,6 +30,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
 
     private String workspaceId;
     private String id;
+    private String reference;
     private String version;
     private String type;
     private String title;
@@ -93,6 +94,14 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         this.id = id;
     }
 
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+        
     public DocumentMasterTemplateDTO getDocumentMsTemplate() {
         return documentMsTemplate;
     }

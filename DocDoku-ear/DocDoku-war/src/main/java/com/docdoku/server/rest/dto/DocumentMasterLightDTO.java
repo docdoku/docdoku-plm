@@ -33,6 +33,7 @@ public class DocumentMasterLightDTO implements Serializable, Comparable<Document
     
     private String workspaceId;
     private String id;
+    private String reference;
     private String version;
     private String type;
     private String authorName;
@@ -65,13 +66,22 @@ public class DocumentMasterLightDTO implements Serializable, Comparable<Document
     }
 
     public String getId() {
-        return id;
+        return id+"-"+version;
     }
 
     public void setId(String id) {
         this.id = id;
     }
 
+    public String getReference() {
+        reference = this.id;
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+    
     public String getTitle() {
         return title;
     }

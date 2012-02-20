@@ -151,7 +151,7 @@ public class DocumentResource {
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}/{docVersion}/checkout")
+    @Path("{workspaceId}/{docId}-{docVersion}/checkout")
     public Response checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
         try {
             commandService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
@@ -164,7 +164,7 @@ public class DocumentResource {
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}/{docVersion}/undocheckout")
+    @Path("{workspaceId}/{docId}-{docVersion}/undocheckout")
     public Response undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
         try {
             commandService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
@@ -204,8 +204,8 @@ public class DocumentResource {
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}")
     public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO) {
-
-        String pDocMID = docCreationDTO.getId();
+        
+        String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pPath = docCreationDTO.getPath();
