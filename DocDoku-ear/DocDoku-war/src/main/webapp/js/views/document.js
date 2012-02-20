@@ -9,39 +9,39 @@ var DocumentListView = BaseView.extend({
 	initialize: function () {
 		_.bindAll(this,
 			"template", "render",
+			"onDocumentListReset", "createDocumentListItemView",
 			"itemSelectClicked",
 			"new",
-			"delete", "deleteItem", "itemDeleted");
+			"delete", "deleteItem", "onItemDeleted");
+		this.render();
 		this.selectedIds = [];
-		this.model.documents.bind("reset", this.render);
+		this.model.documents.bind("reset", this.onDocumentListReset);
+		this.model.documents.bind("remove", this.onDocumentListReset);
 		this.model.documents.fetch({data: {path:this.model.path()}});
 	},
-	render: function () {
-		data = {
-			items: this.model.documents.toJSON()
-		}
-		_.each(data.items, function (item) {
-			// Format date
-			if (item.lastIterationDate) {
-				item.lastIterationDate = new Date(item.lastIterationDate).toLocaleDateString();
-			}
-			// checkOut
-			item.checkOutDate = item.checkOutDate ?
-				new Date(item.lastIterationDate).toLocaleDateString() :
-				"";
+	onDocumentListReset: function () {
+		_.each(this.views, function (view) {
+			view.remove();
 		});
-		$(this.el).html(this.template(data));
+		this.views = [];
+		this.model.documents.each(this.createDocumentListItemView);
+	},
+	createDocumentListItemView: function (model) {
+		view = new DocumentListItemView({
+			model: model
+		});
+		$(this.el).find("table tbody").append(view.el);
+		this.views.push(view);
+		view.render();
+	},
+	render: function () {
+		$(this.el).html(this.template({}));
 		$(this.el).find(".actions .delete").hide();
 	},
-	itemSelectClicked: function (ev) {
-		modelId = $(ev.target).val();
-		pos = _.indexOf(this.selectedIds, modelId);
-		if (pos == -1) {
-			this.selectedIds.push(modelId);
-		} else {
-			this.selectedIds.pop(pos);
-		}
-		if (this.selectedIds.length > 0) {
+	itemSelectClicked: function () {
+		console.debug($(this.el).find("input.select[type=checkbox]"));
+		console.debug($(this.el).find("input.select[type=checkbox]").filter(":checked"));
+		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {
 			$(this.el).find(".actions .delete").show();
 		} else {
 			$(this.el).find(".actions .delete").hide();
@@ -53,28 +53,44 @@ var DocumentListView = BaseView.extend({
 		return false;
 	},
 	delete: function () {
-		_.each(this.selectedIds, this.deleteItem);
+		_.each(this.views, function (view) {
+			view.delete();
+		});
 		return false;
+	}
+});
+var DocumentListItemView = BaseView.extend({
+	tagName: "tr",
+	template_el: "#document-list-item-tpl",
+	initialize: function () {
+		_.bindAll(this,
+			"template", "render",
+			"isSelected",
+			"delete");
 	},
-	deleteItem: function (modelId) {
-		var model = this.model.documents.get(modelId);
-		if (model.checkOutDate) {
-			// Do not try to delete reserved documents
-			this.selectedIds.pop(_.indexOf(this.selectedIds, modelId));
-		} else {
-			model.destroy({success: this.itemDeleted});
+	render: function () {
+		data = this.model.toJSON();
+		// Format date
+		if (data.lastIterationDate) {
+			data.lastIterationDate = new Date(data.lastIterationDate).toLocaleDateString();
 		}
+		if (data.checkOutDate) {
+			data.checkOutDate = new Date(data.lastIterationDate).toLocaleDateString();
+		}
+		$(this.el).html(this.template(data));
 	},
-	itemDeleted: function (model) {
-		this.selectedIds.pop(_.indexOf(this.selectedIds, model.documentId));
-		// Refresh when all deletion are done
-		if (this.selectedIds.length == 0) {
-			this.model.documents.fetch({data: {path:this.model.path()}});
+	isSelected: function () {
+		return $(this.el).find("input.select").filter(":checked").length > 0;
+	},
+	delete: function () {
+		if (this.isSelected()) {
+			this.model.destroy();
 		}
 	}
 });
-DocumentNewView = Backbone.View.extend({
+DocumentNewView = BaseView.extend({
 	tagName: "div",
+	template_el: "#document-new-tpl",
 	events: {
 		"submit form": "create",
 		"click .create": "create",
@@ -85,12 +101,6 @@ DocumentNewView = Backbone.View.extend({
 			"template", "render",
 			"create", "cancel",
 			"success", "error");
-	},
-	template: function(data) {
-		return Mustache.render(
-			$("#document-new-tpl").html(),
-			data
-		);
 	},
 	render: function () {
 		$(this.el).html(this.template({}));

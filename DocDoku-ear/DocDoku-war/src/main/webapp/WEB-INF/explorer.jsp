@@ -23,6 +23,7 @@
 		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document.js"></script>
@@ -155,21 +156,19 @@
 					</tr>
 				</thead>
 				<tbody>
-					{{#items}}
-					<tr>
-						<td><input value="{{id}}" for="document-list-actions" type="checkbox" /></td>
-						<td>{{reference}}</td>
-						<td>{{version}}</td>
-						<td>{{lastIterationNumber}}</td>
-						<td>{{type}}</td>
-						<td>{{title}}</td>
-						<td>{{authorName}}</td>
-						<td>{{lastIterationDate}}</td>
-						<td>{{checkOutDate}}</td>
-					</tr>
-					{{/items}}
 				</tbody>
 			</table>
+		</script>
+		<script id="document-list-item-tpl" type="text/html">
+			<td><input for="document-list-actions" type="checkbox" class="select" /></td>
+			<td>{{reference}}</td>
+			<td>{{version}}</td>
+			<td>{{lastIterationNumber}}</td>
+			<td>{{type}}</td>
+			<td>{{title}}</td>
+			<td>{{authorName}}</td>
+			<td>{{lastIterationDate}}</td>
+			<td>{{checkOutDate}}</td>
 		</script>
 		<script id="document-new-tpl" type="text/html">
 			<div class="modal new-document">
