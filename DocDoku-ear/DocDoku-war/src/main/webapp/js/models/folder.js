@@ -31,7 +31,8 @@ Folder.prototype.__defineSetter__("folders", function(value) {
 Folder.prototype.__defineGetter__("documents", function() {
 	if (!this._documents) {
 		this._documents = new DocumentList();
-		this._documents.url = "/api/documents/" + app.workspaceId + "?path=" + this.path();
+		//this._documents.url = "/api/documents/" + app.workspaceId + "?path=" + this.path();
+		this._documents.url = "/api/documents/" + app.workspaceId
 	}
 	return this._documents;
 }); 

@@ -150,20 +150,22 @@
 						<th>Type</th>
 						<th>Titre</th>
 						<th>Auteur</th>
-						<th>Date de Modification</th>
+						<th>Date de modification</th>
+						<th>Date de réservation</th>
 					</tr>
 				</thead>
 				<tbody>
 					{{#items}}
 					<tr>
 						<td><input value="{{id}}" for="document-list-actions" type="checkbox" /></td>
-						<td>{{id}}</td>
+						<td>{{reference}}</td>
 						<td>{{version}}</td>
 						<td>{{lastIterationNumber}}</td>
 						<td>{{type}}</td>
 						<td>{{title}}</td>
 						<td>{{authorName}}</td>
 						<td>{{lastIterationDate}}</td>
+						<td>{{checkOutDate}}</td>
 					</tr>
 					{{/items}}
 				</tbody>
@@ -178,7 +180,7 @@
 				<div class="modal-body">
 					<form id="new-document-form">
 						<label>Référence&nbsp;:</label>
-						<input name="id" class="id" type="text" value=""
+						<input name="reference" class="reference" type="text" value=""
 							placeholder="Référence du document" />
 						<label>Titre&nbsp;:</label>
 						<input name="title" class="title" type="text" value=""

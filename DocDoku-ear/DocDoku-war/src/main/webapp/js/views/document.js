@@ -13,7 +13,7 @@ var DocumentListView = Backbone.View.extend({
 			"delete", "deleteItem", "itemDeleted");
 		this.selectedIds = [];
 		this.model.documents.bind("reset", this.render);
-		this.model.documents.fetch();
+		this.model.documents.fetch({data: {path:this.model.path()}});
 	},
 	template: function(data) {
 		return Mustache.render(
@@ -30,6 +30,10 @@ var DocumentListView = Backbone.View.extend({
 			if (item.lastIterationDate) {
 				item.lastIterationDate = new Date(item.lastIterationDate).toLocaleDateString();
 			}
+			// checkOut
+			item.checkOutDate = item.checkOutDate ?
+				new Date(item.lastIterationDate).toLocaleDateString() :
+				"";
 		});
 		$(this.el).html(this.template(data));
 		$(this.el).find(".actions .delete").hide();
@@ -63,19 +67,14 @@ var DocumentListView = Backbone.View.extend({
 			// Do not try to delete reserved documents
 			this.selectedIds.pop(_.indexOf(this.selectedIds, modelId));
 		} else {
-			var revision = new DocumentRevision({
-				id: model.get("version")
-			});
-			revision.urlRoot = "/api/documents/" + app.workspaceId + "/" + model.id;
-			revision.documentId = modelId;
-			revision.destroy({success: this.itemDeleted});
+			model.destroy({success: this.itemDeleted});
 		}
 	},
 	itemDeleted: function (model) {
 		this.selectedIds.pop(_.indexOf(this.selectedIds, model.documentId));
 		// Refresh when all deletion are done
 		if (this.selectedIds.length == 0) {
-			this.model.documents.fetch();
+			this.model.documents.fetch({data: {path:this.model.path()}});
 		}
 	}
 });
@@ -104,18 +103,15 @@ DocumentNewView = Backbone.View.extend({
 		$(this.el).find("input.id").first().focus();
 	},
 	create: function () {
-		var id = $(this.el).find("input.id").first().val();
-		if (id) {
+		var reference = $(this.el).find("input.reference").first().val();
+		if (reference) {
 			newDocument = new Document({
-				id: id,
+				reference: reference,
 				title: $(this.el).find("input.title").first().val(),
 				description: $(this.el).find("textarea.description").first().val(),
 				path: app.restpath(this.model.get("completePath"))
 			})
 			newDocument.urlRoot = "/api/documents/" + app.workspaceId;
-			newDocument.isNew = function () { // Hack because of existing id
-				return true;
-			};
 			newDocument.bind("sync", this.success);
 			newDocument.bind("error", this.error);
 			newDocument.save();
@@ -124,7 +120,7 @@ DocumentNewView = Backbone.View.extend({
 	},
 	success: function () {
 		$(this.el).modal("hide");
-		this.model.documents.fetch();
+		this.model.documents.fetch({data: {path:this.model.path()}});
 		this.remove();
 	},
 	error: function (model, error) {
