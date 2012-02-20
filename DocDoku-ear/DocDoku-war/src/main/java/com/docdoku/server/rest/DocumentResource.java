@@ -275,6 +275,8 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
+
+    
     /**
      *
      * POST method
@@ -357,7 +359,28 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
+    
+    
+    @DELETE
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{workspaceId}/{docKey}/iterations/{docIteration}/remove_attached_file/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,@PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, @PathParam("fileName") String fileName){
+        try { 
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash+1, docKey.length());             
 
+            String fileFullName = workspaceId+"/documents/"+id+"/"+version+"/"+docIteration+"/"+fileName;
+            System.out.println("fileFullName : "+fileFullName);
+            
+            commandService.removeFileFromDocument(fileFullName);
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+      
     /*
      *
      */
