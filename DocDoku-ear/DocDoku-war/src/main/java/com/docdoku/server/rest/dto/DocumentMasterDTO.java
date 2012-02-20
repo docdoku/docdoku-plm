@@ -32,6 +32,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
 
     private String workspaceId;
     private String id;
+    private String reference;    
     private String version;
     private String type;
     private UserDTO author;
@@ -76,10 +77,6 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
 
     public String getDescription() {
         return description;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getWorkspaceId() {
@@ -177,11 +174,22 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
             return documentIterations.get(index);
         }
     }
+    public String getId() {
+        return id+"-"+version;
+    }
 
     public void setId(String id) {
         this.id = id;
     }
-      
+
+    public String getReference() {
+        reference = this.id;
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
     public boolean isIterationSubscription() {
         return iterationSubscription;
     }
