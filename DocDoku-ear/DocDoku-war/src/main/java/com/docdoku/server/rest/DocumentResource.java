@@ -81,7 +81,7 @@ public class DocumentResource {
     @Path("{workspaceId}")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterLightDTO[] getJson(@PathParam("workspaceId") String workspaceId, @QueryParam("tag") String label, @QueryParam("path") String path) {
-        System.out.println(" GET documentMaster listing in workspace");
+
         try {
             DocumentMasterLightDTO[] docMsResultDTO = null;
             if (label != null) {
@@ -105,8 +105,7 @@ public class DocumentResource {
     @Path("{workspaceId}/checkedout")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterLightDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
-        
-        System.out.println(" GET checked out documentMaster");
+
         try {
             DocumentMaster[] checkedOutdocMs = commandService.getCheckedOutDocumentMasters(workspaceId);
             DocumentMasterLightDTO[] checkedOutdocMsDTO = new DocumentMasterLightDTO[checkedOutdocMs.length];
@@ -126,15 +125,13 @@ public class DocumentResource {
     @Path("{workspaceId}/{docKey}")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
-        
-            System.out.println(" GET specific documentMaster");
-            
-            int lastDash = docKey.lastIndexOf('-');
-            String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash+1, docKey.length());            
-            System.out.println("docId : "+id);
-            System.out.println("docVersion : "+version);
-            
+
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
+
         try {
             DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
 
@@ -154,16 +151,16 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}/{docKey}/checkin")
-    public Response checkInDocument(@PathParam("workspaceId") String workspaceId,@PathParam("docKey") String docKey) {
+    public Response checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
-            
+
             int lastDash = docKey.lastIndexOf('-');
             String docId = docKey.substring(0, lastDash);
-            String docVersion = docKey.substring(lastDash+1, docKey.length());             
-            
+            String docVersion = docKey.substring(lastDash + 1, docKey.length());
+
             commandService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
             return Response.ok().build();
-            
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
@@ -172,13 +169,13 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}/{docKey}/checkout")
-    public Response checkOutDocument(@PathParam("workspaceId") String workspaceId,  @PathParam("docKey") String docKey) {
+    public Response checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
-            
+
             int lastDash = docKey.lastIndexOf('-');
             String docId = docKey.substring(0, lastDash);
-            String docVersion = docKey.substring(lastDash+1, docKey.length()); 
-            
+            String docVersion = docKey.substring(lastDash + 1, docKey.length());
+
             commandService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
             return Response.ok().build();
 
@@ -190,13 +187,13 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}/{docKey}/undocheckout")
-    public Response undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey){
+    public Response undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
-            
+
             int lastDash = docKey.lastIndexOf('-');
             String docId = docKey.substring(0, lastDash);
-            String docVersion = docKey.substring(lastDash+1, docKey.length()); 
-            
+            String docVersion = docKey.substring(lastDash + 1, docKey.length());
+
             commandService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
             return Response.ok().build();
 
@@ -204,19 +201,19 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
+
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}/{docKey}/move")
     public Response moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, DocumentCreationDTO docCreationDTO) {
         try {
-            
+
             int lastDash = docKey.lastIndexOf('-');
             String docId = docKey.substring(0, lastDash);
-            String docVersion = docKey.substring(lastDash+1, docKey.length()); 
+            String docVersion = docKey.substring(lastDash + 1, docKey.length());
             String parentFolderPath = docCreationDTO.getPath();
             String newCompletePath = Tools.stripTrailingSlash(workspaceId + "/" + parentFolderPath);
-            
+
             DocumentMasterKey docMsKey = new DocumentMasterKey(workspaceId, docId, docVersion);
             commandService.moveDocumentMaster(newCompletePath, docMsKey);
             return Response.ok().build();
@@ -225,15 +222,15 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
+
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}/{docKey}/newVersion")
-    public Response createNewVersion(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey,DocumentCreationDTO docCreationDTO) {
-        
+    public Response createNewVersion(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, DocumentCreationDTO docCreationDTO) {
+
         int lastDash = docKey.lastIndexOf('-');
         String pID = docKey.substring(0, lastDash);
-        String pVersion = docKey.substring(lastDash+1, docKey.length()); 
+        String pVersion = docKey.substring(lastDash + 1, docKey.length());
         String pWorkspaceId = workspaceId;
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
@@ -242,12 +239,12 @@ public class DocumentResource {
         if (docCreationDTO.getWorkflowModel() != null) {
             pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
         }
-                
+
         /*
          * Null value for test purpose only
          */
         ACLDTO acl = null;
-        
+
         try {
 
             ACLUserEntry[] userEntries = null;
@@ -269,25 +266,23 @@ public class DocumentResource {
                 }
             }
             commandService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
-            return Response.ok().build();            
-            
+            return Response.ok().build();
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
 
-    
     /**
      *
      * POST method
      *
      */
-
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}")
     public Response putJson(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO) {
-        
+
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
@@ -347,11 +342,11 @@ public class DocumentResource {
     @Path("{workspaceId}/{docKey}")
     @Produces("application/json;charset=UTF-8")
     public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
-        
-            int lastDash = docKey.lastIndexOf('-');
-            String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash+1, docKey.length()); 
-            
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
         try {
             commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             return Response.status(Response.Status.OK).build();
@@ -359,20 +354,19 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
-    
+
     @DELETE
     @Consumes("application/json;charset=UTF-8")
     @Path("{workspaceId}/{docKey}/iterations/{docIteration}/remove_attached_file/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,@PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, @PathParam("fileName") String fileName){
-        try { 
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, @PathParam("fileName") String fileName) {
+        try {
             int lastDash = docKey.lastIndexOf('-');
             String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash+1, docKey.length());             
+            String version = docKey.substring(lastDash + 1, docKey.length());
 
-            String fileFullName = workspaceId+"/documents/"+id+"/"+version+"/"+docIteration+"/"+fileName;
-            System.out.println("fileFullName : "+fileFullName);
-            
+            String fileFullName = workspaceId + "/documents/" + id + "/" + version + "/" + docIteration + "/" + fileName;
+            System.out.println("fileFullName : " + fileFullName);
+
             commandService.removeFileFromDocument(fileFullName);
             return Response.ok().build();
 
@@ -380,7 +374,7 @@ public class DocumentResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-      
+
     /*
      *
      */
