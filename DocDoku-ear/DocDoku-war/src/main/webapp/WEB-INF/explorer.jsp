@@ -173,7 +173,7 @@
 			<div class="modal new-document">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
-					<h3>Nouveau Dossier</h3>
+					<h3>Nouveau document</h3>
 				</div>
 				<div class="modal-body">
 					<form id="new-document-form">
