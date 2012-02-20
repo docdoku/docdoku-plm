@@ -29,7 +29,10 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.UserNotActiveException;
+import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentCreationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
@@ -117,7 +120,7 @@ public class DocumentResource {
     }
 
     @GET
-    @Path("{workspaceId}/{docMsId}/{docMsVersion}")
+    @Path("{workspaceId}/{docMsId}-{docMsVersion}")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docMsId") String id, @PathParam("docMsVersion") String version) {
         try {
@@ -138,7 +141,7 @@ public class DocumentResource {
      */
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}/{docVersion}/checkin")
+    @Path("{workspaceId}/{docId}-{docVersion}/checkin")
     public Response checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
         try {
             commandService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
@@ -177,7 +180,7 @@ public class DocumentResource {
     
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{workspaceId}/{docId}/{docVersion}/move")
+    @Path("{workspaceId}/{docId}-{docVersion}/move")
     public Response moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion, DocumentCreationDTO docCreationDTO) {
         try {
 
@@ -261,7 +264,7 @@ public class DocumentResource {
      * @return the array of the documents that have also been deleted
      */
     @DELETE
-    @Path("{workspaceId}/{docId}/{docVersion}")
+    @Path("{workspaceId}/{docId}-{docVersion}")
     @Produces("application/json;charset=UTF-8")
     public Response deleteJson(@PathParam("workspaceId") String workspaceId, @PathParam("docId") String docId, @PathParam("docVersion") String docVersion) {
         try {
