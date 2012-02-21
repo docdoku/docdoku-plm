@@ -28,7 +28,7 @@ import java.io.Serializable;
  */
 public class FolderDTO implements Serializable{
     
-    private String completePath;
+    private String path;
     private String id;
     private String name;
     private boolean home;
@@ -39,7 +39,7 @@ public class FolderDTO implements Serializable{
     }
     
     public FolderDTO(String parentFolder, String name) {
-        completePath=parentFolder+"/"+name;
+        path=parentFolder+"/"+name;
     }
 
     public boolean isHome() {
@@ -68,12 +68,12 @@ public class FolderDTO implements Serializable{
 
 
     
-    public String getCompletePath() {
-        return completePath;
+    public String getPath() {
+        return path;
     }
 
-    public void setCompletePath(String completePath) {
-        this.completePath = completePath;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     
