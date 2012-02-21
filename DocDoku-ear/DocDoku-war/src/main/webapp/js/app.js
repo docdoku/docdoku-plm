@@ -26,5 +26,6 @@ var app = {
 		var path = completePath.split("/");
 		path.shift();
 		return path.join("/");
-	}
+	},
+	i18n: {}
 }

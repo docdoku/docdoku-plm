@@ -37,7 +37,9 @@ var FolderView = BaseView.extend({
 		this.folderViews.push(view);
 	},
 	render: function () {
-		$(this.el).html(this.template(this.model.toJSON()));
+		$(this.el).html(this.template({
+			model: this.model.toJSON()
+		}));
 		$(this.el).addClass("folder");
 		if (this.isHome) $(this.el).addClass("home");
 		// No delete or no edit actions on root or home
@@ -130,7 +132,6 @@ FolderNewView = BaseView.extend({
 	create: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
-			console.debug(this.model.folders.url);
 			this.model.folders.create({
 				name: name,
 				completePath: this.model.get("completePath") + "/" + name

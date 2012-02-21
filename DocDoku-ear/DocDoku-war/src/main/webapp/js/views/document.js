@@ -88,7 +88,6 @@ var DocumentListItemView = BaseView.extend({
 			this.model.bind("change", this.render);
 	},
 	render: function () {
-		console.debug(this.model.get("checkOutDate"));
 		data = this.model.toJSON();
 		// Format date
 		if (data.lastIterationDate) {
@@ -97,7 +96,9 @@ var DocumentListItemView = BaseView.extend({
 		if (data.checkOutDate) {
 			data.checkOutDate = new Date(data.lastIterationDate).toLocaleDateString();
 		}
-		$(this.el).html(this.template(data));
+		$(this.el).html(this.template({
+			model: data
+		}));
 	},
 	isSelected: function () {
 		return $(this.el).find("input.select").filter(":checked").length > 0;

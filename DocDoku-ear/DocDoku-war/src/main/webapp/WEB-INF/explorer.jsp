@@ -26,6 +26,7 @@
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
+		<script src="<%=request.getContextPath()%>/js/i18n.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function () {
 				app.init({
@@ -64,10 +65,10 @@
 			<div class="header">
 				<span class="icon status"></span>
 				<span class="icon type"></span>
-				<a class="name" href="#folders/{{completePath}}"
+				<a class="name" href="#folders/{{model.completePath}}"
 						data-toggle="collapse"
 						data-target="#subfolders-{{view_cid}}">
-					{{name}}
+					{{model.name}}
 				</a>
 				<div class="actions btn-group">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -75,17 +76,17 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li class="new-folder">
-							<a href="#"><span class="icon"></span>Nouveau dossier</a>
+							<a href="#"><span class="icon"></span>{{_.NEW_FOLDER}}</a>
 						</li>
 						<li class="edit">
-							<a href="#"><span class="icon"></span>Renommer</a>
+							<a href="#"><span class="icon"></span>{{_.RENAME}}</a>
 						</li>
 						<li class="delete">
-							<a href="#"><span class="icon"></span>Supprimer</a>
+							<a href="#"><span class="icon"></span>{{_.DELETE}}</a>
 						</li>
 						<li class="divider"></li>
 						<li class="new-document">
-							<a href="#"><span class="icon"></span>Nouveau document</a>
+							<a href="#"><span class="icon"></span>{{_.NEW_DOCUMENT}}</a>
 						</li>
 					</ul>
 				</div>
@@ -100,16 +101,16 @@
 				</div>
 				<div class="modal-body">
 					<form id="new-folder-form">
-						<label>Nom&nbsp;:</label>
+						<label>{{_.NAME}}&nbsp;:</label>
 						<input class="name" type="text" value=""
-							placeholder="Nom du dossier" />
+							placeholder="{{_.FOLDER_S_NAME}}" />
 					</form>
 				</div>
 				<div class="modal-footer">
 					<button class="btn create btn-primary" for="new-folder-form">
-						Créer
+						{{_.CREATE}}
 					</button>
-					<button class="btn cancel">Annuler</button>
+					<button class="btn cancel">{{_.CANCEL}}</button>
 				</div>
 			</div>
 		</script>
@@ -128,34 +129,34 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn save btn-primary" for="edit-folder-form">
-						Enregistrer
+						{{_.SAVE}}
 					</button>
-					<button class="btn cancel">Annuler</button>
+					<button class="btn cancel">{{_.CANCEL}}</button>
 				</div>
 			</div>
 		</script>
 		<script id="document-list-tpl" type="text/html">
 			<div class="actions">
 				<span class="btn-group">
-					<button class="btn checkout" title="Réserver"></button>
-					<button class="btn undocheckout" title="Annuler la réservation"></button>
-					<button class="btn checkin" title="Libérer"></button>
+					<button class="btn checkout" title="{{_.CHECKOUT}}"></button>
+					<button class="btn undocheckout" title="{{_.CANCEL_CHECKOUT}}"></button>
+					<button class="btn checkin" title="{{_.CHECKIN}}"></button>
 				</span>
-				<button class="btn new" title="Nouveau Document"></button>
-				<button class="btn delete" title="Supprimer"></button>
+				<button class="btn new" title="{{_.NEW_DOCUMENT}}"></button>
+				<button class="btn delete" title="{{_.DELETE}}"></button>
 			</div>
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
 						<th></th>
-						<th>Référence</th>
-						<th>Version</th>
-						<th>Itération</th>
-						<th>Type</th>
-						<th>Titre</th>
-						<th>Auteur</th>
-						<th>Date de modification</th>
-						<th>Date de réservation</th>
+						<th>{{_.REFERENCE}}</th>
+						<th>{{_.VERSION}}</th>
+						<th>{{_.ITERATION}}</th>
+						<th>{{_.TYPE}}</th>
+						<th>{{_.TITLE}}</th>
+						<th>{{_.AUTHOR}}</th>
+						<th>{{_.MODIFICATION_DATE}}</th>
+						<th>{{_.CHECKOUT_DATE}}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -164,39 +165,39 @@
 		</script>
 		<script id="document-list-item-tpl" type="text/html">
 			<td><input for="document-list-actions" type="checkbox" class="select" /></td>
-			<td>{{reference}}</td>
-			<td>{{version}}</td>
-			<td>{{lastIterationNumber}}</td>
-			<td>{{type}}</td>
-			<td>{{title}}</td>
-			<td>{{authorName}}</td>
-			<td>{{lastIterationDate}}</td>
-			<td>{{checkOutDate}}</td>
+			<td>{{model.reference}}</td>
+			<td>{{model.version}}</td>
+			<td>{{model.lastIterationNumber}}</td>
+			<td>{{model.type}}</td>
+			<td>{{model.title}}</td>
+			<td>{{model.authorName}}</td>
+			<td>{{model.lastIterationDate}}</td>
+			<td>{{model.checkOutDate}}</td>
 		</script>
 		<script id="document-new-tpl" type="text/html">
 			<div class="modal new-document">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
-					<h3>Nouveau document</h3>
+					<h3>{{_.NEW_DOCUMENT}}</h3>
 				</div>
 				<div class="modal-body">
 					<form id="new-document-form">
-						<label>Référence&nbsp;:</label>
+						<label>{{_.REFERENCE}}&nbsp;:</label>
 						<input name="reference" class="reference" type="text" value=""
-							placeholder="Référence du document" />
+							placeholder="{{_.DOCUMENT_S_REFERENCE}}" />
 						<label>Titre&nbsp;:</label>
 						<input name="title" class="title" type="text" value=""
-							placeholder="Titre du document" />
+							placeholder="{{_.DOCUMENT_S_TITLE}}" />
 						<label>Description&nbsp;:</label>
 						<textarea name="description" class="description"
-							placeholder="Description du document"></textarea>
+							placeholder="{{_.DOCUMENT_S_DESCRIPTION}}"></textarea>
 					</form>
 				</div>
 				<div class="modal-footer">
 					<button class="btn create btn-primary" for="new-document-form">
-						Créer
+						{{_.CREATE}}
 					</button>
-					<button class="btn cancel">Annuler</button>
+					<button class="btn cancel">{{_.CANCEL}}</button>
 				</div>
 			</div>
 		</script>
