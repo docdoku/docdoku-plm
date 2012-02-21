@@ -4,6 +4,11 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.UserDTO;
+import java.util.Date;
+
 /**
  *
  * @author flo
@@ -25,4 +30,37 @@ public class Tools {
         else
             return completePath;
     }
+    
+   public static DocumentMasterDTO createLightDocumentMasterDTO(DocumentMasterDTO docMsDTO){
+
+       String documentAuthorName = docMsDTO.getAuthor().getName();
+       docMsDTO.setAuthor(new UserDTO());
+       docMsDTO.getAuthor().setName(documentAuthorName);
+       
+       if(docMsDTO.getCheckOutUser()!=null){
+            String checkOutUserName = docMsDTO.getCheckOutUser().getName();
+            docMsDTO.setCheckOutUser(new UserDTO());
+            docMsDTO.getCheckOutUser().setName(checkOutUserName);
+       }
+       
+       if (docMsDTO.getLastIteration() != null) {
+           
+           Date lastIterationCreationDate = docMsDTO.getLastIteration().getCreationDate();
+           int lastIterationNumber = docMsDTO.getLastIteration().getIteration();
+           String lastIterationAuthorName = docMsDTO.getLastIteration().getAuthor().getName();
+           
+           docMsDTO.setDocumentIterations(null);
+           docMsDTO.setLastIteration(new DocumentDTO());
+           docMsDTO.getLastIteration().setCreationDate(lastIterationCreationDate);
+           docMsDTO.getLastIteration().setIteration(lastIterationNumber);
+           
+           docMsDTO.getLastIteration().setAuthor(new UserDTO());
+           docMsDTO.getLastIteration().getAuthor().setName(lastIterationAuthorName);
+       }
+       
+       docMsDTO.setTags(null);
+       docMsDTO.setWorkflow(null);       
+       
+       return docMsDTO;
+   }    
 }
