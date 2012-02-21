@@ -21,7 +21,7 @@ var DocumentListView = BaseView.extend({
 		this.selectedIds = [];
 		this.model.documents.bind("reset", this.onDocumentListReset);
 		this.model.documents.bind("remove", this.onDocumentListReset);
-		this.model.documents.fetch({data: {path:this.model.path()}});
+		this.model.documents.fetch({data: {path:this.model.get("path")}});
 	},
 	onDocumentListReset: function () {
 		_.each(this.views, function (view) {
@@ -150,7 +150,7 @@ DocumentNewView = BaseView.extend({
 				reference: reference,
 				title: $(this.el).find("input.title").first().val(),
 				description: $(this.el).find("textarea.description").first().val(),
-				path: app.restpath(this.model.get("completePath"))
+				path: app.restpath(this.model.completePath())
 			})
 			newDocument.urlRoot = "/api/documents/" + app.workspaceId;
 			newDocument.bind("sync", this.success);
@@ -161,7 +161,7 @@ DocumentNewView = BaseView.extend({
 	},
 	success: function () {
 		$(this.el).modal("hide");
-		this.model.documents.fetch({data: {path:this.model.path()}});
+		this.model.documents.fetch({data: {path:this.model.get("path")}});
 		this.remove();
 	},
 	error: function (model, error) {

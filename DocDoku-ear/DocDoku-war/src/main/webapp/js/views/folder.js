@@ -133,8 +133,7 @@ FolderNewView = BaseView.extend({
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
 			this.model.folders.create({
-				name: name,
-				completePath: this.model.get("completePath") + "/" + name
+				name: name
 			}, {
 				success: this.success,
 				error: this.error
@@ -185,13 +184,11 @@ FolderEditView = BaseView.extend({
 	save: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
-			completePath = app.dirname(this.model.get("completePath")) + "/" + name
 			this.previousAttributes = this.model.toJSON();
 			this.model.bind("sync", this.success);
 			this.model.bind("error", this.error);
 			this.model.save({
-				name: name,
-				completePath: completePath
+				name: name
 			});
 		}
 		return false;

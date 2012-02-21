@@ -1,13 +1,16 @@
 var Folder = Backbone.Model.extend({
-	path: function() {
-		return app.restpath(this.get("completePath"));
+	url: function () {
+		return "/api/workspaces/" + app.workspaceId + "/folders/" + this.get("id");
+	},
+	completePath: function() {
+		return this.get("path") + "/" + this.get("name");
 	}
 });
 // Folder.folders getter an setter
 Folder.prototype.__defineGetter__("folders", function() {
 	if (!this._folders) {
 		this._folders = new FolderList();
-		this._folders.url = "/api/folders/" + this.get("completePath");
+		this._folders.url = "/api/workspaces/" + app.workspaceId + "/folders/" + this.get("id") + "/folders";
 	}
 	return this._folders;
 }); 
@@ -27,11 +30,21 @@ Folder.prototype.__defineSetter__("documents", function(value) {
 }); 
 
 RootFolder = Folder.extend({
+	completePath: function() {
+		return this.get("path") + "/" + app.workspaceId;
+	},
 	initialize: function () {
 		this.set({
 			name: "Documents",
-			completePath: app.workspaceId
+			path: ""
 		});
-		this.urlRoot = "/api/folders/" + app.workspaceId;
+		//this.urlRoot = "/api/folders/" + app.workspaceId;
 	}
 });
+RootFolder.prototype.__defineGetter__("folders", function() {
+	if (!this._folders) {
+		this._folders = new FolderList();
+		this._folders.url = "/api/workspaces/" + app.workspaceId + "/folders";
+	}
+	return this._folders;
+}); 

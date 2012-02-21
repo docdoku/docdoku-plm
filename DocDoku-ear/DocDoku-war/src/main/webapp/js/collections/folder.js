@@ -4,18 +4,20 @@ var FolderList = Backbone.Collection.extend({
 		// adding folders' id from completePath
 		// done here because completePath is not reachable in initialize
 		var folders = [];
-		if (this.url == "/api/folders/" + app.workspaceId) {
+		console.debug(this.url)
+		if (this.url == "/api/workspaces/" + app.workspaceId +"/folders") {
 			data.unshift({
-				completePath: app.workspaceId + "/~" + app.login,
+				id: window.btoa(app.workspaceId + "/~" + app.login),
+				name: "~" + app.login,
+				path: app.workspaceId,
 				home: true
 			});
 		}
 		_.each(data, function (item) {
-			name = app.basename(item.completePath);
 			folders.push({
-				id: name,
-				name: name,
-				completePath: item.completePath,
+				id: item.id,
+				name: item.name,
+				path: item.path,
 				home: item.home ? item.home : false
 			});	    		
 		});
