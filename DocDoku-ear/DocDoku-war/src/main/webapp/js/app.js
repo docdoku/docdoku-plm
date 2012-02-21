@@ -7,12 +7,7 @@ var app = {
 		$('.dropdown-toggle').dropdown();
 		$('.modal').modal();
 
-		rootFolder = new Folder({
-			name:"Documents",
-			completePath: this.workspaceId
-		});
-		rootFolder.isRoot = true;
-		rootFolderView = new FolderView({model:rootFolder});
+		rootFolderView = new FolderView({model:new RootFolder()});
 		$("#folders").append(rootFolderView.el);
 	},
 	dirname: function (path) {

@@ -4,9 +4,9 @@ var FolderList = Backbone.Collection.extend({
 		// adding folders' id from completePath
 		// done here because completePath is not reachable in initialize
 		var folders = [];
-		if (this.home != undefined) {
+		if (this.url == "/api/folders/" + app.workspaceId) {
 			data.unshift({
-				completePath: this.home,
+				completePath: app.workspaceId + "/~" + app.login,
 				home: true
 			});
 		}
