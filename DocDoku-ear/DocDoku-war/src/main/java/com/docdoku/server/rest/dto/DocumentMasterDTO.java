@@ -47,6 +47,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private List<DocumentDTO> documentIterations;
     private WorkflowDTO workflow;
     private String path;
+    private DocumentDTO lastIteration;
 
     public DocumentMasterDTO() {
     }
@@ -167,13 +168,23 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     }
 
     public DocumentDTO getLastIteration() {
-        int index = documentIterations.size() - 1;
-        if (index < 0) {
-            return null;
+        if (documentIterations != null) {
+            int index = documentIterations.size() - 1;
+            if (index < 0) {
+                return null;
+            } else {
+                this.lastIteration = documentIterations.get(index);
+                return lastIteration;
+            }
         } else {
-            return documentIterations.get(index);
+            return lastIteration;
         }
     }
+    
+    public void setLastIteration (DocumentDTO lastIteration){
+        this.lastIteration = lastIteration;
+    }
+    
     public String getId() {
         return id+"-"+version;
     }
@@ -213,7 +224,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     public void setPath(String path) {
         this.path = path;
     }
-    
+
 
     @Override
     public String toString() {
