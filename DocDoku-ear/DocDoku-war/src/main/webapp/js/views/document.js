@@ -4,6 +4,9 @@ var DocumentListView = BaseView.extend({
 	events: {
 		"click tbody tr input": "itemSelectClicked",
 		"click .actions .new": "new",
+		"click .actions .checkout": "checkout",
+		"click .actions .undocheckout": "undocheckout",
+		"click .actions .checkin": "checkin",
 		"click .actions .delete": "delete"
 	},
 	initialize: function () {
@@ -12,7 +15,8 @@ var DocumentListView = BaseView.extend({
 			"onDocumentListReset", "createDocumentListItemView",
 			"itemSelectClicked",
 			"new",
-			"delete", "deleteItem", "onItemDeleted");
+			"checkout", "undocheckout", "checkin",
+			"delete");
 		this.render();
 		this.selectedIds = [];
 		this.model.documents.bind("reset", this.onDocumentListReset);
@@ -39,8 +43,6 @@ var DocumentListView = BaseView.extend({
 		$(this.el).find(".actions .delete").hide();
 	},
 	itemSelectClicked: function () {
-		console.debug($(this.el).find("input.select[type=checkbox]"));
-		console.debug($(this.el).find("input.select[type=checkbox]").filter(":checked"));
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {
 			$(this.el).find(".actions .delete").show();
 		} else {
@@ -51,6 +53,21 @@ var DocumentListView = BaseView.extend({
 		newView = new DocumentNewView({model: this.model});
 		newView.render();
 		return false;
+	},
+	checkout: function () {
+		_.each(this.views, function (view) {
+			view.checkout();
+		});
+	},
+	undocheckout: function () {
+		_.each(this.views, function (view) {
+			view.undocheckout();
+		});
+	},
+	checkin: function () {
+		_.each(this.views, function (view) {
+			view.checkin();
+		});
 	},
 	delete: function () {
 		_.each(this.views, function (view) {
@@ -66,9 +83,12 @@ var DocumentListItemView = BaseView.extend({
 		_.bindAll(this,
 			"template", "render",
 			"isSelected",
+			"checkout", "undocheckout", "checkin",
 			"delete");
+			this.model.bind("change", this.render);
 	},
 	render: function () {
+		console.debug(this.model.get("checkOutDate"));
 		data = this.model.toJSON();
 		// Format date
 		if (data.lastIterationDate) {
@@ -81,6 +101,21 @@ var DocumentListItemView = BaseView.extend({
 	},
 	isSelected: function () {
 		return $(this.el).find("input.select").filter(":checked").length > 0;
+	},
+	checkout: function () {
+		if (this.isSelected()) {
+			this.model.checkout();
+		}
+	},
+	undocheckout: function () {
+		if (this.isSelected()) {
+			this.model.undocheckout();
+		}
+	},
+	checkin: function () {
+		if (this.isSelected()) {
+			this.model.checkin();
+		}
 	},
 	delete: function () {
 		if (this.isSelected()) {

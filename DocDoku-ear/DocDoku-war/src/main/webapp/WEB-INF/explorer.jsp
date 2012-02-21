@@ -138,6 +138,11 @@
 		</script>
 		<script id="document-list-tpl" type="text/html">
 			<div class="actions">
+				<span class="btn-group">
+					<button class="btn checkout" title="Réserver"></button>
+					<button class="btn undocheckout" title="Annuler la réservation"></button>
+					<button class="btn checkin" title="Libérer"></button>
+				</span>
 				<button class="btn new" title="Nouveau Document"></button>
 				<button class="btn delete" title="Supprimer"></button>
 			</div>
