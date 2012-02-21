@@ -185,7 +185,7 @@ FolderEditView = BaseView.extend({
 	save: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
-			completePath = app.basename(this.model.get("completePath")) + "/" + name
+			completePath = app.dirname(this.model.get("completePath")) + "/" + name
 			this.previousAttributes = this.model.toJSON();
 			this.model.bind("sync", this.success);
 			this.model.bind("error", this.error);

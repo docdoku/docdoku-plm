@@ -11,7 +11,7 @@ var FolderList = Backbone.Collection.extend({
 			});
 		}
 		_.each(data, function (item) {
-			name = app.dirname(item.completePath);
+			name = app.basename(item.completePath);
 			folders.push({
 				id: name,
 				name: name,

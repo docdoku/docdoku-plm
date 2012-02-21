@@ -15,10 +15,10 @@ var app = {
 		rootFolderView = new FolderView({model:rootFolder});
 		$("#folders").append(rootFolderView.el);
 	},
-	basename: function (path) {
+	dirname: function (path) {
 		return path.replace(/\/[^\/]*$/g, '');
 	},
-	dirname: function (path) {
+	basename: function (path) {
 		return path.replace(/^.*\//g, '');
 	},
 	// Returns the rest of the given path
