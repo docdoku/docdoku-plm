@@ -48,6 +48,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private WorkflowDTO workflow;
     private String path;
     private DocumentDTO lastIteration;
+    private String lifeCycleState;
 
     public DocumentMasterDTO() {
     }
@@ -224,7 +225,11 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     public void setPath(String path) {
         this.path = path;
     }
-
+    
+    public void setLifeCycleState(String lifeCycleState) {
+        this.lifeCycleState = lifeCycleState;
+    }
+    
 
     @Override
     public String toString() {
