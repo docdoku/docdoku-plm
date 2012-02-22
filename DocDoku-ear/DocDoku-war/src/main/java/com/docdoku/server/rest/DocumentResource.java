@@ -137,7 +137,8 @@ public class DocumentResource {
             DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
-            
+            docMsDTO.setLifeCycleState(docM.getLifeCycleState()); 
+           
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -318,16 +319,19 @@ public class DocumentResource {
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO createDocumentMaster(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO) {
+    public Response createRootDocumentMaster(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO) {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
-        String pPath = docCreationDTO.getPath();
-        String pParentFolder = Tools.stripTrailingSlash(workspaceId + "/" + pPath);
+        String pParentFolder = Tools.stripTrailingSlash(workspaceId);
         String pWorkflowModelId = null;
         String pDocMTemplateId = null;
 
+            System.out.println(pDocMID);
+            System.out.println(pTitle);
+            System.out.println(docCreationDTO.getPath());
+        
         if (docCreationDTO.getWorkflowModel() != null) {
             pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
         }
@@ -362,13 +366,9 @@ public class DocumentResource {
                 }
             }
 
-            DocumentMaster createdDocumentMaster = commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-
-            DocumentMasterDTO docMsDTO = mapper.map(createdDocumentMaster, DocumentMasterDTO.class);
-            docMsDTO.setPath(createdDocumentMaster.getLocation().getCompletePath());
-            docMsDTO.setLifeCycleState(createdDocumentMaster.getLifeCycleState());
+            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
             
-            return docMsDTO;
+            return Response.ok().build();
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());

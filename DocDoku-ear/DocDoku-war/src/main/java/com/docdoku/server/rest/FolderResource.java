@@ -19,13 +19,22 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Folder;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
+import com.docdoku.gwt.explorer.shared.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentCreationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.FolderDTO;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -224,6 +233,65 @@ public class FolderResource {
             
             return createdRootFolder;
             
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+    
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("{folderId}/documents/")
+    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO,@PathParam("folderId") String folderId) {
+
+        String pDocMID = docCreationDTO.getReference();
+        String pTitle = docCreationDTO.getTitle();
+        String pDescription = docCreationDTO.getDescription();
+        
+        byte[] encodedcompletePath = Base64.decodeBase64(folderId.getBytes());
+        String decodedCompletePath = new String(encodedcompletePath);            
+        String pParentFolder = Tools.stripTrailingSlash(decodedCompletePath);
+        
+        String pWorkflowModelId = null;
+        String pDocMTemplateId = null;
+
+        if (docCreationDTO.getWorkflowModel() != null) {
+            pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
+        }
+
+        if (docCreationDTO.getDocumentMsTemplate() != null) {
+            pDocMTemplateId = docCreationDTO.getDocumentMsTemplate().getId();
+        }
+
+        /*
+         * Null value for test purpose only
+         */
+        ACLDTO acl = null;
+
+
+        try {
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] userGroupEntries = null;
+            if (acl != null) {
+                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+                int i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries[i] = new ACLUserEntry();
+                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
+                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+                i = 0;
+                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    userGroupEntries[i] = new ACLUserGroupEntry();
+                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
+                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+            }
+
+            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+
+            return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
