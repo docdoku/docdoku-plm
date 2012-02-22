@@ -12,19 +12,10 @@ var Folder = Backbone.Model.extend({
 	initialize: function () {
 		this.folders = new FolderList();
 		this.folders.parent = this;
+		this.documents = new DocumentList();
+		this.documents.parent = this;
 	}
 });
-// Folder.documents getter an setter
-Folder.prototype.__defineGetter__("documents", function() {
-	if (!this._documents) {
-		this._documents = new DocumentList();
-		this._documents.url = "/api/documents/" + app.workspaceId
-	}
-	return this._documents;
-}); 
-Folder.prototype.__defineSetter__("documents", function(value) {
-	this._documents = value
-}); 
 
 RootFolder = Folder.extend({
 	completePath: function() {
@@ -37,5 +28,7 @@ RootFolder = Folder.extend({
 		});
 		this.folders = new RootFolderList();
 		this.folders.parent = this;
+		this.documents = new RootDocumentList();
+		this.documents.parent = this;
 	}
 });

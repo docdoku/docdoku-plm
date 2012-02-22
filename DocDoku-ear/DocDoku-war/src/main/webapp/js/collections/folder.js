@@ -32,14 +32,14 @@ var FolderList = Backbone.Collection.extend({
 		return (nameA < nameB) ? -1 : 1;
 	}
 });
-// FolderList.url getter
 FolderList.prototype.__defineGetter__("url", function() {
-	return  "/api/workspaces/" + app.workspaceId + "/folders/" + this.parent.get("id") + "/folders";
+	baseUrl = "/api/workspaces/" + app.workspaceId + "/folders"
+	return baseUrl + "/" + this.parent.get("id") + "/folders";
 }); 
 
 RootFolderList = FolderList.extend({});
-// RootFolderList.url getter
 RootFolderList.prototype.__defineGetter__("url", function() {
-	return  "/api/workspaces/" + app.workspaceId + "/folders/";
+	baseUrl = "/api/workspaces/" + app.workspaceId + "/folders"
+	return  baseUrl;
 }); 
 

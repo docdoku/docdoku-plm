@@ -21,7 +21,7 @@ var DocumentListView = BaseView.extend({
 		this.selectedIds = [];
 		this.model.documents.bind("reset", this.onDocumentListReset);
 		this.model.documents.bind("remove", this.onDocumentListReset);
-		this.model.documents.fetch({data: {path:this.model.get("path")}});
+		this.model.documents.fetch();
 	},
 	onDocumentListReset: function () {
 		_.each(this.views, function (view) {
@@ -87,17 +87,19 @@ var DocumentListItemView = BaseView.extend({
 			"delete");
 			this.model.bind("change", this.render);
 	},
-	render: function () {
-		data = this.model.toJSON();
-		// Format date
-		if (data.lastIterationDate) {
-			data.lastIterationDate = new Date(data.lastIterationDate).toLocaleDateString();
+	formatData: function (data) {
+		// Format dates
+		if (data.lastIteration && data.lastIteration.creationDate) {
+			data.lastIteration.creationDate = new Date(data.lastIteration.creationDate).toLocaleDateString();
 		}
 		if (data.checkOutDate) {
-			data.checkOutDate = new Date(data.lastIterationDate).toLocaleDateString();
+			data.checkOutDate = new Date(data.checkOutDate).toLocaleDateString();
 		}
+		return data;
+	},
+	render: function () {
 		$(this.el).html(this.template({
-			model: data
+			model: this.formatData(this.model.toJSON())
 		}));
 	},
 	isSelected: function () {
@@ -146,22 +148,20 @@ DocumentNewView = BaseView.extend({
 	create: function () {
 		var reference = $(this.el).find("input.reference").first().val();
 		if (reference) {
-			newDocument = new Document({
+			this.model.documents.create({
 				reference: reference,
 				title: $(this.el).find("input.title").first().val(),
 				description: $(this.el).find("textarea.description").first().val(),
-				path: app.restpath(this.model.completePath())
-			})
-			newDocument.urlRoot = "/api/documents/" + app.workspaceId;
-			newDocument.bind("sync", this.success);
-			newDocument.bind("error", this.error);
-			newDocument.save();
+			}, {
+				sync: this.success,
+				error: this.error
+			});
 		}
 		return false;
 	},
 	success: function () {
 		$(this.el).modal("hide");
-		this.model.documents.fetch({data: {path:this.model.get("path")}});
+		this.model.documents.fetch();
 		this.remove();
 	},
 	error: function (model, error) {

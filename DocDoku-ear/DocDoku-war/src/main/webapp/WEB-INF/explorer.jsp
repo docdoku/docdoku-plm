@@ -167,11 +167,11 @@
 			<td><input for="document-list-actions" type="checkbox" class="select" /></td>
 			<td>{{model.reference}}</td>
 			<td>{{model.version}}</td>
-			<td>{{model.lastIterationNumber}}</td>
+			<td>{{model.lastIteration.iteration}}</td>
 			<td>{{model.type}}</td>
 			<td>{{model.title}}</td>
-			<td>{{model.authorName}}</td>
-			<td>{{model.lastIterationDate}}</td>
+			<td>{{model.lastIteration.author.name}}</td>
+			<td>{{model.lastIteration.creationDate}}</td>
 			<td>{{model.checkOutDate}}</td>
 		</script>
 		<script id="document-new-tpl" type="text/html">
