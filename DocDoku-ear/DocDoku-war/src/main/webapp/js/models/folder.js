@@ -1,22 +1,19 @@
 var Folder = Backbone.Model.extend({
-	url: function () {
-		return "/api/workspaces/" + app.workspaceId + "/folders/" + this.get("id");
+	url: function() {
+		if (this.get("id")) {
+			return "/api/workspaces/" + app.workspaceId + "/folders/" + this.get("id");
+		} else if (this.collection) {
+			return this.collection.url;
+		}
 	},
 	completePath: function() {
 		return this.get("path") + "/" + this.get("name");
+	},
+	initialize: function () {
+		this.folders = new FolderList();
+		this.folders.parent = this;
 	}
 });
-// Folder.folders getter an setter
-Folder.prototype.__defineGetter__("folders", function() {
-	if (!this._folders) {
-		this._folders = new FolderList();
-		this._folders.url = "/api/workspaces/" + app.workspaceId + "/folders/" + this.get("id") + "/folders";
-	}
-	return this._folders;
-}); 
-Folder.prototype.__defineSetter__("folders", function(value) {
-	this._folders = value;
-}); 
 // Folder.documents getter an setter
 Folder.prototype.__defineGetter__("documents", function() {
 	if (!this._documents) {
@@ -38,13 +35,7 @@ RootFolder = Folder.extend({
 			name: "Documents",
 			path: ""
 		});
-		//this.urlRoot = "/api/folders/" + app.workspaceId;
+		this.folders = new RootFolderList();
+		this.folders.parent = this;
 	}
 });
-RootFolder.prototype.__defineGetter__("folders", function() {
-	if (!this._folders) {
-		this._folders = new FolderList();
-		this._folders.url = "/api/workspaces/" + app.workspaceId + "/folders";
-	}
-	return this._folders;
-}); 

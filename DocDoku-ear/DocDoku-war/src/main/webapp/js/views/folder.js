@@ -184,17 +184,17 @@ FolderEditView = BaseView.extend({
 	save: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
-			this.previousAttributes = this.model.toJSON();
-			this.model.bind("sync", this.success);
-			this.model.bind("error", this.error);
 			this.model.save({
 				name: name
+			}, {
+				success: this.success,
+				error: this.error
 			});
 		}
 		return false;
 	},
-	success: function () {
-		this.model.id = this.model.get("name");
+	success: function (model, response) {
+		this.model.id = response.id;
 		this.parent.render();
 		if (this.parent.isOpen) this.parent.open();
 		$(this.el).modal("hide");
@@ -202,7 +202,6 @@ FolderEditView = BaseView.extend({
 	},
 	error: function (model, error) {
 		if (error.responseText) {
-			this.model.set(this.previousAttributes);
 			alert(error.responseText);
 		} else {
 			console.error(error);
@@ -213,13 +212,4 @@ FolderEditView = BaseView.extend({
 		this.remove();
 		return false;
 	},
-	comparator: function (folderA, folderB) {
-		nameA = folderA.get("name");
-		nameB = folderB.get("name");
-
-		if (folderB.isHome) return 1;
-		if (folderA.isHome) return -1;
-		if (nameA == nameB) return 0;
-		return (nameA < nameB) ? -1 : 1;
-	}
 });
