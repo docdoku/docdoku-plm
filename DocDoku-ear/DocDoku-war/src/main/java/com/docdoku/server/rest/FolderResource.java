@@ -143,6 +143,7 @@ public class FolderResource {
             for (int i = 0; i < docM.length; i++) {
                 dtos[i] = mapper.map(docM[i], DocumentMasterDTO.class);
                 dtos[i].setPath(docM[i].getLocation().getCompletePath());
+                dtos[i].setLifeCycleState(docM[i].getLifeCycleState());
                 dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
             }
 
