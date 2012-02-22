@@ -142,6 +142,7 @@ public class FolderResource {
 
             for (int i = 0; i < docM.length; i++) {
                 dtos[i] = mapper.map(docM[i], DocumentMasterDTO.class);
+                dtos[i].setPath(docM[i].getLocation().getCompletePath());
                 dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
             }
 
@@ -247,7 +248,7 @@ public class FolderResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-
+    
     private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException{
 
         byte[] encodedcompletePath = Base64.decodeBase64(pCompletePath.getBytes());
