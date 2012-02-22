@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.TagKey;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
@@ -35,9 +35,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.apache.commons.codec.binary.Base64;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
-import org.apache.commons.codec.binary.Base64;
 
 @Stateless
 @Path("workspaces/{workspaceId}/folders")
@@ -118,7 +118,6 @@ public class FolderResource {
                 folderDtos[i].setPath(completePath);
                 folderDtos[i].setName(folderNames[i]);
                 folderDtos[i].setId(encodedFolderId);
-//                folderDtos[i] = new FolderDTO(completePath, folderNames[i]);
             }
 
             return folderDtos;
@@ -163,8 +162,9 @@ public class FolderResource {
      */
     @PUT
     @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
     @Path("{folderId}")
-    public void renameFolder(@PathParam("folderId") String folderPath, FolderDTO folder) {
+    public FolderDTO renameFolderjson(@PathParam("folderId") String folderPath, FolderDTO folder) {
         try {
             
             byte[] encodedcompletePath = Base64.decodeBase64(folderPath.getBytes());
@@ -177,6 +177,16 @@ public class FolderResource {
             
             commandService.moveFolder(completePath, destParentFolder, folderName);
 
+            String completeRenamedFolderId=destParentFolder+'/'+folderName;
+            String encodedRenamedFolderId=Base64.encodeBase64String(completeRenamedFolderId.getBytes());            
+            
+            FolderDTO renamedFolderDto = new FolderDTO();
+            renamedFolderDto.setPath(destParentFolder);
+            renamedFolderDto.setName(folderName);
+            renamedFolderDto.setId(encodedRenamedFolderId);
+                    
+            return renamedFolderDto;
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
@@ -184,17 +194,18 @@ public class FolderResource {
 
     @POST
     @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
     @Path("{parentFolderPath}/folders")
-    public Response createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
+    public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
         try {
             
             byte[] encodedcompletePath = Base64.decodeBase64(parentFolderPath.getBytes());
             String decodedCompletePath = new String(encodedcompletePath);
             
-            String folderName = folder.getName();
-            createFolder(decodedCompletePath, folderName);
+            String folderName = folder.getName(); 
+            FolderDTO createdSubFolder =  createFolder(decodedCompletePath, folderName);
             
-            return Response.ok().build();
+            return createdSubFolder;
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
@@ -202,13 +213,15 @@ public class FolderResource {
 
     @POST
     @Consumes("application/json;charset=UTF-8")
-    public Response createRootFolder(@PathParam("workspaceId") String workspaceId, FolderDTO folder) {
+    @Produces("application/json;charset=UTF-8")
+    public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId, FolderDTO folder) {
         try {
 
-            String folderName = folder.getName();
-            createFolder(workspaceId, folderName);
+            String folderName = folder.getName();  
+            FolderDTO createdRootFolder = createFolder(workspaceId, folderName);
             
-            return Response.ok().build();
+            return createdRootFolder;
+            
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
@@ -223,22 +236,41 @@ public class FolderResource {
     @DELETE
     @Path("{folderId}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterKey[] deleteJson(@PathParam("folderId") String completePath) {
+    public Response deleteRootFolder(@PathParam("folderId") String completePath) {
         try {
             
-            byte[] encodedcompletePath = Base64.decodeBase64(completePath.getBytes());
-            String decodedCompletePath = new String(encodedcompletePath);
+            deleteFolder(completePath);
             
-            completePath = Tools.stripTrailingSlash(decodedCompletePath);
-            return commandService.deleteFolder(completePath);
+            return Response.status(Response.Status.OK).build();
+            
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
 
-    private void createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException{
+    private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException{
+
+        byte[] encodedcompletePath = Base64.decodeBase64(pCompletePath.getBytes());
+        String decodedCompletePath = new String(encodedcompletePath);
+
+        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
+
+        return commandService.deleteFolder(completePath);      
+    }
     
-        commandService.createFolder(pCompletePath, pFolderName);
+    private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException{
+    
+        Folder createdFolder= commandService.createFolder(pCompletePath, pFolderName);
+                        
+        String completeCreatedFolderPath=createdFolder.getCompletePath()+'/'+createdFolder.getShortName();
+        String encodedFolderId=Base64.encodeBase64String(completeCreatedFolderPath.getBytes());
+               
+        FolderDTO createdFolderDtos = new FolderDTO();
+        createdFolderDtos.setPath(createdFolder.getCompletePath());
+        createdFolderDtos.setName(createdFolder.getShortName());
+        createdFolderDtos.setId(encodedFolderId);
+        
+        return createdFolderDtos;
 
     }
 
