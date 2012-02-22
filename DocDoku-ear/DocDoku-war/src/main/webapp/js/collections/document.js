@@ -5,9 +5,3 @@ DocumentList.prototype.__defineGetter__("url", function() {
 	baseUrl = "/api/workspaces/" + app.workspaceId + "/folders";
 	return  baseUrl + "/" + this.parent.id + "/documents";
 }); 
-
-RootDocumentList = DocumentList.extend({});
-RootDocumentList.prototype.__defineGetter__("url", function() {
-	baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
-	return baseUrl;
-}); 

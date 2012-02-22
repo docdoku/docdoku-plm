@@ -16,19 +16,3 @@ var Folder = Backbone.Model.extend({
 		this.documents.parent = this;
 	}
 });
-
-RootFolder = Folder.extend({
-	completePath: function() {
-		return this.get("path") + "/" + app.workspaceId;
-	},
-	initialize: function () {
-		this.set({
-			name: "Documents",
-			path: ""
-		});
-		this.folders = new RootFolderList();
-		this.folders.parent = this;
-		this.documents = new RootDocumentList();
-		this.documents.parent = this;
-	}
-});

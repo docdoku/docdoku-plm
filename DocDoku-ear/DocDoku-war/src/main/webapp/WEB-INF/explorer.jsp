@@ -19,12 +19,19 @@
 		<script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.0.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
-		<script src="<%=request.getContextPath()%>/js/views/document.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/folder_new.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/folder_edit.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
 		<script src="<%=request.getContextPath()%>/js/i18n.js"></script>
 		<script type="text/javascript">
