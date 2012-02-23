@@ -102,7 +102,7 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
-            String id = docMsTemplateDTO.getId();
+            String id = docMsTemplateDTO.getReference();
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
             boolean idGenerated = docMsTemplateDTO.isIdGenerated();

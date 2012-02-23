@@ -35,6 +35,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     
     private String workspaceId;
     private String id;
+    private String reference;
     private String documentType;
     private UserDTO author;
     private Date creationDate;
@@ -114,8 +115,6 @@ public class DocumentMasterTemplateDTO implements Serializable{
         this.idGenerated = idGenerated;
     }
 
-    
-
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -132,7 +131,13 @@ public class DocumentMasterTemplateDTO implements Serializable{
         return attributeTemplates;
     }
 
-    
-    
+    public String getReference() {
+        reference = this.id;
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
 }
