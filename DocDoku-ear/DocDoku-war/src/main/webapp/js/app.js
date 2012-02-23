@@ -2,6 +2,9 @@ var app = {
 	init: function (config) {
 		this.workspaceId = config.workspaceId
 		this.login = config.login
+		this.workspace = new Workspace({
+			id: this.workspaceId
+		});
 
 		$('.collapse').collapse();
 		$('.dropdown-toggle').dropdown();
@@ -9,9 +12,7 @@ var app = {
 
 		workspaceView = new WorkspaceView({
 			el: $("#workspace"),
-			model: new Workspace({
-				id: this.workspaceId
-			})
+			model: this.workspace
 		});
 		workspaceView.render();
 	},

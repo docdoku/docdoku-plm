@@ -16,6 +16,11 @@ DocumentNewView = BaseView.extend({
 		$(this.el).html(this.template({}));
 		$(this.el).modal("show");
 		$(this.el).find("input.id").first().focus();
+		templateListView = new DocumentNewTemplateListView({
+			el: $("#new-document-form-template-list"),
+			collection: app.workspace.templates
+		});
+		templateListView.collection.fetch();
 	},
 	create: function () {
 		var reference = $(this.el).find("input.reference").first().val();

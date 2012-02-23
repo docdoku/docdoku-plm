@@ -22,16 +22,19 @@
 		<script src="<%=request.getContextPath()%>/js/models/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_edit.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_template_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
@@ -58,7 +61,7 @@
 					<li class="nav-header">{{_.REFERENCES}}</li>
 					<li>
 						<a href="#workflows">{{_.WORKFLOWS}}</a>
-						<a href="#models">{{_.MODELS}}</a>
+						<a href="#models">{{_.TEMPLATES}}</a>
 					</li>
 					<li class="nav-header">{{_.LINKS}}</li>
 					<li>
@@ -191,6 +194,8 @@
 					<h3><span class="icon"></span>{{_.NEW_DOCUMENT}}</h3>
 				</div>
 				<div class="modal-body">
+					<form id="new-document-form-template-list">
+					</form>
 					<form id="new-document-form">
 						<label>{{_.REFERENCE}}</label>
 						<input name="reference" class="reference" type="text" value=""
@@ -210,6 +215,15 @@
 					<button class="btn cancel">{{_.CANCEL}}</button>
 				</div>
 			</div>
+		</script>
+		<script id="document-new-template-list-tpl" type="text/html">
+			<label>{{_.TEMPLATE}}</label>
+			<select>
+				<option value=""></option>
+				{{#items}}
+				<option value="{{id}}">{{id}}</option>
+				{{/items}}
+			</select>
 		</script>
     </body>
 </html>
