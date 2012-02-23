@@ -1,0 +1,106 @@
+#folders {
+	list-style-type: none;
+	margin: 0;
+	.folder {
+		> .header {
+			float: left;
+			> .name {
+				display: inline-block;
+				float: left;
+				padding: 0 4px;
+				line-height: 28px;
+				> .status {
+					.icon-folder-status-closed;
+					width: 16px;
+				}
+				> .type {
+					.icon-folder;
+					width: 24px;
+				}
+			}
+			> .actions {
+				border: none;
+				display: none;
+				float: left;
+				.dropdown-toggle {
+					border: none;
+					box-shadow: none;
+					background: none;
+					.caret {
+						border-top-color: #000000;
+						opacity: .3;
+					}
+				}
+				.dropdown-toggle:hover {
+					.caret {
+						opacity: 1;
+					}
+				}
+				.dropdown-menu {
+					margin-top: -28px;
+					a {
+						line-height: 24px;
+					}
+					.new-folder .icon {
+						.icon-folder-new;
+					}
+					.new-document .icon {
+						.icon-document-new;
+					}
+					.edit .icon {
+						.icon-edit;
+					}
+					.delete .icon {
+						.icon-delete;
+					}
+				}
+			}
+		}
+		> .header:hover {
+			.actions {
+				display: block;
+			}
+		}
+		.subfolders {
+			clear: both;
+			list-style-type: none;
+			margin-left: 13px;
+		}
+	}
+	.folder.open {
+		> .header > .name {
+			.status {
+				.icon-folder-status-opened;
+			}
+			.type {
+				.icon-folder-opened;
+			}
+		}
+		> .subfolders {
+			overflow: visible;
+		}
+	}
+	> .folder:first-child {
+		> .header > .name {
+			.type {
+				.icon-documents;
+			}
+			.status {
+				display: none;
+			}
+		}
+	}
+	.folder.home > .header > .name .type {
+		.icon-folder-home;
+	}
+}
+.modal.new-folder {
+	.modal-header .icon {
+		.icon-folder-new;
+	}
+}
+.modal.edit-folder {
+	.modal-header .icon {
+		.icon-edit;
+	}
+}

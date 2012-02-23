@@ -45,8 +45,8 @@
     </head>    
     <body>
         <%@ include file="/WEB-INF/explorer_header.jspf" %>
-        <div id="workspace" class="row">
-			<nav class="span4 well">
+		<div id="workspace">
+			<nav>
 				<ul class="nav nav-list">
 					<li class="nav-header">Workspace</li>
 					<li>
@@ -65,16 +65,17 @@
 					</li>
 				</ul>
 			</nav>
-			<div class="content span8">
+			<div class="content">
+				<div class="actions"></div>
 			</div>
-        </div>
+		</div>
 		<script id="folder-tpl" type="text/html">
 			<div class="header">
-				<span class="icon status"></span>
-				<span class="icon type"></span>
 				<a class="name" href="#folders/{{model.completePath}}"
 						data-toggle="collapse"
 						data-target="#subfolders-{{view_cid}}">
+					<span class="icon status"></span>
+					<span class="icon type"></span>
 					{{model.name}}
 				</a>
 				<div class="actions btn-group">
@@ -104,11 +105,11 @@
 			<div class="modal new-folder">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
-					<h3>Nouveau Dossier</h3>
+					<h3><span class="icon"></span>{{_.NEW_FOLDER}}</h3>
 				</div>
 				<div class="modal-body">
 					<form id="new-folder-form">
-						<label>{{_.NAME}}&nbsp;:</label>
+						<label>{{_.NAME}}</label>
 						<input class="name" type="text" value=""
 							placeholder="{{_.FOLDER_S_NAME}}" />
 					</form>
@@ -125,11 +126,11 @@
 			<div class="modal edit-folder">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
-					<h3>Renomer le dossier</h3>
+					<h3><span class="icon"></span>{{_.RENAME}}</h3>
 				</div>
 				<div class="modal-body">
 					<form id="edit-folder-form">
-						<label>Nom&nbsp;:</label>
+						<label>Nom</label>
 						<input class="name" type="text" value=""
 							placeholder="Nom du dossier" />
 					</form>
@@ -185,17 +186,17 @@
 			<div class="modal new-document">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
-					<h3>{{_.NEW_DOCUMENT}}</h3>
+					<h3><span class="icon"></span>{{_.NEW_DOCUMENT}}</h3>
 				</div>
 				<div class="modal-body">
 					<form id="new-document-form">
-						<label>{{_.REFERENCE}}&nbsp;:</label>
+						<label>{{_.REFERENCE}}</label>
 						<input name="reference" class="reference" type="text" value=""
 							placeholder="{{_.DOCUMENT_S_REFERENCE}}" />
-						<label>Titre&nbsp;:</label>
+						<label>Titre</label>
 						<input name="title" class="title" type="text" value=""
 							placeholder="{{_.DOCUMENT_S_TITLE}}" />
-						<label>Description&nbsp;:</label>
+						<label>Description</label>
 						<textarea name="description" class="description"
 							placeholder="{{_.DOCUMENT_S_DESCRIPTION}}"></textarea>
 					</form>

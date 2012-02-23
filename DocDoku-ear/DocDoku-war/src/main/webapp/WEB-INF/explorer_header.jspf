@@ -20,9 +20,9 @@
                 <a class="brand" href="#">
                     document<strong>Management</strong>
                 </a>
-                <ul class="nav" id="left_nav_container">
+                <ul class="nav">
                     <li>
-                        <a href="<%=request.getContextPath()%>/" id="home_link"><!----></a>
+                        <a href="<%=request.getContextPath()%>/" id="home_link"></a>
                     </li>
                     <li class="dropdown" id="workspace_container">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
