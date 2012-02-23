@@ -21,18 +21,21 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -76,21 +79,107 @@ public class DocumentTemplateResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
+
     @GET
     @Path("{templateId}")
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            DocumentMasterTemplate docMsTemplate = commandService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId,templateId));
-            DocumentMasterTemplateDTO dto = new DocumentMasterTemplateDTO();
-            dto = mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
+            DocumentMasterTemplate docMsTemplate = commandService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
+            DocumentMasterTemplateDTO dto = mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
 
             return dto;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
-    }    
+    }
+
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentMasterTemplateDTO docMsTemplateDTO) {
+
+        try {
+            String id = docMsTemplateDTO.getId();
+            String documentType = docMsTemplateDTO.getDocumentType();
+            String mask = docMsTemplateDTO.getMask();
+            boolean idGenerated = docMsTemplateDTO.isIdGenerated();
+
+            Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
+            List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
+            InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
+
+            for (int i = 0; i < attributeTemplatesDtos.length; i++) {
+                attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
+            }
+
+            DocumentMasterTemplate template = commandService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
+
+            return templateDto;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+    
+    @PUT
+    @Path("{templateId}") 
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")  
+    public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId, DocumentMasterTemplateDTO docMsTemplateDTO) {
+
+        try {
+            String id = docMsTemplateDTO.getId();
+            String documentType = docMsTemplateDTO.getDocumentType();
+            String mask = docMsTemplateDTO.getMask();
+            boolean idGenerated = docMsTemplateDTO.isIdGenerated();
+
+            Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
+            List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
+            InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
+
+            for (int i = 0; i < attributeTemplatesDtos.length; i++) {
+                attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
+            }
+
+            DocumentMasterTemplate template = commandService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, id), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
+
+            return templateDto;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @DELETE
+    @Path("{templateId}")
+    public Response deleteDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+        try {
+            commandService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(InstanceAttributeTemplateDTO[] dtos) {
+        InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.length];
+
+        for (int i = 0; i < dtos.length; i++) {
+            data[i] = createInstanceAttributeTemplateObject(dtos[i]);
+        }
+
+        return data;
+    }
+
+    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO instanceAttributeTemplateDTO) {
+        InstanceAttributeTemplate data = new InstanceAttributeTemplate();
+        data.setName(instanceAttributeTemplateDTO.getName());
+        data.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(instanceAttributeTemplateDTO.getAttributeType().name()));
+        return data;
+    }
 }
