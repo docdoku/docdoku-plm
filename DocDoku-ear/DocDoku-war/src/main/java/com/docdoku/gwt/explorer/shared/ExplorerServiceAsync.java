@@ -20,6 +20,7 @@
 
 package com.docdoku.gwt.explorer.shared;
 
+import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
