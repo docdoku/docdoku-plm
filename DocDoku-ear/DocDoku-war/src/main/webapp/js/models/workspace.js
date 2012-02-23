@@ -1,0 +1,1 @@
+Workspace = Backbone.Model.extend();

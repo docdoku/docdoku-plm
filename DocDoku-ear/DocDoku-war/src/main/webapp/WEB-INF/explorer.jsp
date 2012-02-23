@@ -18,6 +18,7 @@
 		<script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.0.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
@@ -26,6 +27,7 @@
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_edit.js"></script>
@@ -45,30 +47,30 @@
     </head>    
     <body>
         <%@ include file="/WEB-INF/explorer_header.jspf" %>
-		<div id="workspace">
+		<div id="workspace"></div>
+		<script id="workspace-tpl" type="text/html">
 			<nav>
 				<ul class="nav nav-list">
-					<li class="nav-header">Workspace</li>
+					<li class="nav-header">{{model.id}}</li>
 					<li>
-						<ul id="folders">
-						</ul>
+						<ul id="folders"></ul>
 					</li>
-					<li class="nav-header">Références</li>
+					<li class="nav-header">{{_.REFERENCES}}</li>
 					<li>
-						<a href="#workflows">Workflows</a>
-						<a href="#models">Modèles</a>
+						<a href="#workflows">{{_.WORKFLOWS}}</a>
+						<a href="#models">{{_.MODELS}}</a>
 					</li>
-					<li class="nav-header">Liens</li>
+					<li class="nav-header">{{_.LINKS}}</li>
 					<li>
-						<a href="#checkouts">Reservés</a>
-						<a href="#tasks">Tâches</a>
+						<a href="#checkouts">{{_.CHECKOUTS}}</a>
+						<a href="#tasks">{{_.TASKS}}</a>
 					</li>
 				</ul>
 			</nav>
 			<div class="content">
 				<div class="actions"></div>
 			</div>
-		</div>
+		</script>
 		<script id="folder-tpl" type="text/html">
 			<div class="header">
 				<a class="name" href="#folders/{{model.completePath}}"

@@ -7,8 +7,13 @@ var app = {
 		$('.dropdown-toggle').dropdown();
 		$('.modal').modal();
 
-		rootFolderView = new FolderView({model:new RootFolder()});
-		$("#folders").append(rootFolderView.el);
+		workspaceView = new WorkspaceView({
+			el: $("#workspace"),
+			model: new Workspace({
+				id: this.workspaceId
+			})
+		});
+		workspaceView.render();
 	},
 	dirname: function (path) {
 		return path.replace(/\/[^\/]*$/g, '');

@@ -27,6 +27,7 @@ app.i18n = {
 	"REFERENCES":				"Références",
 	"RENAME":					"Renommer",
 	"SAVE":						"Enregistrer",
+	"TASKS":					"Tâches",
 	"TITLE":					"Titre",
 	"TYPE":						"Type",
 	"VERSION":					"Version",
