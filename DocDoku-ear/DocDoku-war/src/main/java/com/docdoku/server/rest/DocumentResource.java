@@ -328,10 +328,6 @@ public class DocumentResource {
         String pWorkflowModelId = null;
         String pDocMTemplateId = null;
 
-            System.out.println(pDocMID);
-            System.out.println(pTitle);
-            System.out.println(docCreationDTO.getPath());
-        
         if (docCreationDTO.getWorkflowModel() != null) {
             pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
         }
