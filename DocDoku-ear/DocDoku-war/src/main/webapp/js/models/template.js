@@ -1,0 +1,1 @@
+Template = Backbone.Model.extend();

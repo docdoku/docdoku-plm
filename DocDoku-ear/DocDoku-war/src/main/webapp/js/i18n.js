@@ -1,4 +1,5 @@
 app.i18n = {
+	"ATTRIBUTES":				"Attributs",
 	"AUTHOR":					"Auteur",
 	"CANCEL":					"Annuler",
 	"CANCEL_CHECKOUT":			"Annuler la réservation",

@@ -22,13 +22,20 @@ DocumentNewView = BaseView.extend({
 		});
 		templateListView.collection.fetch();
 	},
+	getAttributes: function () {
+		var attributes = {}
+		$(this.el).find("input.attribute").each(function () {
+			console.debug($(this).attr("name"), $(this).val());
+		});
+		return attributes;
+	},
 	create: function () {
 		var reference = $(this.el).find("input.reference").first().val();
 		if (reference) {
 			this.model.documents.create({
 				reference: reference,
 				title: $(this.el).find("input.title").first().val(),
-				description: $(this.el).find("textarea.description").first().val(),
+				description: $(this.el).find("textarea.description").first().val()
 			}, {
 				success: this.success,
 				error: this.error

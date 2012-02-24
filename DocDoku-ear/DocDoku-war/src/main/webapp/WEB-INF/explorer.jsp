@@ -35,6 +35,7 @@
 		<script src="<%=request.getContextPath()%>/js/views/folder_edit.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_template_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attributes.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
@@ -206,6 +207,7 @@
 						<label>Description</label>
 						<textarea name="description" class="description"
 							placeholder="{{_.DOCUMENT_S_DESCRIPTION}}"></textarea>
+						<fieldset class="attributes"></fieldset>
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -224,6 +226,13 @@
 				<option value="{{id}}">{{id}}</option>
 				{{/items}}
 			</select>
+		</script>
+		<script id="document-new-attributes-tpl" type="text/html">
+			<legend>{{_.ATTRIBUTES}}</legend>
+			{{#model.attributeTemplates}}
+				<label>{{name}}</label>
+				<input class="attribute" name="{{name}}" type="{{attributeType}}"/>
+			{{/model.attributeTemplates}}
 		</script>
     </body>
 </html>

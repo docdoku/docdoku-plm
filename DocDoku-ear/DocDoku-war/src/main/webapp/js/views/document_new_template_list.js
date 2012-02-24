@@ -17,7 +17,11 @@ DocumentNewTemplateListView = BaseView.extend({
 	selectionChanged: function () {
 		var templateId = $(this.el).children("select").val()
 		if (templateId) {
-			console.debug(templateId);
+			templateView = new DocumentNewAttributesView({
+				el: $("#new-document-form .attributes"),
+				model: this.collection.get(templateId)
+			});
+			templateView.render();
 		}
 	}
 });
