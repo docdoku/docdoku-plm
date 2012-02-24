@@ -102,11 +102,14 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
-            String id = docMsTemplateDTO.getReference();
+            
+            docMsTemplateDTO.setId(docMsTemplateDTO.getReference());
+            
+            String id =docMsTemplateDTO.getId();
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
             boolean idGenerated = docMsTemplateDTO.isIdGenerated();
-
+            System.out.println(docMsTemplateDTO.getReference());
             Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
             InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
@@ -129,9 +132,11 @@ public class DocumentTemplateResource {
     @Path("{templateId}") 
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")  
-    public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId, DocumentMasterTemplateDTO docMsTemplateDTO) {
+    public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
+            docMsTemplateDTO.setId(docMsTemplateDTO.getReference());
+            
             String id = docMsTemplateDTO.getId();
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
@@ -145,7 +150,7 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = commandService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, id), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = commandService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
