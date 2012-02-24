@@ -1,16 +1,15 @@
-FolderEditView = BaseView.extend({
+FolderEditView = ModalView.extend({
 	tagName: "div",
 	template_el: "#folder-edit-tpl",
 	events: {
-		"submit form": "save",
-		"click .save": "save",
+		"submit form": "primaryAction",
+		"click .btn-primary": "primaryAction",
 		"click .cancel": "cancel",
 	},
 	initialize: function () {
 		_.bindAll(this,
 			"template", "render",
-			"save", "cancel",
-			"success", "error");
+			"primaryAction", "success", "error");
 	},
 	render: function () {
 		$(this.el).html(this.template({}));
@@ -20,7 +19,7 @@ FolderEditView = BaseView.extend({
 		// Hide the parent's actions menu to correct a display bug
 		this.parent.mouseleave();
 	},
-	save: function () {
+	primaryAction: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
 			this.model.save({
@@ -41,14 +40,13 @@ FolderEditView = BaseView.extend({
 	},
 	error: function (model, error) {
 		if (error.responseText) {
-			alert(error.responseText);
+			this.alert({
+				type: "error",
+				title: "Erreur",
+				message: error.responseText
+			});
 		} else {
 			console.error(error);
 		}
-	},
-	cancel: function () {
-		$(this.el).modal("hide");
-		this.remove();
-		return false;
-	},
+	}
 });

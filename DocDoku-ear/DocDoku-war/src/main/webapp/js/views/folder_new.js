@@ -1,23 +1,22 @@
-FolderNewView = BaseView.extend({
+FolderNewView = ModalView.extend({
 	tagName: "div",
 	template_el: "#folder-new-tpl",
 	events: {
-		"submit form": "create",
-		"click .create": "create",
+		"submit form": "primaryAction",
+		"click .btn-primary": "primaryAction",
 		"click .cancel": "cancel",
 	},
 	initialize: function () {
 		_.bindAll(this,
 			"template", "render",
-			"create", "cancel",
-			"success", "error");
+			"primaryAction", "success", "error");
 	},
 	render: function () {
 		$(this.el).html(this.template({}));
 		$(this.el).modal("show");
 		$(this.el).find("input.name").first().focus();
 	},
-	create: function () {
+	primaryAction: function () {
 		var name = $(this.el).find("input.name").first().val();
 		if (name) {
 			this.model.folders.create({
@@ -36,14 +35,13 @@ FolderNewView = BaseView.extend({
 	},
 	error: function (model, error) {
 		if (error.responseText) {
-			alert(error.responseText);
+			this.alert({
+				type: "error",
+				title: "Erreur",
+				message: error.responseText
+			});
 		} else {
 			console.error(error);
 		}
-	},
-	cancel: function () {
-		$(this.el).modal("hide");
-		this.remove();
-		return false;
 	}
 });

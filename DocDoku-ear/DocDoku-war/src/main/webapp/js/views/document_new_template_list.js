@@ -16,15 +16,13 @@ DocumentNewTemplateListView = BaseView.extend({
 	},
 	selectionChanged: function () {
 		if (this.attributesView) {
-			this.attributesView.remove();
+			$("#modal-form-tab-attributes").html("");
 		}
-		var templateId = $("#new-document-form-template").val()
-		if (templateId) {
-			this.attributesView = new DocumentNewAttributesView({
-				el: $("#new-document-form .attributes"),
-				model: this.collection.get(templateId)
-			});
-			this.attributesView.render();
-		}
+		var templateId = $("#modal-form-template").val()
+		this.attributesView = new DocumentNewAttributesView({
+			el: $("#modal-form-tab-attributes"),
+			model: this.collection.get(templateId)
+		});
+		this.attributesView.render();
 	}
 });

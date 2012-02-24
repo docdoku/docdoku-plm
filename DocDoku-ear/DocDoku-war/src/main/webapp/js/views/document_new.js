@@ -1,26 +1,26 @@
-DocumentNewView = BaseView.extend({
+DocumentNewView = ModalView.extend({
 	tagName: "div",
 	template_el: "#document-new-tpl",
 	events: {
-		"submit form": "create",
-		"click .create": "create",
+		"submit form": "primaryAction",
+		"click .btn-primary": "primaryAction",
 		"click .cancel": "cancel",
 	},
 	initialize: function () {
 		_.bindAll(this,
 			"template", "render",
-			"create", "cancel",
-			"success", "error");
+			"primaryAction", "success", "error");
 	},
 	render: function () {
 		$(this.el).html(this.template({}));
 		$(this.el).modal("show");
 		$(this.el).find("input.id").first().focus();
 		templateListView = new DocumentNewTemplateListView({
-			el: $("#new-document-form-template-list"),
+			el: $("#modal-form-template-list"),
 			collection: app.workspace.templates
 		});
 		templateListView.collection.fetch();
+		$("#modal-form-tab").tab();
 	},
 	getAttributes: function () {
 		var attributes = {}
@@ -29,13 +29,13 @@ DocumentNewView = BaseView.extend({
 		});
 		return attributes;
 	},
-	create: function () {
-		var reference = $("#new-document-form-reference").val();
+	primaryAction: function () {
+		var reference = $("#modal-form-reference").val();
 		if (reference) {
 			this.model.documents.create({
 				reference: reference,
-				title: $("#new-document-form-title").val(),
-				description: $("#new-document-form-description").val()
+				title: $("#modal-form-title").val(),
+				description: $("#modal-form-description").val()
 			}, {
 				success: this.success,
 				error: this.error
@@ -50,14 +50,13 @@ DocumentNewView = BaseView.extend({
 	},
 	error: function (model, error) {
 		if (error.responseText) {
-			alert(error.responseText);
+			this.alert({
+				type: "error",
+				title: "Erreur",
+				message: error.responseText
+			});
 		} else {
 			console.error(error);
 		}
-	},
-	cancel: function () {
-		$(this.el).modal("hide");
-		this.remove();
-		return false;
 	}
 });

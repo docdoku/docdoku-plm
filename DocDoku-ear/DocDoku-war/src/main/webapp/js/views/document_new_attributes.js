@@ -5,9 +5,9 @@ DocumentNewAttributesView = BaseView.extend({
 			"template", "render");
 	},
 	render: function () {
-		console.debug(this.model.toJSON());
+		var jsonModel = this.model ? this.model.toJSON() : {};
 		$(this.el).html(this.template({
-			model: this.model.toJSON()
+			model: jsonModel
 		}));
 		return this;
 	},

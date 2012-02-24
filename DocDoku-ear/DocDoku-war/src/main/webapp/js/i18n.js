@@ -17,6 +17,7 @@ app.i18n = {
 	"EDIT":						"Éditer",
 	"FOLDER":					"Dossier",
 	"FOLDER_S_NAME":			"Nom du dossier",
+	"GENERAL":					"Général",
 	"ITERATION":				"Itération",
 	"LINKS":					"Liens",
 	"MODIFICATION_DATE":		"Date de modification",

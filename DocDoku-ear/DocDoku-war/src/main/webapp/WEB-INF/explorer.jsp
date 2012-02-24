@@ -29,6 +29,7 @@
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/alert.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_new.js"></script>
@@ -114,6 +115,7 @@
 					<h3><span class="icon"></span>{{_.NEW_FOLDER}}</h3>
 				</div>
 				<div class="modal-body">
+					<div class="alerts"></div>
 					<form id="new-folder-form" class="form-horizontal">
 						<label>{{_.NAME}}</label>
 						<input class="name" type="text" value=""
@@ -121,7 +123,7 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button class="btn create btn-primary" for="new-folder-form">
+					<button class="btn btn-primary" for="new-folder-form">
 						{{_.CREATE}}
 					</button>
 					<button class="btn cancel">{{_.CANCEL}}</button>
@@ -135,6 +137,7 @@
 					<h3><span class="icon"></span>{{_.RENAME}}</h3>
 				</div>
 				<div class="modal-body">
+					<div class="alerts"></div>
 					<form id="edit-folder-form">
 						<label>Nom</label>
 						<input class="name" type="text" value=""
@@ -195,35 +198,47 @@
 					<h3><span class="icon"></span>{{_.NEW_DOCUMENT}}</h3>
 				</div>
 				<div class="modal-body">
-					<form id="new-document-form-template-list" class="form-horizontal">
-					</form>
-					<form id="new-document-form" class="form-horizontal">
-						<div class="control-group">
-							<label class="control-label" for="new-document-form-reference">{{_.REFERENCE}}</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge" id="new-document-form-reference">
-								<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
+					<div class="alerts"></div>
+					<div id="modal-form-tab">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#modal-form-tab-main" data-toggle="tab">{{_.GENERAL}}</a></li>
+							<li><a href="#modal-form-tab-attributes" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="modal-form-tab-main">
+								<form id="modal-form-template-list" class="form-horizontal">
+								</form>
+								<form id="modal-form" class="form-horizontal">
+									<div class="control-group">
+										<label class="control-label required" for="modal-form-reference">{{_.REFERENCE}}</label>
+										<div class="controls">
+											<input type="text" class="input-xlarge" id="modal-form-reference">
+											<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="modal-form-title">{{_.TITLE}}</label>
+										<div class="controls">
+											<input type="text" class="input-xlarge" id="modal-form-title">
+											<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="modal-form-description">{{_.DESCRIPTION}}</label>
+										<div class="controls">
+											<textarea type="text" class="input-xlarge" id="modal-form-description"></textarea>
+											<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="modal-form-tab-attributes">
 							</div>
 						</div>
-						<div class="control-group">
-							<label class="control-label" for="new-document-form-title">{{_.TITLE}}</label>
-							<div class="controls">
-								<input type="text" class="input-xlarge" id="new-document-form-title">
-								<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" for="new-document-form-description">{{_.DESCRIPTION}}</label>
-							<div class="controls">
-								<textarea type="text" class="input-xlarge" id="new-document-form-description"></textarea>
-								<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
-							</div>
-						</div>
-						<fieldset class="attributes"></fieldset>
-					</form>
+					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn create btn-primary" for="new-document-form">
+					<button class="btn btn-primary" for="modal-form">
 						{{_.CREATE}}
 					</button>
 					<button class="btn cancel">{{_.CANCEL}}</button>
@@ -232,9 +247,9 @@
 		</script>
 		<script id="document-new-template-list-tpl" type="text/html">
 			<div class="control-group">
-				<label class="control-label" for="new-document-form-template">{{_.TEMPLATE}}</label>
+				<label class="control-label" for="modal-form-template">{{_.TEMPLATE}}</label>
 				<div class="controls">
-					<select class="input-xlarge" id="new-document-form-template">
+					<select class="input-xlarge" id="modal-form-template">
 						<option value=""></option>
 						{{#items}}
 						<option value="{{id}}">{{id}}</option>
@@ -245,15 +260,21 @@
 			</div>
 		</script>
 		<script id="document-new-attributes-tpl" type="text/html">
-			<legend>{{_.ATTRIBUTES}}</legend>
 			{{#model.attributeTemplates}}
 			<div class="control-group">
-				<label class="control-label">{{name}}</label>
+				<label class="control-label" for="modal-form-attribute-{{name}}">{{name}}</label>
 				<div class="controls">
-					<input type="{{attributeType}}" class="input-xlarge attribute" />
+					<input id="modal-form-attribute-{{name}}" type="{{attributeType}}" class="input-xlarge attribute" />
 				</div>
 			</div>
 			{{/model.attributeTemplates}}
+		</script>
+		<script id="alert-tpl" type="text/html">
+			<div class="alert alert-block alert-{{alert.type}} fade in">
+				<a class="close" data-dismiss="alert" href="#">×</a>
+				<h4 class="alert-heading">{{alert.title}}</h4>
+				<p>{{alert.message}}</p>
+			</div>
 		</script>
     </body>
 </html>
