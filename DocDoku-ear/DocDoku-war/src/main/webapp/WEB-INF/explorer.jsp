@@ -114,7 +114,7 @@
 					<h3><span class="icon"></span>{{_.NEW_FOLDER}}</h3>
 				</div>
 				<div class="modal-body">
-					<form id="new-folder-form">
+					<form id="new-folder-form" class="form-horizontal">
 						<label>{{_.NAME}}</label>
 						<input class="name" type="text" value=""
 							placeholder="{{_.FOLDER_S_NAME}}" />
@@ -195,18 +195,30 @@
 					<h3><span class="icon"></span>{{_.NEW_DOCUMENT}}</h3>
 				</div>
 				<div class="modal-body">
-					<form id="new-document-form-template-list">
+					<form id="new-document-form-template-list" class="form-horizontal">
 					</form>
-					<form id="new-document-form">
-						<label>{{_.REFERENCE}}</label>
-						<input name="reference" class="reference" type="text" value=""
-							placeholder="{{_.DOCUMENT_S_REFERENCE}}" />
-						<label>Titre</label>
-						<input name="title" class="title" type="text" value=""
-							placeholder="{{_.DOCUMENT_S_TITLE}}" />
-						<label>Description</label>
-						<textarea name="description" class="description"
-							placeholder="{{_.DOCUMENT_S_DESCRIPTION}}"></textarea>
+					<form id="new-document-form" class="form-horizontal">
+						<div class="control-group">
+							<label class="control-label" for="new-document-form-reference">{{_.REFERENCE}}</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge" id="new-document-form-reference">
+								<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="new-document-form-title">{{_.TITLE}}</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge" id="new-document-form-title">
+								<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="new-document-form-description">{{_.DESCRIPTION}}</label>
+							<div class="controls">
+								<textarea type="text" class="input-xlarge" id="new-document-form-description"></textarea>
+								<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
+							</div>
+						</div>
 						<fieldset class="attributes"></fieldset>
 					</form>
 				</div>
@@ -219,19 +231,28 @@
 			</div>
 		</script>
 		<script id="document-new-template-list-tpl" type="text/html">
-			<label>{{_.TEMPLATE}}</label>
-			<select>
-				<option value=""></option>
-				{{#items}}
-				<option value="{{id}}">{{id}}</option>
-				{{/items}}
-			</select>
+			<div class="control-group">
+				<label class="control-label" for="new-document-form-template">{{_.TEMPLATE}}</label>
+				<div class="controls">
+					<select class="input-xlarge" id="new-document-form-template">
+						<option value=""></option>
+						{{#items}}
+						<option value="{{id}}">{{id}}</option>
+						{{/items}}
+					</select>
+					<p class="help-block">{{_.DOCUMENT_S_TEMPLATE}}</p>
+				</div>
+			</div>
 		</script>
 		<script id="document-new-attributes-tpl" type="text/html">
 			<legend>{{_.ATTRIBUTES}}</legend>
 			{{#model.attributeTemplates}}
-				<label>{{name}}</label>
-				<input class="attribute" name="{{name}}" type="{{attributeType}}"/>
+			<div class="control-group">
+				<label class="control-label">{{name}}</label>
+				<div class="controls">
+					<input type="{{attributeType}}" class="input-xlarge attribute" />
+				</div>
+			</div>
 			{{/model.attributeTemplates}}
 		</script>
     </body>

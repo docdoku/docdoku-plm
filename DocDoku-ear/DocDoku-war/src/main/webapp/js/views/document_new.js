@@ -30,12 +30,12 @@ DocumentNewView = BaseView.extend({
 		return attributes;
 	},
 	create: function () {
-		var reference = $(this.el).find("input.reference").first().val();
+		var reference = $("#new-document-form-reference").val();
 		if (reference) {
 			this.model.documents.create({
 				reference: reference,
-				title: $(this.el).find("input.title").first().val(),
-				description: $(this.el).find("textarea.description").first().val()
+				title: $("#new-document-form-title").val(),
+				description: $("#new-document-form-description").val()
 			}, {
 				success: this.success,
 				error: this.error

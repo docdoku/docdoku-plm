@@ -15,13 +15,16 @@ DocumentNewTemplateListView = BaseView.extend({
 		}));
 	},
 	selectionChanged: function () {
-		var templateId = $(this.el).children("select").val()
+		if (this.attributesView) {
+			this.attributesView.remove();
+		}
+		var templateId = $("#new-document-form-template").val()
 		if (templateId) {
-			templateView = new DocumentNewAttributesView({
+			this.attributesView = new DocumentNewAttributesView({
 				el: $("#new-document-form .attributes"),
 				model: this.collection.get(templateId)
 			});
-			templateView.render();
+			this.attributesView.render();
 		}
 	}
 });
