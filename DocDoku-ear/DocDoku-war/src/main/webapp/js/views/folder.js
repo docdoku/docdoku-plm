@@ -73,6 +73,7 @@ var FolderView = BaseView.extend({
 		if (this.documentsView) this.documentsView.remove();
 		this.documentsView = new DocumentListView({model:this.model});
 		$("#workspace .content").html(this.documentsView.el);
+		folderId = this.model.id ? this.model.id : "";
 
 		$(this.el).hasClass("open") ? this.close() : this.open();
 		return false;

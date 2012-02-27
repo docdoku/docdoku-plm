@@ -27,6 +27,7 @@ app.i18n = {
 	"NAME":						"Nom",
 	"NEW_DOCUMENT":				"Nouveau Document",
 	"NEW_FOLDER":				"Nouveau Dossier",
+	"NEW_TEMPLATE":				"Nouveau Modèle",
 	"NUMBER":					"Nombre",
 	"REFERENCE":				"Référence",
 	"REFERENCES":				"Références",

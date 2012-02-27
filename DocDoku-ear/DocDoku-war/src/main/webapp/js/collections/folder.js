@@ -1,5 +1,9 @@
 var FolderList = Backbone.Collection.extend({
 	model: Folder,
+	url: function () {
+		baseUrl = "/api/workspaces/" + app.workspaceId + "/folders"
+		return baseUrl + "/" + this.parent.get("id") + "/folders";
+	},
 	parse: function(data) {
 		// adding folders' id from completePath
 		// done here because completePath is not reachable in initialize
@@ -32,7 +36,3 @@ var FolderList = Backbone.Collection.extend({
 		return (nameA < nameB) ? -1 : 1;
 	}
 });
-FolderList.prototype.__defineGetter__("url", function() {
-	baseUrl = "/api/workspaces/" + app.workspaceId + "/folders"
-	return baseUrl + "/" + this.parent.get("id") + "/folders";
-}); 

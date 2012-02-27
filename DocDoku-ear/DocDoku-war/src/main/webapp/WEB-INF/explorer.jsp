@@ -27,6 +27,7 @@
 		<script src="<%=request.getContextPath()%>/js/collections/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/document_checkedout.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/alert.js"></script>
@@ -37,8 +38,13 @@
 		<script src="<%=request.getContextPath()%>/js/views/document_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_template_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attributes.js"></script>
-		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_listitem.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_listitem.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/template_listitem.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/template_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/router.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
 		<script src="<%=request.getContextPath()%>/js/i18n.js"></script>
 		<script type="text/javascript">
@@ -63,11 +69,11 @@
 					<li class="nav-header">{{_.REFERENCES}}</li>
 					<li>
 						<a href="#workflows">{{_.WORKFLOWS}}</a>
-						<a href="#models">{{_.TEMPLATES}}</a>
+						<a href="#templates">{{_.TEMPLATES}}</a>
 					</li>
 					<li class="nav-header">{{_.LINKS}}</li>
 					<li>
-						<a href="#checkouts">{{_.CHECKOUTS}}</a>
+						<a href="#checkedout">{{_.CHECKOUTS}}</a>
 						<a href="#tasks">{{_.TASKS}}</a>
 					</li>
 				</ul>
@@ -176,8 +182,7 @@
 						<th>{{_.CHECKOUT_DATE}}</th>
 					</tr>
 				</thead>
-				<tbody>
-				</tbody>
+				<tbody></tbody>
 			</table>
 		</script>
 		<script id="document-list-item-tpl" type="text/html">
@@ -281,6 +286,31 @@
 					<li><a class="new-url-attribute" href="#">{{_.URL}}</a></li>
 				</ul>
 			</div>
+		</script>
+		<script id="template-list-tpl" type="text/html">
+			<div class="actions">
+				<button class="btn new" title="{{_.NEW_TEMPLATE}}"></button>
+				<button class="btn delete" title="{{_.DELETE}}"></button>
+			</div>
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th>{{_.REFERENCE}}</th>
+						<th>{{_.TYPE}}</th>
+						<th>{{_.AUTHOR}}</th>
+						<th>{{_.CREATION_DATE}}</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</script>
+		<script id="template-list-item-tpl" type="text/html">
+			<td><input for="template-list-actions" type="checkbox" class="select" /></td>
+			<td>{{model.reference}}</td>
+			<td>{{model.documentType}}</td>
+			<td>{{model.author.name}}</td>
+			<td>{{model.creationDate}}</td>
 		</script>
 		<script id="alert-tpl" type="text/html">
 			<div class="alert alert-block alert-{{alert.type}} fade in">
