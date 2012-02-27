@@ -22,22 +22,19 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.TagKey;
+import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.gwt.explorer.shared.ACLDTO;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -76,7 +73,6 @@ public class DocumentResource {
      *
      * @return an instance of com.docdoku.core.document.DocumentMaster
      */
-    
     @GET
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterDTO[] getRootDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("tag") String label, @QueryParam("path") String path) {
@@ -112,7 +108,7 @@ public class DocumentResource {
             for (int i = 0; i < checkedOutdocMs.length; i++) {
                 checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
                 checkedOutdocMsDTO[i].setPath(checkedOutdocMs[i].getLocation().getCompletePath());
-                checkedOutdocMsDTO[i] = Tools.createLightDocumentMasterDTO(checkedOutdocMsDTO[i]);              
+                checkedOutdocMsDTO[i] = Tools.createLightDocumentMasterDTO(checkedOutdocMsDTO[i]);
             }
 
             return checkedOutdocMsDTO;
@@ -137,8 +133,8 @@ public class DocumentResource {
             DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
-            docMsDTO.setLifeCycleState(docM.getLifeCycleState()); 
-           
+            docMsDTO.setLifeCycleState(docM.getLifeCycleState());
+
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -152,7 +148,6 @@ public class DocumentResource {
      * @param content representation for the resource
      * @return an HTTP response with content of the updated or created resource.
      */
-    
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
@@ -165,10 +160,10 @@ public class DocumentResource {
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
             DocumentMaster docM = commandService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
-            
+
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
-            
+
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -192,7 +187,7 @@ public class DocumentResource {
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(docM.getLifeCycleState());
-            
+
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -216,7 +211,7 @@ public class DocumentResource {
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(docM.getLifeCycleState());
-            
+
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -243,12 +238,62 @@ public class DocumentResource {
             DocumentMasterDTO docMsDTO = mapper.map(movedDocumentMaster, DocumentMasterDTO.class);
             docMsDTO.setPath(movedDocumentMaster.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(movedDocumentMaster.getLifeCycleState());
-            
+
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{docKey}/iterations/{docIteration}")
+    public DocumentMasterDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, DocumentDTO data) {
+
+
+
+        try {
+
+            int lastDash = docKey.lastIndexOf('-');
+            String pID = docKey.substring(0, lastDash);
+            String pVersion = docKey.substring(lastDash + 1, docKey.length());
+            String pWorkspaceId = workspaceId;
+            String pRevisionNote = data.getRevisionNote();
+            int pIteration = Integer.parseInt(docIteration);
+
+            Set<DocumentDTO> linksData = data.getLinkedDocuments();
+            DocumentIterationKey[] links = null;
+            if (linksData != null) {
+                List<DocumentDTO> linksList = new ArrayList<DocumentDTO>(linksData);
+                DocumentDTO[] linksDtos = new DocumentDTO[linksList.size()];
+
+                for (int i = 0; i < linksDtos.length; i++) {
+                    linksDtos[i] = linksList.get(i);
+                }
+                links = createObject(linksDtos);
+            }
+
+
+            List<AttributesDTO> documentAttributesDtosList = new ArrayList<AttributesDTO>(data.getDocumentAttributes());
+            
+            InstanceAttribute[] attributes = null;
+            if(documentAttributesDtosList!=null){
+                AttributesDTO[] documentAttributesDtos = new AttributesDTO[documentAttributesDtosList.size()];             
+                for (int i = 0; i < documentAttributesDtos.length; i++) {
+                    documentAttributesDtos[i]=documentAttributesDtosList.get(i);          
+                }
+                attributes = createObject(documentAttributesDtos);   
+            }
+
+            DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
+            DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
+
+            return docMsDTO;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+
     }
 
     @PUT
@@ -302,8 +347,8 @@ public class DocumentResource {
                 dtos[i].setPath(docM[i].getLocation().getCompletePath());
                 dtos[i].setLifeCycleState(docM[i].getLifeCycleState());
                 dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
-            }            
-            
+            }
+
             return dtos;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -363,9 +408,9 @@ public class DocumentResource {
             }
 
             commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-            
+
             return Response.ok().build();
-            
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
@@ -414,4 +459,61 @@ public class DocumentResource {
         }
     }
 
+    private InstanceAttribute[] createObject(AttributesDTO[] dtos) {
+        if (dtos == null) {
+            return null;
+        }
+        InstanceAttribute[] data = new InstanceAttribute[dtos.length];
+
+        for (int i = 0; i < dtos.length; i++) {          
+            data[i] = createObject(dtos[i]);
+        }
+
+        return data;
+    }
+
+    private InstanceAttribute createObject(AttributesDTO dto) {
+        if (dto.getType().equals(AttributesDTO.Type.BOOLEAN)) {
+            InstanceBooleanAttribute attr = new InstanceBooleanAttribute();
+            attr.setName(dto.getName());
+            attr.setBooleanValue(Boolean.parseBoolean(dto.getValue()));
+            return attr;
+        } else if (dto.getType().equals(AttributesDTO.Type.TEXT)) {
+            InstanceTextAttribute attr = new InstanceTextAttribute();
+            attr.setName(dto.getName());
+            attr.setTextValue((String) dto.getValue());
+            return attr;
+        } else if (dto.getType().equals(AttributesDTO.Type.NUMBER)) {
+            InstanceNumberAttribute attr = new InstanceNumberAttribute();
+            attr.setName(dto.getName());
+            attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            return attr;
+        } else if (dto.getType().equals(AttributesDTO.Type.DATE)) {
+            InstanceDateAttribute attr = new InstanceDateAttribute();
+            attr.setName(dto.getName());
+            attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            return attr;
+        } else if (dto.getType().equals(AttributesDTO.Type.URL)) {
+            InstanceURLAttribute attr = new InstanceURLAttribute();
+            attr.setName(dto.getName());
+            attr.setUrlValue(dto.getValue());
+            return attr;
+        } else {
+            throw new IllegalArgumentException("Instance attribute not supported");
+        }
+    }
+
+    private DocumentIterationKey[] createObject(DocumentDTO[] dtos) {
+        DocumentIterationKey[] data = new DocumentIterationKey[dtos.length];
+
+        for (int i = 0; i < dtos.length; i++) {
+            data[i] = createObject(dtos[i]);
+        }
+
+        return data;
+    }
+
+    private DocumentIterationKey createObject(DocumentDTO dto) {
+        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
+    }
 }
