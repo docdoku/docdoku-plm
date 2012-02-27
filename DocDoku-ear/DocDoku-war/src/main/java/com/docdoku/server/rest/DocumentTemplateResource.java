@@ -109,7 +109,7 @@ public class DocumentTemplateResource {
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
             boolean idGenerated = docMsTemplateDTO.isIdGenerated();
-            System.out.println(docMsTemplateDTO.getReference());
+
             Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
             InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
