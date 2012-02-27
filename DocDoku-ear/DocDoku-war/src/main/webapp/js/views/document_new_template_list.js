@@ -13,11 +13,13 @@ DocumentNewTemplateListView = BaseView.extend({
 		$(this.el).html(this.template({
 			items: this.collection.toJSON()
 		}));
+		this.attributesView = new DocumentNewAttributesView({
+			el: $("#modal-form-tab-attributes"),
+			model: null
+		});
+		this.attributesView.render();
 	},
 	selectionChanged: function () {
-		if (this.attributesView) {
-			$("#modal-form-tab-attributes").html("");
-		}
 		var templateId = $("#modal-form-template").val()
 		this.attributesView = new DocumentNewAttributesView({
 			el: $("#modal-form-tab-attributes"),

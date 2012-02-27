@@ -232,8 +232,8 @@
 									</div>
 								</form>
 							</div>
-							<div class="tab-pane" id="modal-form-tab-attributes">
-							</div>
+							<form id="modal-form-tab-attributes" class="tab-pane form-horizontal">
+							</form>
 						</div>
 					</div>
 				</div>
@@ -268,6 +268,19 @@
 				</div>
 			</div>
 			{{/model.attributeTemplates}}
+			<div class="dropdown">
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+					{{_.APPEND}}
+					<b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a class="new-text-attribute" href="#">{{_.TEXT}}</a></li>
+					<li><a class="new-number-attribute" href="#">{{_.NUMBER}}</a></li>
+					<li><a class="new-date-attribute" href="#">{{_.DATE}}</a></li>
+					<li><a class="new-boolean-attribute" href="#">{{_.BOOLEAN}}</a></li>
+					<li><a class="new-url-attribute" href="#">{{_.URL}}</a></li>
+				</ul>
+			</div>
 		</script>
 		<script id="alert-tpl" type="text/html">
 			<div class="alert alert-block alert-{{alert.type}} fade in">
