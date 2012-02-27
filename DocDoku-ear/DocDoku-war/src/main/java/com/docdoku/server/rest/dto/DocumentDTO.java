@@ -17,12 +17,12 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.meta.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -30,29 +30,27 @@ import java.util.Set;
  * @author Florent GARIN
  */
 public class DocumentDTO implements Serializable {
-    
+
     private String workspaceId;
     private String documentMasterId;
     private String documentMasterVersion;
     private int iteration;
-
     private Date creationDate;
     private UserDTO author;
     private String revisionNote;
-
-
-    private Map<String,String> attachedFiles;
-    private Map<String,InstanceAttributeDTO> instanceAttributes;
+    private Map<String, String> attachedFiles;
+    private Map<String, InstanceAttributeDTO> instanceAttributes;
+    private List<AttributesDTO> documentAttributes;
     private Set<DocumentDTO> linkedDocuments;
 
     public DocumentDTO() {
     }
-    
+
     public DocumentDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
-        workspaceId=pWorkspaceId;
-        documentMasterId=pDocumentMasterId;
-        documentMasterVersion=pDocumentMasterVersion;
-        iteration=pIteration;
+        workspaceId = pWorkspaceId;
+        documentMasterId = pDocumentMasterId;
+        documentMasterVersion = pDocumentMasterVersion;
+        iteration = pIteration;
     }
 
     public UserDTO getAuthor() {
@@ -70,8 +68,6 @@ public class DocumentDTO implements Serializable {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-    
-  
 
     public void setRevisionNote(String pRevisionNote) {
         revisionNote = pRevisionNote;
@@ -81,7 +77,7 @@ public class DocumentDTO implements Serializable {
         return revisionNote;
     }
 
-    public Map<String,String> getAttachedFiles() {
+    public Map<String, String> getAttachedFiles() {
         return attachedFiles;
     }
 
@@ -89,7 +85,7 @@ public class DocumentDTO implements Serializable {
         return linkedDocuments;
     }
 
-    public void setAttachedFiles(Map<String,String> attachedFiles) {
+    public void setAttachedFiles(Map<String, String> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 
@@ -97,32 +93,31 @@ public class DocumentDTO implements Serializable {
         this.linkedDocuments = linkedDocuments;
     }
 
-    public Map<String,InstanceAttributeDTO> getInstanceAttributes() {
+    public Map<String, InstanceAttributeDTO> getInstanceAttributes() {
         return instanceAttributes;
     }
 
-    public void setInstanceAttributes(Map<String,InstanceAttributeDTO> instanceAttributes) {
+    public void setInstanceAttributes(Map<String, InstanceAttributeDTO> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
     }
-
 
     @Override
     public String toString() {
         return workspaceId + "-" + documentMasterId + "-" + documentMasterVersion + "-" + iteration;
     }
-    
+
     public String getWorkspaceId() {
         return workspaceId;
     }
-    
+
     public void setWorkspaceId(String pWorkspaceId) {
         workspaceId = pWorkspaceId;
     }
-    
+
     public String getDocumentMasterId() {
         return documentMasterId;
     }
-    
+
     public void setDocumentMasterId(String pDocumentMasterId) {
         documentMasterId = pDocumentMasterId;
     }
@@ -134,13 +129,59 @@ public class DocumentDTO implements Serializable {
     public void setDocumentMasterVersion(String pDocumentMasterVersion) {
         this.documentMasterVersion = pDocumentMasterVersion;
     }
-    
-    
-    public int getIteration(){
+
+    public int getIteration() {
         return iteration;
     }
-    
-    public void setIteration(int pIteration){
-        iteration=pIteration;
+
+    public List<AttributesDTO> getDocumentAttributes() {
+        if (instanceAttributes != null) {
+            List<AttributesDTO> attributes = new ArrayList<AttributesDTO>();
+            Object[] attributeList = getInstanceAttributes().values().toArray();
+
+            for (int i = 0; i < attributeList.length; i++) {
+                AttributesDTO attribute = new AttributesDTO();
+
+                if (attributeList[i] instanceof InstanceTextAttribute) {
+                    InstanceTextAttribute instanceAttribute = (InstanceTextAttribute) attributeList[i];
+                    attribute.setName(instanceAttribute.getName());
+                    attribute.setType(AttributesDTO.Type.TEXT);
+                    attribute.setValue(instanceAttribute.getTextValue());
+                } else if (attributeList[i] instanceof InstanceBooleanAttribute) {
+                    InstanceBooleanAttribute instanceAttribute = (InstanceBooleanAttribute) attributeList[i];
+                    attribute.setName(instanceAttribute.getName());
+                    attribute.setType(AttributesDTO.Type.BOOLEAN);
+                    attribute.setValue(Boolean.toString(instanceAttribute.isBooleanValue()));
+                } else if (attributeList[i] instanceof InstanceNumberAttribute) {
+                    InstanceNumberAttribute instanceAttribute = (InstanceNumberAttribute) attributeList[i];
+                    attribute.setName(instanceAttribute.getName());
+                    attribute.setType(AttributesDTO.Type.NUMBER);
+                    attribute.setValue(Float.toString(instanceAttribute.getNumberValue()));
+                } else if (attributeList[i] instanceof InstanceDateAttribute) {
+                    InstanceDateAttribute instanceAttribute = (InstanceDateAttribute) attributeList[i];
+                    attribute.setName(instanceAttribute.getName());
+                    attribute.setType(AttributesDTO.Type.NUMBER);
+                    attribute.setValue(instanceAttribute.getDateValue().toString());
+                } else if (attributeList[i] instanceof InstanceURLAttribute) {
+                    InstanceURLAttribute instanceAttribute = (InstanceURLAttribute) attributeList[i];
+                    attribute.setName(instanceAttribute.getName());
+                    attribute.setType(AttributesDTO.Type.URL);
+                    attribute.setValue(instanceAttribute.getUrlValue());
+                }
+                attributes.add(attribute);
+            }
+            documentAttributes = attributes;
+            return documentAttributes;
+        } else {
+            return documentAttributes;
+        }
+    }
+
+    public void setDocumentAttributes(List<AttributesDTO> documentAttributes) {
+        this.documentAttributes = documentAttributes;
+    }
+
+    public void setIteration(int pIteration) {
+        iteration = pIteration;
     }
 }
