@@ -27,7 +27,6 @@
 		<script src="<%=request.getContextPath()%>/js/collections/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
-		<script src="<%=request.getContextPath()%>/js/collections/document_checkedout.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/alert.js"></script>
@@ -40,8 +39,6 @@
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attributes.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
-		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_listitem.js"></script>
-		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/router.js"></script>

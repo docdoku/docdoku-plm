@@ -1,6 +1,5 @@
-RootDocumentList = DocumentList.extend({
-	url: function () {
-		baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
-		return baseUrl;
-	}
+var RootDocumentList = DocumentList.extend({});
+RootDocumentList.prototype.__defineGetter__("url", function () {
+	baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
+	return baseUrl;
 });
