@@ -356,6 +356,32 @@ public class DocumentResource {
         }
     }
 
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("{docKey}/tags")
+    public DocumentMasterDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, TagDTO[] tagDtos) {
+  
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+        
+        String[] tagsLabel = new String[tagDtos.length];
+        for(int i = 0; i < tagDtos.length; i++){
+            tagsLabel[i]=tagDtos[i].getLabel();
+        }
+        
+        try{
+            DocumentMaster docMs = commandService.saveTags(new DocumentMasterKey(workspaceId, id, version), tagsLabel);
+            DocumentMasterDTO docMsDto = mapper.map(docMs,DocumentMasterDTO.class);
+            docMsDto.setPath(docMs.getLocation().getCompletePath());
+            docMsDto.setLifeCycleState(docMs.getLifeCycleState());
+        
+            return docMsDto;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }        
+    }
     /**
      *
      * POST method

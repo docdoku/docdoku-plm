@@ -24,15 +24,14 @@ import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
+import com.docdoku.server.rest.dto.TagDTO;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -58,7 +57,27 @@ public class TagResource {
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     } 
-    
+
+    @GET
+    @Produces("application/json;charset=UTF-8")
+    public TagDTO[] getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
+        
+        try{    
+        
+            String[] tagsName = commandService.getTags(workspaceId);
+            TagDTO[] tagDtos = new TagDTO[tagsName.length];
+            for (int i = 0; i < tagsName.length; i++) {                
+                tagDtos[i] = new TagDTO();
+                tagDtos[i].setWorkspaceId(workspaceId);
+                tagDtos[i].setLabel(tagsName[i]);
+            }            
+            
+            return tagDtos;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+        
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }          
+    }
     
     @GET
     @Path("{tagId}/documents/")
@@ -79,5 +98,38 @@ public class TagResource {
         }        
     } 
     
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag) {
+        try {
+
+            commandService.createTag(workspaceId, tag.getLabel());
+            return new TagDTO(tag.getLabel());
+            
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
     
+    /**
+     * DELETE method for deleting an instance of TagResource
+     *
+     * @param parent folder path
+     * @return the array of the documents that have also been deleted
+     */
+    @DELETE
+    @Path("{tagId}")
+    @Produces("application/json;charset=UTF-8")
+    public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId) {
+        try {
+            
+            commandService.deleteTag(new TagKey(workspaceId, tagId));
+            
+            return Response.status(Response.Status.OK).build();
+            
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }    
 }
