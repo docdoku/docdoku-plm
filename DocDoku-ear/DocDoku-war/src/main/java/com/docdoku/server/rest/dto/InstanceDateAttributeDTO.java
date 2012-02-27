@@ -18,9 +18,10 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -38,7 +39,7 @@ public class InstanceDateAttributeDTO extends InstanceAttributeDTO{
     public Date getDateValue() {
         return dateValue;
     }
-
+       
     @Override
     public Object getValue() {
         return dateValue;

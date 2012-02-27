@@ -18,35 +18,36 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import java.io.Serializable;
 
 /**
  *
- * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
+ * @author Florent Garin
  */
-public class InstanceURLAttributeDTO extends InstanceAttributeDTO{
+public class InstanceTextAttributeDTO extends InstanceAttributeDTO{
 
-    private String urlValue;
+    private String textValue;
+
+    public String getTextValue() {
+        return textValue;
+    }
+
+    public void setTextValue(String textValue) {
+        this.textValue = textValue;
+    }
 
     @Override
     public Object getValue() {
-        return urlValue;
+        return textValue;
     }
 
     @Override
-    public boolean setValue(Object pValue) {
-        urlValue = pValue + "";
+    public boolean setValue(Object value) {
+        textValue=value + "";
         return true;
     }
-
-    public String getUrlValue() {
-        return urlValue;
-    }
-
-    public void setUrlValue(String urlValue) {
-        this.urlValue = urlValue;
-    }
-
+    
 }

@@ -18,36 +18,42 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.gwt.explorer.shared;
+package com.docdoku.server.rest.dto;
 
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
-public class InstanceBooleanAttributeDTO extends InstanceAttributeDTO{
+public class InstanceNumberAttributeDTO extends InstanceAttributeDTO{
 
+    private float numberValue;
 
-    private boolean booleanValue;
-
-    public void setBooleanValue(boolean booleanValue) {
-        this.booleanValue = booleanValue;
+    public void setNumberValue(float numberValue) {
+        this.numberValue = numberValue;
     }
 
-    public boolean isBooleanValue() {
-        return booleanValue;
+    public float getNumberValue() {
+        return numberValue;
     }
 
     @Override
     public Object getValue() {
-        return booleanValue;
+        return numberValue;
     }
 
     @Override
     public boolean setValue(Object value) {
-        booleanValue=Boolean.parseBoolean(value + "");
-        return true;
+        try{
+            numberValue=Float.parseFloat(value + "");
+            return true;
+        }catch(NumberFormatException ex){
+            return false;
+        }
     }
-    
+
+
+
 }
