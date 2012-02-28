@@ -27,6 +27,7 @@ import java.io.Serializable;
  */
 public class TagDTO implements Serializable {
     
+    private String id;
     private String label;
     private String workspaceId;
     
@@ -48,6 +49,15 @@ public class TagDTO implements Serializable {
 
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public String getId() {
+        id= this.label;
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setWorkspaceId(String workspaceId) {
