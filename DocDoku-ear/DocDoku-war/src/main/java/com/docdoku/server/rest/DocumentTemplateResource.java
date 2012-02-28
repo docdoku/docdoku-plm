@@ -95,6 +95,19 @@ public class DocumentTemplateResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
+    
+    @GET
+    @Path("{templateId}/generate_id")
+    @Produces("application/json;charset=UTF-8")
+    public String generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+        try {
+
+            return commandService.generateId(workspaceId, templateId);
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }    
 
     @POST
     @Consumes("application/json;charset=UTF-8")
