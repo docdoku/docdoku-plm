@@ -132,6 +132,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     }
 
     public String getReference() {
+        reference = this.id;
         return reference;
     }
 
