@@ -1009,19 +1009,17 @@ public class CommandBean implements ICommandWS, ICommandLocal {
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().getKey().equals(pKey)) {
             DocumentIteration doc = docM.getLastIteration();
             
-            /*links process commentend due to an unresolved bug*/
-            
-//            Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
-//            for (DocumentIterationKey key : pLinkKeys) {
-//                links.add(new DocumentToDocumentLink(doc, key));
-//            }
-//            Set<DocumentToDocumentLink> linksToRemove = new HashSet<DocumentToDocumentLink>(doc.getLinkedDocuments());
-//            linksToRemove.removeAll(links);
-//
-//            DocumentToDocumentLinkDAO linkDAO = new DocumentToDocumentLinkDAO(em);
-//            for (DocumentToDocumentLink linkToRemove : linksToRemove) {
-//                linkDAO.removeLink(linkToRemove);
-//            }
+            Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
+            for (DocumentIterationKey key : pLinkKeys) {
+                links.add(new DocumentToDocumentLink(doc, key));
+            }
+            Set<DocumentToDocumentLink> linksToRemove = new HashSet<DocumentToDocumentLink>(doc.getLinkedDocuments());
+            linksToRemove.removeAll(links);
+
+            DocumentToDocumentLinkDAO linkDAO = new DocumentToDocumentLinkDAO(em);
+            for (DocumentToDocumentLink linkToRemove : linksToRemove) {
+                linkDAO.removeLink(linkToRemove);
+            }
 
             // set doc for all attributes
             
@@ -1065,7 +1063,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
             }
             */
             doc.setRevisionNote(pRevisionNote);
-//            doc.setLinkedDocuments(links);
+            doc.setLinkedDocuments(links);
             //doc.setInstanceAttributes(attrs);
             return docM;
 
