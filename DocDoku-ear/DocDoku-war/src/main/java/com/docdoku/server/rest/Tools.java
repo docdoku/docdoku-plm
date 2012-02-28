@@ -31,7 +31,15 @@ public class Tools {
             return completePath;
     }
     
-   public static DocumentMasterDTO createLightDocumentMasterDTO(DocumentMasterDTO docMsDTO){
+    public static String replaceSlashWithDots(String completePath){
+        return completePath.replaceAll("/", ":");
+    }
+    
+    public static String replaceDotsWithSlash(String completePath){
+        return completePath.replaceAll(":", "/");
+    }    
+
+    public static DocumentMasterDTO createLightDocumentMasterDTO(DocumentMasterDTO docMsDTO){
 
        String documentAuthorName = docMsDTO.getAuthor().getName();
        docMsDTO.setAuthor(new UserDTO());

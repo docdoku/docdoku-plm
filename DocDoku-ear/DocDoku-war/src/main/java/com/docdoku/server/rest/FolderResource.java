@@ -44,7 +44,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.apache.commons.codec.binary.Base64;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -89,7 +88,7 @@ public class FolderResource {
             for (int i = 0; i < folderNames.length; i++) {
                 
                 String completeFolderPath=workspaceId+"/"+folderNames[i];
-                String encodedFolderId=Base64.encodeBase64String(completeFolderPath.getBytes()); 
+                String encodedFolderId=Tools.replaceSlashWithDots(completeFolderPath);
                 
                 folderDtos[i] = new FolderDTO();
                 folderDtos[i].setPath(completePath);
@@ -110,8 +109,7 @@ public class FolderResource {
     public FolderDTO[] getSubFoldersJson(@PathParam("completePath") String folderId) {
         try {
             
-            byte[] encodedcompletePath = Base64.decodeBase64(folderId.getBytes());
-            String decodedCompletePath = new String(encodedcompletePath);
+            String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);
             
             String completePath = Tools.stripTrailingSlash(decodedCompletePath);
             String[] folderNames = commandService.getFolders(completePath);
@@ -121,7 +119,7 @@ public class FolderResource {
             for (int i = 0; i < folderNames.length; i++) {
                 
                 String completeFolderPath=completePath+"/"+folderNames[i];
-                String encodedFolderId=Base64.encodeBase64String(completeFolderPath.getBytes());
+                String encodedFolderId=Tools.replaceSlashWithDots(completeFolderPath);
                
                 folderDtos[i] = new FolderDTO();
                 folderDtos[i].setPath(completePath);
@@ -142,8 +140,7 @@ public class FolderResource {
 
         try {
 
-            byte[] encodedcompletePath = Base64.decodeBase64(folderId.getBytes());
-            String decodedCompletePath = new String(encodedcompletePath);
+            String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);
             
             String pCompletePath = Tools.stripTrailingSlash(decodedCompletePath);
             DocumentMaster[] docM = commandService.findDocumentMastersByFolder(pCompletePath);
@@ -178,8 +175,7 @@ public class FolderResource {
     public FolderDTO renameFolderjson(@PathParam("folderId") String folderPath, FolderDTO folder) {
         try {
             
-            byte[] encodedcompletePath = Base64.decodeBase64(folderPath.getBytes());
-            String decodedCompletePath = new String(encodedcompletePath);
+            String decodedCompletePath = Tools.replaceDotsWithSlash(folderPath);
             
             String completePath = Tools.stripTrailingSlash(decodedCompletePath);
             int lastSlash = completePath.lastIndexOf('/');
@@ -189,7 +185,7 @@ public class FolderResource {
             commandService.moveFolder(completePath, destParentFolder, folderName);
 
             String completeRenamedFolderId=destParentFolder+'/'+folderName;
-            String encodedRenamedFolderId=Base64.encodeBase64String(completeRenamedFolderId.getBytes());            
+            String encodedRenamedFolderId=Tools.replaceSlashWithDots(completeRenamedFolderId);            
             
             FolderDTO renamedFolderDto = new FolderDTO();
             renamedFolderDto.setPath(destParentFolder);
@@ -210,8 +206,7 @@ public class FolderResource {
     public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
         try {
             
-            byte[] encodedcompletePath = Base64.decodeBase64(parentFolderPath.getBytes());
-            String decodedCompletePath = new String(encodedcompletePath);
+            String decodedCompletePath = Tools.replaceDotsWithSlash(parentFolderPath);  
             
             String folderName = folder.getName(); 
             FolderDTO createdSubFolder =  createFolder(decodedCompletePath, folderName);
@@ -247,9 +242,8 @@ public class FolderResource {
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
-        
-        byte[] encodedcompletePath = Base64.decodeBase64(folderId.getBytes());
-        String decodedCompletePath = new String(encodedcompletePath);            
+
+        String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);             
         String pParentFolder = Tools.stripTrailingSlash(decodedCompletePath);
         
         String pWorkflowModelId = null;
@@ -320,8 +314,7 @@ public class FolderResource {
     
     private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException{
 
-        byte[] encodedcompletePath = Base64.decodeBase64(pCompletePath.getBytes());
-        String decodedCompletePath = new String(encodedcompletePath);
+        String decodedCompletePath = Tools.replaceDotsWithSlash(pCompletePath);
 
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
 
@@ -333,8 +326,8 @@ public class FolderResource {
         Folder createdFolder= commandService.createFolder(pCompletePath, pFolderName);
                         
         String completeCreatedFolderPath=createdFolder.getCompletePath()+'/'+createdFolder.getShortName();
-        String encodedFolderId=Base64.encodeBase64String(completeCreatedFolderPath.getBytes());
-               
+        String encodedFolderId=Tools.replaceSlashWithDots(completeCreatedFolderPath); 
+
         FolderDTO createdFolderDtos = new FolderDTO();
         createdFolderDtos.setPath(createdFolder.getCompletePath());
         createdFolderDtos.setName(createdFolder.getShortName());
