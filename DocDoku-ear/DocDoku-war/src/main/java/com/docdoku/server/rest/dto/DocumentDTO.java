@@ -156,12 +156,13 @@ public class DocumentDTO implements Serializable {
                     InstanceNumberAttribute instanceAttribute = (InstanceNumberAttribute) attributeList[i];
                     attribute.setName(instanceAttribute.getName());
                     attribute.setType(AttributesDTO.Type.NUMBER);
-                    attribute.setValue(Float.toString(instanceAttribute.getNumberValue()));
                 } else if (attributeList[i] instanceof InstanceDateAttribute) {
                     InstanceDateAttribute instanceAttribute = (InstanceDateAttribute) attributeList[i];
                     attribute.setName(instanceAttribute.getName());
-                    attribute.setType(AttributesDTO.Type.NUMBER);
-                    attribute.setValue(instanceAttribute.getDateValue().toString());
+                    attribute.setType(AttributesDTO.Type.DATE);
+                    if(instanceAttribute.getDateValue()!=null){
+                        attribute.setValue(instanceAttribute.getDateValue().toString());                    
+                    }
                 } else if (attributeList[i] instanceof InstanceURLAttribute) {
                     InstanceURLAttribute instanceAttribute = (InstanceURLAttribute) attributeList[i];
                     attribute.setName(instanceAttribute.getName());
