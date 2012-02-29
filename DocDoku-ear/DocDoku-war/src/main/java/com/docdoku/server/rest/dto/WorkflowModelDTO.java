@@ -30,6 +30,7 @@ public class WorkflowModelDTO implements Serializable {
 
     private String workspaceId;
     private String id;
+    private String reference;
     private String finalLifeCycleState;
     private UserDTO author;
     private Date creationDate;
@@ -42,6 +43,11 @@ public class WorkflowModelDTO implements Serializable {
     public WorkflowModelDTO(String workspaceId, String id) {
         this.workspaceId = workspaceId;
         this.id = id;
+    }
+    
+        public WorkflowModelDTO(String id) {
+        this.id = id;
+        this.reference = id;        
     }
 
     public String getId() {
@@ -99,4 +105,15 @@ public class WorkflowModelDTO implements Serializable {
     public void setActivityModels(List<ActivityModelDTO> activityModels) {
         this.activityModels = activityModels;
     }
+
+    public String getReference() {
+        reference = this.id;
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+    
+    
 }
