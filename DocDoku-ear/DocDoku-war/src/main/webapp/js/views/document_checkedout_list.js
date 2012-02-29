@@ -1,5 +1,5 @@
-var DocumentListView = ListView.extend({
-	ItemView: DocumentListItemView,
+var DocumentCheckedoutListView = ListView.extend({
+	ItemView: DocumentCheckedoutListItemView,
 	tagName: "div",
 	template_el: "#document-list-tpl",
 	events: {
@@ -11,10 +11,10 @@ var DocumentListView = ListView.extend({
 		"click .actions .delete": "delete"
 	},
 	initialize: function () {
-		this.documentListViewBindings();
+		this.documentCheckedoutListViewBindings();
 		this.collection.fetch();
 	},
-	documentListViewBindings: function () {
+	documentCheckedoutListViewBindings: function () {
 		this.listViewBindings();
 		_.bindAll(this,
 			"itemSelectClicked",
@@ -30,7 +30,7 @@ var DocumentListView = ListView.extend({
 		}
 	},
 	new : function () {
-		var newView = new DocumentNewView({collection: this.collection});
+		newView = new DocumentNewView({model: this.model});
 		newView.render();
 		return false;
 	},
@@ -40,7 +40,6 @@ var DocumentListView = ListView.extend({
 		});
 	},
 	undocheckout: function () {
-		console.debug("undocheckout");
 		_.each(this.itemViews, function (view) {
 			view.undocheckout();
 		});

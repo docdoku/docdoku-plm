@@ -11,7 +11,7 @@ var app = {
 		$(".modal").modal();
 		$(".alert").alert();
 
-		workspaceView = new WorkspaceView({
+		var workspaceView = new WorkspaceView({
 			el: $("#workspace"),
 			model: this.workspace
 		});

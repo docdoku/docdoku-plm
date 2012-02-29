@@ -10,12 +10,13 @@
 				padding: 0 4px;
 				line-height: 28px;
 				> .status {
-					.icon-folder-status-closed;
+					.icon-nav-folder-status-closed;
 					width: 16px;
 				}
 				> .type {
-					.icon-folder;
+					.icon-nav-folder;
 					width: 24px;
+					margin-right: 4px;
 				}
 			}
 			> .actions {
@@ -41,17 +42,20 @@
 					a {
 						line-height: 24px;
 					}
+					.icon {
+						margin-right: 4px;
+					}
 					.new-folder .icon {
-						.icon-folder-new;
+						.icon-menu-folder-new;
 					}
 					.new-document .icon {
-						.icon-document-new;
+						.icon-menu-document-new;
 					}
 					.edit .icon {
-						.icon-edit;
+						.icon-menu-edit;
 					}
 					.delete .icon {
-						.icon-delete;
+						.icon-menu-delete;
 					}
 				}
 			}
@@ -70,10 +74,10 @@
 	.folder.open {
 		> .header > .name {
 			.status {
-				.icon-folder-status-opened;
+				.icon-nav-folder-status-opened;
 			}
 			.type {
-				.icon-folder-opened;
+				.icon-nav-folder-opened;
 			}
 		}
 		> .subfolders {
@@ -82,8 +86,11 @@
 	}
 	> .folder:first-child {
 		> .header > .name {
+			color: #4F76AB;
+			font-weight: bold;
+			text-shadow: 0px 1px 0px white;
 			.type {
-				.icon-documents;
+				.icon-nav-documents;
 			}
 			.status {
 				display: none;
@@ -91,16 +98,16 @@
 		}
 	}
 	.folder.home > .header > .name .type {
-		.icon-folder-home;
+		.icon-nav-folder-home;
 	}
 }
 .modal.new-folder {
 	.modal-header .icon {
-		.icon-folder-new;
+		.icon-menu-folder-new;
 	}
 }
 .modal.edit-folder {
 	.modal-header .icon {
-		.icon-edit;
+		.icon-menu-edit;
 	}
 }

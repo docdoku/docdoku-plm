@@ -21,24 +21,35 @@
 		<script src="<%=request.getContextPath()%>/js/models/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/folder_root.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/tag.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/document_iteration.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder_root.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/tag.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/document_checkedout.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/document_iteration.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
-		<script src="<%=request.getContextPath()%>/js/views/common.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/base.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/modal.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/alert.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/workspace.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/folder_edit.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/tag_listitem.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/tag_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_template_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attributes.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_listitem.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/router.js"></script>
@@ -62,6 +73,7 @@
 					<li class="nav-header">{{model.id}}</li>
 					<li>
 						<ul id="folders"></ul>
+						<div id="tags"></div>
 					</li>
 					<li class="nav-header">{{_.REFERENCES}}</li>
 					<li>
@@ -75,13 +87,11 @@
 					</li>
 				</ul>
 			</nav>
-			<div class="content">
-				<div class="actions"></div>
-			</div>
+			<div class="content"></div>
 		</script>
 		<script id="folder-tpl" type="text/html">
 			<div class="header">
-				<a class="name" href="#folders/{{model.completePath}}"
+				<a class="name" href="#folders/{{model.id}}"
 						data-toggle="collapse"
 						data-target="#subfolders-{{view_cid}}">
 					<span class="icon status"></span>
@@ -94,17 +104,17 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li class="new-folder">
-							<a href="#"><span class="icon"></span>{{_.NEW_FOLDER}}</a>
+							<a><span class="icon"></span>{{_.NEW_FOLDER}}</a>
 						</li>
 						<li class="edit">
-							<a href="#"><span class="icon"></span>{{_.RENAME}}</a>
+							<a><span class="icon"></span>{{_.RENAME}}</a>
 						</li>
 						<li class="delete">
-							<a href="#"><span class="icon"></span>{{_.DELETE}}</a>
+							<a><span class="icon"></span>{{_.DELETE}}</a>
 						</li>
 						<li class="divider"></li>
 						<li class="new-document">
-							<a href="#"><span class="icon"></span>{{_.NEW_DOCUMENT}}</a>
+							<a><span class="icon"></span>{{_.NEW_DOCUMENT}}</a>
 						</li>
 					</ul>
 				</div>
@@ -158,12 +168,22 @@
 		<script id="document-list-tpl" type="text/html">
 			<div class="actions">
 				<span class="btn-group">
-					<button class="btn checkout" title="{{_.CHECKOUT}}"></button>
-					<button class="btn undocheckout" title="{{_.CANCEL_CHECKOUT}}"></button>
-					<button class="btn checkin" title="{{_.CHECKIN}}"></button>
+					<button class="btn checkout" title="{{_.CHECKOUT}}">
+						<span class="icon"></span>
+					</button>
+					<button class="btn undocheckout" title="{{_.CANCEL_CHECKOUT}}">
+						<span class="icon"></span>
+					</button>
+					<button class="btn checkin" title="{{_.CHECKIN}}">
+						<span class="icon"></span>
+					</button>
 				</span>
-				<button class="btn new" title="{{_.NEW_DOCUMENT}}"></button>
-				<button class="btn delete" title="{{_.DELETE}}"></button>
+				<button class="btn new" title="{{_.NEW_DOCUMENT}}">
+					<span class="icon"></span>
+				</button>
+				<button class="btn delete" title="{{_.DELETE}}">
+					<span class="icon"></span>
+				</button>
 			</div>
 			<table class="table table-striped table-condensed">
 				<thead>
@@ -179,7 +199,7 @@
 						<th>{{_.CHECKOUT_DATE}}</th>
 					</tr>
 				</thead>
-				<tbody></tbody>
+				<tbody class="items"></tbody>
 			</table>
 		</script>
 		<script id="document-list-item-tpl" type="text/html">
@@ -284,10 +304,47 @@
 				</ul>
 			</div>
 		</script>
+		<script id="tag-list-tpl" type="text/html">
+			<div class="tag list">
+				<div class="header">
+					<a class="name" href="#tags"
+							data-toggle="collapse"
+							data-target="#data-target-tags-{{view_cid}}">
+						<span class="icon"></span>
+						{{_.TAGS}}
+					</a>
+				</div>
+				<ul id="data-target-tags-{{view_cid}}" class="collapse items"></ul>
+			</div>
+		</script>
+		<script id="tag-list-item-tpl" type="text/html">
+			<div class="header">
+				<a class="name" href="#tag/{{model.id}}">
+					<span class="icon"></span>
+					{{model.label}}
+				</a>
+				<div class="actions btn-group">
+					<a class="btn dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li class="delete">
+							<a href="#"><span class="icon"></span>{{_.DELETE}}</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</script>
 		<script id="template-list-tpl" type="text/html">
 			<div class="actions">
-				<button class="btn new" title="{{_.NEW_TEMPLATE}}"></button>
-				<button class="btn delete" title="{{_.DELETE}}"></button>
+				<!--
+				<button class="btn new" title="{{_.NEW_TEMPLATE}}">
+					<span class="icon"></span>
+				</button>
+				-->
+				<button class="btn delete" title="{{_.DELETE}}">
+					<span class="icon"></span>
+				</button>
 			</div>
 			<table class="table table-striped table-condensed">
 				<thead>
@@ -299,7 +356,7 @@
 						<th>{{_.CREATION_DATE}}</th>
 					</tr>
 				</thead>
-				<tbody></tbody>
+				<tbody class="items"></tbody>
 			</table>
 		</script>
 		<script id="template-list-item-tpl" type="text/html">

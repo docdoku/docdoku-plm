@@ -2,7 +2,7 @@ var Router = Backbone.Router.extend({
 	routes: {
 		"templates":	"templates",
 		"checkedout":	"checkedout",
-		"/":	"default",
+		"":				"default",
 	},
 	templates: function() {
 		collection = new TemplateList();
@@ -10,8 +10,17 @@ var Router = Backbone.Router.extend({
 			el: $("#workspace .content"),
 			collection: collection
 		});
+		$("html, body").animate({ scrollTop: 0 }, "slow");
+	},
+	checkedout: function() {
+		collection = new DocumentCheckedoutList();
+		new DocumentCheckedoutListView({
+			el: $("#workspace .content"),
+			collection: collection
+		});
+		$("html, body").animate({ scrollTop: 0 }, "slow");
 	},
 	default: function() {
-		console.debug("route: default");
+		console.debug("Router.default");
 	},
 });

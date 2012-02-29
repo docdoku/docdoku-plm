@@ -11,7 +11,7 @@
 }
 #home_link {
 	background: no-repeat center;
-	background-image: url("../images/home.png");
+	background-image: url("../images/icon-place-home.png");
 	padding: 20px;
 	opacity: .8;
 }
@@ -23,10 +23,14 @@
 	padding: 0;
 	width: 100%;
 	> nav {
-		float: left;
 		background: @navBackground;
 		box-shadow: 2px 0 2px darken(@navBackground, 5%);
+		float: left;
+		padding-top: 15px;
 		width: 257px;
+		.nav-header {
+			font-size: 12px;
+		}
 		li {
 			clear: both;
 		}
@@ -35,31 +39,75 @@
 		margin-left: 257px;
 		.actions {
 			background: @actionBarBackground;
-			box-shadow: 0 2px 2px darken(@actionBarBackground, 5%);
-			padding: 16px;
+			box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
+			padding: 16px 20px;
 			.btn {
-				height: 32px;
-				width: 32px;
-				background: center no-repeat;
+				height: 35px;
+				width: 56px;
 			}
-			.btn:hover {
-				background-color: #EEE;
-			}
-			.new {
-				.icon-document-new;
+			.new .icon {
+				.icon-action-document-new;
 			}
 			.delete {
-				.icon-delete;
+				display: none;
+				.icon {
+					.icon-action-delete;
+				}
 			}
-			.checkout {
-				.icon-checkout;
+			.checkout .icon {
+				.icon-action-checkout;
 			}
-			.undocheckout {
-				.icon-undocheckout;
+			.undocheckout .icon {
+				.icon-action-undocheckout;
 			}
-			.checkin {
-				.icon-checkin;
+			.checkin .icon {
+				.icon-action-checkin;
 			}
 		}
+	}
+}
+#workspace .content {
+	table {
+		border-radius: 3px;
+		box-shadow: 0px 1px 5px #8C9FBE;
+		margin: 20px 0 0 20px;
+		width: 96%;
+		thead {
+			color: white;
+			text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 0px;
+			// .#gradient > .vertical(#4F75AB, #8C9FBE)
+			background-image: -moz-linear-gradient(bottom, #4F75AB 0%, #8C9FBE 100%);
+			background-image: -webkit-linear-gradient(bottom, #4F75AB 0%, #8C9FBE 100%);
+			tr {
+				height: 40px;
+				font-size: 13px;
+				th {
+					vertical-align: middle;
+				}
+				th:first-child {
+					border-radius: 3px 0 0 0;
+				}
+				th:last-child {
+					border-radius: 0 3px 0 0;
+				}
+			}
+		}
+		tbody {
+			color: #62697B;
+			font-size: 12px;
+			text-shadow: 0px 1px 0px white;
+			tr {
+				height:35px;
+				td:first-child {
+					padding-left: 15px;
+				}
+				td {
+					vertical-align: middle;
+				}
+			}
+		}
+	}
+	.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+		background-color: #EFF2F7;
 	}
 }

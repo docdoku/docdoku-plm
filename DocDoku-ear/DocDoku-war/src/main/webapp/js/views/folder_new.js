@@ -3,23 +3,20 @@ FolderNewView = ModalView.extend({
 	template_el: "#folder-new-tpl",
 	events: {
 		"submit form": "primaryAction",
-		"click .btn-primary": "primaryAction",
-		"click .cancel": "cancel",
 	},
 	initialize: function () {
-		_.bindAll(this,
-			"template", "render",
-			"primaryAction", "success", "error");
+		this.modalViewBindings();
+		_.bindAll(this, "success", "error");
 	},
-	render: function () {
-		$(this.el).html(this.template({}));
+	renderAfter: function () {
 		$(this.el).modal("show");
-		$(this.el).find("input.name").first().focus();
+		this.nameInput = $(this.el).find("input.name").first();
+		this.nameInput.focus();
 	},
 	primaryAction: function () {
-		var name = $(this.el).find("input.name").first().val();
+		var name = this.nameInput.val();
 		if (name) {
-			this.model.folders.create({
+			this.collection.create({
 				name: name
 			}, {
 				success: this.success,

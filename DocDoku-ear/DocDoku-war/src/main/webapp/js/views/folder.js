@@ -32,7 +32,7 @@ var FolderView = BaseView.extend({
 	},
 	createFolderView: function (folder) {
 		folder.parent = this.model;
-		view = new FolderView({model:folder});
+		var view = new FolderView({model:folder});
 		$(this.el).children(".subfolders").first().append(view.el);
 		this.folderViews.push(view);
 	},
@@ -71,11 +71,13 @@ var FolderView = BaseView.extend({
 	},
 	toggle : function () {
 		if (this.documentsView) this.documentsView.remove();
-		this.documentsView = new DocumentListView({model:this.model});
+		this.documentsView = new DocumentListView({collection:this.model.documents});
 		$("#workspace .content").html(this.documentsView.el);
 		folderId = this.model.id ? this.model.id : "";
 
 		$(this.el).hasClass("open") ? this.close() : this.open();
+		var route = this.model.id ? "folders/" + this.model.id : "folders";
+		app.router.navigate(route);
 		return false;
 	},
 	mouseleave: function () {
@@ -85,20 +87,20 @@ var FolderView = BaseView.extend({
 		return false;
 	},
 	newFolder: function () {
-		newView = new FolderNewView({model: this.model});
+		var newView = new FolderNewView({collection: this.model.folders});
 		newView.parent = this;
 		this.mouseleave();
 		newView.render();
 		return false;
 	},
 	newDocument: function () {
-		newView = new DocumentNewView({model: this.model});
+		var newView = new DocumentNewView({collection: this.model.documents});
 		this.mouseleave();
 		newView.render();
 		return false;
 	},
 	edit: function () {
-		editView = new FolderEditView({model: this.model});
+		var editView = new FolderEditView({model: this.model});
 		editView.parent = this;
 		editView.render();
 		return false;

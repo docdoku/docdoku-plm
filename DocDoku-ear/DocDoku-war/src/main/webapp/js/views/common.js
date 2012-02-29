@@ -7,6 +7,25 @@ BaseView = Backbone.View.extend({
 			data
 		);
 	},
+	renderData: function () {
+		data = {};
+		if (this.model) {
+			data.model = this.modelDataFormater ?
+				this.modelDataFormater(this.model.toJSON()) :
+				this.model.toJSON();
+		}
+		if (this.collection) {
+			data.collection = this.collectionDataFormater ?
+				this.collectionDataFormater(this.collection.toJSON()) :
+				this.collection.toJSON();
+		}
+		return data;
+	},
+	render: function () {
+		var data = this.renderData ? this.renderData() : {};
+		$(this.el).html(this.template(data));
+		if (this.renderAfter) { this.renderAfter(); }
+	},
 	alert: function (model) {
 		alertView = new AlertView({
 			el: $(this.el).find(".alerts").first(),

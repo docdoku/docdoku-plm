@@ -8,9 +8,9 @@ var Document = Backbone.Model.extend({
 		}
 	},
 	initialize: function () {
-		_.bindAll(this,
-			"checkout", "undocheckout", "checkin"
-			);
+		_.bindAll(this, "checkout", "undocheckout", "checkin");
+		this.iterations = new DocumentIterationList();
+		this.iterations.parent = this;
 	},
 	checkout: function () {
 		var that = this;
