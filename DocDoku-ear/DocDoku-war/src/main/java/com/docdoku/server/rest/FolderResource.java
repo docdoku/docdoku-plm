@@ -237,7 +237,7 @@ public class FolderResource {
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
     @Path("{folderId}/documents/")
-    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO,@PathParam("folderId") String folderId) {
+    public DocumentMasterDTO createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO,@PathParam("folderId") String folderId) {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
@@ -283,9 +283,12 @@ public class FolderResource {
                 }
             }
 
-            commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-
-            return Response.ok().build();
+           DocumentMaster createdDocMs =  commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+           DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
+           docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
+           docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
+           
+            return docMsDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
