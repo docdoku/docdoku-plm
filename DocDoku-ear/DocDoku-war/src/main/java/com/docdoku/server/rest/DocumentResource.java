@@ -301,45 +301,69 @@ public class DocumentResource {
     }
 
     @PUT
-    @Path("{docKey}/notification/iterationChange")
-    public Response subscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @QueryParam("action") String action) {
+    @Path("{docKey}/notification/iterationChange/subscribe")
+    public Response subscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
             int lastDash = docKey.lastIndexOf('-');
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            if (action.equalsIgnoreCase("subscribe")) {
                 commandService.subscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
-            } else if (action.equalsIgnoreCase("unsubscribe")) {
-                commandService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
-            }
-
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
+    
+     @PUT
+    @Path("{docKey}/notification/iterationChange/unsubscribe")
+    public Response unsubscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String docId = docKey.substring(0, lastDash);
+            String docVersion = docKey.substring(lastDash + 1, docKey.length());
+
+                commandService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+
+
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }   
 
     @PUT
-    @Path("{docKey}/notification/stateChange")
-    public Response subscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @QueryParam("action") String action) {
+    @Path("{docKey}/notification/stateChange/subscribe")
+    public Response subscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
             int lastDash = docKey.lastIndexOf('-');
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
-            
-            if (action.equalsIgnoreCase("subscribe")) {
-                commandService.subscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
-            } else if (action.equalsIgnoreCase("unsubscribe")) {
-                commandService.unsubscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
-            }
+
+            commandService.subscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
+    
+    @PUT
+    @Path("{docKey}/notification/stateChange/unsubscribe")
+    public Response unsubscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String docId = docKey.substring(0, lastDash);
+            String docVersion = docKey.substring(lastDash + 1, docKey.length());
+
+            commandService.unsubscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }    
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
