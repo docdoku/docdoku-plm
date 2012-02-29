@@ -41,6 +41,10 @@
 			background: @actionBarBackground;
 			box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
 			padding: 16px 20px;
+			.btn-group { // prevent a firefox bug
+				float: left;
+				margin-right: 4px;
+			}
 			.btn {
 				height: 35px;
 				width: 56px;
