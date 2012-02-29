@@ -6,7 +6,7 @@ var FolderList = Backbone.Collection.extend({
 		var folders = [];
 		if (this.url == "/api/workspaces/" + app.workspaceId +"/folders") {
 			data.unshift({
-				id: window.btoa(app.workspaceId + "/~" + app.login),
+				id: app.workspaceId + ":~" + app.login,
 				name: "~" + app.login,
 				path: app.workspaceId,
 				home: true
