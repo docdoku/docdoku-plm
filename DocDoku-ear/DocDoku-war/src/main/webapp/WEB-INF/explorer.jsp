@@ -217,7 +217,7 @@
 			<table class="content table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th></th>
+						<th><input for="document-list-actions" type="checkbox" class="select" /></th>
 						<th>{{_.REFERENCE}}</th>
 						<th>{{_.VERSION}}</th>
 						<th>{{_.ITERATION}}</th>
@@ -374,7 +374,7 @@
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th></th>
+						<th><input for="document-list-actions" type="checkbox" class="select" /></th>
 						<th>{{_.REFERENCE}}</th>
 						<th>{{_.TYPE}}</th>
 						<th>{{_.AUTHOR}}</th>
@@ -405,7 +405,7 @@
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th></th>
+						<th><input for="document-list-actions" type="checkbox" class="select" /></th>
 						<th>{{_.REFERENCE}}</th>
 						<th>{{_.AUTHOR}}</th>
 					</tr>

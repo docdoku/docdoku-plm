@@ -3,6 +3,7 @@ var WorkflowListView = ListView.extend({
 	tagName: "div",
 	template_el: "#workflow-list-tpl",
 	events: {
+		"click thead input.select": "selectAll",
 		"click tbody tr input": "itemSelectClicked",
 		"click .actions .new": "new",
 		"click .actions .delete": "delete"
@@ -13,7 +14,22 @@ var WorkflowListView = ListView.extend({
 	},
 	workflowListViewBindings: function () {
 		this.listViewBindings();
-		_.bindAll(this, "itemSelectClicked", "new", "delete");
+		_.bindAll(this, 
+			"selectAll", "itemSelectClicked",
+			"new", "delete");
+	},
+	selectAll: function () {
+		var elSelectList = $(this.el).find("tbody input.select")
+		if ($(this.el).find("thead input.select").first().is(":checked")) {
+			elSelectList.each(function () {
+				$(this).attr("checked", true);
+			});
+		} else {
+			elSelectList.each(function () {
+				$(this).attr("checked", false);
+			});
+		}
+		this.itemSelectClicked();
 	},
 	itemSelectClicked: function () {
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {

@@ -3,6 +3,7 @@ var DocumentCheckedoutListView = ListView.extend({
 	tagName: "div",
 	template_el: "#document-list-tpl",
 	events: {
+		"click thead input.select": "selectAll",
 		"click tbody tr input": "itemSelectClicked",
 		"click .actions .undocheckout": "undocheckout",
 		"click .actions .checkin": "checkin",
@@ -14,11 +15,26 @@ var DocumentCheckedoutListView = ListView.extend({
 	},
 	documentCheckedoutListViewBindings: function () {
 		this.listViewBindings();
-		_.bindAll(this, "itemSelectClicked", "undocheckout", "checkin", "delete");
+		_.bindAll(this,
+			"itemSelectClicked", "itemSelectClicked",
+			"undocheckout", "checkin", "delete");
 	},
 	renderAfter: function () {
 		$(this.el).find(".actions .new").remove();
 		$(this.el).find(".actions .checkout").remove();
+	},
+	selectAll: function () {
+		var elSelectList = $(this.el).find("tbody input.select")
+		if ($(this.el).find("thead input.select").first().is(":checked")) {
+			elSelectList.each(function () {
+				$(this).attr("checked", true);
+			});
+		} else {
+			elSelectList.each(function () {
+				$(this).attr("checked", false);
+			});
+		}
+		this.itemSelectClicked();
 	},
 	itemSelectClicked: function () {
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {

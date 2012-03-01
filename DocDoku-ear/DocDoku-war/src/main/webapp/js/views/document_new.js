@@ -35,7 +35,7 @@ DocumentNewView = ModalView.extend({
 			this.collection.create({
 				reference: reference,
 				title: $("#modal-form-title").val(),
-				description: $("#modal-form-description").val()
+				description: $("#modal-form-description").val(),
 			}, {
 				success: this.success,
 				error: this.error
@@ -44,11 +44,10 @@ DocumentNewView = ModalView.extend({
 		return false;
 	},
 	success: function (model, response) {
-		/*
-		iterationData = model.get("lasTiteration");
+		var iterationData = model.get("lastIteration");
 		iterationData.id = iterationData.iteration;
-		iteration.set();
-		*/
+		var iteration = new DocumentIteration(iterationData);
+		iteration.save();
 		$(this.el).modal("hide");
 		this.collection.fetch();
 		this.remove();
