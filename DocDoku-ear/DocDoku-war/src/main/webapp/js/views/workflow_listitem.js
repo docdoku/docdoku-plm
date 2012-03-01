@@ -1,11 +1,10 @@
-var TemplateListItemView = BaseView.extend({
+var WorkflowListItemView = BaseView.extend({
 	tagName: "tr",
-	template_el: "#template-list-item-tpl",
+	template_el: "#workflow-list-item-tpl",
 	initialize: function () {
-		console.debug("TemplateListItemView.initialize");
-		this.templateListItemViewBindings();
+		this.workflowListItemViewBindings();
 	},
-	templateListItemViewBindings: function () {
+	workflowListItemViewBindings: function () {
 		this.baseViewBindings();
 		_.bindAll(this, "isSelected", "delete");
 	},

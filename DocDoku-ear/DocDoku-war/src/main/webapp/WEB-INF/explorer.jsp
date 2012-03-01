@@ -25,6 +25,7 @@
 		<script src="<%=request.getContextPath()%>/js/models/document.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/document_iteration.js"></script>
 		<script src="<%=request.getContextPath()%>/js/models/template.js"></script>
+		<script src="<%=request.getContextPath()%>/js/models/workflow.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/folder_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/tag.js"></script>
@@ -34,6 +35,7 @@
 		<script src="<%=request.getContextPath()%>/js/collections/document_iteration.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_tag.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/workflow.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/base.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/modal.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/list.js"></script>
@@ -54,6 +56,8 @@
 		<script src="<%=request.getContextPath()%>/js/views/document_tag_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/workflow_listitem.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/workflow_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/router.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
 		<script src="<%=request.getContextPath()%>/js/i18n.js"></script>
@@ -387,6 +391,33 @@
 			<td>{{model.documentType}}</td>
 			<td>{{model.author.name}}</td>
 			<td>{{model.creationDate}}</td>
+		</script>
+		<script id="workflow-list-tpl" type="text/html">
+			<div class="actions">
+				<!--
+				<button class="btn new" title="{{_.NEW_TEMPLATE}}">
+					<span class="icon"></span>
+				</button>
+				-->
+				<button class="btn delete" title="{{_.DELETE}}">
+					<span class="icon"></span>
+				</button>
+			</div>
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th>{{_.REFERENCE}}</th>
+						<th>{{_.AUTHOR}}</th>
+					</tr>
+				</thead>
+				<tbody class="items"></tbody>
+			</table>
+		</script>
+		<script id="workflow-list-item-tpl" type="text/html">
+			<td><input for="workflow-list-actions" type="checkbox" class="select" /></td>
+			<td>{{model.reference}}</td>
+			<td>{{model.author.name}}</td>
 		</script>
 		<script id="alert-tpl" type="text/html">
 			<div class="alert alert-block alert-{{alert.type}} fade in">
