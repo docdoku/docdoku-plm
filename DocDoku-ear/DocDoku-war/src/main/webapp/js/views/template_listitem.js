@@ -15,7 +15,7 @@ var TemplateListItemView = BaseView.extend({
 	modelToJSON: function () {
 		var data = this.model.toJSON();
 		// Format dates
-		data.creationDate = new Date(data.creationDate).toLocaleDateString();
+		data.creationDate = new Date(data.creationDate).format("dd/mm/yyyy");
 		return data;
 	},
 	isSelected: function () {

@@ -14,6 +14,7 @@
 
 		<link rel="stylesheet/less" href="<%=request.getContextPath()%>/less/style.less">
 
+		<script src="<%=request.getContextPath()%>/js/lib/date.format.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
@@ -310,27 +311,23 @@
 			</div>
 		</script>
 		<script id="document-new-attributes-tpl" type="text/html">
-			{{#collection}}
-			<div class="control-group">
-				<label class="control-label" for="modal-form-attribute-{{name}}">{{name}}</label>
-				<div class="controls">
-					<input id="modal-form-attribute-{{name}}" type="{{attributeType}}" class="input-xlarge attribute" />
+			<div class="content">
+				{{#collection}}
+				<div class="control-group">
+					<label class="control-label" for="modal-form-attribute-{{name}}">{{name}}</label>
+					<div class="controls">
+						<input id="modal-form-attribute-{{name}}" type="{{attributeType}}" class="input-xlarge attribute" />
+					</div>
 				</div>
+				{{/collection}}
 			</div>
-			{{/collection}}
+			<!--
 			<div class="dropdown">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<a class="btn" data-toggle="dropdown" href="#">
 					{{_.APPEND}}
-					<b class="caret"></b>
 				</a>
-				<ul class="dropdown-menu">
-					<li><a class="new-text-attribute" href="#">{{_.TEXT}}</a></li>
-					<li><a class="new-number-attribute" href="#">{{_.NUMBER}}</a></li>
-					<li><a class="new-date-attribute" href="#">{{_.DATE}}</a></li>
-					<li><a class="new-boolean-attribute" href="#">{{_.BOOLEAN}}</a></li>
-					<li><a class="new-url-attribute" href="#">{{_.URL}}</a></li>
-				</ul>
 			</div>
+			-->
 		</script>
 		<script id="tag-list-tpl" type="text/html">
 			<div class="tag list">

@@ -12,10 +12,10 @@ var DocumentListItemView = BaseView.extend({
 	formatData: function (data) {
 		// Format dates
 		if (data.lastIteration && data.lastIteration.creationDate) {
-			data.lastIteration.creationDate = new Date(data.lastIteration.creationDate).toLocaleDateString();
+			data.lastIteration.creationDate = new Date(data.lastIteration.creationDate).format("dd/mm/yyyy");
 		}
 		if (data.checkOutDate) {
-			data.checkOutDate = new Date(data.checkOutDate).toLocaleDateString();
+			data.checkOutDate = new Date(data.checkOutDate).format("dd/mm/yyyy");
 		}
 		return data;
 	},

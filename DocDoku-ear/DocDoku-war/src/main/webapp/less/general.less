@@ -1,7 +1,27 @@
+/*
+input[type="checkbox"] {
+   -webkit-appearance: none;
+   box-shadow: none;
+   background: url("../images/form-checkbox.png") no-repeat center;
+   width: 16px;
+   height: 16px;
+   cursor: pointer;
+}
+input[type="checkbox"]:checked {
+   -webkit-appearance: none;
+   box-shadow: none;
+   background: url("../images/form-checkbox-checked.png") no-repeat center;
+   width: 16px;
+   height: 16px;
+   cursor: pointer;
+}
+*/
 .modal {
-	overflow: visible;
+	max-height: none;
 	.modal-body {
-		overflow: visible;
+		.tab-content {
+			overflow: auto;
+		}
 		max-height: 366px
 	}
 }
@@ -57,6 +77,7 @@ body {
 	margin-left: 254px;
 	.actions {
 		background: @actionBarBackground;
+		-webkit-box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
 		box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
 		padding: 0 20px;
 		height: 67px;
@@ -103,6 +124,7 @@ body {
 			color: white;
 			text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 0px;
 			// .#gradient > .vertical(#4F75AB, #8C9FBE)
+			background-color: #4F75AB;
 			background-image: -moz-linear-gradient(bottom, #4F75AB 0%, #8C9FBE 100%);
 			background-image: -webkit-linear-gradient(bottom, #4F75AB 0%, #8C9FBE 100%);
 			tr {
