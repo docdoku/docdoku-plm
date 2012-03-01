@@ -1,5 +1,5 @@
 var DocumentCheckedoutListView = ListView.extend({
-	ItemView: DocumentCheckedoutListItemView,
+	ItemView: DocumentListItemView,
 	tagName: "div",
 	template_el: "#document-list-tpl",
 	events: {

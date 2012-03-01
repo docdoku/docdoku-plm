@@ -43,7 +43,6 @@ var DocumentListView = ListView.extend({
 		});
 	},
 	undocheckout: function () {
-		console.debug("undocheckout");
 		_.each(this.itemViews, function (view) {
 			view.undocheckout();
 		});

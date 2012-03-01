@@ -1,15 +1,21 @@
 var DocumentListItemView = BaseView.extend({
 	tagName: "tr",
 	template_el: "#document-list-item-tpl",
+	events: {
+		"click input.select": "selectToggle",
+	},
 	initialize: function () {
+		this.baseViewBindings();
 		_.bindAll(this,
 			"template", "render",
-			"isSelected",
+			"selectToggle",
 			"checkout", "undocheckout", "checkin",
 			"delete");
 			this.model.bind("change", this.render);
+		this.isSelected = false;
 	},
-	formatData: function (data) {
+	modelToJSON: function () {
+		var data = this.model.toJSON();
 		// Format dates
 		if (data.lastIteration && data.lastIteration.creationDate) {
 			data.lastIteration.creationDate = new Date(data.lastIteration.creationDate).format("dd/mm/yyyy");
@@ -19,31 +25,34 @@ var DocumentListItemView = BaseView.extend({
 		}
 		return data;
 	},
-	render: function () {
-		$(this.el).html(this.template({
-			model: this.formatData(this.model.toJSON())
-		}));
+	onModelSync: function () {
+		this.render();
 	},
-	isSelected: function () {
-		return $(this.el).find("input.select").filter(":checked").length > 0;
+	renderAfter: function () {
+		if (this.isSelected) {
+			$(this.el).find("input.select").first().attr("checked", true);
+		}
+	},
+	selectToggle: function () {
+		this.isSelected = $(this.el).find("input.select").first().is(":checked");
 	},
 	checkout: function () {
-		if (this.isSelected()) {
+		if (this.isSelected) {
 			this.model.checkout();
 		}
 	},
 	undocheckout: function () {
-		if (this.isSelected()) {
+		if (this.isSelected) {
 			this.model.undocheckout();
 		}
 	},
 	checkin: function () {
-		if (this.isSelected()) {
+		if (this.isSelected) {
 			this.model.checkin();
 		}
 	},
 	delete: function () {
-		if (this.isSelected()) {
+		if (this.isSelected) {
 			this.model.destroy();
 		}
 	}

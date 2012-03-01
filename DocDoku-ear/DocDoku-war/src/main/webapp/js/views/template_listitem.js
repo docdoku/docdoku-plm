@@ -2,7 +2,6 @@ var TemplateListItemView = BaseView.extend({
 	tagName: "tr",
 	template_el: "#template-list-item-tpl",
 	initialize: function () {
-		console.debug("TemplateListItemView.initialize");
 		this.templateListItemViewBindings();
 	},
 	templateListItemViewBindings: function () {
