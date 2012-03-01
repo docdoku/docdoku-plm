@@ -1,5 +1,6 @@
 var BaseView = Backbone.View.extend({
 	baseViewBindings: function () {
+		this.subViews = [];
 		_.bindAll(this, "template", "render");
 		if (this.model) {
 			if (this.onModelChange) {
@@ -42,7 +43,14 @@ var BaseView = Backbone.View.extend({
 		}
 		return data;
 	},
+	removeSubViews: function () {
+		_.each(this.subViews, function (view) {
+			view.remove();
+			delete view;
+		});
+	},
 	render: function () {
+		this.removeSubViews();
 		var data = this.renderData ? this.renderData() : {};
 		$(this.el).html(this.template(data));
 		if (this.renderAfter) { this.renderAfter(); }

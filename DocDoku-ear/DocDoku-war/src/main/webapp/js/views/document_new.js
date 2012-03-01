@@ -15,11 +15,12 @@ DocumentNewView = ModalView.extend({
 	renderAfter: function () {
 		$(this.el).modal("show");
 		$("#modal-form-tab").tab();
-		var templateListView = new DocumentNewTemplateListView({
+		var view = new DocumentNewTemplateListView({
 			el: $("#modal-form-template-list"),
 			collection: app.workspace.templates
 		});
-		templateListView.collection.fetch();
+		this.subViews.push(view);
+		view.collection.fetch();
 	},
 	getAttributes: function () {
 		var attributes = {}
@@ -43,6 +44,9 @@ DocumentNewView = ModalView.extend({
 		return false;
 	},
 	success: function (model, response) {
+		iterationData = model.get("lasTiteration");
+		iterationData.id = iterationData.iteration;
+		iteration.set();
 		$(this.el).modal("hide");
 		this.collection.fetch();
 		this.remove();

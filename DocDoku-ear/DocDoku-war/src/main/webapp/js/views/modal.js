@@ -12,11 +12,15 @@ ModalView = BaseView.extend({
 		}
 		if (this.onHidden) {
 			_.bindAll(this, "onHidden");
+			$(this.el).on("hidden", this.onHidden);
 		};
 	},
 	cancelAction: function () {
 		$(this.el).modal("hide");
 		this.remove();
 		return false;
+	},
+	onHidden: function () {
+		this.removeSubViews();
 	}
 });

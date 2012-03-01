@@ -3,14 +3,11 @@ var ListView = BaseView.extend({
 		this.listViewBindings();
 	},
 	listViewBindings: function () {
+		this.itemViews = [];
 		this.baseViewBindings();
 		_.bindAll(this, "createItemView");
 	},
 	onCollectionReset: function () {
-		_.each(this.itemViews, function (view) {
-			view.remove();
-		});
-		this.itemViews = [];
 		if (this.collection.length > 0) {
 			this.render();
 			this.collection.each(this.createItemView);
@@ -21,8 +18,9 @@ var ListView = BaseView.extend({
 	},
 	createItemView: function (model) {
 		var view = new this.ItemView({model: model});
-		$(this.el).find(".items").first().append(view.el);
+		this.subViews.push(view);
 		this.itemViews.push(view);
+		$(this.el).find(".items").first().append(view.el);
 		view.render();
 	},
 });

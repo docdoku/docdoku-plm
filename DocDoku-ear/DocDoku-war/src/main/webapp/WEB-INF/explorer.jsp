@@ -273,9 +273,9 @@
 				<div class="controls">
 					<select class="input-xlarge" id="modal-form-template">
 						<option value=""></option>
-						{{#items}}
+						{{#collection}}
 						<option value="{{id}}">{{id}}</option>
-						{{/items}}
+						{{/collection}}
 					</select>
 					<p class="help-block">{{_.DOCUMENT_S_TEMPLATE}}</p>
 				</div>
