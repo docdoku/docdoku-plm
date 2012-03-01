@@ -5,6 +5,10 @@
 		max-height: 366px
 	}
 }
+.navbar .icon-brand-plm {
+	margin-right: 8px;
+	float: left;
+}
 .required:after {
 	content: " *";
 	color: @errorText;
@@ -31,6 +35,10 @@
 		.nav-header {
 			font-size: 12px;
 		}
+		> ul > li  > div { //TODO: Remove this temporary hack
+			margin-left: 4px;
+			height: 28px;
+		}
 		li {
 			clear: both;
 		}
@@ -40,10 +48,15 @@
 		.actions {
 			background: @actionBarBackground;
 			box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
-			padding: 16px 20px;
+			padding: 0 20px;
+			height: 67px;
+			> .btn {
+				float: left;
+				margin: 16px 4px 0 4px;
+			}
 			.btn-group { // prevent a firefox bug
 				float: left;
-				margin-right: 4px;
+				margin: 16px 4px 0 4px;
 			}
 			.btn {
 				height: 35px;
@@ -57,6 +70,9 @@
 				.icon {
 					.icon-action-delete;
 				}
+			}
+			.checkout-group {
+				display: none;
 			}
 			.checkout .icon {
 				.icon-action-checkout;
@@ -113,5 +129,33 @@
 	}
 	.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
 		background-color: #EFF2F7;
+	}
+}
+a[href="#workflows"] {
+	.icon {
+		width: 24px;
+		margin-right: 4px;
+		.icon-nav-workflows;
+	}
+}
+a[href="#templates"] {
+	.icon {
+		width: 24px;
+		margin-right: 4px;
+		.icon-nav-templates;
+	}
+}
+a[href="#checkedouts"] {
+	.icon {
+		width: 24px;
+		margin-right: 4px;
+		.icon-nav-checkedouts;
+	}
+}
+a[href="#tasks"] {
+	.icon {
+		width: 24px;
+		margin-right: 4px;
+		.icon-nav-tasks;
 	}
 }

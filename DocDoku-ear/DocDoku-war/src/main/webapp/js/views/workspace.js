@@ -2,9 +2,9 @@ var WorkspaceView = BaseView.extend({
 	template_el: "#workspace-tpl",
 	renderAfter: function () {
 		var rootFolderView = new FolderView({model:new RootFolder()});
-		$("#folders").append(rootFolderView.el);
+		$("#folders-container").append(rootFolderView.el);
 		var taglistView = new TagListView({
-			el: $("#tags"),
+			el: $("#tags-container"),
 			collection: new TagList()
 		});
 		taglistView.collection.fetch();

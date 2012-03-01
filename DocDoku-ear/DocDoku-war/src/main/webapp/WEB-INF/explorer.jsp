@@ -72,18 +72,38 @@
 				<ul class="nav nav-list">
 					<li class="nav-header">{{model.id}}</li>
 					<li>
-						<ul id="folders"></ul>
-						<div id="tags"></div>
+						<ul id="folders-container"></ul>
+						<div id="tags-container"></div>
 					</li>
 					<li class="nav-header">{{_.REFERENCES}}</li>
 					<li>
-						<a href="#workflows">{{_.WORKFLOWS}}</a>
-						<a href="#templates">{{_.TEMPLATES}}</a>
+						<div><!-- TODO: Remove this temporary hack -->
+							<a href="#workflows">
+								<span class="icon"></span>
+								{{_.WORKFLOWS}}
+							</a>
+						</div>
+						<div><!-- TODO: Remove this temporary hack -->
+							<a href="#templates">
+								<span class="icon"></span>
+								{{_.TEMPLATES}}
+							</a>
+						</div>
 					</li>
 					<li class="nav-header">{{_.LINKS}}</li>
 					<li>
-						<a href="#checkedout">{{_.CHECKOUTS}}</a>
-						<a href="#tasks">{{_.TASKS}}</a>
+						<div><!-- TODO: Remove this temporary hack -->
+							<a href="#checkedouts">
+								<span class="icon"></span>
+								{{_.CHECKOUTS}}
+							</a>
+						</div>
+						<div><!-- TODO: Remove this temporary hack -->
+							<a href="#tasks">
+								<span class="icon"></span>
+								{{_.TASKS}}
+							</a>
+						</div>
 					</li>
 				</ul>
 			</nav>
@@ -167,7 +187,13 @@
 		</script>
 		<script id="document-list-tpl" type="text/html">
 			<div class="actions">
-				<span class="btn-group">
+				<button class="btn new" title="{{_.NEW_DOCUMENT}}">
+					<span class="icon"></span>
+				</button>
+				<button class="btn delete" title="{{_.DELETE}}">
+					<span class="icon"></span>
+				</button>
+				<span class="btn-group checkout-group">
 					<button class="btn checkout" title="{{_.CHECKOUT}}">
 						<span class="icon"></span>
 					</button>
@@ -178,12 +204,6 @@
 						<span class="icon"></span>
 					</button>
 				</span>
-				<button class="btn new" title="{{_.NEW_DOCUMENT}}">
-					<span class="icon"></span>
-				</button>
-				<button class="btn delete" title="{{_.DELETE}}">
-					<span class="icon"></span>
-				</button>
 			</div>
 			<table class="table table-striped table-condensed">
 				<thead>

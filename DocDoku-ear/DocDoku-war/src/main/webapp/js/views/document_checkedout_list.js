@@ -22,16 +22,21 @@ var DocumentCheckedoutListView = ListView.extend({
 			"checkout", "undocheckout", "checkin",
 			"delete");
 	},
+	renderAfter: function () {
+		$(this.el).find(".actions .checkout").remove();
+	},
 	itemSelectClicked: function () {
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {
 			$(this.el).find(".actions .delete").show();
+			$(this.el).find(".actions .checkout-group").show();
 		} else {
 			$(this.el).find(".actions .delete").hide();
+			$(this.el).find(".actions .checkout-group").hide();
 		}
 	},
 	new : function () {
-		newView = new DocumentNewView({model: this.model});
-		newView.render();
+		var view = new DocumentNewView({model: this.model});
+		view.render();
 		return false;
 	},
 	checkout: function () {

@@ -25,8 +25,10 @@ var DocumentListView = ListView.extend({
 	itemSelectClicked: function () {
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {
 			$(this.el).find(".actions .delete").show();
+			$(this.el).find(".actions .checkout-group").show();
 		} else {
 			$(this.el).find(".actions .delete").hide();
+			$(this.el).find(".actions .checkout-group").hide();
 		}
 	},
 	new : function () {

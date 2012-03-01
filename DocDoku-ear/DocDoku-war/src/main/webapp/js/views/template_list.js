@@ -13,11 +13,7 @@ var TemplateListView = ListView.extend({
 	},
 	templateListViewBindings: function () {
 		this.listViewBindings();
-		_.bindAll(this,
-			"itemSelectClicked",
-			"new",
-			"checkout", "undocheckout", "checkin",
-			"delete");
+		_.bindAll(this, "itemSelectClicked", "new", "delete");
 	},
 	itemSelectClicked: function () {
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {

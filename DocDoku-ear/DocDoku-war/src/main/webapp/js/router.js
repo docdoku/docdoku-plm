@@ -1,24 +1,24 @@
 var Router = Backbone.Router.extend({
 	routes: {
 		"templates":	"templates",
-		"checkedout":	"checkedout",
+		"checkedouts":	"checkedouts",
 		"":				"default",
 	},
 	templates: function() {
-		collection = new TemplateList();
+		var collection = new TemplateList();
 		new TemplateListView({
 			el: $("#workspace .content"),
 			collection: collection
 		});
-		$("html, body").animate({ scrollTop: 0 }, "slow");
+		$("html, body").animate({ scrollTop: 0 }, "fast");
 	},
-	checkedout: function() {
-		collection = new DocumentCheckedoutList();
+	checkedouts: function() {
+		var collection = new DocumentCheckedoutList();
 		new DocumentCheckedoutListView({
 			el: $("#workspace .content"),
 			collection: collection
 		});
-		$("html, body").animate({ scrollTop: 0 }, "slow");
+		$("html, body").animate({ scrollTop: 0 }, "fast");
 	},
 	default: function() {
 		console.debug("Router.default");

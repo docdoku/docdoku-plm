@@ -17,6 +17,7 @@
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
+				<span class="icon-brand-plm"></span>
                 <a class="brand" href="#">
                     document<strong>Management</strong>
                 </a>
