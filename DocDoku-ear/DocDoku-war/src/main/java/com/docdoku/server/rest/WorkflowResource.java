@@ -19,9 +19,11 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
@@ -67,7 +69,9 @@ public class WorkflowResource {
             WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
             
             for(int i=0; i<workflowModels.length; i++){
-                dtos[i]=new WorkflowModelDTO(workflowModels[i].getId());
+                User workflowAuhtor = workflowModels[i].getAuthor();
+                UserDTO worflowAuthor = mapper.map(workflowAuhtor,UserDTO.class);
+                dtos[i]=new WorkflowModelDTO(workflowModels[i].getId(), worflowAuthor);
             }
             
             return dtos;
