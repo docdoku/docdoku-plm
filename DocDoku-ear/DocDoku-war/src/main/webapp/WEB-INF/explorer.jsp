@@ -7,6 +7,8 @@
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
 
@@ -308,14 +310,14 @@
 			</div>
 		</script>
 		<script id="document-new-attributes-tpl" type="text/html">
-			{{#model.attributeTemplates}}
+			{{#collection}}
 			<div class="control-group">
 				<label class="control-label" for="modal-form-attribute-{{name}}">{{name}}</label>
 				<div class="controls">
 					<input id="modal-form-attribute-{{name}}" type="{{attributeType}}" class="input-xlarge attribute" />
 				</div>
 			</div>
-			{{/model.attributeTemplates}}
+			{{/collection}}
 			<div class="dropdown">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 					{{_.APPEND}}

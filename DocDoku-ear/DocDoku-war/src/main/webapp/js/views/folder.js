@@ -10,6 +10,7 @@ var FolderView = BaseView.extend({
 		"mouseleave .header": "mouseleave",
 	},
 	initialize: function () {
+		this.baseViewBindings();
 		_.bindAll(this,
 			"template", "render",
 			"onFolderListReset", "createFolderView",
@@ -33,8 +34,9 @@ var FolderView = BaseView.extend({
 	createFolderView: function (folder) {
 		folder.parent = this.model;
 		var view = new FolderView({model:folder});
-		$(this.el).children(".subfolders").first().append(view.el);
+		this.subViews.push(view);
 		this.folderViews.push(view);
+		$(this.el).children(".subfolders").first().append(view.el);
 	},
 	render: function () {
 		$(this.el).html(this.template({

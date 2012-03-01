@@ -5,16 +5,24 @@
 		max-height: 366px
 	}
 }
-.navbar .icon-brand-plm {
-	margin-right: 8px;
-	float: left;
+.navbar {
+	.nav > li > a {
+		color: white;
+	}
+	.nav > li > a:hover {
+		font-weight: bold;
+	}
+	.icon-brand-plm {
+		margin-right: 8px;
+		float: left;
+	}
 }
 .required:after {
 	content: " *";
 	color: @errorText;
 }
 #home_link {
-	background: no-repeat center;
+	background: no-repeat left;
 	background-image: url("../images/icon-place-home.png");
 	padding: 20px;
 	opacity: .8;
@@ -22,13 +30,14 @@
 #home_link:hover {
 	opacity: 1;
 }
+body {
+	background: url("../images/sidebar_bg.png") repeat-y left;
+}
 #workspace {
 	margin-top: 40px;
 	padding: 0;
 	width: 100%;
 	> nav {
-		background: @navBackground;
-		box-shadow: 2px 0 2px darken(@navBackground, 5%);
 		float: left;
 		padding-top: 15px;
 		width: 257px;
@@ -45,7 +54,7 @@
 	}
 }
 #content {
-	margin-left: 257px;
+	margin-left: 254px;
 	.actions {
 		background: @actionBarBackground;
 		box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);

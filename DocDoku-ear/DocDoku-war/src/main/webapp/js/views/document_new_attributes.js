@@ -8,15 +8,13 @@ DocumentNewAttributesView = BaseView.extend({
 		"click .new-url-attribute":		"newUrlAttribute",
 	},
 	initialize: function () {
-		_.bindAll(this,
-			"template", "render");
+		this.baseViewBindings();
+		console.debug(this.collection);
+		console.debug(this.collectionToJSON());
 	},
-	render: function () {
-		var jsonModel = this.model ? this.model.toJSON() : {};
-		$(this.el).html(this.template({
-			model: jsonModel
-		}));
-		return this;
+	collectionToJSON: function () {
+		// Because collection is already JSON
+		return this.collection;
 	},
 	newTextAttribute: function () {
 		console.debug("newTextAttribute");

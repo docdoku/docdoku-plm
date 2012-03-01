@@ -20,9 +20,12 @@ DocumentNewTemplateListView = BaseView.extend({
 	},
 	selectionChanged: function () {
 		var templateId = $("#modal-form-template").val()
+		var template = this.collection.get(templateId);
+		var collection = template ? template.get("attributeTemplates") : null;
+		console.debug(template.toJSON());
 		var view = new DocumentNewAttributesView({
 			el: $("#modal-form-tab-attributes"),
-			model: this.collection.get(templateId)
+			collection: collection 
 		});
 		this.subViews.push(view);
 		view.render();
