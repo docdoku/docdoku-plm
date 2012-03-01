@@ -11,6 +11,10 @@ var BaseView = Backbone.View.extend({
 				_.bindAll(this, "onModelSync");
 				this.model.bind("sync", this.onModelSync);
 			}
+			if (this.onModelDestroy) {
+				_.bindAll(this, "onModelDestroy");
+				this.model.bind("sync", this.onModelDestroy);
+			}
 		}
 		if (this.collection) {
 			if (this.onCollectionReset) {
@@ -55,11 +59,17 @@ var BaseView = Backbone.View.extend({
 		$(this.el).html(this.template(data));
 		if (this.renderAfter) { this.renderAfter(); }
 	},
+	onModelDestroy: function () {
+		this.removeSubViews();
+		this.remove();
+		delete this;
+	},
 	alert: function (model) {
-		var alertView = new AlertView({
+		var view = new AlertView({
 			el: $(this.el).find(".alerts").first(),
 			model: model
 		});
-		alertView.render();
+		this.subViews.push(view);
+		view.render();
 	},
 });

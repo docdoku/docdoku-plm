@@ -43,50 +43,48 @@
 			clear: both;
 		}
 	}
-	> .content {
-		margin-left: 257px;
-		.actions {
-			background: @actionBarBackground;
-			box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
-			padding: 0 20px;
-			height: 67px;
-			> .btn {
-				float: left;
-				margin: 16px 4px 0 4px;
-			}
-			.btn-group { // prevent a firefox bug
-				float: left;
-				margin: 16px 4px 0 4px;
-			}
-			.btn {
-				height: 35px;
-				width: 56px;
-			}
-			.new .icon {
-				.icon-action-document-new;
-			}
-			.delete {
-				display: none;
-				.icon {
-					.icon-action-delete;
-				}
-			}
-			.checkout-group {
-				display: none;
-			}
-			.checkout .icon {
-				.icon-action-checkout;
-			}
-			.undocheckout .icon {
-				.icon-action-undocheckout;
-			}
-			.checkin .icon {
-				.icon-action-checkin;
+}
+#content {
+	margin-left: 257px;
+	.actions {
+		background: @actionBarBackground;
+		box-shadow: 0 1px 3px darken(@actionBarBackground, 35%);
+		padding: 0 20px;
+		height: 67px;
+		> .btn {
+			float: left;
+			margin: 16px 4px 0 4px;
+		}
+		.btn-group { // prevent a firefox bug
+			float: left;
+			margin: 16px 4px 0 4px;
+		}
+		.btn {
+			height: 35px;
+			width: 56px;
+		}
+		.new .icon {
+			.icon-action-document-new;
+		}
+		.delete {
+			display: none;
+			.icon {
+				.icon-action-delete;
 			}
 		}
+		.checkout-group {
+			display: none;
+		}
+		.checkout .icon {
+			.icon-action-checkout;
+		}
+		.undocheckout .icon {
+			.icon-action-undocheckout;
+		}
+		.checkin .icon {
+			.icon-action-checkin;
+		}
 	}
-}
-#workspace .content {
 	table {
 		border-radius: 3px;
 		box-shadow: 0px 1px 5px #8C9FBE;

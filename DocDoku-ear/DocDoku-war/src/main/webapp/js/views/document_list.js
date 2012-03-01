@@ -32,8 +32,9 @@ var DocumentListView = ListView.extend({
 		}
 	},
 	new : function () {
-		var newView = new DocumentNewView({collection: this.collection});
-		newView.render();
+		var view = new DocumentNewView({collection: this.collection});
+		this.subViews.push(view);
+		view.render();
 		return false;
 	},
 	checkout: function () {

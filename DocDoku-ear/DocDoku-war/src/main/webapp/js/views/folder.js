@@ -72,7 +72,7 @@ var FolderView = BaseView.extend({
 	toggle : function () {
 		if (this.documentsView) this.documentsView.remove();
 		this.documentsView = new DocumentListView({collection:this.model.documents});
-		$("#workspace .content").html(this.documentsView.el);
+		$("#content").html(this.documentsView.el);
 		folderId = this.model.id ? this.model.id : "";
 
 		$(this.el).hasClass("open") ? this.close() : this.open();
@@ -87,22 +87,25 @@ var FolderView = BaseView.extend({
 		return false;
 	},
 	newFolder: function () {
-		var newView = new FolderNewView({collection: this.model.folders});
-		newView.parent = this;
+		var view = new FolderNewView({collection: this.model.folders});
+		this.subViews.push(view);
+		view.parent = this;
 		this.mouseleave();
-		newView.render();
+		view.render();
 		return false;
 	},
 	newDocument: function () {
-		var newView = new DocumentNewView({collection: this.model.documents});
+		var view = new DocumentNewView({collection: this.model.documents});
+		this.subViews.push(view);
 		this.mouseleave();
-		newView.render();
+		view.render();
 		return false;
 	},
 	edit: function () {
-		var editView = new FolderEditView({model: this.model});
-		editView.parent = this;
-		editView.render();
+		var view = new FolderEditView({model: this.model});
+		this.subViews.push(view);
+		view.parent = this;
+		view.render();
 		return false;
 	},
 	delete: function () {

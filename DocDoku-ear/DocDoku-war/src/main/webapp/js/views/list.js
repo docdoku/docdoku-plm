@@ -8,9 +8,11 @@ var ListView = BaseView.extend({
 		_.bindAll(this, "createItemView");
 	},
 	onCollectionReset: function () {
+		this.render();
 		if (this.collection.length > 0) {
-			this.render();
 			this.collection.each(this.createItemView);
+		} else {
+			$(this.el).find(".content").first().html("");
 		}
 	},
 	onCollectionRemove: function () {

@@ -23,8 +23,9 @@ var TemplateListView = ListView.extend({
 		}
 	},
 	new : function () {
-		var newView = new TemplateNewView({model: this.model});
-		newView.render();
+		var view = new TemplateNewView({model: this.model});
+		this.subViews.push(view);
+		view.render();
 		return false;
 	},
 	delete: function () {

@@ -32,6 +32,7 @@
 		<script src="<%=request.getContextPath()%>/js/collections/document_root.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_checkedout.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/document_iteration.js"></script>
+		<script src="<%=request.getContextPath()%>/js/collections/document_tag.js"></script>
 		<script src="<%=request.getContextPath()%>/js/collections/template.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/base.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/modal.js"></script>
@@ -50,6 +51,7 @@
 		<script src="<%=request.getContextPath()%>/js/views/document_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_checkedout_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_tag_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_listitem.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/template_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/router.js"></script>
@@ -107,7 +109,7 @@
 					</li>
 				</ul>
 			</nav>
-			<div class="content"></div>
+			<div id="content"></div>
 		</script>
 		<script id="folder-tpl" type="text/html">
 			<div class="header">
@@ -205,7 +207,7 @@
 					</button>
 				</span>
 			</div>
-			<table class="table table-striped table-condensed">
+			<table class="content table table-striped table-condensed">
 				<thead>
 					<tr>
 						<th></th>

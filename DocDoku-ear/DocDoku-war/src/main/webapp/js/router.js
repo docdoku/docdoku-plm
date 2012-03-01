@@ -7,7 +7,7 @@ var Router = Backbone.Router.extend({
 	templates: function() {
 		var collection = new TemplateList();
 		new TemplateListView({
-			el: $("#workspace .content"),
+			el: $("#content"),
 			collection: collection
 		});
 		$("html, body").animate({ scrollTop: 0 }, "fast");
@@ -15,7 +15,7 @@ var Router = Backbone.Router.extend({
 	checkedouts: function() {
 		var collection = new DocumentCheckedoutList();
 		new DocumentCheckedoutListView({
-			el: $("#workspace .content"),
+			el: $("#content"),
 			collection: collection
 		});
 		$("html, body").animate({ scrollTop: 0 }, "fast");
