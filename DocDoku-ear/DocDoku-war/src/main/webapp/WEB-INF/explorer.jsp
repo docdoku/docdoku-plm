@@ -195,6 +195,7 @@
 			</div>
 		</script>
 		<script id="document-list-tpl" type="text/html">
+			<div id="popover"></div>
 			<div class="actions">
 				<button class="btn new" title="{{_.NEW_DOCUMENT}}">
 					<span class="icon"></span>
@@ -233,7 +234,7 @@
 		</script>
 		<script id="document-list-item-tpl" type="text/html">
 			<td><input for="document-list-actions" type="checkbox" class="select" /></td>
-			<td>{{model.reference}}</td>
+			<td class="reference">{{model.reference}}</td>
 			<td>{{model.version}}</td>
 			<td>{{model.lastIteration.iteration}}</td>
 			<td>{{model.type}}</td>
@@ -241,6 +242,81 @@
 			<td>{{model.lastIteration.author.name}}</td>
 			<td>{{model.lastIteration.creationDate}}</td>
 			<td>{{model.checkOutDate}}</td>
+		</script>
+		<script id="document-tpl" type="text/html">
+			<div class="popover fade right in">
+				<div class="arrow"></div>
+				<div class="inner">
+					<div class="title_container">
+						<a class="close_popover">×</a>
+						<h3 class="title">{{title}}</h3>
+					</div>
+					<div class="content">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#document-details-main" data-toggle="tab">Général</a></li>
+							<li><a href="#document-details-attributes" data-toggle="tab">Attributs</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="document-details-main">
+							<div class="item">
+								<label>Référence</label>
+								<p>{{reference}}</p>
+							</div>
+							<div class="item">
+								<label>Auteur</label>
+								<p>{{author.name}}</p>
+							</div>
+							<div class="item">
+								<label>Date de Creation</label>
+								<p>{{creationDate}}</p>
+							</div>
+							<div class="item">
+								<label>Type</label>
+								<p>{{type}}</p>
+							</div>
+							<div class="item">
+								<label>Titre</label>
+								<p>{{type}}</p>
+							</div>
+							<div class="item">
+								<label>Réservé par</label>
+								<p>{{checkoutuser.name}}</p>
+							</div> 
+							<div class="item">
+								<label>Date de Modification</label>
+								<p>{{lastIteration.creationDate}}</p>
+							</div>  
+							<div class="item">
+								<label>Etat du cycle de vie</label>
+								<p></p>
+							</div> 
+							<div class="item">
+								<label>Libellés</label>
+								<div class="tags_container">
+									{{#tags}}
+										<span class="tag_color_1">{{.}}</span>
+									{{/tags}}
+								</div>
+							</div>         
+							<div class="item">
+								<label>Note de révision</label>
+								<textarea readonly>{{revisionNote}}</textarea>
+							</div>
+							</div>
+							<div class="tab-pane" id="document-details-attributes">
+								{{#lastIteration}}
+									{{#documentAttributes}}
+										<div class="item">
+											<label>{{name}}</label>
+											<p>{{value}}</p>
+										</div>
+									{{/documentAttributes}}
+								{{/lastIteration}}
+							</div>
+						</div>      
+					</div>      
+				</div>
+			</div>
 		</script>
 		<script id="document-new-tpl" type="text/html">
 			<div class="modal new-document">
