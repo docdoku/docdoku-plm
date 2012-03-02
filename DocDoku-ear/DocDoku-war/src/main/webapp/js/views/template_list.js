@@ -13,7 +13,22 @@ var TemplateListView = ListView.extend({
 	},
 	templateListViewBindings: function () {
 		this.listViewBindings();
-		_.bindAll(this, "itemSelectClicked", "new", "delete");
+		_.bindAll(this,
+			"selectAll", "itemSelectClicked",
+			"new", "delete");
+	},
+	selectAll: function () {
+		var elSelectList = $(this.el).find("tbody input.select")
+		if ($(this.el).find("thead input.select").first().is(":checked")) {
+			_.each(this.itemViews, function (view) {
+				view.select(true);
+			});
+		} else {
+			_.each(this.itemViews, function (view) {
+				view.select(false);
+			});
+		}
+		this.itemSelectClicked();
 	},
 	itemSelectClicked: function () {
 		if ($(this.el).find("input.select[type=checkbox]").filter(":checked").length > 0) {

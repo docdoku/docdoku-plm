@@ -21,12 +21,12 @@ var WorkflowListView = ListView.extend({
 	selectAll: function () {
 		var elSelectList = $(this.el).find("tbody input.select")
 		if ($(this.el).find("thead input.select").first().is(":checked")) {
-			elSelectList.each(function () {
-				$(this).attr("checked", true);
+			_.each(this.itemViews, function (view) {
+				view.select(true);
 			});
 		} else {
-			elSelectList.each(function () {
-				$(this).attr("checked", false);
+			_.each(this.itemViews, function (view) {
+				view.select(false);
 			});
 		}
 		this.itemSelectClicked();
