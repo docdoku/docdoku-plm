@@ -72,9 +72,11 @@ var FolderView = BaseView.extend({
 		this.isOpen = false;
 	},
 	toggle : function () {
-		if (this.documentsView) this.documentsView.remove();
-		this.documentsView = new DocumentListView({collection:this.model.documents});
-		$("#content").html(this.documentsView.el);
+		if (app.contentView) app.contentView.remove();
+		delete app.contentView;
+		var view = new DocumentListView({collection:this.model.documents});
+		app.contentView = view;
+		$("#content").html(view.el);
 		folderId = this.model.id ? this.model.id : "";
 
 		$(this.el).hasClass("open") ? this.close() : this.open();

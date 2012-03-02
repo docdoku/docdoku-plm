@@ -44,10 +44,12 @@ DocumentNewView = ModalView.extend({
 		return false;
 	},
 	success: function (model, response) {
+		/*
 		var iterationData = model.get("lastIteration");
 		iterationData.id = iterationData.iteration;
 		var iteration = new DocumentIteration(iterationData);
 		iteration.save();
+		*/
 		$(this.el).modal("hide");
 		this.collection.fetch();
 		this.remove();
