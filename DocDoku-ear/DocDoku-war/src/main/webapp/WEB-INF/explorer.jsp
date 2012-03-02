@@ -371,18 +371,20 @@
 					<span class="icon"></span>
 				</button>
 			</div>
-			<table class="table table-striped table-condensed">
-				<thead>
-					<tr>
-						<th><input for="document-list-actions" type="checkbox" class="select" /></th>
-						<th>{{_.REFERENCE}}</th>
-						<th>{{_.TYPE}}</th>
-						<th>{{_.AUTHOR}}</th>
-						<th>{{_.CREATION_DATE}}</th>
-					</tr>
-				</thead>
-				<tbody class="items"></tbody>
-			</table>
+			<div class="content">
+				<table class="table table-striped table-condensed">
+					<thead>
+						<tr>
+							<th><input for="document-list-actions" type="checkbox" class="select" /></th>
+							<th>{{_.REFERENCE}}</th>
+							<th>{{_.TYPE}}</th>
+							<th>{{_.AUTHOR}}</th>
+							<th>{{_.CREATION_DATE}}</th>
+						</tr>
+					</thead>
+					<tbody class="items"></tbody>
+				</table>
+			</div>
 		</script>
 		<script id="template-list-item-tpl" type="text/html">
 			<td><input for="template-list-actions" type="checkbox" class="select" /></td>
@@ -402,16 +404,18 @@
 					<span class="icon"></span>
 				</button>
 			</div>
-			<table class="table table-striped table-condensed">
-				<thead>
-					<tr>
-						<th><input for="document-list-actions" type="checkbox" class="select" /></th>
-						<th>{{_.REFERENCE}}</th>
-						<th>{{_.AUTHOR}}</th>
-					</tr>
-				</thead>
-				<tbody class="items"></tbody>
-			</table>
+			<div class="content">
+				<table class="table table-striped table-condensed">
+					<thead>
+						<tr>
+							<th><input for="document-list-actions" type="checkbox" class="select" /></th>
+							<th>{{_.REFERENCE}}</th>
+							<th>{{_.AUTHOR}}</th>
+						</tr>
+					</thead>
+					<tbody class="items"></tbody>
+				</table>
+			</div>
 		</script>
 		<script id="workflow-list-item-tpl" type="text/html">
 			<td><input for="workflow-list-actions" type="checkbox" class="select" /></td>
