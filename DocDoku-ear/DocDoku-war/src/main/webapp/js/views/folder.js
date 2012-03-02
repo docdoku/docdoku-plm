@@ -72,7 +72,7 @@ var FolderView = BaseView.extend({
 		this.isOpen = false;
 	},
 	toggle : function () {
-		if (app.contentView) app.contentView.remove();
+		if (app.contentView) $(app.contentView.el).html("");
 		delete app.contentView;
 		var view = new DocumentListView({collection:this.model.documents});
 		app.contentView = view;

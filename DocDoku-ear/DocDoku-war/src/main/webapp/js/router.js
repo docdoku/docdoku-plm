@@ -6,7 +6,7 @@ var Router = Backbone.Router.extend({
 		"":				"default",
 	},
 	templates: function() {
-		if (app.contentView) app.contentView.remove();
+		if (app.contentView) $(app.contentView.el).html("");
 		delete app.contentView;
 		var collection = new TemplateList();
 		var view = new TemplateListView({
@@ -17,7 +17,7 @@ var Router = Backbone.Router.extend({
 		$("html, body").animate({ scrollTop: 0 }, "fast");
 	},
 	workflows: function() {
-		if (app.contentView) app.contentView.remove();
+		if (app.contentView) $(app.contentView.el).html("");
 		delete app.contentView;
 		var collection = new WorkflowList();
 		var view = new WorkflowListView({
@@ -28,7 +28,7 @@ var Router = Backbone.Router.extend({
 		$("html, body").animate({ scrollTop: 0 }, "fast");
 	},
 	checkedouts: function() {
-		if (app.contentView) app.contentView.remove();
+		if (app.contentView) $(app.contentView.el).html("");
 		delete app.contentView;
 		var collection = new DocumentCheckedoutList();
 		var view = new DocumentCheckedoutListView({
