@@ -3,6 +3,7 @@ var TemplateListView = ListView.extend({
 	tagName: "div",
 	template_el: "#template-list-tpl",
 	events: {
+		"click thead input.select": "selectAll",
 		"click tbody tr input": "itemSelectClicked",
 		"click .actions .new": "new",
 		"click .actions .delete": "delete"

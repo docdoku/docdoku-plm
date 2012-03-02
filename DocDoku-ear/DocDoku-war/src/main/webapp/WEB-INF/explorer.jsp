@@ -276,7 +276,7 @@
 							</div>
 							<div class="item">
 								<label>Titre</label>
-								<p>{{type}}</p>
+								<p>{{title}}</p>
 							</div>
 							<div class="item">
 								<label>Réservé par</label>
