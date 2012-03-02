@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import javax.annotation.PostConstruct;
@@ -30,10 +31,8 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -60,6 +59,7 @@ public class WorkflowResource {
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
+    
     @GET
     @Produces("application/json;charset=UTF-8")
     public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId) {
@@ -80,6 +80,16 @@ public class WorkflowResource {
             throw new RESTException(ex.toString(), ex.getMessage());
         }
     }
-    
+
+    @DELETE
+    @Path("{workflowModelId}")    
+        public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId){
+        try {
+            commandService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+            return Response.status(Response.Status.OK).build();
+        }  catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RESTException(ex.toString(), ex.getMessage());
+        }
+    }
     
 }
