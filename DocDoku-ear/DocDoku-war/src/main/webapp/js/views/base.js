@@ -1,75 +1,158 @@
 var BaseView = Backbone.View.extend({
-	baseViewBindings: function () {
-		this.subViews = [];
-		_.bindAll(this, "template", "render");
-		if (this.model) {
-			if (this.onModelChange) {
-				_.bindAll(this, "onModelChange");
-				this.model.bind("change", this.onModelChange);
-			}
-			if (this.onModelSync) {
-				_.bindAll(this, "onModelSync");
-				this.model.bind("sync", this.onModelSync);
-			}
-			if (this.onModelDestroy) {
-				_.bindAll(this, "onModelDestroy");
-				this.model.bind("sync", this.onModelDestroy);
-			}
-		}
-		if (this.collection) {
-			if (this.onCollectionReset) {
-				_.bindAll(this, "onCollectionReset");
-				this.collection.bind("reset", this.onCollectionReset);
-			}
-			if (this.onCollectionRemove) {
-				_.bindAll(this, "onCollectionRemove");
-				this.collection.bind("remove", this.onCollectionRemove);
-			}
-		}
+	modelEvents: {
+		"change":	"modelChange",
+		"sync":		"modelSync",
+		"destroy":	"modelDestroy",
 	},
-	template: function(data) {
-		data.view_cid = this.cid;
-		data._ = app.i18n;
-		var template = $(this.template_el).html();
-		return Mustache.render(template, data);
+	collectionEvents: {
+		"reset":	"collectionReset",
+		"add":		"collectionAdd",
+		"remove":	"collectionRemove",
 	},
-	renderData: function () {
-		var data = {};
-		if (this.model) {
-			data.model = this.modelToJSON ?
-				this.modelToJSON() :
-				this.model.toJSON();
+	initialize: function () {
+		// Owned events
+		this.events = {};
+
+		// Owned child subViews
+		this.subViews = {};
+
+		// Collection creation from factory
+		if (_.isFunction(this.collection)) {
+			this.collection = new this.collection();
 		}
-		if (this.collection) {
-			data.collection = this.collectionToJSON ?
-				this.collectionToJSON() :
-				this.collection.toJSON();
-		}
-		return data;
+
+		// Bindings
+		_.bindAll(this);
+		this.bindModel();
+		this.bindCollection();
 	},
-	removeSubViews: function () {
-		_.each(this.subViews, function (view) {
-			view.remove();
-			delete view;
+	destroy: function () {
+		this.deleteSubViews();
+		this.undelegateEvents();
+		this.unbindCollection();
+		this.unbindModel();
+		this.unbind();
+		if (this.parentView) delete this.parentView.subViews[this.cid];
+		if (_.isFunction(this.destroyed)) this.destroyed();
+	},
+	destroyed: function () {
+		this.remove();
+	},
+	clear: function () {
+		this.$el.html("");
+	},
+	addSubView: function (view) {
+		view.parentView = this;
+		this.subViews[view.cid] = view;
+		if (_.isFunction(this.viewAdded)) this.viewAdded(view);
+		return view;
+	},
+	deleteSubViews: function () {
+		_.each(_.values(this.subViews), function (view) {
+			view.destroy();
 		});
+	},
+	_eventsBindings: function (options) {
+		var target = options.target;
+		var events = options.events;
+		var action = options.action;
+		for (evt in events) {
+			var key = events[evt];
+			if (key in this && this[key]) {
+				target[action](evt, this[key]);
+			};
+		}
+	},
+	bindModel: function () {
+		if (this.model) {
+			this._eventsBindings({
+				target: this.model,
+				events: this.modelEvents,
+				action: "bind",
+			});
+		};
+	},
+	bindCollection: function () {
+		if (this.collection) {
+			this._eventsBindings({
+				target: this.collection,
+				events: this.collectionEvents,
+				action: "bind",
+			});
+		};
+	},
+	unbindModel: function () {
+		if (this.model) {
+			this._eventsBindings({
+				target: this.model,
+				events: this.modelEvents,
+				action: "unbind",
+			});
+		};
+	},
+	unbindCollection: function () {
+		if (this.collection) {
+			this._eventsBindings({
+				target: this.collection,
+				events: this.collectionEvents,
+				action: "unbind",
+			});
+		};
 	},
 	render: function () {
-		this.removeSubViews();
-		var data = this.renderData ? this.renderData() : {};
-		$(this.el).html(this.template(data));
-		if (this.renderAfter) { this.renderAfter(); }
+		this.deleteSubViews();
+		var html = "";
+		if (this.template) {
+			html = this.renderer(this.data());
+		}
+		this.$el.html(html);
+		if (_.isFunction(this.rendered)) {
+			this.rendered();
+		}
 	},
-	onModelDestroy: function () {
-		this.removeSubViews();
-		this.remove();
-		delete this;
+	renderer: function (data) {
+		var html = $(this.template).html();
+		return Mustache.render(html, data);
 	},
-	alert: function (model) {
-		var view = new AlertView({
-			el: $(this.el).find(".alerts").first(),
-			model: model
-		});
-		this.subViews.push(view);
+	data: function () {
+		var data = {};
+		data.view_cid = this.cid;
+		data._ = app.i18n;
+		if (this.model) data.model = this.modelToJSON();
+		if (this.collection) data.collection = this.collectionToJSON();
+		return data;
+	},
+	modelToJSON: function () {
+		return this.model.toJSON ?
+			this.model.toJSON() :
+			this.model;
+	},
+	collectionToJSON: function () {
+		return this.collection.toJSON ?
+			this.collection.toJSON() :
+			this.collection;
+	},
+	confirm: function (options) {
+		var view = this.addSubView(new ConfirmView({
+			model: {
+				message: options.message
+			}
+		}));
+		view.render();
+	},
+	alert: function (options) {
+		var titles = {
+			"error": app.i18n.ERROR
+		}
+		options.title = options.title ? options.title : titles[options.type];
+		var view = this.addSubView(new AlertView({
+			el: "#alerts-" + this.cid,
+			model: {
+				type: options.type,
+				title: options.title,
+				message: options.message
+			}
+		}));
 		view.render();
 	},
 });

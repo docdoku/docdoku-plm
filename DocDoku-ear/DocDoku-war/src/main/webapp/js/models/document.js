@@ -1,7 +1,7 @@
 var Document = Backbone.Model.extend({
 	url: function() {
 		if (this.get("id")) {
-			baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
+			var baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
 			return baseUrl + "/" + this.get("id");
 		} else if (this.collection) {
 			return this.collection.url;
@@ -9,36 +9,38 @@ var Document = Backbone.Model.extend({
 	},
 	initialize: function () {
 		_.bindAll(this, "checkout", "undocheckout", "checkin");
+		/*
 		this.iterations = new DocumentIterationList();
 		this.iterations.parent = this;
+		*/
 	},
 	checkout: function () {
-		var that = this;
 		$.ajax({
+			context: this,
 			type: "PUT",
 			url: this.url() + "/checkout",
 			success: function () {
-				that.fetch();
+				this.fetch();
 			}
 		});
 	},
 	undocheckout: function () {
-		var that = this;
 		$.ajax({
+			context: this,
 			type: "PUT",
 			url: this.url() + "/undocheckout",
 			success: function () {
-				that.fetch();
+				this.fetch();
 			}
 		});
 	},
 	checkin: function () {
-		var that = this;
 		$.ajax({
+			context: this,
 			type: "PUT",
 			url: this.url() + "/checkin",
 			success: function () {
-				that.fetch();
+				this.fetch();
 			}
 		});
 	}

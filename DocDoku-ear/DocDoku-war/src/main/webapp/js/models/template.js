@@ -1,1 +1,1 @@
-Template = Backbone.Model.extend();
+var Template = Backbone.Model.extend();

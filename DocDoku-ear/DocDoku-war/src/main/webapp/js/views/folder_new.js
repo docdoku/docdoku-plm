@@ -1,19 +1,14 @@
 FolderNewView = ModalView.extend({
 	tagName: "div",
-	template_el: "#folder-new-tpl",
-	events: {
-		"submit form": "primaryAction",
-	},
+	template: "#folder-new-tpl",
 	initialize: function () {
-		this.modalViewBindings();
-		_.bindAll(this, "success", "error");
-	},
-	renderAfter: function () {
-		$(this.el).modal("show");
-		this.nameInput = $(this.el).find("input.name").first();
-		this.nameInput.focus();
+		ModalView.prototype.initialize.apply(this, arguments);
+		this.events = _.extend(this.events, {
+			"submit form": "primaryAction",
+		});
 	},
 	primaryAction: function () {
+		this.nameInput = this.$el.find("input.name").first();
 		var name = this.nameInput.val();
 		if (name) {
 			this.collection.create({
@@ -26,15 +21,13 @@ FolderNewView = ModalView.extend({
 		return false;
 	},
 	success: function () {
-		$(this.el).modal("hide");
-		this.remove();
-		if (this.parent.isOpen) this.parent.open();
+		this.hide();
+		this.parentView.show();
 	},
 	error: function (model, error) {
 		if (error.responseText) {
 			this.alert({
 				type: "error",
-				title: "Erreur",
 				message: error.responseText
 			});
 		} else {

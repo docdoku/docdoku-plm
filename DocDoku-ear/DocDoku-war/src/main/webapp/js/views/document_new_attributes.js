@@ -3,9 +3,6 @@ DocumentNewAttributesView = BaseView.extend({
 	events: {
 		"click .new-url-attribute":		"newAttribute",
 	},
-	initialize: function () {
-		this.baseViewBindings();
-	},
 	collectionToJSON: function () {
 		// Because collection is already JSON
 		return this.collection;

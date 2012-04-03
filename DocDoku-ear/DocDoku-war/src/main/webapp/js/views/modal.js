@@ -1,26 +1,34 @@
 ModalView = BaseView.extend({
-	events: {},
-	modalViewBindings: function () {
-		this.baseViewBindings();
+	initialize: function () {
+		BaseView.prototype.initialize.apply(this, arguments);
 		if (this.cancelAction) {
-			_.bindAll(this, "cancelAction");
 			this.events["click .modal-footer .cancel"] = "cancelAction";
 		}
 		if (this.primaryAction) {
-			_.bindAll(this, "primaryAction");
 			this.events["click .modal-footer .btn-primary"] = "primaryAction";
 		}
-		if (this.onHidden) {
-			_.bindAll(this, "onHidden");
-			$(this.el).on("hidden", this.onHidden);
-		};
+		this.$el.one("shown", this.shown);
+		this.$el.one("hidden", this.hidden);
+		this.show();
+	},
+	show: function () {
+		this.$el.modal("show");
+	},
+	shown: function () {
+		this.render();
+	},
+	hide: function () {
+		this.$el.modal("hide");
+		// Sometimes the destroy is too fast.
+		// Bootstrap should have thrown hidden only when all is finished
+		// see: bootstrap hideModal
+		$(".modal-backdrop").remove(); // TODO: Fin a way to remove the hack.
+	},
+	hidden: function () {
+		this.destroy();
 	},
 	cancelAction: function () {
-		$(this.el).modal("hide");
-		this.remove();
+		this.hide();
 		return false;
 	},
-	onHidden: function () {
-		this.removeSubViews();
-	}
 });

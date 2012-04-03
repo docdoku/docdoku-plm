@@ -1,10 +1,7 @@
 var FolderList = Backbone.Collection.extend({
 	model: Folder,
 	parse: function(data) {
-		// adding folders' id from completePath
-		// done here because completePath is not reachable in initialize
-		var folders = [];
-		if (this.url == "/api/workspaces/" + app.workspaceId +"/folders") {
+		if (!this.parent) {
 			data.unshift({
 				id: app.workspaceId + ":~" + app.login,
 				name: "~" + app.login,
@@ -12,15 +9,7 @@ var FolderList = Backbone.Collection.extend({
 				home: true
 			});
 		}
-		_.each(data, function (item) {
-			folders.push({
-				id: item.id,
-				name: item.name,
-				path: item.path,
-				home: item.home ? item.home : false
-			});	    		
-		});
-		return folders; 
+		return data; 
 	},
 	comparator: function (folderA, folderB) {
 		nameA = folderA.get("name");
@@ -33,6 +22,10 @@ var FolderList = Backbone.Collection.extend({
 	}
 });
 FolderList.prototype.__defineGetter__("url", function () {
-	baseUrl = "/api/workspaces/" + app.workspaceId + "/folders"
-	return baseUrl + "/" + this.parent.get("id") + "/folders";
+	var baseUrl = "/api/workspaces/" + app.workspaceId + "/folders"
+	if (this.parent) {
+		return baseUrl + "/" + this.parent.get("id") + "/folders";
+	} else {
+		return  baseUrl;
+	}
 });

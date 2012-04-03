@@ -1,44 +1,55 @@
 var Router = Backbone.Router.extend({
 	routes: {
-		"templates":	"templates",
-		"workflows":	"workflows",
-		"checkedouts":	"checkedouts",
-		"":				"default",
+		"folders":			"folders",
+		"folders/*path":	"folder",
+		"tags":				"tags",
+		"tags/:id": 		"tag",
+		"templates":		"templates",
+		"workflows":		"workflows",
+		"checkedouts":		"checkedouts",
+		"tasks":			"tasks",
+		"":					"default",
 	},
-	templates: function() {
-		if (app.contentView) $(app.contentView.el).html("");
-		delete app.contentView;
-		var collection = new TemplateList();
-		var view = new TemplateListView({
-			el: $("#content"),
-			collection: collection
-		});
-		app.contentView = view;
-		$("html, body").animate({ scrollTop: 0 }, "fast");
+	folders: function() {
+		this.default();
+		FolderNavView.getInstance().toggle();
+	},
+	folder: function(path) {
+		this.default();
+		FolderNavView.getInstance().show(path);
+	},
+	tags: function() {
+		this.default();
+		TagNavView.getInstance().toggle();
+	},
+	tag: function(id) {
+		this.default();
+		TagNavView.getInstance().show(id);
 	},
 	workflows: function() {
-		if (app.contentView) $(app.contentView.el).html("");
-		delete app.contentView;
-		var collection = new WorkflowList();
-		var view = new WorkflowListView({
-			el: $("#content"),
-			collection: collection
-		});
-		app.contentView = view;
-		$("html, body").animate({ scrollTop: 0 }, "fast");
+		this.default();
+		var view = WorkflowNavView.getInstance();
+		view.showContent();
+	},
+	templates: function() {
+		this.default();
+		var view = TemplateNavView.getInstance();
+		view.showContent();
 	},
 	checkedouts: function() {
-		if (app.contentView) $(app.contentView.el).html("");
-		delete app.contentView;
-		var collection = new DocumentCheckedoutList();
-		var view = new DocumentCheckedoutListView({
-			el: $("#content"),
-			collection: collection
-		});
-		app.contentView = view;
-		$("html, body").animate({ scrollTop: 0 }, "fast");
+		this.default();
+		var view = CheckedoutNavView.getInstance();
+		view.showContent();
+	},
+	tasks: function() {
+		this.default();
 	},
 	default: function() {
-		console.debug("Router.default");
+		FolderNavView.getInstance();
+		TagNavView.getInstance();
+		WorkflowNavView.getInstance();
+		TemplateNavView.getInstance();
+		CheckedoutNavView.getInstance();
+		app.scrollTop();
 	},
 });

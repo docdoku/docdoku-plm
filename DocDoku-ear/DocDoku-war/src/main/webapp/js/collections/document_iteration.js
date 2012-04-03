@@ -1,6 +1,6 @@
 var DocumentIterationList = Backbone.Collection.extend({
-});
-DocumentIterationList.prototype.__defineGetter__("url", function () {
-	baseUrl = "/api/workspaces/" + app.workspaceId + "/documents"
-	return baseUrl + "/" + this.parent.get("id") + "/iterations";
+	model: DocumentIteration,
+	initialize: function (models, options) {
+		this.url = "/api/workspaces/" + app.workspaceId + "/documents/" + options.document.id + "/iterations";
+	}
 });

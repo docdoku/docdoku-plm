@@ -1,19 +1,15 @@
 FolderEditView = ModalView.extend({
 	tagName: "div",
-	template_el: "#folder-edit-tpl",
-	events: {
-		"submit form": "primaryAction",
-	},
+	template: "#folder-edit-tpl",
 	initialize: function () {
-		this.modalViewBindings();
-		_.bindAll(this, "success", "error");
+		ModalView.prototype.initialize.apply(this, arguments);
+		this.events = _.extend(this.events, {
+			"submit form": "primaryAction",
+		});
 	},
-	renderAfter: function () {
-		$(this.el).modal("show");
-		this.nameInput = $(this.el).find("input.name").first();
-		this.nameInput.val(this.model.get("name")).focus();
-		// Hide the parent's actions menu to correct a display bug
-		this.parent.mouseleave();
+	rendered: function () {
+		this.nameInput = this.$el.find("input.name").first();
+		this.nameInput.val(this.model.get("name"));
 	},
 	primaryAction: function () {
 		var name = this.nameInput.val();
@@ -29,16 +25,12 @@ FolderEditView = ModalView.extend({
 	},
 	success: function (model, response) {
 		this.model.id = response.id;
-		this.parent.render();
-		if (this.parent.isOpen) this.parent.open();
-		$(this.el).modal("hide");
-		this.remove();
+		this.hide();
 	},
 	error: function (model, error) {
 		if (error.responseText) {
 			this.alert({
 				type: "error",
-				title: "Erreur",
 				message: error.responseText
 			});
 		} else {

@@ -1,33 +1,39 @@
 DocumentNewTemplateListView = BaseView.extend({
-	template_el: "#document-new-template-list-tpl",
-	events: {
-		"change": "selectionChanged",
-	},
-	initialize: function () {
-		console.debug("initialize");
-		this.baseViewBindings();
-		_.bindAll(this, "selectionChanged");
-	},
-	renderAfter: function () {
-		var view = new DocumentNewAttributesView({
-			el: $("#modal-form-tab-attributes"),
+	collection: TemplateList,
+	template: "#document-new-template-select-tpl",
+	initialize: function (options) {
+		BaseView.prototype.initialize.apply(this, arguments);
+		this.attributesView = options.attributesView;
+		this.events = _.extend(this.events, {
+			"change": "selectionChanged",
 		});
-		this.subViews.push(view);
-		view.render();
 	},
-	onCollectionReset: function () {
+	collectionReset: function () {
 		this.render();
 	},
 	selectionChanged: function () {
-		var templateId = $("#modal-form-template").val()
+		var templateId = this.$el.find("select").first().val();
 		var template = this.collection.get(templateId);
-		var collection = template ? template.get("attributeTemplates") : null;
-		console.debug(template.toJSON());
-		var view = new DocumentNewAttributesView({
-			el: $("#modal-form-tab-attributes"),
-			collection: collection 
-		});
-		this.subViews.push(view);
-		view.render();
-	}
+		var elId = this.parentView.$el.find("input.reference:first").val("");
+		if (template) {
+			var collection = template.get("attributeTemplates");
+			if (template.get("idGenerated")) {
+				this.generate_id(template);
+			}
+		} else {
+			var collection = [];
+		}
+		this.attributesView.collection.reset(collection);
+	},
+	generate_id: function (template) {
+		var elId = this.parentView.$el.find("input.reference:first");
+		var mask = template.get("mask");
+		$.get(template.url() + "/generate_id", function (data) {
+			if (data) {
+				elId.val(data);
+			} else {
+				elId.val(mask);
+			}
+		}, "html");
+	},
 });
