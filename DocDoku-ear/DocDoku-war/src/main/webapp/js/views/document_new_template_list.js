@@ -1,6 +1,6 @@
 DocumentNewTemplateListView = BaseView.extend({
 	collection: TemplateList,
-	template: "#document-new-template-select-tpl",
+	template: "document-new-template-select-tpl",
 	initialize: function (options) {
 		BaseView.prototype.initialize.apply(this, arguments);
 		this.attributesView = options.attributesView;

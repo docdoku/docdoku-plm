@@ -58,16 +58,20 @@ html, body, #workspace {
 	}
 	.remove {
 		.close;
+		&:hover {
+			color: @red;
+			opacity: 1;
+		}
 	}
 	.document-new-attribute-list-item {
 		display: table;
 		> * {
 			display: table-cell;
 			vertical-align: middle;
-		}
-		input, select {
-			width: auto;
-			margin: 4px 4px 4px 0;
+			> * {
+				width: auto;
+				margin: 4px;
+			}
 		}
 	}
 }

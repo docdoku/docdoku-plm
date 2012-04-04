@@ -1,6 +1,6 @@
 var FolderDocumentListView = ContentDocumentListView.extend({
 	collection: FolderDocumentList,
-	template: "#folder-document-list-tpl",
+	template: "folder-document-list-tpl",
 	initialize: function () {
 		ContentDocumentListView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {

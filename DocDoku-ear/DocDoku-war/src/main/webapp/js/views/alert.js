@@ -1,3 +1,3 @@
 var AlertView = BaseView.extend({
-	template: "#alert-tpl",
+	template: "alert-tpl",
 });

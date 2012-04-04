@@ -1,5 +1,5 @@
 DocumentNewView = ModalView.extend({
-	template: "#document-new-tpl",
+	template: "document-new-tpl",
 	initialize: function () {
 		ModalView.prototype.initialize.apply(this, arguments);
 		this.model = new Document();

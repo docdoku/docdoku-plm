@@ -1,5 +1,5 @@
 var WorkflowNavView = BaseView.extend({
-	template: "#workflow-nav-tpl",
+	template: "workflow-nav-tpl",
 	el: "#workflow-nav",
 	initialize: function () {
 		BaseView.prototype.initialize.apply(this, arguments);

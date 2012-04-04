@@ -1,5 +1,5 @@
 var CheckedoutNavView = BaseView.extend({
-	template: "#checkedout-nav-tpl",
+	template: "checkedout-nav-tpl",
 	el: "#checkedout-nav",
 	setActive: function () {
 		$("#nav .active").removeClass("active");

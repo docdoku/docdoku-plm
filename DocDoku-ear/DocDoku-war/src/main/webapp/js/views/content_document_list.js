@@ -1,5 +1,5 @@
 var ContentDocumentListView = ContentView.extend({
-	template: "#content-document-list-tpl",
+	template: "content-document-list-tpl",
 	initialize: function () {
 		ContentView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {

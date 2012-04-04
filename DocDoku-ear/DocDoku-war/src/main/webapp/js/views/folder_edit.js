@@ -1,6 +1,6 @@
 FolderEditView = ModalView.extend({
 	tagName: "div",
-	template: "#folder-edit-tpl",
+	template: "folder-edit-tpl",
 	initialize: function () {
 		ModalView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {

@@ -1,7 +1,7 @@
 DocumentNewAttributeListView = ListView.extend({
 	ItemView: DocumentNewAttributeListItemView,
 	collection: Backbone.Collection,
-	template: "#document-new-attribute-list-tpl",
+	template: "document-new-attribute-list-tpl",
 	initialize: function () {
 		ListView.prototype.initialize.apply(this, arguments);
 		this.events["click .add"] = this.addAttribute;

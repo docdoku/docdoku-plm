@@ -2,22 +2,34 @@ var app = {
 	init: function (config) {
 		this.workspaceId = config.workspaceId;
 		this.login = config.login;
+		this.initTemplates();
+		this.initPartials();
+		this.initWorkspace();
+		this.router = new Router();
+		Backbone.history.start();
+	},
+	initTemplates: function () {
+		var templates = {};
+		$("script.template").each( function () {
+			templates[this.id] = Mustache.compile(this.innerHTML);
+		});
+		this.templates = templates;
+	},
+	initPartials: function () {
+		var partials = {};
+		$("script.partial").each( function () {
+			partials[this.id] = this.innerHTML;
+		});
+		this.partials = partials;
+	},
+	initWorkspace: function () {
 		this.workspace = new Workspace({
 			id: this.workspaceId
 		});
-
-		//$(".dropdown-toggle").dropdown();
-		//$(".modal").modal();
-		//$(".collapse").collapse();
-		//$(".alert").alert();
-
-		var workspaceView = new WorkspaceView({
-			el: $("#workspace"),
+		new WorkspaceView({
+			el: "#workspace",
 			model: this.workspace
-		});
-		workspaceView.render();
-		this.router = new Router();
-		Backbone.history.start();
+		}).render();
 	},
 	i18n: {},
 	formatDate: function (unformatedDate) {
@@ -36,4 +48,4 @@ var app = {
 	scrollTop: function () {
 		this.scrollTo();
 	},
-}
+};

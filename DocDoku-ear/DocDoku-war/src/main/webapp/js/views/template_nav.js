@@ -1,5 +1,5 @@
 var TemplateNavView = BaseView.extend({
-	template: "#template-nav-tpl",
+	template: "template-nav-tpl",
 	el: "#template-nav",
 	initialize: function () {
 		BaseView.prototype.initialize.apply(this, arguments);

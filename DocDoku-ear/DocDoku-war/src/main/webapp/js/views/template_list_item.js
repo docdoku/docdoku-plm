@@ -1,6 +1,6 @@
 var TemplateListItemView = CheckboxListItemView.extend({
 	tagName: "tr",
-	template: "#template-list-item-tpl",
+	template: "template-list-item-tpl",
 	modelToJSON: function () {
 		var data = this.model.toJSON();
 		// Format dates

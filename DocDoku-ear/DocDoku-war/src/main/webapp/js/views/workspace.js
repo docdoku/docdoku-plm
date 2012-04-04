@@ -1,5 +1,5 @@
 var WorkspaceView = BaseView.extend({
-	template: "#workspace-tpl",
+	template: "workspace-tpl",
 	rendered: function () {
 		FolderNavView.getInstance().render();
 	},

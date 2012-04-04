@@ -1,5 +1,5 @@
 var WorkflowContentListView = ContentView.extend({
-	template: "#workflow-content-list-tpl",
+	template: "workflow-content-list-tpl",
 	initialize: function () {
 		ContentView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {

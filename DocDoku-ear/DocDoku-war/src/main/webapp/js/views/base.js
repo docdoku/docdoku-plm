@@ -103,7 +103,9 @@ var BaseView = Backbone.View.extend({
 		this.deleteSubViews();
 		var html = "";
 		if (this.template) {
-			html = this.renderer(this.data());
+			var templateId = _.isFunction(this.template) ? this.template() : this.template;
+			html = app.templates[templateId](this.data(), app.partials);
+			//html = this.renderer(this.data());
 		}
 		this.$el.html(html);
 		if (_.isFunction(this.rendered)) {

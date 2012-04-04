@@ -1,8 +1,4 @@
 var ListView = BaseView.extend({
-	/* template exemple:
-		<h3>My List</h3>
-		<ul id="items-{{view_cid}}"></ul>
-	*/
 	collectionReset: function () {
 		this.clear();
 		if (this.collection.length > 0) {

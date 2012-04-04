@@ -1,4 +1,4 @@
 var DocumentListView = CheckboxListView.extend({
 	ItemView: DocumentListItemView,
-	template: "#document-list-tpl",
+	template: "document-list-tpl",
 });

@@ -1,6 +1,6 @@
 var DocumentListItemView = CheckboxListItemView.extend({
 	tagName: "tr",
-	template: "#document-list-item-tpl",
+	template: "document-list-item-tpl",
 	modelToJSON: function () {
 		var data = this.model.toJSON();
 

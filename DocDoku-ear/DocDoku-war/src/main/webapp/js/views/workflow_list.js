@@ -1,5 +1,5 @@
 var WorkflowListView = CheckboxListView.extend({
 	collection: WorkflowList,
 	ItemView: WorkflowListItemView,
-	template: "#workflow-list-tpl",
+	template: "workflow-list-tpl",
 });

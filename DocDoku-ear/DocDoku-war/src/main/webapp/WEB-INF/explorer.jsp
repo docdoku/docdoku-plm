@@ -23,6 +23,7 @@
 		<script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.2.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.2.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
 		<!-- END LIBS -->
 		<!-- MODELS -->
 		<script src="<%=request.getContextPath()%>/js/models/workspace.js"></script>
@@ -104,7 +105,7 @@
         <%@ include file="/WEB-INF/explorer_header.jspf" %>
 		<div id="workspace"></div>
 
-		<script id="workspace-tpl" type="text/html">
+		<script id="workspace-tpl" class="template" type="text/html">
 			<ul id="nav" class="nav nav-list">
 				<li class="nav-header">{{model.id}}</li>
 				<li id="folder-nav"></li>
@@ -124,7 +125,7 @@
 			<div id="content"></div>
 		</script>
 
-		<script id="alert-tpl" type="text/html">
+		<script id="alert-tpl" class="template" type="text/html">
 			<div class="alert alert-block alert-{{model.type}} fade in">
 				<a class="close" data-dismiss="alert">×</a>
 				<h4 class="alert-heading">{{alert.title}}</h4>
@@ -132,7 +133,7 @@
 			</div>
 		</script>
 
-		<script id="document-list-tpl" type="text/html">
+		<script id="document-list-tpl" class="template" type="text/html">
 			<thead>
 				<tr>
 					<th><input type="checkbox" id="check-toggle-{{view_cid}}" /></th>
@@ -148,7 +149,7 @@
 			</thead>
 			<tbody id="items-{{view_cid}}" class="items"></tbody>
 		</script>
-		<script id="document-list-item-tpl" type="text/html">
+		<script id="document-list-item-tpl" class="template" type="text/html">
 			<td><input type="checkbox" id="check-toggle-{{view_cid}}" /></td>
 			<td class="reference">{{model.reference}}</td>
 			<td>{{model.version}}</td>
@@ -159,7 +160,7 @@
 			<td>{{model.lastIteration.creationDate}}</td>
 			<td>{{model.checkOutDate}}</td>
 		</script>
-		<script id="document-new-tpl" type="text/html">
+		<script id="document-new-tpl" class="template" type="text/html">
 			<div class="modal new-document">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
@@ -213,7 +214,7 @@
 				</div>
 			</div>
 		</script>
-		<script id="document-new-template-select-tpl" type="text/html">
+		<script id="document-new-template-select-tpl" class="template" type="text/html">
 			<div class="control-group">
 				<label class="control-label" for="input-{{view_cid}}">{{_.TEMPLATE}}</label>
 				<div class="controls">
@@ -227,12 +228,48 @@
 				</div>
 			</div>
 		</script>
-		<script id="document-new-attribute-list-tpl" type="text/html">
+		<script id="document-new-attribute-list-tpl" class="template" type="text/html">
 			<a class="btn add">
 				{{_.APPEND}}
 			</a>
 		</script>
-		<script id="document-new-attribute-list-item-tpl" type="text/html">
+		<script id="document-new-attribute-list-item-boolean-tpl" class="template" type="text/html">
+			{{> document-new-attribute-list-item-tpl}}
+			<div class="controls">
+				<select class="input-xlarge value">
+					<option value="false">{{_.FALSE}}</option>
+					<option value="true">{{_.TRUE}}</option>
+				</select>
+			</div>
+		</script>
+		<script id="document-new-attribute-list-item-date-tpl" class="template" type="text/html">
+			{{> document-new-attribute-list-item-tpl}}
+			<div class="controls">
+				<input type="date" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+			</div>
+		</script>
+		<script id="document-new-attribute-list-item-number-tpl" class="template" type="text/html">
+			{{> document-new-attribute-list-item-tpl}}
+			<div class="controls">
+				<input type="number" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+			</div>
+		</script>
+		<script id="document-new-attribute-list-item-text-tpl" class="template" type="text/html">
+			{{> document-new-attribute-list-item-tpl}}
+			<div class="controls">
+				<input type="text" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+			</div>
+		</script>
+		<script id="document-new-attribute-list-item-url-tpl" class="template" type="text/html">
+			{{> document-new-attribute-list-item-tpl}}
+			<div class="controls">
+				<input type="url" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+			</div>
+		</script>
+		<script id="document-new-attribute-list-item-tpl" class="partial" type="text/html">
+			<div class="controls">
+				<a class="remove">×</a>
+			</div>
 			<div class="controls">
 				<select class="type">
 					<option value="URL">{{_.URL}}</option>
@@ -245,15 +282,9 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge name" placeholder="{{_.NAME}}" value="{{model.name}}"/>
 			</div>
-			<div class="controls">
-				<input type="{{model.type}}" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
-			</div>
-			<div class="controls">
-				<a class="remove">×</a>
-			</div>
 		</script>
 
-		<script id="folder-list-item-tpl" type="text/html">
+		<script id="folder-list-item-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
 				<a href="#folders/{{model.path}}" data-target="#items-{{view_cid}}">
 					<span class="status"></span>
@@ -279,7 +310,7 @@
 			</div>
 			<ul id="items-{{view_cid}}" class="items"></ul>
 		</script>
-		<script id="folder-nav-tpl" type="text/html">
+		<script id="folder-nav-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
 				<a href="#folders" data-target="#items-{{view_cid}}">
 					<span class="icon icon-nav-documents"></span>
@@ -298,7 +329,7 @@
 			</div>
 			<ul id="items-{{view_cid}}" class="items"></ul>
 		</script>
-		<script id="folder-new-tpl" type="text/html">
+		<script id="folder-new-tpl" class="template" type="text/html">
 			<div class="modal new-folder">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
@@ -320,7 +351,7 @@
 				</div>
 			</div>
 		</script>
-		<script id="folder-edit-tpl" type="text/html">
+		<script id="folder-edit-tpl" class="template" type="text/html">
 			<div class="modal edit-folder">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
@@ -342,7 +373,7 @@
 				</div>
 			</div>
 		</script>
-		<script id="folder-document-list-tpl" type="text/html">
+		<script id="folder-document-list-tpl" class="template" type="text/html">
 			<div id="actions-{{view_cid}}" class="actions">
 				<button class="btn new-document" title="{{_.NEW_DOCUMENT}}">
 					<span class="icon"></span>
@@ -365,7 +396,7 @@
 			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
 		</script>
 
-		<script id="tag-list-item-tpl" type="text/html">
+		<script id="tag-list-item-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
 				<a class="name" href="#tags/{{model.id}}">
 					<span class="icon icon-nav-tag"></span>
@@ -386,7 +417,7 @@
 				</div>
 			</div>
 		</script>
-		<script id="tag-nav-tpl" type="text/html">
+		<script id="tag-nav-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
 				<a href="#tags" data-target="#items-{{view_cid}}">
 					<span class="icon icon-nav-tags"></span>
@@ -395,7 +426,7 @@
 			</div>
 			<ul id="items-{{view_cid}}" class="items"></ul>
 		</script>
-		<script id="content-document-list-tpl" type="text/html">
+		<script id="content-document-list-tpl" class="template" type="text/html">
 			<div id="actions-{{view_cid}}" class="actions">
 				<button class="btn delete" title="{{_.DELETE}}">
 					<span class="icon"></span>
@@ -415,13 +446,13 @@
 			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
 		</script>
 
-		<script id="workflow-nav-tpl" type="text/html">
+		<script id="workflow-nav-tpl" class="template" type="text/html">
 			<a href="#workflows" class="nav-list-entry">
 				<span class="icon icon-nav-workflows"></span>
 				{{_.WORKFLOWS}}
 			</a>
 		</script>
-		<script id="workflow-content-list-tpl" type="text/html">
+		<script id="workflow-content-list-tpl" class="template" type="text/html">
 			<div class="actions">
 				<!--
 				<button class="btn new-workflow" title="{{_.NEW_WORKFLOW}}">
@@ -434,7 +465,7 @@
 			</div>
 			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
 		</script>
-		<script id="workflow-list-tpl" type="text/html">
+		<script id="workflow-list-tpl" class="template" type="text/html">
 			<thead>
 				<tr>
 					<th><input type="checkbox" id="check-toggle-{{view_cid}}" /></th>
@@ -444,19 +475,19 @@
 			</thead>
 			<tbody id="items-{{view_cid}}" class="items"></tbody>
 		</script>
-		<script id="workflow-list-item-tpl" type="text/html">
+		<script id="workflow-list-item-tpl" class="template" type="text/html">
 			<td><input type="checkbox" id="check-toggle-{{view_cid}}" /></td>
 			<td>{{model.reference}}</td>
 			<td>{{model.author.name}}</td>
 		</script>
 
-		<script id="template-nav-tpl" type="text/html">
+		<script id="template-nav-tpl" class="template" type="text/html">
 			<a href="#templates" class="nav-list-entry">
 				<span class="icon icon-nav-templates"></span>
 				{{_.TEMPLATE}}
 			</a>
 		</script>
-		<script id="template-content-list-tpl" type="text/html">
+		<script id="template-content-list-tpl" class="template" type="text/html">
 			<div class="actions">
 				<!--
 				<button class="btn new-template" title="{{_.NEW_WORKFLOW}}">
@@ -469,7 +500,7 @@
 			</div>
 			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
 		</script>
-		<script id="template-list-tpl" type="text/html">
+		<script id="template-list-tpl" class="template" type="text/html">
 			<thead>
 				<tr>
 					<th><input type="checkbox" id="check-toggle-{{view_cid}}" /></th>
@@ -481,7 +512,7 @@
 			</thead>
 			<tbody id="items-{{view_cid}}" class="items"></tbody>
 		</script>
-		<script id="template-list-item-tpl" type="text/html">
+		<script id="template-list-item-tpl" class="template" type="text/html">
 			<td><input type="checkbox" id="check-toggle-{{view_cid}}" /></td>
 			<td>{{model.reference}}</td>
 			<td>{{model.documentType}}</td>
@@ -489,7 +520,7 @@
 			<td>{{model.creationDate}}</td>
 		</script>
 
-		<script id="checkedout-nav-tpl" type="text/html">
+		<script id="checkedout-nav-tpl" class="template" type="text/html">
 			<a href="#checkedouts" class="nav-list-entry">
 				<span class="icon icon-nav-checkedouts"></span>
 				{{_.CHECKOUTS}}

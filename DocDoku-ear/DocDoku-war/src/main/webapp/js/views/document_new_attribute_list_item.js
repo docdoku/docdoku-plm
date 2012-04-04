@@ -1,13 +1,17 @@
 DocumentNewAttributeListItemView = ListItemView.extend({
 	tagName: "div",
 	className: "document-new-attribute-list-item",
-	template: "#document-new-attribute-list-item-tpl",
-	attributeTypeMapping: {
-		"BOOLEAN":	"boolean",
-		"DATE":		"date",
-		"NUMBER":	"number",
-		"TEXT":		"text",
-		"URL":		"url",
+	template: "document-new-attribute-list-item-text-tpl",
+	template: function () {
+		var attributeTypeTemplateMapping = {
+			"BOOLEAN":	"document-new-attribute-list-item-boolean-tpl",
+			"DATE":		"document-new-attribute-list-item-date-tpl",
+			"NUMBER":	"document-new-attribute-list-item-number-tpl",
+			"TEXT":		"document-new-attribute-list-item-text-tpl",
+			"URL":		"document-new-attribute-list-item-url-tpl",
+		};
+		var type = this.model.get("attributeType") ? this.model.get("attributeType") : "TEXT";
+		return attributeTypeTemplateMapping[type];
 	},
 	initialize: function () {
 		ListItemView.prototype.initialize.apply(this, arguments);
@@ -15,15 +19,6 @@ DocumentNewAttributeListItemView = ListItemView.extend({
 			"change .type": "setType",
 			"click .remove": "removeAction",
 		});
-	},
-	modelToJSON: function () {
-		var data = this.model.toJSON();
-		if (this.attributeTypeMapping[data.attributeType]) {
-			data.type = this.attributeTypeMapping[data.attributeType];
-		} else {
-			data.type = "text";
-		}
-		return data;
 	},
 	rendered: function () {
 		var attributeType = this.model.get("attributeType");

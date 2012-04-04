@@ -1,6 +1,6 @@
 FolderNewView = ModalView.extend({
 	tagName: "div",
-	template: "#folder-new-tpl",
+	template: "folder-new-tpl",
 	initialize: function () {
 		ModalView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {

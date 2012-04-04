@@ -1,5 +1,5 @@
 var TagNavView = BaseView.extend({
-	template: "#tag-nav-tpl",
+	template: "tag-nav-tpl",
 	el: "#tag-nav",
 	initialize: function () {
 		BaseView.prototype.initialize.apply(this, arguments);

@@ -1,7 +1,7 @@
 TagListItemView = ListItemView.extend({
 	tagName: "li",
 	className: "tag",
-	template: "#tag-list-item-tpl",
+	template: "tag-list-item-tpl",
 	initialize: function () {
 		ListItemView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {
