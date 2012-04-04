@@ -14,7 +14,9 @@ DocumentNewTemplateListView = BaseView.extend({
 	selectionChanged: function () {
 		var templateId = this.$el.find("select").first().val();
 		var template = this.collection.get(templateId);
-		var elId = this.parentView.$el.find("input.reference:first").val("");
+		var elId = this.parentView.$el.find("input.reference:first")
+			.unmask()
+			.val("");
 		if (template) {
 			var collection = template.get("attributeTemplates");
 			if (template.get("idGenerated")) {
@@ -27,12 +29,11 @@ DocumentNewTemplateListView = BaseView.extend({
 	},
 	generate_id: function (template) {
 		var elId = this.parentView.$el.find("input.reference:first");
-		var mask = template.get("mask");
+		var mask = template.get("mask").replace(/#/g, "9");
+		elId.mask(mask);
 		$.get(template.url() + "/generate_id", function (data) {
 			if (data) {
 				elId.val(data);
-			} else {
-				elId.val(mask);
 			}
 		}, "html");
 	},
