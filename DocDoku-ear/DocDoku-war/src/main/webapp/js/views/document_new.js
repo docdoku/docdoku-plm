@@ -2,10 +2,7 @@ DocumentNewView = ModalView.extend({
 	template: "document-new-tpl",
 	initialize: function () {
 		ModalView.prototype.initialize.apply(this, arguments);
-		this.model = new Document();
-		this.events = _.extend(this.events, {
-			"submit .main-form": "primaryAction",
-		});
+		this.events["submit #form-" + this.cid] = "primaryAction";
 	},
 	rendered: function () {
 		this.attributesView = this.addSubView(new DocumentNewAttributeListView({
@@ -19,8 +16,7 @@ DocumentNewView = ModalView.extend({
 		this.templatesView.collection.fetch();
 	},
 	primaryAction: function () {
-		/*
-		var reference = $(".main-form reference").val();
+		var reference = $("#form-" + this.cid + " .reference").val();
 		if (reference) {
 			this.collection.create({
 				reference: reference,
@@ -31,17 +27,9 @@ DocumentNewView = ModalView.extend({
 				error: this.error
 			});
 		}
-		*/
 		return false;
 	},
 	success: function (model, response) {
-		/*
-		var iterationData = model.get("lastIteration");
-		iterationData.id = iterationData.iteration;
-		var iteration = new DocumentIteration(iterationData);
-		iteration.save();
-		*/
-		//this.collection.fetch();
 		this.hide();
 	},
 	error: function (model, error) {

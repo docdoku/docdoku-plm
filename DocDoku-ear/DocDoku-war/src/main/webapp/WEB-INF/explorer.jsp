@@ -187,14 +187,14 @@
 									<div class="control-group">
 										<label class="control-label" for="form-{{view_cid}}-title">{{_.TITLE}}</label>
 										<div class="controls">
-											<input type="text" class="input-xlarge" id="form-{{view_cid}}-title">
+											<input type="text" class="input-xlarge title" id="form-{{view_cid}}-title">
 											<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
 										</div>
 									</div>
 									<div class="control-group">
 										<label class="control-label" for="form-{{view_cid}}-description">{{_.DESCRIPTION}}</label>
 										<div class="controls">
-											<textarea type="text" class="input-xlarge" id="form-{{view_cid}}-description"></textarea>
+											<textarea type="text" class="input-xlarge description" id="form-{{view_cid}}-description"></textarea>
 											<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
 										</div>
 									</div>
