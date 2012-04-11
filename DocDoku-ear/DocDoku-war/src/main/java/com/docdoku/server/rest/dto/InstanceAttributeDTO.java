@@ -17,21 +17,32 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 
 /**
  *
- * @author Florent Garin
+ * @author Yassine Belouad
  */
-public abstract class InstanceAttributeDTO implements Serializable{
+public class InstanceAttributeDTO  implements Serializable{
+    
+    private String name;
+    private Type type;
+    public enum Type {
 
-    protected String name;
-
+        TEXT, NUMBER, DATE, BOOLEAN, URL
+    }
+    private String value;
+    
     public InstanceAttributeDTO(){
+    
+    }
 
+    public InstanceAttributeDTO(String pName, String pType, String pValue){
+        this.name=pName;
+        this.type=InstanceAttributeDTO.Type.valueOf(pType);
+        this.value=pValue;
     }
     
     public String getName() {
@@ -42,9 +53,22 @@ public abstract class InstanceAttributeDTO implements Serializable{
         this.name = name;
     }
 
-    public abstract Object getValue();
-    public abstract boolean setValue(Object pValue);
+    public String getValue() {
+        return value;
+    }
     
+    public InstanceAttributeDTO.Type getType(){
+        return type;
+    }
     
+    public void setType(InstanceAttributeDTO.Type type) {
+        this.type = type;
+    }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    
+    
 }

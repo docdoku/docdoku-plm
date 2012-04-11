@@ -19,15 +19,13 @@
  */
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.meta.*;
 import java.io.Serializable;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class DocumentDTO implements Serializable {
 
@@ -38,10 +36,9 @@ public class DocumentDTO implements Serializable {
     private Date creationDate;
     private UserDTO author;
     private String revisionNote;
-    private Map<String, String> attachedFiles;
-    private Map<String, InstanceAttributeDTO> instanceAttributes;
-    private List<AttributesDTO> documentAttributes;
-    private Set<DocumentDTO> linkedDocuments;
+    private List<String> attachedFiles;
+    private List<InstanceAttributeDTO> instanceAttributes;
+    private List<DocumentDTO> linkedDocuments;
 
     public DocumentDTO() {
     }
@@ -77,27 +74,27 @@ public class DocumentDTO implements Serializable {
         return revisionNote;
     }
 
-    public Map<String, String> getAttachedFiles() {
+    public List<String> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public Set<DocumentDTO> getLinkedDocuments() {
+    public List<DocumentDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
-    public void setAttachedFiles(Map<String, String> attachedFiles) {
+    public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 
-    public void setLinkedDocuments(Set<DocumentDTO> linkedDocuments) {
+    public void setLinkedDocuments(List<DocumentDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 
-    public Map<String, InstanceAttributeDTO> getInstanceAttributes() {
+    public List<InstanceAttributeDTO> getInstanceAttributes() {
         return instanceAttributes;
     }
 
-    public void setInstanceAttributes(Map<String, InstanceAttributeDTO> instanceAttributes) {
+    public void setInstanceAttributes(List<InstanceAttributeDTO> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
     }
 
@@ -132,54 +129,6 @@ public class DocumentDTO implements Serializable {
 
     public int getIteration() {
         return iteration;
-    }
-
-    public List<AttributesDTO> getDocumentAttributes() {
-        if (instanceAttributes != null) {
-            List<AttributesDTO> attributes = new ArrayList<AttributesDTO>();
-            Object[] attributeList = getInstanceAttributes().values().toArray();
-
-            for (int i = 0; i < attributeList.length; i++) {
-                AttributesDTO attribute = new AttributesDTO();
-
-                if (attributeList[i] instanceof InstanceTextAttribute) {
-                    InstanceTextAttribute instanceAttribute = (InstanceTextAttribute) attributeList[i];
-                    attribute.setName(instanceAttribute.getName());
-                    attribute.setType(AttributesDTO.Type.TEXT);
-                    attribute.setValue(instanceAttribute.getTextValue());
-                } else if (attributeList[i] instanceof InstanceBooleanAttribute) {
-                    InstanceBooleanAttribute instanceAttribute = (InstanceBooleanAttribute) attributeList[i];
-                    attribute.setName(instanceAttribute.getName());
-                    attribute.setType(AttributesDTO.Type.BOOLEAN);
-                    attribute.setValue(Boolean.toString(instanceAttribute.isBooleanValue()));
-                } else if (attributeList[i] instanceof InstanceNumberAttribute) {
-                    InstanceNumberAttribute instanceAttribute = (InstanceNumberAttribute) attributeList[i];
-                    attribute.setName(instanceAttribute.getName());
-                    attribute.setType(AttributesDTO.Type.NUMBER);
-                } else if (attributeList[i] instanceof InstanceDateAttribute) {
-                    InstanceDateAttribute instanceAttribute = (InstanceDateAttribute) attributeList[i];
-                    attribute.setName(instanceAttribute.getName());
-                    attribute.setType(AttributesDTO.Type.DATE);
-                    if(instanceAttribute.getDateValue()!=null){
-                        attribute.setValue(instanceAttribute.getDateValue().toString());                    
-                    }
-                } else if (attributeList[i] instanceof InstanceURLAttribute) {
-                    InstanceURLAttribute instanceAttribute = (InstanceURLAttribute) attributeList[i];
-                    attribute.setName(instanceAttribute.getName());
-                    attribute.setType(AttributesDTO.Type.URL);
-                    attribute.setValue(instanceAttribute.getUrlValue());
-                }
-                attributes.add(attribute);
-            }
-            documentAttributes = attributes;
-            return documentAttributes;
-        } else {
-            return documentAttributes;
-        }
-    }
-
-    public void setDocumentAttributes(List<AttributesDTO> documentAttributes) {
-        this.documentAttributes = documentAttributes;
     }
 
     public void setIteration(int pIteration) {
