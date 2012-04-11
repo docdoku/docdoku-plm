@@ -369,9 +369,6 @@ public class DocumentResource {
     @Consumes("application/json;charset=UTF-8")
     @Path("{docKey}/iterations/{docIteration}")
     public DocumentMasterDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, DocumentDTO data) {
-
-        
-
         try {
 
             int lastDash = docKey.lastIndexOf('-');
@@ -381,28 +378,17 @@ public class DocumentResource {
             String pRevisionNote = data.getRevisionNote();
             int pIteration = Integer.parseInt(docIteration);
 
-            Set<DocumentDTO> linksData = data.getLinkedDocuments();
+            List<DocumentDTO> linkedDocs = data.getLinkedDocuments();
             DocumentIterationKey[] links = null;
-            if (linksData != null) {
-                List<DocumentDTO> linksList = new ArrayList<DocumentDTO>(linksData);
-                DocumentDTO[] linksDtos = new DocumentDTO[linksList.size()];
-
-                for (int i = 0; i < linksDtos.length; i++) {
-                    linksDtos[i] = linksList.get(i);
-                }
-                links = createObject(linksDtos);
+            if (linkedDocs != null) {
+                links = createDocumentIterationKey(linkedDocs);
             }
 
 
-            List<AttributesDTO> documentAttributesDtosList = new ArrayList<AttributesDTO>(data.getDocumentAttributes());
-
+            List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
             InstanceAttribute[] attributes = null;
-            if (documentAttributesDtosList != null) {
-                AttributesDTO[] documentAttributesDtos = new AttributesDTO[documentAttributesDtosList.size()];
-                for (int i = 0; i < documentAttributesDtos.length; i++) {
-                    documentAttributesDtos[i] = documentAttributesDtosList.get(i);
-                }
-                attributes = createObject(documentAttributesDtos);
+            if (instanceAttributes != null) {
+                attributes = createInstanceAttribute(instanceAttributes);
             }
 
             DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
@@ -609,7 +595,7 @@ public class DocumentResource {
         }
     }
 
-    private InstanceAttribute[] createObject(AttributesDTO[] dtos) {
+    private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {
             return null;
         }
@@ -621,29 +607,42 @@ public class DocumentResource {
 
         return data;
     }
+    
+    private InstanceAttribute[] createInstanceAttribute(List<InstanceAttributeDTO> dtos) {
+        if (dtos == null) {
+            return null;
+        }
+        InstanceAttribute[] data = new InstanceAttribute[dtos.size()];
+        int i=0;
+        for (InstanceAttributeDTO dto:dtos) {
+            data[i++] = createObject(dto);
+        }
 
-    private InstanceAttribute createObject(AttributesDTO dto) {
-        if (dto.getType().equals(AttributesDTO.Type.BOOLEAN)) {
+        return data;
+    }
+
+    private InstanceAttribute createObject(InstanceAttributeDTO dto) {
+        if (dto.getType().equals(InstanceAttributeDTO.Type.BOOLEAN)) {
             InstanceBooleanAttribute attr = new InstanceBooleanAttribute();
             attr.setName(dto.getName());
             attr.setBooleanValue(Boolean.parseBoolean(dto.getValue()));
             return attr;
-        } else if (dto.getType().equals(AttributesDTO.Type.TEXT)) {
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.TEXT)) {
             InstanceTextAttribute attr = new InstanceTextAttribute();
             attr.setName(dto.getName());
             attr.setTextValue((String) dto.getValue());
             return attr;
-        } else if (dto.getType().equals(AttributesDTO.Type.NUMBER)) {
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
             InstanceNumberAttribute attr = new InstanceNumberAttribute();
             attr.setName(dto.getName());
             attr.setNumberValue(Float.parseFloat(dto.getValue()));
             return attr;
-        } else if (dto.getType().equals(AttributesDTO.Type.DATE)) {
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
             InstanceDateAttribute attr = new InstanceDateAttribute();
             attr.setName(dto.getName());
             attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
             return attr;
-        } else if (dto.getType().equals(AttributesDTO.Type.URL)) {
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
             InstanceURLAttribute attr = new InstanceURLAttribute();
             attr.setName(dto.getName());
             attr.setUrlValue(dto.getValue());
@@ -653,11 +652,21 @@ public class DocumentResource {
         }
     }
 
-    private DocumentIterationKey[] createObject(DocumentDTO[] dtos) {
+    private DocumentIterationKey[] createDocumentIterationKey(DocumentDTO[] dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.length];
 
         for (int i = 0; i < dtos.length; i++) {
             data[i] = createObject(dtos[i]);
+        }
+
+        return data;
+    }
+    
+        private DocumentIterationKey[] createDocumentIterationKey(List<DocumentDTO> dtos) {
+        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+        int i= 0;
+        for (DocumentDTO dto:dtos) {
+            data[i++] = createObject(dto);
         }
 
         return data;
