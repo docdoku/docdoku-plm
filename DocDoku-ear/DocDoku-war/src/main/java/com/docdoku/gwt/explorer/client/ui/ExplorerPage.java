@@ -329,9 +329,9 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             m_docPanel.clearInputs();
             m_docPanel.setDocM(m_lastOpenedDocM);
             //m_docPanel.setEditionMode(m_lastOpenedDocM.getCheckOutUser() != null && m_login.equals(m_lastOpenedDocM.getCheckOutUser().getLogin()));
-            m_docPanel.setFiles(iteration.getAttachedFiles());
-            m_docPanel.setAttributes(iteration.getInstanceAttributes());
-            m_docPanel.setLinks(iteration.getLinkedDocuments(), m_lastOpenedDocM.getWorkspaceId());
+            //m_docPanel.setFiles(iteration.getAttachedFiles());
+            //m_docPanel.setAttributes(iteration.getInstanceAttributes());
+            //m_docPanel.setLinks(iteration.getLinkedDocuments(), m_lastOpenedDocM.getWorkspaceId());
             inputPanel.setWidget(m_docPanel);
         }
 

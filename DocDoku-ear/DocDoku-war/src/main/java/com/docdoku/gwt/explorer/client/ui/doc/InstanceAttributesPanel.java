@@ -30,11 +30,6 @@ import com.docdoku.gwt.client.ui.widget.input.EditableLabel;
 import com.docdoku.gwt.client.ui.widget.util.NotEmptyValidator;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import com.docdoku.server.rest.dto.InstanceBooleanAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceDateAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceNumberAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceTextAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceURLAttributeDTO;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -130,6 +125,7 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
             m_attributeList.setWidget(i, 1, l);
 
             Widget attrWidget = null;
+           /*
             if (attr.getValue() instanceof InstanceBooleanAttributeDTO) {
                 CheckBox checkBox = new CheckBox();
                 checkBox.setEnabled(m_editionMode);
@@ -159,6 +155,8 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
             }
             m_attributeList.setWidget(i, 2, attrWidget);
             i++;
+            
+            */
         }
     }
 
@@ -169,6 +167,7 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
             if (!name.getText().isEmpty()) {
                 InstanceAttributeDTO attribute = null;
                 Widget attrWidget = m_attributeList.getWidget(i, 2);
+                /*
                 if (attrWidget instanceof CheckBox) {
                     InstanceBooleanAttributeDTO tmp = new InstanceBooleanAttributeDTO() ;
                     tmp.setBooleanValue(((CheckBox) attrWidget).getValue());
@@ -190,7 +189,7 @@ public class InstanceAttributesPanel extends DataRoundedPanel {
                     tmp.setValue(((TextBox) attrWidget).getValue());
                     attribute = tmp ;
                 }
-
+                 * */
                 if (! (attrWidget instanceof ListBox)){
                     attribute.setName(name.getText());
                     result.add(attribute);
