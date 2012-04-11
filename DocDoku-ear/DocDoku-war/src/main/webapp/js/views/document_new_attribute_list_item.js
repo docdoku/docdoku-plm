@@ -1,7 +1,6 @@
-DocumentNewAttributeListItemView = ListItemView.extend({
+var DocumentNewAttributeListItemView = ListItemView.extend({
 	tagName: "div",
-	className: "document-new-attribute-list-item",
-	template: "document-new-attribute-list-item-text-tpl",
+	className: "attribute-list-item",
 	template: function () {
 		var attributeTypeTemplateMapping = {
 			"BOOLEAN":	"document-new-attribute-list-item-boolean-tpl",
@@ -10,34 +9,36 @@ DocumentNewAttributeListItemView = ListItemView.extend({
 			"TEXT":		"document-new-attribute-list-item-text-tpl",
 			"URL":		"document-new-attribute-list-item-url-tpl",
 		};
-		var type = this.model.get("attributeType") ? this.model.get("attributeType") : "TEXT";
+		var type = this.model.get("type") ? this.model.get("type") : "TEXT";
 		return attributeTypeTemplateMapping[type];
 	},
 	initialize: function () {
 		ListItemView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {
-			"change .type": "setType",
-			"click .remove": "removeAction",
+			"change select":	"typeChanged",
+			"blur input":		"update",
+			"click .remove":	"removeAction",
 		});
 	},
 	rendered: function () {
-		var attributeType = this.model.get("attributeType");
-		var elType = this.$el.find("select.type").first();
-		elType.val(attributeType);
+		var attributeType = this.model.get("type");
+		this.$el.find("select.type:first").val(attributeType);
 	},
-	removeAction: function (evt) {
+	removeAction: function () {
 		this.model.destroy();
 	},
-	setType: function (evt) {
-		var elType = $(evt.target);
-		var elName = this.$el.find("input.name").first();
-		var elValue = this.$el.find("input.value").first();
-		var attributeType = elType.val();
+	typeChanged: function (evt) {
 		this.model.set({
-			attributeType: elType.val(),
-			name: elName.val(),
-			value: elValue.val()
+			type: $(evt.target).val(),
+			name: this.$el.find("input.name:first").val(),
+			value: this.$el.find("input.value:first").val()
 		});
 		this.render();
+	},
+	update: function () {
+		this.model.set({
+			name: this.$el.find("input.name:first").val(),
+			value: this.$el.find("input.value:first").val()
+		});
 	},
 });

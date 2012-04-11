@@ -85,8 +85,15 @@
 
 		<script src="<%=request.getContextPath()%>/js/views/document_new.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_template_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_workflow_list.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attributes.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list.js"></script>
+
+		<script src="<%=request.getContextPath()%>/js/views/template_new.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/template_new_attributes.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/template_new_attribute_list_item.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/template_new_attribute_list.js"></script>
 		<!-- END VIEWS -->
 		<script src="<%=request.getContextPath()%>/js/router.js"></script>
 		<script src="<%=request.getContextPath()%>/js/app.js"></script>
@@ -114,7 +121,7 @@
 				<li id="workflow-nav"></li>
 				<li id="template-nav"></li>
 				<li class="nav-header">{{_.LINKS}}</li>
-				<li id="checkedout-nav"></li>
+				<li id="checkedout-nav">???</li>
 				<li>
 					<a href="#tasks" class="nav-list-entry">
 						<span class="icon icon-nav-tasks"></span>
@@ -136,7 +143,7 @@
 		<script id="document-list-tpl" class="template" type="text/html">
 			<thead>
 				<tr>
-					<th><input type="checkbox" id="check-toggle-{{view_cid}}" /></th>
+					<th><input type="checkbox" id="check-toggle-{{view.cid}}" /></th>
 					<th>{{_.REFERENCE}}</th>
 					<th>{{_.VERSION}}</th>
 					<th>{{_.ITERATION}}</th>
@@ -147,10 +154,10 @@
 					<th>{{_.CHECKOUT_DATE}}</th>
 				</tr>
 			</thead>
-			<tbody id="items-{{view_cid}}" class="items"></tbody>
+			<tbody id="items-{{view.cid}}" class="items"></tbody>
 		</script>
 		<script id="document-list-item-tpl" class="template" type="text/html">
-			<td><input type="checkbox" id="check-toggle-{{view_cid}}" /></td>
+			<td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
 			<td class="reference">{{model.reference}}</td>
 			<td>{{model.version}}</td>
 			<td>{{model.lastIteration.iteration}}</td>
@@ -167,47 +174,48 @@
 					<h3><span class="icon"></span>{{_.NEW_DOCUMENT}}</h3>
 				</div>
 				<div class="modal-body">
-					<div id="alerts-{{view_cid}}"></div>
+					<div id="alerts-{{view.cid}}"></div>
 					<div class="tabs">
 						<ul class="nav nav-tabs">
-							<li class="active"><a href="#form-{{view_cid}}-tab-main" data-toggle="tab">{{_.GENERAL}}</a></li>
-							<li><a href="#form-{{view_cid}}-tab-attributes" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
+							<li class="active"><a href="#form-{{view.cid}}-tab-main" data-toggle="tab">{{_.GENERAL}}</a></li>
+							<li><a href="#form-{{view.cid}}-tab-attributes" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
 						</ul>
 						<div class="tab-content">
-							<div class="tab-pane active" id="form-{{view_cid}}-tab-main">
-								<form id="templates-{{view_cid}}" class="form-horizontal"></form>
-								<form id="form-{{view_cid}}" class="form-horizontal">
+							<div class="tab-pane active" id="form-{{view.cid}}-tab-main">
+								<form id="templates-{{view.cid}}" class="form-horizontal"></form>
+								<form id="form-{{view.cid}}" class="form-horizontal">
 									<div class="control-group">
-										<label class="control-label required" for="form-{{view_cid}}-reference">{{_.REFERENCE}}</label>
+										<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
 										<div class="controls">
-											<input type="text" class="input-xlarge reference" id="form-{{view_cid}}-reference">
+											<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference">
 											<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
 										</div>
 									</div>
 									<div class="control-group">
-										<label class="control-label" for="form-{{view_cid}}-title">{{_.TITLE}}</label>
+										<label class="control-label" for="form-{{view.cid}}-title">{{_.TITLE}}</label>
 										<div class="controls">
-											<input type="text" class="input-xlarge title" id="form-{{view_cid}}-title">
+											<input type="text" class="input-xlarge title" id="form-{{view.cid}}-title">
 											<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
 										</div>
 									</div>
 									<div class="control-group">
-										<label class="control-label" for="form-{{view_cid}}-description">{{_.DESCRIPTION}}</label>
+										<label class="control-label" for="form-{{view.cid}}-description">{{_.DESCRIPTION}}</label>
 										<div class="controls">
-											<textarea type="text" class="input-xlarge description" id="form-{{view_cid}}-description"></textarea>
+											<textarea type="text" class="input-xlarge description" id="form-{{view.cid}}-description"></textarea>
 											<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
 										</div>
 									</div>
 								</form>
+								<form id="workflows-{{view.cid}}" class="form-horizontal"></form>
 							</div>
-							<div id="form-{{view_cid}}-tab-attributes" class="tab-pane">
-								<form id="attributes-{{view_cid}}" class="form-horizontal document-new-attribute-list"></form>
+							<div id="form-{{view.cid}}-tab-attributes" class="tab-pane">
+								<form id="attributes-{{view.cid}}" class="form-horizontal document-new-attribute-list"></form>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-primary" for="modal-form">
+					<button class="btn btn-primary" form="form-{{view.cid}}">
 						{{_.CREATE}}
 					</button>
 					<a class="btn cancel" data-dismiss="modal">{{_.CANCEL}}</a>
@@ -216,22 +224,33 @@
 		</script>
 		<script id="document-new-template-select-tpl" class="template" type="text/html">
 			<div class="control-group">
-				<label class="control-label" for="input-{{view_cid}}">{{_.TEMPLATE}}</label>
+				<label class="control-label" for="input-{{view.cid}}">{{_.TEMPLATE}}</label>
 				<div class="controls">
-					<select class="input-xlarge" id="input-{{view_cid}}">
-						<option value=""></option>
+					<select class="input-xlarge" id="select-{{view.cid}}">
 						{{#collection}}
 						<option value="{{id}}">{{id}}</option>
 						{{/collection}}
 					</select>
-					<p class="help-block">{{_.DOCUMENT_S_TEMPLATE}}</p>
 				</div>
 			</div>
 		</script>
-		<script id="document-new-attribute-list-tpl" class="template" type="text/html">
+		<script id="document-new-workflow-select-tpl" class="template" type="text/html">
+			<div class="control-group">
+				<label class="control-label" for="input-{{view.cid}}">{{_.WORKFLOW}}</label>
+				<div class="controls">
+					<select class="input-xlarge" id="select-{{view.cid}}">
+						{{#collection}}
+						<option value="{{id}}">{{id}}</option>
+						{{/collection}}
+					</select>
+				</div>
+			</div>
+		</script>
+		<script id="document-new-attributes-tpl" class="template" type="text/html">
 			<a class="btn add">
 				{{_.APPEND}}
 			</a>
+			<div id="items-{{view.cid}}"></div>
 		</script>
 		<script id="document-new-attribute-list-item-boolean-tpl" class="template" type="text/html">
 			{{> document-new-attribute-list-item-tpl}}
@@ -284,9 +303,93 @@
 			</div>
 		</script>
 
+		<script id="template-new-tpl" class="template" type="text/html">
+			<div class="modal new-template">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3><span class="icon"></span>{{_.NEW_TEMPLATE}}</h3>
+				</div>
+				<div class="modal-body">
+					<div id="alerts-{{view.cid}}"></div>
+					<div class="tabs">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#form-{{view.cid}}-tab-main" data-toggle="tab">{{_.GENERAL}}</a></li>
+							<li><a href="#form-{{view.cid}}-tab-attributes" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="form-{{view.cid}}-tab-main">
+								<form id="form-{{view.cid}}" class="form-horizontal">
+									<div class="control-group">
+										<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
+										<div class="controls">
+											<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference">
+											<p class="help-block"></p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="form-{{view.cid}}-title">{{_.TYPE}}</label>
+										<div class="controls">
+											<input type="text" class="input-xlarge title" id="form-{{view.cid}}-title">
+											<p class="help-block"></p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="form-{{view.cid}}-description">{{_.MASK}}</label>
+										<div class="controls">
+											<input type="text" class="input-xlarge mask" id="form-{{view.cid}}-title">
+											<p class="help-block"></p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="form-{{view.cid}}-id-generated">{{_.ID_GENERATION}}</label>
+										<div class="controls">
+											<input type="checkbox" class="input-xlarge id-generated" id="form-{{view.cid}}-id-generated">
+											<p class="help-block"></p>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div id="form-{{view.cid}}-tab-attributes" class="tab-pane">
+								<form id="attributes-{{view.cid}}" class="form-horizontal template-new-attribute-list"></form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" form="form-{{view.cid}}">
+						{{_.CREATE}}
+					</button>
+					<a class="btn cancel" data-dismiss="modal">{{_.CANCEL}}</a>
+				</div>
+			</div>
+		</script>
+		<script id="template-new-attributes-tpl" class="template" type="text/html">
+			<a class="btn add">
+				{{_.APPEND}}
+			</a>
+			<div id="items-{{view.cid}}"></div>
+		</script>
+		<script id="template-new-attribute-list-item-tpl" class="template" type="text/html">
+			<div class="controls">
+				<a class="remove">×</a>
+			</div>
+			<div class="controls">
+				<select class="type">
+					<option value="URL">{{_.URL}}</option>
+					<option value="TEXT">{{_.TEXT}}</option>
+					<option value="BOOLEAN">{{_.BOOLEAN}}</option>
+					<option value="DATE">{{_.DATE}}</option>
+					<option value="NUMBER">{{_.NUMBER}}</option>
+				</select>
+			</div>
+			<div class="controls">
+				<input type="text" class="input-xlarge name" placeholder="{{_.NAME}}" value="{{model.name}}"/>
+			</div>
+		</script>
+
 		<script id="folder-list-item-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
-				<a href="#folders/{{model.path}}" data-target="#items-{{view_cid}}">
+				<a href="#folders/{{model.path}}" data-target="#items-{{view.cid}}">
 					<span class="status"></span>
 					<span class="icon"></span>
 					{{model.name}}
@@ -308,11 +411,11 @@
 					</ul>
 				</div>
 			</div>
-			<ul id="items-{{view_cid}}" class="items"></ul>
+			<ul id="items-{{view.cid}}" class="items"></ul>
 		</script>
 		<script id="folder-nav-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
-				<a href="#folders" data-target="#items-{{view_cid}}">
+				<a href="#folders" data-target="#items-{{view.cid}}">
 					<span class="icon icon-nav-documents"></span>
 					{{_.FOLDERS}}
 				</a>
@@ -327,7 +430,7 @@
 					</ul>
 				</div>
 			</div>
-			<ul id="items-{{view_cid}}" class="items"></ul>
+			<ul id="items-{{view.cid}}" class="items"></ul>
 		</script>
 		<script id="folder-new-tpl" class="template" type="text/html">
 			<div class="modal new-folder">
@@ -336,7 +439,7 @@
 					<h3><span class="icon"></span>{{_.NEW_FOLDER}}</h3>
 				</div>
 				<div class="modal-body">
-					<div id="alerts-{{view_cid}}"></div>
+					<div id="alerts-{{view.cid}}"></div>
 					<form id="new-folder-form" class="form-horizontal">
 						<label>{{_.NAME}}</label>
 						<input class="name" type="text" autofocus
@@ -344,7 +447,7 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-primary" for="new-folder-form">
+					<button class="btn btn-primary" form="new-folder-form">
 						{{_.CREATE}}
 					</button>
 					<a class="btn cancel" data-dismiss="modal">{{_.CANCEL}}</a>
@@ -358,7 +461,7 @@
 					<h3><span class="icon"></span>{{_.RENAME}}</h3>
 				</div>
 				<div class="modal-body">
-					<div id="alerts-{{view_cid}}"></div>
+					<div id="alerts-{{view.cid}}"></div>
 					<form id="edit-folder-form">
 						<label>Nom</label>
 						<input class="name" type="text" autofocus
@@ -366,7 +469,7 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button class="btn save btn-primary" for="edit-folder-form">
+					<button class="btn save btn-primary" form="edit-folder-form">
 						{{_.SAVE}}
 					</button>
 					<a class="btn cancel" data-dismiss="modal">{{_.CANCEL}}</a>
@@ -374,7 +477,7 @@
 			</div>
 		</script>
 		<script id="folder-document-list-tpl" class="template" type="text/html">
-			<div id="actions-{{view_cid}}" class="actions">
+			<div id="actions-{{view.cid}}" class="actions">
 				<button class="btn new-document" title="{{_.NEW_DOCUMENT}}">
 					<span class="icon"></span>
 				</button>
@@ -393,7 +496,7 @@
 					</button>
 				</span>
 			</div>
-			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
+			<table id="list-{{view.cid}}" class="table table-striped table-condensed"></table>
 		</script>
 
 		<script id="tag-list-item-tpl" class="template" type="text/html">
@@ -419,15 +522,15 @@
 		</script>
 		<script id="tag-nav-tpl" class="template" type="text/html">
 			<div class="header nav-list-entry">
-				<a href="#tags" data-target="#items-{{view_cid}}">
+				<a href="#tags" data-target="#items-{{view.cid}}">
 					<span class="icon icon-nav-tags"></span>
 					{{_.TAGS}}
 				</a>
 			</div>
-			<ul id="items-{{view_cid}}" class="items"></ul>
+			<ul id="items-{{view.cid}}" class="items"></ul>
 		</script>
 		<script id="content-document-list-tpl" class="template" type="text/html">
-			<div id="actions-{{view_cid}}" class="actions">
+			<div id="actions-{{view.cid}}" class="actions">
 				<button class="btn delete" title="{{_.DELETE}}">
 					<span class="icon"></span>
 				</button>
@@ -443,7 +546,7 @@
 					</button>
 				</span>
 			</div>
-			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
+			<table id="list-{{view.cid}}" class="table table-striped table-condensed"></table>
 		</script>
 
 		<script id="workflow-nav-tpl" class="template" type="text/html">
@@ -463,20 +566,20 @@
 					<span class="icon"></span>
 				</button>
 			</div>
-			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
+			<table id="list-{{view.cid}}" class="table table-striped table-condensed"></table>
 		</script>
 		<script id="workflow-list-tpl" class="template" type="text/html">
 			<thead>
 				<tr>
-					<th><input type="checkbox" id="check-toggle-{{view_cid}}" /></th>
+					<th><input type="checkbox" id="check-toggle-{{view.cid}}" /></th>
 					<th>{{_.REFERENCE}}</th>
 					<th>{{_.AUTHOR}}</th>
 				</tr>
 			</thead>
-			<tbody id="items-{{view_cid}}" class="items"></tbody>
+			<tbody id="items-{{view.cid}}" class="items"></tbody>
 		</script>
 		<script id="workflow-list-item-tpl" class="template" type="text/html">
-			<td><input type="checkbox" id="check-toggle-{{view_cid}}" /></td>
+			<td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
 			<td>{{model.reference}}</td>
 			<td>{{model.author.name}}</td>
 		</script>
@@ -489,31 +592,29 @@
 		</script>
 		<script id="template-content-list-tpl" class="template" type="text/html">
 			<div class="actions">
-				<!--
-				<button class="btn new-template" title="{{_.NEW_WORKFLOW}}">
+				<button class="btn new-template" title="{{_.NEW_TEMPLATE}}">
 					<span class="icon"></span>
 				</button>
-				-->
 				<button class="btn delete" title="{{_.DELETE}}">
 					<span class="icon"></span>
 				</button>
 			</div>
-			<table id="list-{{view_cid}}" class="table table-striped table-condensed"></table>
+			<table id="list-{{view.cid}}" class="table table-striped table-condensed"></table>
 		</script>
 		<script id="template-list-tpl" class="template" type="text/html">
 			<thead>
 				<tr>
-					<th><input type="checkbox" id="check-toggle-{{view_cid}}" /></th>
+					<th><input type="checkbox" id="check-toggle-{{view.cid}}" /></th>
 					<th>{{_.REFERENCE}}</th>
 					<th>{{_.TYPE}}</th>
 					<th>{{_.AUTHOR}}</th>
 					<th>{{_.CREATION_DATE}}</th>
 				</tr>
 			</thead>
-			<tbody id="items-{{view_cid}}" class="items"></tbody>
+			<tbody id="items-{{view.cid}}" class="items"></tbody>
 		</script>
 		<script id="template-list-item-tpl" class="template" type="text/html">
-			<td><input type="checkbox" id="check-toggle-{{view_cid}}" /></td>
+			<td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
 			<td>{{model.reference}}</td>
 			<td>{{model.documentType}}</td>
 			<td>{{model.author.name}}</td>

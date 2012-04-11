@@ -1,3 +1,3 @@
 var CheckedoutContentListView = ContentDocumentListView.extend({
-	collection: CheckedoutDocumentList,
+	collection: function () { return new CheckedoutDocumentList(); },
 });

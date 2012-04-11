@@ -9,17 +9,15 @@ var BaseView = Backbone.View.extend({
 		"add":		"collectionAdd",
 		"remove":	"collectionRemove",
 	},
-	initialize: function () {
+	initialize: function (options) {
 		// Owned events
 		this.events = {};
 
-		// Owned child subViews
+		// Owned child views
 		this.subViews = {};
 
 		// Collection creation from factory
-		if (_.isFunction(this.collection)) {
-			this.collection = new this.collection();
-		}
+		if (_.isFunction(this.collection)) this.collection = this.collection();
 
 		// Bindings
 		_.bindAll(this);
@@ -104,25 +102,27 @@ var BaseView = Backbone.View.extend({
 		var html = "";
 		if (this.template) {
 			var templateId = _.isFunction(this.template) ? this.template() : this.template;
-			html = app.templates[templateId](this.data(), app.partials);
-			//html = this.renderer(this.data());
+			html = app.templates[templateId](this.renderData(), app.partials);
 		}
 		this.$el.html(html);
-		if (_.isFunction(this.rendered)) {
-			this.rendered();
-		}
+		if (_.isFunction(this.rendered)) this.rendered();
 	},
-	renderer: function (data) {
-		var html = $(this.template).html();
-		return Mustache.render(html, data);
-	},
-	data: function () {
+	renderData: function () {
 		var data = {};
-		data.view_cid = this.cid;
-		data._ = app.i18n;
+		data._ = this.i18nRenderData();
+		data.view = this.viewToJSON();
 		if (this.model) data.model = this.modelToJSON();
 		if (this.collection) data.collection = this.collectionToJSON();
 		return data;
+	},
+	viewToJSON: function () {
+		var data = {
+			cid: this.cid
+		};
+		return data;
+	},
+	i18nRenderData: function () {
+		return app.i18n;
 	},
 	modelToJSON: function () {
 		return this.model.toJSON ?

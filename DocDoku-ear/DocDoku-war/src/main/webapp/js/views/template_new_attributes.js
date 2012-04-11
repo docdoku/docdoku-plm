@@ -1,12 +1,12 @@
-var DocumentNewAttributesView = BaseView.extend({
+TemplateNewAttributesView = BaseView.extend({
 	collection: function () { return new Backbone.Collection(); },
-	template: "document-new-attributes-tpl",
+	template: "template-new-attributes-tpl",
 	initialize: function () {
 		ListView.prototype.initialize.apply(this, arguments);
 		this.events["click .add"] = this.addAttribute;
 	},
 	rendered: function () {
-		this.attributesView = this.addSubView(new DocumentNewAttributeListView({
+		this.attributesView = this.addSubView(new TemplateNewAttributeListView({
 			el: "#items-" + this.cid,
 			collection: this.collection
 		}));
@@ -14,8 +14,7 @@ var DocumentNewAttributesView = BaseView.extend({
 	addAttribute: function () {
 		this.collection.add({
 			name: "",
-			type: "TEXT",
-			value: ""
+			attributeType: "TEXT",
 		});
 	},
 });

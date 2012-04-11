@@ -2,7 +2,7 @@ var FolderListItemView = ListItemView.extend({
 	tagName: "li",
 	className: "folder",
 	template: "folder-list-item-tpl",
-	collection: FolderList,
+	collection: function () { return new FolderList(); },
 	initialize: function () {
 		ListItemView.prototype.initialize.apply(this, arguments);
 		this.isOpen = false;

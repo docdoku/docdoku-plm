@@ -3,7 +3,7 @@ var TemplateContentListView = ContentView.extend({
 	initialize: function () {
 		ContentView.prototype.initialize.apply(this, arguments);
 		this.events = _.extend(this.events, {
-			"click .actions .new": "actionNew",
+			"click .actions .new-template": "actionNew",
 			"click .actions .delete": "actionDelete"
 		});
 	},
@@ -21,7 +21,7 @@ var TemplateContentListView = ContentView.extend({
 	},
 	actionNew : function () {
 		var view = this.addSubView(new TemplateNewView());
-		view.render();
+		view.show();
 		return false;
 	},
 	actionDelete: function () {

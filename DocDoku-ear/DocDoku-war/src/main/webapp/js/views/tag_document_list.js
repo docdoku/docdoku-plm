@@ -1,5 +1,5 @@
 var TagDocumentListView = ContentDocumentListView.extend({
-	collection: TagDocumentList,
+	collection: function () { return new TagDocumentList(); },
 	initialize: function () {
 		ContentDocumentListView.prototype.initialize.apply(this, arguments);
 		if (this.model) {

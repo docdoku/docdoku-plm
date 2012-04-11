@@ -1,5 +1,5 @@
 var TemplateListView = CheckboxListView.extend({
-	collection: TemplateList,
+	collection: function () { return new TemplateList(); },
 	ItemView: TemplateListItemView,
 	template: "template-list-tpl",
 });

@@ -1,4 +1,20 @@
 var Document = Backbone.Model.extend({
+	initialize: function () {
+		_.bindAll(this);
+	},
+	parse: function(data) {
+		if (data.documentIterations) {
+			this.iterations = new DocumentIterationList(data.documentIterations);
+			this.iterations.document = this;
+			data.documentIterations = this.iterations;
+			// TODO update webservice to use lastIteration = lastIteration id
+			// and have the iterations in "iterations"
+			// and use iteration.id intead of iteration.iteration
+			this.lastIteration = this.iterations.get(data.lastIteration.iteration);
+			data.lastIteration = this.lastIteration;
+		}
+		return data;
+	},
 	url: function() {
 		if (this.get("id")) {
 			var baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
@@ -6,13 +22,6 @@ var Document = Backbone.Model.extend({
 		} else if (this.collection) {
 			return this.collection.url;
 		}
-	},
-	initialize: function () {
-		_.bindAll(this, "checkout", "undocheckout", "checkin");
-		/*
-		this.iterations = new DocumentIterationList();
-		this.iterations.parent = this;
-		*/
 	},
 	checkout: function () {
 		$.ajax({

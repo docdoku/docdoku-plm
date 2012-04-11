@@ -9,6 +9,7 @@ var app = {
 		Backbone.history.start();
 	},
 	initTemplates: function () {
+		// Compile all templates at init time
 		var templates = {};
 		$("script.template").each( function () {
 			templates[this.id] = Mustache.compile(this.innerHTML);
@@ -16,6 +17,7 @@ var app = {
 		this.templates = templates;
 	},
 	initPartials: function () {
+		// Compile all partial templates at init time
 		var partials = {};
 		$("script.partial").each( function () {
 			partials[this.id] = this.innerHTML;
@@ -31,8 +33,9 @@ var app = {
 			model: this.workspace
 		}).render();
 	},
-	i18n: {},
+	i18n: {}, // Filled by i18n.js
 	formatDate: function (unformatedDate) {
+		// TODO: use moments.js ?
 		try {
 			var formatedDate = new Date(unformatedDate).format("dd/mm/yyyy");
 			return formatedDate;

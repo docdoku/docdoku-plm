@@ -5,7 +5,7 @@ DocumentNewView = ModalView.extend({
 		this.events["submit #form-" + this.cid] = "primaryAction";
 	},
 	rendered: function () {
-		this.attributesView = this.addSubView(new DocumentNewAttributeListView({
+		this.attributesView = this.addSubView(new DocumentNewAttributesView({
 			el: "#attributes-" + this.cid,
 		}));
 		this.attributesView.render();
@@ -14,15 +14,22 @@ DocumentNewView = ModalView.extend({
 			attributesView: this.attributesView
 		}));
 		this.templatesView.collection.fetch();
+		this.workflowsView = this.addSubView(new DocumentNewWorkflowListView({
+			el: "#workflows-" + this.cid,
+		}));
+		this.workflowsView.collection.fetch();
 	},
 	primaryAction: function () {
 		var reference = $("#form-" + this.cid + " .reference").val();
 		if (reference) {
-			this.collection.create({
+			var workflow = this.workflowsView.selected();
+			var data = {
 				reference: reference,
 				title: $("#form-" + this.cid + " .title").val(),
 				description: $("#form-" + this.cid + " .description").val(),
-			}, {
+				/* workflow: workflow ? workflow.toJSON() : null, */
+			};
+			this.collection.create(data, {
 				success: this.success,
 				error: this.error
 			});
@@ -30,7 +37,15 @@ DocumentNewView = ModalView.extend({
 		return false;
 	},
 	success: function (model, response) {
-		this.hide();
+		var that = this;
+		model.lastIteration.save({
+			documentAttributes: this.attributesView.collection.toJSON()
+		}, {
+			success: function () {
+				that.hide();
+			},
+			error: this.error
+		});
 	},
 	error: function (model, error) {
 		if (error.responseText) {

@@ -49,8 +49,11 @@ app.i18n = {
 	"TRUE":						"Vrai",
 	"TYPE":						"Type",
 	"URL":						"URL",
-	"VALUE":					"Valeure",
+	"VALUE":					"Valeur",
+	"MASK":						"Masque de saisie",
+	"ID_GENERATION":			"Génération de l'ID",
 	"VERSION":					"Version",
+	"WORKFLOW":					"Workflow",
 	"WORKFLOWS":				"Workflows",
 	"WORKSPACES":				"Workspaces",
 };

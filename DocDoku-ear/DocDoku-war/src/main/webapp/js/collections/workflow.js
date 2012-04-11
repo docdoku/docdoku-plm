@@ -4,3 +4,4 @@ var WorkflowList = Backbone.Collection.extend({
 WorkflowList.prototype.__defineGetter__("url", function () {
 	return "/api/workspaces/" + app.workspaceId + "/workflows";
 });
+WorkflowList = singletonDecorator(WorkflowList);
