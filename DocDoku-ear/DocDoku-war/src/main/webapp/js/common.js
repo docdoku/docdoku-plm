@@ -1,11 +1,11 @@
 // A Singleton decorator.
-// To be used with _.wrap
+// requires underscrore.js
 // var Foo = function () {};
 // Foo = singletonDecorator(Foo);
 var singletonDecorator = function (constructor) {
 	constructor.getInstance = function () {
 		if (!constructor._instance) {
-			constructor._instance = new constructor();
+			constructor._instance = _.extend(constructor.prototype, {});
 			constructor.apply(constructor._instance, arguments);
 		}
 		return constructor._instance;

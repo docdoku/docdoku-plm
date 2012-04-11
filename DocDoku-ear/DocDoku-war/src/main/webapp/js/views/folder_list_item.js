@@ -111,10 +111,8 @@ var FolderListItemView = ListItemView.extend({
 		}
 	},
 	actionNewFolder: function (evt) {
-		//console.debug(new Date().getTime(), this.cid, "actionNewFolder", evt);
 		this.hideActions();
 		var view = this.addSubView(new FolderNewView({collection: this.collection}));
-		view.show();
 		return false;
 	},
 	actionEdit: function () {
