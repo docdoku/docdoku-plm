@@ -46,8 +46,8 @@ public class UploadCompleteDocFileCommand implements Action {
             @Override
             public void onSuccess(DocumentMasterDTO docM) {
                 DocumentDTO iteration = null;//docM.getLastIteration();
-                if(iteration!=null)
-                    m_mainPage.setDocFiles(iteration.getAttachedFiles());
+                //if(iteration!=null)
+                  //  m_mainPage.setDocFiles(iteration.getAttachedFiles());
             }
 
             @Override
