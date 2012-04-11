@@ -39,7 +39,7 @@ DocumentNewView = ModalView.extend({
 	success: function (model, response) {
 		var that = this;
 		model.lastIteration.save({
-			documentAttributes: this.attributesView.collection.toJSON()
+			instanceAttributes: this.attributesView.collection.toJSON()
 		}, {
 			success: function () {
 				that.hide();
