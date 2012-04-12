@@ -246,16 +246,9 @@ public class FolderResource {
         String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);             
         String pParentFolder = Tools.stripTrailingSlash(decodedCompletePath);
         
-        String pWorkflowModelId = null;
-        String pDocMTemplateId = null;
+        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        String pDocMTemplateId = docCreationDTO.getTemplateId();
 
-        if (docCreationDTO.getWorkflowModel() != null) {
-            pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
-        }
-
-        if (docCreationDTO.getDocumentMsTemplate() != null) {
-            pDocMTemplateId = docCreationDTO.getDocumentMsTemplate().getId();
-        }
 
         /*
          * Null value for test purpose only

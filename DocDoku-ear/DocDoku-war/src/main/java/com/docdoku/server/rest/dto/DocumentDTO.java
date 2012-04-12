@@ -21,7 +21,6 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.Set;
 
 /**
  *

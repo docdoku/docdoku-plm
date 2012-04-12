@@ -413,11 +413,8 @@ public class DocumentResource {
         String pWorkspaceId = workspaceId;
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
-        String pWorkflowModelId = null;
+        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
 
-        if (docCreationDTO.getWorkflowModel() != null) {
-            pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
-        }
 
         /*
          * Null value for test purpose only
@@ -502,16 +499,10 @@ public class DocumentResource {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pParentFolder = Tools.stripTrailingSlash(workspaceId);
-        String pWorkflowModelId = null;
-        String pDocMTemplateId = null;
+        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        String pDocMTemplateId = docCreationDTO.getTemplateId();
 
-        if (docCreationDTO.getWorkflowModel() != null) {
-            pWorkflowModelId = docCreationDTO.getWorkflowModel().getId();
-        }
 
-        if (docCreationDTO.getDocumentMsTemplate() != null) {
-            pDocMTemplateId = docCreationDTO.getDocumentMsTemplate().getId();
-        }
 
         /*
          * Null value for test purpose only

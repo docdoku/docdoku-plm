@@ -35,8 +35,8 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     private String type;
     private String title;
     private String description;
-    private WorkflowModelDTO workflowModel;
-    private DocumentMasterTemplateDTO documentMsTemplate;
+    private String workflowModelId;
+    private String templateId;
     private String path;
 
     public DocumentCreationDTO() {
@@ -102,20 +102,20 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         this.reference = reference;
     }
         
-    public DocumentMasterTemplateDTO getDocumentMsTemplate() {
-        return documentMsTemplate;
+    public String getTemplateId() {
+        return templateId;
     }
 
-    public void setDocumentMsTemplate(DocumentMasterTemplateDTO documentMsTemplate) {
-        this.documentMsTemplate = documentMsTemplate;
+    public void setDocumentMsTemplate(String templateId) {
+        this.templateId = templateId;
     }
 
-    public WorkflowModelDTO getWorkflowModel() {
-        return workflowModel;
+    public String getWorkflowModelId() {
+        return workflowModelId;
     }
 
-    public void setWorkflowModel(WorkflowModelDTO workflowModel) {
-        this.workflowModel = workflowModel;
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
     }
 
     public String getPath() {

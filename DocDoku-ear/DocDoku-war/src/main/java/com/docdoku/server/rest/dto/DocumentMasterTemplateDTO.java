@@ -20,8 +20,6 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import com.docdoku.server.rest.dto.UserDTO;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;

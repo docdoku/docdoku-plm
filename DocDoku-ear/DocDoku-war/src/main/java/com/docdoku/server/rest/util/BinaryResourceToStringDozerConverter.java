@@ -20,39 +20,34 @@
 
 package com.docdoku.server.rest.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import com.docdoku.core.common.BinaryResource;
 import org.dozer.DozerConverter;
-import org.dozer.Mapper;
-import org.dozer.MapperAware;
+
+import java.util.Date;
 
 /**
- *
- * @author Yassine Belouad
+ * @author Florent Garin
  */
-public class VectorToListDozerConverter extends DozerConverter<Vector, List> implements MapperAware{
+public class BinaryResourceToStringDozerConverter extends DozerConverter<BinaryResource, String> {
 
-    private Mapper mapper;
-    
-    @Override
-    public void setMapper(Mapper mapper) {
-        this.mapper = mapper;
-    }
-    
-    public VectorToListDozerConverter() {
-        super(Vector.class, List.class);
-    }
-    
-    @Override
-    public List convertTo(Vector source, List destination) {
-        List originalToMapped = new ArrayList();
-        return originalToMapped;
+    public BinaryResourceToStringDozerConverter() {
+        super(BinaryResource.class, String.class);
     }
 
     @Override
-    public Vector convertFrom(List b, Vector a) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String convertTo(BinaryResource source, String destination) {
+        return (source != null) ? source.getFullName() : null;
+    }
+
+    @Override
+    public BinaryResource convertFrom(String source, BinaryResource destination) {
+        if (source != null) {
+            BinaryResource bin = new BinaryResource();
+            bin.setFullName(source);
+            return bin;
+        } else {
+            return null;
+        }
     }
 
 }
