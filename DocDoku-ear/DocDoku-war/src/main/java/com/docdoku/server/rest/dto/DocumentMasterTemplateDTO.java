@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     private boolean idGenerated;
     private String mask;
 
-    private Map<String,String> attachedFiles;
+    private List<String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
     
     public DocumentMasterTemplateDTO(){
@@ -93,11 +94,11 @@ public class DocumentMasterTemplateDTO implements Serializable{
         return creationDate;
     }
 
-    public Map<String, String> getAttachedFiles() {
+    public List<String> getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(Map<String, String> attachedFiles) {
+    public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 
