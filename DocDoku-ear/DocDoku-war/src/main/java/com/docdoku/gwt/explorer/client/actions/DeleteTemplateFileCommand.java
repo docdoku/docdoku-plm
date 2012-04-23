@@ -46,7 +46,7 @@ public class DeleteTemplateFileCommand implements Action {
 
             @Override
             public void onSuccess(DocumentMasterTemplateDTO template) {
-                m_mainPage.setEditTemplateFiles(template.getAttachedFiles());
+                //m_mainPage.setEditTemplateFiles(template.getAttachedFiles());
             }
 
             @Override

@@ -30,37 +30,25 @@ import java.util.Set;
  *
  * @author Florent Garin
  */
-public class DocumentMasterTemplateDTO implements Serializable{
+public class DocumentTemplateCreationDTO implements Serializable{
     
     private String workspaceId;
-    private String id;
+    private String reference;
     private String documentType;
-    private UserDTO author;
-    private Date creationDate;
     private boolean idGenerated;
     private String mask;
 
     private List<String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
     
-    public DocumentMasterTemplateDTO(){
+    public DocumentTemplateCreationDTO(){
         
     }
     
-    public DocumentMasterTemplateDTO(String workspaceId, String id, String documentType) {
+    public DocumentTemplateCreationDTO(String workspaceId, String documentType) {
         this.workspaceId=workspaceId;
-        this.id=id;
         this.documentType=documentType;
     }
-
-    public UserDTO getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(UserDTO author) {
-        this.author = author;
-    }
-
     
     public String getDocumentType() {
         return documentType;
@@ -78,19 +66,10 @@ public class DocumentMasterTemplateDTO implements Serializable{
         this.mask = mask;
     }
 
-    
-    
-    
-    public String getId() {
-        return id;
-    }
+   
 
     public String getWorkspaceId() {
         return workspaceId;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
     }
 
     public List<String> getAttachedFiles() {
@@ -99,10 +78,6 @@ public class DocumentMasterTemplateDTO implements Serializable{
 
     public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
     }
 
     public boolean isIdGenerated() {
@@ -117,10 +92,6 @@ public class DocumentMasterTemplateDTO implements Serializable{
         this.workspaceId = workspaceId;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
     }
@@ -128,4 +99,13 @@ public class DocumentMasterTemplateDTO implements Serializable{
     public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
     }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
 }

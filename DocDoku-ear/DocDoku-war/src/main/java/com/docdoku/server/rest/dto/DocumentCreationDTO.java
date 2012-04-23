@@ -29,7 +29,6 @@ import java.io.Serializable;
 public class DocumentCreationDTO implements Serializable, Comparable<DocumentCreationDTO> {
 
     private String workspaceId;
-    private String id;
     private String reference;
     private String version;
     private String type;
@@ -44,10 +43,6 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
 
     public String getDescription() {
         return description;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getWorkspaceId() {
@@ -90,10 +85,6 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         this.title = title;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getReference() {
         return reference;
     }
@@ -128,7 +119,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
 
     @Override
     public String toString() {
-        return workspaceId + "-" + id + "-" + version;
+        return workspaceId + "-" + reference + "-" + version;
     }
 
     @Override
@@ -140,7 +131,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
             return false;
         }
         DocumentCreationDTO docM = (DocumentCreationDTO) pObj;
-        return ((docM.id.equals(id)) && (docM.workspaceId.equals(workspaceId)) && (docM.version.equals(version)));
+        return ((docM.reference.equals(reference)) && (docM.workspaceId.equals(workspaceId)) && (docM.version.equals(version)));
 
     }
 
@@ -148,7 +139,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     public int hashCode() {
         int hash = 1;
         hash = 31 * hash + workspaceId.hashCode();
-        hash = 31 * hash + id.hashCode();
+        hash = 31 * hash + reference.hashCode();
         hash = 31 * hash + version.hashCode();
         return hash;
     }
@@ -158,9 +149,9 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         if (wksComp != 0) {
             return wksComp;
         }
-        int idComp = id.compareTo(pDocM.id);
-        if (idComp != 0) {
-            return idComp;
+        int refComp = reference.compareTo(pDocM.reference);
+        if (refComp != 0) {
+            return refComp;
         } else {
             return version.compareTo(pDocM.version);
         }

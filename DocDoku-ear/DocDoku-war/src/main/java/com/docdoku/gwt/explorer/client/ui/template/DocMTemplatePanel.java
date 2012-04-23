@@ -149,7 +149,7 @@ public class DocMTemplatePanel extends FlexTable {
         m_mainPanel.setDocMTemplateMask(template.getMask());
         m_mainPanel.setDocMTemplateType(template.getDocumentType());
         m_attributesPanel.setAttributes(template.getAttributeTemplates());
-        m_filesPanel.setFiles(template.getAttachedFiles());
+        //m_filesPanel.setFiles(template.getAttachedFiles());
     }
 
     
