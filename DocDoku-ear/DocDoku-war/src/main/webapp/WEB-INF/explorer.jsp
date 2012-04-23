@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <fmt:setBundle basename="com.docdoku.server.localization.explorer_resource"/>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
@@ -20,10 +20,11 @@
 		<script src="<%=request.getContextPath()%>/js/lib/date.format.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
+		<script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.2.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.2.min.js"></script>
-		<script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
 		<!-- END LIBS -->
 		<!-- MODELS -->
 		<script src="<%=request.getContextPath()%>/js/models/workspace.js"></script>
@@ -88,6 +89,11 @@
 		<script src="<%=request.getContextPath()%>/js/views/document_new_workflow_list.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attributes.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item_boolean.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item_date.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item_number.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item_text.js"></script>
+		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list_item_url.js"></script>
 		<script src="<%=request.getContextPath()%>/js/views/document_new_attribute_list.js"></script>
 
 		<script src="<%=request.getContextPath()%>/js/views/template_new.js"></script>
@@ -177,41 +183,37 @@
 					<div id="alerts-{{view.cid}}"></div>
 					<div class="tabs">
 						<ul class="nav nav-tabs">
-							<li class="active"><a href="#form-{{view.cid}}-tab-main" data-toggle="tab">{{_.GENERAL}}</a></li>
-							<li><a href="#form-{{view.cid}}-tab-attributes" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
+							<li class="active"><a href="#tab-main-{{view.cid}}" data-toggle="tab">{{_.GENERAL}}</a></li>
+							<li><a href="#tab-attributes-{{view.cid}}" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
 						</ul>
-						<div class="tab-content">
-							<div class="tab-pane active" id="form-{{view.cid}}-tab-main">
-								<form id="templates-{{view.cid}}" class="form-horizontal"></form>
-								<form id="form-{{view.cid}}" class="form-horizontal">
-									<div class="control-group">
-										<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
-										<div class="controls">
-											<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference">
-											<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
-										</div>
+						<form id="form-{{view.cid}}" class="tab-content form-horizontal">
+							<div id="tab-main-{{view.cid}}" class="tab-pane active">
+								<div id="templates-{{view.cid}}"></div>
+								<div id="workflows-{{view.cid}}"></div>
+								<div class="control-group">
+									<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference">
+										<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
 									</div>
-									<div class="control-group">
-										<label class="control-label" for="form-{{view.cid}}-title">{{_.TITLE}}</label>
-										<div class="controls">
-											<input type="text" class="input-xlarge title" id="form-{{view.cid}}-title">
-											<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
-										</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="form-{{view.cid}}-title">{{_.TITLE}}</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge title" id="form-{{view.cid}}-title">
+										<p class="help-block">{{_.DOCUMENT_S_TITLE}}</p>
 									</div>
-									<div class="control-group">
-										<label class="control-label" for="form-{{view.cid}}-description">{{_.DESCRIPTION}}</label>
-										<div class="controls">
-											<textarea type="text" class="input-xlarge description" id="form-{{view.cid}}-description"></textarea>
-											<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
-										</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label" for="form-{{view.cid}}-description">{{_.DESCRIPTION}}</label>
+									<div class="controls">
+										<textarea type="text" class="input-xlarge description" id="form-{{view.cid}}-description"></textarea>
+										<p class="help-block">{{_.DOCUMENT_S_DESCRIPTION}}</p>
 									</div>
-								</form>
-								<form id="workflows-{{view.cid}}" class="form-horizontal"></form>
+								</div>
 							</div>
-							<div id="form-{{view.cid}}-tab-attributes" class="tab-pane">
-								<form id="attributes-{{view.cid}}" class="form-horizontal document-new-attribute-list"></form>
-							</div>
-						</div>
+							<div id="tab-attributes-{{view.cid}}" class="tab-pane attributes"></div>
+						</form>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -254,35 +256,34 @@
 		</script>
 		<script id="document-new-attribute-list-item-boolean-tpl" class="template" type="text/html">
 			{{> document-new-attribute-list-item-tpl}}
-			<div class="controls">
-				<select class="input-xlarge value">
-					<option value="false">{{_.FALSE}}</option>
-					<option value="true">{{_.TRUE}}</option>
-				</select>
+			<div class="controls boolean">
+				<input type="checkbox" class="input-xlarge value"{{#model.value}}checked="checked" {{/model.value}} />
+				<span class="false">{{_.FALSE}}</span>
+				<span class="true">{{_.TRUE}}</span>
 			</div>
 		</script>
 		<script id="document-new-attribute-list-item-date-tpl" class="template" type="text/html">
 			{{> document-new-attribute-list-item-tpl}}
 			<div class="controls">
-				<input type="date" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+				<input type="date" class="input-xlarge value" pattern="{{_._VALIDATION_PATTERN_DATE}}" placeholder="{{_.VALUE}}" value="{{model.value}}" required />
 			</div>
 		</script>
 		<script id="document-new-attribute-list-item-number-tpl" class="template" type="text/html">
 			{{> document-new-attribute-list-item-tpl}}
 			<div class="controls">
-				<input type="number" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+				<input type="text" class="input-xlarge value" pattern="{{_._VALIDATION_PATTERN_NUMBER}}" placeholder="{{_.VALUE}}" value="{{model.value}}" required />
 			</div>
 		</script>
 		<script id="document-new-attribute-list-item-text-tpl" class="template" type="text/html">
 			{{> document-new-attribute-list-item-tpl}}
 			<div class="controls">
-				<input type="text" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+				<input type="text" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" required />
 			</div>
 		</script>
 		<script id="document-new-attribute-list-item-url-tpl" class="template" type="text/html">
 			{{> document-new-attribute-list-item-tpl}}
 			<div class="controls">
-				<input type="url" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" />
+				<input type="url" class="input-xlarge value" placeholder="{{_.VALUE}}" value="{{model.value}}" required />
 			</div>
 		</script>
 		<script id="document-new-attribute-list-item-tpl" class="partial" type="text/html">
@@ -299,7 +300,7 @@
 				</select>
 			</div>
 			<div class="controls">
-				<input type="text" class="input-xlarge name" placeholder="{{_.NAME}}" value="{{model.name}}"/>
+				<input type="text" class="input-xlarge name" placeholder="{{_.NAME}}" value="{{model.name}}" required />
 			</div>
 		</script>
 
@@ -313,12 +314,15 @@
 					<div id="alerts-{{view.cid}}"></div>
 					<div class="tabs">
 						<ul class="nav nav-tabs">
-							<li class="active"><a href="#form-{{view.cid}}-tab-main" data-toggle="tab">{{_.GENERAL}}</a></li>
-							<li><a href="#form-{{view.cid}}-tab-attributes" data-toggle="tab">{{_.ATTRIBUTES}}</a></li>
+							<li class="active">
+								<a href="#tab-main-{{view.cid}}" data-toggle="tab">{{_.GENERAL}}</a>
+							</li>
+							<li>
+								<a href="#tab-attributes-{{view.cid}}" data-toggle="tab">{{_.ATTRIBUTES}}</a>
+							</li>
 						</ul>
-						<div class="tab-content">
-							<div class="tab-pane active" id="form-{{view.cid}}-tab-main">
-								<form id="form-{{view.cid}}" class="form-horizontal">
+						<form id="form-{{view.cid}}" class="form-horizontal tab-content">
+							<div class="tab-pane active" id="tab-main-{{view.cid}}">
 									<div class="control-group">
 										<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
 										<div class="controls">
@@ -347,12 +351,9 @@
 											<p class="help-block"></p>
 										</div>
 									</div>
-								</form>
 							</div>
-							<div id="form-{{view.cid}}-tab-attributes" class="tab-pane">
-								<form id="attributes-{{view.cid}}" class="form-horizontal template-new-attribute-list"></form>
-							</div>
-						</div>
+							<div id="tab-attributes-{{view.cid}}" class="tab-pane attributes"></div>
+						</form>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -383,7 +384,7 @@
 				</select>
 			</div>
 			<div class="controls">
-				<input type="text" class="input-xlarge name" placeholder="{{_.NAME}}" value="{{model.name}}"/>
+				<input type="text" class="input-xlarge name" placeholder="{{_.NAME}}" value="{{model.name}}" required />
 			</div>
 		</script>
 

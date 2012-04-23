@@ -7,7 +7,7 @@ TemplateNewView = ModalView.extend({
 	},
 	rendered: function () {
 		this.attributesView = this.addSubView(new TemplateNewAttributesView({
-			el: "#attributes-" + this.cid,
+			el: "#tab-attributes-" + this.cid,
 		}));
 		this.attributesView.render();
 	},

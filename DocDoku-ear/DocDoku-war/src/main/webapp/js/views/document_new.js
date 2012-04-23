@@ -6,7 +6,7 @@ DocumentNewView = ModalView.extend({
 	},
 	rendered: function () {
 		this.attributesView = this.addSubView(new DocumentNewAttributesView({
-			el: "#attributes-" + this.cid,
+			el: "#tab-attributes-" + this.cid,
 		}));
 		this.attributesView.render();
 		this.templatesView = this.addSubView(new DocumentNewTemplateListView({
@@ -27,7 +27,7 @@ DocumentNewView = ModalView.extend({
 				reference: reference,
 				title: $("#form-" + this.cid + " .title").val(),
 				description: $("#form-" + this.cid + " .description").val(),
-				/* workflow: workflow ? workflow.toJSON() : null, */
+				workflowModelId: workflow ? workflow.get("id") : null,
 			};
 			this.collection.create(data, {
 				success: this.success,

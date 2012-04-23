@@ -13,7 +13,7 @@ var ListView = BaseView.extend({
 		this.collectionReset();
 	},
 	createItemView: function (model) {
-		var view = this.addSubView(new this.ItemView({model: model}));
+		var view = this.addSubView(this.itemViewFactory(model));
 		this.$el.append(view.el);
 		view.render();
 	},

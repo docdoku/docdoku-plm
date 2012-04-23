@@ -1,3 +1,10 @@
+.ui-widget {
+	background: white;
+}
+:invalid {
+	color: @errorText;
+	background-color: @errorBackground;
+}
 .modal {
 	max-height: none;
 	overflow: visible;
@@ -52,29 +59,43 @@ html, body, #workspace {
 		vertical-align: top;
 	}
 }
-.document-new-attribute-list, .template-new-attribute-list {
-	.add {
-		margin-bottom: 8px;
-	}
-	.remove {
-		.close;
-		&:hover {
-			color: @red;
-			opacity: 1;
+.modal.new-document,
+.modal.new-template {
+	 .attributes {
+		.add {
+			margin-bottom: 8px;
 		}
-	}
-	.attribute-list-item {
-		display: table;
-		> * {
-			display: table-cell;
-			vertical-align: middle;
+		.remove {
+			.close;
+			&:hover {
+				color: @red;
+				opacity: 1;
+			}
+		}
+		.attribute-list-item {
+			display: table;
 			> * {
-				width: auto;
-				margin: 4px;
+				display: table-cell;
+				vertical-align: middle;
+				> * {
+					width: auto;
+					margin: 4px;
+				}
+			}
+			.controls.boolean {
+				> input {
+					&:checked ~ .false {
+						display: none;
+					}
+					&:not(:checked) ~ .true {
+						display: none;
+					}
+				}
 			}
 		}
 	}
 }
+
 @media (max-width: 980px) {
 #workspace {
 	> * {

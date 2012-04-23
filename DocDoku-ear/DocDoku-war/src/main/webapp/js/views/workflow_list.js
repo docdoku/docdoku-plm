@@ -1,5 +1,5 @@
 var WorkflowListView = CheckboxListView.extend({
 	collection: function () { return WorkflowList.getInstance(); },
-	ItemView: WorkflowListItemView,
+	itemViewFactory: function (model) { return new WorkflowListItemView({ model: model }); },
 	template: "workflow-list-tpl",
 });

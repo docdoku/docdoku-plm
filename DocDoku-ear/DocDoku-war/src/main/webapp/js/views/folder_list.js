@@ -1,3 +1,3 @@
 var FolderListView = CollapsibleListView.extend({
-	ItemView: FolderListItemView,
+	itemViewFactory: function (model) { return new FolderListItemView({ model: model }); },
 });

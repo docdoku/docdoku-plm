@@ -1,5 +1,5 @@
 var TagListView = CollapsibleListView.extend({
-	ItemView: TagListItemView,
+	itemView: function ()  { return TagListItemView },
 	collection: function () { return new TagList(); },
 	showTag: function (tag) {
 		this.tag = tag;
