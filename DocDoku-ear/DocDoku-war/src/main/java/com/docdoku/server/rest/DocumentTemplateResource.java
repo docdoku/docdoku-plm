@@ -25,6 +25,7 @@ import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
+import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,18 +113,15 @@ public class DocumentTemplateResource {
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentMasterTemplateDTO docMsTemplateDTO) {
+    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentTemplateCreationDTO templateCreationDTO) {
 
-        try {
-            
-            docMsTemplateDTO.setId(docMsTemplateDTO.getReference());
-            
-            String id =docMsTemplateDTO.getId();
-            String documentType = docMsTemplateDTO.getDocumentType();
-            String mask = docMsTemplateDTO.getMask();
-            boolean idGenerated = docMsTemplateDTO.isIdGenerated();
+        try {      
+            String id =templateCreationDTO.getReference();
+            String documentType = templateCreationDTO.getDocumentType();
+            String mask = templateCreationDTO.getMask();
+            boolean idGenerated = templateCreationDTO.isIdGenerated();
 
-            Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
+            Set<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
             InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
 
@@ -148,8 +146,6 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
-            docMsTemplateDTO.setId(docMsTemplateDTO.getReference());
-            
             String id = docMsTemplateDTO.getId();
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
