@@ -164,7 +164,7 @@
 		</script>
 		<script id="document-list-item-tpl" class="template" type="text/html">
 			<td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
-			<td class="reference">{{model.reference}}</td>
+			<td class="reference">{{model.id}}</td>
 			<td>{{model.version}}</td>
 			<td>{{model.lastIteration.iteration}}</td>
 			<td>{{model.type}}</td>
@@ -193,7 +193,7 @@
 								<div class="control-group">
 									<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
 									<div class="controls">
-										<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference">
+										<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference" required />
 										<p class="help-block">{{_.DOCUMENT_S_REFERENCE}}</p>
 									</div>
 								</div>
@@ -292,11 +292,11 @@
 			</div>
 			<div class="controls">
 				<select class="type">
-					<option value="URL">{{_.URL}}</option>
 					<option value="TEXT">{{_.TEXT}}</option>
 					<option value="BOOLEAN">{{_.BOOLEAN}}</option>
 					<option value="DATE">{{_.DATE}}</option>
 					<option value="NUMBER">{{_.NUMBER}}</option>
+					<option value="URL">{{_.URL}}</option>
 				</select>
 			</div>
 			<div class="controls">
@@ -326,7 +326,7 @@
 									<div class="control-group">
 										<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
 										<div class="controls">
-											<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference">
+											<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference" required />
 											<p class="help-block"></p>
 										</div>
 									</div>
@@ -376,11 +376,11 @@
 			</div>
 			<div class="controls">
 				<select class="type">
-					<option value="URL">{{_.URL}}</option>
 					<option value="TEXT">{{_.TEXT}}</option>
 					<option value="BOOLEAN">{{_.BOOLEAN}}</option>
 					<option value="DATE">{{_.DATE}}</option>
 					<option value="NUMBER">{{_.NUMBER}}</option>
+					<option value="URL">{{_.URL}}</option>
 				</select>
 			</div>
 			<div class="controls">
@@ -581,7 +581,7 @@
 		</script>
 		<script id="workflow-list-item-tpl" class="template" type="text/html">
 			<td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
-			<td>{{model.reference}}</td>
+			<td>{{model.id}}</td>
 			<td>{{model.author.name}}</td>
 		</script>
 
@@ -616,7 +616,7 @@
 		</script>
 		<script id="template-list-item-tpl" class="template" type="text/html">
 			<td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
-			<td>{{model.reference}}</td>
+			<td>{{model.id}}</td>
 			<td>{{model.documentType}}</td>
 			<td>{{model.author.name}}</td>
 			<td>{{model.creationDate}}</td>

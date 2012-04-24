@@ -1,6 +1,5 @@
 TemplateNewView = ModalView.extend({
 	template: "template-new-tpl",
-	collection: function () { return TemplateList.getInstance(); },
 	initialize: function () {
 		ModalView.prototype.initialize.apply(this, arguments);
 		this.events["submit #form-" + this.cid] = "primaryAction";
@@ -16,11 +15,11 @@ TemplateNewView = ModalView.extend({
 		if (reference) {
 			this.collection.create({
 				reference: reference,
-				type: $("#form-" + this.cid + " .type").val(),
+				documentType: $("#form-" + this.cid + " .title").val(),
 				mask: $("#form-" + this.cid + " .mask").val(),
-				idGenarated: $("#form-" + this.cid + " .id-genarated")
+				idGenerated: $("#form-" + this.cid + " .id-generated")
 					.attr("checked") ? true : false,
-				templateAttributes: this.attributesView.collection.toJSON()
+				attributeTemplates: this.attributesView.collection.toJSON()
 			}, {
 				success: this.success,
 				error: this.error
@@ -32,6 +31,7 @@ TemplateNewView = ModalView.extend({
 		this.hide();
 	},
 	error: function (model, error) {
+		this.collection.remove(model);
 		if (error.responseText) {
 			this.alert({
 				type: "error",

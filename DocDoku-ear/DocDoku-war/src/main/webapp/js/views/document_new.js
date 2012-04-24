@@ -46,8 +46,10 @@ DocumentNewView = ModalView.extend({
 			},
 			error: this.error
 		});
+		model.fetch();
 	},
 	error: function (model, error) {
+		this.collection.remove(model);
 		if (error.responseText) {
 			this.alert({
 				type: "error",

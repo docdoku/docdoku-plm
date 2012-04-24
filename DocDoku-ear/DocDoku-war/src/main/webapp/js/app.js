@@ -40,7 +40,7 @@ var app = {
 			var formatedDate = new Date(unformatedDate).format("dd/mm/yyyy");
 			return formatedDate;
 		} catch (error) {
-			console.error("app:formatDate", error);
+			console.error("app:formatDate(" + unformatedDate + ")", error);
 			return unformatedDate;
 		}
 	},
