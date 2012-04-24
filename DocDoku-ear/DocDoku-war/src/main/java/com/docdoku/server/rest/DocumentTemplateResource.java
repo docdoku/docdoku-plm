@@ -77,7 +77,7 @@ public class DocumentTemplateResource {
             return dtos;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ public class DocumentTemplateResource {
             return dto;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -106,7 +106,7 @@ public class DocumentTemplateResource {
             return commandService.generateId(workspaceId, templateId);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }    
 
@@ -135,7 +135,7 @@ public class DocumentTemplateResource {
             return templateDto;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -165,7 +165,7 @@ public class DocumentTemplateResource {
             return templateDto;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -176,7 +176,7 @@ public class DocumentTemplateResource {
             commandService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 

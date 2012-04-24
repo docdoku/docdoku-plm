@@ -77,7 +77,7 @@ public class WorkflowResource {
             return dtos;
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ public class WorkflowResource {
             commandService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             return Response.status(Response.Status.OK).build();
         }  catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     

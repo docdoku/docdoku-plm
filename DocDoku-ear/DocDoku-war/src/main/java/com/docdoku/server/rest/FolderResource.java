@@ -99,7 +99,7 @@ public class FolderResource {
 
             return folderDtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -129,7 +129,7 @@ public class FolderResource {
 
             return folderDtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -155,7 +155,7 @@ public class FolderResource {
 
             return dtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
     }
@@ -195,7 +195,7 @@ public class FolderResource {
             return renamedFolderDto;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -213,7 +213,7 @@ public class FolderResource {
             
             return createdSubFolder;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -229,7 +229,7 @@ public class FolderResource {
             return createdRootFolder;
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -283,7 +283,7 @@ public class FolderResource {
            
             return docMsDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -304,7 +304,7 @@ public class FolderResource {
             return Response.status(Response.Status.OK).build();
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     

@@ -26,9 +26,9 @@ import javax.ws.rs.core.Response.Status;
 
 
 
-public class RESTException extends WebApplicationException {
+public class RestApiException extends WebApplicationException {
 
-    public RESTException(String technicalDetail, String userMessage) {
+    public RestApiException(String technicalDetail, String userMessage) {
         super(Response.status(Status.BAD_REQUEST).header("Reason-Phrase",
                 userMessage).entity(technicalDetail).build());
     }

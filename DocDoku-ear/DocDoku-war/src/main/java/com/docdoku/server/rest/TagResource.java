@@ -75,7 +75,7 @@ public class TagResource {
             return tagDtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
         
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }          
     }
     
@@ -94,7 +94,7 @@ public class TagResource {
 
         return docMsDTO; 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }        
     } 
     
@@ -108,7 +108,7 @@ public class TagResource {
             return new TagDTO(tag.getLabel());
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -129,7 +129,7 @@ public class TagResource {
             return Response.status(Response.Status.OK).build();
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }    
 }

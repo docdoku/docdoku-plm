@@ -91,7 +91,7 @@ public class DocumentResource {
 
             return dtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
     }
@@ -168,7 +168,7 @@ public class DocumentResource {
             return checkedOutdocMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -192,7 +192,7 @@ public class DocumentResource {
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -221,7 +221,7 @@ public class DocumentResource {
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -245,7 +245,7 @@ public class DocumentResource {
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -269,7 +269,7 @@ public class DocumentResource {
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -296,7 +296,7 @@ public class DocumentResource {
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -312,7 +312,7 @@ public class DocumentResource {
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -329,7 +329,7 @@ public class DocumentResource {
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }   
 
@@ -345,7 +345,7 @@ public class DocumentResource {
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
@@ -361,7 +361,7 @@ public class DocumentResource {
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }    
 
@@ -396,7 +396,7 @@ public class DocumentResource {
 
             return docMsDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
     }
@@ -454,7 +454,7 @@ public class DocumentResource {
             return dtos;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -481,7 +481,7 @@ public class DocumentResource {
 
             return docMsDto;
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -539,7 +539,7 @@ public class DocumentResource {
 
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -562,7 +562,7 @@ public class DocumentResource {
             commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             return Response.status(Response.Status.OK).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -582,7 +582,7 @@ public class DocumentResource {
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RESTException(ex.toString(), ex.getMessage());
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
