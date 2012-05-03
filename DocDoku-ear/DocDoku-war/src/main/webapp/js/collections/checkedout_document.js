@@ -1,7 +1,14 @@
-var CheckedoutDocumentList = Backbone.Collection.extend({
-	model: Document,
-});
-CheckedoutDocumentList.prototype.__defineGetter__("url", function () {
-	baseUrl = "/api/workspaces/" + app.workspaceId + "/documents";
-	return  baseUrl + "/checkedout";
+define([
+	"models/document"
+], function (
+	Document
+) {
+	var CheckedoutDocumentList = Backbone.Collection.extend({
+		model: Document,
+	});
+	CheckedoutDocumentList.prototype.__defineGetter__("url", function () {
+		baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
+		return  baseUrl + "/checkedout";
+	});
+	return CheckedoutDocumentList;
 });

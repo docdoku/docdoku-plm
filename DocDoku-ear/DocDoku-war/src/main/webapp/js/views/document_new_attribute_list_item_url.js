@@ -1,6 +1,20 @@
-var DocumentNewAttributeListItemUrlView = DocumentNewAttributeListItemView.extend({
-	template: "document-new-attribute-list-item-url-tpl",
-	initialize: function () {
-		DocumentNewAttributeListItemView.prototype.initialize.apply(this, arguments);
-	},
+define([
+	"views/document_new_attribute_list_item",
+	"text!templates/partials/document_new_attribute_list_item.html",
+	"text!templates/document_new_attribute_list_item_url.html"
+], function (
+	DocumentNewAttributeListItemView,
+	document_new_attribute_list_item,
+	template
+) {
+	var DocumentNewAttributeListItemUrlView = DocumentNewAttributeListItemView.extend({
+		template: Mustache.compile(template),
+		partials: {
+			document_new_attribute_list_item: document_new_attribute_list_item
+		},
+		initialize: function () {
+			DocumentNewAttributeListItemView.prototype.initialize.apply(this, arguments);
+		},
+	});
+	return DocumentNewAttributeListItemUrlView;
 });

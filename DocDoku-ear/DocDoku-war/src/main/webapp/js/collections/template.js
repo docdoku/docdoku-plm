@@ -1,7 +1,16 @@
-var TemplateList = Backbone.Collection.extend({
-	model: Template,
+define([
+	"models/template",
+	"common/singleton_decorator"
+], function (
+	Template,
+	singletonDecorator
+) {
+	var TemplateList = Backbone.Collection.extend({
+		model: Template,
+	});
+	TemplateList.prototype.__defineGetter__("url", function () {
+		return "/api/workspaces/" + APP_CONFIG.workspaceId + "/templates";
+	});
+	TemplateList = singletonDecorator(TemplateList);
+	return TemplateList;
 });
-TemplateList.prototype.__defineGetter__("url", function () {
-	return "/api/workspaces/" + app.workspaceId + "/templates";
-});
-TemplateList = singletonDecorator(TemplateList);

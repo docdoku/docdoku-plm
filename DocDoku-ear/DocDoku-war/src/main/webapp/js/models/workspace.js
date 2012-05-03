@@ -1,1 +1,4 @@
-var Workspace = Backbone.Model.extend();
+define(function () {
+	var Workspace = Backbone.Model.extend();
+	return Workspace;
+});

@@ -1,20 +1,35 @@
-TemplateNewAttributesView = BaseView.extend({
-	collection: function () { return new Backbone.Collection(); },
-	template: "template-new-attributes-tpl",
-	initialize: function () {
-		ListView.prototype.initialize.apply(this, arguments);
-		this.events["click .add"] = this.addAttribute;
-	},
-	rendered: function () {
-		this.attributesView = this.addSubView(new TemplateNewAttributeListView({
-			el: "#items-" + this.cid,
-			collection: this.collection
-		}));
-	},
-	addAttribute: function () {
-		this.collection.add({
-			name: "",
-			attributeType: "TEXT",
-		});
-	},
+define([
+	"views/base",
+	"views/template_new_attribute_list",
+	"text!templates/template_new_attributes.html"
+], function (
+	BaseView,
+	TemplateNewAttributeListView,
+	template
+) {
+	var TemplateNewAttributesView = BaseView.extend({
+		template: Mustache.compile(template),
+		collection: function () {
+			return new Backbone.Collection();
+		},
+		initialize: function () {
+			BaseView.prototype.initialize.apply(this, arguments);
+			this.events["click .add"] = this.addAttribute;
+		},
+		rendered: function () {
+			this.attributesView = this.addSubView(
+				new TemplateNewAttributeListView({
+					el: "#items-" + this.cid,
+					collection: this.collection
+				})
+			);
+		},
+		addAttribute: function () {
+			this.collection.add({
+				name: "",
+				attributeType: "TEXT",
+			});
+		},
+	});
+	return TemplateNewAttributesView;
 });

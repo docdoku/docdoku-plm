@@ -1,7 +1,16 @@
-var WorkflowList = Backbone.Collection.extend({
-	model: Workflow,
+define([
+	"models/workflow",
+	"common/singleton_decorator"
+], function (
+	Workflow,
+	singletonDecorator
+) {
+	var WorkflowList = Backbone.Collection.extend({
+		model: Workflow,
+	});
+	WorkflowList.prototype.__defineGetter__("url", function () {
+		return "/api/workspaces/" + APP_CONFIG.workspaceId + "/workflows";
+	});
+	WorkflowList = singletonDecorator(WorkflowList);
+	return WorkflowList;
 });
-WorkflowList.prototype.__defineGetter__("url", function () {
-	return "/api/workspaces/" + app.workspaceId + "/workflows";
-});
-WorkflowList = singletonDecorator(WorkflowList);

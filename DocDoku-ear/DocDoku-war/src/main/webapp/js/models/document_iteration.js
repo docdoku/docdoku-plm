@@ -1,3 +1,6 @@
-var DocumentIteration = Backbone.Model.extend({
-	idAttribute: "iteration"
+define(function () {
+	var DocumentIteration = Backbone.Model.extend({
+		idAttribute: "iteration"
+	});
+	return DocumentIteration;
 });
