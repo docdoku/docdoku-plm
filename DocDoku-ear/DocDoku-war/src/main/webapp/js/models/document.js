@@ -1,6 +1,10 @@
 define([
+	"i18n",
+	"common/date",
 	"collections/document_iteration"
 ], function (
+	i18n,
+	date,
 	DocumentIterationList
 ) {
 	var Document = Backbone.Model.extend({
@@ -8,16 +12,16 @@ define([
 			_.bindAll(this);
 		},
 		parse: function(data) {
+			// TODO update webservice to use iterations instead documentIterations
+			// TODO update webservice to use iteration.id intead iteration.iteration
+			//this.iterations = new DocumentIterationList(data.documentIterations ? data.documentIterations : []);
+			this.iterations = new DocumentIterationList(data.documentIterations);
+			this.iterations.document = this;
 			if (data.documentIterations) {
-				this.iterations = new DocumentIterationList(data.documentIterations);
-				this.iterations.document = this;
-				data.documentIterations = this.iterations;
-				// TODO update webservice to use lastIteration = lastIteration id
-				// and have the iterations in "iterations"
-				// and use iteration.id intead of iteration.iteration
 				this.lastIteration = this.iterations.get(data.lastIteration.iteration);
 				data.lastIteration = this.lastIteration;
 			}
+			data.documentIterations = this.iterations;
 			return data;
 		},
 		url: function() {

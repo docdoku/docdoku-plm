@@ -2,15 +2,20 @@ define([
 	"i18n",
 	"views/content",
 	"views/document_list",
+	"text!templates/content_document_list_checkout_button_group.html",
 	"text!templates/content_document_list.html"
 ], function (
 	i18n,
 	ContentView,
 	DocumentListView,
+	checkout_button_group,
 	template
 ) {
 	var ContentDocumentListView = ContentView.extend({
 		template: Mustache.compile(template),
+		partials: {
+			checkout_button_group: checkout_button_group
+		},
 		initialize: function () {
 			ContentView.prototype.initialize.apply(this, arguments);
 			this.events["click .actions .checkout"] = "actionCheckout";

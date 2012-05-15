@@ -1,0 +1,89 @@
+.document-edit {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	z-index: 1000;
+	.wrapper {
+		.display(box);
+		.box-orient(vertical);
+		.box-shadow(0 0 8px darken(@actionBarBackground, 50%));
+		.border-radius(3px 0 0 3px);
+		background-color: rgba(0, 0, 0, 0.7);
+		> header, > footer {
+			background: @navBackground;
+			padding: 4px 8px;
+		}
+		> header {
+			.border-radius(3px 0 0 0);
+		}
+		> footer {
+			.border-radius(0 0 0 3px);
+		}
+		> section {
+			.box-flex(1);
+			overflow: auto;
+			padding: 4px 8px;
+			.properties,
+			.attributes {
+				.name {
+					font-weight: bold;
+				}
+			}
+			form {
+				.display(box);
+				.box-orient(vertical);
+				padding: 0;
+				> header, > footer {
+					background: #CCC;
+					padding: 4px 8px;
+					.border-radius(3px 3px 3px 3px);
+				}
+				> footer {
+					bottom: 0;
+				}
+				> section {
+					.box-flex(1);
+					padding: 8px;
+				}
+			}
+			.tabs {
+				.display(box);
+				width: 100%;
+				.nav {
+					.border-radius(3px 3px 3px 3px);
+					li {
+						a {
+							background-color:  @white;
+						}
+						&.active a {
+							color:  @white;
+							background-color:  @grayLight;
+						}
+					}
+				}
+				.tab-content {
+					.border-radius(3px 3px 3px 3px);
+					.box-flex(1);
+					margin-left: 8px;
+					.tab-pane,
+					.document {
+						.border-radius(3px 3px 3px 3px);
+						background: @white;
+						padding: 8px;
+					}
+					.document {
+						.properties {
+							.column-width(50%);
+							.column-count(2);
+							.column-rule(1px solid #000);
+						}
+					}
+					.tab-pane {
+						margin: 8px 0;
+					}
+				}
+			}
+		}
+	}
+}

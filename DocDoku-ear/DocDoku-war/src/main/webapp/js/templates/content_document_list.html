@@ -2,16 +2,6 @@
 	<button class="btn delete" title="{{_.DELETE}}">
 		<span class="icon"></span>
 	</button>
-	<span class="btn-group checkout-group">
-		<button class="btn checkout" title="{{_.CHECKOUT}}">
-			<span class="icon"></span>
-		</button>
-		<button class="btn undocheckout" title="{{_.CANCEL_CHECKOUT}}">
-			<span class="icon"></span>
-		</button>
-		<button class="btn checkin" title="{{_.CHECKIN}}">
-			<span class="icon"></span>
-		</button>
-	</span>
+	{{> checkout_button_group}}
 </div>
 <table id="list-{{view.cid}}" class="table table-striped table-condensed"></table>

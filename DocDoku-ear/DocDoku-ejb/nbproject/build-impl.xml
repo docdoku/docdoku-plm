@@ -127,6 +127,9 @@ is divided into following sections:
         <condition property="is.server.weblogic" value="true">
             <equals arg1="${j2ee.server.type}" arg2="WebLogic9"/>
         </condition>
+        <condition property="is.jars.in.ejbjar" value="true">
+            <equals arg1="${jars.in.ejbjar}" arg2="true"/>
+        </condition>
         <condition else="false" property="jdkBug6558476">
             <and>
                 <matches pattern="1\.[56]" string="${java.specification.version}"/>
@@ -484,7 +487,14 @@ exists or setup the property manually. For example like this:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
+    <target depends="compile,-library-inclusion-in-archive-weblogic,-library-inclusion-in-archive-by-user" name="library-inclusion-in-archive"/>
+    <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
+        <copyfiles files="${file.reference.poi-3.0.1-FINAL-20070705.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.lucene-core-3.0.3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}" todir="${build.classes.dir}"/>
+    </target>
+    <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${file.reference.poi-3.0.1-FINAL-20070705.jar}" property="manifest.file.reference.poi-3.0.1-FINAL-20070705.jar"/>
         <basename file="${file.reference.lucene-core-3.0.3.jar}" property="manifest.file.reference.lucene-core-3.0.3.jar"/>
         <basename file="${file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}" property="manifest.file.reference.poi-contrib-3.0.1-FINAL-20070705.jar"/>

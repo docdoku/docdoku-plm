@@ -1,0 +1,33 @@
+.attributes-edit {
+	.add {
+		margin-bottom: 8px;
+	}
+	.remove {
+		.close;
+		&:hover {
+			color: @red;
+			opacity: 1;
+		}
+	}
+	.attribute-list-item {
+		display: table;
+		> * {
+			display: table-cell;
+			vertical-align: middle;
+			> * {
+				width: auto;
+				margin: 4px;
+			}
+		}
+		.controls.boolean {
+			> input {
+				&:checked ~ .false {
+					display: none;
+				}
+				&:not(:checked) ~ .true {
+					display: none;
+				}
+			}
+		}
+	}
+}

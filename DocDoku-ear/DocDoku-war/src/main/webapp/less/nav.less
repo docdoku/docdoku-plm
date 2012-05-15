@@ -1,10 +1,35 @@
+#home_link {
+	background: no-repeat left;
+	background-image: url("../images/icon-place-home.png");
+	padding: 20px;
+	opacity: .8;
+}
+#home_link:hover {
+	opacity: 1;
+}
+.navbar {
+	.nav > li > a {
+		color: @white;
+	}
+	.nav > li > a:hover {
+		font-weight: bold;
+	}
+	.icon-brand-plm {
+		margin-right: 8px;
+		float: left;
+	}
+}
+.navbar-fixed-top {
+	position: static;
+	margin-bottom: 0;
+}
+
 #nav {
 	.well;
 	.border-radius(0);
 	.box-shadow(1px 1px 3px darken(@actionBarBackground, 35%));
 	border: none;
 	margin-bottom: 0;
-	width: 4 * @gridColumnWidth;
 	.nav-header {
 		font-size: 12px;
 	}

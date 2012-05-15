@@ -1,3 +1,37 @@
+.display(@value) when (@value = box) {
+	display : -moz-box;
+	display : -webkit-box;
+	display : box;
+}
+.display(@value) when not (@value = box) {
+	display : @value;
+}
+.box-orient(@value) {
+	-moz-box-orient : @value;
+	-webkit-box-orient : @value;
+	box-orient : @value;
+}
+.box-flex(@value) {
+	-moz-box-flex : @value;
+	-webkit-box-flex : @value;
+	box-flex : @value;
+}
+.column-width(@value) {
+	-moz-column-width : @value;
+	-webkit-column-width : @value;
+	column-width : @value;
+}
+.column-count(@value) {
+	-moz-column-count : @value;
+	-webkit-column-count : @value;
+	column-count : @value;
+}
+.column-rule(@value) {
+	-moz-column-rule : @value;
+	-webkit-column-rule : @value;
+	column-rule : @value;
+}
+
 .ui-widget {
 	background: white;
 }
@@ -5,102 +39,29 @@
 	color: @errorText;
 	background-color: @errorBackground;
 }
-.modal {
-	max-height: none;
-	overflow: visible;
-	.modal-body {
-		max-height: 366px;
-		overflow: auto;
-		.tab-content {
-			overflow: visible;
-		}
-	}
-}
-.navbar {
-	.nav > li > a {
-		color: white;
-	}
-	.nav > li > a:hover {
-		font-weight: bold;
-	}
-	.icon-brand-plm {
-		margin-right: 8px;
-		float: left;
-	}
-}
 :required:after {
 	content: " *";
 	color: @errorText;
 }
-#home_link {
-	background: no-repeat left;
-	background-image: url("../images/icon-place-home.png");
-	padding: 20px;
-	opacity: .8;
-}
-#home_link:hover {
-	opacity: 1;
-}
 
-html, body, #workspace {
+html, body {
 	height: 100%;
+	width: 100%; // required for firefox
 }
-.navbar-fixed-top {
-	position: static;
-	margin-bottom: 0;
+body {
+	.display(box);
+	.box-orient(vertical);
 }
 #workspace {
-	display: table;
-	display: table;
+	.box-flex(1);
 	padding: 0;
 	width: 100%;
-	> * {
-		display: table-cell;
-		vertical-align: top;
-	}
-}
-.modal.new-document,
-.modal.new-template {
-	 .attributes {
-		.add {
-			margin-bottom: 8px;
-		}
-		.remove {
-			.close;
-			&:hover {
-				color: @red;
-				opacity: 1;
-			}
-		}
-		.attribute-list-item {
-			display: table;
-			> * {
-				display: table-cell;
-				vertical-align: middle;
-				> * {
-					width: auto;
-					margin: 4px;
-				}
-			}
-			.controls.boolean {
-				> input {
-					&:checked ~ .false {
-						display: none;
-					}
-					&:not(:checked) ~ .true {
-						display: none;
-					}
-				}
-			}
-		}
-	}
+	.display(box);
+	.box-orient(horizontal);
 }
 
 @media (max-width: 980px) {
 #workspace {
-	> * {
-		display: table-row;
-		vertical-align: top;
-	}
+	.box-orient(vertical);
 }
 }
