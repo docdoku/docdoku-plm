@@ -23,9 +23,7 @@
             <converter type="com.docdoku.server.rest.util.InstanceAttributeDozerConverter" >
                 <class-a>com.docdoku.core.meta.InstanceAttribute</class-a>
                 <class-b>com.docdoku.server.rest.dto.InstanceAttributeDTO</class-b>
-            </converter>
-                     
-            
+            </converter>     
         </custom-converters>    
     </configuration>
          
@@ -37,6 +35,27 @@
             <b>instanceAttributes</b>
             <a-hint>java.util.HashMap</a-hint>
             <b-hint>java.util.ArrayList</b-hint>
+        </field>
+    </mapping>
+    
+    <mapping>
+        <class-a>com.docdoku.core.document.DocumentToDocumentLink</class-a>
+        <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
+        <field>
+            <a>toDocumentIteration</a>
+            <b>iteration</b>
+        </field>
+        <field>
+            <a>toDocumentDocumentMasterId</a>
+            <b>documentMasterId</b>
+        </field>
+        <field>
+            <a>toDocumentDocumentMasterVersion</a>
+            <b>documentMasterVersion</b>
+        </field>
+        <field>
+            <a>toDocumentWorkspaceId</a>
+            <b>workspaceId</b>
         </field>
     </mapping>
 </mappings>

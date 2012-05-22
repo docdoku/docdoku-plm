@@ -10,9 +10,7 @@
 <project name="DocDoku-war" default="default" basedir=".">
     <description>Builds, tests, and runs the project DocDoku-war.</description>
     <import file="nbproject/build-impl.xml"/>
-    <import file="build-gwt.xml"/>
     <import file="build-swing.xml"/>
-<!--    <target depends="compile-gwt" name="-post-compile"/>-->
     <!--
 
     There exist several targets which are by default empty and which can be 
