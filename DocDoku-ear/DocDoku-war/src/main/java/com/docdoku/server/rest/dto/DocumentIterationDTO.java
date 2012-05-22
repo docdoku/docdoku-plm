@@ -26,7 +26,7 @@ import java.util.*;
  *
  * @author Florent Garin
  */
-public class DocumentDTO implements Serializable {
+public class DocumentIterationDTO implements Serializable {
 
     private String workspaceId;
     private String documentMasterId;
@@ -37,12 +37,12 @@ public class DocumentDTO implements Serializable {
     private String revisionNote;
     private List<String> attachedFiles;
     private List<InstanceAttributeDTO> instanceAttributes;
-    private List<DocumentDTO> linkedDocuments;
+    private List<DocumentIterationDTO> linkedDocuments;
 
-    public DocumentDTO() {
+    public DocumentIterationDTO() {
     }
 
-    public DocumentDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
+    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
         workspaceId = pWorkspaceId;
         documentMasterId = pDocumentMasterId;
         documentMasterVersion = pDocumentMasterVersion;
@@ -77,7 +77,7 @@ public class DocumentDTO implements Serializable {
         return attachedFiles;
     }
 
-    public List<DocumentDTO> getLinkedDocuments() {
+    public List<DocumentIterationDTO> getLinkedDocuments() {
         return linkedDocuments;
     }
 
@@ -85,7 +85,7 @@ public class DocumentDTO implements Serializable {
         this.attachedFiles = attachedFiles;
     }
 
-    public void setLinkedDocuments(List<DocumentDTO> linkedDocuments) {
+    public void setLinkedDocuments(List<DocumentIterationDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
     }
 

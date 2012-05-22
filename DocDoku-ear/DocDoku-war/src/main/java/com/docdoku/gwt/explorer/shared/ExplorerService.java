@@ -26,7 +26,7 @@ import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Date;
@@ -60,7 +60,7 @@ public interface ExplorerService extends RemoteService{
     DocumentMasterTemplateDTO removeFileFromTemplate(String pFullName) throws ApplicationException;
     DocumentMasterTemplateDTO removeFilesFromTemplate(String[] pFullNames) throws ApplicationException;
     DocumentMasterDTO getDocM(String workspaceId, String id, String version) throws ApplicationException;
-    DocumentMasterDTO updateDoc(String workspaceId, String id, String version, int iteration, String pComment, InstanceAttributeDTO[] attributes, DocumentDTO[] links) throws ApplicationException;
+    DocumentMasterDTO updateDoc(String workspaceId, String id, String version, int iteration, String pComment, InstanceAttributeDTO[] attributes, DocumentIterationDTO[] links) throws ApplicationException;
     DocumentMasterTemplateDTO createDocMTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates, boolean idGenerated) throws ApplicationException;
     void delDocMTemplate(String workspaceId, String id) throws ApplicationException;
     DocumentMasterTemplateDTO updateDocMTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates,  boolean idGenerated) throws ApplicationException;

@@ -29,7 +29,7 @@ import com.docdoku.server.rest.dto.WorkflowDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.InstanceAttributeTemplate;

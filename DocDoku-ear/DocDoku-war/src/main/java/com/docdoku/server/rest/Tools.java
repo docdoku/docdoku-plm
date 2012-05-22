@@ -4,10 +4,12 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.UserDTO;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -56,9 +58,9 @@ public class Tools {
            Date lastIterationCreationDate = docMsDTO.getLastIteration().getCreationDate();
            int lastIterationNumber = docMsDTO.getLastIteration().getIteration();
            String lastIterationAuthorName = docMsDTO.getLastIteration().getAuthor().getName();
-           
-           docMsDTO.setDocumentIterations(null);
-           docMsDTO.setLastIteration(new DocumentDTO());
+           List<DocumentIterationDTO> iterations = new ArrayList<DocumentIterationDTO>();
+           iterations.add(new DocumentIterationDTO());
+           docMsDTO.setDocumentIterations(iterations);
            docMsDTO.getLastIteration().setCreationDate(lastIterationCreationDate);
            docMsDTO.getLastIteration().setIteration(lastIterationNumber);
            

@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.actions;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.ui.ExplorerPage;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -49,7 +49,7 @@ public class EditElementCommand implements Action {
         int iteration =0;//docM.getLastIteration().getIteration();
         String revisionNote=(String) userObject[0];
         InstanceAttributeDTO[] attributes=(InstanceAttributeDTO[]) userObject[1];
-        DocumentDTO[] links=(DocumentDTO[]) userObject[2];
+        DocumentIterationDTO[] links=(DocumentIterationDTO[]) userObject[2];
 
         AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
 

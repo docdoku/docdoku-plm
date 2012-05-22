@@ -43,10 +43,9 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private String description;
     private boolean iterationSubscription;
     private boolean stateSubscription;
-    private List<DocumentDTO> documentIterations;
+    private List<DocumentIterationDTO> documentIterations;
     private WorkflowDTO workflow;
     private String path;
-    private DocumentDTO lastIteration;
     private String lifeCycleState;
 
     public DocumentMasterDTO() {
@@ -159,31 +158,29 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         this.title = title;
     }
 
-    public List<DocumentDTO> getDocumentIterations() {
+    public List<DocumentIterationDTO> getDocumentIterations() {
         return documentIterations;
     }
 
-    public void setDocumentIterations(List<DocumentDTO> documentIterations) {
+    public void setDocumentIterations(List<DocumentIterationDTO> documentIterations) {
         this.documentIterations = documentIterations;
     }
 
-    public DocumentDTO getLastIteration() {
+    public DocumentIterationDTO getLastIteration() {
         if (documentIterations != null) {
             int index = documentIterations.size() - 1;
             if (index < 0) {
                 return null;
             } else {
-                this.lastIteration = documentIterations.get(index);
-                return lastIteration;
+                return documentIterations.get(index);
+                 
             }
         } else {
-            return lastIteration;
+            return null;
         }
     }
     
-    public void setLastIteration (DocumentDTO lastIteration){
-        this.lastIteration = lastIteration;
-    }
+
     
     public String getId() {
         return id+"-"+version;

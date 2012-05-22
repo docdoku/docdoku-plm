@@ -23,7 +23,7 @@ package com.docdoku.gwt.explorer.client.ui;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ExplorerConstants;
 import com.docdoku.gwt.explorer.client.data.DocMTableModel;
@@ -323,7 +323,7 @@ public class ExplorerPage extends DockPanel implements ResizeHandler, PageHandle
             elementTableDecPanel.removeStyleName("searchTable");
         }
         showBasicSearchPanel();
-        DocumentDTO iteration = null;//m_lastOpenedDocM.getLastIteration();
+        DocumentIterationDTO iteration = null;//m_lastOpenedDocM.getLastIteration();
         if (iteration != null) {
             inputPanel.clear();
             m_docPanel.clearInputs();

@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.DocOracle;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.client.ui.widget.spinbox.SpinBox;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -52,7 +52,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
     private int suggestSize;
     private String workspaceId;
 
-    public ChooseLinkPanel(DocOracle oracle, final DocumentDTO doc) {
+    public ChooseLinkPanel(DocOracle oracle, final DocumentIterationDTO doc) {
         this(oracle);
 
         AsyncCallback<DocumentMasterDTO> callback = new AsyncCallback<DocumentMasterDTO>() {
@@ -92,7 +92,7 @@ public class ChooseLinkPanel extends Composite implements SelectionHandler<Sugge
         workspaceId = oracle.getWorkspaceId();
     }
 
-    public DocumentDTO getSelectedDocument() {
+    public DocumentIterationDTO getSelectedDocument() {
         if (masterDoc != null) {
             return null;//masterDoc.getDocumentIterations().get(iterationsSpin.getValue() - 1);
         } else {

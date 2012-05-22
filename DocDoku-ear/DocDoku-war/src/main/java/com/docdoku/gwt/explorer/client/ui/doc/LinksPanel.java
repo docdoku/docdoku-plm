@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.data.DocOracle;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
 import com.docdoku.gwt.explorer.client.ui.widget.DataRoundedPanel;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -100,12 +100,12 @@ public class LinksPanel extends DataRoundedPanel implements ClickHandler {
         }
     }
 
-    public void setLinks(Set<DocumentDTO> links, String workspaceId) {
+    public void setLinks(Set<DocumentIterationDTO> links, String workspaceId) {
         oracle.setWorkspaceId(workspaceId);
         m_linkList.clear();
         //m_linkList.resize(links.size(), 2);
         int i = 0;
-        for (DocumentDTO link : links) {
+        for (DocumentIterationDTO link : links) {
             CheckBox linkCheckBox = new CheckBox();
             linkCheckBox.setVisible(m_editionMode);
             m_linkList.setWidget(i, 0, linkCheckBox);
@@ -150,15 +150,15 @@ public class LinksPanel extends DataRoundedPanel implements ClickHandler {
         }
     }
 
-    public DocumentDTO[] getLinks(){
-        Set<DocumentDTO> resultTmp = new HashSet<DocumentDTO>() ;
+    public DocumentIterationDTO[] getLinks(){
+        Set<DocumentIterationDTO> resultTmp = new HashSet<DocumentIterationDTO>() ;
         for (int i = 0 ; i < m_linkList.getRowCount() ; i++){
             ChooseLinkPanel p = (ChooseLinkPanel) m_linkList.getWidget(i, 1) ;
             if (p.getSelectedDocument() != null){
                 resultTmp.add(p.getSelectedDocument()) ;
             }
         }
-        DocumentDTO result[] = new DocumentDTO[resultTmp.size()] ;
+        DocumentIterationDTO result[] = new DocumentIterationDTO[resultTmp.size()] ;
         resultTmp.toArray(result) ;
         return result ;
     }

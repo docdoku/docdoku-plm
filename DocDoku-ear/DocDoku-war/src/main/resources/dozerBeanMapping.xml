@@ -12,32 +12,31 @@
                   <b>attachedFiles</b>
               </field>
           </mapping>
-                    <mapping>
-              <class-a>com.docdoku.core.document.DocumentMasterTemplate</class-a>
-              <class-b>com.docdoku.server.rest.dto.DocumentMasterTemplateDTO</class-b>
-              <field custom-converter="com.docdoku.server.rest.util.SetToMapDozerConverter">
-                  <a>attachedFiles</a>
-                  <b>attachedFiles</b>
-              </field>
-          </mapping>          
-          <mapping>
-              <class-a>com.docdoku.core.workflow.Workflow</class-a>
-              <class-b>com.docdoku.server.rest.dto.WorkflowDTO</class-b>
-              <field custom-converter="com.docdoku.server.rest.util.VectorToListDozerConverter">
-                  <a>activities</a>
-                  <b>activities</b>
-              </field>
-          </mapping> 
           -->
-          
-          <configuration>
-            <custom-converters> <!-- these are always bi-directional -->
-              <converter type="com.docdoku.server.rest.util.BinaryResourceToStringDozerConverter" >
+
+    <configuration>
+        <custom-converters> <!-- these are always bi-directional -->
+            <converter type="com.docdoku.server.rest.util.BinaryResourceToStringDozerConverter" >
                 <class-a>com.docdoku.core.common.BinaryResource</class-a>
                 <class-b>java.lang.String</class-b>
-              </converter>
-
-            </custom-converters>     
-        </configuration>
-                    
+            </converter>
+            <converter type="com.docdoku.server.rest.util.InstanceAttributeDozerConverter" >
+                <class-a>com.docdoku.core.meta.InstanceAttribute</class-a>
+                <class-b>com.docdoku.server.rest.dto.InstanceAttributeDTO</class-b>
+            </converter>
+                     
+            
+        </custom-converters>    
+    </configuration>
+         
+    <mapping>
+        <class-a>com.docdoku.core.document.DocumentIteration</class-a>
+        <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
+        <field custom-converter="com.docdoku.server.rest.util.MapToListDozerConverter">
+            <a>instanceAttributes</a>
+            <b>instanceAttributes</b>
+            <a-hint>java.util.HashMap</a-hint>
+            <b-hint>java.util.ArrayList</b-hint>
+        </field>
+    </mapping>
 </mappings>

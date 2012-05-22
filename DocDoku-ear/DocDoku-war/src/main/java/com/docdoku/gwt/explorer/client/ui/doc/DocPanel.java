@@ -24,7 +24,7 @@ import com.docdoku.gwt.explorer.client.ui.widget.FilesPanel;
 import com.docdoku.gwt.explorer.client.actions.Action;
 import com.docdoku.gwt.explorer.client.data.ServiceLocator;
 import com.docdoku.gwt.explorer.client.localization.ExplorerI18NConstants;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.gwt.explorer.client.util.HTMLUtil;
@@ -106,7 +106,7 @@ public class DocPanel extends FlexTable {
             public void onClick(ClickEvent event) {
 //                Map<String, InstanceAttributeDTO> attributes = m_attributesPanel.getAttributesOld();
                 List<InstanceAttributeDTO> attributes = m_attributesPanel.getAttributes();
-                DocumentDTO[] links = m_linksPanel.getLinks();
+                DocumentIterationDTO[] links = m_linksPanel.getLinks();
                 cmds.get("EditElementCommand").execute(m_mainPanel.getRevisionNote(), attributes.toArray(new InstanceAttributeDTO[attributes.size()]), links);
             }
         });
@@ -190,7 +190,7 @@ public class DocPanel extends FlexTable {
 
     }
 
-    public void setLinks(Set<DocumentDTO> links, String workspaceId) {
+    public void setLinks(Set<DocumentIterationDTO> links, String workspaceId) {
         m_linksPanel.setLinks(links, workspaceId);
 
     }

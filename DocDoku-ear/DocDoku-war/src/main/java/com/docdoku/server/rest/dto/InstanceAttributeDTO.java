@@ -39,10 +39,14 @@ public class InstanceAttributeDTO  implements Serializable{
     
     }
 
-    public InstanceAttributeDTO(String pName, String pType, String pValue){
+    public InstanceAttributeDTO(String pName, Type pType, String pValue){
         this.name=pName;
-        this.type=InstanceAttributeDTO.Type.valueOf(pType);
+        this.type=pType;
         this.value=pValue;
+    }
+    
+    public InstanceAttributeDTO(String pName, String pType, String pValue){
+        this(pName,InstanceAttributeDTO.Type.valueOf(pType),pValue);
     }
     
     public String getName() {

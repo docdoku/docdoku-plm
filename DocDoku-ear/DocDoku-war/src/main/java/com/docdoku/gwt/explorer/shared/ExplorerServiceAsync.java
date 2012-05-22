@@ -27,7 +27,7 @@ import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
-import com.docdoku.server.rest.dto.DocumentDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
@@ -56,7 +56,7 @@ public interface ExplorerServiceAsync {
     void whoAmI(String pWorkspaceId, AsyncCallback<UserDTO> callback);
     void createDocM(String parentFolder, String docMId, String title, String description, String docMTemplateId, String workflowModelId, ACLDTO acl, AsyncCallback<DocumentMasterDTO> callback);
     void createVersion(String workspaceId, String id, String version, String title, String description, String workflowModelId, ACLDTO acl, AsyncCallback<DocumentMasterDTO[]> callback);
-    void updateDoc(String workspaceId, String id, String version, int iteration, String revisionNote, InstanceAttributeDTO[] attributes, DocumentDTO[] links, AsyncCallback<DocumentMasterDTO> callback);
+    void updateDoc(String workspaceId, String id, String version, int iteration, String revisionNote, InstanceAttributeDTO[] attributes, DocumentIterationDTO[] links, AsyncCallback<DocumentMasterDTO> callback);
     void createDocMTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates, boolean idGenerated, AsyncCallback<DocumentMasterTemplateDTO> callback);
     void delDocMTemplate(String workspaceId, String id, AsyncCallback<Void> callback);
     void updateDocMTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplateDTO[] attributeTemplates,  boolean idGenerated, AsyncCallback<DocumentMasterTemplateDTO> callback);

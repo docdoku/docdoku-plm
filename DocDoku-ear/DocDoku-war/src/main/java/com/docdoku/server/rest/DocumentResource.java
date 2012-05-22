@@ -368,7 +368,7 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Path("{docKey}/iterations/{docIteration}")
-    public DocumentMasterDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, DocumentDTO data) {
+    public DocumentIterationDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, DocumentIterationDTO data) {
         try {
 
             int lastDash = docKey.lastIndexOf('-');
@@ -378,7 +378,7 @@ public class DocumentResource {
             String pRevisionNote = data.getRevisionNote();
             int pIteration = Integer.parseInt(docIteration);
 
-            List<DocumentDTO> linkedDocs = data.getLinkedDocuments();
+            List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
             DocumentIterationKey[] links = null;
             if (linkedDocs != null) {
                 links = createDocumentIterationKey(linkedDocs);
@@ -391,10 +391,9 @@ public class DocumentResource {
                 attributes = createInstanceAttribute(instanceAttributes);
             }
 
-            DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
-            DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
-
-            return docMsDTO;
+            DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);            
+            DocumentIterationDTO docDTO = mapper.map(docM.getLastIteration(), DocumentIterationDTO.class);
+            return docDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -643,7 +642,7 @@ public class DocumentResource {
         }
     }
 
-    private DocumentIterationKey[] createDocumentIterationKey(DocumentDTO[] dtos) {
+    private DocumentIterationKey[] createDocumentIterationKey(DocumentIterationDTO[] dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.length];
 
         for (int i = 0; i < dtos.length; i++) {
@@ -653,17 +652,17 @@ public class DocumentResource {
         return data;
     }
     
-        private DocumentIterationKey[] createDocumentIterationKey(List<DocumentDTO> dtos) {
+    private DocumentIterationKey[] createDocumentIterationKey(List<DocumentIterationDTO> dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
         int i= 0;
-        for (DocumentDTO dto:dtos) {
+        for (DocumentIterationDTO dto:dtos) {
             data[i++] = createObject(dto);
         }
 
         return data;
     }
 
-    private DocumentIterationKey createObject(DocumentDTO dto) {
+    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
         return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
     }
 }
