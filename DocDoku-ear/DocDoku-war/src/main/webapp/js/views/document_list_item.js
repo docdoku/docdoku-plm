@@ -35,12 +35,11 @@ define([
 			return data;
 		},
 		actionEdit: function (evt) {
-			var offsetContent = $("#content").offset();
 			var that = this;
 			var target = $(evt.target); 
 			var targetOffset = target.offset(); 
 			var offset = {
-				x: targetOffset.left + target.width() - offsetContent.left,
+				x: targetOffset.left + target.width(),
 				y: targetOffset.top + (target.height() / 2)
 			};
 			this.model.fetch().success(function () {

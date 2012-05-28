@@ -1,4 +1,5 @@
-.attributes-edit {
+.attributes-edit,
+.files-edit {
 	.add {
 		margin-bottom: 8px;
 	}
@@ -9,7 +10,7 @@
 			opacity: 1;
 		}
 	}
-	.attribute-list-item {
+	.list-item {
 		display: table;
 		> * {
 			display: table-cell;
@@ -19,14 +20,14 @@
 				margin: 4px;
 			}
 		}
-		.controls.boolean {
-			> input {
-				&:checked ~ .false {
-					display: none;
-				}
-				&:not(:checked) ~ .true {
-					display: none;
-				}
+	}
+	.controls.boolean {
+		> input {
+			&:checked ~ .false {
+				display: none;
+			}
+			&:not(:checked) ~ .true {
+				display: none;
 			}
 		}
 	}

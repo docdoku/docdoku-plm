@@ -79,6 +79,7 @@ define([
 					})
 				).render();
 			}
+			this.$el.find(".nav-tabs a").on("shown", this.centerActiveTab);
 		},
 		hide: function () {
 			var that = this;
@@ -89,6 +90,31 @@ define([
 		closeAction: function () {
 			this.hide();
 			return false;
+		},
+		setActiveTab: function (el) {
+			el.find("a").click();
+		},
+		centerActiveTab: function () {
+			var el = this.$el.find(".nav-tabs .active");
+			for (var i = 2 - 1; i >= 0; i--){
+				if (el.prev().html()) {
+					el = el.prev();
+				};
+			};
+			var scrollArea = this.$el.find(".scroll-area");
+			var scrollContent = this.$el.find(".scroll-content");
+
+			var elOffset = el.offset();
+			var scrollAreaOffset = scrollArea.offset();
+
+			// Get the numeric value off the css left attribute
+			var prevLeft = scrollContent.css("left") == "auto" ? 0 : parseInt(scrollContent.css("left").replace("px", ""));
+
+			var nextLeft = prevLeft + scrollAreaOffset.left - elOffset.left;
+
+			scrollContent.animate({
+				"left": nextLeft
+			});
 		},
 	});
 	return DocumentEditView;

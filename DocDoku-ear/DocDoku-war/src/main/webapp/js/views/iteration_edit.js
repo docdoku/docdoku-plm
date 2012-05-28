@@ -3,12 +3,14 @@ define([
 	"common/date",
 	"views/base",
 	"views/document_new_attributes",
+	"views/file_uploads",
 	"text!templates/iteration_edit.html"
 ], function (
 	i18n,
 	date,
 	BaseView,
 	DocumentNewAttributesView,
+	FileUploadsView,
 	template
 ) {
 	var IterationEditView = BaseView.extend({
@@ -38,6 +40,14 @@ define([
 			);
 			this.attributesView.render();
 			this.attributesView.collection.reset(this.model.get("instanceAttributes"));
+
+			this.fileUploadsView = this.addSubView(
+				new FileUploadsView({
+					el: "#file-uploads-" + this.cid,
+					model: this.model
+				})
+			);
+			this.fileUploadsView.render();
 		},
 		cancelAction: function () {
 			this.render();

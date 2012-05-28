@@ -8,7 +8,6 @@ define([
 	var TemplateNewAttributeListItemView = ListItemView.extend({
 		template: Mustache.compile(template),
 		tagName: "div",
-		className: "attribute-list-item",
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events["change .type"] = "typeChanged";

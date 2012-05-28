@@ -5,7 +5,6 @@ define([
 ) {
 	var DocumentNewAttributeListItemView = ListItemView.extend({
 		tagName: "div",
-		className: "attribute-list-item",
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events[ "change .type"] = "typeChanged";

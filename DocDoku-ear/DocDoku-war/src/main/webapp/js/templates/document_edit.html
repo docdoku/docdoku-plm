@@ -4,30 +4,16 @@
 	<h3><span class="icon"></span>{{model.id}} {{model.version}}</h3>
 </header>
 <section>
+	<div class="document properties">
+		<p><span class="name">{{_.REFERENCE}}:</span>		<span class="value">{{model.reference}}</span></p>
+		<p><span class="name">{{_.VERSION}}:</span>			<span class="value">{{model.version}}</span></p>
+		<p><span class="name">{{_.TYPE}}:</span>			<span class="value">{{model.type}}</span></p>
+		<p><span class="name">{{_.AUTHOR}}:</span>			<span class="value">{{model.author.name}}</span></p>
+		<p><span class="name">{{_.CREATION_DATE}}:</span>	<span class="value">{{model.creationDate}}</span></p>
+		<p><span class="name">{{_.CHECKOUT_DATE}}:</span>	<span class="value">{{model.checkOutDate}}</span></p>
+	</div>
 	<div class="tabs">
-		<ul class="nav nav-tabs nav-stacked">
-			{{#model.documentIterations}}
-			<li{{#lastIteration?}} class="active"{{/lastIteration?}}>
-				<a href="#tab-iteration-{{iteration}}-{{view.cid}}" data-toggle="tab"
-					{{#revisionNote}} title="{{_.REVISION_NOTE}}: {{revisionNote}}"{{/revisionNote}}>
-					{{iteration}}
-					({{author.name}})
-					{{creationDate}}
-				</a>
-			</li>
-			{{/model.documentIterations}}
-		</ul>
 		<div class="tab-content">
-			<div class="document">
-				<div class="properties">
-					<p><span class="name">{{_.REFERENCE}}:</span>		<span class="value">{{model.reference}}</span></p>
-					<p><span class="name">{{_.VERSION}}:</span>			<span class="value">{{model.version}}</span></p>
-					<p><span class="name">{{_.TYPE}}:</span>			<span class="value">{{model.type}}</span></p>
-					<p><span class="name">{{_.AUTHOR}}:</span>			<span class="value">{{model.author.name}}</span></p>
-					<p><span class="name">{{_.CREATION_DATE}}:</span>	<span class="value">{{model.creationDate}}</span></p>
-					<p><span class="name">{{_.CHECKOUT_DATE}}:</span>	<span class="value">{{model.checkOutDate}}</span></p>
-				</div>
-			</div>
 			{{#model.documentIterations}}
 				{{#editable?}}
 					<div id="tab-iteration-{{iteration}}-{{view.cid}}" class="tab-pane active"></div>
@@ -48,11 +34,26 @@
 						<div class="files">
 							<h2>{{_.FILES}}</h2>
 							{{#attachedFiles}}
+								{{.}}
 							{{/attachedFiles}}
 						</div>
 					</div>
 				{{/editable?}}
 			{{/model.documentIterations}}
+		</div>
+		<div class="iteration-nav scroll-area">
+			<ul class="nav nav-tabs scroll-content">
+				{{#model.documentIterations}}
+				<li class="scroll-item{{#lastIteration?}} active{{/lastIteration?}}">
+					<a href="#tab-iteration-{{iteration}}-{{view.cid}}" data-toggle="tab"
+						{{#revisionNote}} title="{{_.REVISION_NOTE}}: {{revisionNote}}"{{/revisionNote}}>
+						{{iteration}}
+						({{author.name}})
+						{{creationDate}}
+					</a>
+				</li>
+				{{/model.documentIterations}}
+			</ul>
 		</div>
 	</div>
 </section>

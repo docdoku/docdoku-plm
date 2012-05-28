@@ -4,6 +4,7 @@ define([
 	BaseView
 ) {
 	var ListItemView = BaseView.extend({
+		className: "list-item",
 		modelDestroy: function () {
 			this.destroy();
 		},
