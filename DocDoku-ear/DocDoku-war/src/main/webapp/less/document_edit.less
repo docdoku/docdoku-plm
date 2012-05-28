@@ -19,7 +19,7 @@
 		.box-shadow(0 0 8px darken(@actionBarBackground, 50%));
 		.display(box);
 		background-color: rgba(0, 0, 0, 0.7);
-		display: block; // correct a firefox bug
+		width: 100%; // firefox bug workaround https://bugzilla.mozilla.org/show_bug.cgi?id=625694
 		height: 100%;
 		> header, > footer {
 			background: @navBackground;
@@ -34,7 +34,7 @@
 		> section {
 			.box-flex(1);
 			overflow: auto;
-			padding: 4px 8px;
+			padding: 8px 8px;
 			.properties,
 			.attributes {
 				.name {
