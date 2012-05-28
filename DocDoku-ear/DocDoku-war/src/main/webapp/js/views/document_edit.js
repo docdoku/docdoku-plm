@@ -41,10 +41,12 @@ define([
 			data.documentIterations = iterations;
 			// Flag for templating
 			// Use form if checkedout
-			data.documentIterations[1]["lastIteration?"] = true;
-			if (data.checkOutDate) {
-				data.documentIterations[1]["editable?"] = true;
-			};
+			if (data.documentIterations[1]) {
+				data.documentIterations[1]["lastIteration?"] = true;
+				if (data.checkOutDate) {
+					data.documentIterations[1]["editable?"] = true;
+				};
+			}
 
 			// Format dates
 			if (data.creationDate) {

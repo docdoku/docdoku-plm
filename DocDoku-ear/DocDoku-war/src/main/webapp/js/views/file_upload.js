@@ -22,7 +22,6 @@ define([
 			xhr.open("POST", this.model.fileUploadUrl() + "/test.pdf");
 			var form = document.getElementById("form-" + this.cid);
 			var fd = new FormData(form);
-			console.debug(fd, form);
 			xhr.send(fd);
 			return false;
 		},

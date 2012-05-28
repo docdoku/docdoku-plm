@@ -49,6 +49,7 @@ define(function () {
 		"REFERENCES":					"Références",
 		"RENAME":						"Renommer",
 		"REVISION_NOTE":				"Note de révision",
+		"SAVED":						"Sauvegardé",
 		"SAVE":							"Enregistrer",
 		"TAGS":							"Libellés",
 		"TASKS":						"Tâches",

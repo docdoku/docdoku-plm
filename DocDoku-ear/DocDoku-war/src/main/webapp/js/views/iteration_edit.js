@@ -3,14 +3,14 @@ define([
 	"common/date",
 	"views/base",
 	"views/document_new_attributes",
-	"views/file_uploads",
+	"views/iteration_edit_files",
 	"text!templates/iteration_edit.html"
 ], function (
 	i18n,
 	date,
 	BaseView,
 	DocumentNewAttributesView,
-	FileUploadsView,
+	IterationEditFilesView,
 	template
 ) {
 	var IterationEditView = BaseView.extend({
@@ -41,13 +41,13 @@ define([
 			this.attributesView.render();
 			this.attributesView.collection.reset(this.model.get("instanceAttributes"));
 
-			this.fileUploadsView = this.addSubView(
-				new FileUploadsView({
-					el: "#file-uploads-" + this.cid,
+			this.filesView = this.addSubView(
+				new IterationEditFilesView({
+					el: "#files-" + this.cid,
 					model: this.model
 				})
 			);
-			this.fileUploadsView.render();
+			this.filesView.render();
 		},
 		cancelAction: function () {
 			this.render();
@@ -55,7 +55,6 @@ define([
 		},
 		primaryAction: function () {
 			var revisionNote = $("#form-" + this.cid + " .revision-note").val();
-			console.debug(revisionNote);
 			this.model.save({
 				revisionNote: revisionNote,
 				instanceAttributes: this.attributesView.collection.toJSON()
@@ -66,6 +65,11 @@ define([
 			return false;
 		},
 		success: function (model, response) {
+			this.alert({
+				type: "",
+				title: i18n["SAVED"],
+				message: ""
+			});
 		},
 		error: function (model, error) {
 			if (error.responseText) {

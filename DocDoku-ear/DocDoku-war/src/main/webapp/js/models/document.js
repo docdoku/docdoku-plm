@@ -12,13 +12,10 @@ define([
 			_.bindAll(this);
 		},
 		parse: function(data) {
-			// TODO update webservice to use iterations instead documentIterations
-			// TODO update webservice to use iteration.id intead iteration.iteration
-			//this.iterations = new DocumentIterationList(data.documentIterations ? data.documentIterations : []);
 			this.iterations = new DocumentIterationList(data.documentIterations);
 			this.iterations.document = this;
-			if (data.documentIterations) {
-				this.lastIteration = this.iterations.get(data.lastIteration.iteration);
+			if (data.documentIterations.length) {
+				this.lastIteration = this.iterations.get(data.documentIterations[data.documentIterations.length - 1].iteration);
 				data.lastIteration = this.lastIteration;
 			}
 			data.documentIterations = this.iterations;

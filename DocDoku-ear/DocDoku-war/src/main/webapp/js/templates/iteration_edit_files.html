@@ -1,0 +1,6 @@
+<ul>
+{{#model.attachedFiles}}
+	<li><a target="blank" href="/files/{{.}}">{{.}}</a></li>
+{{/model.attachedFiles}}
+</ul>
+<div id="file-uploads-{{view.cid}}" class="files-new"></div>
