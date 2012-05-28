@@ -1,9 +1,11 @@
 define([
 	"require",
-	"i18n"
+	"i18n",
+	"text!templates/alert.html"
 ], function (
 	require,
-	i18n
+	i18n,
+	alert_template
 ) {
 	var BaseView = Backbone.View.extend({
 		modelEvents: {
@@ -151,24 +153,19 @@ define([
 				this.collection;
 		},
 		alert: function (options) {
-			var AlertView = require(["views/alert"]);
+			// AlertView not used to resolve circular dependency
 			var titles = {
-				"error": i18n.ERROR
+				"error": i18n.ERROR,
 			}
 			options.title = options.title ? options.title : titles[options.type];
-			var view = this.addSubView(
-				new AlertView({
-					el: "#alerts-" + this.cid,
+			var html = Mustache.render(alert_template, {
 					model: {
 						type: options.type,
 						title: options.title,
 						message: options.message
 					}
-				})
-			).render();
-		},
-		__str__: function () {
-			return "<" + this.cid + " " + this.__name__ + ">";
+			})
+			$("#alerts-" + this.cid).html(html);
 		},
 	});
 	return BaseView;
