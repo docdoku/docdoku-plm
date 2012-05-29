@@ -31,7 +31,7 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
-import com.docdoku.gwt.explorer.shared.ACLDTO;
+import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
 import java.util.*;

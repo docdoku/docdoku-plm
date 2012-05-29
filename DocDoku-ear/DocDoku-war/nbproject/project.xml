@@ -15,22 +15,6 @@
                     <file>${reference.DocDoku-Common.jar}</file>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.cobogw-1.3.1.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.gwt-dnd-3.1.1.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.regularTheme.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.searchTheme.jar}</file>
-                </library>
-                <library dirs="200">
-                    <file>${file.reference.gwt-servlet.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
                     <file>${file.reference.milton-servlet-1.6.3.jar}</file>
                 </library>
                 <library dirs="200">

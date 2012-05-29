@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.gwt.explorer.shared.TaskModelDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

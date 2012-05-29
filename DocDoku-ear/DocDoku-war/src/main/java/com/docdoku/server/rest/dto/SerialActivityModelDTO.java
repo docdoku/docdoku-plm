@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.gwt.explorer.shared.TaskModelDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import java.io.Serializable;
 
