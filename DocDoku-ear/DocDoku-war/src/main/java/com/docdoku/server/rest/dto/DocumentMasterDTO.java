@@ -23,11 +23,14 @@ package com.docdoku.server.rest.dto;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Florent Garin
  */
+@XmlRootElement
 public class DocumentMasterDTO implements Serializable, Comparable<DocumentMasterDTO> {
 
     private String workspaceId;
@@ -166,6 +169,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         this.documentIterations = documentIterations;
     }
 
+    @XmlTransient
     public DocumentIterationDTO getLastIteration() {
         if (documentIterations != null) {
             int index = documentIterations.size() - 1;
