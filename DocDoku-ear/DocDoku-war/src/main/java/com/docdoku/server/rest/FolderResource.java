@@ -88,7 +88,7 @@ public class FolderResource {
             for (int i = 0; i < folderNames.length; i++) {
                 
                 String completeFolderPath=workspaceId+"/"+folderNames[i];
-                String encodedFolderId=Tools.replaceSlashWithDots(completeFolderPath);
+                String encodedFolderId=Tools.replaceSlashWithColon(completeFolderPath);
                 
                 folderDtos[i] = new FolderDTO();
                 folderDtos[i].setPath(completePath);
@@ -109,7 +109,7 @@ public class FolderResource {
     public FolderDTO[] getSubFoldersJson(@PathParam("completePath") String folderId) {
         try {
             
-            String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);
+            String decodedCompletePath = Tools.replaceColonWithSlash(folderId);
             
             String completePath = Tools.stripTrailingSlash(decodedCompletePath);
             String[] folderNames = commandService.getFolders(completePath);
@@ -119,7 +119,7 @@ public class FolderResource {
             for (int i = 0; i < folderNames.length; i++) {
                 
                 String completeFolderPath=completePath+"/"+folderNames[i];
-                String encodedFolderId=Tools.replaceSlashWithDots(completeFolderPath);
+                String encodedFolderId=Tools.replaceSlashWithColon(completeFolderPath);
                
                 folderDtos[i] = new FolderDTO();
                 folderDtos[i].setPath(completePath);
@@ -140,7 +140,7 @@ public class FolderResource {
 
         try {
 
-            String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);
+            String decodedCompletePath = Tools.replaceColonWithSlash(folderId);
             
             String pCompletePath = Tools.stripTrailingSlash(decodedCompletePath);
             DocumentMaster[] docM = commandService.findDocumentMastersByFolder(pCompletePath);
@@ -175,7 +175,7 @@ public class FolderResource {
     public FolderDTO renameFolderjson(@PathParam("folderId") String folderPath, FolderDTO folder) {
         try {
             
-            String decodedCompletePath = Tools.replaceDotsWithSlash(folderPath);
+            String decodedCompletePath = Tools.replaceColonWithSlash(folderPath);
             
             String completePath = Tools.stripTrailingSlash(decodedCompletePath);
             int lastSlash = completePath.lastIndexOf('/');
@@ -185,7 +185,7 @@ public class FolderResource {
             commandService.moveFolder(completePath, destParentFolder, folderName);
 
             String completeRenamedFolderId=destParentFolder+'/'+folderName;
-            String encodedRenamedFolderId=Tools.replaceSlashWithDots(completeRenamedFolderId);            
+            String encodedRenamedFolderId=Tools.replaceSlashWithColon(completeRenamedFolderId);            
             
             FolderDTO renamedFolderDto = new FolderDTO();
             renamedFolderDto.setPath(destParentFolder);
@@ -206,7 +206,7 @@ public class FolderResource {
     public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
         try {
             
-            String decodedCompletePath = Tools.replaceDotsWithSlash(parentFolderPath);  
+            String decodedCompletePath = Tools.replaceColonWithSlash(parentFolderPath);  
             
             String folderName = folder.getName(); 
             FolderDTO createdSubFolder =  createFolder(decodedCompletePath, folderName);
@@ -243,7 +243,7 @@ public class FolderResource {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
 
-        String decodedCompletePath = Tools.replaceDotsWithSlash(folderId);             
+        String decodedCompletePath = Tools.replaceColonWithSlash(folderId);             
         String pParentFolder = Tools.stripTrailingSlash(decodedCompletePath);
         
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
@@ -310,7 +310,7 @@ public class FolderResource {
     
     private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException{
 
-        String decodedCompletePath = Tools.replaceDotsWithSlash(pCompletePath);
+        String decodedCompletePath = Tools.replaceColonWithSlash(pCompletePath);
 
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
 
@@ -322,7 +322,7 @@ public class FolderResource {
         Folder createdFolder= commandService.createFolder(pCompletePath, pFolderName);
                         
         String completeCreatedFolderPath=createdFolder.getCompletePath()+'/'+createdFolder.getShortName();
-        String encodedFolderId=Tools.replaceSlashWithDots(completeCreatedFolderPath); 
+        String encodedFolderId=Tools.replaceSlashWithColon(completeCreatedFolderPath); 
 
         FolderDTO createdFolderDtos = new FolderDTO();
         createdFolderDtos.setPath(createdFolder.getCompletePath());

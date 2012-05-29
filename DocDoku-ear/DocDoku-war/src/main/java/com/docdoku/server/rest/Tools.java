@@ -33,39 +33,21 @@ public class Tools {
             return completePath;
     }
     
-    public static String replaceSlashWithDots(String completePath){
+    public static String replaceSlashWithColon(String completePath){
         return completePath.replaceAll("/", ":");
     }
     
-    public static String replaceDotsWithSlash(String completePath){
+    public static String replaceColonWithSlash(String completePath){
         return completePath.replaceAll(":", "/");
     }    
 
     public static DocumentMasterDTO createLightDocumentMasterDTO(DocumentMasterDTO docMsDTO){
-
-       String documentAuthorName = docMsDTO.getAuthor().getName();
-       docMsDTO.setAuthor(new UserDTO());
-       docMsDTO.getAuthor().setName(documentAuthorName);
        
-       if(docMsDTO.getCheckOutUser()!=null){
-            String checkOutUserName = docMsDTO.getCheckOutUser().getName();
-            docMsDTO.setCheckOutUser(new UserDTO());
-            docMsDTO.getCheckOutUser().setName(checkOutUserName);
-       }
-       
-       if (docMsDTO.getLastIteration() != null) {
-           
-           Date lastIterationCreationDate = docMsDTO.getLastIteration().getCreationDate();
-           int lastIterationNumber = docMsDTO.getLastIteration().getIteration();
-           String lastIterationAuthorName = docMsDTO.getLastIteration().getAuthor().getName();
+       if (docMsDTO.getLastIteration() != null) {      
+           DocumentIterationDTO lastIteration = docMsDTO.getLastIteration();
            List<DocumentIterationDTO> iterations = new ArrayList<DocumentIterationDTO>();
-           iterations.add(new DocumentIterationDTO());
+           iterations.add(lastIteration);
            docMsDTO.setDocumentIterations(iterations);
-           docMsDTO.getLastIteration().setCreationDate(lastIterationCreationDate);
-           docMsDTO.getLastIteration().setIteration(lastIterationNumber);
-           
-           docMsDTO.getLastIteration().setAuthor(new UserDTO());
-           docMsDTO.getLastIteration().getAuthor().setName(lastIterationAuthorName);
        }
        
        docMsDTO.setTags(null);
