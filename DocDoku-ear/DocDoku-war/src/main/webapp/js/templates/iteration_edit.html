@@ -18,7 +18,18 @@
 		<h3>{{_.ATTRIBUTES}}</h3>
 		<div id="attributes-{{view.cid}}" class="attributes-edit"></div>
 		<h3>{{_.FILES}}</h3>
+<<<<<<< HEAD
 		<div id="files-{{view.cid}}"></div>
+=======
+		<div id="files-{{view.cid}}" class="files-edit">
+			<ul>
+			{{#model.attachedFiles}}
+				<li><a target="blank" href="/files/{{.}}">{{.}}</a></li>
+			{{/model.attachedFiles}}
+			</ul>
+			<div id="file-uploads-{{view.cid}}" class="files-edit"></div>
+		</div>
+>>>>>>> webapp document edition file upload and css
 	</section>
 	<footer>
 		<button class="btn save btn-primary" form="{{view.cid}}-form">
