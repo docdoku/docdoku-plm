@@ -22,10 +22,6 @@ define([
 			xhr.open("POST", this.model.fileUploadUrl() + "/test.pdf");
 			var form = document.getElementById("form-" + this.cid);
 			var fd = new FormData(form);
-<<<<<<< HEAD
-=======
-			console.debug(fd, form);
->>>>>>> webapp document edition file upload and css
 			xhr.send(fd);
 			return false;
 		},
