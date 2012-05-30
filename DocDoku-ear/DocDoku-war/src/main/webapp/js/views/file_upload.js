@@ -11,6 +11,7 @@ define([
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.events["click .upload"] = this.upload;
+			this.events["click .remove"] = this.destroy;
 		},
 		upload: function () {
 			var form = document.getElementById("form-" + this.cid);

@@ -28,7 +28,7 @@ define([
 			this.uploadFiles();
 		},
 		deleteFiles: function () {
-			this.$el.find(".file-delete").each(function () {
+			this.$el.find(".file-delete:checked").each(function () {
 				var url = $(this).attr("value");
 				$.ajax(url, {
 					type: "DELETE"

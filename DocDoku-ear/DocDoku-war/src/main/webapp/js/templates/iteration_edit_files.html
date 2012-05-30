@@ -1,10 +1,11 @@
 <ul class="files">
 {{#model.attachedFiles}}
-	<li>
-		<label for="">
-			<a target="blank" href="/files/{{.}}">{{.}}</a>
+	<li class="list-item">
+		<label class="" for="{{view.cid}}{{.}}">
+			<input id="{{view.cid}}{{.}}" class="file-delete" type="checkbox" value="{{.}}" />
+			<a class="remove">×</a>
 		</label>
-		<input class="file-delete" type="checkbox" value="{{.}}" />
+		<a target="blank" href="/files/{{.}}">{{.}}</a>
 	</li>
 {{/model.attachedFiles}}
 </ul>
