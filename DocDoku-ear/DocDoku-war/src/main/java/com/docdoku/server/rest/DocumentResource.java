@@ -31,18 +31,30 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.server.http.FileConverter;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
+import javax.activation.FileTypeMap;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.transaction.Status;
+import javax.transaction.UserTransaction;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -55,6 +67,14 @@ public class DocumentResource {
 
     @EJB
     private ICommandLocal commandService;
+    
+    private final static int CHUNK_SIZE = 1024 * 8;
+    private final static int BUFFER_CAPACITY = 1024 * 16;
+
+    @Resource
+    private UserTransaction utx;
+
+    
     @Context
     private UriInfo context;
     private Mapper mapper;
@@ -308,15 +328,15 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-                commandService.subscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+            commandService.subscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-    
-     @PUT
+
+    @PUT
     @Path("{docKey}/notification/iterationChange/unsubscribe")
     public Response unsubscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
@@ -324,14 +344,14 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-                commandService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+            commandService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-    }   
+    }
 
     @PUT
     @Path("{docKey}/notification/stateChange/subscribe")
@@ -348,7 +368,7 @@ public class DocumentResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-    
+
     @PUT
     @Path("{docKey}/notification/stateChange/unsubscribe")
     public Response unsubscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
@@ -363,7 +383,7 @@ public class DocumentResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-    }    
+    }
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
@@ -391,7 +411,7 @@ public class DocumentResource {
                 attributes = createInstanceAttribute(instanceAttributes);
             }
 
-            DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);            
+            DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
             DocumentIterationDTO docDTO = mapper.map(docM.getLastIteration(), DocumentIterationDTO.class);
             return docDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -529,10 +549,10 @@ public class DocumentResource {
                 }
             }
 
-           DocumentMaster createdDocMs =  commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-           DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
-           docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
-           docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
+            DocumentMaster createdDocMs = commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+            DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
+            docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
+            docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
 
             return docMsDTO;
 
@@ -568,7 +588,7 @@ public class DocumentResource {
     @DELETE
     @Consumes("application/json;charset=UTF-8")
     @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, @PathParam("fileName") String fileName) {
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
         try {
             int lastDash = docKey.lastIndexOf('-');
             String id = docKey.substring(0, lastDash);
@@ -585,6 +605,117 @@ public class DocumentResource {
         }
     }
 
+    @POST
+    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
+    @Consumes("multipart/form-data")
+    @Produces("application/json;charset=UTF-8")
+    public Response uploadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @FormParam("upload") InputStream inputStream) {
+        try {
+            utx.begin();
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+                        
+            DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, id, version, docIteration);
+            File vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
+     
+            vaultFile.getParentFile().mkdirs();
+            vaultFile.createNewFile();
+            
+            InputStream in = new BufferedInputStream(inputStream, BUFFER_CAPACITY);
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
+
+            byte[] data = new byte[CHUNK_SIZE];
+            int length;
+            try {
+                while ((length = in.read(data)) != -1) {
+                    out.write(data, 0, length);
+                }
+            } finally {
+                in.close();
+                out.close();
+            }
+            commandService.saveFileInDocument(docPK, fileName, vaultFile.length());          
+            utx.commit();
+            return Response.ok().build();
+        } catch (Exception pEx) {
+            throw new RuntimeException("Error while uploading the file.", pEx);
+        } finally {
+            try {
+                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
+                    utx.rollback();
+                }
+            } catch (Exception pRBEx) {
+                throw new RuntimeException("Rollback failed.", pRBEx);
+            }
+        }
+    }
+
+    
+    @GET
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
+    @Produces("image/jpeg")
+    public Response downloadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @HeaderParam("Range") Range pRange, @QueryParam("type") String type) {
+        String elementType = "documents";
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
+        String fullName = workspaceId + "/" + elementType + "/" + id + "/" + version + "/" + docIteration + "/" + fileName;
+
+        
+        File dateFile = null;//commandService.getDataFile(fullName);
+        File fileToOutput=null;
+        String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dateFile);
+        
+        
+        if ("pdf".equals(type)) {
+            contentType = "application/pdf";
+            //String ooHome = this.getInitParameter("OO_HOME");
+            //int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
+            //fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
+        } else if ("swf".equals(type)) {
+            contentType="application/x-shockwave-flash";
+            //String pdf2SWFHome = this.getInitParameter("PDF2SWF_HOME");
+            //String ooHome = this.getInitParameter("OO_HOME");
+            //int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
+            //FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
+            //fileToOutput = fileConverter.convertToSWF(dateFile);
+        } else {
+            //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");             
+            fileToOutput = dateFile;
+        }
+            
+       
+
+        
+        ResponseBuilder rb;
+        if (pRange != null) {
+            try {
+                Range properRange = Range.validateRangeWithFile(pRange, fileToOutput);
+                rb = Response.status(206);
+                rb.type(contentType);
+                rb.entity(new StreamingBinaryResourceOutput(fileToOutput, properRange));
+                rb.header("Content-Length", properRange.getlengthOfTheBytesRange());
+                rb.header("Content-Range", "bytes " + properRange.getMin() + "-" + properRange.getMax() + "/" + fileToOutput.length() + "");
+            } catch (RequestedRangeNotSatisfiableException ex) {
+                rb = Response.status(416);
+                rb.header("Content-Range", "bytes */" + fileToOutput.length() + "");
+            }
+        } else {
+            rb = Response.ok();
+            rb.type(contentType);
+            rb.entity(new StreamingBinaryResourceOutput(fileToOutput));
+            rb.header("Content-Length", fileToOutput.length());
+        }
+        rb.header("Accept-Ranges", "bytes");
+
+        return rb.build();
+    }
+    
+    
+    
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {
             return null;
@@ -597,14 +728,14 @@ public class DocumentResource {
 
         return data;
     }
-    
+
     private InstanceAttribute[] createInstanceAttribute(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
             return null;
         }
         InstanceAttribute[] data = new InstanceAttribute[dtos.size()];
-        int i=0;
-        for (InstanceAttributeDTO dto:dtos) {
+        int i = 0;
+        for (InstanceAttributeDTO dto : dtos) {
             data[i++] = createObject(dto);
         }
 
@@ -651,11 +782,11 @@ public class DocumentResource {
 
         return data;
     }
-    
+
     private DocumentIterationKey[] createDocumentIterationKey(List<DocumentIterationDTO> dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
-        int i= 0;
-        for (DocumentIterationDTO dto:dtos) {
+        int i = 0;
+        for (DocumentIterationDTO dto : dtos) {
             data[i++] = createObject(dto);
         }
 
