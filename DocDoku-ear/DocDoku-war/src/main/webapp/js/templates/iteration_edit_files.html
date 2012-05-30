@@ -1,6 +1,12 @@
-<ul>
+<ul class="files">
 {{#model.attachedFiles}}
-	<li><a target="blank" href="/files/{{.}}">{{.}}</a></li>
+	<li>
+		<label for="">
+			<a target="blank" href="/files/{{.}}">{{.}}</a>
+		</label>
+		<input class="file-delete" type="checkbox" value="{{.}}" />
+	</li>
 {{/model.attachedFiles}}
 </ul>
+<a class="btn add">{{_.APPEND}}</a>
 <div id="file-uploads-{{view.cid}}" class="files-new"></div>

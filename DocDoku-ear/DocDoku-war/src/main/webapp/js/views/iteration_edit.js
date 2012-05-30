@@ -54,6 +54,13 @@ define([
 			return false;
 		},
 		primaryAction: function () {
+			this.filesView.save({
+				success: this.filesSaveSuccess,
+				error: this.filesSaveError
+			});
+			return false;
+		},
+		filesSaveSuccess: function () {
 			var revisionNote = $("#form-" + this.cid + " .revision-note").val();
 			this.model.save({
 				revisionNote: revisionNote,
@@ -62,7 +69,8 @@ define([
 				success: this.success,
 				error: this.error
 			});
-			return false;
+		},
+		filesSaveError: function () {
 		},
 		success: function (model, response) {
 			this.alert({
