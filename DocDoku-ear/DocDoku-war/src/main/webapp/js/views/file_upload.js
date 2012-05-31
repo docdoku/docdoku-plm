@@ -7,6 +7,7 @@ define([
 ) {
 	var FileUploadView = BaseView.extend({
 		template: Mustache.compile(template),
+		tagName:  "li",
 		className: "list-item",
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
