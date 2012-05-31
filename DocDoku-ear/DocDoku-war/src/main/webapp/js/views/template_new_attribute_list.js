@@ -11,9 +11,6 @@ define([
 				model: model
 			});
 		},
-		collectionAdd: function (model) {
-			this.createItemView(model);
-		},
 	});
 	return TemplateNewAttributeListView;
 });

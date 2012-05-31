@@ -20,7 +20,9 @@ define([
 		},
 		modelToJSON: function () {
 			var data = this.model.toJSON();
-			data.lastIteration = this.model.lastIteration.toJSON();
+			if (this.lastIteration) {
+				data.lastIteration = this.model.lastIteration.toJSON();
+			}
 
 			// Format dates
 			if (data.lastIteration && data.lastIteration.creationDate) {

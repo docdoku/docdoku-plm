@@ -93,16 +93,13 @@ define([
 			this.hide();
 			return false;
 		},
-		setActiveTab: function (el) {
-			el.find("a").click();
-		},
 		centerActiveTab: function () {
 			var el = this.$el.find(".nav-tabs .active");
-			for (var i = 2 - 1; i >= 0; i--){
+			for (var i = 2 - 1; i >= 0; i--) {
 				if (el.prev().html()) {
 					el = el.prev();
 				};
-			};
+			}
 			var scrollArea = this.$el.find(".scroll-area");
 			var scrollContent = this.$el.find(".scroll-content");
 

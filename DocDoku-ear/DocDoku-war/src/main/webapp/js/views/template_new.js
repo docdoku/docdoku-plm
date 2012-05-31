@@ -25,7 +25,7 @@ define([
 			if (reference) {
 				this.collection.create({
 					reference: reference,
-					documentType: $("#form-" + this.cid + " .title").val(),
+					documentType: $("#form-" + this.cid + " .type").val(),
 					mask: $("#form-" + this.cid + " .mask").val(),
 					idGenerated: $("#form-" + this.cid + " .id-generated")
 						.attr("checked") ? true : false,

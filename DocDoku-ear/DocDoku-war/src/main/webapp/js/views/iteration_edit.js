@@ -48,6 +48,7 @@ define([
 				})
 			);
 			this.filesView.render();
+			this.filesView.bind("saved", this.model.fetch);
 		},
 		cancelAction: function () {
 			this.render();
