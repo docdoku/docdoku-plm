@@ -33,9 +33,13 @@
 						</div>
 						<div class="files">
 							<h2>{{_.FILES}}</h2>
+							<ul>
 							{{#attachedFiles}}
-								{{.}}
+								<li class="list-item">
+									<a target="blank" href="/files/{{.}}">{{.}}</a>
+								</li>
 							{{/attachedFiles}}
+							</ul>
 						</div>
 					</div>
 				{{/editable?}}
