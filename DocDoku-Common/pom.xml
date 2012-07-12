@@ -41,6 +41,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>docdoku-common</finalName>
     </build>
     <dependencies>
         <dependency>

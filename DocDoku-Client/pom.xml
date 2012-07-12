@@ -25,6 +25,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>docdoku-client</finalName>
     </build>
     <dependencies>
         <dependency>

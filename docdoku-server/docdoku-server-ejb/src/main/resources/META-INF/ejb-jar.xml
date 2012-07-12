@@ -56,5 +56,5 @@
             <rollback>true</rollback>
         </application-exception>
     </assembly-descriptor>
-    <ejb-client-jar>DocDoku-Common.jar</ejb-client-jar>
+    <ejb-client-jar>docdoku-common.jar</ejb-client-jar>
 </ejb-jar>

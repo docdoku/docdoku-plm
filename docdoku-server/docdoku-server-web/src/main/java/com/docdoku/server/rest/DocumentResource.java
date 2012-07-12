@@ -604,7 +604,7 @@ public class DocumentResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-
+/*
     @POST
     @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
     @Consumes("multipart/form-data")
@@ -650,7 +650,7 @@ public class DocumentResource {
             }
         }
     }
-
+*/
     
     @GET
     @Consumes("application/json;charset=UTF-8")
