@@ -1,0 +1,96 @@
+.scroll-area {
+	overflow: hidden;
+	.scroll-content {
+		position: relative;
+		.scroll-item {
+			position: relative;
+		}
+	}
+}
+.document-edit {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 1000;
+	.wrapper { // workaround for a firefox bug https://bugzilla.mozilla.org/show_bug.cgi?id=579776
+		.border-radius(3px 0 0 3px);
+		.box-orient(vertical);
+		.box-shadow(0 0 8px darken(@actionBarBackground, 50%));
+		.display(box);
+		background-color: rgba(0, 0, 0, 0.7);
+		width: 100%; // firefox bug workaround https://bugzilla.mozilla.org/show_bug.cgi?id=625694
+		height: 100%;
+		> header, > footer {
+			background: @navBackground;
+			padding: 4px 8px;
+		}
+		> header {
+			.border-radius(3px 0 0 0);
+		}
+		> footer {
+			.border-radius(0 0 0 3px);
+		}
+		> section {
+			.box-flex(1);
+			overflow: auto;
+			padding: 8px 8px;
+			.properties,
+			.attributes {
+				.name {
+					font-weight: bold;
+				}
+			}
+			.document.properties {
+				.border-radius(3px 3px 3px 3px);
+				.column-count(2);
+				.column-rule(1px solid #000);
+				.column-width(50%);
+				background: @white;
+				padding: 8px;
+			}
+			form {
+				padding: 0;
+				> header, > footer {
+					background: #CCC;
+					padding: 4px 8px;
+					.border-radius(3px 3px 3px 3px);
+				}
+				> footer {
+					bottom: 0;
+				}
+				> section {
+					.box-flex(1);
+					padding: 8px;
+				}
+			}
+			.tabs {
+				width: 100%;
+				.iteration-nav {
+					.nav {
+						.border-radius(3px 3px 3px 3px);
+						white-space: nowrap;
+						li {
+							display: inline-block;
+							float: none;
+							a {
+								background-color:  @white;
+							}
+							&.active a {
+								color:  @white;
+								background-color:  @grayLight;
+							}
+						}
+					}
+				}
+				.tab-content {
+					.border-radius(3px 3px 3px 3px);
+					.box-flex(1);
+					background: @white;
+					margin: 8px 0;
+					padding: 4px 8px;
+				}
+			}
+		}
+	}
+}

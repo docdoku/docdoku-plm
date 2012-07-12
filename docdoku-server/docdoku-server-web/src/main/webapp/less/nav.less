@@ -1,0 +1,136 @@
+#home_link {
+	background: no-repeat left;
+	background-image: url("../images/icon-place-home.png");
+	padding: 20px;
+	opacity: .8;
+}
+#home_link:hover {
+	opacity: 1;
+}
+.navbar {
+	.nav > li > a {
+		color: @white;
+	}
+	.nav > li > a:hover {
+		font-weight: bold;
+	}
+	.icon-brand-plm {
+		margin-right: 8px;
+		float: left;
+	}
+}
+.navbar-fixed-top {
+	position: static;
+	margin-bottom: 0;
+}
+
+#nav {
+	.well;
+	.border-radius(0);
+	.box-shadow(1px 1px 3px darken(@actionBarBackground, 35%));
+	border: none;
+	margin-bottom: 0;
+	width: 15%;
+	.nav-header {
+		font-size: 12px;
+	}
+	.nav-list-entry {
+		height: 26px;
+		line-height: 26px;
+		margin-left: -15px;
+		margin-right: -15px;
+		padding: 0 15px;
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+		.icon {
+			float: left;
+		}
+		width: 100%;
+		float: left;
+		> a, .actions {
+			vertical-align: middle;
+			float: left;
+		}
+		> a {
+			float: left;
+			.status {
+				float: left;
+			}
+		}
+		.dropdown-toggle {
+			.border-radius(0);
+			margin: 0 0 0 8px;
+			display: none;
+			border: none;
+			background: none;
+			.box-shadow(none);
+			.caret {
+				border-top-color: #000000;
+				opacity: .5;
+			}
+		}
+		.dropdown-toggle:hover {
+			background: #CCC;
+			.caret {
+				opacity: 1;
+			}
+		}
+		.dropdown-menu {
+			margin: -27px 0 0 7px;
+			a {
+				line-height: 24px;
+			}
+			.new-folder .icon {
+				.icon-menu-folder-new;
+			}
+			.edit .icon {
+				.icon-menu-edit;
+			}
+			.delete .icon {
+				.icon-menu-delete;
+			}
+		}
+	}
+	.nav-list-entry:hover {
+		> a {
+			text-decoration: none;
+		}
+		background-color: #EEE;
+		.dropdown-toggle {
+			display: block;
+		}
+	}
+	.nav-list-entry.active, .nav-list-entry.active > a {
+		text-shadow: 0 -1px 0 @grayLight;
+		color:  @white;
+		background-color:  @grayLight;
+	}
+	.items {
+		overflow: visible;
+		list-style-type: none;
+	}
+}
+#folder-nav {
+	.clearfix();
+	.folder {
+		.status {
+			.icon-nav-folder-status-closed;
+		}
+		.icon {
+			.icon-nav-folder;
+		}
+	}
+	.folder.open {
+		.status {
+			.icon-nav-folder-status-opened;
+		}
+		.icon {
+			.icon-nav-folder-opened;
+		}
+	}
+	.folder.home > .header > a .icon {
+		.icon-nav-folder-home;
+	}
+}
+#tags-nav {
+	.clearfix();
+}

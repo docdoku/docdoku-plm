@@ -1,0 +1,10 @@
+<div class="control-group">
+	<label class="control-label" for="input-{{view.cid}}">{{_.TEMPLATE}}</label>
+	<div class="controls">
+		<select class="input-xlarge" id="select-{{view.cid}}">
+			{{#collection}}
+			<option value="{{id}}">{{id}}</option>
+			{{/collection}}
+		</select>
+	</div>
+</div>
