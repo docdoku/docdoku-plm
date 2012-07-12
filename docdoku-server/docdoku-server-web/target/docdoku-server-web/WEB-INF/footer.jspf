@@ -1,6 +1,0 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:bundle basename="com.docdoku.server.localization.header_footer_resource">
-    <div id="footer">        
-        <p>Copyright 2006-2011 - <a href="http://www.docdoku.com">DocDoku</a></p>
-    </div>
-</fmt:bundle>
