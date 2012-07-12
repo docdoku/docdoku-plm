@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+*.iml
+DocDoku-ear/docdoku-server-ear/target
+DocDoku-ear/docdoku-server-ejb/target
+DocDoku-ear/docdoku-server-web/target
+DocDoku-Common/target
+DocDoku-Client/target
+

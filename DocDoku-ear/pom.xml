@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.docdoku</groupId>
+  <artifactId>docdoku-server</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>docdoku-server</name>
+  <url>http://maven.apache.org</url>
+  <modules>
+    <module>docdoku-server-ear</module>
+    <module>docdoku-server-web</module>
+    <module>docdoku-server-ejb</module>
+  </modules>
+</project>
