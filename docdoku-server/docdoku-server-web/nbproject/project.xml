@@ -82,6 +82,7 @@
                 </library>
                 <library dirs="200">
                     <file>${libs.restlib_gfv3ee6.classpath}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.commons-beanutils-1.8.3.jar}</file>

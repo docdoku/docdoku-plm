@@ -6,4 +6,13 @@ docdoku-server/docdoku-server-ejb/target
 docdoku-server/docdoku-server-web/target
 docdoku-common/target
 docdoku-client/target
-
+docdoku-server/dist
+docdoku-server/docdoku-server-ejb/dist
+docdoku-server/docdoku-server-web/dist
+docdoku-common/dist
+docdoku-client/dist
+docdoku-server/build
+docdoku-server/docdoku-server-ejb/build
+docdoku-server/docdoku-server-web/build
+docdoku-common/build
+docdoku-client/build
