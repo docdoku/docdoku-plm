@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>DocDoku-Client</name>
+            <name>docdoku-client</name>
             <source-roots>
                 <root id="src.java.dir"/>
                 <root id="src.resources.dir"/>
@@ -14,7 +14,7 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>DocDoku-Common</foreign-project>
+                <foreign-project>docdoku-common</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

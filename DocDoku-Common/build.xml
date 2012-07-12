@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="DocDoku-Common" default="default" basedir=".">
-    <description>Builds, tests, and runs the project DocDoku-Common.</description>
+<project name="docdoku-common" default="default" basedir=".">
+    <description>Builds, tests, and runs the project docdoku-common.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -59,7 +59,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="DocDoku-Common-impl.jar">
+        <target name="run" depends="docdoku-common-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>

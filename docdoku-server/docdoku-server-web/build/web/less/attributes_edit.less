@@ -1,0 +1,41 @@
+.attributes-edit,
+.files-edit {
+	.file-delete {
+		display: none;
+		&:checked + .remove {
+			color: @red;
+			opacity: 1;
+		}
+	}
+	.add {
+		margin-bottom: 8px;
+	}
+	.remove {
+		.close;
+		&:hover {
+			color: @red;
+			opacity: 1;
+		}
+	}
+	.list-item {
+		display: table;
+		> * {
+			display: table-cell;
+			vertical-align: middle;
+			> * {
+				width: auto;
+				margin: 4px;
+			}
+		}
+	}
+	.controls.boolean {
+		> input {
+			&:checked ~ .false {
+				display: none;
+			}
+			&:not(:checked) ~ .true {
+				display: none;
+			}
+		}
+	}
+}

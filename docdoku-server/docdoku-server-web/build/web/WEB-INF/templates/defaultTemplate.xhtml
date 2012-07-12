@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <f:loadBundle var="i18nTemplate" basename="com.docdoku.server.localization.header_footer_resource"/>
+    <f:loadBundle var="i18nRecoveryRequestForm" basename="com.docdoku.server.localization.recoveryRequestForm_resource"/>
+    <f:loadBundle var="i18nRecovery" basename="com.docdoku.server.localization.recovery_resource"/>
+    <f:loadBundle var="i18nRecoveryForm" basename="com.docdoku.server.localization.recoveryForm_resource"/>
+    <f:loadBundle var="i18nRecoveryRequested" basename="com.docdoku.server.localization.recoveryRequested_resource"/>
+    <h:head>
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <title><ui:insert name="title"/></title>
+        <link rel="Shortcut Icon" type="image/ico" href="#{facesContext.externalContext.requestContextPath}/images/favicon.ico"/>
+        <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/css/main.css" media="screen"/>
+    </h:head>
+
+    <h:body>
+        <div id="page">
+            <script type="text/javascript">
+    <!--
+    function switchMenu(objet){
+        var el = document.getElementById(objet);
+        if ( el.style.display != 'none' ) {
+            el.style.display = 'none';
+        }
+        else {
+            el.style.display = '';
+        }
+    }
+    //-->
+            </script>
+            <div id="header">
+                <span id="home">
+                    <a href="#{facesContext.externalContext.requestContextPath}/">#{i18nTemplate['toplinks.home']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/download.jsp">#{i18nTemplate['menu.download']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/help/help.jsp">#{i18nTemplate['menu.help']}</a>
+                </span>
+                <span id="toplinks">
+                    <c:choose>
+                        <c:when test="${sessionScope.account==null}" >
+                            #{i18nTemplate['toplinks.notRegistered']} <a href="#{facesContext.externalContext.requestContextPath}/registrationForm.jsp">#{i18nTemplate['toplinks.subscribe']}</a>
+                        </c:when>
+                        <c:otherwise>
+                            #{i18nTemplate['toplinks.welcome']} ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');">#{i18nTemplate['toplinks.workspace']}&#9660;</a>
+                            <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
+                                <li>
+                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/admin/workspacesMenu.jsp">
+                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                             onmouseout="this.style.backgroundColor='';this.style.color='';">#{i18nTemplate['toplinks.admin']}</div></a>
+                                </li>
+                                <hr/>
+                                <c:forEach var="item" items="${administeredWorkspaces}">
+                                    <li>
+                                        <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/explorer/${item.value.id}">
+                                            <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                 onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
+                                    </li>
+                                </c:forEach>
+
+                                <c:forEach var="item" items="${regularWorkspaces}">
+                                    <li>
+                                        <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/explorer/${item.id}">
+                                            <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                 onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
+                                    </li>
+                                </c:forEach>
+
+                            </ul>
+
+                            | <a href="#{facesContext.externalContext.requestContextPath}/admin/accountEditionForm.jsp">#{i18nTemplate['toplinks.account']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/admin/logout.jsp">#{i18nTemplate['toplinks.logout']}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+            </div>
+
+            <div id="content">
+                <ui:insert name="content"/>
+            </div>
+
+            <div id="footer">
+                <p>Copyright 2006-2011 - <a href="http://www.docdoku.com">DocDoku</a></p>
+            </div>
+        </div>
+    </h:body>
+
+</html>

@@ -2,7 +2,7 @@
 <!--
         *** GENERATED - DO NOT EDIT  ***
         -->
-<project name="DocDoku-war-rest-build" basedir=".." xmlns:webproject3="http://www.netbeans.org/ns/web-project/3" xmlns:webproject2="http://www.netbeans.org/ns/web-project/2" xmlns:webproject1="http://www.netbeans.org/ns/web-project/1" xmlns:jaxrs="http://www.netbeans.org/ns/jax-rs/1">
+<project name="docdoku-server-web-rest-build" basedir=".." xmlns:webproject3="http://www.netbeans.org/ns/web-project/3" xmlns:webproject2="http://www.netbeans.org/ns/web-project/2" xmlns:webproject1="http://www.netbeans.org/ns/web-project/1" xmlns:jaxrs="http://www.netbeans.org/ns/jax-rs/1">
     <target name="-check-trim">
         <condition property="do.trim">
             <and>
