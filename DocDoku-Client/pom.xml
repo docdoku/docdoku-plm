@@ -26,18 +26,12 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>maven2-repository.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -64,7 +58,6 @@
             <artifactId>jaxws-rt</artifactId>
             <version>2.2.3</version>
         </dependency>
-
         <dependency>
             <groupId>com.jyloo</groupId>
             <artifactId>synthetica</artifactId>

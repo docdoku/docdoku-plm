@@ -11,8 +11,7 @@
     <packaging>ear</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>docdoku-server-ear JavaEE6 Assembly</name>
-    <url>http://maven.apache.org</url>
-
+    <url>http://www.ow2.org/view/ActivitiesDashboard/DocDoku</url>
     <build>
         <plugins>
             <plugin>

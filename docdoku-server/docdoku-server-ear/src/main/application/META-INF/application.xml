@@ -2,11 +2,11 @@
 <application version="6" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
   <display-name>DocDoku-ear</display-name>
   <module>
-    <ejb>DocDoku-ejb.jar</ejb>
+    <ejb>docdoku-server-ejb.jar</ejb>
   </module>
   <module>
     <web>
-      <web-uri>DocDoku-war.war</web-uri>
+      <web-uri>docdoku-server-web.war</web-uri>
       <context-root>/</context-root>
     </web>
   </module>

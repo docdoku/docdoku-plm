@@ -11,21 +11,20 @@
     <packaging>ejb</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>docdoku-server-ejb Java EE 6 EJB</name>
-    <url>http://maven.apache.org</url>
+    <url>http://www.ow2.org/view/ActivitiesDashboard/DocDoku</url>
     <dependencies>
-
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
@@ -45,23 +44,8 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.0.1-FINAL</version>
-        </dependency>
-
-        
+        </dependency>    
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>java.net2</id>
-            <name>Java.Net Maven2 Repository, hosts the javaee-api dependency</name>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-        <repository>
-            <id>EclipseLink Repo</id>
-            <url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
-        </repository>   
-    </repositories>
-
     <build>
         <plugins>
             <plugin>
@@ -85,42 +69,6 @@
         </plugins>
         <finalName>docdoku-server-ejb</finalName>
     </build>
-    <profiles>
-        <profile>
-            <id>endorsed</id>
-            <activation>
-                <property>
-                    <name>sun.boot.class.path</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>2.0.2</version>
-                        <configuration>
-                            <!-- javaee6 contains upgrades of APIs contained within the JDK itself.
-                                 As such these need to be placed on the bootclasspath, rather than classpath of the
-                                 compiler.
-                                 If you don't make use of these new updated API, you can delete the profile.
-                                 On non-SUN jdk, you will need to create a similar profile for your jdk, with the similar property as sun.boot.class.path in Sun's JDK.-->
-                            <compilerArguments>
-                                <bootclasspath>${settings.localRepository}/javax/javaee-endorsed-api/6.0/javaee-endorsed-api-6.0.jar${path.separator}${sun.boot.class.path}</bootclasspath>
-                            </compilerArguments>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>javax</groupId>
-                                <artifactId>javaee-endorsed-api</artifactId>
-                                <version>6.0</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <properties>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
