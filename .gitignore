@@ -1,6 +1,7 @@
 .DS_Store
 .idea
 *.iml
+private.properties
 docdoku-server/docdoku-server-ear/target
 docdoku-server/docdoku-server-ejb/target
 docdoku-server/docdoku-server-web/target
