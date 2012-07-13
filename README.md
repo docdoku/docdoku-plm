@@ -17,3 +17,11 @@ Docdoku PLM is an high end Open Source PLM solution.
 ## Project support
 
 The Project is lead by the DocDoku team (6 committers) and is part of the [OW2 Consortium](http://ow2.org/)
+
+## Setting Up
+
+You have a full description of the [Installation Guide](https://github.com/docdoku/docdoku-plm/wiki)
+
+## Coding 
+
+You may use clone or fork the code GitHub. Thought you can use it with Maven in any IDE, the code is also configured for working with Netbeans without Maven.
