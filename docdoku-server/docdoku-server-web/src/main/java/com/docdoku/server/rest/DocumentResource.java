@@ -49,6 +49,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.ServletContext;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 import javax.ws.rs.*;
@@ -67,16 +68,14 @@ public class DocumentResource {
 
     @EJB
     private ICommandLocal commandService;
-    
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
-
     @Resource
     private UserTransaction utx;
-
-    
     @Context
     private UriInfo context;
+    @Resource
+    ServletContext servletContext;
     private Mapper mapper;
 
     public DocumentResource() {
@@ -346,7 +345,6 @@ public class DocumentResource {
 
             commandService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
-
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -604,7 +602,7 @@ public class DocumentResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-/*
+
     @POST
     @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
     @Consumes("multipart/form-data")
@@ -615,13 +613,13 @@ public class DocumentResource {
             int lastDash = docKey.lastIndexOf('-');
             String id = docKey.substring(0, lastDash);
             String version = docKey.substring(lastDash + 1, docKey.length());
-                        
+
             DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, id, version, docIteration);
             File vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
-     
+
             vaultFile.getParentFile().mkdirs();
             vaultFile.createNewFile();
-            
+
             InputStream in = new BufferedInputStream(inputStream, BUFFER_CAPACITY);
             OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
 
@@ -635,87 +633,88 @@ public class DocumentResource {
                 in.close();
                 out.close();
             }
-            commandService.saveFileInDocument(docPK, fileName, vaultFile.length());          
+            commandService.saveFileInDocument(docPK, fileName, vaultFile.length());
             utx.commit();
             return Response.ok().build();
-        } catch (Exception pEx) {
-            throw new RuntimeException("Error while uploading the file.", pEx);
+        } catch (Exception ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
         } finally {
             try {
                 if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                     utx.rollback();
                 }
-            } catch (Exception pRBEx) {
-                throw new RuntimeException("Rollback failed.", pRBEx);
+            } catch (Exception ex) {
+                throw new RestApiException(ex.toString(), ex.getMessage());
             }
         }
     }
-*/
-    
+
     @GET
     @Consumes("application/json;charset=UTF-8")
     @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
     @Produces("image/jpeg")
     public Response downloadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @HeaderParam("Range") Range pRange, @QueryParam("type") String type) {
-        String elementType = "documents";
-        int lastDash = docKey.lastIndexOf('-');
-        String id = docKey.substring(0, lastDash);
-        String version = docKey.substring(lastDash + 1, docKey.length());
+        try {
+            String elementType = "documents";
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
 
-        String fullName = workspaceId + "/" + elementType + "/" + id + "/" + version + "/" + docIteration + "/" + fileName;
+            String fullName = workspaceId + "/" + elementType + "/" + id + "/" + version + "/" + docIteration + "/" + fileName;
 
-        
-        File dateFile = null;//commandService.getDataFile(fullName);
-        File fileToOutput=null;
-        String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dateFile);
-        
-        
-        if ("pdf".equals(type)) {
-            contentType = "application/pdf";
-            //String ooHome = this.getInitParameter("OO_HOME");
-            //int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
-            //fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
-        } else if ("swf".equals(type)) {
-            contentType="application/x-shockwave-flash";
-            //String pdf2SWFHome = this.getInitParameter("PDF2SWF_HOME");
-            //String ooHome = this.getInitParameter("OO_HOME");
-            //int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
-            //FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
-            //fileToOutput = fileConverter.convertToSWF(dateFile);
-        } else {
-            //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");             
-            fileToOutput = dateFile;
-        }
-            
-       
 
-        
-        ResponseBuilder rb;
-        if (pRange != null) {
-            try {
-                Range properRange = Range.validateRangeWithFile(pRange, fileToOutput);
-                rb = Response.status(206);
-                rb.type(contentType);
-                rb.entity(new StreamingBinaryResourceOutput(fileToOutput, properRange));
-                rb.header("Content-Length", properRange.getlengthOfTheBytesRange());
-                rb.header("Content-Range", "bytes " + properRange.getMin() + "-" + properRange.getMax() + "/" + fileToOutput.length() + "");
-            } catch (RequestedRangeNotSatisfiableException ex) {
-                rb = Response.status(416);
-                rb.header("Content-Range", "bytes */" + fileToOutput.length() + "");
+            File dataFile = commandService.getDataFile(fullName);
+            File fileToOutput = null;
+            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
+            String contentDisposition = null;
+
+            if ("pdf".equals(type)) {
+                contentType = "application/pdf";
+                String ooHome = servletContext.getInitParameter("OO_HOME");
+                int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
+                fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
+            } else if ("swf".equals(type)) {
+                contentType = "application/x-shockwave-flash";
+                String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
+                String ooHome = servletContext.getInitParameter("OO_HOME");
+                int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
+                FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
+                fileToOutput = fileConverter.convertToSWF(dataFile);
+            } else {
+                contentDisposition = "attachment; filename=\"" + dataFile.getName() + "\"";             
+                fileToOutput = dataFile;
             }
-        } else {
-            rb = Response.ok();
-            rb.type(contentType);
-            rb.entity(new StreamingBinaryResourceOutput(fileToOutput));
-            rb.header("Content-Length", fileToOutput.length());
-        }
-        rb.header("Accept-Ranges", "bytes");
 
-        return rb.build();
+            ResponseBuilder rb;
+            if (pRange != null) {
+                try {
+                    Range properRange = Range.validateRangeWithFile(pRange, fileToOutput);
+                    rb = Response.status(206);
+                    rb.type(contentType);
+                    rb.entity(new StreamingBinaryResourceOutput(fileToOutput, properRange));
+                    rb.header("Content-Length", properRange.getlengthOfTheBytesRange());
+                    rb.header("Content-Range", "bytes " + properRange.getMin() + "-" + properRange.getMax() + "/" + fileToOutput.length() + "");
+                } catch (RequestedRangeNotSatisfiableException ex) {
+                    rb = Response.status(416);
+                    rb.header("Content-Range", "bytes */" + fileToOutput.length() + "");
+                }
+            } else {
+                rb = Response.ok();
+                rb.type(contentType);
+                rb.entity(new StreamingBinaryResourceOutput(fileToOutput));
+                rb.header("Content-Length", fileToOutput.length());
+            }
+            if(contentDisposition!=null)
+                rb.header("Content-disposition", contentDisposition);
+            
+            rb.header("Accept-Ranges", "bytes");
+
+            return rb.build();
+        } catch (Exception ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
-    
-    
-    
+
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {
             return null;

@@ -94,14 +94,14 @@ public class UploadDownloadServlet extends HttpServlet {
             File fileToOutput;
             if ("pdf".equals(pRequest.getParameter("type"))) {
                 pResponse.setContentType("application/pdf");
-                String ooHome = this.getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
+                String ooHome = getServletContext().getInitParameter("OO_HOME");
+                int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
                 fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
             } else if ("swf".equals(pRequest.getParameter("type"))) {
                 pResponse.setContentType("application/x-shockwave-flash");
-                String pdf2SWFHome = this.getInitParameter("PDF2SWF_HOME");
-                String ooHome = this.getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(this.getInitParameter("OO_PORT"));
+                String pdf2SWFHome = getServletContext().getInitParameter("PDF2SWF_HOME");
+                String ooHome = getServletContext().getInitParameter("OO_HOME");
+                int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
                 FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
                 fileToOutput = fileConverter.convertToSWF(dataFile);
             } else {
