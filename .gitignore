@@ -16,3 +16,10 @@ docdoku-server/docdoku-server-ejb/build
 docdoku-server/docdoku-server-web/build
 docdoku-common/build
 docdoku-client/build
+/DocDoku-Common/nbproject/
+/docdoku-ccommon/nbproject/private/
+/docdoku-Cclient/nbproject/private/
+/docdoku-client/nbproject/private/
+/docdoku-common/nbproject/
+/docdoku-cclient/nbproject/
+/docdoku-ccommon/nbproject/
