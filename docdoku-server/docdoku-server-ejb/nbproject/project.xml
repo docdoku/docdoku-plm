@@ -6,6 +6,7 @@
             <name>docdoku-server-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">file.reference.poi-3.0.1-FINAL-20070705.jar</included-library>
+            <included-library dirs="200">reference.DocDoku-Common.jar</included-library>
             <included-library dirs="200">file.reference.lucene-core-3.0.3.jar</included-library>
             <included-library dirs="200">file.reference.poi-contrib-3.0.1-FINAL-20070705.jar</included-library>
             <included-library dirs="200">file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar</included-library>
@@ -19,7 +20,7 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>docdoku-common</foreign-project>
+                <foreign-project>DocDoku-Common</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

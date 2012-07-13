@@ -1,6 +1,7 @@
 .DS_Store
 .idea
 *.iml
+
 private.properties
 docdoku-server/docdoku-server-ear/target
 docdoku-server/docdoku-server-ejb/target
@@ -17,10 +18,9 @@ docdoku-server/docdoku-server-ejb/build
 docdoku-server/docdoku-server-web/build
 docdoku-common/build
 docdoku-client/build
-/DocDoku-Common/nbproject/
-/docdoku-ccommon/nbproject/private/
-/docdoku-Cclient/nbproject/private/
-/docdoku-client/nbproject/private/
-/docdoku-common/nbproject/
-/docdoku-cclient/nbproject/
-/docdoku-ccommon/nbproject/
+
+docdoku-common/nbproject/private
+docdoku-client/nbproject/private
+docdoku-server/docdoku-server-web/nbproject/private
+docdoku-server/docdoku-server-ejb/nbproject/private
+docdoku-server/nbproject/private
