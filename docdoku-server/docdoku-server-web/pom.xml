@@ -14,7 +14,7 @@
     <url>http://www.ow2.org/view/ActivitiesDashboard/DocDoku</url>
     <dependencies>
         
-        
+        <!-- JAXRS -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
@@ -30,7 +30,36 @@
             <artifactId>mimepull</artifactId>
             <version>1.2</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.glassfish.v3.osgi</groupId>
+            <artifactId>jersey-gf-server</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>1.13</version>
+        </dependency>
+
+
+
+
+
         <!-- docdoku core -->
         <dependency>
             <groupId>com.docdoku</groupId>
