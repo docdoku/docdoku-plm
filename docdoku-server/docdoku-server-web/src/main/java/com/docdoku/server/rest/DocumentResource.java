@@ -38,6 +38,7 @@ import com.docdoku.server.rest.exceptions.ApplicationException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,6 +55,7 @@ import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -75,7 +77,8 @@ public class DocumentResource {
     @Context
     private UriInfo context;
     @Resource
-    ServletContext servletContext;
+    private ServletContext servletContext;
+    
     private Mapper mapper;
 
     public DocumentResource() {
@@ -605,9 +608,9 @@ public class DocumentResource {
 
     @POST
     @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
-    @Consumes("multipart/form-data")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json;charset=UTF-8")
-    public Response uploadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @FormParam("upload") InputStream inputStream) {
+    public Response uploadFile(@FormParam("upload") File upload, @PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
         try {
             utx.begin();
             int lastDash = docKey.lastIndexOf('-');
@@ -620,7 +623,7 @@ public class DocumentResource {
             vaultFile.getParentFile().mkdirs();
             vaultFile.createNewFile();
 
-            InputStream in = new BufferedInputStream(inputStream, BUFFER_CAPACITY);
+            InputStream in = new BufferedInputStream(new FileInputStream(upload), BUFFER_CAPACITY);
             OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
 
             byte[] data = new byte[CHUNK_SIZE];
@@ -652,7 +655,6 @@ public class DocumentResource {
     @GET
     @Consumes("application/json;charset=UTF-8")
     @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
-    @Produces("image/jpeg")
     public Response downloadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @HeaderParam("Range") Range pRange, @QueryParam("type") String type) {
         try {
             String elementType = "documents";
