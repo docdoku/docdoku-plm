@@ -13,17 +13,17 @@
         <!--<param-value>/usr/local/bin</param-value>-->
         <!--<param-value>C:\tools\SWFTools</param-value>-->
         <param-value>/usr/bin</param-value>
-    <context-param>
+    </context-param>
     <context-param>
         <param-name>OO_HOME</param-name>
         <!--<param-value>C:\Program Files\OpenOffice.org 3</param-value>-->
         <param-value>/usr/lib/openoffice</param-value>
         <!--<param-value>/opt/openoffice.org3</param-value>-->
-    <context-param>
+    </context-param>
     <context-param>
         <param-name>OO_PORT</param-name>
         <param-value>8100</param-value>
-    <context-param>  
+    </context-param>  
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
