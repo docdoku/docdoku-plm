@@ -14,10 +14,7 @@ define([
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.events["click .add"] = this.addUpload;
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/ged
             kumo.assertNotEmpty(this.model, "no model defined in IterationEditFilesView");
             kumo.assert (this.model.className=="DocumentIteration", "model should be a DocumentIteration");
 
@@ -92,11 +89,6 @@ define([
                         var existingFilesCollection = documentIteration.get("attachedFiles");
                         var fileModel = existingFilesCollection.getByCid(fileCid);
                         existingFilesCollection.remove(fileModel);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/ged
                     },
                     failure : function(resp){
                         console.error("error deleting "+shortName+" : "+resp);
