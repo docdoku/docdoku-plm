@@ -22,6 +22,7 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
@@ -32,6 +33,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 
 /**
@@ -58,9 +60,14 @@ public class PartUsageLink implements Serializable {
     private PartMaster component;
     
     @OrderColumn
-    @CollectionTable(name="PARTUSAGELINK_PARTSUBSTITUTELINK")
-    @ElementCollection(fetch=FetchType.LAZY)
+    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<PartSubstituteLink> substitutes=new LinkedList<PartSubstituteLink>();
+
+    
+    @OrderColumn
+    @CollectionTable(name="PARTUSAGELINK_CADINSTANCE")
+    @ElementCollection(fetch=FetchType.LAZY)
+    private List<CADInstance> cadInstances=new LinkedList<CADInstance>();
 
     public PartUsageLink() {
     }
@@ -112,5 +119,14 @@ public class PartUsageLink implements Serializable {
     public void setReferenceDescription(String referenceDescription) {
         this.referenceDescription = referenceDescription;
     }
+
+    public List<CADInstance> getCadInstances() {
+        return cadInstances;
+    }
+
+    public void setCadInstances(List<CADInstance> cadInstances) {
+        this.cadInstances = cadInstances;
+    }
+    
     
 }
