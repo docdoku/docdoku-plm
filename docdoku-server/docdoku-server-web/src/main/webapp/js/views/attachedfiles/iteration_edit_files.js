@@ -14,6 +14,8 @@ define([
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.events["click .add"] = this.addUpload;
+<<<<<<< HEAD
+=======
 
 >>>>>>> origin/ged
             kumo.assertNotEmpty(this.model, "no model defined in IterationEditFilesView");
@@ -90,6 +92,7 @@ define([
                         var existingFilesCollection = documentIteration.get("attachedFiles");
                         var fileModel = existingFilesCollection.getByCid(fileCid);
                         existingFilesCollection.remove(fileModel);
+<<<<<<< HEAD
 
 
 =======

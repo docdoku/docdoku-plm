@@ -34,6 +34,10 @@ define([
             var docKey = doc.id+"-"+doc.version;
 <<<<<<< HEAD
             //documentIterationUrl should be : "/workspaces/"+APP_CONFIG.workspaceId+"/documents/"+docKey+"/iteration/"+this.documentIteration.iteration;
+=======
+            //documentIterationUrl should be :
+            var toto = "/workspaces/"+APP_CONFIG.workspaceId+"/documents/"+docKey+"/iteration/"+this.documentIteration.iteration;
+>>>>>>> origin/ged
             return this.documentIteration.url+"/files/"+this.name;
         },
 

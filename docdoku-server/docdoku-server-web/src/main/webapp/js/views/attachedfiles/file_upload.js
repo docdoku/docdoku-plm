@@ -41,6 +41,7 @@ define([
 
                 var files = $('input[type=file]');
                 var fd = new FormData();
+<<<<<<< HEAD:docdoku-server/docdoku-server-web/src/main/webapp/js/views/attachedfiles/file_upload.js
                 fd.append("testKey", "testValue");
 =======
 >>>>>>> origin/ged:docdoku-server/docdoku-server-web/src/main/webapp/js/views/attachedfiles/file_upload.js
