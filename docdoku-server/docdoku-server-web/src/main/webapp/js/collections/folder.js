@@ -3,6 +3,7 @@ define([
 ], function (
 	Folder
 ) {
+    //TODO : rename the file to FolderList
 	var FolderList = Backbone.Collection.extend({
 		model: Folder,
 		parse: function(data) {
@@ -36,5 +37,6 @@ define([
 			return  baseUrl;
 		}
 	});
+    FolderList.className="FolderList";
 	return FolderList;
 });

@@ -3,7 +3,7 @@ define([
 	"common/date",
 	"views/base",
 	"views/document_new_attributes",
-	"views/iteration_edit_files",
+	"views/attachedfiles/iteration_edit_files",
 	"text!templates/iteration_edit.html"
 ], function (
 	i18n,
@@ -35,19 +35,23 @@ define([
 		rendered: function () {
 			this.attributesView = this.addSubView(
 				new DocumentNewAttributesView({
-					el: "#attributes-" + this.cid,
+					el: "#attributes-" + this.cid
 				})
 			);
 			this.attributesView.render();
 			this.attributesView.collection.reset(this.model.get("instanceAttributes"));
 
+            //model is : {attachedFiles : [ --collection of  AttachedFiles --]}
+            //alert ("sending to IterationEditFilesView : "+JSON.stringify(this.model));
 			this.filesView = this.addSubView(
 				new IterationEditFilesView({
 					el: "#files-" + this.cid,
 					model: this.model
 				})
 			);
-			this.filesView.render();
+			this.filesView.render();//calling Mustache
+
+            //kind of reload ?
 			this.filesView.bind("saved", this.model.fetch);
 		},
 		cancelAction: function () {

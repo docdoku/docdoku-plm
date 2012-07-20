@@ -11,12 +11,12 @@ define([
 		modelEvents: {
 			"change":	"modelChange",
 			"sync":		"modelSync",
-			"destroy":	"modelDestroy",
+			"destroy":	"modelDestroy"
 		},
 		collectionEvents: {
 			"reset":	"collectionReset",
 			"add":		"collectionAdd",
-			"remove":	"collectionRemove",
+			"remove":	"collectionRemove"
 		},
 		initialize: function (options) {
 			// Resolves circular dependency
@@ -84,7 +84,7 @@ define([
 				this._eventsBindings({
 					target: this.model,
 					events: this.modelEvents,
-					action: "bind",
+					action: "bind"
 				});
 			};
 		},
@@ -93,7 +93,7 @@ define([
 				this._eventsBindings({
 					target: this.collection,
 					events: this.collectionEvents,
-					action: "bind",
+					action: "bind"
 				});
 			};
 		},
@@ -102,7 +102,7 @@ define([
 				this._eventsBindings({
 					target: this.model,
 					events: this.modelEvents,
-					action: "unbind",
+					action: "unbind"
 				});
 			};
 		},
@@ -111,7 +111,7 @@ define([
 				this._eventsBindings({
 					target: this.collection,
 					events: this.collectionEvents,
-					action: "unbind",
+					action: "unbind"
 				});
 			};
 		},
@@ -155,7 +155,7 @@ define([
 		alert: function (options) {
 			// AlertView not used to resolve circular dependency
 			var titles = {
-				"error": i18n.ERROR,
+				"error": i18n.ERROR
 			}
 			options.title = options.title ? options.title : titles[options.type];
 			var html = Mustache.render(alert_template, {
@@ -166,7 +166,7 @@ define([
 					}
 			})
 			$("#alerts-" + this.cid).html(html);
-		},
+		}
 	});
 	return BaseView;
 });

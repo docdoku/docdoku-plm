@@ -9,7 +9,7 @@
         <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title><fmt:message key="title"/></title>
+        <title>v 0.2 - <fmt:message key="title"/></title>
 
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
 		<link rel="stylesheet/less" href="<%=request.getContextPath()%>/less/style.less">
@@ -19,6 +19,7 @@
 		<script src="<%=request.getContextPath()%>/js/lib/date.format.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
+        <script src="<%=request.getContextPath()%>/js/lib/kumo.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
 		<script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
@@ -35,7 +36,7 @@
 				baseUrl: "<%=request.getContextPath()%>/js",
 				paths: {
 					"require": "lib/require/1.0.8/require.min",
-					"text": "lib/require/1.0.8/text.min",
+					"text": "lib/require/1.0.8/text.min"
 				},
 				locale: "<%=request.getLocale()%>"
 			});

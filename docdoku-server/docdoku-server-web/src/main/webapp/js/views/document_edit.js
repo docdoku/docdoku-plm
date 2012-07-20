@@ -114,7 +114,7 @@ define([
 			scrollContent.animate({
 				"left": nextLeft
 			});
-		},
+		}
 	});
 	return DocumentEditView;
 });

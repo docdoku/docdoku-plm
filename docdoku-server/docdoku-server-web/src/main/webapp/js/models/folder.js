@@ -1,5 +1,10 @@
 define(function () {
 	var Folder = Backbone.Model.extend({
+
+        initialize : function(){
+            this.className = "Folder";
+        },
+
 		defaults: {
 			home: false
 		},
@@ -9,7 +14,7 @@ define(function () {
 			} else if (this.collection) {
 				return this.collection.url;
 			}
-		},
+		}
 	});
 	return Folder;
 });

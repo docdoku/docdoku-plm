@@ -10,5 +10,6 @@ define([
 		baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags"
 		return baseUrl + "/" + this.parent.get("label") + "/documents";
 	});
+    TagDocumentList.className="TagDocumentList";
 	return TagDocumentList;
 });
