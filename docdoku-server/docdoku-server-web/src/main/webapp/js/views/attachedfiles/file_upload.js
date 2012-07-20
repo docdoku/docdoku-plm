@@ -42,6 +42,8 @@ define([
                 var files = $('input[type=file]');
                 var fd = new FormData();
                 fd.append("testKey", "testValue");
+=======
+>>>>>>> origin/ged:docdoku-server/docdoku-server-web/src/main/webapp/js/views/attachedfiles/file_upload.js
 
                 for (var i = 0 ; i <files.length ; i++){
                     var fileId = files[i].id;
@@ -60,6 +62,7 @@ define([
 			console.debug("progress", evt, this);
 		},
 		load: function (evt) {
+            //on success
 			this.trigger("success", evt, this);
 			this.trigger("finished", evt, this);
 		},
