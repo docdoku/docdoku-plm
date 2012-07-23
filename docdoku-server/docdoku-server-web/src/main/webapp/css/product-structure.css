@@ -95,8 +95,10 @@ html{
   font-size: 10px;  
 }
 
-.nav-list li a {
+.nav-list li a label{
   color: #434C64;
+  font-weight: bold;
+  font-size: 11px;
 }
 
 .nav-list li a i{
@@ -164,6 +166,12 @@ height: 702px;
 
 #product_nav_list li.nav-header{
   margin-top:0px;
+}
+
+#product_nav_list li.nav-header>label{
+  color: #999;
+  font-weight: bold;
+  font-size: 11px;
 }
 
 .nav-list > li > a, .nav-list .nav-header {
