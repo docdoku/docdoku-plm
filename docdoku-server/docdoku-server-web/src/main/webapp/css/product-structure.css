@@ -61,9 +61,11 @@ html{
 }
 
 #nav_list_action_bar{
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   margin-top: -14px;
-  height: 28px; 
+  height: 28px;
+  padding-top: 5px;
+  height: 35px; 
 }
 
 #nav_list_action_bar select{
@@ -78,12 +80,21 @@ html{
   padding-left: 15px;
 }
 
+#nav_list_controls input{
+    width: 245px;
+    float: right;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
 #nav_list_expand i, #nav_list_collapse i{
   -webkit-transform: rotate(135deg);
 }
 
 #nav_list_search_button{
   float: right;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
 }
 
 
@@ -136,7 +147,7 @@ html{
 
 .well{
 border: 1px solid #CFD7E4;
-
+padding-top: 15px;
 /*TODO get left container height*/
 height: 702px;
 }
