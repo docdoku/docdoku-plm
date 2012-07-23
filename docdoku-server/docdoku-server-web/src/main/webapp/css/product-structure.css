@@ -109,17 +109,6 @@ html{
   color: #434C64;
 }
 
-.treeview li {
-background: url(../images/treeview-default-line.gif) 0 0 no-repeat;
-}
-
-.treeview .hitarea {
-  background: url(../images/treeview-default.gif) -64px -25px no-repeat;
-}
-
-.treeview li.lastCollapsable, .treeview li.lastExpandable { 
-  background-image: url(../images/treeview-default.gif); 
-} 
 
 [class^="icon-"] {
   background-image: none;
