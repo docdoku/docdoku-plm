@@ -105,6 +105,25 @@ html{
 
 .nav-list li.active a{
   text-shadow: 0px 1px 0px white;
+  background-color: transparent;
+  color: #434C64;
+}
+
+.treeview li {
+background: url(../images/treeview-default-line.gif) 0 0 no-repeat;
+}
+
+.treeview .hitarea {
+  background: url(../images/treeview-default.gif) -64px -25px no-repeat;
+}
+
+.treeview li.lastCollapsable, .treeview li.lastExpandable { 
+  background-image: url(../images/treeview-default.gif); 
+} 
+
+[class^="icon-"] {
+  background-image: none;
+  display: none;
 }
 
 .header_btn-custom {
