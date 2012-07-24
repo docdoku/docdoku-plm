@@ -1,3 +1,4 @@
+//TODO rename the file to tag_collection
 define([
 	"models/tag"
 ], function (
@@ -18,5 +19,6 @@ define([
 		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags";
 		return baseUrl;
 	});
+    TagList.className="TagList";
 	return TagList;
 });

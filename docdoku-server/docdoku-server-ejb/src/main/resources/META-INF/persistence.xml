@@ -55,6 +55,8 @@
     <class>com.docdoku.core.workflow.TaskModel</class>
     <class>com.docdoku.core.workflow.Workflow</class>
     <class>com.docdoku.core.workflow.WorkflowModel</class>
+    <class>com.docdoku.core.product.Geometry</class>
+    <class>com.docdoku.core.product.PartSubstituteLink</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.logging.level" value="FINE"/>

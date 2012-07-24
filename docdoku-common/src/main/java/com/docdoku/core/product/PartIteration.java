@@ -43,6 +43,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @IdClass(com.docdoku.core.product.PartIterationKey.class)
 @Entity
-public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration> {
+public class PartIteration implements Serializable, Comparable<PartIteration> {
     
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
@@ -71,12 +72,11 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     
     @Id
     private int iteration;
-    
-    
 
+    @OrderBy("quality")
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(inverseJoinColumns = {
-        @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
+        @JoinColumn(name = "GEOMETRY_ID", referencedColumnName = "ID")
     },
     joinColumns = {
         @JoinColumn(name = "PARTITERATION_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
@@ -84,7 +84,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "PARTITERATION_PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
         @JoinColumn(name = "PARTITERATION_ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
+    private List<Geometry> geometries = new LinkedList<Geometry>();
 
     private String iterationNote;
 
@@ -134,15 +134,18 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         author = pAuthor;
     }
     
-    
-    @Override
-    public Set<BinaryResource> getAttachedFiles() {
-        return attachedFiles;
-    }
-    
     public String getWorkspaceId() {
         return partRevision==null?"":partRevision.getWorkspaceId();
     }
+
+    public List<Geometry> getGeometries() {
+        return geometries;
+    }
+
+    public void setGeometries(List<Geometry> geometries) {
+        this.geometries = geometries;
+    }
+    
     
     public String getPartNumber() {
         return partRevision==null?"":partRevision.getPartNumber();
@@ -200,11 +203,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
 
     public void setPartRevision(PartRevision partRevision) {
         this.partRevision = partRevision;
-    }
-
-    
-    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
-        this.attachedFiles = attachedFiles;
     }
 
     public List<PartUsageLink> getComponents() {

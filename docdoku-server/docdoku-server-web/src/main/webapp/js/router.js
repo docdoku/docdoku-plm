@@ -26,49 +26,49 @@ function (
 			"workflows":		"workflows",
 			"checkedouts":		"checkedouts",
 			"tasks":			"tasks",
-			"":					"default",
+			"":					"defaults"
 		},
 		folders: function() {
-			this.default();
+			this.defaults();
 			FolderNavView.getInstance().toggle();
 		},
 		folder: function(path) {
-			this.default();
+			this.defaults();
 			FolderNavView.getInstance().show(path);
 		},
 		tags: function() {
-			this.default();
+			this.defaults();
 			TagNavView.getInstance().toggle();
 		},
 		tag: function(id) {
-			this.default();
+			this.defaults();
 			TagNavView.getInstance().show(id);
 		},
 		workflows: function() {
-			this.default();
+			this.defaults();
 			var view = WorkflowNavView.getInstance();
 			view.showContent();
 		},
 		templates: function() {
-			this.default();
+			this.defaults();
 			var view = TemplateNavView.getInstance();
 			view.showContent();
 		},
 		checkedouts: function() {
-			this.default();
+			this.defaults();
 			var view = CheckedoutNavView.getInstance();
 			view.showContent();
 		},
 		tasks: function() {
-			this.default();
+			this.defaults();
 		},
-		default: function() {
+		defaults: function() {
 			FolderNavView.getInstance();
 			TagNavView.getInstance();
 			WorkflowNavView.getInstance();
 			TemplateNavView.getInstance();
 			CheckedoutNavView.getInstance();
-		},
+		}
 	});
 	Router = singletonDecorator(Router);
 	return Router;

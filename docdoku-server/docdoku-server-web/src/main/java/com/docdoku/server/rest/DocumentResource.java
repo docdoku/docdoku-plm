@@ -76,8 +76,7 @@ public class DocumentResource {
     private UserTransaction utx;
     @Context
     private UriInfo context;
-
-
+    //@Resource
     private ServletContext servletContext;
     
     private Mapper mapper;

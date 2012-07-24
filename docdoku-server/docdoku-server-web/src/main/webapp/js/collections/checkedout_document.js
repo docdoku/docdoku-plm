@@ -10,5 +10,6 @@ define([
 		baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
 		return  baseUrl + "/checkedout";
 	});
+    CheckedoutDocumentList.className="CheckedoutDocumentList";
 	return CheckedoutDocumentList;
 });

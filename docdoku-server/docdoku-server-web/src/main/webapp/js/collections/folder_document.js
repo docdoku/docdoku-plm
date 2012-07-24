@@ -4,7 +4,7 @@ define([
 	Document
 ) {
 	var FolderDocumentList = Backbone.Collection.extend({
-		model: Document,
+		model: Document
 	});
 	FolderDocumentList.prototype.__defineGetter__("url", function () {
 		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId;
@@ -14,5 +14,6 @@ define([
 			return baseUrl + "/documents";
 		}
 	});
+    FolderDocumentList.className="FolderDocumentList";
 	return FolderDocumentList;
 });

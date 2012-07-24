@@ -12,5 +12,6 @@ define([
 		return "/api/workspaces/" + APP_CONFIG.workspaceId + "/templates";
 	});
 	TemplateList = singletonDecorator(TemplateList);
+    TemplateList.className="TemplateList";
 	return TemplateList;
 });
