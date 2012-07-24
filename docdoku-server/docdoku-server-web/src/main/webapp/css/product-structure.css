@@ -16,7 +16,7 @@ html{
 }
 
 .container-fluid{
-  padding-right: 20px;
+  padding-right: 0px;
   padding-left: 0px;
   height: 100%;
 }
@@ -36,10 +36,8 @@ html{
 }
 
 .row-fluid .span9{
-  height: 40px;
+  height: 100%;
   margin-left: 0px;
-/*  background-color: whiteSmoke;
-  -webkit-box-shadow: 1px 1px 2px #CCC;*/
 }
 
 #content_header_bar{
@@ -81,7 +79,7 @@ html{
 }
 
 #nav_list_controls input{
-    width: 245px;
+    width: 75%;
     float: right;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
@@ -208,4 +206,39 @@ margin-right:0px;
   -webkit-appearance: none;
   border-radius: 0px;
   margin-top: 1px;
+}
+
+/*
+*RIGHT PANEL
+*/
+
+#content{
+  height: 100%;
+}
+
+#container {
+/*  width: 66%;
+  position: absolute;
+  right: 0px;
+  margin-right: 120px;
+  margin-top: 10%;*/
+  height: 80%;
+  border: 1px black dotted;
+}
+
+#info {
+  color: #fff;
+  position: absolute;
+  top: 10px;
+  text-align: center;
+  z-index: 100;
+  display:block;
+  width: 100%;
+}
+
+#info a, .button { 
+  color: #f00; 
+  font-weight: bold; 
+  text-decoration: underline; 
+  cursor: pointer 
 }

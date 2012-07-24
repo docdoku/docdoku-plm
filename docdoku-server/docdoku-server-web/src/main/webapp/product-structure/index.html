@@ -5,8 +5,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="../css/jquery.treeview.css" />
 		<link rel="stylesheet" type="text/css" href="../css/product-structure.css" />
-		<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="../js/lib/jquery.treeview.js"></script>						
+		<link rel="stylesheet" type="text/css" href="../css/navigation-controls.css" />					
 	</head>
 
 <body>
@@ -347,20 +346,56 @@
 				</div>					
 			</div>
 			<div class="span9">
+
 				<div id="content">
 					<div id="content_header_bar">
 						<a class="btn header_btn-custom" href="#"><i class="icon-eye-open"></i></a>
 						<a class="btn header_btn-custom" href="#"><i class="icon-info-sign"></i></a>
 						<a class="btn header_btn-custom" href="#"><i class="icon-list"></i></a>
 					</div>
+
+					<div id="container" class="span10"></div>
+
+					<div class="span1">
+						<div id="navigationMenu">
+							<div id="moveSpace">
+								<a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
+								<a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
+								<a href="#" class="moveBtnSide moveBtnRight"><i class="icon-caret-right icon-navigation"></i></a>
+								<a href="#" class="moveBtnSide moveBtnBottom"><i class="icon-caret-down icon-navigation"></i></a>
+								<a href="#" class="moveBtn moveBtnCenter"><i class="icon-undo icon-navigation"></i></a>
+							</div>
+
+							<div id="moveMap">
+								<a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
+								<a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
+								<a href="#" class="moveBtnSide moveBtnRight"><i class="icon-caret-right icon-navigation"></i></a>
+								<a href="#" class="moveBtnSide moveBtnBottom"><i class="icon-caret-down icon-navigation"></i></a>
+								<a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
+							</div>
+						</div>												
+					</div>
+
+					<div id="zoomBar" class="span12">
+						<input id="zoomRange" type="range" min="0" max="100" value="50" step="1" />
+					</div>
+
 					<div id="content_footer_bar">
 						<h1></h1>
 					</div>
+
 				</div>
 			</div>		
 		</div>
 		
 	</div>
+	
+	<script type="text/javascript" src="../js/lib/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="../js/lib/jquery.treeview.js"></script>
+	<script src="../build/Three.js"></script>
+	<script src="../js/imagery/Detector.js"></script>
+	<script src="../js/imagery/Stats.js"></script>
+	<script src="../js/imagery/Lod3D.js"></script>	
 
 	<script type="text/javascript">
 		$(document).ready(function(){
@@ -370,6 +405,7 @@
 		    });
 		});
 	</script>
+
 		
 </body>	
 
