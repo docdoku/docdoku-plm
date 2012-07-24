@@ -19,15 +19,16 @@
  */
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 
 /**
  * This class represents an entire product or some portion
@@ -45,13 +46,20 @@ import javax.persistence.OneToOne;
  * @since   V1.1
  */
 @NamedQuery(name="ConfigurationItem.getEffectivities",query="SELECT e FROM Effectivity e WHERE e.configurationItem = :configurationItem")
+@javax.persistence.IdClass(com.docdoku.core.product.ConfigurationItemKey.class)
 @Entity
 public class ConfigurationItem implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Column(length = 50)
     @Id
-    private int id;
-    private String name;
+    private String id = "";
+    
+    @Id
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private Workspace workspace;
+    
+
     private String description;
        
     /**
@@ -59,6 +67,10 @@ public class ConfigurationItem implements Serializable {
      * which is the context for effectivities.
      */
     @ManyToOne(fetch= FetchType.LAZY, optional=false)
+    @JoinColumns({
+        @JoinColumn(name = "PARTMASTER_NUMBER", referencedColumnName = "NUMBER"),
+        @JoinColumn(name = "PARTMASTER_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
     private PartMaster designItem;
 
     public ConfigurationItem() {
@@ -72,15 +84,15 @@ public class ConfigurationItem implements Serializable {
         this.designItem = designItem;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -89,8 +101,14 @@ public class ConfigurationItem implements Serializable {
         this.description = description;
     }
 
-    public int getId() {
-        return id;
+    public Workspace getWorkspace() {
+        return workspace;
     }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    
     
 }

@@ -20,100 +20,47 @@
 package com.docdoku.core.product;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * An Effectivity is an abstract subclass which is
- * a kind of qualification object.
- * 
- * Effectivities are applied to <code>PartRevision</code> objects.
- * 
+ * A configuration specification used to select a <code>PartIteration</code>
+ * of a given <code>PartMaster</code> according to its effectivities.
+ * Actually the EffectivityConfigSpec determine the right
+ * <code>PartRevision</code>, we then catch its last iteration.
  * 
  * @author Florent Garin
- * @version 1.1, 14/10/11
+ * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@XmlSeeAlso({DateBasedEffectivity.class, SerialNumberBasedEffectivity.class, LotBasedEffectivity.class})
-@Inheritance()
+@XmlSeeAlso({DateBasedEffectivityConfigSpec.class, SerialNumberBasedEffectivityConfigSpec.class, LotBasedEffectivityConfigSpec.class})
 @Entity
-public abstract class Effectivity implements Serializable {
+public abstract class EffectivityConfigSpec extends ConfigSpec {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    private int id;
-    protected String name;
-    private String description;
-    
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
         @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
-    private ConfigurationItem configurationItem;
-    
-    /**
-     * Used to restrict the effectivity to a given product definition usage.
-     * However, the case when we need to manage different versions of a part
-     * in the same product structure may rarely happen.
-     */
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    private PartUsageLink usageLink;
+    protected ConfigurationItem configurationItem;
 
-    public Effectivity() {
+    public EffectivityConfigSpec() {
     }
 
-    public int getId() {
-        return id;
-    }
-    
-     
-
-    public Effectivity(String pName) {
-        name = pName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /*
-     * May be optional for a DateBasedEffectivity.
-     */
     public void setConfigurationItem(ConfigurationItem configurationItem) {
         this.configurationItem = configurationItem;
     }
 
     public ConfigurationItem getConfigurationItem() {
         return configurationItem;
-    }
-
-    public PartUsageLink getUsageLink() {
-        return usageLink;
-    }
-
-    public void setUsageLink(PartUsageLink usageLink) {
-        this.usageLink = usageLink;
     }
 }
