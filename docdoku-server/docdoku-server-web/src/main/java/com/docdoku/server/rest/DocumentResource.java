@@ -76,12 +76,18 @@ public class DocumentResource {
     private UserTransaction utx;
     @Context
     private UriInfo context;
-    @Resource
+
+
     private ServletContext servletContext;
     
     private Mapper mapper;
 
     public DocumentResource() {
+    }
+
+    @Context
+    public void setServletContext(ServletContext servletContext){
+        this.servletContext = servletContext;
     }
 
     @PostConstruct
