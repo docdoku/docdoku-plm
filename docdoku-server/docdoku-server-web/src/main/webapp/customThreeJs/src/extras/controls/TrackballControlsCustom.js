@@ -513,6 +513,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
 	function mousewheel(event) {
 		_this.zoomCameraWheel(-event.wheelDeltaY * 0.0001);
+		event.preventDefault();
 	}
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
@@ -521,10 +522,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 	this.domElement.addEventListener( 'mousedown', mousedown, false );
 	this.domElement.addEventListener( 'mouseup', mouseup, false );
 
+	this.domElement.addEventListener('DOMMouseScroll', mousewheel, false);
+	this.domElement.addEventListener('mousewheel', mousewheel, false);
+
 	window.addEventListener( 'keydown', keydown, false );
 	window.addEventListener( 'keyup', keyup, false );
-
-	window.addEventListener('DOMMouseScroll', mousewheel, false);
-	window.addEventListener('mousewheel', mousewheel, false);
-
 };

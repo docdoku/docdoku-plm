@@ -37,7 +37,6 @@ html{
 
 .row-fluid .span9{
   height: 100%;
-  margin-left: 0px;
 }
 
 #content_header_bar{
@@ -220,8 +219,8 @@ margin-right:0px;
 /*  width: 66%;
   position: absolute;
   right: 0px;
-  margin-right: 120px;
-  margin-top: 10%;*/
+  margin-right: 120px;*/
+  margin-top: 20px;
   height: 80%;
   border: 1px black dotted;
 }
