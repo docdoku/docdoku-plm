@@ -13,6 +13,7 @@ $(document).ready(function() {
 	stats = new Stats();
 	stats.domElement.style.position	= 'absolute';
 	stats.domElement.style.bottom	= '0px';
+	stats.domElement.style.right	= '0px';
 	document.body.appendChild( stats.domElement );
 
 	var camera, scene, renderer, controls;
