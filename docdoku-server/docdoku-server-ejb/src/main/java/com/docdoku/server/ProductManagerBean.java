@@ -28,6 +28,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.AccessRightException;
 import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
 import com.docdoku.core.services.ConfigurationItemNotFoundException;
@@ -148,4 +149,82 @@ public class ProductManagerBean implements IProductManagerLocal {
         
         return pm;
     }
+    
+    
+    
+//    
+//    @RolesAllowed("users")
+//    @Override
+//    public DocumentMaster updatePartIteration(PartIterationKey pKey, String pRevisionNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes) {
+//        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+//        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+//        DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pKey.getWorkspaceId(), pKey.getDocumentMasterId(), pKey.getDocumentMasterVersion()));
+//        //check access rights on docM ?
+//        if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().getKey().equals(pKey)) {
+//            DocumentIteration doc = docM.getLastIteration();
+//            
+//            Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
+//            for (DocumentIterationKey key : pLinkKeys) {
+//                links.add(new DocumentToDocumentLink(doc, key));
+//            }
+//            Set<DocumentToDocumentLink> linksToRemove = new HashSet<DocumentToDocumentLink>(doc.getLinkedDocuments());
+//            linksToRemove.removeAll(links);
+//
+//            DocumentToDocumentLinkDAO linkDAO = new DocumentToDocumentLinkDAO(em);
+//            for (DocumentToDocumentLink linkToRemove : linksToRemove) {
+//                linkDAO.removeLink(linkToRemove);
+//            }
+//
+//            // set doc for all attributes
+//            
+//            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+//            for (InstanceAttribute attr : pAttributes) {
+//                //attr.setDocument(doc);
+//                attrs.put(attr.getName(), attr);
+//            }
+//
+//            Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(doc.getInstanceAttributes().values());
+//            //attrsToRemove.removeAll(attrs.values());
+//
+//            for(InstanceAttribute attr:currentAttrs){
+//                if(!attrs.containsKey(attr.getName())){
+//                    doc.getInstanceAttributes().remove(attr.getName());
+//                }
+//            }
+//
+//            
+//            //InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
+//            /*
+//            for (InstanceAttribute attrToRemove : attrsToRemove) {
+//                attrDAO.removeAttribute(attrToRemove);
+//            }
+//            */
+//
+//            for(InstanceAttribute attr:attrs.values()){
+//                if(!doc.getInstanceAttributes().containsKey(attr.getName())){
+//                    doc.getInstanceAttributes().put(attr.getName(), attr);
+//                }else{
+//                    doc.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
+//                }
+//            }
+//            
+//            //Set<InstanceAttribute> attrsToCreate = new HashSet<InstanceAttribute>(attrs.values());
+//            //attrsToCreate.removeAll(doc.getInstanceAttributes().values());
+//
+//            /*
+//            for (InstanceAttribute attrToCreate : attrsToCreate) {
+//                attrDAO.createAttribute(attrToCreate);
+//            }
+//            */
+//            doc.setRevisionNote(pRevisionNote);
+//            doc.setLinkedDocuments(links);
+//            //doc.setInstanceAttributes(attrs);
+//            return docM;
+//
+//        } else {
+//            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException25");
+//        }
+//
+//    }
+    
 }

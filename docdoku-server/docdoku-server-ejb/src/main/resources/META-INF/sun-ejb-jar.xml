@@ -51,6 +51,10 @@
             <jndi-name>ejb/UserManagerBean</jndi-name>
         </ejb>
         <ejb>
+            <ejb-name>ProductManagerBean</ejb-name>
+            <jndi-name>ejb/ProductManagerBean</jndi-name>
+        </ejb>
+        <ejb>
             <ejb-name>MailerBean</ejb-name>
             <jndi-name>ejb/MailerBean</jndi-name>
             <resource-ref>

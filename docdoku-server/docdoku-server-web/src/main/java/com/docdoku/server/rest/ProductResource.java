@@ -21,7 +21,6 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.ConfigSpec;
-import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.LatestConfigSpec;
@@ -29,11 +28,9 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ICommandLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.CADInstanceDTO;
 import com.docdoku.server.rest.dto.PartDTO;
-import com.docdoku.server.rest.dto.TagDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -75,10 +72,10 @@ public class ProductResource {
         try{    
             ConfigurationItemKey ciKey= new ConfigurationItemKey(workspaceId,ciId);
             ConfigSpec cs = new LatestConfigSpec();
-            PartMaster root = productService.filterProductStructure(ciKey,cs);
+            //PartMaster root = productService.filterProductStructure(ciKey,cs);
             
-            PartUsageLink rootFakeUsageLink = new PartUsageLink();
-            rootFakeUsageLink.setComponent(root);
+            //PartUsageLink rootFakeUsageLink = new PartUsageLink();
+            //rootFakeUsageLink.setComponent(root);
             //TODO REMOVE STUB
             PartDTO rootDTO = new PartDTO("Airbus", "A400M");
             rootDTO.setVersion("B");
@@ -135,9 +132,9 @@ public class ProductResource {
             return rootDTO;        
             //STUB
             //return createDTO(rootFakeUsageLink);
-        } catch (com.docdoku.core.services.ApplicationException ex) {      
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }          
+        } finally{}//catch (com.docdoku.core.services.ApplicationException ex) {      
+          //  throw new RestApiException(ex.toString(), ex.getMessage());
+        //}          
     }
     
     private PartDTO createDTO(PartUsageLink usageLink){
