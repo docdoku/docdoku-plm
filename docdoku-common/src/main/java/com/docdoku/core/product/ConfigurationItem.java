@@ -76,6 +76,12 @@ public class ConfigurationItem implements Serializable {
     public ConfigurationItem() {
     }
 
+    public ConfigurationItem(Workspace pWorkspace, String pId, String pDescription) {
+        this.workspace=pWorkspace;
+        this.id=pId;
+        this.description=pDescription;
+    }
+    
     public PartMaster getDesignItem() {
         return designItem;
     }
@@ -104,11 +110,38 @@ public class ConfigurationItem implements Serializable {
     public Workspace getWorkspace() {
         return workspace;
     }
+    
+    public String getWorkspaceId() {
+        return workspace == null ? "" : workspace.getId();
+    }
 
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
     }
 
+        @Override
+    public boolean equals(Object pObj) {
+        if (this == pObj) {
+            return true;
+        }
+        if (!(pObj instanceof ConfigurationItem))
+            return false;
+        ConfigurationItem ci = (ConfigurationItem) pObj;
+        return ((ci.id.equals(id)) && (ci.getWorkspaceId().equals(getWorkspaceId())));
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 1;
+	hash = 31 * hash + getWorkspaceId().hashCode();
+	hash = 31 * hash + id.hashCode();
+	return hash;
+    }
+    
+    @Override
+    public String toString() {
+        return id;
+    }
     
     
 }

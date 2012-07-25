@@ -76,10 +76,65 @@ public class ProductResource {
             ConfigurationItemKey ciKey= new ConfigurationItemKey(workspaceId,ciId);
             ConfigSpec cs = new LatestConfigSpec();
             PartMaster root = productService.filterProductStructure(ciKey,cs);
-                        
+            
             PartUsageLink rootFakeUsageLink = new PartUsageLink();
             rootFakeUsageLink.setComponent(root);
-            return createDTO(rootFakeUsageLink);
+            //TODO REMOVE STUB
+            PartDTO rootDTO = new PartDTO("Airbus", "A400M");
+            rootDTO.setVersion("B");
+            rootDTO.setIteration(3);
+            List<PartDTO> lstComp = new ArrayList<PartDTO>();
+            rootDTO.setComponents(lstComp);
+            PartDTO dto1 = new PartDTO("Airbus", "M5391106020000");
+            dto1.setVersion("A");
+            dto1.setIteration(1);
+            PartDTO dto2 = new PartDTO("Airbus", "M53S1030020000");
+            dto2.setStandardPart(true);
+            dto2.setVersion("A");
+            dto2.setIteration(1);
+            PartDTO dto3 = new PartDTO("Airbus", "M53S1030020000");
+            dto3.setStandardPart(true);
+            dto3.setVersion("A");
+            dto3.setIteration(1);
+            PartDTO dto4 = new PartDTO("Airbus", "M5311173120000");
+            dto4.setVersion("A");
+            dto4.setIteration(1);
+            PartDTO dto5 = new PartDTO("Airbus", "M5221123720000");
+            dto5.setVersion("A");
+            dto5.setIteration(1);
+            PartDTO dto6 = new PartDTO("Airbus", "M5311002120100");
+            List<PartDTO> lstComp2 = new ArrayList<PartDTO>();
+            dto6.setComponents(lstComp2);
+            PartDTO dto61 = new PartDTO("Airbus", "M531102622000050");
+            dto61.setVersion("C");
+            dto61.setIteration(1);
+            PartDTO dto62 = new PartDTO("Airbus", "M531104832000050");
+            dto62.setStandardPart(true);
+            dto62.setVersion("A");
+            dto62.setIteration(4);
+            PartDTO dto63 = new PartDTO("Airbus", "M53S104082000050");
+            dto63.setStandardPart(true);
+            dto63.setVersion("A");
+            dto63.setIteration(6);
+            lstComp2.add(dto61);
+            lstComp2.add(dto62);
+            lstComp2.add(dto63);
+            
+            dto6.setVersion("A");
+            dto6.setIteration(1);
+            PartDTO dto7 = new PartDTO("Airbus", "M5391021100000");
+            dto7.setVersion("A");
+            dto7.setIteration(1);
+            lstComp.add(dto1);
+            lstComp.add(dto2);
+            lstComp.add(dto3);
+            lstComp.add(dto4);
+            lstComp.add(dto5);
+            lstComp.add(dto6);
+            lstComp.add(dto7);
+            return rootDTO;        
+            //STUB
+            //return createDTO(rootFakeUsageLink);
         } catch (com.docdoku.core.services.ApplicationException ex) {      
             throw new RestApiException(ex.toString(), ex.getMessage());
         }          

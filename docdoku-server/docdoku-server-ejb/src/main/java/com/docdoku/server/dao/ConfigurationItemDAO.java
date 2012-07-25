@@ -22,10 +22,14 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
 import com.docdoku.core.services.ConfigurationItemNotFoundException;
+import com.docdoku.core.services.CreationException;
 import java.util.List;
 import java.util.Locale;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 public class ConfigurationItemDAO {
@@ -75,5 +79,18 @@ public class ConfigurationItemDAO {
         }
     }
 
-
+    public void createConfigurationItem(ConfigurationItem pCI) throws ConfigurationItemAlreadyExistsException, CreationException {
+        try {
+            //the EntityExistsException is thrown only when flush occurs
+            em.persist(pCI);
+            em.flush();
+        } catch (EntityExistsException pEEEx) {
+            throw new ConfigurationItemAlreadyExistsException(mLocale, pCI);
+        } catch (PersistenceException pPEx) {
+            //EntityExistsException is case sensitive
+            //whereas MySQL is not thus PersistenceException could be
+            //thrown instead of EntityExistsException
+            throw new CreationException(mLocale);
+        }
+    }
 }

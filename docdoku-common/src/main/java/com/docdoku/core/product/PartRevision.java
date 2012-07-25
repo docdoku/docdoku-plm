@@ -96,6 +96,16 @@ public class PartRevision implements Serializable {
     private List<PartIteration> partIterations = new ArrayList<PartIteration>();
    
  
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name="CHECKOUTUSER_LOGIN", referencedColumnName="LOGIN"),
+        @JoinColumn(name="CHECKOUTUSER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private User checkOutUser;
+    
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date checkOutDate;
+    
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
 
@@ -156,6 +166,21 @@ public class PartRevision implements Serializable {
         this.creationDate = creationDate;
     }
 
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public User getCheckOutUser() {
+        return checkOutUser;
+    }
+
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+
+    public void setCheckOutUser(User checkOutUser) {
+        this.checkOutUser = checkOutUser;
+    }
 
     public String getVersion() {
         return version;
