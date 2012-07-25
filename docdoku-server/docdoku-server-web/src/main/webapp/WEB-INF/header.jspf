@@ -34,7 +34,7 @@
                             <hr/>
                         <c:forEach var="item" items="${administeredWorkspaces}">
                             <li>
-                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/explorer/${item.value.id}">
+                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/document-management/${item.value.id}">
                                     <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
                                      onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
                             </li>
@@ -42,7 +42,7 @@
 
                         <c:forEach var="item" items="${regularWorkspaces}">
                             <li>
-                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/explorer/${item.id}">
+                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/document-management/${item.id}">
                                     <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
                                      onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
                             </li>

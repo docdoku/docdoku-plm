@@ -46,14 +46,14 @@
 								<li class="divider"></li>
 								<c:forEach var="item" items="${administeredWorkspaces}">
 									<li>
-										<a href="<%=request.getContextPath()%>/explorer/${item.value.id}">
+										<a href="<%=request.getContextPath()%>/document-management/${item.value.id}">
 											${item.value.id}
 										</a>
 									</li>
 								</c:forEach>
 								<c:forEach var="item" items="${regularWorkspaces}">
 									<li>
-										<a href="<%=request.getContextPath()%>/explorer/${item.id}">
+										<a href="<%=request.getContextPath()%>/document-management/${item.id}">
 											${item.id}
 										</a>
 									</li>

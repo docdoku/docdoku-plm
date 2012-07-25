@@ -34,7 +34,7 @@ public class HomePageServlet extends HttpServlet {
     private void handleRequest(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
             throws ServletException, IOException {
-        pResponse.sendRedirect(pRequest.getContextPath() + "/explorer/");
+        pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/");
     }
     @Override
     protected void doGet(HttpServletRequest pRequest,

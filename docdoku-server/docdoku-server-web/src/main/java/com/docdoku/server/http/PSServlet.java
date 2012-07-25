@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
-public class ExplorerServlet extends HttpServlet {
+public class PSServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -70,12 +70,12 @@ public class ExplorerServlet extends HttpServlet {
             if(workspaceID == null){
                 pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
             }else{
-                pResponse.sendRedirect(pRequest.getContextPath() + "/explorer/" + workspaceID);
+                pResponse.sendRedirect(pRequest.getContextPath() + "/product-structure/" + workspaceID);
             }
         } else {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/WEB-INF/explorer.jsp").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.html").forward(pRequest, pResponse);
         }
     }
 }

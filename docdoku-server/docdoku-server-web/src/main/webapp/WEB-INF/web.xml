@@ -7,7 +7,7 @@
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
         <param-value>client</param-value>
-    </context-param>  
+    </context-param>
     <context-param>
         <param-name>PDF2SWF_HOME</param-name>
         <!--<param-value>/usr/local/bin</param-value>-->
@@ -23,7 +23,7 @@
     <context-param>
         <param-name>OO_PORT</param-name>
         <param-value>8100</param-value>
-    </context-param>  
+    </context-param>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -68,7 +68,8 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
-        <url-pattern>/explorer/*</url-pattern>
+        <url-pattern>/document-management/*</url-pattern>
+        <url-pattern>/product-structure/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
@@ -123,8 +124,12 @@
         <servlet-class>com.docdoku.server.http.DocumentServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ExplorerServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.ExplorerServlet</servlet-class>
+        <servlet-name>DMServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.DMServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PSServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.PSServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CalendarServlet</servlet-name>
@@ -191,8 +196,12 @@
         <url-pattern>/documents/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ExplorerServlet</servlet-name>
-        <url-pattern>/explorer/*</url-pattern>
+        <servlet-name>DMServlet</servlet-name>
+        <url-pattern>/document-management/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PSServlet</servlet-name>
+        <url-pattern>/product-structure/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CalendarServlet</servlet-name>
@@ -215,7 +224,6 @@
         <web-resource-collection>
             <web-resource-name>Pages</web-resource-name>
             <url-pattern>/admin/*</url-pattern>
-            <url-pattern>/explorer/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>
