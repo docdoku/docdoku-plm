@@ -152,7 +152,7 @@ public class ProductResource {
         }
         PartIteration partIte = pm.getPartRevisions().get(0).getIteration(0);
         for(Geometry cadFiles:partIte.getGeometries()){
-            lstFiles.add((cadFiles.getCadFile().getFullName()));            
+            lstFiles.add((cadFiles.getFullName()));            
         }
         dto.setInstances(lstInstances);
         dto.setFiles(lstFiles);

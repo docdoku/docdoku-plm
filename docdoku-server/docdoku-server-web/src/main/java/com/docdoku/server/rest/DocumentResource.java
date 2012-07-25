@@ -30,7 +30,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.http.FileConverter;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.*;
@@ -69,7 +69,7 @@ import org.dozer.Mapper;
 public class DocumentResource {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
     @Resource
@@ -102,7 +102,7 @@ public class DocumentResource {
         try {
 
             String pCompletePath = Tools.stripTrailingSlash(workspaceId);
-            DocumentMaster[] docM = commandService.findDocumentMastersByFolder(pCompletePath);
+            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(pCompletePath);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
@@ -125,7 +125,7 @@ public class DocumentResource {
 //
 //        try {
 //
-//            DocumentMasterKey[] docMKey = commandService.getIterationChangeEventSubscriptions(workspaceId);
+//            DocumentMasterKey[] docMKey = documentService.getIterationChangeEventSubscriptions(workspaceId);
 //            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
 //
 //            for (int i = 0; i < docMKey.length; i++) {
@@ -152,7 +152,7 @@ public class DocumentResource {
 //
 //        try {
 //
-//            DocumentMasterKey[] docMKey = commandService.getStateChangeEventSubscriptions(workspaceId);
+//            DocumentMasterKey[] docMKey = documentService.getStateChangeEventSubscriptions(workspaceId);
 //            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
 //
 //            for (int i = 0; i < docMKey.length; i++) {
@@ -178,7 +178,7 @@ public class DocumentResource {
     public DocumentMasterDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
 
         try {
-            DocumentMaster[] checkedOutdocMs = commandService.getCheckedOutDocumentMasters(workspaceId);
+            DocumentMaster[] checkedOutdocMs = documentService.getCheckedOutDocumentMasters(workspaceId);
             DocumentMasterDTO[] checkedOutdocMsDTO = new DocumentMasterDTO[checkedOutdocMs.length];
 
             for (int i = 0; i < checkedOutdocMs.length; i++) {
@@ -206,7 +206,7 @@ public class DocumentResource {
 
 
         try {
-            DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(docM.getLifeCycleState());
@@ -235,7 +235,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            DocumentMaster docM = commandService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
+            DocumentMaster docM = documentService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
@@ -258,7 +258,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            DocumentMaster docM = commandService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
+            DocumentMaster docM = documentService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
@@ -282,7 +282,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            DocumentMaster docM = commandService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
+            DocumentMaster docM = documentService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
@@ -309,7 +309,7 @@ public class DocumentResource {
             String newCompletePath = Tools.stripTrailingSlash(workspaceId + "/" + parentFolderPath);
 
             DocumentMasterKey docMsKey = new DocumentMasterKey(workspaceId, docId, docVersion);
-            DocumentMaster movedDocumentMaster = commandService.moveDocumentMaster(newCompletePath, docMsKey);
+            DocumentMaster movedDocumentMaster = documentService.moveDocumentMaster(newCompletePath, docMsKey);
 
             DocumentMasterDTO docMsDTO = mapper.map(movedDocumentMaster, DocumentMasterDTO.class);
             docMsDTO.setPath(movedDocumentMaster.getLocation().getCompletePath());
@@ -330,7 +330,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            commandService.subscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+            documentService.subscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -346,7 +346,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            commandService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+            documentService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -362,7 +362,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            commandService.subscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+            documentService.subscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -378,7 +378,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            commandService.unsubscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
+            documentService.unsubscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -412,7 +412,7 @@ public class DocumentResource {
                 attributes = createInstanceAttribute(instanceAttributes);
             }
 
-            DocumentMaster docM = commandService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
+            DocumentMaster docM = documentService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
             DocumentIterationDTO docDTO = mapper.map(docM.getLastIteration(), DocumentIterationDTO.class);
             return docDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -461,7 +461,7 @@ public class DocumentResource {
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
             }
-            DocumentMaster[] docM = commandService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
+            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
@@ -494,7 +494,7 @@ public class DocumentResource {
         }
 
         try {
-            DocumentMaster docMs = commandService.saveTags(new DocumentMasterKey(workspaceId, id, version), tagsLabel);
+            DocumentMaster docMs = documentService.saveTags(new DocumentMasterKey(workspaceId, id, version), tagsLabel);
             DocumentMasterDTO docMsDto = mapper.map(docMs, DocumentMasterDTO.class);
             docMsDto.setPath(docMs.getLocation().getCompletePath());
             docMsDto.setLifeCycleState(docMs.getLifeCycleState());
@@ -550,7 +550,7 @@ public class DocumentResource {
                 }
             }
 
-            DocumentMaster createdDocMs = commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+            DocumentMaster createdDocMs = documentService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
             DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
             docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
@@ -579,7 +579,7 @@ public class DocumentResource {
         String version = docKey.substring(lastDash + 1, docKey.length());
 
         try {
-            commandService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            documentService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             return Response.status(Response.Status.OK).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -598,7 +598,7 @@ public class DocumentResource {
             String fileFullName = workspaceId + "/documents/" + id + "/" + version + "/" + docIteration + "/" + fileName;
             System.out.println("fileFullName : " + fileFullName);
 
-            commandService.removeFileFromDocument(fileFullName);
+            documentService.removeFileFromDocument(fileFullName);
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -618,7 +618,7 @@ public class DocumentResource {
             String version = docKey.substring(lastDash + 1, docKey.length());
 
             DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, id, version, docIteration);
-            File vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
+            File vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
 
             vaultFile.getParentFile().mkdirs();
             vaultFile.createNewFile();
@@ -636,7 +636,7 @@ public class DocumentResource {
                 in.close();
                 out.close();
             }
-            commandService.saveFileInDocument(docPK, fileName, vaultFile.length());
+            documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
             utx.commit();
             return Response.ok().build();
         } catch (Exception ex) {
@@ -665,7 +665,7 @@ public class DocumentResource {
             String fullName = workspaceId + "/" + elementType + "/" + id + "/" + version + "/" + docIteration + "/" + fileName;
 
 
-            File dataFile = commandService.getDataFile(fullName);
+            File dataFile = documentService.getDataFile(fullName);
             File fileToOutput = null;
             String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
             String contentDisposition = null;

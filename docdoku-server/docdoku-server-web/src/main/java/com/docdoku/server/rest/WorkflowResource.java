@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.UserDTO;
@@ -49,7 +49,7 @@ import org.dozer.Mapper;
 public class WorkflowResource {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     private Mapper mapper;
 
     public WorkflowResource() {
@@ -65,7 +65,7 @@ public class WorkflowResource {
     public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId) {
         try {
 
-            WorkflowModel[] workflowModels = commandService.getWorkflowModels(workspaceId);
+            WorkflowModel[] workflowModels = documentService.getWorkflowModels(workspaceId);
             WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
             
             for(int i=0; i<workflowModels.length; i++){
@@ -85,7 +85,7 @@ public class WorkflowResource {
     @Path("{workflowModelId}")    
         public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId){
         try {
-            commandService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+            documentService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             return Response.status(Response.Status.OK).build();
         }  catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

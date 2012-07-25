@@ -54,7 +54,7 @@ import org.dozer.Mapper;
 public class FolderResource {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     @EJB
     private IUserManagerLocal userManager;
     @Context
@@ -82,7 +82,7 @@ public class FolderResource {
         try {
             
             String completePath = Tools.stripTrailingSlash(workspaceId);
-            String[] folderNames = commandService.getFolders(completePath);
+            String[] folderNames = documentService.getFolders(completePath);
             FolderDTO[] folderDtos = new FolderDTO[folderNames.length];
             
             for (int i = 0; i < folderNames.length; i++) {
@@ -112,7 +112,7 @@ public class FolderResource {
             String decodedCompletePath = Tools.replaceColonWithSlash(folderId);
             
             String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-            String[] folderNames = commandService.getFolders(completePath);
+            String[] folderNames = documentService.getFolders(completePath);
             
             FolderDTO[] folderDtos = new FolderDTO[folderNames.length];
             
@@ -143,7 +143,7 @@ public class FolderResource {
             String decodedCompletePath = Tools.replaceColonWithSlash(folderId);
             
             String pCompletePath = Tools.stripTrailingSlash(decodedCompletePath);
-            DocumentMaster[] docM = commandService.findDocumentMastersByFolder(pCompletePath);
+            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(pCompletePath);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
@@ -182,7 +182,7 @@ public class FolderResource {
             String destParentFolder = completePath.substring(0, lastSlash);
             String folderName = folder.getName();
             
-            commandService.moveFolder(completePath, destParentFolder, folderName);
+            documentService.moveFolder(completePath, destParentFolder, folderName);
 
             String completeRenamedFolderId=destParentFolder+'/'+folderName;
             String encodedRenamedFolderId=Tools.replaceSlashWithColon(completeRenamedFolderId);            
@@ -276,7 +276,7 @@ public class FolderResource {
                 }
             }
 
-           DocumentMaster createdDocMs =  commandService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+           DocumentMaster createdDocMs =  documentService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
            DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
            docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
            docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
@@ -314,12 +314,12 @@ public class FolderResource {
 
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
 
-        return commandService.deleteFolder(completePath);      
+        return documentService.deleteFolder(completePath);      
     }
     
     private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException{
     
-        Folder createdFolder= commandService.createFolder(pCompletePath, pFolderName);
+        Folder createdFolder= documentService.createFolder(pCompletePath, pFolderName);
                         
         String completeCreatedFolderPath=createdFolder.getCompletePath()+'/'+createdFolder.getShortName();
         String encodedFolderId=Tools.replaceSlashWithColon(completeCreatedFolderPath); 

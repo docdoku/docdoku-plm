@@ -140,7 +140,15 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
     public void setGeometries(List<Geometry> geometries) {
         this.geometries = geometries;
     }
+
     
+    public boolean removeGeometry(Geometry pGeometry){
+        return geometries.remove(pGeometry);
+    }
+    
+    public void addGeometry(Geometry pGeometry){
+        geometries.add(pGeometry);
+    }    
     
     public String getPartNumber() {
         return partRevision==null?"":partRevision.getPartNumber();
@@ -207,7 +215,11 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
     public void setComponents(List<PartUsageLink> components) {
         this.components = components;
     }
-
+    
+    public PartIterationKey getKey() {
+        return new PartIterationKey(partRevision.getKey(),iteration);
+    }
+    
     public Source getSource() {
         return source;
     }
@@ -219,6 +231,28 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
     public boolean isAssembly(){
         return components==null?false:!components.isEmpty();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 1;
+	hash = 31 * hash + getWorkspaceId().hashCode();
+	hash = 31 * hash + getPartNumber().hashCode();
+        hash = 31 * hash + getPartVersion().hashCode();
+        hash = 31 * hash + iteration;
+	return hash;
+    }
+    
+    @Override
+    public boolean equals(Object pObj) {
+        if (this == pObj) {
+            return true;
+        }
+        if (!(pObj instanceof PartIteration))
+            return false;
+        PartIteration partI = (PartIteration) pObj;
+        return ((partI.getPartNumber().equals(getPartNumber())) && (partI.getWorkspaceId().equals(getWorkspaceId()))  && (partI.getPartVersion().equals(getPartVersion())) && (partI.iteration==iteration));
+    }
+
     
     @Override
     public int compareTo(PartIteration pPart) {

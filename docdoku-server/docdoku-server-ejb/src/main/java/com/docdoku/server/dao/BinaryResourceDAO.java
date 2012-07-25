@@ -26,6 +26,7 @@ import com.docdoku.core.*;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.product.PartIteration;
 import java.util.*;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -81,6 +82,15 @@ public class BinaryResourceDAO {
         }
     }
 
+    public PartIteration getPartOwner(BinaryResource pBinaryResource) {
+        Query query = em.createQuery("SELECT p FROM PartIteration p WHERE :binaryResource MEMBER OF p.geometries");
+        try {
+            return (PartIteration) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+        } catch (NoResultException pNREx) {
+            return null;
+        }
+    }
+    
     public DocumentIteration getDocumentOwner(BinaryResource pBinaryResource) {
         Query query = em.createQuery("SELECT d FROM DocumentIteration d WHERE :binaryResource MEMBER OF d.attachedFiles");
         try {

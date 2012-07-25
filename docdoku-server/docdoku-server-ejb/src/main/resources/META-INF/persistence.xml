@@ -24,17 +24,23 @@
     <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
     <class>com.docdoku.core.meta.InstanceTextAttribute</class>
     <class>com.docdoku.core.meta.InstanceURLAttribute</class>
+    <class>com.docdoku.core.product.ConfigSpec</class>
     <class>com.docdoku.core.product.ConfigurationItem</class>
     <class>com.docdoku.core.product.DateBasedEffectivity</class>
+    <class>com.docdoku.core.product.DateBasedEffectivityConfigSpec</class>
     <class>com.docdoku.core.product.Effectivity</class>
+    <class>com.docdoku.core.product.EffectivityConfigSpec</class>
     <class>com.docdoku.core.product.Geometry</class>
+    <class>com.docdoku.core.product.LatestConfigSpec</class>
     <class>com.docdoku.core.product.LotBasedEffectivity</class>
+    <class>com.docdoku.core.product.LotBasedEffectivityConfigSpec</class>
     <class>com.docdoku.core.product.PartIteration</class>
     <class>com.docdoku.core.product.PartMaster</class>
     <class>com.docdoku.core.product.PartRevision</class>
     <class>com.docdoku.core.product.PartSubstituteLink</class>
     <class>com.docdoku.core.product.PartUsageLink</class>
     <class>com.docdoku.core.product.SerialNumberBasedEffectivity</class>
+    <class>com.docdoku.core.product.SerialNumberBasedEffectivityConfigSpec</class>
     <class>com.docdoku.core.security.ACL</class>
     <class>com.docdoku.core.security.ACLUserEntry</class>
     <class>com.docdoku.core.security.ACLUserGroupEntry</class>
@@ -53,12 +59,6 @@
     <class>com.docdoku.core.workflow.TaskModel</class>
     <class>com.docdoku.core.workflow.Workflow</class>
     <class>com.docdoku.core.workflow.WorkflowModel</class>
-    <class>com.docdoku.core.product.ConfigSpec</class>
-    <class>com.docdoku.core.product.DateBasedEffectivityConfigSpec</class>
-    <class>com.docdoku.core.product.EffectivityConfigSpec</class>
-    <class>com.docdoku.core.product.LatestConfigSpec</class>
-    <class>com.docdoku.core.product.LotBasedEffectivityConfigSpec</class>
-    <class>com.docdoku.core.product.SerialNumberBasedEffectivityConfigSpec</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.logging.level" value="FINE"/>

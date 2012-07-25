@@ -20,7 +20,7 @@
 package com.docdoku.client.data;
 
 import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.ICommandWS;
+import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.Folder;
@@ -370,7 +370,7 @@ public class MainModel {
     private ElementsTreeModel mElementsTreeModel;
     private List<FolderBasedElementsTableModel> mElementTableModels;
     public final ModelUpdater updater;
-    private ICommandWS mCommandService;
+    private IDocumentManagerWS mDocumentService;
     private IUploadDownloadWS mFileService;
     private static MainModel sSingleton;
 
@@ -382,22 +382,22 @@ public class MainModel {
         return sSingleton;
     }
 
-    public static MainModel init(String pLogin, String pPassword, String pWorkspaceId, ICommandWS pCommandService, IUploadDownloadWS pFileService)
+    public static MainModel init(String pLogin, String pPassword, String pWorkspaceId, IDocumentManagerWS pDocumentService, IUploadDownloadWS pFileService)
             throws InitializationException {
         if (sSingleton == null) {
-            sSingleton = new MainModel(pLogin, pPassword, pWorkspaceId, pCommandService, pFileService);
+            sSingleton = new MainModel(pLogin, pPassword, pWorkspaceId, pDocumentService, pFileService);
             return sSingleton;
         } else {
             throw new AlreadyInitializedException(MainModel.class.getName());
         }
     }
 
-    private MainModel(String pLogin, String pPassword, String pWorkspaceId, ICommandWS pCommandService, IUploadDownloadWS pFileService) throws InitializationException {
-        mCommandService = pCommandService;
+    private MainModel(String pLogin, String pPassword, String pWorkspaceId, IDocumentManagerWS pDocumentService, IUploadDownloadWS pFileService) throws InitializationException {
+        mDocumentService = pDocumentService;
         mFileService = pFileService;
         mElementTableModels = new LinkedList<FolderBasedElementsTableModel>();
         try {
-            Workspace workspace = mCommandService.getWorkspace(pWorkspaceId);
+            Workspace workspace = mDocumentService.getWorkspace(pWorkspaceId);
             mCache = new Cache(pLogin, pPassword, workspace);
         } catch (Exception pEx) {
             throw new InitializationException(
@@ -413,7 +413,7 @@ public class MainModel {
         if (folderTreeNodes == null) {
             try {
                 System.out.println("Retrieving folders in " + completePath);
-                String[] folders = mCommandService.getFolders(completePath);
+                String[] folders = mDocumentService.getFolders(completePath);
                 folderTreeNodes = new FolderTreeNode[folders.length];
                 for (int i = 0; i < folderTreeNodes.length; i++) {
                     folderTreeNodes[i] = new FolderTreeNode(completePath + "/" + folders[i], pParent);
@@ -444,7 +444,7 @@ public class MainModel {
         if (models == null) {
             try {
                 System.out.println("Retrieving workflow models");
-                models = Tools.resetParentReferences(mCommandService.getWorkflowModels(getWorkspace().getId()));
+                models = Tools.resetParentReferences(mDocumentService.getWorkflowModels(getWorkspace().getId()));
                 mCache.cacheWorkflowModels(models);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -470,7 +470,7 @@ public class MainModel {
         if (templates == null) {
             try {
                 System.out.println("Retrieving templates");
-                templates = Tools.resetParentReferences(mCommandService.getDocumentMasterTemplates(getWorkspace().getId()));
+                templates = Tools.resetParentReferences(mDocumentService.getDocumentMasterTemplates(getWorkspace().getId()));
                 mCache.cacheDocMTemplates(templates);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -496,7 +496,7 @@ public class MainModel {
         if (template == null) {
             try {
                 System.out.println("Retrieving document template " + pId);
-                template = Tools.resetParentReferences(mCommandService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(getWorkspace().getId(), pId)));
+                template = Tools.resetParentReferences(mDocumentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(getWorkspace().getId(), pId)));
                 mCache.cacheDocMTemplate(template);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -524,7 +524,7 @@ public class MainModel {
         if (workflowModel == null) {
             try {
                 System.out.println("Retrieving workflow model " + pId);
-                workflowModel = Tools.resetParentReferences(mCommandService.getWorkflowModel(new WorkflowModelKey(getWorkspace().getId(), pId)));
+                workflowModel = Tools.resetParentReferences(mDocumentService.getWorkflowModel(new WorkflowModelKey(getWorkspace().getId(), pId)));
                 mCache.cacheWorkflowModel(workflowModel);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -552,7 +552,7 @@ public class MainModel {
         if (docM == null) {
             try {
                 System.out.println("Retrieving document master " + pDocMPK);
-                docM = Tools.resetParentReferences(mCommandService.getDocumentMaster(pDocMPK));
+                docM = Tools.resetParentReferences(mDocumentService.getDocumentMaster(pDocMPK));
                 mCache.cacheDocM(docM);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -580,7 +580,7 @@ public class MainModel {
         if (subKeys == null) {
             try {
                 System.out.println("Retrieving state subscriptions");
-                subKeys = mCommandService.getStateChangeEventSubscriptions(getWorkspace().getId());
+                subKeys = mDocumentService.getStateChangeEventSubscriptions(getWorkspace().getId());
                 mCache.cacheStateSubscriptions(subKeys);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -616,7 +616,7 @@ public class MainModel {
         if (subKeys == null) {
             try {
                 System.out.println("Retrieving iteration subscriptions");
-                subKeys = mCommandService.getIterationChangeEventSubscriptions(getWorkspace().getId());
+                subKeys = mDocumentService.getIterationChangeEventSubscriptions(getWorkspace().getId());
                 mCache.cacheIterationSubscriptions(subKeys);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -642,7 +642,7 @@ public class MainModel {
         if (docMs == null) {
             try {
                 System.out.println("Retrieving personnal checked out document masters");
-                docMs = Tools.resetParentReferences(mCommandService.getCheckedOutDocumentMasters(getWorkspace().getId()));
+                docMs = Tools.resetParentReferences(mDocumentService.getCheckedOutDocumentMasters(getWorkspace().getId()));
                 mCache.cacheCheckedOutDocMs(docMs);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -668,7 +668,7 @@ public class MainModel {
         if (docMs == null) {
             try {
                 System.out.println("Searching document masters by tag " + pTag);
-                docMs = Tools.resetParentReferences(mCommandService.findDocumentMastersByTag(new TagKey(getWorkspace().getId(), pTag)));
+                docMs = Tools.resetParentReferences(mDocumentService.findDocumentMastersByTag(new TagKey(getWorkspace().getId(), pTag)));
                 mCache.cacheDocMsByTag(pTag, docMs);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -694,7 +694,7 @@ public class MainModel {
         if (docMs == null) {
             try {
                 System.out.println("Searching document masters by folder " + pCompletePath);
-                docMs = Tools.resetParentReferences(mCommandService.findDocumentMastersByFolder(pCompletePath));
+                docMs = Tools.resetParentReferences(mDocumentService.findDocumentMastersByFolder(pCompletePath));
                 mCache.cacheDocMsByFolder(pCompletePath, docMs);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -732,7 +732,7 @@ public class MainModel {
         if (user == null) {
             try {
                 System.out.println("Retrieving personnal informations");
-                user = mCommandService.whoAmI(getWorkspace().getId());
+                user = mDocumentService.whoAmI(getWorkspace().getId());
                 mCache.cacheUser(user);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -760,7 +760,7 @@ public class MainModel {
         if (users == null) {
             try {
                 System.out.println("Retrieving users");
-                users = mCommandService.getUsers(getWorkspace().getId());
+                users = mDocumentService.getUsers(getWorkspace().getId());
                 mCache.cacheUsers(users);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -786,7 +786,7 @@ public class MainModel {
         String generatedId = null;
         try {
             System.out.println("Retrieving generated document master id");
-            generatedId = mCommandService.generateId(pWorkspaceId, pDocMTemplateId);
+            generatedId = mDocumentService.generateId(pWorkspaceId, pDocMTemplateId);
         } catch (Exception pEx) {
             //TODO treat exception ?
         }
@@ -799,7 +799,7 @@ public class MainModel {
         if (tags == null) {
             try {
                 System.out.println("Retrieving tags");
-                tags = mCommandService.getTags(getWorkspace().getId());
+                tags = mDocumentService.getTags(getWorkspace().getId());
                 mCache.cacheTags(tags);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -880,7 +880,7 @@ public class MainModel {
         DocumentMaster[] docMs = null;
         try {
             System.out.println("Searching for document master " + pDocMId + " version " + pVersion + " title " + pTitle + " author " + pAuthor + " creation date between " + pCreationDateFrom + " and " + pCreationDateTo + " tags " + pTags + " content " + pContent);
-            docMs = Tools.resetParentReferences(mCommandService.searchDocumentMasters(new SearchQuery(getWorkspace().getId(), pDocMId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
+            docMs = Tools.resetParentReferences(mDocumentService.searchDocumentMasters(new SearchQuery(getWorkspace().getId(), pDocMId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
                     pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent)));
             //TODO cache docMs ?
         } catch (WebServiceException pWSEx) {

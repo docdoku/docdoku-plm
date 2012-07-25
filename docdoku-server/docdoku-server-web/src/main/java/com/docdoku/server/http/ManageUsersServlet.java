@@ -23,7 +23,7 @@ package com.docdoku.server.http;
 import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.core.services.UserNotFoundException;
 import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
@@ -51,7 +51,7 @@ public class ManageUsersServlet extends HttpServlet {
     private IUserManagerLocal userManager;
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     
     @Override
     protected void doPost(HttpServletRequest pRequest,
@@ -118,7 +118,7 @@ public class ManageUsersServlet extends HttpServlet {
     }
     
     private void displayView(HttpServletRequest pRequest, HttpServletResponse pResponse, String workspaceId) throws UserNotFoundException, UserNotActiveException, IOException, ServletException, WorkspaceNotFoundException{
-        User[] users = commandService.getUsers(workspaceId);
+        User[] users = documentService.getUsers(workspaceId);
         UserGroup[] groups = userManager.getUserGroups(workspaceId);
 
         Map<String,List<UserGroup>> usersGroups = new HashMap<String,List<UserGroup>>();

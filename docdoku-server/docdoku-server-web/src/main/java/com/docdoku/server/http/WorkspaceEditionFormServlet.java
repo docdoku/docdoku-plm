@@ -20,7 +20,7 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSession;
 public class WorkspaceEditionFormServlet extends HttpServlet {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -50,7 +50,7 @@ public class WorkspaceEditionFormServlet extends HttpServlet {
             HttpSession sessionHTTP = pRequest.getSession();
             Workspace workspace = (Workspace) sessionHTTP.getAttribute("selectedWorkspace");
 
-            User[] users = commandService.getUsers(workspace.getId());
+            User[] users = documentService.getUsers(workspace.getId());
             pRequest.setAttribute("users", users);
             pRequest.getRequestDispatcher("/WEB-INF/admin/workspaceEditionForm.jsp").forward(pRequest, pResponse);
 

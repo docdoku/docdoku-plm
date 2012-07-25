@@ -20,7 +20,7 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.workflow.Task;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -43,7 +43,7 @@ public class CalendarServlet extends HttpServlet {
     private final static String PSEUDO_FILENAME = "DocDokuCalendar.ics";
     private final static long ONE_YEAR_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 365;
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -61,7 +61,7 @@ public class CalendarServlet extends HttpServlet {
 
             String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
 
-            Task[] tasks = commandService.getTasks(workspaceId);
+            Task[] tasks = documentService.getTasks(workspaceId);
 
             Calendar cal = new Calendar();
             //cal.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));

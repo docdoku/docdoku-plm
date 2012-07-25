@@ -79,4 +79,12 @@ public class PartIterationKey implements Serializable {
     public void setIteration(int pIteration){
         iteration=pIteration;
     }
+
+    public String getWorkspaceId() {
+        return partRevision.getPartMaster().getWorkspace();
+    }
+
+    public String getPartMasterNumber() {
+        return partRevision.getPartMaster().getNumber();
+    }
 }

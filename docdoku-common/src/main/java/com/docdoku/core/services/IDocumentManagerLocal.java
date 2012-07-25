@@ -43,7 +43,7 @@ import java.io.File;
  *
  * @author Florent Garin
  */
-public interface ICommandLocal {
+public interface IDocumentManagerLocal {
 
     String generateId(String pWorkspaceId, String pDocMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, DocumentMasterTemplateNotFoundException;
 
