@@ -89,7 +89,8 @@ public class PartMaster implements Serializable {
     @OrderBy("version ASC")
     private List<PartRevision> partRevisions = new ArrayList<PartRevision>();
 
-
+    private boolean standardPart;
+    
     public PartMaster() {
     }
 
@@ -146,6 +147,15 @@ public class PartMaster implements Serializable {
     public void setPartRevisions(List<PartRevision> partRevisions) {
         this.partRevisions = partRevisions;
     }
+
+    public boolean isStandardPart() {
+        return standardPart;
+    }
+
+    public void setStandardPart(boolean standardPart) {
+        this.standardPart = standardPart;
+    }
+    
     
     
     public Workspace getWorkspace() {

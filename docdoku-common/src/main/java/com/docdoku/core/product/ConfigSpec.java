@@ -33,36 +33,35 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- *
+ * A ConfigSpec is used to filter the right <code>PartIteration</code> of
+ * <code>PartMaster</code>s, based on various rules.
+ * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@XmlSeeAlso({DateBasedEffectivityContext.class, SerialNumberBasedEffectivityContext.class, LotBasedEffectivityContext.class})
+@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class})
 @Inheritance()
 @Entity
-public abstract class EffectivityContext implements Serializable{
+public abstract class ConfigSpec implements Serializable{
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     private int id;
 
     
-    @ManyToOne(optional=true, fetch= FetchType.EAGER)
-    private ConfigurationItem configurationItem;
+    public ConfigSpec() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     
-    public EffectivityContext() {
-    }
 
-   
-
-    public void setConfigurationItem(ConfigurationItem configurationItem) {
-        this.configurationItem = configurationItem;
-    }
-
-    public ConfigurationItem getConfigurationItem() {
-        return configurationItem;
-    }
     
     
 }

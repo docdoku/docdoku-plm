@@ -76,17 +76,12 @@ public class DocumentResource {
     private UserTransaction utx;
     @Context
     private UriInfo context;
-    //@Resource
+    @Resource
     private ServletContext servletContext;
-    
+
     private Mapper mapper;
 
     public DocumentResource() {
-    }
-
-    @Context
-    public void setServletContext(ServletContext servletContext){
-        this.servletContext = servletContext;
     }
 
     @PostConstruct
@@ -132,7 +127,7 @@ public class DocumentResource {
 //
 //            DocumentMasterKey[] docMKey = commandService.getIterationChangeEventSubscriptions(workspaceId);
 //            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
-//            
+//
 //            for (int i = 0; i < docMKey.length; i++) {
 //                DocumentMasterDTO dto = new DocumentMasterDTO();
 //                dto.setWorkspaceID(docMKey[i].getWorkspaceId());
@@ -140,15 +135,15 @@ public class DocumentResource {
 //                dto.setReference(docMKey[i].getId());
 //                dto.setVersion(docMKey[i].getVersion());
 //                data[i] = dto;
-//            }       
+//            }
 //
 //            return data;
-//            
+//
 //        } catch (com.docdoku.core.services.ApplicationException ex) {
 //            throw new RESTException(ex.toString(), ex.getMessage());
 //        }
 //
-//    }    
+//    }
 //
 //    @GET
 //    @Path()
@@ -159,7 +154,7 @@ public class DocumentResource {
 //
 //            DocumentMasterKey[] docMKey = commandService.getStateChangeEventSubscriptions(workspaceId);
 //            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
-//            
+//
 //            for (int i = 0; i < docMKey.length; i++) {
 //                DocumentMasterDTO dto = new DocumentMasterDTO();
 //                dto.setWorkspaceID(docMKey[i].getWorkspaceId());
@@ -167,16 +162,16 @@ public class DocumentResource {
 //                dto.setReference(docMKey[i].getId());
 //                dto.setVersion(docMKey[i].getVersion());
 //                data[i] = dto;
-//            }       
+//            }
 //
 //            return data;
-//            
+//
 //        } catch (com.docdoku.core.services.ApplicationException ex) {
 //            throw new RESTException(ex.toString(), ex.getMessage());
 //        }
 //
-//    }    
-//    
+//    }
+//
     @GET
     @Path("checkedout")
     @Produces("application/json;charset=UTF-8")
@@ -688,7 +683,7 @@ public class DocumentResource {
                 FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
                 fileToOutput = fileConverter.convertToSWF(dataFile);
             } else {
-                contentDisposition = "attachment; filename=\"" + dataFile.getName() + "\"";             
+                contentDisposition = "attachment; filename=\"" + dataFile.getName() + "\"";
                 fileToOutput = dataFile;
             }
 
@@ -713,7 +708,7 @@ public class DocumentResource {
             }
             if(contentDisposition!=null)
                 rb.header("Content-disposition", contentDisposition);
-            
+
             rb.header("Accept-Ranges", "bytes");
 
             return rb.build();

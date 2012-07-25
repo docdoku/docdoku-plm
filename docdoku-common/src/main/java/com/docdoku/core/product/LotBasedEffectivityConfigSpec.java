@@ -24,20 +24,21 @@ package com.docdoku.core.product;
 import javax.persistence.Entity;
 
 /**
+ * <code>EffectivityConfigSpec</code> based on a specific lot.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
 @Entity
-public class LotBasedEffectivityContext extends EffectivityContext{
+public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec{
 
     /**
      * The lot id of the particular batch of items specified by the context.
      */
     private String lotId;
 
-    public LotBasedEffectivityContext() {
+    public LotBasedEffectivityConfigSpec() {
     }
 
     

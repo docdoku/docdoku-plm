@@ -21,37 +21,22 @@
 
 package com.docdoku.core.product;
 
-import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
+ * A <code>ConfigSpec</code> which selects the latest iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
 @Entity
-public class DateBasedEffectivityContext extends EffectivityContext{
+public class LatestConfigSpec extends ConfigSpec{
 
-    /**
-     * The date and/or time of the context.
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-
-    public DateBasedEffectivityContext() {
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
     
+    public LatestConfigSpec() {
+    }
+
     
     
 }

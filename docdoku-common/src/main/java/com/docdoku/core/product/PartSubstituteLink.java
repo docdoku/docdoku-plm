@@ -34,7 +34,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 
 /**
- *
+ * This class is related to a <code>PartUsageLink</code> to indicate
+ * a replacement part that could be used instead.
+ * 
  * @author Florent Garin
  * @version 1.1, 16/10/11
  * @since   V1.1

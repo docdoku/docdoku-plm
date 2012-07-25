@@ -24,20 +24,21 @@ package com.docdoku.core.product;
 import javax.persistence.Entity;
 
 /**
+ * A kind of <code>EffectivityConfigSpec</code> based on serial number.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
 @Entity
-public class SerialNumberBasedEffectivityContext extends EffectivityContext{
+public class SerialNumberBasedEffectivityConfigSpec extends EffectivityConfigSpec{
 
     /**
      * The serial number of the particular item specified by the context.
      */
     private String number;
 
-    public SerialNumberBasedEffectivityContext() {
+    public SerialNumberBasedEffectivityConfigSpec() {
     }
 
     public void setNumber(String number) {
