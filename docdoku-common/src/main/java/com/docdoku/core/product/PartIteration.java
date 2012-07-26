@@ -71,7 +71,7 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
     @OrderBy("quality")
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(inverseJoinColumns = {
-        @JoinColumn(name = "GEOMETRY_ID", referencedColumnName = "ID")
+        @JoinColumn(name = "GEOMETRY_FULLNAME", referencedColumnName = "FULLNAME")
     },
     joinColumns = {
         @JoinColumn(name = "PARTITERATION_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
