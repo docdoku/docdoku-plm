@@ -97,12 +97,12 @@ public class DocumentResource {
      */
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getRootDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("tag") String label, @QueryParam("path") String path) {
+    public DocumentMasterDTO[] getRootDocuments(@PathParam("workspaceId") String workspaceId) {
 
         try {
 
-            String pCompletePath = Tools.stripTrailingSlash(workspaceId);
-            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(pCompletePath);
+            String wksId = Tools.stripTrailingSlash(workspaceId);
+            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(wksId);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
@@ -606,116 +606,116 @@ public class DocumentResource {
         }
     }
 
-    @POST
-    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces("application/json;charset=UTF-8")
-    public Response uploadFile(@FormParam("upload") File upload, @PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
-        try {
-            utx.begin();
-            int lastDash = docKey.lastIndexOf('-');
-            String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash + 1, docKey.length());
-
-            DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, id, version, docIteration);
-            File vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
-
-            vaultFile.getParentFile().mkdirs();
-            vaultFile.createNewFile();
-
-            InputStream in = new BufferedInputStream(new FileInputStream(upload), BUFFER_CAPACITY);
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
-
-            byte[] data = new byte[CHUNK_SIZE];
-            int length;
-            try {
-                while ((length = in.read(data)) != -1) {
-                    out.write(data, 0, length);
-                }
-            } finally {
-                in.close();
-                out.close();
-            }
-            documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
-            utx.commit();
-            return Response.ok().build();
-        } catch (Exception ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        } finally {
-            try {
-                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
-                    utx.rollback();
-                }
-            } catch (Exception ex) {
-                throw new RestApiException(ex.toString(), ex.getMessage());
-            }
-        }
-    }
-
-    @GET
-    @Consumes("application/json;charset=UTF-8")
-    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
-    public Response downloadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @HeaderParam("Range") Range pRange, @QueryParam("type") String type) {
-        try {
-            String elementType = "documents";
-            int lastDash = docKey.lastIndexOf('-');
-            String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash + 1, docKey.length());
-
-            String fullName = workspaceId + "/" + elementType + "/" + id + "/" + version + "/" + docIteration + "/" + fileName;
-
-
-            File dataFile = documentService.getDataFile(fullName);
-            File fileToOutput = null;
-            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
-            String contentDisposition = null;
-
-            if ("pdf".equals(type)) {
-                contentType = "application/pdf";
-                String ooHome = servletContext.getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
-                fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
-            } else if ("swf".equals(type)) {
-                contentType = "application/x-shockwave-flash";
-                String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-                String ooHome = servletContext.getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
-                FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
-                fileToOutput = fileConverter.convertToSWF(dataFile);
-            } else {
-                contentDisposition = "attachment; filename=\"" + dataFile.getName() + "\"";
-                fileToOutput = dataFile;
-            }
-
-            ResponseBuilder rb;
-            if (pRange != null) {
-                try {
-                    Range properRange = Range.validateRangeWithFile(pRange, fileToOutput);
-                    rb = Response.status(206);
-                    rb.type(contentType);
-                    rb.entity(new StreamingBinaryResourceOutput(fileToOutput, properRange));
-                    rb.header("Content-Length", properRange.getlengthOfTheBytesRange());
-                    rb.header("Content-Range", "bytes " + properRange.getMin() + "-" + properRange.getMax() + "/" + fileToOutput.length() + "");
-                } catch (RequestedRangeNotSatisfiableException ex) {
-                    rb = Response.status(416);
-                    rb.header("Content-Range", "bytes */" + fileToOutput.length() + "");
-                }
-            } else {
-                rb = Response.ok();
-                rb.type(contentType);
-                rb.entity(new StreamingBinaryResourceOutput(fileToOutput));
-                rb.header("Content-Length", fileToOutput.length());
-            }
-            if(contentDisposition!=null)
-                rb.header("Content-disposition", contentDisposition);
-
-            rb.header("Accept-Ranges", "bytes");
-
-            return rb.build();
-        } catch (Exception ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
+//    @POST
+//    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    @Produces("application/json;charset=UTF-8")
+//    public Response uploadFile(@FormParam("upload") File upload, @PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
+//        try {
+//            utx.begin();
+//            int lastDash = docKey.lastIndexOf('-');
+//            String id = docKey.substring(0, lastDash);
+//            String version = docKey.substring(lastDash + 1, docKey.length());
+//
+//            DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, id, version, docIteration);
+//            File vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
+//
+//            vaultFile.getParentFile().mkdirs();
+//            vaultFile.createNewFile();
+//
+//            InputStream in = new BufferedInputStream(new FileInputStream(upload), BUFFER_CAPACITY);
+//            OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
+//
+//            byte[] data = new byte[CHUNK_SIZE];
+//            int length;
+//            try {
+//                while ((length = in.read(data)) != -1) {
+//                    out.write(data, 0, length);
+//                }
+//            } finally {
+//                in.close();
+//                out.close();
+//            }
+//            documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
+//            utx.commit();
+//            return Response.ok().build();
+//        } catch (Exception ex) {
+//            throw new RestApiException(ex.toString(), ex.getMessage());
+//        } finally {
+//            try {
+//                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
+//                    utx.rollback();
+//                }
+//            } catch (Exception ex) {
+//                throw new RestApiException(ex.toString(), ex.getMessage());
+//            }
+//        }
+//    }
+//
+//    @GET
+//    @Consumes("application/json;charset=UTF-8")
+//    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
+//    public Response downloadFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, @HeaderParam("Range") Range pRange, @QueryParam("type") String type) {
+//        try {
+//            String elementType = "documents";
+//            int lastDash = docKey.lastIndexOf('-');
+//            String id = docKey.substring(0, lastDash);
+//            String version = docKey.substring(lastDash + 1, docKey.length());
+//
+//            String fullName = workspaceId + "/" + elementType + "/" + id + "/" + version + "/" + docIteration + "/" + fileName;
+//
+//
+//            File dataFile = documentService.getDataFile(fullName);
+//            File fileToOutput = null;
+//            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
+//            String contentDisposition = null;
+//
+//            if ("pdf".equals(type)) {
+//                contentType = "application/pdf";
+//                String ooHome = servletContext.getInitParameter("OO_HOME");
+//                int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
+//                fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
+//            } else if ("swf".equals(type)) {
+//                contentType = "application/x-shockwave-flash";
+//                String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
+//                String ooHome = servletContext.getInitParameter("OO_HOME");
+//                int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
+//                FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
+//                fileToOutput = fileConverter.convertToSWF(dataFile);
+//            } else {
+//                contentDisposition = "attachment; filename=\"" + dataFile.getName() + "\"";
+//                fileToOutput = dataFile;
+//            }
+//
+//            ResponseBuilder rb;
+//            if (pRange != null) {
+//                try {
+//                    Range properRange = Range.validateRangeWithFile(pRange, fileToOutput);
+//                    rb = Response.status(206);
+//                    rb.type(contentType);
+//                    rb.entity(new StreamingBinaryResourceOutput(fileToOutput, properRange));
+//                    rb.header("Content-Length", properRange.getlengthOfTheBytesRange());
+//                    rb.header("Content-Range", "bytes " + properRange.getMin() + "-" + properRange.getMax() + "/" + fileToOutput.length() + "");
+//                } catch (RequestedRangeNotSatisfiableException ex) {
+//                    rb = Response.status(416);
+//                    rb.header("Content-Range", "bytes */" + fileToOutput.length() + "");
+//                }
+//            } else {
+//                rb = Response.ok();
+//                rb.type(contentType);
+//                rb.entity(new StreamingBinaryResourceOutput(fileToOutput));
+//                rb.header("Content-Length", fileToOutput.length());
+//            }
+//            if(contentDisposition!=null)
+//                rb.header("Content-disposition", contentDisposition);
+//
+//            rb.header("Accept-Ranges", "bytes");
+//
+//            return rb.build();
+//        } catch (Exception ex) {
+//            throw new RestApiException(ex.toString(), ex.getMessage());
+//        }
+//    }
 
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {

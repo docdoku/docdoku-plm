@@ -36,6 +36,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -88,6 +89,15 @@ public class PartRevision implements Serializable {
     private String description;
     
     @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
+    @JoinTable(
+    inverseJoinColumns={
+        @JoinColumn(name="EFFECTIVITY_ID", referencedColumnName="ID")
+    },
+    joinColumns={
+        @JoinColumn(name="PARTREVISION_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTREVISION_PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
+        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION")
+    })
     private Set<Effectivity> effectivities = new HashSet<Effectivity>();
     
     

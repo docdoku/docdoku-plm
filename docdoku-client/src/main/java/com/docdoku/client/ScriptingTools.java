@@ -63,7 +63,7 @@ public class ScriptingTools {
     
     public static IUploadDownloadWS createFileManagerService(String url, String login, String password) throws MalformedURLException{
         MTOMFeature feature = new MTOMFeature();
-        UploadDownloadService service = new UploadDownloadService(new URL(url),new javax.xml.namespace.QName("http://http.server.docdoku.com/", "UploadDownloadService"));
+        UploadDownloadService service = new UploadDownloadService(new URL(url),new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
         IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class,feature);
         Map context = ((BindingProvider)proxy).getRequestContext();
         context.put(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);

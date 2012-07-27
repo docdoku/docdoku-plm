@@ -107,8 +107,18 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
-    @OrderColumn
+    @OrderColumn(name="COMPONENT_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinTable(
+    inverseJoinColumns={
+        @JoinColumn(name="COMPONENT_ID", referencedColumnName="ID")
+    },
+    joinColumns={
+        @JoinColumn(name="PARTITERATION_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTITERATION_PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
+        @JoinColumn(name="PARTITERATION_PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+        @JoinColumn(name="PARTITERATION_ITERATION", referencedColumnName="ITERATION")
+    })
     private List<PartUsageLink> components=new LinkedList<PartUsageLink>();
     
     /*

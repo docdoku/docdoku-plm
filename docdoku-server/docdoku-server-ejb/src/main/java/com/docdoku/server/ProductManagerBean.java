@@ -125,11 +125,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         em.detach(root);
 
         if (configSpec instanceof LatestConfigSpec) {
-            //TODO retain only latest iteration
+            //filterLatestConfigSpec(root);
         }
         return root;
     }
 
+    private PartMaster filterLatestConfigSpec(PartMaster root){
+        if(root.getPartRevisions().size()>1){
+            //TODO filter latest
+        }
+        if(root.getPartRevisions().get(0).getNumberOfIterations()>1){
+            //TODO filter latest
+        }
+        
+        for(PartUsageLink link:root.getPartRevisions().get(0).getLastIteration().getComponents()){
+            filterLatestConfigSpec(link.getComponent());
+        }
+        return root;
+    }
     @RolesAllowed("users")
     @Override
     public ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException {
@@ -288,6 +301,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
     
+    
+    @RolesAllowed("users")
+    @Override
+    public ConfigurationItem[] getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new ConfigurationItemDAO(new Locale(user.getLanguage()), em).findAllConfigurationItems(pWorkspaceId);
+    }
+
     
     @RolesAllowed("users")
     @Override
