@@ -10,10 +10,8 @@
     <class>com.docdoku.core.common.Workspace</class>
     <class>com.docdoku.core.document.DocumentIteration</class>
     <class>com.docdoku.core.document.DocumentMaster</class>
-    <class>com.docdoku.core.document.DocumentMasterTemplate</class>
     <class>com.docdoku.core.document.DocumentToDocumentLink</class>
     <class>com.docdoku.core.document.Folder</class>
-    <class>com.docdoku.core.document.InstanceAttributeTemplate</class>
     <class>com.docdoku.core.document.IterationChangeSubscription</class>
     <class>com.docdoku.core.document.StateChangeSubscription</class>
     <class>com.docdoku.core.document.Tag</class>
@@ -24,6 +22,8 @@
     <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
     <class>com.docdoku.core.meta.InstanceTextAttribute</class>
     <class>com.docdoku.core.meta.InstanceURLAttribute</class>
+    <class>com.docdoku.core.document.InstanceAttributeTemplate</class>
+    <class>com.docdoku.core.document.DocumentMasterTemplate</class>    
     <class>com.docdoku.core.product.ConfigSpec</class>
     <class>com.docdoku.core.product.ConfigurationItem</class>
     <class>com.docdoku.core.product.DateBasedEffectivity</class>

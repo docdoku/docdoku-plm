@@ -22,6 +22,8 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 
 /**
@@ -45,6 +47,9 @@ public class PartAlternateLink implements Serializable {
     private String comment;
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name="ALTERNATE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="ALTERNATE_NUMBER", referencedColumnName="NUMBER")})
     private PartMaster alternate;
 
 
