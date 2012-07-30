@@ -7,8 +7,8 @@
     </security-role-mapping>
     <enterprise-beans>
         <ejb>
-            <ejb-name>CommandBean</ejb-name>
-            <jndi-name>ejb/CommandBean</jndi-name>
+            <ejb-name>DocumentManagerBean</ejb-name>
+            <jndi-name>ejb/DocumentManagerBean</jndi-name>
 <!--            <resource-ref>
                 <res-ref-name>jms/docdokuConnFactory</res-ref-name>
                 <jndi-name>jms/docdokuConnFactory</jndi-name>
@@ -18,8 +18,20 @@
                 </default-resource-principal>
             </resource-ref>-->
             <webservice-endpoint>
-                <port-component-name>CommandBean</port-component-name>
-                <endpoint-address-uri>services/Command</endpoint-address-uri>
+                <port-component-name>DocumentManagerBean</port-component-name>
+                <endpoint-address-uri>services/document</endpoint-address-uri>
+                <login-config>
+                    <auth-method>BASIC</auth-method>
+                    <realm>docdokuRealm</realm>
+                </login-config>
+            </webservice-endpoint>
+        </ejb>
+        <ejb>
+            <ejb-name>ProductManagerBean</ejb-name>
+            <jndi-name>ejb/ProductManagerBean</jndi-name>
+            <webservice-endpoint>
+                <port-component-name>ProductManagerBean</port-component-name>
+                <endpoint-address-uri>services/product</endpoint-address-uri>
                 <login-config>
                     <auth-method>BASIC</auth-method>
                     <realm>docdokuRealm</realm>
@@ -49,6 +61,10 @@
         <ejb>
             <ejb-name>UserManagerBean</ejb-name>
             <jndi-name>ejb/UserManagerBean</jndi-name>
+        </ejb>
+        <ejb>
+            <ejb-name>ProductManagerBean</ejb-name>
+            <jndi-name>ejb/ProductManagerBean</jndi-name>
         </ejb>
         <ejb>
             <ejb-name>MailerBean</ejb-name>

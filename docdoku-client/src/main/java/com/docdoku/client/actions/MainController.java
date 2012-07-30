@@ -23,7 +23,7 @@ import com.docdoku.core.services.ApplicationException;
 import com.docdoku.core.services.WorkflowModelNotFoundException;
 import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.ICommandWS;
+import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterKey;
@@ -64,7 +64,7 @@ import javax.xml.ws.WebServiceException;
 
 public class MainController {
 
-    private ICommandWS mCommandService;
+    private IDocumentManagerWS mDocumentService;
     private IUploadDownloadWS mFileService;
     private static MainController sSingleton;
 
@@ -76,16 +76,16 @@ public class MainController {
         return sSingleton;
     }
 
-    public static void init(ICommandWS pCommandService, IUploadDownloadWS pFileService) {
+    public static void init(IDocumentManagerWS pProductService, IUploadDownloadWS pFileService) {
         if (sSingleton == null) {
-            sSingleton = new MainController(pCommandService, pFileService);
+            sSingleton = new MainController(pProductService, pFileService);
         } else {
             throw new AlreadyInitializedException(MainController.class.getName());
         }
     }
 
-    private MainController(ICommandWS pCommandService, IUploadDownloadWS pFileService) {
-        mCommandService = pCommandService;
+    private MainController(IDocumentManagerWS pProductService, IUploadDownloadWS pFileService) {
+        mDocumentService = pProductService;
         mFileService = pFileService;
     }
 
@@ -94,7 +94,7 @@ public class MainController {
             System.out.println("Approving task " + pTaskKey);
             DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.approve(workspaceId, pTaskKey, pComment));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.approve(workspaceId, pTaskKey, pComment));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -112,7 +112,7 @@ public class MainController {
             System.out.println("Rejecting task " + pTaskKey);
             DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.reject(workspaceId, pTaskKey, pComment));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.reject(workspaceId, pTaskKey, pComment));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -129,7 +129,7 @@ public class MainController {
         try {
             System.out.println("Saving tags of document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.saveTags(pDocumentMaster.getKey(), pTags));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.saveTags(pDocumentMaster.getKey(), pTags));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -146,7 +146,7 @@ public class MainController {
         try {
             System.out.println("Checking In document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.checkIn(pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.checkIn(pDocumentMaster.getKey()));
             MainModel.getInstance().updater.checkIn(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -163,7 +163,7 @@ public class MainController {
         try {
             System.out.println("Checking Out document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.checkOut(pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.checkOut(pDocumentMaster.getKey()));
             MainModel.getInstance().updater.checkOut(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -180,7 +180,7 @@ public class MainController {
         try {
             System.out.println("Undoing Check Out document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.undoCheckOut(pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.undoCheckOut(pDocumentMaster.getKey()));
             MainModel.getInstance().updater.undoCheckOut(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -196,7 +196,7 @@ public class MainController {
     public void delDocM(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Deleting document master " + pDocumentMaster);
-            mCommandService.deleteDocumentMaster(pDocumentMaster.getKey());
+            mDocumentService.deleteDocumentMaster(pDocumentMaster.getKey());
             MainModel.getInstance().updater.delDocM(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -211,7 +211,7 @@ public class MainController {
     public void delDocMTemplate(DocumentMasterTemplate pDocMTemplate) throws Exception {
         try {
             System.out.println("Deleting document master template " + pDocMTemplate);
-            mCommandService.deleteDocumentMasterTemplate(pDocMTemplate.getKey());
+            mDocumentService.deleteDocumentMasterTemplate(pDocMTemplate.getKey());
             MainModel.getInstance().updater.delDocMTemplate(pDocMTemplate);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -227,7 +227,7 @@ public class MainController {
         try {
             System.out.println("Moving document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.moveDocumentMaster(pParentFolder, pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.moveDocumentMaster(pParentFolder, pDocumentMaster.getKey()));
             MainModel.getInstance().updater.moveDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -244,7 +244,7 @@ public class MainController {
         try {
             System.out.println("Renaming folder " + pCompletePath);
             Folder folder = new Folder(pCompletePath);
-            mCommandService.moveFolder(pCompletePath, folder.getParentFolder().getCompletePath(), pNewName);
+            mDocumentService.moveFolder(pCompletePath, folder.getParentFolder().getCompletePath(), pNewName);
             MainModel.getInstance().updater.renameFolder(pCompletePath, pNewName);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -259,7 +259,7 @@ public class MainController {
     public DocumentMasterKey[] delFolder(String pFolder) throws Exception {
         try {
             System.out.println("Deleting folder " + pFolder);
-            DocumentMasterKey[] pks = mCommandService.deleteFolder(pFolder);
+            DocumentMasterKey[] pks = mDocumentService.deleteFolder(pFolder);
             MainModel.getInstance().updater.delFolder(pFolder);
             return pks;
         } catch (WebServiceException pWSEx) {
@@ -455,7 +455,7 @@ public class MainController {
     public void createFolder(String pParentFolder, String pFolder) throws Exception {
         try {
             System.out.println("Creating folder " + pFolder + " in " + pParentFolder);
-            mCommandService.createFolder(pParentFolder, pFolder);
+            mDocumentService.createFolder(pParentFolder, pFolder);
             MainModel.getInstance().updater.createFolder(pParentFolder, pFolder);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -480,7 +480,7 @@ public class MainController {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            newDocumentMaster = Tools.resetParentReferences(mCommandService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
             MainModel.getInstance().updater.createDocMInFolder(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -499,7 +499,7 @@ public class MainController {
             System.out.println("Saving document master template " + pId + " with mask " + pMask);
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
             DocumentMasterTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mCommandService.createDocumentMasterTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+            newTemplate = Tools.resetParentReferences(mDocumentService.createDocumentMasterTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
             MainModel.getInstance().updater.createDocMTemplate(newTemplate);
             return newTemplate;
         } catch (WebServiceException pWSEx) {
@@ -516,7 +516,7 @@ public class MainController {
         try {
             System.out.println("Saving document master template " + pTemplate);
             DocumentMasterTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mCommandService.updateDocumentMasterTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+            newTemplate = Tools.resetParentReferences(mDocumentService.updateDocumentMasterTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
             MainModel.getInstance().updater.updateDocMTemplate(newTemplate);
             return newTemplate;
         } catch (WebServiceException pWSEx) {
@@ -539,7 +539,7 @@ public class MainController {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mCommandService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mDocumentService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
             MainModel.getInstance().updater.makeNewVersion(originalAndNewDocM);
             return originalAndNewDocM;
         } catch (WebServiceException pWSEx) {
@@ -556,7 +556,7 @@ public class MainController {
         try {
             System.out.println("Saving personnal informations");
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            User user = mCommandService.savePersonalInfo(workspaceId, pName, pEmail, pLanguage);
+            User user = mDocumentService.savePersonalInfo(workspaceId, pName, pEmail, pLanguage);
             MainModel.getInstance().updater.updateUser(user);
             return user;
         } catch (WebServiceException pWSEx) {
@@ -572,7 +572,7 @@ public class MainController {
     public void subscribeStateNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Subscribe state notification on document master " + pDocumentMaster);
-            mCommandService.subscribeToStateChangeEvent(pDocumentMaster.getKey());
+            mDocumentService.subscribeToStateChangeEvent(pDocumentMaster.getKey());
             MainModel.getInstance().updater.addStateNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -587,7 +587,7 @@ public class MainController {
     public void unsubscribeStateNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Unsubscribe state notification on document master " + pDocumentMaster);
-            mCommandService.unsubscribeToStateChangeEvent(pDocumentMaster.getKey());
+            mDocumentService.unsubscribeToStateChangeEvent(pDocumentMaster.getKey());
             MainModel.getInstance().updater.removeStateNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -602,7 +602,7 @@ public class MainController {
     public void subscribeIterationNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Subscribe iteration notification on document master " + pDocumentMaster);
-            mCommandService.subscribeToIterationChangeEvent(pDocumentMaster.getKey());
+            mDocumentService.subscribeToIterationChangeEvent(pDocumentMaster.getKey());
             MainModel.getInstance().updater.addIterationNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -617,7 +617,7 @@ public class MainController {
     public void unsubscribeIterationNotification(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Unsubscribe iteration notification on document master " + pDocumentMaster);
-            mCommandService.unsubscribeToIterationChangeEvent(pDocumentMaster.getKey());
+            mDocumentService.unsubscribeToIterationChangeEvent(pDocumentMaster.getKey());
             MainModel.getInstance().updater.removeIterationNotification(pDocumentMaster);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -632,7 +632,7 @@ public class MainController {
     public void delWorkflowModel(WorkflowModel pWorkflowModel) throws Exception {
         try {
             System.out.println("Deleting workflow model " + pWorkflowModel);
-            mCommandService.deleteWorkflowModel(pWorkflowModel.getKey());
+            mDocumentService.deleteWorkflowModel(pWorkflowModel.getKey());
             MainModel.getInstance().updater.delWorkflowModel(pWorkflowModel);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -648,7 +648,7 @@ public class MainController {
         try {
             System.out.println("Deleting tag " + pTag);
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            mCommandService.deleteTag(new TagKey(workspaceId, pTag));
+            mDocumentService.deleteTag(new TagKey(workspaceId, pTag));
             MainModel.getInstance().updater.delTag(pTag);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -667,11 +667,11 @@ public class MainController {
 
             //TODO remove and create in the same tx
             try {
-                mCommandService.deleteWorkflowModel(pWorkflowModel.getKey());
+                mDocumentService.deleteWorkflowModel(pWorkflowModel.getKey());
             } catch (WorkflowModelNotFoundException pWNFEx) {
             }
             ActivityModel[] activityModels = pWorkflowModel.getActivityModels().toArray(new ActivityModel[pWorkflowModel.getActivityModels().size()]);
-            model = Tools.resetParentReferences(mCommandService.createWorkflowModel(pWorkflowModel.getWorkspaceId(), pWorkflowModel.getId(), pWorkflowModel.getFinalLifeCycleState(), activityModels));
+            model = Tools.resetParentReferences(mDocumentService.createWorkflowModel(pWorkflowModel.getWorkspaceId(), pWorkflowModel.getId(), pWorkflowModel.getFinalLifeCycleState(), activityModels));
             MainModel.getInstance().updater.saveWorkflowModel(model);
             return model;
         } catch (WebServiceException pWSEx) {
@@ -688,7 +688,7 @@ public class MainController {
         try {
             System.out.println("Removing file " + pFile + " from document");
             DocumentMaster newDocM;
-            newDocM = Tools.resetParentReferences(mCommandService.removeFileFromDocument(pFile.getFullName()));
+            newDocM = Tools.resetParentReferences(mDocumentService.removeFileFromDocument(pFile.getFullName()));
             MainModel.getInstance().updater.updateDocM(newDocM);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -704,7 +704,7 @@ public class MainController {
         try {
             System.out.println("Removing file " + pFile + " from document template");
             DocumentMasterTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mCommandService.removeFileFromTemplate(pFile.getFullName()));
+            newTemplate = Tools.resetParentReferences(mDocumentService.removeFileFromTemplate(pFile.getFullName()));
             MainModel.getInstance().updater.updateDocMTemplate(newTemplate);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -727,7 +727,7 @@ public class MainController {
                 linkKeys[i] = pLinks[i].getToDocumentKey();
             }
 
-            newDocM = Tools.resetParentReferences(mCommandService.updateDocument(docKey, pComment, pAttributes, linkKeys));
+            newDocM = Tools.resetParentReferences(mDocumentService.updateDocument(docKey, pComment, pAttributes, linkKeys));
             MainModel.getInstance().updater.updateDocM(newDocM);
             return newDocM.getIteration(docKey.getIteration());
         } catch (WebServiceException pWSEx) {
@@ -742,12 +742,12 @@ public class MainController {
 
     public void login(String login, String password, String workspaceId) throws Exception {
         try {
-            ((BindingProvider) mCommandService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
-            ((BindingProvider) mCommandService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+            ((BindingProvider) mDocumentService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+            ((BindingProvider) mDocumentService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
             ((BindingProvider) mFileService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
             ((BindingProvider) mFileService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
-            mCommandService.whoAmI(workspaceId);
-            MainModel.init(login, password, workspaceId, mCommandService, mFileService);
+            mDocumentService.whoAmI(workspaceId);
+            MainModel.init(login, password, workspaceId, mDocumentService, mFileService);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {

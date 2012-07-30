@@ -20,6 +20,7 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -156,7 +157,37 @@ public class PartMaster implements Serializable {
         this.standardPart = standardPart;
     }
     
+        
+    public PartRevision getLastRevision() {
+        int index = partRevisions.size()-1;
+        if(index < 0)
+            return null;
+        else
+            return partRevisions.get(index);
+    }
     
+    public PartRevision removeLastRevision() {
+        int index = partRevisions.size()-1;
+        if(index < 0)
+            return null;
+        else
+            return partRevisions.remove(index);
+    }
+    
+    public PartRevision createNextRevision(User pUser){
+        PartRevision lastRev=getLastRevision();
+        Version version;
+        if(lastRev==null)
+            version = new Version("A");
+        else{
+            version = new Version(lastRev.getVersion());
+            version.increase();
+        }
+        
+        PartRevision rev = new PartRevision(this,version,pUser);
+        partRevisions.add(rev);
+        return rev;
+    }
     
     public Workspace getWorkspace() {
         return workspace;
@@ -175,6 +206,10 @@ public class PartMaster implements Serializable {
     }
 
 
+    public PartMasterKey getKey() {
+        return new PartMasterKey(getWorkspaceId(),number);
+    }
+        
     public String getDescription() {
         return description;
     }
@@ -185,5 +220,10 @@ public class PartMaster implements Serializable {
 
     public String getWorkspaceId() {
         return workspace == null ? "" : workspace.getId();
+    }
+    
+    @Override
+    public String toString() {
+        return number;
     }
 }

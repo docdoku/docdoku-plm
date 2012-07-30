@@ -20,7 +20,7 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentMaster;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import com.docdoku.core.*;
 public class DocumentServlet extends HttpServlet {
     
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -58,7 +58,7 @@ public class DocumentServlet extends HttpServlet {
             String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
             String docMVersion = pathInfos[offset+2];
 
-            DocumentMaster docM = commandService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
             pRequest.setAttribute("docm", docM);
 
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);

@@ -30,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 
@@ -43,24 +44,23 @@ import javax.persistence.OrderColumn;
  */
 @Entity
 public class PartSubstituteLink implements Serializable {
-    
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
-        
     private String referenceDescription;
     private String comment;
     
-    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private PartMaster substitute;
 
+    @OrderColumn(name = "CADINSTANCE_ORDER")
+    @CollectionTable(name = "PARTSUBSTITUTELINK_CADINSTANCE", joinColumns = {
+        @JoinColumn(name = "PARTSUBSTITUTELINK_ID", referencedColumnName = "ID")
+    })
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<CADInstance> cadInstances = new LinkedList<CADInstance>();
 
-    @OrderColumn
-    @CollectionTable(name="SUBSTITUTELINK_CADINSTANCE")
-    @ElementCollection(fetch=FetchType.LAZY)
-    private List<CADInstance> cadInstances=new LinkedList<CADInstance>();
-        
     public PartSubstituteLink() {
     }
 
@@ -95,6 +95,4 @@ public class PartSubstituteLink implements Serializable {
     public void setCadInstances(List<CADInstance> cadInstances) {
         this.cadInstances = cadInstances;
     }
-    
-   
 }

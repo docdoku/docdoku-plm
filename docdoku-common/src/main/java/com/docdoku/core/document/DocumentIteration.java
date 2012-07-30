@@ -156,9 +156,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
     public void setIteration(int iteration) {
         this.iteration = iteration;
-    }
-
-    
+    }    
     
     public boolean removeFile(BinaryResource pBinaryResource){
         return attachedFiles.remove(pBinaryResource);

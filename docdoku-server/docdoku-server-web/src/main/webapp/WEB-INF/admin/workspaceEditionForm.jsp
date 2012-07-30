@@ -10,7 +10,7 @@
     <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
     <meta http-equiv="Content-Script-Type" content="text/javascript"/>
-    <script src="<%=request.getContextPath()%>/js/docdoku.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/js/adminForm.js" type="text/javascript"></script>
 </head>
 
 <body>

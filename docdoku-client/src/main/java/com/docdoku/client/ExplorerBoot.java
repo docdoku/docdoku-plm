@@ -21,7 +21,7 @@
 package com.docdoku.client;
 
 import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.ICommandWS;
+import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.client.actions.LoginActionListener;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.ui.login.LoginFrame;
@@ -52,10 +52,10 @@ public class ExplorerBoot {
                 webURL=new URL(new URL(args[0]),"/");
             else
                 webURL=new URL(new URL(args[0]),"/"+ webContext + "/");
-            URL commandServiceURL = new URL(webURL,"/services/Command?wsdl");
+            URL documentServiceURL = new URL(webURL,"/services/document?wsdl");
             URL uploadDownloadServiceURL = new URL(webURL,"/services/UploadDownload?wsdl");
             Config.setHTTPCodebase(webURL);
-            MainController.init(lookupCommandWebService(commandServiceURL), lookupUploadDownloadWebService(uploadDownloadServiceURL));
+            MainController.init(lookupDocumentWebService(documentServiceURL), lookupUploadDownloadWebService(uploadDownloadServiceURL));
             SwingUtilities.invokeAndWait(new Runnable() {
                 @Override
                 public void run() {
@@ -84,9 +84,9 @@ public class ExplorerBoot {
         return proxy;
     }
 
-    public static ICommandWS lookupCommandWebService(URL pURL) throws MalformedURLException{
-        CommandService service = new CommandService(pURL,new javax.xml.namespace.QName("http://server.docdoku.com/", "CommandBeanService"));
-        return service.getPort(ICommandWS.class);
+    public static IDocumentManagerWS lookupDocumentWebService(URL pURL) throws MalformedURLException{
+        DocumentService service = new DocumentService(pURL,new javax.xml.namespace.QName("http://server.docdoku.com/", "DocumentManagerBeanService"));
+        return service.getPort(IDocumentManagerWS.class);
         
     }
     

@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
-public class ExplorerServlet extends HttpServlet {
+public class PSServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -50,32 +50,30 @@ public class ExplorerServlet extends HttpServlet {
         }
 
         String workspaceID = null;
+        String productID = null;
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
-            //we'll try to switch to default workspace
+            
         }
 
+        try {
+            productID = URLDecoder.decode(pathInfos[offset+1], "UTF-8");
+        } catch (IndexOutOfBoundsException ex) {
+            
+        }
+        
         if (workspaceID == null) {
-            HttpSession sessionHTTP = pRequest.getSession();
-            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-
-            if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
-                workspaceID = administeredWorkspaces.values().iterator().next().getId();
-            } else if (regularWorkspaces != null && !regularWorkspaces.isEmpty()) {
-                workspaceID = regularWorkspaces.iterator().next().getId();
-            }
-
-            if(workspaceID == null){
-                pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
-            }else{
-                pResponse.sendRedirect(pRequest.getContextPath() + "/explorer/" + workspaceID);
-            }
-        } else {
+            pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
+            
+        } else if(productID == null){
+            pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
+        }     
+        else {
             pRequest.setAttribute("workspaceID", workspaceID);
+            pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/WEB-INF/explorer.jsp").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.html").forward(pRequest, pResponse);
         }
     }
 }

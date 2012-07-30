@@ -34,33 +34,33 @@ import javax.xml.ws.WebServiceClient;
  *
  * @author Florent GARIN
  */
-@WebServiceClient(name = "CommandService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/Command?wsdl")
-public class CommandService extends Service
+@WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
+public class ProductService extends Service
 {
 
-    private final static URL COMMANDSERVICE_WSDL_LOCATION;
-    private final static QName COMMANDSERVICE_QNAME = new QName("http://server.docdoku.com/", "CommandBeanService");
-    private final static Logger LOGGER = Logger.getLogger(com.docdoku.client.CommandService.class.getName());
+    private final static URL PRODUCTSERVICE_WSDL_LOCATION;
+    private final static QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");
+    private final static Logger LOGGER = Logger.getLogger(com.docdoku.client.ProductService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = com.docdoku.client.CommandService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/Command?wsdl");
+            baseUrl = com.docdoku.client.ProductService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/product?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/Command?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/product?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        COMMANDSERVICE_WSDL_LOCATION = url;
+        PRODUCTSERVICE_WSDL_LOCATION = url;
     }
 
-    public CommandService(URL wsdlLocation, QName serviceName) {
+    public ProductService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public CommandService() {
-        super(COMMANDSERVICE_WSDL_LOCATION, COMMANDSERVICE_QNAME);
+    public ProductService() {
+        super(PRODUCTSERVICE_WSDL_LOCATION, PRODUCTSERVICE_QNAME);
     }
 
     

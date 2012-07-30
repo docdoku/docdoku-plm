@@ -50,10 +50,10 @@ import javax.persistence.NoResultException;
 
 
 @DeclareRoles("users")
-@Local(ICommandLocal.class)
-@Stateless(name = "CommandBean")
-@WebService(endpointInterface = "com.docdoku.core.services.ICommandWS")
-public class CommandBean implements ICommandWS, ICommandLocal {
+@Local(IDocumentManagerLocal.class)
+@Stateless(name = "DocumentManagerBean")
+@WebService(endpointInterface = "com.docdoku.core.services.IDocumentManagerWS")
+public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManagerLocal {
 
     @PersistenceContext
     private EntityManager em;
@@ -70,7 +70,7 @@ public class CommandBean implements ICommandWS, ICommandLocal {
     @EJB
     private IndexSearcherBean indexSearcher;
     private DataManager dataManager;
-    private final static Logger LOGGER = Logger.getLogger(CommandBean.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
 
     @PostConstruct
     private void init() {
