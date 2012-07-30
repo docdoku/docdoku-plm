@@ -466,12 +466,12 @@ exists or setup the property manually. For example like this:
                 COMPILATION SECTION
             -->
     <target depends="init" if="no.dist.ear.dir" name="-deps-module-jar" unless="no.deps">
-        <ant antfile="${project.DocDoku-Common}/build.xml" inheritall="false" target="jar">
+        <ant antfile="${project.docdoku-common}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
     <target depends="init" if="dist.ear.dir" name="-deps-ear-jar" unless="no.deps">
-        <ant antfile="${project.DocDoku-Common}/build.xml" inheritall="false" target="jar">
+        <ant antfile="${project.docdoku-common}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -486,22 +486,19 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
         <basename file="${file.reference.poi-3.0.1-FINAL-20070705.jar}" property="manifest.file.reference.poi-3.0.1-FINAL-20070705.jar"/>
-        <basename file="${reference.DocDoku-Common.jar}" property="manifest.reference.DocDoku-Common.jar"/>
         <basename file="${file.reference.lucene-core-3.0.3.jar}" property="manifest.file.reference.lucene-core-3.0.3.jar"/>
         <basename file="${file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}" property="manifest.file.reference.poi-contrib-3.0.1-FINAL-20070705.jar"/>
         <basename file="${file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}" property="manifest.file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.file.reference.poi-3.0.1-FINAL-20070705.jar}"/>
-            <attribute name="jar-2-Extension-Name" value="${manifest.reference.DocDoku-Common.jar}"/>
-            <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.lucene-core-3.0.3.jar}"/>
-            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}"/>
-            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}"/>
+            <attribute name="jar-2-Extension-Name" value="${manifest.file.reference.lucene-core-3.0.3.jar}"/>
+            <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}"/>
+            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${file.reference.poi-3.0.1-FINAL-20070705.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${reference.DocDoku-Common.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.lucene-core-3.0.3.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.poi-contrib-3.0.1-FINAL-20070705.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.poi-scratchpad-3.0.1-FINAL-20070705.jar}" todir="${dist.ear.dir}/lib"/>
@@ -862,7 +859,7 @@ exists or setup the property manually. For example like this:
                 CLEANUP SECTION
             -->
     <target depends="init" name="deps-clean" unless="no.deps">
-        <ant antfile="${project.DocDoku-Common}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.docdoku-common}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="-do-clean">
         <delete dir="${build.dir}"/>
