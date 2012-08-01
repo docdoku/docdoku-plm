@@ -7,13 +7,13 @@ html{
   height: 100%;  
 }
 
-.container{
+/*.container{
     position: relative;
     background-color: #F5F5F5;
     overflow: hidden;
     margin-left: 0px;
     width: 295px;
-}
+}      */
 
 .container-fluid{
   padding-right: 0px;
@@ -23,6 +23,8 @@ html{
 
 .row-fluid{
   height: 100%;
+  top: -2px;
+  position: absolute;
 }
 
 .well{
@@ -58,9 +60,8 @@ html{
 }
 
 #nav_list_action_bar{
-  padding-top: 5px;
-  height: 6%;
-  padding-top: 5px;
+    height: 5%;
+    padding-top: 6px;
 }
 
 #nav_list_action_bar select{
@@ -76,8 +77,9 @@ html{
 }
 
 #nav_list_controls input{
-    width: 75%;
-    float: right;
+    margin-left: 6%;
+    width: 70%;
+    float: left;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
 }
@@ -87,7 +89,7 @@ html{
 }
 
 #nav_list_search_button{
-  float: right;
+  float: left;
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
 }
@@ -103,8 +105,8 @@ html{
 
 .nav-list li a label{
   color: #434C64;
-  font-weight: bold;
-  font-size: 11px;
+  font-size: 12px;
+  text-shadow: 0px 1px 0px white;
 }
 
 .nav-list li a i{
@@ -123,22 +125,6 @@ html{
   display: none;
 }
 
-.header_btn-custom {
-  background-color: hsl(214, 37%, 28%) !important;
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#7a99c1", endColorstr="#2c4361");
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#7a99c1), to(#2c4361));
-  background-image: -moz-linear-gradient(top, #7a99c1, #2c4361);
-  background-image: -ms-linear-gradient(top, #7a99c1, #2c4361);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #7a99c1), color-stop(100%, #2c4361));
-  background-image: -webkit-linear-gradient(top, #7a99c1, #2c4361);
-  background-image: -o-linear-gradient(top, #7a99c1, #2c4361);
-  background-image: linear-gradient(#7a99c1, #2c4361);
-  border-color: #2c4361 #2c4361 hsl(214, 37%, 19.5%);
-  color: #fff !important;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.56);
-  -webkit-font-smoothing: antialiased;
-}
 
 .well{
   border: 1px solid #CFD7E4;
@@ -146,22 +132,19 @@ html{
   height: 100%;
   padding: 0px;
   margin-bottom: 0px;
+  margin-top: 2px;
 }
 
 .well nav{
-  height: 87%;
-  width: 100%;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-}
-
-
-#product_nav_list{
-  margin-left: 15px;
+  height: 87%;
+  margin-top: 10px;
 }
 
 #product_nav_list ul {
   background-color: transparent;
+    margin-top: 5px;
 }
 
 #product_nav_list li {
@@ -170,6 +153,14 @@ html{
 
 #product_nav_list li.active {
   background-image: -webkit-linear-gradient(left , transparent 2%, #CFD7E4 3%);
+}
+
+#product_nav_list a:hover {
+   text-decoration: none;
+}
+
+#product_nav_list label:hover {
+    background-color: #CFD7E4;
 }
 
 #product_nav_list li.nav-header{
@@ -195,7 +186,7 @@ margin-right:0px;
   text-shadow: 0px 1px 0px black;
   font-weight: bold;
   display: block;
-  height: 6%;
+  height: 5%;
   text-transform: capitalize;
   padding-top: 0px;
   font-size: 15px;
