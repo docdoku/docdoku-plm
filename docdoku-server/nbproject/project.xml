@@ -12,11 +12,11 @@
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
-                    <file>${reference.docdoku-common.jar}</file>
+                    <file>${reference.docdoku-server-web.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
-                    <file>${reference.docdoku-server-web.dist-ear}</file>
+                    <file>${reference.docdoku-common.jar}</file>
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>

@@ -2,23 +2,63 @@
 <Scene Scope="Project" version="2">
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
+        <Node id="js/templates/folder_document_list.html" x="1400" y="750" zoom="true"/>
+        <Node id="js/templates/alert.html" x="900" y="600" zoom="true"/>
+        <Node id="recoveryForm.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="js/templates/folder_nav.html" x="2400" y="150" zoom="true"/>
+        <Node id="admin/workspace/userAddingForm.jsp" x="900" y="150" zoom="true"/>
         <Node id="help/workflowHelp.jsp" x="400" y="600" zoom="true"/>
         <Node id="admin/workspaceCreationForm.jsp" x="650" y="150" zoom="true"/>
-        <Node id="help/help.jsp" x="400" y="150" zoom="true"/>
-        <Node id="help/documentHelp.jsp" x="150" y="750" zoom="true"/>
-        <Node id="recoveryRequestForm.xhtml" x="650" y="450" zoom="true"/>
-        <Node id="registrationForm.jsp" x="400" y="450" zoom="true"/>
-        <Node id="help/adminHelp.jsp" x="400" y="300" zoom="true"/>
+        <Node id="js/templates/document_list_item.html" x="400" y="750" zoom="true"/>
+        <Node id="js/templates/template_new_attribute_list_item.html" x="1900" y="150" zoom="true"/>
+        <Node id="js/templates/workflow_list_item.html" x="900" y="900" zoom="true"/>
+        <Node id="js/templates/workspace.html" x="1650" y="600" zoom="true"/>
+        <Node id="js/templates/document_new_attributes.html" x="1900" y="300" zoom="true"/>
         <Node id="help/templateHelp.jsp" x="1150" y="300" zoom="true"/>
-        <Node id="admin/workspacesMenu.jsp" x="150" y="600" zoom="true"/>
-        <Node id="admin/workspace/groupCreationForm.jsp" x="150" y="150" zoom="true"/>
-        <Node id="recoveryForm.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="js/templates/document_new_attribute_list_item_url.html" x="400" y="900" zoom="true"/>
+        <Node id="js/templates/folder_edit.html" x="1650" y="150" zoom="true"/>
+        <Node id="js/templates/workflow_content_list.html" x="1650" y="300" zoom="true"/>
+        <Node id="help/aboutHelp.jsp" x="650" y="300" zoom="true"/>
+        <Node id="js/templates/document_new.html" x="650" y="600" zoom="true"/>
+        <Node id="help/tagHelp.jsp" x="1150" y="150" zoom="true"/>
+        <Node id="js/templates/template_list_item.html" x="1150" y="900" zoom="true"/>
+        <Node id="help/help.jsp" x="400" y="150" zoom="true"/>
+        <Node id="js/templates/partials/document_new_attribute_list_item.html" x="1150" y="750" zoom="true"/>
+        <Node id="js/templates/workflow_nav.html" x="900" y="750" zoom="true"/>
+        <Node id="js/templates/content_document_list_checkout_button_group.html" x="150" y="1350" zoom="true"/>
+        <Node id="js/templates/document_new_attribute_list_item_boolean.html" x="1900" y="450" zoom="true"/>
+        <Node id="js/templates/folder_list_item.html" x="1400" y="600" zoom="true"/>
+        <Node id="js/templates/template_list.html" x="1150" y="600" zoom="true"/>
+        <Node id="registrationForm.jsp" x="400" y="450" zoom="true"/>
+        <Node id="js/templates/iteration_edit.html" x="400" y="1350" zoom="true"/>
+        <Node id="js/templates/workflow_list.html" x="1650" y="450" zoom="true"/>
         <Node id="download.jsp" x="150" y="300" zoom="true"/>
         <Node id="admin/accountEditionForm.jsp" x="1400" y="150" zoom="true"/>
-        <Node id="help/aboutHelp.jsp" x="650" y="300" zoom="true"/>
+        <Node id="js/templates/checkedout_nav.html" x="150" y="900" zoom="true"/>
+        <Node id="js/templates/document_new_template_select.html" x="150" y="1200" zoom="true"/>
+        <Node id="js/templates/document_new_attribute_list_item_date.html" x="650" y="1200" zoom="true"/>
+        <Node id="help/documentHelp.jsp" x="150" y="750" zoom="true"/>
+        <Node id="js/templates/document_new_workflow_select.html" x="150" y="1050" zoom="true"/>
+        <Node id="js/templates/template_new_attributes.html" x="2150" y="300" zoom="true"/>
+        <Node id="recoveryRequestForm.xhtml" x="650" y="450" zoom="true"/>
+        <Node id="js/templates/template_content_list.html" x="900" y="450" zoom="true"/>
+        <Node id="js/templates/tag_list_item.html" x="650" y="1050" zoom="true"/>
+        <Node id="js/templates/template_new.html" x="400" y="1050" zoom="true"/>
+        <Node id="help/adminHelp.jsp" x="400" y="300" zoom="true"/>
+        <Node id="js/templates/attachedfiles/iteration_edit_files.html" x="2650" y="150" zoom="true"/>
+        <Node id="js/templates/template_edit.html" x="400" y="1200" zoom="true"/>
+        <Node id="js/templates/document_edit.html" x="900" y="1050" zoom="true"/>
+        <Node id="admin/workspacesMenu.jsp" x="150" y="600" zoom="true"/>
+        <Node id="admin/workspace/groupCreationForm.jsp" x="150" y="150" zoom="true"/>
+        <Node id="js/templates/tag_nav.html" x="1400" y="300" zoom="true"/>
+        <Node id="js/templates/document_new_attribute_list_item_number.html" x="1400" y="450" zoom="true"/>
+        <Node id="js/templates/template_nav.html" x="150" y="1500" zoom="true"/>
+        <Node id="js/templates/folder_new.html" x="650" y="900" zoom="true"/>
+        <Node id="js/templates/content_document_list.html" x="2400" y="300" zoom="true"/>
+        <Node id="js/templates/attachedfiles/file_upload.html" x="1150" y="450" zoom="true"/>
+        <Node id="js/templates/document_list.html" x="2150" y="150" zoom="true"/>
         <Node id="admin/logout.jsp" x="900" y="300" zoom="true"/>
-        <Node id="help/tagHelp.jsp" x="1150" y="150" zoom="true"/>
-        <Node id="admin/workspace/userAddingForm.jsp" x="900" y="150" zoom="true"/>
+        <Node id="js/templates/document_new_attribute_list_item_text.html" x="650" y="750" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>
 </Scene>

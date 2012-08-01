@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -73,7 +74,12 @@ public class PartMaster implements Serializable {
     })
     private User author;
     
-    @OrderColumn
+    
+    @OrderColumn(name="ALTERNATE_ORDER")
+    @CollectionTable(name="PARTMASTER_ALTERNATE",joinColumns={
+        @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTMASTER_NUMBER", referencedColumnName="NUMBER")
+    })    
     @ElementCollection(fetch = FetchType.LAZY)
     private List<PartAlternateLink> alternates = new LinkedList<PartAlternateLink>();
     
