@@ -1,0 +1,56 @@
+//bootstrap default overwrite
+@import "../bootstrap/bootstrap.less";
+@import "../bootstrap/responsive.less";
+@import "../colors.less";
+@import "../icons.less";
+@import "../general.less";
+@import "../nav.less";
+
+
+
+.well {
+    border:none;
+    border-radius:0px;
+    padding:0px;
+    margin-bottom:0px;
+    border: 1px solid #CFD7E4;
+}
+
+.nav-list {
+    padding-left: 15px;
+    padding-right:0px;
+}
+
+.nav-list > li > a, .nav-list .nav-header {
+    margin-right:0px;
+}
+
+.header_btn-custom {
+    .buttonBackground(#7A99C1, #2C4361);
+    color: @white;
+    text-shadow: 0 1px 1px rgba(0,0,0,.75);
+}
+
+.header_btn-custom:hover{
+    color: @white;
+    text-shadow: 0 1px 1px rgba(0,0,0,.75);
+}
+
+.isNode{
+    font-weight: 600;
+}
+
+#container {
+    .border-radius(5px);
+    margin-top: 20px;
+    height: 80%;
+    border: 1px #94ADCC dashed;
+}
+
+#workspace{
+    position: relative;
+}
+
+#search_control_container input[type="search"] {
+    -webkit-appearance: none;
+}
