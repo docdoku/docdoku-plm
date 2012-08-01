@@ -7,7 +7,6 @@ window.Part = Backbone.Model.extend({
             "instances":     null,
             "files":    null,
             "components": null,
-            "parent":null,
             "isNode":false
         },
 
@@ -15,13 +14,9 @@ window.Part = Backbone.Model.extend({
 
         initialize : function(){
             this.className = "Part";
-            if (Array.isArray(this.get('components'))) {
-                var subParts = new PartCollection;
-                subParts.add(this.get('components'));
-                this.set({components: subParts});
-                this.set({isNode: true});
+            if (Array.isArray(this.getComponents())) {
+                this.set('isNode', true);
             }
-
         },
 
         getName : function() {
@@ -62,5 +57,9 @@ window.Part = Backbone.Model.extend({
 
         getStandardPart : function() {
             return this.get('standarPart');
+        },
+
+        isNode: function() {
+            return this.get('isNode');
         }
     });
