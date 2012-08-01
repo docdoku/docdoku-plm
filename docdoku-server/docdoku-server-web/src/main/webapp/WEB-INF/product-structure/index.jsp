@@ -21,6 +21,7 @@
     <script type="text/javascript">
         var APP_CONFIG = {
             workspaceId:"${workspaceID}",
+            productId:"${productID}",
             login:"${login}"
         };
     </script>

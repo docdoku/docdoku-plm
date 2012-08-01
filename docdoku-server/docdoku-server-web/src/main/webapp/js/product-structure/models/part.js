@@ -14,7 +14,7 @@ window.Part = Backbone.Model.extend({
 
         initialize : function(){
             this.className = "Part";
-            if (Array.isArray(this.getComponents())) {
+            if (this.getComponents().length>0) {
                 this.set('isNode', true);
             }
         },
