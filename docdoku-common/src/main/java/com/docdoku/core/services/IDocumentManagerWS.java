@@ -45,7 +45,7 @@ import javax.jws.WebService;
  * @author Florent Garin
  */
 @WebService
-public interface ICommandWS {
+public interface IDocumentManagerWS {
 
     DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
 

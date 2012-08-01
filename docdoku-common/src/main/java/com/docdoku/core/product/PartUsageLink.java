@@ -31,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -61,13 +62,22 @@ public class PartUsageLink implements Serializable {
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private PartMaster component;
     
-    @OrderColumn
+    @OrderColumn(name="PARTSUBSTITUTE_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinTable(
+    inverseJoinColumns={
+        @JoinColumn(name="PARTSUBSTITUTE_ID", referencedColumnName="ID")
+    },
+    joinColumns={
+        @JoinColumn(name="PARTUSAGELINK_ID", referencedColumnName="ID")
+    })
     private List<PartSubstituteLink> substitutes=new LinkedList<PartSubstituteLink>();
 
     
-    @OrderColumn
-    @CollectionTable(name="PARTUSAGELINK_CADINSTANCE")
+    @OrderColumn(name="CADINSTANCE_ORDER")
+    @CollectionTable(name="PARTUSAGELINK_CADINSTANCE",joinColumns={
+        @JoinColumn(name="PARTUSAGELINK_ID", referencedColumnName="ID")
+    })
     @ElementCollection(fetch=FetchType.LAZY)
     private List<CADInstance> cadInstances=new LinkedList<CADInstance>();
 

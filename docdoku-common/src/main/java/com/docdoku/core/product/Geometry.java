@@ -22,15 +22,7 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.BinaryResource;
-import java.io.Serializable;
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 /**
  * Wraps a CAD file providing quality information.
@@ -41,21 +33,21 @@ import javax.persistence.OneToOne;
  * @since   V1.1
  */
 @Entity
-public class Geometry implements Serializable{
+public class Geometry extends BinaryResource{
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Id
-    private int id;
         
     /**
      * Starts at 0, smaller is greater.
      */
     private int quality;
 
-    @OneToOne(cascade= CascadeType.ALL, fetch= FetchType.EAGER, optional=false)
-    private BinaryResource cadFile;
-            
+ 
     public Geometry() {
+    }
+    
+    public Geometry(int pQuality, String pFullName, long pContentLength) {
+        super(pFullName, pContentLength);
+        this.quality=pQuality;
     }
 
     public int getQuality() {
@@ -65,17 +57,6 @@ public class Geometry implements Serializable{
     public void setQuality(int quality) {
         this.quality = quality;
     }
-
-    public BinaryResource getCadFile() {
-        return cadFile;
-    }
-
-    public void setCadFile(BinaryResource cadFile) {
-        this.cadFile = cadFile;
-    }
-
-
-    
 
     
 }

@@ -206,6 +206,10 @@ public class PartMaster implements Serializable {
     }
 
 
+    public PartMasterKey getKey() {
+        return new PartMasterKey(getWorkspaceId(),number);
+    }
+        
     public String getDescription() {
         return description;
     }

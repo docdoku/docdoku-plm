@@ -22,7 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.TagDTO;
 import javax.annotation.PostConstruct;
@@ -46,7 +46,7 @@ import org.dozer.Mapper;
 public class TagResource {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     
     private Mapper mapper;
 
@@ -64,7 +64,7 @@ public class TagResource {
         
         try{    
         
-            String[] tagsName = commandService.getTags(workspaceId);
+            String[] tagsName = documentService.getTags(workspaceId);
             TagDTO[] tagDtos = new TagDTO[tagsName.length];
             for (int i = 0; i < tagsName.length; i++) {                
                 tagDtos[i] = new TagDTO();
@@ -84,7 +84,7 @@ public class TagResource {
     @Produces("application/json;charset=UTF-8")
     public DocumentMasterDTO[] getMasterDocumentsWithSpecifiedTagJson(@PathParam("workspaceId") String workspaceId,@PathParam("tagId") String tagId) {
         try{
-        DocumentMaster[] docMs = commandService.findDocumentMastersByTag(new TagKey(workspaceId, tagId));
+        DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, tagId));
         DocumentMasterDTO[] docMsDTO = new DocumentMasterDTO[docMs.length];
 
         for (int i = 0; i < docMs.length; i++) {
@@ -104,7 +104,7 @@ public class TagResource {
     public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag) {
         try {
 
-            commandService.createTag(workspaceId, tag.getLabel());
+            documentService.createTag(workspaceId, tag.getLabel());
             return new TagDTO(tag.getLabel());
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -124,7 +124,7 @@ public class TagResource {
     public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId) {
         try {
             
-            commandService.deleteTag(new TagKey(workspaceId, tagId));
+            documentService.deleteTag(new TagKey(workspaceId, tagId));
             
             return Response.status(Response.Status.OK).build();
             

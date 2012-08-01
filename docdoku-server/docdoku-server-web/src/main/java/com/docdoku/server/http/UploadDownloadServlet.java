@@ -20,7 +20,7 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import java.io.BufferedInputStream;
@@ -52,7 +52,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class UploadDownloadServlet extends HttpServlet {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
     @Resource
@@ -90,7 +90,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
             }
 
-            File dataFile = commandService.getDataFile(fullName);
+            File dataFile = documentService.getDataFile(fullName);
             File fileToOutput;
             if ("pdf".equals(pRequest.getParameter("type"))) {
                 pResponse.setContentType("application/pdf");
@@ -161,13 +161,13 @@ public class UploadDownloadServlet extends HttpServlet {
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
-                vaultFile = commandService.saveFileInDocument(docPK, fileName, 0);
+                vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
 
             } else if (elementType.equals("templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
-                vaultFile = commandService.saveFileInTemplate(templatePK, fileName, 0);
+                vaultFile = documentService.saveFileInTemplate(templatePK, fileName, 0);
             }
             vaultFile.getParentFile().mkdirs();
             vaultFile.createNewFile();
@@ -195,9 +195,9 @@ public class UploadDownloadServlet extends HttpServlet {
                 }
             }
             if (elementType.equals("documents")) {
-                commandService.saveFileInDocument(docPK, fileName, vaultFile.length());
+                documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
             } else if (elementType.equals("templates")) {
-                commandService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
+                documentService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
             }
             utx.commit();
         } catch (Exception pEx) {

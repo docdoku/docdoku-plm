@@ -23,7 +23,7 @@ import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
@@ -51,7 +51,7 @@ import org.dozer.Mapper;
 public class DocumentTemplateResource {
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     private Mapper mapper;
 
     public DocumentTemplateResource() {
@@ -67,7 +67,7 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId) {
         try {
 
-            DocumentMasterTemplate[] docMsTemplates = commandService.getDocumentMasterTemplates(workspaceId);
+            DocumentMasterTemplate[] docMsTemplates = documentService.getDocumentMasterTemplates(workspaceId);
             DocumentMasterTemplateDTO[] dtos = new DocumentMasterTemplateDTO[docMsTemplates.length];
 
             for (int i = 0; i < docMsTemplates.length; i++) {
@@ -87,7 +87,7 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            DocumentMasterTemplate docMsTemplate = commandService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
+            DocumentMasterTemplate docMsTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
             DocumentMasterTemplateDTO dto = mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
 
             return dto;
@@ -103,7 +103,7 @@ public class DocumentTemplateResource {
     public String generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            return commandService.generateId(workspaceId, templateId);
+            return documentService.generateId(workspaceId, templateId);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -129,7 +129,7 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = commandService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
@@ -159,7 +159,7 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = commandService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
@@ -173,7 +173,7 @@ public class DocumentTemplateResource {
     @Path("{templateId}")
     public Response deleteDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
-            commandService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
+            documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

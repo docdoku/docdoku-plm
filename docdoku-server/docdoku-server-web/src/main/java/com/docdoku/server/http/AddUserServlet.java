@@ -21,7 +21,7 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.ICommandLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
@@ -43,7 +43,7 @@ public class AddUserServlet extends HttpServlet {
     private IUserManagerLocal userManager;
 
     @EJB
-    private ICommandLocal commandService;
+    private IDocumentManagerLocal documentService;
     
     @Override
     protected void doPost(HttpServletRequest pRequest,
@@ -55,7 +55,7 @@ public class AddUserServlet extends HttpServlet {
             
             HttpSession sessionHTTP = pRequest.getSession();
             Workspace workspace = (Workspace) sessionHTTP.getAttribute("selectedWorkspace");
-            User[] users = commandService.getUsers(workspace.getId());
+            User[] users = documentService.getUsers(workspace.getId());
 
             
             switch(workspace.getVaultType()){
