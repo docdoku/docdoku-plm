@@ -75,7 +75,7 @@ public class PSServlet extends HttpServlet {
         } else {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.html").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.jsp").forward(pRequest, pResponse);
         }
     }
 }
