@@ -11,19 +11,26 @@
     <title>v 0.2 - <fmt:message key="title"/></title>
 
 
-    <!--<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/bootstrap.css"/>-->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/jquery.treeview.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/product-structure.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/navigation-controls.css"/>
     <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/product-structure/style.less">
 
+    <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
+
     <script type="text/javascript">
+
         var APP_CONFIG = {
             workspaceId:"${workspaceID}",
             productId:"${productID}",
             login:"${login}"
         };
+
+        $(document).ready(function() {
+            populateProductsMenu();
+        });
+
     </script>
 
 </head>
@@ -121,7 +128,6 @@
 <script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
 <script src="<%=request.getContextPath()%>/js/lib/kumo.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
 <script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.2.min.js"></script>

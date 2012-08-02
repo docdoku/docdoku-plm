@@ -1,18 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<script type="text/javascript">
-    <!--
-    function switchMenu(objet){
-        var el = document.getElementById(objet);
-        if ( el.style.display != 'none' ) {
-            el.style.display = 'none';
-        }
-        else {
-            el.style.display = '';
-        }
-    }
-    //-->
-</script>
 <fmt:bundle basename="com.docdoku.server.localization.header_footer_resource">
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
@@ -31,19 +18,15 @@
 						<li>
 							<a href="<%=request.getContextPath()%>/" id="home_link" title="Home"></a>
 						</li>
+
+                        <!-- my documents dropdown menu-->
+
 						<li class="dropdown" id="workspace_container">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-								<fmt:message key="toplinks.workspace"/>
+								<fmt:message key="toplinks.document"/>
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li>                                
-									<a href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
-										<i class="icon-cog"></i>
-										<fmt:message key="toplinks.admin"/>
-									</a>
-								</li>
-								<li class="divider"></li>
 								<c:forEach var="item" items="${administeredWorkspaces}">
 									<li>
 										<a href="<%=request.getContextPath()%>/document-management/${item.value.id}">
@@ -60,6 +43,19 @@
 								</c:forEach>
 							</ul>
 						</li>
+
+                        <!-- my products dropdown menu-->
+
+                        <li class="dropdown" id="product_container">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <fmt:message key="toplinks.product"/>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                            </ul>
+                        </li>
+
+
 					</ul>
 					<ul class="nav pull-right">
 						<li class="dropdown" id="account_name_node">
@@ -74,6 +70,13 @@
 										<fmt:message key="toplinks.account"/>
 									</a>
 								</li>
+                                <li>
+                                    <a href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
+                                        <i class="icon-cog"></i>
+                                        <fmt:message key="toplinks.admin"/>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
 								<li>
 									<a href="<%=request.getContextPath()%>/admin/logout.jsp">
 										<i class="icon-off"></i>
@@ -94,3 +97,25 @@
         </div>
     </div>
 </fmt:bundle>
+<script type="text/javascript">
+    <!--
+    function switchMenu(objet){
+        var el = document.getElementById(objet);
+        if ( el.style.display != 'none' ) {
+            el.style.display = 'none';
+        }
+        else {
+            el.style.display = '';
+        }
+    }
+
+    function populateProductsMenu(){
+        $.getJSON('<%=request.getContextPath()%>/api/workspaces/'+APP_CONFIG.workspaceId+'/products/', function(data) {
+            $.each(data, function(i,product){
+                var product_item_view = $('<li><a href="/product-structure/'+APP_CONFIG.workspaceId+'/'+product.id+'">'+product.id+'</a></li>');
+                $("#product_container ul").append(product_item_view);
+            });
+        });
+    }
+    //-->
+</script>
