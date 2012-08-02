@@ -41,6 +41,11 @@
 				locale: "<%=request.getLocale()%>"
 			});
 			require(["app"]);
+
+            $(document).ready(function() {
+                populateProductsMenu();
+            });
+            
 		</script>
     </head>    
     <body>
