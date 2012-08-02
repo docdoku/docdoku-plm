@@ -1,0 +1,114 @@
+@import "../bootstrap/bootstrap.less";
+@import "../bootstrap/responsive.less";
+@import "../colors.less";
+@import "../icons.less";
+@import "../general.less";
+@import "../nav.less";
+
+body{
+    #gradient > .vertical(#EFF2F7,#CFD7E4);
+    height: 100%;
+}
+
+html{
+    height: 100%;
+}
+
+.header_btn-custom {
+    .buttonBackground(#7A99C1, #2C4361);
+    color: @white;
+    text-shadow: 0 1px 1px rgba(0,0,0,.75);
+}
+
+.header_btn-custom:hover{
+    color: @white;
+    text-shadow: 0 1px 1px rgba(0,0,0,.75);
+}
+
+#page{
+    background: none;
+    padding: 0px;
+}
+
+.nav a{
+    color:white;
+    text-shadow: 0px -1px 0px black;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.nav a:hover{
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.nav i{
+    margin-right: 3px;
+    margin-top: -2px;
+}
+
+#registration_link_container{
+    text-shadow: 0px -1px 0px black;
+    color: #CCC;
+    margin-top: 10px;
+}
+
+#registration_link_container a{
+    display: inline;
+}
+
+#header{
+    border:none;
+}
+
+#login_form_container{
+    margin: 0px auto;
+    background-color: white;
+    width: 300px;
+    border-radius: 5px;
+    .box-shadow(0px 1px 4px rgba(0, 0, 0, 0.5));
+}
+
+#login_form_container h3{
+    text-align: center;
+    font-size: 20px;
+    color: #434C64;
+}
+
+#login_form_container h3 i{
+    margin-right: 10px;
+    margin-top: -2px;
+}
+
+
+#login_form_container #login_form label{
+    color: #5B6B80;
+}
+
+#login_form{
+    margin-top: 15px;
+    margin-bottom: 0px;
+}
+
+#login_form input[type="text"], #login_form input[type="password"]{
+    width:250px;
+}
+
+#login_form p{
+    margin-left: 20px;
+}
+
+#login_button_container{
+    //text-align: right;
+    float: right;
+    margin-bottom: 15px;
+}
+
+#login_button{
+    width: 80px;
+    margin-right: 20px;
+}
+
+#footer{
+    border:none;
+}

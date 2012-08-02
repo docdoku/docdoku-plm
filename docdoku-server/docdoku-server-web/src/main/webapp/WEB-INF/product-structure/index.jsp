@@ -11,7 +11,6 @@
     <title>v 0.2 - <fmt:message key="title"/></title>
 
 
-    <!--<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/bootstrap.css"/>-->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/jquery.treeview.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/product-structure.css"/>
