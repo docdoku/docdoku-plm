@@ -1,10 +1,10 @@
 body{
   background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0.21, #CFD7E4), color-stop(0.61, #EFF2F7) );
-  height: 100%; 
+  height: 100%;
 }
 
 html{
-  height: 100%;  
+  height: 100%;
 }
 
 /*.container{
@@ -39,6 +39,7 @@ html{
 
 .row-fluid .span9{
   height: 100%;
+    position:relative;
 }
 
 #content_header_bar{
@@ -196,6 +197,7 @@ margin-right:0px;
   -webkit-appearance: none;
   border-radius: 0px;
   margin-top: 1px;
+  display:none;
 }
 
 /*
