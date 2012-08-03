@@ -145,6 +145,10 @@ window.Part = Backbone.Model.extend({
 
     getLoader: function() {
         return this.get('loader');
+    },
+
+    getScoreCoeff: function() {
+        return this.get('scoreCoeff');
     }
 
 });
