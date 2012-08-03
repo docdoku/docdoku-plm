@@ -26,7 +26,7 @@ import java.io.Serializable;
  *
  * @author Julien Maffre
  */
-public class GeometryDTO implements Serializable{
+public class GeometryDTO implements Serializable {
 
     private String fullName;
     private int quality;
