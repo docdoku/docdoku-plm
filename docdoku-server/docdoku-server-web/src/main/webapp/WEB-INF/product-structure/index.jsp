@@ -27,10 +27,40 @@
             login:"${login}"
         };
 
+
         $(document).ready(function() {
             populateProductsMenu();
+
+            _.templateSettings = {
+                evaluate : /\{\[([\s\S]+?)\]\}/g,
+                interpolate : /\{\{([\s\S]+?)\}\}/g
+            };
+
         });
 
+    </script>
+
+    <script type="text/x-underscore-template" id="part_metadata_template">
+        <h1><i class="icon-cog"></i>{{getNumber}}</h1>
+        <button type="button" class="close" id="part_metadata_close_button">×</button>
+        <div class="row">
+            <div class="span7">
+                <div class="span12">
+                    <span class="part_metadata_key">Version :</span>
+                    <span class="part_metadata_value" id="part_metadata_version">{{getVersion}}</span>
+                </div>
+                <div class="span12">
+                    <span class="part_metadata_key">Iteration :</span>
+                    <span class="part_metadata_value" id="part_metadata_iteration">{{getIteration}}</span>
+                </div>
+            </div>
+            <div class="span4">
+                <div class="span12">
+                    <span class="part_metadata_key">Description :</span>
+                    <span class="part_metadata_value" id="part_metadata_description">{{getDescription}}</span>
+                </div>
+            </div>
+        </div>
     </script>
 
 </head>
@@ -116,30 +146,7 @@
 
     </div>
     <div id="part_metadata_container">
-        <h1><i class="icon-cog"></i>Part Name</h1>
-        <button type="button" class="close">×</button>
-        <div class="row">
-            <div class="span7">
-                <div class="span12">
-                    <span class="part_metadata_key">Number :</span>
-                    <span class="part_metadata_value" id="part_metadata_number">Value</span>
-                </div>
-                <div class="span12">
-                    <span class="part_metadata_key">Version :</span>
-                    <span class="part_metadata_value" id="part_metadata_version">Value</span>
-                </div>
-                <div class="span12">
-                    <span class="part_metadata_key">Iteration :</span>
-                    <span class="part_metadata_value" id="part_metadata_iteration">Value</span>
-                    </div>
-            </div>
-            <div class="span4">
-                <div class="span12">
-                    <span class="part_metadata_key">Description :</span>
-                    <span class="part_metadata_value" id="part_metadata_description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
-                    </div>
-            </div>
-        </div>
+
     </div>
 </div>
 </div>
@@ -164,12 +171,13 @@
 <script src="<%=request.getContextPath()%>/js/product-structure/collections/partCollection.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_node_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_item_view.js"></script>
+<script src="<%=request.getContextPath()%>/js/product-structure/views/part_metadata_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/app.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/customThreeJs/build/Three.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Detector.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Stats.js"></script>
+<!--<script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Stats.js"></script>-->
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Lod3D.js"></script>
 
 
