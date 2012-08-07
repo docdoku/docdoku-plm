@@ -141,10 +141,8 @@
 <script src="<%=request.getContextPath()%>/js/product-structure/app.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/customThreeJs/build/Three.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Detector.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Stats.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/imagery/Lod3D.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
 
 
 </body>
