@@ -35,7 +35,7 @@ html{
 }
 
 #content_header_bar{
-  padding-top: 5px;
+  padding-top: 10px;
   text-align: center;
 }
 
@@ -43,8 +43,9 @@ html{
   font-size: 16px;
 }
 
-#content_header_bar a{
-  margin-left: 5px;
+#content_header_bar .btn-group{
+    width: 106px;
+    margin: 0px auto;
 }
 
 #nav_list_action_bar i{

@@ -10,7 +10,6 @@
 
     <title>v 0.2 - <fmt:message key="title"/></title>
 
-
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/jquery.treeview.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/product-structure.css"/>
@@ -63,95 +62,122 @@
         </div>
     </script>
 
+
 </head>
 <body>
-<%@ include file="/WEB-INF/explorer_header.jspf" %>
-<div class="container-fluid" id="workspace">
-<div class="row-fluid">
-<div class="span3">
-<div class="well sidebar-nav">
-<div id="nav_list_action_bar">
+    <%@ include file="/WEB-INF/explorer_header.jspf" %>
+    <div class="container-fluid" id="workspace">
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="well sidebar-nav">
 
-    <div id="nav_list_controls">
-        <!--<a class="btn header_btn-custom" id="nav_list_collapse" href="#">
-           <i class="icon-resize-small"></i>
-       </a>
-       <a class="btn header_btn-custom" id="nav_list_expand" href="#">
-           <i class="icon-resize-full"></i>
-       </a>-->
-        <div id="search_control_container">
-            <input type="search"/>
-            <a class="btn header_btn-custom" id="nav_list_search_button" href="#">
-                <i class="icon-search"></i>
-            </a>
-        </div>
-    </div>
-</div>
+                    <div id="nav_list_action_bar">
 
-<nav class="nav nav-list treeview" id="product_nav_list">
+                        <div id="nav_list_controls">
+                                <!--<a class="btn header_btn-custom" id="nav_list_collapse" href="#">
+                                   <i class="icon-resize-small"></i>
+                               </a>
+                               <a class="btn header_btn-custom" id="nav_list_expand" href="#">
+                                   <i class="icon-resize-full"></i>
+                               </a>-->
+                            <div id="search_control_container">
+                                <input type="search"/>
+                                <a class="btn header_btn-custom" id="nav_list_search_button" href="#">
+                                    <i class="icon-search"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-</nav>
+                    <nav class="nav nav-list treeview" id="product_nav_list">
 
-<select id="context_selector_list">
-    <option>contexte</option>
-    <option>2</option>
-    <option>3</option>
-    <option>4</option>
-    <option>5</option>
-</select>
-</div>
-</div>
-<div class="span9">
+                    </nav>
 
-    <div id="content">
-        <div id="content_header_bar" class="span10">
-            <a class="btn header_btn-custom" href="#"><i class="icon-eye-open"></i></a>
-            <a class="btn header_btn-custom" href="#"><i class="icon-info-sign"></i></a>
-            <a class="btn header_btn-custom" href="#"><i class="icon-list"></i></a>
-        </div>
+                    <select id="context_selector_list">
+                        <option>contexte</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
 
-        <div id="container" class="span10"></div>
-
-        <div id="navigationMenu" class="span1">
-            <div id="moveSpace">
-                <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
-                <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
-                <a href="#" class="moveBtnSide moveBtnRight"><i
-                        class="icon-caret-right icon-navigation"></i></a>
-                <a href="#" class="moveBtnSide moveBtnBottom"><i
-                        class="icon-caret-down icon-navigation"></i></a>
-                <a href="#" class="moveBtn moveBtnCenter"><i class="icon-undo icon-navigation"></i></a>
+                </div>
             </div>
 
-            <div id="moveMap">
-                <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
-                <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
-                <a href="#" class="moveBtnSide moveBtnRight"><i
-                        class="icon-caret-right icon-navigation"></i></a>
-                <a href="#" class="moveBtnSide moveBtnBottom"><i
-                        class="icon-caret-down icon-navigation"></i></a>
-                <a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
-            </div>
-        </div>
+            <div class="span9">
 
-        <div id="zoomContainer" class="span10">
-            <div id="zoomBar">
-                <input id="zoomRange" type="range" min="0" max="100" value="50" step="1"/>
-            </div>
-        </div>
+                <div id="content_header_bar" class="span10">
+                    <div class="btn-group" data-toggle="buttons-radio">
+                        <button class="btn header_btn-custom active" id="scene_view_btn"><i class="icon-eye-open"></i></button>
+                        <button class="btn header_btn-custom" id="metadata_view_btn"><i class="icon-info-sign"></i></button>
+                        <button class="btn header_btn-custom" id="bom_view_btn"><i class="icon-list"></i></button>
+                    </div>
+                </div>
 
-        <div id="content_footer_bar">
-            <h1></h1>
+                <div id="content">
+
+                    <div id="container" class="span10"></div>
+
+                    <div id="navigationMenu" class="span1">
+                        <div id="moveSpace">
+                            <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnRight"><i
+                                    class="icon-caret-right icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnBottom"><i
+                                    class="icon-caret-down icon-navigation"></i></a>
+                            <a href="#" class="moveBtn moveBtnCenter"><i class="icon-undo icon-navigation"></i></a>
+                        </div>
+
+                        <div id="moveMap">
+                            <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnRight"><i
+                                    class="icon-caret-right icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnBottom"><i
+                                    class="icon-caret-down icon-navigation"></i></a>
+                            <a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
+                        </div>
+                    </div>
+
+                    <div id="zoomContainer" class="span10">
+                        <div id="zoomBar">
+                            <input id="zoomRange" type="range" min="0" max="100" value="50" step="1"/>
+                        </div>
+                    </div>
+
+                    <div id="content_footer_bar">
+                        <h1></h1>
+                    </div>
+
+                </div>
+
+                <div id="part_metadata_container">
+
+                </div>
+
+
+                <div id="bom_table_container">
+                    <table id="bom_table" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Part Number</th>
+                                <th>Name</th>
+                                <th>Revision</th>
+                                <th>Iteration</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
         </div>
 
     </div>
-    <div id="part_metadata_container">
-
-    </div>
-</div>
-</div>
-
-</div>
 
 
 
@@ -172,6 +198,7 @@
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_node_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_item_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_metadata_view.js"></script>
+    <script src="<%=request.getContextPath()%>/js/product-structure/views/bom_item_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/app.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
