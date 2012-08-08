@@ -16,9 +16,12 @@ window.PartNodeView = Backbone.View.extend({
     },
 
     addPartItemView:function(partItem){
-        var partItemView = new PartItemView({model: partItem});
 
+        var partItemView = new PartItemView({model: partItem});
         this.$el.append(partItemView.render().el);
+
+        var bomItemView = new BomItemView({model: partItem})
+        bomItemView.render();
 
         if (partItem.isNode()) {
             var subParts = new PartCollection;

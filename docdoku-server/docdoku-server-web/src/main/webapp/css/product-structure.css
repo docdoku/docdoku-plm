@@ -1,19 +1,11 @@
 body{
   background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0.21, #CFD7E4), color-stop(0.61, #EFF2F7) );
-  height: 100%; 
+  height: 100%;
 }
 
 html{
-  height: 100%;  
+  height: 100%;
 }
-
-/*.container{
-    position: relative;
-    background-color: #F5F5F5;
-    overflow: hidden;
-    margin-left: 0px;
-    width: 295px;
-}      */
 
 .container-fluid{
   padding-right: 0px;
@@ -22,7 +14,7 @@ html{
 }
 
 .row-fluid{
-  height: 100%;
+  height: 99.7%;
   top: -2px;
   position: absolute;
 }
@@ -39,10 +31,11 @@ html{
 
 .row-fluid .span9{
   height: 100%;
+    position:relative;
 }
 
 #content_header_bar{
-  padding-top: 5px;
+  padding-top: 10px;
   text-align: center;
 }
 
@@ -50,8 +43,9 @@ html{
   font-size: 16px;
 }
 
-#content_header_bar a{
-  margin-left: 5px;
+#content_header_bar .btn-group{
+    width: 106px;
+    margin: 0px auto;
 }
 
 #nav_list_action_bar i{
@@ -128,7 +122,6 @@ html{
 
 .well{
   border: 1px solid #CFD7E4;
-  /*TODO get left container height*/
   height: 100%;
   padding: 0px;
   margin-bottom: 0px;
@@ -155,8 +148,17 @@ html{
   background-image: -webkit-linear-gradient(left , transparent 2%, #CFD7E4 3%);
 }
 
+#product_nav_list a{
+    display:inline-block;
+    cursor:pointer;
+}
+
 #product_nav_list a:hover {
    text-decoration: none;
+}
+
+#product_nav_list a .checkbox{
+    padding-left:5px;
 }
 
 #product_nav_list label:hover {
@@ -196,6 +198,7 @@ margin-right:0px;
   -webkit-appearance: none;
   border-radius: 0px;
   margin-top: 1px;
+  display:none;
 }
 
 /*
@@ -207,10 +210,6 @@ margin-right:0px;
 }
 
 #container {
-/*  width: 66%;
-  position: absolute;
-  right: 0px;
-  margin-right: 120px;*/
   margin-top: 20px;
   height: 80%;
   border: 1px black dotted;
