@@ -16,14 +16,15 @@
 				<div class="nav-collapse">
 					<ul class="nav">
 						<li>
-							<a href="<%=request.getContextPath()%>/" id="home_link" title="Home"></a>
+							<a href="<%=request.getContextPath()%>/" id="home_link" title="Home"><i class="icon-home"></i></a>
 						</li>
 
                         <!-- my documents dropdown menu-->
 
 						<li class="dropdown" id="workspace_container">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-								<fmt:message key="toplinks.document"/>
+                                <i class="icon-file"></i>
+                                <fmt:message key="toplinks.document"/>
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
@@ -48,6 +49,7 @@
 
                         <li class="dropdown" id="product_container">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="icon-briefcase"></i>
                                 <fmt:message key="toplinks.product"/>
                                 <span class="caret"></span>
                             </a>
@@ -60,6 +62,7 @@
 					<ul class="nav pull-right">
 						<li class="dropdown" id="account_name_node">
 							<a href="#" class="dropdown-toggle" id="account_name_link" data-toggle="dropdown">
+                                <i class="icon-user"></i>
 								${sessionScope.account.name}
 								<span class="caret"></span>
 							</a>
