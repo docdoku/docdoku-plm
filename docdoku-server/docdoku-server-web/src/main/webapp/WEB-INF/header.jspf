@@ -23,7 +23,8 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <span class="icon-brand-plm"></span>
+                <!--<span class="brand-plm"></span>-->
+                <img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/>
                 <a class="brand" href="#">
                     DocDoku<strong>PLM</strong>
                 </a>
