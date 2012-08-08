@@ -6,37 +6,52 @@ window.Part = Backbone.Model.extend({
         number: null,
         version: null,
         description: null,
-        instances: [],
         files: null,
         components: [],
-        isNode: false,
-        loader: null,
-        scoreCoeff: null,
-        instancesOnScene: 0,
-        geometryCached: null,
-        idle: true,
-        filenameLow: null,
-        filenameHigh: null
+        isNode: false
     },
 
     idAttribute: "number",
 
     initialize : function() {
 
+        this.idle = true;
+        this.geometryLow = null;
+        this.instancesOnScene = 0;
+        this.scoreCoeff = this.isStandardPart() ? 1 : 0.3;
+
         if (this.getComponents().length > 0) {
-            this.set('isNode', true);
+            this.set('isNode', true, {silent: true});
         }
 
         var self = this;
+
         _.each(this.getFiles(), function(file) {
             switch (file.quality) {
                 case 0:
-                    self.set('filenameLow', file.fullName);
+                    self.filenameHigh = '/files/' + file.fullName;
                     break;
                 case 1:
-                    self.set('filenameHigh', file.fullName);
+                    self.filenameLow = '/files/' + file.fullName;
                     break;
             }
+        });
+
+        _.each(this.get('instances'), function(instanceRaw) {
+
+            var instance = new Instance(
+                sceneManager.material,
+                self,
+                instanceRaw.tx*10,
+                instanceRaw.ty*10,
+                instanceRaw.tz*10,
+                instanceRaw.rx,
+                instanceRaw.ry,
+                instanceRaw.rz
+            );
+
+            sceneManager.instances.push(instance);
+
         });
 
     },
@@ -57,10 +72,6 @@ window.Part = Backbone.Model.extend({
         return this.get('description');
     },
 
-    getInstances : function() {
-        return this.get('instances');
-    },
-
     getFiles : function() {
         return this.get('files');
     },
@@ -77,7 +88,7 @@ window.Part = Backbone.Model.extend({
         return this.get('iteration');
     },
 
-    getStandardPart : function() {
+    isStandardPart : function() {
         return this.get('standardPart');
     },
 
@@ -85,70 +96,37 @@ window.Part = Backbone.Model.extend({
         return this.get('isNode');
     },
 
-    getGeometryCached: function() {
-        return this.get('geometryCached');
-    },
-
-    setGeometryCached: function(geometry) {
-        this.set('geometryCached', geometry);
-    },
-
-    isIdle: function() {
-        return this.get('idle');
-    },
-
-    setIdle: function(idle) {
-        this.set('idle', idle);
-    },
-
-    getFilenameLow: function() {
-        return this.get('filenameLow');
-    },
-
-    getFilenameHigh: function() {
-        return this.get('filenameHigh');
-    },
-
-    getInstancesOnScene: function() {
-        return this.get('instancesOnScene');
-    },
-
     getGeometry: function(callback) {
-        if (this.getGeometryCached() == null) {
+        if (this.geometryLow == null) {
             var self = this;
-            this.setIdle(false);
-            this.getLoader().load(this.getFilenameLow(), function(geometry) {
+            this.idle = false;
+            this.getLoader().load(this.filenameLow, function(geometry) {
                 geometry.computeVertexNormals();
-                self.setGeometryCached(geometry);
-                self.setIdle(true);
-                callback(self.getGeometryCached());
+                self.geometryLow = geometry;
+                self.idle = true;
+                callback(self.geometryLow);
             }, 'images');
         } else {
-            callback(this.getGeometryCached());
+            callback(this.geometryLow);
         }
     },
 
     onAddInstanceOnScene: function() {
-        this.set('instancesOnScene', this.getInstancesOnScene() + 1);
+        this.instancesOnScene++;
     },
 
     onRemoveInstanceFromScene: function() {
-        this.set('instancesOnScene', this.getInstancesOnScene() - 1);
-        if (this.getInstancesOnScene() == 0) {
+        if (--this.instancesOnScene == 0) {
             this.clear();
         }
     },
 
     clear: function() {
-        this.setGeometryCached(null);
+        this.geometryLow = null;
     },
 
     getLoader: function() {
-        return this.get('loader');
-    },
-
-    getScoreCoeff: function() {
-        return this.get('scoreCoeff');
+        return sceneManager.loader;
     }
 
 });

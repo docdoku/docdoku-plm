@@ -1,76 +1,60 @@
-window.Instance = Backbone.Model.extend({
+window.Instance = function(material, part, tx, ty, tz, rx, ry, rz) {
 
-    defaults: {
-        position: {
-            x: 0,
-            y: 0,
-            z: 0
-        },
-        rotation: {
-            x: 0,
-            y: 0,
-            z: 0
-        },
-        part: null,
-        mesh: null,
-        onScene: false,
-        idle: true,
-        material: null
-    },
+    this.position = {
+        x: tx,
+        y: ty,
+        z: tz
+    };
 
-    getPart: function() {
-        return this.get('part');
-    },
+    this.rotation = {
+        x: rx,
+        y: ry,
+        z: rz
+    };
+
+    this.part = part;
+    this.mesh = null;
+    this.onScene = false;
+    this.idle = true;
+    this.material = material;
+
+}
+
+Instance.prototype = {
 
     getScore: function(cameraPosition) {
-        return this.getPart().getScoreCoeff() * this.getDistance(cameraPosition);
-    },
-
-    getPosition: function() {
-        return this.get('position');
-    },
-
-    getRotation: function() {
-        return this.get('rotation');
-    },
-
-    getMesh: function() {
-        return this.get('mesh');
-    },
-
-    getMaterial: function() {
-        return this.get('material');
+        return this.part.scoreCoeff * this.getDistance(cameraPosition);
     },
 
     getDistance: function(cameraPosition) {
-        return Math.sqrt(Math.pow(cameraPosition.x - this.getPosition().x, 2) + Math.pow(cameraPosition.y - this.getPosition().y, 2) + Math.pow(cameraPosition.z - this.getPosition().z, 2));
+        return Math.sqrt(Math.pow(cameraPosition.x - this.position.x, 2) + Math.pow(cameraPosition.y - this.position.y, 2) + Math.pow(cameraPosition.z - this.position.z, 2));
     },
 
     getMeshForLoading: function(callback) {
 
         var self = this;
-        this.getPart().getGeometry(function(geometry) {
-            var mesh = new THREE.Mesh(geometry, self.getMaterial());
-            mesh.position.set(self.getPosition().x, self.getPosition().y, self.getPosition().z);
-            VisualizationUtils.rotateAroundWorldAxis(mesh, self.getRotation().x, self.getRotation().y, self.getRotation().z);
+        this.part.getGeometry(function(geometry) {
+            var mesh = new THREE.Mesh(geometry, self.material);
+            mesh.position.set(self.position.x, self.position.y, self.position.z);
+            VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
             mesh.doubleSided = false;
-            self.set('mesh', mesh);
-            callback(self.getMesh());
+            self.mesh = mesh;
+            callback(self.mesh);
         });
 
     },
 
     getMeshToRemove: function() {
-        return this.getMesh();
+        return this.mesh;
     },
 
     onAdd: function() {
-        this.getPart().onAddInstanceOnScene();
+        this.part.onAddInstanceOnScene();
     },
 
     onRemove: function() {
-        this.set('mesh', null);
-        this.getPart().onRemoveInstanceFromScene();
+        this.mesh = null;
+        this.part.onRemoveInstanceFromScene();
     }
 
-});
+};

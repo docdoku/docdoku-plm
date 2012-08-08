@@ -1,14 +1,11 @@
-window.AppView = Backbone.View.extend({
+var sceneManager;
 
-    el: $("#workspace"),
+$(document).ready(function() {
 
-    initialize: function() {
-        var allParts = new PartCollection;
-        var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
-        allParts.fetch();
+    sceneManager = new SceneManager();
+    var allParts = new PartCollection;
+    var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
+    allParts.fetch();
 
-    }
-
+    sceneManager.init();
 });
-
-window.App = new AppView;

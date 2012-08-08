@@ -135,6 +135,7 @@
 
 
 <script src="<%=request.getContextPath()%>/js/product-structure/models/part.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/instance.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/collections/partCollection.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_node_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_item_view.js"></script>
@@ -143,7 +144,9 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
 
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 
 </body>
 </html>
