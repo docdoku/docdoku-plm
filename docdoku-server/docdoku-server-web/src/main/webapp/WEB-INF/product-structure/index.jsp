@@ -29,12 +29,6 @@
 
         $(document).ready(function() {
             populateProductsMenu();
-
-            _.templateSettings = {
-                evaluate : /\{\[([\s\S]+?)\]\}/g,
-                interpolate : /\{\{([\s\S]+?)\}\}/g
-            };
-
         });
 
     </script>
