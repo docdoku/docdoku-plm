@@ -3,7 +3,7 @@ function SceneManager(options) {
     var options = options || {};
 
     var defaultsOptions = {
-        scoreQuality: 40000,
+        scoreQuality: 1500,
         typeLoader: 'json',
         typeMaterial: 'face'
     }
@@ -49,8 +49,8 @@ SceneManager.prototype = {
         this.controls.zoomSpeed = 5;
         this.controls.panSpeed = 1;
 
-        this.controls.noZoom = false;
-        this.controls.noPan = false;
+        //this.controls.noZoom = false;
+        //this.controls.noPan = false;
 
         this.controls.staticMoving = true;
         this.controls.dynamicDampingFactor = 0.3;
@@ -112,9 +112,7 @@ SceneManager.prototype = {
     },
 
     render: function() {
-        var rand = Math.floor(Math.random()*3);
-        if (rand == 0)
-            this.updateInstances();
+        this.updateInstances2();
         this.scene.updateMatrixWorld();
         this.renderer.render( this.scene, this.camera );
     },
@@ -157,6 +155,69 @@ SceneManager.prototype = {
                     }
                 }
             }
+        }
+    },
+
+    updateInstances2: function() {
+
+        var numbersOfInstances = this.instances.length;
+
+        for (var j = 0; j<numbersOfInstances; j++) {
+
+            var instance = this.instances[j];
+
+            if (instance.idle && instance.part.idle) {
+
+                instance.idle = false;
+
+                var score = instance.getScore(this.camera.position);
+
+                if (score > this.scoreQuality) {
+                    if (instance.isHigh) {
+
+                        this.scene.remove(instance.getMeshToRemove());
+                        instance.onRemoveHigh();
+
+                        (function(pInstance, pScene) {
+                            instance.getMeshLowForLoading(function(mesh) {
+                                pScene.add(mesh);
+                                instance.isHigh = false;
+                                pInstance.idle = true;
+                            });
+                        })(instance, this.scene);
+
+                    } else {
+                        if (instance.mesh == null) {
+
+                            (function(pInstance, pScene) {
+                                instance.getMeshLowForLoading(function(mesh) {
+                                    pScene.add(mesh);
+                                    instance.isHigh = false;
+                                    pInstance.idle = true;
+                                });
+                            })(instance, this.scene);
+
+                        } else {
+                            instance.idle = true;
+                        }
+                    }
+                } else {
+                    if (!instance.isHigh) {
+                        this.scene.remove(instance.getMeshToRemove());
+                        (function(pInstance, pScene) {
+                            instance.getMeshHighForLoading(function(mesh) {
+                                pScene.add(mesh);
+                                pInstance.onAddHigh();
+                                pInstance.isHigh = true;
+                                pInstance.idle = true;
+                            });
+                        })(instance, this.scene);
+                    } else {
+                        instance.idle = true;
+                    }
+                }
+            }
+
         }
     }
 

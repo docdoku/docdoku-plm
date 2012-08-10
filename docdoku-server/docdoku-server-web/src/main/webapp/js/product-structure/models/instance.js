@@ -17,6 +17,7 @@ window.Instance = function(material, part, tx, ty, tz, rx, ry, rz) {
     this.onScene = false;
     this.idle = true;
     this.material = material;
+    this.isHigh = false;
 
 }
 
@@ -30,10 +31,24 @@ Instance.prototype = {
         return Math.sqrt(Math.pow(cameraPosition.x - this.position.x, 2) + Math.pow(cameraPosition.y - this.position.y, 2) + Math.pow(cameraPosition.z - this.position.z, 2));
     },
 
-    getMeshForLoading: function(callback) {
+    getMeshHighForLoading: function(callback) {
 
         var self = this;
-        this.part.getGeometry(function(geometry) {
+        this.part.getGeometryHigh(function(geometry) {
+            var mesh = new THREE.Mesh(geometry, self.material);
+            mesh.position.set(self.position.x, self.position.y, self.position.z);
+            VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
+            mesh.doubleSided = false;
+            self.mesh = mesh;
+            callback(self.mesh);
+        });
+
+    },
+
+    getMeshLowForLoading: function(callback) {
+
+        var self = this;
+        this.part.getGeometryLow(function(geometry) {
             var mesh = new THREE.Mesh(geometry, self.material);
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
@@ -48,13 +63,22 @@ Instance.prototype = {
         return this.mesh;
     },
 
-    onAdd: function() {
-        this.part.onAddInstanceOnScene();
+    onAddHigh: function() {
+        this.part.onAddHighInstance();
     },
 
-    onRemove: function() {
+    onRemoveHigh: function() {
         this.mesh = null;
-        this.part.onRemoveInstanceFromScene();
+        this.part.onRemoveHighInstance();
+    },
+
+    onAddLow: function() {
+        this.part.onAddLowInstance();
+    },
+
+    onRemoveLow: function() {
+        this.mesh = null;
+        this.part.onRemoveLowInstance();
     }
 
 };

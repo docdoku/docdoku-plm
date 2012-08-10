@@ -14,11 +14,13 @@ window.Part = Backbone.Model.extend({
     idAttribute: "number",
 
     initialize : function() {
-
         this.idle = true;
         this.geometryLow = null;
+        this.geometryHigh = null;
+        this.instancesLow = 0;
+        this.instancesHigh = 0;
         this.instancesOnScene = 0;
-        this.scoreCoeff = this.isStandardPart() ? 1 : 0.3;
+        this.scoreCoeff = this.isStandardPart() ? 2 : 1;
 
         if (this.getComponents().length > 0) {
             this.set('isNode', true, {silent: true});
@@ -96,7 +98,22 @@ window.Part = Backbone.Model.extend({
         return this.get('isNode');
     },
 
-    getGeometry: function(callback) {
+    getGeometryHigh: function(callback) {
+        if (this.geometryHigh == null) {
+            var self = this;
+            this.idle = false;
+            this.getLoader().load(this.filenameHigh, function(geometry) {
+                self.geometryHigh = geometry;
+                self.idle = true;
+                callback(self.geometryHigh);
+            }, 'images');
+        } else {
+            callback(this.geometryHigh);
+        }
+
+    },
+
+    getGeometryLow: function(callback) {
         if (this.geometryLow == null) {
             var self = this;
             this.idle = false;
@@ -109,6 +126,35 @@ window.Part = Backbone.Model.extend({
         } else {
             callback(this.geometryLow);
         }
+    },
+
+    onAddHighInstance: function() {
+        this.instancesHigh++;
+    },
+
+    onRemoveHighInstance: function() {
+        if (--this.instancesHigh == 0) {
+            this.clearHighInstance();
+        }
+    },
+
+    onAddLowInstance: function() {
+        this.instancesLow++;
+    },
+
+    onRemoveLowInstance: function() {
+        if (--this.instancesLow == 0) {
+            this.clearLowInstance();
+        }
+    },
+
+    clearHighInstance: function() {
+        this.geometryHigh = null;
+        console.log('clear high instance for ' + this.getNumber());
+    },
+
+    clearLowInstance: function() {
+        this.geometryLow = null;
     },
 
     onAddInstanceOnScene: function() {
