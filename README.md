@@ -1,6 +1,6 @@
-<h1> Welcome to the Docdoku PLM project</h1><img src = "http://plm.docdoku.com/wp-content/themes/docdokuplm/images/logo-DocDokuPLM.png" />
+<h1> Welcome to the DocDoku PLM project</h1><img src = "http://plm.docdoku.com/wp-content/themes/docdokuplm/images/logo-DocDokuPLM.png" />
 
-## What is Docdoku PLM ?
+## What is DocDoku PLM ?
 
 Docdoku PLM is a high end Open Source PLM solution.
 
