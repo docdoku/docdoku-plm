@@ -513,7 +513,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 	window.addEventListener( 'keydown', keydown, false );
 	window.addEventListener( 'keyup', keyup, false );
 
-	window.addEventListener('DOMMouseScroll', mousewheel, false);
-	window.addEventListener('mousewheel', mousewheel, false);
+	this.domElement.addEventListener('DOMMouseScroll', mousewheel, false);
+	this.domElement.addEventListener('mousewheel', mousewheel, false);
 
 };
