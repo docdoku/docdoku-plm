@@ -2,7 +2,7 @@
 
 ## What is DocDoku PLM ?
 
-Docdoku PLM is a high end Open Source PLM solution.
+DocDoku PLM is a high end Open Source PLM solution.
 
 ## What does DocDoku PLM offers ?
 
