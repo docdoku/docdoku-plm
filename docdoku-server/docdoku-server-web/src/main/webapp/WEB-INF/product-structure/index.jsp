@@ -115,6 +115,25 @@
 
                 <div id="content">
 
+                    <div class="modal hide fade" id="issueModal">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                            <h3 id="issueTitle"></h3>
+                        </div>
+                        <div class="modal-body">
+                            <p><b>Author:</b> <span id="issueAuthor"></span></p>
+                            <p><b>Date:</b> <span id="issueDate"></span></p>
+                            <p><b>Description:</b> <span id="issueDesc"></span></p>
+                            <p><b>Comment:</b> <span id="issueComment"></span></p>
+                            <p><b>Zone:</b> <span id="issueZone"></span></p>
+                            <p><b>Responsible:</b> <span id="issueResponsible"></span></p>
+                            <p><b>Criticity:</b> <span id="issueCriticity"></span></p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="#" class="btn" data-dismiss="modal">Close</a>
+                        </div>
+                    </div>
+
                     <div id="container" class="span10"></div>
 
                     <div id="navigationMenu" class="span1">
@@ -136,6 +155,12 @@
                             <a href="#" class="moveBtnSide moveBtnBottom"><i
                                     class="icon-caret-down icon-navigation"></i></a>
                             <a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
+                        </div>
+
+                        <div id="managePin">
+                            <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-minus icon-pin-manager"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-plus icon-pin-manager"></i></a>
+                            <a href="#" class="moveBtn moveBtnCenter"><i id="pinState" class="icon-pin icon-pin-full icon-navigation"></i></a>
                         </div>
                     </div>
 
@@ -202,8 +227,12 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.domevent.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
 
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/PinManager.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/TrackballControlsCustom.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 
 </body>

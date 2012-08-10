@@ -27,6 +27,7 @@ SceneManager.prototype = {
         this.initAxes();
         this.initStats();
         this.initRenderer();
+        this.initPinManager();
         this.animate();
     },
 
@@ -42,17 +43,28 @@ SceneManager.prototype = {
     },
 
     initControls: function() {
-        this.controls = new THREE.TrackballControls( this.camera );
+        this.controls = new THREE.TrackballControlsCustom( this.camera, this.container[0] );
 
-        this.controls.rotateSpeed = 4.0;
+        this.controls.rotateSpeed = 3.0;
         this.controls.zoomSpeed = 5;
-        this.controls.panSpeed = 2;
+        this.controls.panSpeed = 1;
 
         this.controls.noZoom = false;
         this.controls.noPan = false;
 
         this.controls.staticMoving = true;
         this.controls.dynamicDampingFactor = 0.3;
+
+        this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
+
+        new ControlManager( this.controls );
+    },
+
+    initPinManager: function() {
+        this.pinManager = new PinManager(this.scene, this.camera, this.renderer, this.controls, this.container[0]);
+        this.pinManager.addPins();
+        this.pinManager.bindEvent();
+        this.pinManager.rescalePins(0);
     },
 
     initLights: function() {
@@ -85,7 +97,7 @@ SceneManager.prototype = {
 
     initRenderer: function() {
         this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( this.container.width(), this.container.height() );
         this.container.append( this.renderer.domElement );
     },
 
@@ -100,7 +112,6 @@ SceneManager.prototype = {
     },
 
     render: function() {
-        this.camera.lookAt( this.scene.position );
         var rand = Math.floor(Math.random()*3);
         if (rand == 0)
             this.updateInstances();

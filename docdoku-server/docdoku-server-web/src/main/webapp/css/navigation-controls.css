@@ -8,7 +8,6 @@
 	position: relative;
 	height: 81px;
 	width: 81px;
-	
 }
 
 #moveMap {
@@ -101,16 +100,14 @@
 	position: relative;
 }
 
+/* 
+ * PIN MANAGER 
+ */
+
 .icon-navigation {
-	color: #FEFEFE;
-	font-size: 22px;
-	text-shadow:1px 1px 3px #000;
-	line-height: normal;
-	width: auto;
-	height: auto;
-	vertical-align: middle;
-	background:none;
-	font-size: 18px;
+    color: #FEFEFE;
+    font-size: 22px;
+    text-shadow:1px 1px 3px #000;
 }
 
 .icon-fullscreen {
@@ -119,6 +116,65 @@
 	text-shadow: -1px -1px 3px #000;
 	padding-left: 10px;
 }
+
+.icon-pin-manager {
+    color: #FEFEFE;
+    font-size: 16px;
+    text-shadow:1px 1px 3px #000;
+    margin-top: 3px;
+}
+
+.icon-pin {
+    width: 0.8em;
+    height: 0.8em;
+    -webkit-border-radius: 5em;
+    box-shadow: -1px -1px 3px #000;
+    margin-top: 4px;
+    margin-left: 5px;
+}
+
+.icon-pin-full {
+    width: 0.8em;
+    height: 0.8em;
+    color: #FFFFFF;
+    background-color: #fff;
+}
+
+.icon-pin-empty {
+    width: 0.7em;
+    height: 0.7em;
+    border: white 2px solid;
+}
+
+.icon-pin-dotted {
+    width: 0.7em;
+    height: 0.7em;
+    border: white 2px dotted;
+}
+
+#managePin .moveBtnLeft i {
+    padding-left: 5px;
+    padding-top: 1px;
+}
+
+#managePin .moveBtnRight i {
+    padding-left: 8px;
+    padding-top: 1px;
+}
+
+#managePin .moveBtnCenter {
+    box-shadow: 2px 4px 4px -4px rgba(0,0,0,0.4),
+    2px -4px 4px -4px rgba(0,0,0,0.4);
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-color: #1F2F45;
+    width: 26px;
+    height: 25px;
+}
+
+/* 
+ * ZOOMBAR MANAGER 
+ */
 
 #zoomContainer {
 	margin-top: 20px;
