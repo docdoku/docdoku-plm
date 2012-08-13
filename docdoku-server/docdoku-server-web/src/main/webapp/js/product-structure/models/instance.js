@@ -79,6 +79,15 @@ Instance.prototype = {
     onRemoveLow: function() {
         this.mesh = null;
         this.part.onRemoveLowInstance();
+    },
+
+    onRemoveInstanceFromScene: function() {
+        this.mesh = null;
+        this.part.onRemoveInstanceFromScene();
+    },
+
+    onAddInstanceOnScene: function() {
+        this.part.onAddInstanceOnScene();
     }
 
 };

@@ -150,7 +150,6 @@ window.Part = Backbone.Model.extend({
 
     clearHighInstance: function() {
         this.geometryHigh = null;
-        console.log('clear high instance for ' + this.getNumber());
     },
 
     clearLowInstance: function() {
@@ -169,6 +168,7 @@ window.Part = Backbone.Model.extend({
 
     clear: function() {
         this.geometryLow = null;
+        this.geometryHigh = null;
     },
 
     getLoader: function() {
