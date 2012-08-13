@@ -14,45 +14,72 @@
     //-->
 </script>
 <fmt:bundle basename="com.docdoku.server.localization.header_footer_resource">
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <!--<span class="brand-plm"></span>-->
+                <img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/>
+                <a class="brand" href="#">
+                    DocDoku<strong>PLM</strong>
+                </a>
+                <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="<%=request.getContextPath()%>/"><i class="icon-home"></i><fmt:message key="toplinks.home"/></a></li>
+                    <li><a href="<%=request.getContextPath()%>/download.jsp"><i class="icon-download-alt"></i><fmt:message key="menu.download"/></a></li>
+                    <li><a href="<%=request.getContextPath()%>/help/help.jsp"><fmt:message key="menu.help"/></a></li>
+                </ul>
+                <ul class="nav pull-right">
+                    <c:choose>
+                        <c:when test="${sessionScope.account==null}" >
+                            <li id="registration_link_container"><fmt:message key="toplinks.notRegistered"/> <a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="toplinks.subscribe"/></a></li>
+                        </c:when>
+                        <c:otherwise>
+                            <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');"><fmt:message key="toplinks.workspace"/><span style="font-size: 8px; margin-left: 2px;">&#9660;</span></a>
+                            <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
+                                <li>
+                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
+                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                             onmouseout="this.style.backgroundColor='';this.style.color='';"><fmt:message key="toplinks.admin"/></div></a>
+                                </li>
+                                <hr/>
+                                <c:forEach var="item" items="${administeredWorkspaces}">
+                                    <li>
+                                        <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/document-management/${item.value.id}">
+                                            <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                 onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
+                                    </li>
+                                </c:forEach>
+
+                                <c:forEach var="item" items="${regularWorkspaces}">
+                                    <li>
+                                        <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/document-management/${item.id}">
+                                            <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                 onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
+                                    </li>
+                                </c:forEach>
+
+                            </ul>
+
+                            | <a href="<%=request.getContextPath()%>/admin/accountEditionForm.jsp"><fmt:message key="toplinks.account"/></a> | <a href="<%=request.getContextPath()%>/admin/logout.jsp"><fmt:message key="toplinks.logout"/></a>
+                        </c:otherwise>
+                    </c:choose>
+                </ul>
+               </div>
+
+            </div><!--container-->
+        </div><!--navbar-inner-->
+    </div><!--navbar-fixed-top-->
+
+
     <div id="header">
-        <span id="home">
-            <a href="<%=request.getContextPath()%>/"><fmt:message key="toplinks.home"/></a> | <a href="<%=request.getContextPath()%>/download.jsp"><fmt:message key="menu.download"/></a> | <a href="<%=request.getContextPath()%>/help/help.jsp"><fmt:message key="menu.help"/></a>
-        </span>
+        <span id="home"></span>
         <span id="toplinks">
-            <c:choose>
-                <c:when test="${sessionScope.account==null}" >
-                    <fmt:message key="toplinks.notRegistered"/> <a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="toplinks.subscribe"/></a>
-                </c:when>
-                <c:otherwise>
-                    <fmt:message key="toplinks.welcome"/> ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');"><fmt:message key="toplinks.workspace"/><span style="font-size: 8px; margin-left: 2px;">&#9660;</span></a>
-                    <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
-                            <li>
-                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
-                                    <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                     onmouseout="this.style.backgroundColor='';this.style.color='';"><fmt:message key="toplinks.admin"/></div></a>
-                            </li>
-                            <hr/>
-                        <c:forEach var="item" items="${administeredWorkspaces}">
-                            <li>
-                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/document-management/${item.value.id}">
-                                    <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                     onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
-                            </li>
-                        </c:forEach>
-
-                        <c:forEach var="item" items="${regularWorkspaces}">
-                            <li>
-                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="<%=request.getContextPath()%>/document-management/${item.id}">
-                                    <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                     onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
-                            </li>
-                        </c:forEach>
-
-                    </ul>
-
-                    | <a href="<%=request.getContextPath()%>/admin/accountEditionForm.jsp"><fmt:message key="toplinks.account"/></a> | <a href="<%=request.getContextPath()%>/admin/logout.jsp"><fmt:message key="toplinks.logout"/></a>
-                </c:otherwise>
-            </c:choose>
         </span>
     </div>
 </fmt:bundle>
