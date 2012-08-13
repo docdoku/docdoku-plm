@@ -13,7 +13,7 @@ define([
 			return new DocumentListItemView({
 				model: model
 			});
-		},
+		}
 	});
 	return DocumentListView;
 });

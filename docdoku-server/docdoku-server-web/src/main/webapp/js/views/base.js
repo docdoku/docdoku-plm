@@ -8,7 +8,9 @@ define([
 	alert_template
 ) {
 	var BaseView = Backbone.View.extend({
-		modelEvents: {
+
+
+        modelEvents: {
 			"change":	"modelChange",
 			"sync":		"modelSync",
 			"destroy":	"modelDestroy"

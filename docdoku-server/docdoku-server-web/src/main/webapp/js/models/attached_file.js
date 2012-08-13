@@ -9,12 +9,9 @@ define([
         initialize: function () {
             this.className = "AttachedFile";
             //expected : documentIteration
-            kumo.assert(_.size(this.attributes)== 1,
-                    "attributes : "+JSON.stringify(this.attributes)+" ; "+_.size(this.attributes)+" ; Size of this.attributes should be 1, or recheck the name assignation procedure");
-            this.set("fullName", _.keys(this.attributes)[0]);
-            this.set("shortName", _.last(this.getFullName().split("/")));
+            kumo.assertNotEmpty(this.get("created"), "created attribute not set at AttachedFile creation");
 
-            _.bindAll(this);
+            //_.bindAll(this);
         },
 
         getDocumentIteration : function(){
@@ -29,16 +26,35 @@ define([
             return this.get("shortName");
         },
 
-        getUrl : function(){
-            var doc = this.documentIteration.collection.document;
-            var docKey = doc.id+"-"+doc.version;
-            //documentIterationUrl should be : "/workspaces/"+APP_CONFIG.workspaceId+"/documents/"+docKey+"/iteration/"+this.documentIteration.iteration;
-            return this.documentIteration.url+"/files/"+this.name;
+        //used to delete a file
+        url : function(){
+            return this.getDocumentIteration().url()+"/files/"+this.getShortName();
         },
 
+        //Url used for downloading (it's the same servlet as upload)
+        getUrl : function(){
+            return this.getDocumentIteration().getUploadUrl(this.getShortName());
+        },
+
+
+        //TODO check if delete
         fileUploadUrl: function () {
             var baseUrl = this.getDocumentIteration().getUrl();
             return baseUrl +"/files/"+this.getShortName();
+        },
+
+        toString : function(){
+            return this.getShortName();
+        },
+
+        isCreated : function(){
+
+            var result = kumo.isNotEmpty(this.getFullName());
+            return result;
+        },
+
+        isNew : function(){
+            return false;
         }
     });
     return AttachedFile;

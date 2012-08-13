@@ -2,7 +2,7 @@ define([
 	"i18n",
 	"common/date",
 	"views/base",
-	"views/document_new_attributes",
+	"views/document_new/document_new_attributes",
 	"views/attachedfiles/iteration_edit_files",
 	"text!templates/iteration_edit.html"
 ], function (

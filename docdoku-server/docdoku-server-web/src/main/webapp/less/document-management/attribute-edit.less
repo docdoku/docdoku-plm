@@ -1,0 +1,39 @@
+div.attribute-edit{
+    @leftWidth: 80px;
+    @inputWidth: 170px;
+    @booleanWidth : 80px;
+    display : inline-block;
+    select{
+        width: @leftWidth;
+    }
+
+
+
+    input{
+        width :  @inputWidth;
+
+    }
+    input.boolean{
+         width :  @booleanWidth;
+    }
+
+    div{
+        display : inline-block;
+    }
+    div.stroke{
+
+         color : red;
+
+         div.type{
+            width: @leftWidth;
+         }
+         div{
+            text-decoration: line-through;
+            width: @inputWidth;
+         }
+
+    }
+
+
+
+}

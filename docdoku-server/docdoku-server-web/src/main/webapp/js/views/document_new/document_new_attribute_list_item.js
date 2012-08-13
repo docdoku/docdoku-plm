@@ -1,5 +1,5 @@
 define([
-	"views/list_item"
+	"views/components/list_item"
 ], function (
 	ListItemView
 ) {
@@ -24,13 +24,13 @@ define([
 			var oldType = this.model.get("type");
 			this.model.set({
 				type: type,
-				value: "", // TODO: Validate and convert if possible between types
+				value: "" // TODO: Validate and convert if possible between types
 			});
 			this.model.collection.trigger("reset");
 		},
 		updateName: function () {
 			this.model.set({
-				name: this.$el.find("input.name:first").val(),
+				name: this.$el.find("input.name:first").val()
 			});
 		},
 		updateValue: function () {
@@ -41,7 +41,7 @@ define([
 		},
 		getValue: function (el) {
 			return el.val();
-		},
+		}
 	});
 	return DocumentNewAttributeListItemView;
 });

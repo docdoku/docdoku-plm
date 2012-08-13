@@ -13,7 +13,7 @@ define([
 		},
 		modelSync: function () {
 			this.render();
-		},
+		}
 	});
 	return ListItemView;
 });

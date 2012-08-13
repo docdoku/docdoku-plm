@@ -37,21 +37,19 @@ var kumo = {
             return value.length <= 0;
 
 
-        if (typeof(value)=='string'){
-          return (value == "");
+        if (typeof(value) == 'string') {
+            return (value == "");
         }
 
-        if (typeof(value)=='object'){
+        if (typeof(value) == 'object') {
             //check if we have an empty object
-            for (var key in value){
-                if (value.hasOwnProperty(key) ){
+            for (var key in value) {
                     return false;
-                }
+
             }
             //we have an empty object
             return true;
         }
-
 
 
         return false;
@@ -81,7 +79,11 @@ var kumo = {
     xor:function (x, y) {
         return this.e(x) ? !this.e(y) : this.e(y)
     },
-    //returns true if any value in the array is empty
+
+    /**
+     * returns true if any value in the array is empty
+     * It will return at the first empty item found
+     */
     any:function (array) {
         for (var i = 0; i < array.length; i++) {
             if (this.e(array[i])) {
@@ -91,6 +93,13 @@ var kumo = {
         return false;
     },
     enableAssert:true,
+    devMode:true,
+
+    debug:function (log) {
+        if (this.devMode) {
+            console.dir(log);
+        }
+    },
 
     replaceAll:function (string, that, byThat) {
         var regex = new RegExp(that, 'g');
@@ -121,37 +130,7 @@ var kumo = {
     },
 
 
-    enableActionState:function (object) {
-        object.actionRunning = "Une action est en cours. Veuillez l'annuler.";
-        var States = {
-            IDLE:0,
-            ACTION:1
-        };
 
-        object.state = States.IDLE;
-
-        object.setAction = function () {
-            if (object.state != States.IDLE) {
-                console.log(object.actionRunning);
-                return false;
-            } else {
-                object.state = States.ACTION;
-                return true;
-            }
-        };
-        object.clearAction = function () {
-            kumo.assert(object.state != States.IDLE, "state is already IDLE");
-            object.state = States.IDLE;
-        }
-
-        object.checkClear = function () {
-            if (object.state == States.IDLE) {
-                return true;
-            } else {
-                return false;
-            }
-        };
-    },
 
     createUuid:function () {
         var s = [], itoh = '0123456789ABCDEF';
@@ -172,33 +151,65 @@ var kumo = {
         return s.join('');
     },
 
-    getDateStr: function() {
+    getDateStr:function () {
         var temp = new Date();
-        var dateStr =   kumo.padStr(temp.getDate()) + "/" +
-                        kumo.padStr(1 + temp.getMonth()) + "/" +
-                        kumo.padStr(temp.getFullYear()) + " " +
-                        kumo.padStr(temp.getHours()) + ":" +
-                        kumo.padStr(temp.getMinutes()) + ":" +
-                        kumo.padStr(temp.getSeconds());
+        var dateStr = kumo.padStr(temp.getDate()) + "/" +
+            kumo.padStr(1 + temp.getMonth()) + "/" +
+            kumo.padStr(temp.getFullYear()) + " " +
+            kumo.padStr(temp.getHours()) + ":" +
+            kumo.padStr(temp.getMinutes()) + ":" +
+            kumo.padStr(temp.getSeconds());
         return dateStr;
     },
 
-    padStr: function(i) {
+    padStr:function (i) {
         return (i < 10) ? "0" + i : "" + i;
     },
 
-    isEmptyOrUndefined: function(value) {
-        if (_.isObject(value)) {
-            return _.isEmpty(value);
-        } else if (_.isString(value)) {
-            return value == "";
-        }
 
-        return _.isUndefined(value);
+
+    extractFullHtml:function (jqueryElement) {
+
+        var html = $('<div>').append($(jqueryElement).clone()).remove().html();
+        return html;
+    },
+
+    /**
+     * Apply properties to the object if they are undefined ;
+     * It won't apply if object has property equals to null, or empty string
+     */
+    applyIf:function (object, properties) {
+        for (var prop in properties) {
+            if (typeof object[prop] == 'undefined') {
+                object[prop] = properties[prop];
+            }
+        }
+    },
+    /**
+     * Try a function with optional arguments
+     * @param functionRef
+     */
+    tryFunction:function (object, functionRef) {
+        kumo.debug("args : " + arguments);
+        var args = [];
+        for (var i = 2; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        }
+        try {
+            functionRef.apply(object, args);
+        } catch (e) {
+            console.error(e)
+            //nothing here
+        }
     }
 
 };
 
+
+var f = function (i, j) {
+    console.log("calcul : " + (i + j));
+}
+kumo.tryFunction(this, f, 2, 3);
 
 
 if (!window.console) {
@@ -211,5 +222,3 @@ if (!window.console) {
         }
     }
 }
-
-

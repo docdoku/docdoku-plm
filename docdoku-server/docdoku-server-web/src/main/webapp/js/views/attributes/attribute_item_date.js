@@ -1,21 +1,21 @@
 define([
 	"i18n",
-	"views/document_new_attribute_list_item",
+	"views/attributes/attribute_item",
 	"text!templates/partials/document_new_attribute_list_item.html",
-	"text!templates/document_new_attribute_list_item_date.html"
+	"text!templates/document_new/document_new_attribute_list_item_date.html"
 ], function (
 	i18n,
-	DocumentNewAttributeListItemView,
-	document_new_attribute_list_item,
+	AttributeItemView,
+    attribute_partial,
 	template
 ) {
-	var DocumentNewAttributeListItemDateView = DocumentNewAttributeListItemView.extend({
+	var AttributeItemDateView = AttributeItemView.extend({
 		template: Mustache.compile(template),
 		partials: {
-			document_new_attribute_list_item: document_new_attribute_list_item
+			document_new_attribute_list_item: attribute_partial
 		},
 		initialize: function () {
-			DocumentNewAttributeListItemView.prototype.initialize.apply(this, arguments);
+            AttributeItemView.prototype.initialize.apply(this, arguments);
 		},
 		modelToJSON: function () {
 			var data = this.model.toJSON();
@@ -28,7 +28,7 @@ define([
 			return data;
 		},
 		rendered: function () {
-			DocumentNewAttributeListItemView.prototype.rendered.apply(this, arguments);
+            AttributeItemView.prototype.rendered.apply(this, arguments);
 			this.$el.find("input.value:first").datepicker({
 				dateFormat: i18n["_DATE_PICKER_DATE_FORMAT"]
 			});
@@ -42,7 +42,7 @@ define([
 				).getTime();
 			};
 			return value;
-		},
+		}
 	});
-	return DocumentNewAttributeListItemDateView;
+	return AttributeItemDateView;
 });

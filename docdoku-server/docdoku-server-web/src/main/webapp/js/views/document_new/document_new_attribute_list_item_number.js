@@ -1,13 +1,13 @@
 define([
-	"views/document_new_attribute_list_item",
+	"views/document_new/document_new_attribute_list_item",
 	"text!templates/partials/document_new_attribute_list_item.html",
-	"text!templates/document_new_attribute_list_item_url.html"
+	"text!templates/document_new/document_new_attribute_list_item_number.html"
 ], function (
 	DocumentNewAttributeListItemView,
 	document_new_attribute_list_item,
 	template
 ) {
-	var DocumentNewAttributeListItemUrlView = DocumentNewAttributeListItemView.extend({
+	var DocumentNewAttributeListItemNumberView = DocumentNewAttributeListItemView.extend({
 		template: Mustache.compile(template),
 		partials: {
 			document_new_attribute_list_item: document_new_attribute_list_item
@@ -16,5 +16,5 @@ define([
 			DocumentNewAttributeListItemView.prototype.initialize.apply(this, arguments);
 		},
 	});
-	return DocumentNewAttributeListItemUrlView;
+	return DocumentNewAttributeListItemNumberView;
 });

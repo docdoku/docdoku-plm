@@ -1,5 +1,5 @@
 define([
-	'views/list'
+	'views/components/list'
 ], function (
 	ListView
 ) {
@@ -20,7 +20,7 @@ define([
 			this.$el.hide();
 			this.$el.removeClass("in");
 			this.clear();
-		},
+		}
 	});
 	return CollapsibleListView;
 });

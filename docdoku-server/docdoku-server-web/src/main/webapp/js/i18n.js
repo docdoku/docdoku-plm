@@ -1,6 +1,7 @@
 define(function () {
 	var i18n = {
 		"APPEND":						"Ajouter",
+        "ATTACHED_FILES":               "Fichiers",
 		"ATTRIBUTES":					"Attributs",
 		"AUTHOR":						"Auteur",
 		"BOOLEAN":						"Booléen",
@@ -45,6 +46,7 @@ define(function () {
 		"NEW_TEMPLATE":					"Nouveau Modèle",
 		"NEW_WORKFLOW":					"Nouveau Workflow",
 		"NUMBER":						"Nombre",
+        "OK":                           "OK",
 		"REFERENCE":					"Référence",
 		"REFERENCES":					"Références",
 		"RENAME":						"Renommer",
@@ -68,6 +70,7 @@ define(function () {
 		"WORKFLOWS":					"Workflows",
 		"WORKFLOW":						"Workflow",
 		"WORKSPACES":					"Workspaces",
+        "VALIDATION_FAILED_FOR":        "Validation échouée pour "
 	};
 	return i18n;
 });

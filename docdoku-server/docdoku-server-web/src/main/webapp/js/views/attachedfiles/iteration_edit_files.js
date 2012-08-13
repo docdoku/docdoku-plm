@@ -1,3 +1,4 @@
+//TODO deprecated ? check if still used
 define([
 	"views/base",
 	"views/attachedfiles/file_upload",
@@ -11,6 +12,9 @@ define([
 ) {
 	var IterationEditFilesView = BaseView.extend({
 		template: Mustache.compile(template),
+
+        className : "IterationEditFilesView",
+
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.events["click .add"] = this.addUpload;
@@ -20,6 +24,7 @@ define([
 
             //list of further uploaded files view
 			this.uploadViews = [];
+
 		},
 
         getDocumentIteration : function(){

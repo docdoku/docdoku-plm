@@ -3,6 +3,9 @@ define([
 ], function (
 	BaseView
 ) {
+    /**
+     * A Modal window may have a primaryAction function bind on a ".btn-primary" button
+     */
 	var ModalView = BaseView.extend({
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
@@ -35,7 +38,7 @@ define([
 		cancelAction: function () {
 			this.hide();
 			return false;
-		},
+		}
 	});
 	return ModalView;
 });

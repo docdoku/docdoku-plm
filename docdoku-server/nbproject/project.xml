@@ -23,6 +23,10 @@
                     <file>${libs.eclipselink.classpath}</file>
                     <path-in-war>/</path-in-war>
                 </library>
+                <library>
+                    <file>${libs.eclipselink.classpath}</file>
+                    <path-in-war>/</path-in-war>
+                </library>
             </web-module-additional-libraries>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">

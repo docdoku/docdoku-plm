@@ -2,7 +2,7 @@ define([
 	"require",
 	"i18n",
 	"collections/folder",
-	"views/list_item",
+	"views/components/list_item",
 	"views/folder_list",
 	"views/folder_document_list",
 	"views/folder_new",

@@ -1,5 +1,5 @@
 define([
-	"views/modal",
+	"views/components/modal",
 	"views/template_new_attributes",
 	"text!templates/template_new.html"
 ], function (
@@ -16,7 +16,7 @@ define([
 		rendered: function () {
 			this.attributesView = this.addSubView(
 				new TemplateNewAttributesView({
-					el: "#tab-attributes-" + this.cid,
+					el: "#tab-attributes-" + this.cid
 				})
 			).render();
 		},

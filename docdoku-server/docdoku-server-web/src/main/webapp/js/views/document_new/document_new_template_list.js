@@ -1,7 +1,7 @@
 define([
 	"collections/template",
 	"views/base",
-	"text!templates/document_new_template_select.html"
+	"text!templates/document_new/document_new_template_select.html"
 ], function (
 	TemplateList,
 	BaseView,

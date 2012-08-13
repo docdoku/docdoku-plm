@@ -1,0 +1,48 @@
+<div class="attribute-edit" data-attribute-cid="{{cid}}" data-attribute-id="{{id}}">
+
+    {{^isSelected}}
+    <select class="type">
+        <option value="TEXT" {{#isText}}selected="selected"{{/isText}}>{{_.TEXT}}</option>
+        <option value="BOOLEAN" {{#isBoolean}}selected="selected"{{/isBoolean}}>{{_.BOOLEAN}}</option>
+        <option value="DATE" {{#isDate}}selected="selected"{{/isDate}}>{{_.DATE}}</option>
+        <option value="NUMBER" {{#isNumber}}selected="selected"{{/isNumber}}>{{_.NUMBER}}</option>
+        <option value="URL" {{#isUrl}}selected="selected"{{/isUrl}}>{{_.URL}}</option>
+    </select>
+
+    {{! setting the name}}
+    <input type="text" class="input-xlarge attribute-name" placeholder="{{_.NAME}}" value="{{name}}" required/>
+
+    {{! setting the values : one different box for each type}}
+    {{#isText}}
+    <input type="text" class="input-xlarge attribute-value" placeholder="{{_.VALUE}}" value="{{value}}" required/>
+    {{/isText}}
+
+    {{#isBoolean}}
+    <input type="checkbox" class="input-xlarge attribute-value boolean" {{#value}}checked="checked" {{/value}} />
+    {{^value}}<span >({{_.FALSE}})</span>{{/value}}
+    {{#value}}<span >({{_.TRUE}})</span>{{/value}}
+    {{/isBoolean}}
+
+    {{#isDate}}
+    <input type="date" class="input-xlarge attribute-value" pattern="{{_._VALIDATION_PATTERN_DATE}}" placeholder="{{_.VALUE}}" value="{{value}}" required />
+    {{/isDate}}
+
+    {{#isNumber}}
+    <input type="text" class="input-xlarge attribute-value" pattern="{{_._VALIDATION_PATTERN_NUMBER}}" placeholder="{{_.VALUE}}" value="{{value}}" required />
+    {{/isNumber}}
+
+    {{#isUrl}}
+    <input type="url" class="input-xlarge attribute-value" placeholder="{{_.VALUE}}" value="{{value}}" required />
+    {{/isUrl}}
+
+    {{/isSelected}}
+
+    {{#isSelected}}
+    <div class="stroke">
+    <div class="type">{{typeText}}</div>
+    <div class="attribute-name">{{name}}</div>
+    <div class="attribute-value">{{value}}</div>
+    </div>
+    {{/isSelected}}
+
+</div>

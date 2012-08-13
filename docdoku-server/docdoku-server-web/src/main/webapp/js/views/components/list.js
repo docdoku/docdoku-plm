@@ -23,7 +23,7 @@ define([
 			);
 			this.$el.append(view.el);
 			view.render();
-		},
+		}
 	});
 	return ListView;
 });

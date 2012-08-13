@@ -9,7 +9,7 @@
         <meta name="gwt:property" content="locale=<%=request.getLocale()%>"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>v 0.2 - <fmt:message key="title"/></title>
+        <title>v 0.4 - <fmt:message key="title"/></title>
 
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
 		<link rel="stylesheet/less" href="<%=request.getContextPath()%>/less/style.less">
@@ -33,7 +33,7 @@
 				login: "${login}"
 			};
 			require.config({
-				baseUrl: "<%=request.getContextPath()%>/js",
+				baseUrl: "${request.contextPath}/js",
 				paths: {
 					"require": "lib/require/1.0.8/require.min",
 					"text": "lib/require/1.0.8/text.min"

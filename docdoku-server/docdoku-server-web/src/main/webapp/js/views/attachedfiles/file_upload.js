@@ -41,6 +41,7 @@ define([
 
                 var files = $('input[type=file]');
                 var fd = new FormData();
+
                 for (var i = 0 ; i <files.length ; i++){
                     var fileId = files[i].id;
                     var html5File = document.getElementById(fileId);

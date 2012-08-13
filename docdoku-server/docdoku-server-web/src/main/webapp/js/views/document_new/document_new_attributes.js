@@ -1,7 +1,7 @@
 define([
 	"views/base",
-	"views/document_new_attribute_list",
-	"text!templates/document_new_attributes.html"
+	"views/document_new/document_new_attribute_list",
+	"text!templates/document_new/document_new_attributes.html"
 ], function (
 	BaseView,
 	DocumentNewAttributeListView,
@@ -30,7 +30,7 @@ define([
 				type: "TEXT",
 				value: ""
 			});
-		},
+		}
 	});
 	return DocumentNewAttributesView;
 });

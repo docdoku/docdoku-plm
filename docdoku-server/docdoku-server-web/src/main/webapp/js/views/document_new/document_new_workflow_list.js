@@ -1,7 +1,7 @@
 define([
 	"collections/workflow",
 	"views/base",
-	"text!templates/document_new_workflow_select.html"
+	"text!templates/document_new/document_new_workflow_select.html"
 ], function (
 	WorkflowList,
 	BaseView,
