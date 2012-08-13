@@ -35,7 +35,7 @@ public class PartDTO implements Serializable{
     private String version;
     private int iteration;
     private String description;
-    private List<String> files;
+    private List<GeometryDTO> files;
     private boolean standardPart;
     
     private List<PartDTO> components;
@@ -49,8 +49,6 @@ public class PartDTO implements Serializable{
         this.workspaceId=workspaceId;
         this.number=number;
     }
-
-
 
     public String getNumber() {
         return number;
@@ -72,7 +70,6 @@ public class PartDTO implements Serializable{
         this.iteration = iteration;
     }
 
-    
     public List<PartDTO> getComponents() {
         return components;
     }
@@ -81,7 +78,7 @@ public class PartDTO implements Serializable{
         return description;
     }
 
-    public List<String> getFiles() {
+    public List<GeometryDTO> getFiles() {
         return files;
     }
 
@@ -105,8 +102,7 @@ public class PartDTO implements Serializable{
         this.version = version;
     }
 
-    
-    public void setFiles(List<String> files) {
+    public void setFiles(List<GeometryDTO> files) {
         this.files = files;
     }
 
@@ -114,7 +110,6 @@ public class PartDTO implements Serializable{
         this.name = name;
     }
 
-    
     public void setNumber(String number) {
         this.number = number;
     }

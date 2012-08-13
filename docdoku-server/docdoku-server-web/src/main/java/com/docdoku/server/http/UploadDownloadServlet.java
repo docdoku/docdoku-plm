@@ -88,6 +88,12 @@ public class UploadDownloadServlet extends HttpServlet {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
+            } else if (elementType.equals("parts")) {
+                String partNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                String version = pathInfos[offset + 3];
+                int iteration = Integer.parseInt(pathInfos[offset + 4]);
+                String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
             }
 
             File dataFile = documentService.getDataFile(fullName);
