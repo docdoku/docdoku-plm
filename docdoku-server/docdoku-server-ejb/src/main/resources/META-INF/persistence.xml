@@ -23,7 +23,7 @@
     <class>com.docdoku.core.meta.InstanceTextAttribute</class>
     <class>com.docdoku.core.meta.InstanceURLAttribute</class>
     <class>com.docdoku.core.document.InstanceAttributeTemplate</class>
-    <class>com.docdoku.core.document.DocumentMasterTemplate</class>    
+    <class>com.docdoku.core.document.DocumentMasterTemplate</class>
     <class>com.docdoku.core.product.ConfigSpec</class>
     <class>com.docdoku.core.product.ConfigurationItem</class>
     <class>com.docdoku.core.product.DateBasedEffectivity</class>
@@ -59,6 +59,8 @@
     <class>com.docdoku.core.workflow.TaskModel</class>
     <class>com.docdoku.core.workflow.Workflow</class>
     <class>com.docdoku.core.workflow.WorkflowModel</class>
+    <class>com.docdoku.core.product.Marker</class>
+    <class>com.docdoku.core.product.Layer</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.logging.level" value="FINE"/>

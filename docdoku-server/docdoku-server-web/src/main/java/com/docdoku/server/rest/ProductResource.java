@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.ConfigSpec;
 import com.docdoku.core.product.ConfigurationItem;
@@ -27,6 +28,7 @@ import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.LatestConfigSpec;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ConfigurationItemNotFoundException;
@@ -36,6 +38,7 @@ import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.server.rest.dto.CADInstanceDTO;
 import com.docdoku.server.rest.dto.ConfigurationItemDTO;
 import com.docdoku.server.rest.dto.GeometryDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.PartDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +113,7 @@ public class ProductResource {
 
     private PartDTO createDTO(PartUsageLink usageLink) {
         PartMaster pm = usageLink.getComponent();
+        
         PartDTO dto = new PartDTO(pm.getWorkspaceId(), pm.getNumber());
         dto.setDescription(pm.getDescription());
         dto.setName(pm.getName());
@@ -117,23 +121,36 @@ public class ProductResource {
 
         List<GeometryDTO> lstFiles = new ArrayList<GeometryDTO>();
         List<CADInstanceDTO> lstInstances = new ArrayList<CADInstanceDTO>();
+        List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
+        List<PartDTO> components = new ArrayList<PartDTO>();
+
 
         for (CADInstance cadInstance : usageLink.getCadInstances()) {
             lstInstances.add(mapper.map(cadInstance, CADInstanceDTO.class));
         }
-        PartIteration partIte = pm.getPartRevisions().get(0).getIteration(1);
-        for (Geometry geometry : partIte.getGeometries()) {
-            lstFiles.add(mapper.map(geometry, GeometryDTO.class));
+        PartRevision partR = pm.getLastRevision();
+        PartIteration partI = null;
+        if(partR !=null)
+            partI = partR.getLastIteration();
+        
+        if(partI !=null){
+            for (Geometry geometry : partI.getGeometries()) {
+                lstFiles.add(mapper.map(geometry, GeometryDTO.class));
+            }
+            for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+                lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
+            }
+            for (PartUsageLink component : partI.getComponents()) {
+                components.add(createDTO(component));
+            }
+            dto.setVersion(partI.getPartVersion());
+            dto.setIteration(partI.getIteration());
         }
-        dto.setInstances(lstInstances);
+        
+        
         dto.setFiles(lstFiles);
-        dto.setVersion(partIte.getPartVersion());
-        dto.setIteration(partIte.getIteration());
-
-        List<PartDTO> components = new ArrayList<PartDTO>();
-        for (PartUsageLink component : partIte.getComponents()) {
-            components.add(createDTO(component));
-        }
+        dto.setInstances(lstInstances);
+        dto.setAttributes(lstAttributes);
         dto.setComponents(components);
         return dto;
     }

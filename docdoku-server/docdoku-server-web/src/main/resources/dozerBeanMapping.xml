@@ -26,7 +26,7 @@
             </converter>     
         </custom-converters>    
     </configuration>
-         
+    
     <mapping>
         <class-a>com.docdoku.core.document.DocumentIteration</class-a>
         <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>

@@ -40,7 +40,7 @@ public class PartDTO implements Serializable{
     
     private List<PartDTO> components;
     private List<CADInstanceDTO> instances;
-    
+    private List<InstanceAttributeDTO> attributes;
     public PartDTO(){
         
     }
@@ -129,5 +129,15 @@ public class PartDTO implements Serializable{
     public void setInstances(List<CADInstanceDTO> instances) {
         this.instances = instances;
     }
+
+    public void setAttributes(List<InstanceAttributeDTO> attributes) {
+        this.attributes = attributes;
+    }
+
+    public List<InstanceAttributeDTO> getAttributes() {
+        return attributes;
+    }
+    
+    
     
 }

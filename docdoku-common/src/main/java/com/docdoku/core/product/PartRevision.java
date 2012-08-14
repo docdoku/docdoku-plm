@@ -297,5 +297,25 @@ public class PartRevision implements Serializable {
         this.effectivities = effectivities;
     }
     
+    @Override
+    public boolean equals(Object pObj) {
+        if (this == pObj) {
+            return true;
+        }
+        if (!(pObj instanceof PartRevision))
+            return false;
+        PartRevision partR = (PartRevision) pObj;
+        return ((partR.getPartNumber().equals(getPartNumber())) && (partR.getWorkspaceId().equals(getWorkspaceId())) && (partR.version.equals(version)));
+        
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 1;
+	hash = 31 * hash + getWorkspaceId().hashCode();
+	hash = 31 * hash + getPartNumber().hashCode();
+        hash = 31 * hash + version.hashCode();
+	return hash;
+    }
     
 }
