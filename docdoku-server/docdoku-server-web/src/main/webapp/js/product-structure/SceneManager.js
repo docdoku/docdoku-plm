@@ -3,7 +3,6 @@ function SceneManager(options) {
     var options = options || {};
 
     var defaultsOptions = {
-        scoreQuality: 1500,
         typeLoader: 'json',
         typeMaterial: 'face'
     }
@@ -112,7 +111,7 @@ SceneManager.prototype = {
     },
 
     render: function() {
-        this.updateInstances2();
+        this.updateInstances();
         this.scene.updateMatrixWorld();
         this.renderer.render( this.scene, this.camera );
     },
@@ -122,143 +121,9 @@ SceneManager.prototype = {
         var numbersOfInstances = this.instances.length;
 
         for (var j = 0; j<numbersOfInstances; j++) {
-
-            var instance = this.instances[j];
-
-            if (instance.idle && instance.part.idle) {
-
-                instance.idle = false;
-
-                var score = instance.getScore(this.camera.position);
-
-                if (score > this.scoreQuality) {
-                    if (instance.onScene) {
-                        this.scene.remove(instance.getMeshToRemove());
-                        instance.onRemove();
-                        instance.onScene = false;
-                        instance.idle = true;
-                    } else {
-                        instance.idle = true;
-                    }
-                } else {
-                    if (!instance.onScene) {
-                        (function(pInstance, pScene) {
-                            instance.getMeshForLoading(function(mesh) {
-                                pScene.add(mesh);
-                                pInstance.onAdd();
-                                pInstance.onScene = true;
-                                pInstance.idle = true;
-                            });
-                        })(instance, this.scene);
-                    } else {
-                        instance.idle = true;
-                    }
-                }
-            }
+            this.instances[j].update(this.camera);
         }
-    },
 
-    updateInstances2: function() {
-
-        var numbersOfInstances = this.instances.length;
-
-        for (var j = 0; j<numbersOfInstances; j++) {
-
-            var instance = this.instances[j];
-
-            if (instance.idle && instance.part.idle) {
-
-                if (instance.part.isStandardPart()) {
-                    this.updateStdInstances(instance);
-                } else {
-
-                    instance.idle = false;
-
-                    var score = instance.getScore(this.camera.position);
-
-                    if (score > this.scoreQuality) {
-                        if (instance.isHigh) {
-
-                            this.scene.remove(instance.getMeshToRemove());
-                            instance.onRemoveHigh();
-
-                            (function(pInstance, pScene) {
-                                instance.getMeshLowForLoading(function(mesh) {
-                                    pScene.add(mesh);
-                                    instance.isHigh = false;
-                                    pInstance.idle = true;
-                                });
-                            })(instance, this.scene);
-
-                        } else {
-                            if (instance.mesh == null) {
-
-                                (function(pInstance, pScene) {
-                                    instance.getMeshLowForLoading(function(mesh) {
-                                        pScene.add(mesh);
-                                        instance.isHigh = false;
-                                        pInstance.idle = true;
-                                    });
-                                })(instance, this.scene);
-
-                            } else {
-                                instance.idle = true;
-                            }
-                        }
-                    } else {
-                        if (!instance.isHigh) {
-                            this.scene.remove(instance.getMeshToRemove());
-                            (function(pInstance, pScene) {
-                                instance.getMeshHighForLoading(function(mesh) {
-                                    pScene.add(mesh);
-                                    pInstance.onAddHigh();
-                                    pInstance.isHigh = true;
-                                    pInstance.idle = true;
-                                });
-                            })(instance, this.scene);
-                        } else {
-                            instance.idle = true;
-                        }
-                    }
-
-                }
-            }
-
-        }
-    },
-
-    updateStdInstances: function(instance) {
-
-        instance.idle = false;
-
-        var score = instance.getScore(this.camera.position);
-
-        if (score > 1500) {
-            if (instance.onScene) {
-
-                this.scene.remove(instance.getMeshToRemove());
-                instance.onRemoveInstanceFromScene();
-                instance.idle = true;
-                instance.onScene = false;
-
-            } else {
-                instance.idle = true;
-            }
-        } else {
-            if (!instance.onScene) {
-
-                (function(pInstance, pScene) {
-                    instance.getMeshHighForLoading(function(mesh) {
-                        pScene.add(mesh);
-                        pInstance.onAddInstanceOnScene();
-                        pInstance.onScene = true;
-                        pInstance.idle = true;
-                    });
-                })(instance, this.scene);
-            } else {
-                instance.idle = true;
-            }
-        }
     }
 
 }
