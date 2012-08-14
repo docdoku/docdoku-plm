@@ -15,12 +15,7 @@ window.Part = Backbone.Model.extend({
 
     initialize : function() {
         this.idle = true;
-        this.geometryLow = null;
-        this.geometryHigh = null;
-        this.instancesLow = 0;
-        this.instancesHigh = 0;
-        this.instancesOnScene = 0;
-        this.scoreCoeff = this.isStandardPart() ? 2 : 1;
+        this.levels = [];
 
         if (this.getComponents().length > 0) {
             this.set('isNode', true, {silent: true});
@@ -29,12 +24,13 @@ window.Part = Backbone.Model.extend({
         var self = this;
 
         _.each(this.getFiles(), function(file) {
+            var filename = '/files/' + file.fullName;
             switch (file.quality) {
                 case 0:
-                    self.filenameHigh = '/files/' + file.fullName;
+                    self.addLevelGeometry(filename, -2500);
                     break;
                 case 1:
-                    self.filenameLow = '/files/' + file.fullName;
+                    self.addLevelGeometry(filename, -3000);
                     break;
             }
         });
@@ -42,7 +38,6 @@ window.Part = Backbone.Model.extend({
         _.each(this.get('instances'), function(instanceRaw) {
 
             var instance = new Instance(
-                sceneManager.material,
                 self,
                 instanceRaw.tx*10,
                 instanceRaw.ty*10,
@@ -98,81 +93,23 @@ window.Part = Backbone.Model.extend({
         return this.get('isNode');
     },
 
-    getGeometryHigh: function(callback) {
-        if (this.geometryHigh == null) {
-            var self = this;
-            this.idle = false;
-            this.getLoader().load(this.filenameHigh, function(geometry) {
-                self.geometryHigh = geometry;
-                self.idle = true;
-                callback(self.geometryHigh);
-            }, 'images');
-        } else {
-            callback(this.geometryHigh);
+    addLevelGeometry: function(filename, visibleFromRating) {
+        for (var i = 0; i<this.levels.length ; i++) {
+            if (visibleFromRating < this.levels[i].visibleFromRating) {
+                break;
+            }
         }
-
+        this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating));
     },
 
-    getGeometryLow: function(callback) {
-        if (this.geometryLow == null) {
-            var self = this;
-            this.idle = false;
-            this.getLoader().load(this.filenameLow, function(geometry) {
-                geometry.computeVertexNormals();
-                self.geometryLow = geometry;
-                self.idle = true;
-                callback(self.geometryLow);
-            }, 'images');
-        } else {
-            callback(this.geometryLow);
+    getLevelGeometry: function(rating) {
+        for (var i = this.levels.length-1; i>=0 ; i--) {
+            if (rating > this.levels[i].visibleFromRating) {
+                return this.levels[i];
+            }
         }
-    },
-
-    onAddHighInstance: function() {
-        this.instancesHigh++;
-    },
-
-    onRemoveHighInstance: function() {
-        if (--this.instancesHigh == 0) {
-            this.clearHighInstance();
-        }
-    },
-
-    onAddLowInstance: function() {
-        this.instancesLow++;
-    },
-
-    onRemoveLowInstance: function() {
-        if (--this.instancesLow == 0) {
-            this.clearLowInstance();
-        }
-    },
-
-    clearHighInstance: function() {
-        this.geometryHigh = null;
-    },
-
-    clearLowInstance: function() {
-        this.geometryLow = null;
-    },
-
-    onAddInstanceOnScene: function() {
-        this.instancesOnScene++;
-    },
-
-    onRemoveInstanceFromScene: function() {
-        if (--this.instancesOnScene == 0) {
-            this.clear();
-        }
-    },
-
-    clear: function() {
-        this.geometryLow = null;
-        this.geometryHigh = null;
-    },
-
-    getLoader: function() {
-        return sceneManager.loader;
+        //no level found for this rating
+        return null;
     }
 
 });
