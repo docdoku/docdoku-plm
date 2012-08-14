@@ -28,6 +28,7 @@ import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.LatestConfigSpec;
+import com.docdoku.core.product.PartAlternateLink;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.product.PartIterationKey;
@@ -35,6 +36,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.AccessRightException;
 import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
@@ -70,6 +72,7 @@ import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -125,24 +128,41 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         em.detach(root);
 
         if (configSpec instanceof LatestConfigSpec) {
-            //filterLatestConfigSpec(root);
+            filterLatestConfigSpec(root);
         }
         return root;
     }
 
     private PartMaster filterLatestConfigSpec(PartMaster root){
+        PartRevision partR = root.getLastRevision();
+        PartIteration partI = null;
+        
+        if(partR !=null)
+            partI = partR.getLastIteration();
+        
         if(root.getPartRevisions().size()>1){
-            //TODO filter latest
+            root.getPartRevisions().retainAll(Collections.singleton(partR));
         }
-        if(root.getPartRevisions().get(0).getNumberOfIterations()>1){
-            //TODO filter latest
+        if(partR !=null && partR.getNumberOfIterations()>1){
+            partR.getPartIterations().retainAll(Collections.singleton(partI));
         }
         
-        for(PartUsageLink link:root.getPartRevisions().get(0).getLastIteration().getComponents()){
-            filterLatestConfigSpec(link.getComponent());
+        if(partI !=null){
+            for(PartUsageLink usageLink:partI.getComponents()){
+                filterLatestConfigSpec(usageLink.getComponent());
+                
+                for(PartSubstituteLink subLink:usageLink.getSubstitutes()){
+                    filterLatestConfigSpec(subLink.getSubstitute());
+                }
+            }
+        }
+        
+        for(PartAlternateLink alternateLink:root.getAlternates()){
+            filterLatestConfigSpec(alternateLink.getAlternate());
         }
         return root;
     }
+    
     @RolesAllowed("users")
     @Override
     public ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException {

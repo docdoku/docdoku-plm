@@ -21,7 +21,9 @@
 
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.User;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -31,10 +33,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Represents a marker on the 3D scene, actually a
@@ -74,6 +80,15 @@ public class Marker implements Serializable{
     private Set<PartMaster> relatedParts = new HashSet<PartMaster>();
     
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+        @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date creationDate;
     
     private String title;
     
@@ -161,6 +176,22 @@ public class Marker implements Serializable{
 
     public double getZ() {
         return z;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
    
     

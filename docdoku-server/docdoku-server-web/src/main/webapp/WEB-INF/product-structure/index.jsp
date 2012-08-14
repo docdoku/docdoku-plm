@@ -8,7 +8,7 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>v 0.2 - <fmt:message key="title"/></title>
+    <title><fmt:message key="title"/></title>
 
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/jquery.treeview.css"/>
