@@ -1,8 +1,9 @@
-function LevelGeometry(filename, visibleFromRating) {
+function LevelGeometry(filename, visibleFromRating, computeVertexNormals) {
     this.filename = filename;
     this.visibleFromRating = visibleFromRating;
     this.geometry = null;
     this.instances = 0;
+    this.computeVertexNormals = computeVertexNormals;
 }
 
 LevelGeometry.prototype = {
@@ -25,6 +26,9 @@ LevelGeometry.prototype = {
         if (this.geometry == null) {
             var self = this;
             sceneManager.loader.load(this.filename, function(geometry) {
+                if (self.computeVertexNormals) {
+                    geometry.computeVertexNormals();
+                }
                 self.geometry = geometry;
                 callback(self.geometry);
             }, 'images');

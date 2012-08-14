@@ -35,10 +35,10 @@ window.Part = Backbone.Model.extend({
             var filename = '/files/' + file.fullName;
             switch (file.quality) {
                 case 0:
-                    self.addLevelGeometry(filename, 0.5);
+                    self.addLevelGeometry(filename, 0.5, false);
                     break;
                 case 1:
-                    self.addLevelGeometry(filename, 0.2);
+                    self.addLevelGeometry(filename, 0.2, true);
                     break;
             }
         });
@@ -105,13 +105,13 @@ window.Part = Backbone.Model.extend({
         return this.get('isNode');
     },
 
-    addLevelGeometry: function(filename, visibleFromRating) {
+    addLevelGeometry: function(filename, visibleFromRating, computeVertexNormals) {
         for (var i = 0; i<this.levels.length ; i++) {
             if (visibleFromRating < this.levels[i].visibleFromRating) {
                 break;
             }
         }
-        this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating));
+        this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating, computeVertexNormals));
     },
 
     getLevelGeometry: function(rating) {
