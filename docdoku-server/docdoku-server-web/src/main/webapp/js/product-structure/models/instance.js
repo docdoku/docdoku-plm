@@ -22,8 +22,7 @@ window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
 Instance.prototype = {
 
     getRating: function() {
-        //TODO rayon/distance
-        return -this.getDistance(sceneManager.camera.position);
+        return this.part.radius / this.getDistance(sceneManager.camera.position);
     },
 
     getDistance: function(position) {
@@ -69,18 +68,6 @@ Instance.prototype = {
 
     switchTo: function(levelGeometry, callback) {
 
-        //remove previous mesh from scene if any
-        if (this.mesh) {
-            sceneManager.scene.remove(this.mesh);
-            this.mesh = null;
-        }
-
-        //notify that we are not using this level anymore
-        if (this.levelGeometry) {
-            this.levelGeometry.onRemove();
-            this.levelGeometry = null;
-        }
-
         //if we had a new level geometry to load on the scene
         if (levelGeometry != null) {
             var self = this;
@@ -90,12 +77,17 @@ Instance.prototype = {
                 sceneManager.scene.add(mesh);
                 //notify that we have one instance at this level on the scene
                 levelGeometry.onAdd();
+
+                //clear previous state
+                self.clearMeshAndLevelGeometry();
+
                 //save level and mesh for further reuse
                 self.levelGeometry = levelGeometry;
                 self.mesh = mesh;
                 callback();
             });
         } else {
+            this.clearMeshAndLevelGeometry();
             callback();
         }
 
@@ -110,6 +102,20 @@ Instance.prototype = {
             mesh.doubleSided = false;
             callback(mesh);
         });
+    },
+
+    clearMeshAndLevelGeometry: function() {
+        //remove previous mesh from scene if any
+        if (this.mesh) {
+            sceneManager.scene.remove(this.mesh);
+            this.mesh = null;
+        }
+
+        //notify that we are not using this level anymore
+        if (this.levelGeometry) {
+            this.levelGeometry.onRemove();
+            this.levelGeometry = null;
+        }
     }
 
 };

@@ -21,16 +21,24 @@ window.Part = Backbone.Model.extend({
             this.set('isNode', true, {silent: true});
         }
 
+        var radiusAttribute = _.find(this.getAttributes(), function(attribute) {
+            return attribute.name == 'radius';
+        });
+
+        if (radiusAttribute) {
+            this.radius = radiusAttribute.value;
+        }
+
         var self = this;
 
         _.each(this.getFiles(), function(file) {
             var filename = '/files/' + file.fullName;
             switch (file.quality) {
                 case 0:
-                    self.addLevelGeometry(filename, -2500);
+                    self.addLevelGeometry(filename, 0.5);
                     break;
                 case 1:
-                    self.addLevelGeometry(filename, -3000);
+                    self.addLevelGeometry(filename, 0.2);
                     break;
             }
         });
@@ -75,6 +83,10 @@ window.Part = Backbone.Model.extend({
 
     getComponents : function() {
         return this.get('components');
+    },
+
+    getAttributes: function() {
+        return this.get('attributes')
     },
 
     getWorkspaceId : function() {
