@@ -31,6 +31,7 @@ window.PartItemView = Backbone.View.extend({
         var partMetadataView = new PartMetadataView({model: this.model});
         partMetadataView.render();
 
+        $("#zoomBar").hide();
         $("#part_metadata_container").slideDown();
     }
 });

@@ -13,18 +13,18 @@ window.AppView = Backbone.View.extend({
     showScene:function(){
         $("#bom_table_container").hide();
         $("#part_metadata_container").hide();
-        $("#content").show();
+        $("#bottom_controls_container").hide();
+        $("#center_container").show();
     },
 
     showMetadata:function(){
-        $("#content").hide();
-        $("#bom_table_container").hide();
-        $("#part_metadata_container").show();
+
     },
 
     showBom:function(){
         $("#part_metadata_container").hide();
-        $("#content").hide();
+        $("#center_container").hide();
+        $("#bottom_controls_container").hide();
         $("#bom_table_container").show();
     },
 
@@ -33,7 +33,7 @@ window.AppView = Backbone.View.extend({
         var allParts = new PartCollection;
         var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
         allParts.fetch();
-        sceneManager.init();
+        //sceneManager.init();
     }
 
 });
