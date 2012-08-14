@@ -33,7 +33,7 @@ window.AppView = Backbone.View.extend({
         var allParts = new PartCollection;
         var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
         allParts.fetch();
-        //sceneManager.init();
+        sceneManager.init();
     }
 
 });
