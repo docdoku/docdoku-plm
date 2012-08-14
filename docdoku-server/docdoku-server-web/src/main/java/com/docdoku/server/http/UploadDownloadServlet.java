@@ -32,6 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 import javax.activation.FileTypeMap;
 
@@ -116,6 +122,16 @@ public class UploadDownloadServlet extends HttpServlet {
                 pResponse.setContentType(contentType);
                 fileToOutput = dataFile;
             }
+            
+            int cacheSeconds=86400;
+            pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);
+            DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+            httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Calendar cal = new GregorianCalendar();
+            cal.add(Calendar.SECOND, cacheSeconds);
+            pResponse.setHeader("Expires", httpDateFormat.format(cal.getTime()));
+            pResponse.setHeader("Pragma", "");
+            
             pResponse.setContentLength((int) fileToOutput.length());
             ServletOutputStream httpOut = pResponse.getOutputStream();
             InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
