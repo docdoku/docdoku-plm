@@ -26,8 +26,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * <code>BinaryResource</code> is the representation of a file contained
- * in either a document or a document template.
+ * <a href="BinaryResource.html">BinaryResource</a> is the representation
+ * of a file contained in either a document or a document template.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

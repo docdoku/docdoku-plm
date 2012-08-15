@@ -24,8 +24,8 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * The <code>Account</code> class represents a user of the application
- * but not attached to a particular workspace.
+ * The <a href="Account.html">Account</a> class represents a user
+ * of the application but not attached to a particular workspace.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

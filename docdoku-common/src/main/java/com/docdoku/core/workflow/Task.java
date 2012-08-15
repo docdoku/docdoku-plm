@@ -28,7 +28,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * <code>Task</code> is the smallest unit of work in a workflow.
+ * <a href="Task.html">Task</a> is the smallest unit of work in a workflow.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

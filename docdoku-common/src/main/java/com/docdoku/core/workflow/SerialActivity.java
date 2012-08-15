@@ -24,10 +24,10 @@ import java.util.*;
 import javax.persistence.*;
 
 /**
- * <code>SerialActivity</code> is an activity where all tasks are launched 
- * subsequently in a specific order.
+ * <a href="SerialActivity.html">SerialActivity</a> is an activity where
+ * all tasks are launched subsequently in a specific order.
  * For the workflow to proceed to the next step, all tasks of 
- * <code>SerialActivity</code> should have been completed.
+ * <a href="SerialActivity.html">SerialActivity</a> should have been completed.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

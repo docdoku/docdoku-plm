@@ -25,9 +25,9 @@ import java.util.Stack;
 import javax.persistence.ManyToOne;
 
 /**
- * The <code>Folder</code> class is the unitary element of the tree structure.
- * Like in a regular file system, folder may contain
- * other folders or documents.  
+ * The <a href="Folder.html">Folder</a>
+ * class is the unitary element of the tree structure.
+ * Like in a regular file system, folder may contain other folders or documents.  
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
