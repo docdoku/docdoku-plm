@@ -38,8 +38,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 
 /**
- * A link between an assembly represented as <code>PartIteration</code>
- * and a part represented as <code>PartMaster</code>. 
+ * A link between an assembly represented as
+ * <a href="PartIteration.html">PartIteration</a>
+ * and a part represented as <a href="PartMaster.html">PartMaster</a>. 
  * 
  * @author Florent Garin
  * @version 1.1, 15/10/11

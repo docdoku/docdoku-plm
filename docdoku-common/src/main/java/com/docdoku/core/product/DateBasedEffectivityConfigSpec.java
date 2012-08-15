@@ -27,7 +27,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * <code>EffectivityConfigSpec</code> expressed by date and time.
+ * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
+ * expressed by date and time.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

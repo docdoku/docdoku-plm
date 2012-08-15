@@ -44,8 +44,8 @@ import javax.persistence.TemporalType;
 
 /**
  * Represents a marker on the 3D scene, actually a
- * <code>ConfigurationItem</code>.
- * May be attached to one or several <code>PartMaster</code>.
+ * <a href="ConfigurationItem.html">ConfigurationItem</a>.
+ * May be attached to one or several <a href="PartMaster.html">PartMaster</a>s.
  * 
  * @author Florent Garin
  * @version 1.1, 14/08/12

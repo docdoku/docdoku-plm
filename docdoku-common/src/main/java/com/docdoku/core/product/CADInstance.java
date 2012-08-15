@@ -26,7 +26,8 @@ import javax.persistence.Embeddable;
 
 /**
  * Represents a CAD instance of a specific part defined in a
- * <code>PartUsageLink</code> or <code>PartSubstituteLink</code>. 
+ * <a href="PartUsageLink.html">PartUsageLink</a>
+ * or <a href="PartSubstituteLink.html">PartSubstituteLink</a>. 
  * Using its attributes: translation and orientation on the three axis we'll be
  * able to create the mesh to render it.
  * 

@@ -40,7 +40,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * A Layer is a collection of <code>Marker</code>s that can be
+ * A Layer is a collection of <a href="Marker.html">Marker</a>s that can be
  * manipulated as a whole.
  * 
  * @author Florent Garin

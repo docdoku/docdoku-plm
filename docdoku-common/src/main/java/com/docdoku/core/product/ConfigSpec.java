@@ -33,8 +33,9 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * A ConfigSpec is used to filter the right <code>PartIteration</code> of
- * <code>PartMaster</code>s, based on various rules.
+ * A ConfigSpec is used to filter the right
+ * <a href="PartIteration.html">PartIteration</a> of
+ * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

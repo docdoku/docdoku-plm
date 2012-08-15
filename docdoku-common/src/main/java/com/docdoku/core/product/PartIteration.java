@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * This class encapsulates the various states of a part whereas its unchanging
- * attributes are hold on a <code>PartMaster</code>.
+ * attributes are hold on a <a href="PartMaster.html">PartMaster</a>.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11

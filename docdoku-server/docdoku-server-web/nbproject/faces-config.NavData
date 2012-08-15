@@ -14,8 +14,8 @@
         <Node id="js/templates/workflow_list_item.html" x="900" y="900" zoom="true"/>
         <Node id="js/templates/workspace.html" x="1650" y="600" zoom="true"/>
         <Node id="help/templateHelp.jsp" x="1150" y="300" zoom="true"/>
-        <Node id="js/templates/workflow_content_list.html" x="1650" y="300" zoom="true"/>
         <Node id="js/templates/folder_edit.html" x="1650" y="150" zoom="true"/>
+        <Node id="js/templates/workflow_content_list.html" x="1650" y="300" zoom="true"/>
         <Node id="help/aboutHelp.jsp" x="650" y="300" zoom="true"/>
         <Node id="help/tagHelp.jsp" x="1150" y="150" zoom="true"/>
         <Node id="js/templates/template_list_item.html" x="1150" y="900" zoom="true"/>
@@ -26,8 +26,8 @@
         <Node id="js/templates/template_list.html" x="1150" y="600" zoom="true"/>
         <Node id="js/templates/folder_list_item.html" x="1400" y="600" zoom="true"/>
         <Node id="registrationForm.jsp" x="400" y="450" zoom="true"/>
-        <Node id="js/templates/iteration_edit.html" x="400" y="1350" zoom="true"/>
         <Node id="js/templates/workflow_list.html" x="1650" y="450" zoom="true"/>
+        <Node id="js/templates/iteration_edit.html" x="400" y="1350" zoom="true"/>
         <Node id="download.jsp" x="150" y="300" zoom="true"/>
         <Node id="admin/accountEditionForm.jsp" x="1400" y="150" zoom="true"/>
         <Node id="js/templates/checkedout_nav.html" x="150" y="900" zoom="true"/>
@@ -35,8 +35,8 @@
         <Node id="js/templates/template_new_attributes.html" x="2150" y="300" zoom="true"/>
         <Node id="recoveryRequestForm.xhtml" x="650" y="450" zoom="true"/>
         <Node id="js/templates/template_content_list.html" x="900" y="450" zoom="true"/>
-        <Node id="js/templates/tag_list_item.html" x="650" y="1050" zoom="true"/>
         <Node id="js/templates/template_new.html" x="400" y="1050" zoom="true"/>
+        <Node id="js/templates/tag_list_item.html" x="650" y="1050" zoom="true"/>
         <Node id="help/adminHelp.jsp" x="400" y="300" zoom="true"/>
         <Node id="js/templates/template_edit.html" x="400" y="1200" zoom="true"/>
         <Node id="js/templates/document_edit.html" x="900" y="1050" zoom="true"/>

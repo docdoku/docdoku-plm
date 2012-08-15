@@ -27,10 +27,12 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * A configuration specification used to select a <code>PartIteration</code>
- * of a given <code>PartMaster</code> according to its effectivities.
+ * A configuration specification used to select
+ * a <a href="PartIteration.html">PartIteration</a>
+ * of a given <a href="PartMaster.html">PartMaster</a>
+ * according to its effectivities.
  * Actually the EffectivityConfigSpec determine the right
- * <code>PartRevision</code>, we then catch its last iteration.
+ * <a href="PartRevision.html">PartRevision</a>, we then catch its last iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

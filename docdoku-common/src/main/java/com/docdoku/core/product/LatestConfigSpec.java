@@ -24,7 +24,7 @@ package com.docdoku.core.product;
 import javax.persistence.Entity;
 
 /**
- * A <code>ConfigSpec</code> which selects the latest iteration.
+ * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

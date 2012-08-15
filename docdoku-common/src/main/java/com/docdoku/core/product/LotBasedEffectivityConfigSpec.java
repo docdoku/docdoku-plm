@@ -24,7 +24,8 @@ package com.docdoku.core.product;
 import javax.persistence.Entity;
 
 /**
- * <code>EffectivityConfigSpec</code> based on a specific lot.
+ * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
+ * based on a specific lot.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

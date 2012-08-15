@@ -47,8 +47,8 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * This class stands between <code>PartMaster</code>
- * and <code>PartIteration</code>.
+ * This class stands between <a href="PartMaster.html">PartMaster</a>
+ * and <a href="PartIteration.html">PartIteration</a>.
  * Its main purpose is to hold effectivities.
  *
  * @author Florent Garin
