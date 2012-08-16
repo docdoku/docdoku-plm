@@ -215,6 +215,13 @@ margin-right:0px;
   border: 1px black dotted;
 }
 
+#frameContainer {
+  margin : 0;
+  height: auto;
+  width: 100%;
+  border: 1px black dotted;
+}
+
 #info {
   color: #fff;
   position: absolute;

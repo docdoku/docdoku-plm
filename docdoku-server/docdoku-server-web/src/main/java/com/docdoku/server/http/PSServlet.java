@@ -51,6 +51,8 @@ public class PSServlet extends HttpServlet {
 
         String workspaceID = null;
         String productID = null;
+        String templateType = null;
+        
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
@@ -63,17 +65,30 @@ public class PSServlet extends HttpServlet {
             
         }
         
-        if (workspaceID == null) {
+        try {
+            templateType = URLDecoder.decode(pathInfos[offset+2], "UTF-8");
+        } catch (IndexOutOfBoundsException ex) {
+            
+        }
+        
+        if (workspaceID == null ) {
             pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
             
         } else if(productID == null){
             pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
-        }     
+            
+        }
         else {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.jsp").forward(pRequest, pResponse);
+            
+            if("visualization".equals(templateType)) {
+                pRequest.getRequestDispatcher("/WEB-INF/product-structure/frame.jsp").forward(pRequest, pResponse);
+            } else {
+                pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.jsp").forward(pRequest, pResponse);
+            }
+            
         }
     }
 }
