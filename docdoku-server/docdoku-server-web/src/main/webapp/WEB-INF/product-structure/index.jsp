@@ -42,18 +42,16 @@
         <h1><i class="icon-cog"></i>{{getNumber}}</h1>
         <button type="button" class="close" id="part_metadata_close_button">×</button>
         <div class="row">
-            <div class="span7">
-                <div class="span6">
+            <div class="span5">
+                <div class="span5">
                     <span class="part_metadata_key">Version :</span>
                     <span class="part_metadata_value" id="part_metadata_version">{{getVersion}}</span>
                 </div>
-                <div class="span6">
+                <div class="span5">
                     <span class="part_metadata_key">Iteration :</span>
                     <span class="part_metadata_value" id="part_metadata_iteration">{{getIteration}}</span>
                 </div>
-            </div>
-            <div class="span4">
-                <div>
+                <div class="span5">
                     <span class="part_metadata_key">Description :</span>
                     <span class="part_metadata_value" id="part_metadata_description">{{getDescription}}</span>
                 </div>
@@ -151,10 +149,6 @@
             </div>
         </div>
 
-        <div id="part_metadata_container">
-
-        </div>
-
         <div id="bom_table_container">
             <table id="bom_table" class="table table-striped">
                 <thead>
@@ -169,6 +163,10 @@
                 <tbody>
                 </tbody>
             </table>
+        </div>
+
+        <div id="part_metadata_container">
+
         </div>
 
     </div>
