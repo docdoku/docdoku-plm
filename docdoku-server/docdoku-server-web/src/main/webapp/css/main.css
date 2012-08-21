@@ -1,327 +1,326 @@
-    body {
-        font-family: arial, geneva, sans-serif;
-        font-size: 1em;
-        color: #666;
-        text-align: center; /* pour centrer la page sous IE */
-    }
+body {
+    font-family: arial, geneva, sans-serif;
+    font-size: 1em;
+    color: #666;
+    text-align: center; /* pour centrer la page sous IE */
+}
 
-    p {
-        line-height: 140%;
-        margin: 0.8em 0;
-    }
+p {
+    line-height: 140%;
+    margin: 0.8em 0;
+}
 
-    a {
-        text-decoration: none;
-        color: #199424;
-    }
+a {
+    text-decoration: none;
+    color: #199424;
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+a:hover {
+    text-decoration: underline;
+}
 
-    h1, h2, h3, h4, h5, h6 {
-        color: #0061c0;
-        font-weight: normal;
-        font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
-    }
+h1, h2, h3, h4, h5, h6 {
+    color: #0061c0;
+    font-weight: normal;
+    font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
+}
 
-    ul, ol {
-        line-height: 140%;
-    }
+ul, ol {
+    line-height: 140%;
+}
 
-    ol {
-        margin: 0.8em 0 0 !important;
-        margin: 0.8em 0 0 30px;
-    }
+ol {
+    margin: 0.8em 0 0 !important;
+    margin: 0.8em 0 0 30px;
+}
 
-    blockquote, pre {
-        padding: 0 10px;
-        margin: 10px 0 0 50px;
-        border-left: 5px solid #ddd;
-	      font-size: 0.85em;
-	      text-align: justify;
-    }
+blockquote, pre {
+    padding: 0 10px;
+    margin: 10px 0 0 50px;
+    border-left: 5px solid #ddd;
+    font-size: 0.85em;
+    text-align: justify;
+}
 
-    pre {
-        overflow: auto;
-        background: #efefef;
-        padding: 5px 10px;
-    }
+pre {
+    overflow: auto;
+    background: #efefef;
+    padding: 5px 10px;
+}
 
-    table {
-        margin: 0px 0px 2px 2px;
-    }
+table {
+    margin: 0px 0px 2px 2px;
+}
 
-    table th {
-        padding: 2px 2px;
-    }
+table th {
+    padding: 2px 2px;
+}
 
-    table td {
-        padding: 0 2px;
-    }
+table td {
+    padding: 0 2px;
+}
 
-    /* positionnement des images dans le texte */
+/* positionnement des images dans le texte */
 
-    .imleft {
-        margin: 8px 8px 45px 0;
-        float: left;
-    }
+.imleft {
+    margin: 8px 8px 45px 0;
+    float: left;
+}
 
-    .imright {
-        margin: 0 0 0 8px;
-        float: right;
-    }
+.imright {
+    margin: 0 0 0 8px;
+    float: right;
+}
 
-    /* Mise en page */
+/* Mise en page */
 
-    #page {
-        text-align: left;
-        padding: 0 20px 30px 20px;
-        overflow: hidden;
-        background: #fff;
-    }
+#page {
+    text-align: left;
+    padding: 0 20px 30px 20px;
+    overflow: hidden;
+    background: #fff;
+}
 
-    /* En-tête commun à toutes les pages, accueil et contenu */
+/* En-tête commun à toutes les pages, accueil et contenu */
 
-    #header {
-        height: 20px;
-        border-bottom: 2px solid #de5c32;
-    }
+#header {
+    height: 41px;
+}
 
-    #header h1 {
-        display: none;
-    }
-
-
-    #header #home {
-        display: inline;
-        float: left;
-        font-size: 12px;
-        font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
-    }
-    #header #toplinks {
-        display: inline;
-        float: right;
-        font-size: 12px;
-        font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
-    }
+#header h1 {
+    display: none;
+}
 
 
-    /* Contenant des éléments du corps de la page */
-
-    #content {
-        text-align: justify;
-    }
-
-    .help h2 {
-        color: #fff;
-        font-size: 16px;
-        margin: 94px 0 10px 10px;
-    }
-
-    .help h3 {
-        font-size: 16px;
-        margin: 10px 0 0 10px;
-    }
-
-    .headline p {
-        padding: 0;
-        margin: 0;
-    }
-
-    #welcome p {
-        text-align: justify;
-        margin-right: 0;
-        padding-right: 0;
-    }
-
-    /* Équivalent de la Sidebar des pages de contenu */
-
-    #panel {
-        width: 220px;
-        float: right;
-        margin-left: 0;
-    }
-
-    #panel h3 {
-        font-size: 1.8em;
-        padding-top: 0;
-        margin: 0 0 11px 0;
-        color: #de5c32;
-    }
-
-    #loginpanel, #latestpanel {
-        width: 200px;
-        padding: 10px;
-        background: #e4e4e4;
-        float: right;
-    }
-
-    #loginpanel p {
-        font-size: 0.8em;
-    }
-
-    /* Formulaire */
-
-    fieldset {
-        border: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    label {
-    }
-
-    input {
-        display: block;
-        clear: both;
-        border: 1px solid #999;
-        font-size: 1em;
-        font-family: inherit;
-    }
-
-    input:hover {
-        border: 1px solid #666;
-    }
-
-    textarea {
-        display: block;
-        clear: both;
-        border: 1px solid #999;
-        font-size: 1em;
-        font-family: inherit;
-    }
-
-    textarea:hover {
-        border: 1px solid #666;
-    }
-
-    select {
-        display: block;
-        clear: both;
-        border: 1px solid #999;
-        font-size: 1em;
-        font-family: inherit;
-    }
-
-    select:hover {
-        border: 1px solid #666;
-    }
-
-    input.box {
-        display: inline;
-        clear: none;
-        border: none;
-        background: #ff7950;
-    }
-
-    input.button {
-        float: right;
-    }
+#header #home {
+    display: inline;
+    float: left;
+    font-size: 12px;
+    font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
+}
+#header #toplinks {
+    display: inline;
+    float: right;
+    font-size: 12px;
+    font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
+}
 
 
-    #panel h3.date {
-        color: #666;
-        font-size: 0.9em;
-        font-weight: bold;
-        display: block;
-        width: 100%;
-        border-bottom: 1px solid #666;
-        margin: 17px 0 10px 0;
-    }
+/* Contenant des éléments du corps de la page */
 
-    h4.newstitle {
-        font-size: 1.2em;
-        line-height: 0.8em;
-        margin: 4px 0 6px 0;
-    }
+#content {
+    text-align: justify;
+}
+
+.help h2 {
+    color: #fff;
+    font-size: 16px;
+    margin: 94px 0 10px 10px;
+}
+
+.help h3 {
+    font-size: 16px;
+    margin: 10px 0 0 10px;
+}
+
+.headline p {
+    padding: 0;
+    margin: 0;
+}
+
+#welcome p {
+    text-align: justify;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+/* Équivalent de la Sidebar des pages de contenu */
+
+#panel {
+    width: 220px;
+    float: right;
+    margin-left: 0;
+}
+
+#panel h3 {
+    font-size: 1.8em;
+    padding-top: 0;
+    margin: 0 0 11px 0;
+    color: #de5c32;
+}
+
+#loginpanel, #latestpanel {
+    width: 200px;
+    padding: 10px;
+    background: #e4e4e4;
+    float: right;
+}
+
+#loginpanel p {
+    font-size: 0.8em;
+}
+
+/* Formulaire */
+
+fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+label {
+}
+
+input {
+    display: block;
+    clear: both;
+    border: 1px solid #999;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+input:hover {
+    border: 1px solid #666;
+}
+
+textarea {
+    display: block;
+    clear: both;
+    border: 1px solid #999;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+textarea:hover {
+    border: 1px solid #666;
+}
+
+select {
+    display: block;
+    clear: both;
+    border: 1px solid #999;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+select:hover {
+    border: 1px solid #666;
+}
+
+input.box {
+    display: inline;
+    clear: none;
+    border: none;
+    background: #ff7950;
+}
+
+input.button {
+    float: right;
+}
+
+
+#panel h3.date {
+    color: #666;
+    font-size: 0.9em;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #666;
+    margin: 17px 0 10px 0;
+}
+
+h4.newstitle {
+    font-size: 1.2em;
+    line-height: 0.8em;
+    margin: 4px 0 6px 0;
+}
 
 
 
-    .data {
-        border-style: solid;
-        border-width: 1px;
-        border-color: #0061c0;
-        text-align: center;
-        color: #777;
-        padding: 2px 0 2px 0;
-    }
+.data {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0061c0;
+    text-align: center;
+    color: #777;
+    padding: 2px 0 2px 0;
+}
 
-    .colleft {
-        border-style: solid;
-        border-width: 1px;
-        border-color: #0061c0;
-        text-align: left;
-        color: #0061c0;
-        padding: 2px 0 2px 0;
-    }
+.colleft {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0061c0;
+    text-align: left;
+    color: #0061c0;
+    padding: 2px 0 2px 0;
+}
 
-    .star {
-        text-align: center;
-        color: #de5c32;
-        font-weight: bold;
-     }
+.star {
+    text-align: center;
+    color: #de5c32;
+    font-weight: bold;
+}
 
-    #sidebar {
-        float: right;
-        width: 560px;
-        padding: 10px 10px 10px 10px;
-        background: #eee;
-        margin: 0;
-    }
+#sidebar {
+    float: right;
+    width: 560px;
+    padding: 10px 10px 10px 10px;
+    background: #eee;
+    margin: 0;
+}
 
 
-    #result {
-        width: 100%;
-        padding: 10px 10px 10px 10px;
-        background: #eee;
-        margin: 10px 0px 10px 0px;
-    }
+#result {
+    width: 100%;
+    padding: 10px 10px 10px 10px;
+    background: #eee;
+    margin: 10px 0px 10px 0px;
+}
 
-    #sidebar h3 {
-        color: #199424;
-        font-size: 20px;
-        margin: 1.2em 0 0.8em 0;
-        border-bottom: 2px solid #2aa535;
-        text-align: right;
-    }
+#sidebar h3 {
+    color: #199424;
+    font-size: 20px;
+    margin: 1.2em 0 0.8em 0;
+    border-bottom: 2px solid #2aa535;
+    text-align: right;
+}
 
-    #sidebar p {
-        font-size: 0.8em;
-        text-align: justify;
-    }
+#sidebar p {
+    font-size: 0.8em;
+    text-align: justify;
+}
 
-    p.legend {
-        font-style: italic;
-        margin-top: 0px;
-        padding: 0;
-    }
+p.legend {
+    font-style: italic;
+    margin-top: 0px;
+    padding: 0;
+}
 
-    #sidebar img {
-        border: 2px solid #fff;
-    }
+#sidebar img {
+    border: 2px solid #fff;
+}
 
-    .disable {
-        text-decoration:line-through;
-    }
+.disable {
+    text-decoration:line-through;
+}
 
-    /* FIN DU STYLE UNIQUEMENT VALABLE POUR LES PAGES DE CONTENU */
+/* FIN DU STYLE UNIQUEMENT VALABLE POUR LES PAGES DE CONTENU */
 
 /* Pied de page - peut figurer aussi sur les pages de contenus pour plus d'ergonomie */
 
-    #footer {
-        text-align: center;
-        clear: both;
-        margin-top: 20px;
-        border-top: 2px solid #de5c32;
-        margin-bottom: 20px;
-        font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
-    }
+#footer {
+    text-align: center;
+    clear: both;
+    margin-top: 20px;
+    border-top: 2px solid #de5c32;
+    margin-bottom: 20px;
+    font-family: "Trebuchet MS", "Lucida Grande", arial, sans-serif;
+}
 
-    #footer p {
-        font-size: 0.8em;
-    }
+#footer p {
+    font-size: 0.8em;
+}
 
-    #footer a {
-        color: #0061c0;
-    }
+#footer a {
+    color: #0061c0;
+}
