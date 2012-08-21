@@ -31,6 +31,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 public class ConfigurationItemDAO {
 
@@ -57,16 +58,9 @@ public class ConfigurationItemDAO {
         return ci;
     }
 
-    public ConfigurationItem[] findAllConfigurationItems(String pWorkspaceId) {
-        ConfigurationItem[] cis;
-        Query query = em.createQuery("SELECT DISTINCT ci FROM ConfigurationItem ci WHERE ci.workspace.id = :workspaceId");
-        List listCIs = query.setParameter("workspaceId", pWorkspaceId).getResultList();
-        cis = new ConfigurationItem[listCIs.size()];
-        for (int i = 0; i < listCIs.size(); i++) {
-            cis[i] = (ConfigurationItem) listCIs.get(i);
-        }
-
-        return cis;
+    public List<ConfigurationItem> findAllConfigurationItems(String pWorkspaceId) {
+        TypedQuery query = em.createQuery("SELECT DISTINCT ci FROM ConfigurationItem ci WHERE ci.workspace.id = :workspaceId", ConfigurationItem.class);
+        return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public ConfigurationItem loadConfigurationItem(ConfigurationItemKey pKey)
