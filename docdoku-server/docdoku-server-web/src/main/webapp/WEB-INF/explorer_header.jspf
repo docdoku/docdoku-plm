@@ -39,33 +39,38 @@
                     DocDoku<strong>PLM</strong>
                 </a>
                 <div class="nav-collapse">
-                    <ul class="nav">
-                        <li>
-                            <a href="<%=request.getContextPath()%>/" id="home_link" title="Home"><i class="icon-home"></i></a>
-                        </li>
+                    <ul class="nav" id="header_left_menu">
 
-                        <!-- my documents dropdown menu-->
+                        <!-- home link -->
+                        <!--<li>
+                            <a href="#" id="home_link" title="Home"><i class="icon-home"></i></a>
+                        </li>-->
 
+                        <!-- current workspace & workspaces dropdown menu-->
                         <li class="dropdown" id="workspace_container">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="icon-file"></i>
-                                <fmt:message key="toplinks.document"/>
+                                <i class="icon-home"></i>
+                                <fmt:message key="toplinks.workspace"/>: <b>${workspaceID}</b>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <c:forEach var="item" items="${administeredWorkspaces}">
-                                    <li>
-                                        <a href="<%=request.getContextPath()%>/document-management/${item.value.id}">
-                                                ${item.value.id}
-                                        </a>
-                                    </li>
+                                    <c:if test="${workspaceID!=item.value.id}">
+                                        <li>
+                                            <a href="<%=request.getContextPath()%>/document-management/${item.value.id}">
+                                                    ${item.value.id}
+                                            </a>
+                                        </li>
+                                    </c:if>
                                 </c:forEach>
                                 <c:forEach var="item" items="${regularWorkspaces}">
-                                    <li>
-                                        <a href="<%=request.getContextPath()%>/document-management/${item.id}">
-                                                ${item.id}
-                                        </a>
-                                    </li>
+                                    <c:if test="${workspaceID!=item.id}">
+                                        <li>
+                                            <a href="<%=request.getContextPath()%>/document-management/${item.id}">
+                                                    ${item.id}
+                                            </a>
+                                        </li>
+                                    </c:if>
                                 </c:forEach>
                             </ul>
                         </li>
@@ -81,6 +86,16 @@
                             <ul class="dropdown-menu">
                             </ul>
                         </li>
+
+                        <!-- my documents link-->
+
+                        <li>
+                            <a href="<%=request.getContextPath()%>/document-management/${workspaceID}">
+                                <i class="icon-file"></i>
+                                <fmt:message key="toplinks.document"/>
+                            </a>
+                        </li>
+
 
 
                     </ul>
