@@ -13,7 +13,7 @@
     <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
-    <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/common/style.less">
+    <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/common/style.less"/>
 
     <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
@@ -48,36 +48,10 @@
                 <p>
                     <a href="<%=request.getContextPath()%>/faces/recoveryRequestForm.xhtml"><fmt:message key="login.recovery"/></a>
                 </p>
-                <!--<p>
-                            <a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="login.subscribe"/></a>
-                        </p>-->
 
             </form>
         </div>
 
-        <!--<div id="panel">
-                    <div id="loginpanel">
-                        <h3><fmt:message key="login.title"/></h3>
-
-                        <form action="<%=request.getContextPath()%>/home" method="post"><fieldset>
-                                <p><label for="login"><fmt:message key="login.user"/></label>
-                                    <input name="login" id="login" type="text" size="20" maxlength="50"/>
-                                </p>
-
-                                <p><label for="password"><fmt:message key="login.password"/></label>
-                                    <input name="password" id="password" type="password" size="20" maxlength="50"/>
-                                </p>
-
-                                <p><input type="submit" class="button" value="Login" name="auth" alt="Login"/>
-                                </p>
-                                <br/>
-                                <p><a href="<%=request.getContextPath()%>/faces/recoveryRequestForm.xhtml"><fmt:message key="login.recovery"/></a></p>
-                                <p><a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="login.subscribe"/></a></p>
-                            </fieldset>
-                        </form>
-                    </div>
-
-                </div>-->
     </div>
 
     <%@ include file="/WEB-INF/footer.jspf" %>

@@ -50,7 +50,7 @@ import javax.persistence.TemporalType;
  * @since   V1.1
  */
 @Entity
-@NamedQuery(name="Layer.findLayersByConfigurationItem",query="SELECT DISTINCT l FROM Layer l WHERE l.configurationItem.Id = :configurationItemId AND l.configurationItem.workspace.id = :workspaceId")
+@NamedQuery(name="Layer.findLayersByConfigurationItem",query="SELECT DISTINCT l FROM Layer l WHERE l.configurationItem.id = :configurationItemId AND l.configurationItem.workspace.id = :workspaceId")
 public class Layer implements Serializable{
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)

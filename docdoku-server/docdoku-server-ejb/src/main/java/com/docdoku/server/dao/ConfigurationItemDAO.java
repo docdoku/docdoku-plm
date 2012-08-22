@@ -59,7 +59,7 @@ public class ConfigurationItemDAO {
     }
 
     public List<ConfigurationItem> findAllConfigurationItems(String pWorkspaceId) {
-        TypedQuery query = em.createQuery("SELECT DISTINCT ci FROM ConfigurationItem ci WHERE ci.workspace.id = :workspaceId", ConfigurationItem.class);
+        TypedQuery<ConfigurationItem> query = em.createQuery("SELECT DISTINCT ci FROM ConfigurationItem ci WHERE ci.workspace.id = :workspaceId", ConfigurationItem.class);
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
