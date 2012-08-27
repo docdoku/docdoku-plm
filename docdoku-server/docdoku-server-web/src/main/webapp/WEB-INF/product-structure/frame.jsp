@@ -106,6 +106,7 @@
 
 <script src="<%=request.getContextPath()%>/js/product-structure/models/part.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/instance.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/levelGeometry.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/collections/partCollection.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/frameApp.js"></script>
 
