@@ -28,6 +28,8 @@ import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.LatestConfigSpec;
+import com.docdoku.core.product.Layer;
+import com.docdoku.core.product.Marker;
 import com.docdoku.core.product.PartAlternateLink;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIteration.Source;
@@ -48,6 +50,7 @@ import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.LayerNotFoundException;
 import com.docdoku.core.services.NotAllowedException;
 import com.docdoku.core.services.PartMasterAlreadyExistsException;
 import com.docdoku.core.services.PartMasterNotFoundException;
@@ -63,6 +66,8 @@ import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.dao.BinaryResourceDAO;
 import com.docdoku.server.dao.ConfigurationItemDAO;
+import com.docdoku.server.dao.LayerDAO;
+import com.docdoku.server.dao.MarkerDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.dao.PartMasterDAO;
 import com.docdoku.server.dao.PartRevisionDAO;
@@ -324,7 +329,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     
     @RolesAllowed("users")
     @Override
-    public ConfigurationItem[] getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new ConfigurationItemDAO(new Locale(user.getLanguage()), em).findAllConfigurationItems(pWorkspaceId);
     }
@@ -370,4 +375,47 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
+
+    @RolesAllowed("users")
+    @Override
+    public List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException{
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
+        return new LayerDAO(new Locale(user.getLanguage()), em).findAllLayers(pKey);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Layer getLayer(int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException{     
+        Layer layer = new LayerDAO(em).loadLayer(pId);
+        User user = userManager.checkWorkspaceReadAccess(layer.getConfigurationItem().getWorkspaceId());
+        return layer;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Layer createLayer(ConfigurationItemKey pKey, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException{
+        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
+        ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
+        Layer layer = new Layer(pName, user, ci);
+        Date now = new Date();
+        layer.setCreationDate(now);
+        
+        new LayerDAO(new Locale(user.getLanguage()), em).createLayer(layer);
+        return layer;
+    }
+
+    @Override
+    public Marker createMarker(int pLayerId, String pTitle, String pDescription, double pX, double pY, double pZ) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
+        Layer layer = new LayerDAO(em).loadLayer(pLayerId);
+        User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
+        Marker marker = new Marker(pTitle, user, pDescription, pX, pY, pZ);
+        Date now = new Date();
+        marker.setCreationDate(now);
+        
+        new MarkerDAO(new Locale(user.getLanguage()), em).createMarker(marker);
+        layer.addMarker(marker);
+        return marker;
+    }
+        
+
 }

@@ -113,6 +113,16 @@ public class Marker implements Serializable{
     public Marker() {
     }
 
+    public Marker(String pTitle, User pAuthor, String pDescription, double pX, double pY, double pZ) {
+        this.title=pTitle;
+        this.author=pAuthor;
+        this.description=pDescription;
+        this.x=pX;
+        this.y=pY;
+        this.z=pZ;
+    }
+    
+    
     public int getId() {
         return id;
     }

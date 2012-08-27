@@ -23,10 +23,13 @@ package com.docdoku.core.services;
 import com.docdoku.core.product.ConfigSpec;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.Layer;
+import com.docdoku.core.product.Marker;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import java.io.File;
 import javax.jws.WebService;
+import java.util.List;
 
 
 /**
@@ -44,5 +47,9 @@ public interface IProductManagerWS{
     java.io.File saveGeometryInPartIteration(com.docdoku.core.product.PartIterationKey pPartIPK, java.lang.String pName, int quality, long pSize) throws com.docdoku.core.services.UserNotFoundException, com.docdoku.core.services.UserNotActiveException, com.docdoku.core.services.WorkspaceNotFoundException, com.docdoku.core.services.NotAllowedException, com.docdoku.core.services.PartRevisionNotFoundException, com.docdoku.core.services.FileAlreadyExistsException, com.docdoku.core.services.CreationException;
     PartRevision updatePartIteration(com.docdoku.core.product.PartIterationKey pKey, java.lang.String pIterationNote, com.docdoku.core.product.PartIteration.Source source, java.util.List<com.docdoku.core.product.PartUsageLink> pUsageLinks, java.util.List<com.docdoku.core.meta.InstanceAttribute> pAttributes) throws com.docdoku.core.services.UserNotFoundException, com.docdoku.core.services.WorkspaceNotFoundException, com.docdoku.core.services.AccessRightException, com.docdoku.core.services.NotAllowedException, com.docdoku.core.services.PartRevisionNotFoundException;
     File getDataFile(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
-    ConfigurationItem[] getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    Layer getLayer(int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException;
+    Layer createLayer(ConfigurationItemKey pKey, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException;
+    Marker createMarker(int pLayerId, String pTitle, String pDescription, double pX, double pY, double pZ) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
 }

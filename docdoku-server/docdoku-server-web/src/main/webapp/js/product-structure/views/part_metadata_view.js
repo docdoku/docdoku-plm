@@ -15,7 +15,8 @@ window.PartMetadataView = Backbone.View.extend({
     },
 
     closePartMetadata: function(){
-        $("#part_metadata_container").slideUp();
+        $("#part_metadata_container").hide();
+        $("#bottom_controls_container").show();
     }
 
 });

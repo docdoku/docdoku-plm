@@ -79,11 +79,11 @@ public class ProductResource {
         try {
 
             String wksId = Tools.stripTrailingSlash(workspaceId);
-            ConfigurationItem[] cis = productService.getConfigurationItems(wksId);
-            ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.length];
+            List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
+            ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
-            for (int i = 0; i < cis.length; i++) {
-                dtos[i] = new ConfigurationItemDTO(cis[i].getId(), cis[i].getWorkspaceId(), cis[i].getDescription());
+            for (int i = 0; i < cis.size(); i++) {
+                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription());
             }
 
             return dtos;

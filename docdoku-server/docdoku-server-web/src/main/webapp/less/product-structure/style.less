@@ -1,4 +1,3 @@
-//bootstrap default overwrite
 @import "../bootstrap/bootstrap.less";
 @import "../bootstrap/responsive.less";
 @import "../colors.less";
@@ -6,8 +5,19 @@
 @import "../general.less";
 @import "../nav.less";
 
+body{
+    width:100%;
+    height:100%;
+    margin: 0;
+    padding: 0;
+}
+
 [class^="icon-"] {
     background-image: none;
+}
+
+#header_left_menu{
+    margin-left: 100px;
 }
 
 .nav a{
@@ -22,12 +32,86 @@
     text-shadow: 0px -1px 0px black;
 }
 
-.well {
+.navbar{
+    height: 5%;
+}
+
+.navbar-inner{
+    min-height: 41px;
+    height:100%;
+}
+
+.navbar-fixed-top {
+    position: relative;
+}
+
+#workspace{
+    display:block;
+    height: 95%;
+    width: 100%;
+    margin-top: 0px;
+}
+
+#leftPanel {
+    float: left;
+    background-color: whitesmoke;
+    height: 100%;
+    width: 300px;
     border:none;
     border-radius:0px;
     padding:0px;
     margin-bottom:0px;
     border: 1px solid #CFD7E4;
+    margin-top: -3px;
+}
+
+#mainPanel {
+    /*position: relative;*/
+    margin-left: 300px;
+    height: 100%;
+    width:auto;
+}
+
+#top_controls_container{
+    width: 100%;
+    height: 5%;
+    padding-top: 20px;
+}
+
+#top_controls_container button.active{
+    color: white;
+}
+
+#top_buttons{
+    height: 30px;
+    width: 75px;
+    margin: 0px auto;
+}
+
+#center_container {
+    width: 100%;
+    height: 76.5%;
+}
+
+#side_controls_container{
+    float:right;
+    position:relative;
+    width: 8%;
+    height: 100%;
+    margin-right: 45px;
+}
+
+#scene_container{
+    width: 79%;
+    height: 100%;
+    margin-left: 5%;
+    margin-top: -1%;
+}
+
+#bottom_controls_container{
+    width: 100%;
+    height: 5%;
+    margin-top: 1.5%;
 }
 
 .nav-list {
@@ -36,8 +120,8 @@
 }
 
 .nav-list > li > a, .nav-list .nav-header {
-    margin-right:0px;
-}
+                margin-right:0px;
+            }
 
 .header_btn-custom {
     .buttonBackground(#7A99C1, #2C4361);
@@ -57,16 +141,15 @@
 #container {
     .border-radius(5px);
     margin-top: 20px;
-    height: 80%;
+    height: 100%;
+    width: 100%;
     border: 1px #94ADCC dashed;
 }
-
-#workspace{
-    position: relative;
-}
-
-.row-fluid{
-    width: 99.6%;
+#product_nav_list_container{
+    margin-top: 10px;
+    height: 80%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 #search_control_container input[type="search"] {
@@ -82,40 +165,40 @@
 }
 
 #part_metadata_container{
+    margin-top: 15px;
     border-top: 3px solid #768AA8;
     background-color: #96AAC6;
-    position: absolute;
-    width: 100%;
-    height: 15%;
-    left: -3.5%;
-    bottom: -3px;
-    padding-top: 5px;
-    padding-left: 3.9%;
+    height: 83px;
     display: none;
-
+    z-index: 10;
 }
 
 #part_metadata_container h1{
-    font-size: 25px;
-    margin-left: -3.5%;
+    padding-top: 0px;
+    margin-top: 20px;
+    font-size: 18px;
+    margin-left: 20px;
     color: white;
     text-align: center;
     text-shadow: 0px 1px 0px #2C4361;
+    float: left;
 }
 
 #part_metadata_container h1 i{
-    margin-top: -3px;
+    margin-top: -7px;
     font-size: 20px;
     margin-right: 10px;
 }
 
 .part_metadata_key{
+    font-size: 13px;
     color: #2C4361;
     text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
     font-weight: 600;
 }
 
 .part_metadata_value{
+    font-size: 13px;
     color: white;
     text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
     font-weight: 500;
@@ -123,6 +206,7 @@
 
 #part_metadata_container .row {
     font-size: 15px;
+    margin-top: 10px;
 }
 
 #part_metadata_container .row .span12{
@@ -132,15 +216,15 @@
 .close{
     border: none;
     background: none;
-    margin-top: -40px;
+    margin-top: 0px;
 }
 
 #bom_table_container{
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    height: 94%;
-    margin-top: 50px;
+    height: 78%;
     display: none;
+    min-height: 300px;
 }
 
 #bom_table{
