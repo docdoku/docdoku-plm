@@ -65,7 +65,7 @@
 </head>
 <body>
 
-<div id="workspace">
+<div id="frameWorkspace">
 
     <div id="frameContainer"></div>        
 

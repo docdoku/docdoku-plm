@@ -211,7 +211,7 @@ html{
 
 #frameContainer {
   margin : 0;
-  height: auto;
+  height: 100%;
   width: 100%;
   border: 1px black dotted;
 }
