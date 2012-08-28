@@ -8,7 +8,6 @@
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
         <meta http-equiv="Content-Script-Type" content="text/javascript"/>
     </head>
 
@@ -37,7 +36,7 @@
                                     <tr>
                                         <td valign="middle"><c:choose>
                                                 <c:when test="${user.login == selectedWorkspace.admin.login}">&nbsp;</c:when>
-                                                <c:otherwise>&nbsp;<input type="checkbox" value="${user.login}" class="box" name="users"/></c:otherwise>
+                                                <c:otherwise>&nbsp;<input type="checkbox" value="${user.login}" name="users"/></c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td><span <c:if test="${userMembers[user.login]==null && user.login != selectedWorkspace.admin.login}">class="disable"</c:if>>${user.name}</span></td>
@@ -54,7 +53,7 @@
                             <c:forEach var="group" items="${groups}">
                                 <tr>
                                     <td valign="middle">
-                                        &nbsp;<input type="checkbox" value="${group.id}" class="box" name="groups"/>
+                                        &nbsp;<input type="checkbox" value="${group.id}" name="groups"/>
                                     </td>
                                     <td><a href="<%=request.getContextPath()%>/admin/workspace/manageUsersGroup?group=${group.id}"><span <c:if test="${groupMembers[group.id]==null}">class="disable"</c:if>>${group.id}</span></a></td>
                                     <td></td>

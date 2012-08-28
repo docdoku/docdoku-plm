@@ -9,7 +9,6 @@
 
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
         <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/common/style.less"/>
 
         <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
@@ -21,11 +20,13 @@
     <body>
         <div id="page">
             <%@ include file="/WEB-INF/header.jspf" %>
-            <div id="sidebar">
-                <h3><fmt:message key="sidebar.title"/></h3>
-                <p><fmt:message key="sidebar.text"/></p>               
-            </div>
             <div id="content">
+
+                <div id="sidebar" class="well well-large">
+                    <h3><fmt:message key="sidebar.title"/></h3>
+                    <p><fmt:message key="sidebar.text"/></p>               
+                </div>
+
                 <h2><fmt:message key="main.title"/></h2>
 
                 <h3><fmt:message key="section1.title1"/></h3>
@@ -47,6 +48,5 @@
             </div>
             <%@ include file="/WEB-INF/footer.jspf" %>
         </div>
-
     </body>
 </html>

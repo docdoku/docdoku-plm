@@ -9,7 +9,6 @@
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
         <meta http-equiv="Content-Script-Type" content="text/javascript"/>
         <script src="<%=request.getContextPath()%>/js/adminForm.js" type="text/javascript"></script>
     </head>
@@ -41,7 +40,7 @@
                         <label for="password"><fmt:message key="section.password"/>*:</label>
                         <input name="password" id="password" disabled="disabled" type="password" size="20" maxlength="50"/>
                         
-                        <input name="changePassword" id="changePassword" class="box" type="checkbox"
+                        <input name="changePassword" id="changePassword" type="checkbox"
                                onclick="document.account.password.disabled=!changePassword.checked"/>
                         <label for="changePassword"><fmt:message key="section.change_password"/></label>
                         <input type="submit" class="button" value="<fmt:message key="section.save"/>" name="submit" alt="<fmt:message key="section.save"/>"/>

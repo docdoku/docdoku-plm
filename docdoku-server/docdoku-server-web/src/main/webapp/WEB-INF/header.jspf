@@ -76,10 +76,4 @@
         </div><!--navbar-inner-->
     </div><!--navbar-fixed-top-->
 
-
-    <div id="header">
-        <span id="home"></span>
-        <span id="toplinks">
-        </span>
-    </div>
 </fmt:bundle>

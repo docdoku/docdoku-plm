@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?> 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
@@ -14,73 +14,113 @@
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <title><ui:insert name="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="#{facesContext.externalContext.requestContextPath}/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/css/main.css" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/css/font-awesome.css"/>
+        <link rel="stylesheet/less" type="text/css" href="#{facesContext.externalContext.requestContextPath}/less/common/style.less"/>
+
+        <script src="#{facesContext.externalContext.requestContextPath}/js/lib/jquery-1.7.1.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/js/lib/less-1.2.1.min.js"></script>
+        <script src="#{facesContext.externalContext.requestContextPath}/js/lib/bootstrap-2.0.2.min.js"></script>
     </h:head>
 
     <h:body>
-        <div id="page">
-            <script type="text/javascript">
-    <!--
-    function switchMenu(objet){
-        var el = document.getElementById(objet);
-        if ( el.style.display != 'none' ) {
-            el.style.display = 'none';
-        }
-        else {
-            el.style.display = '';
-        }
+
+        <script type="text/javascript">
+<!--
+function switchMenu(objet){
+    var el = document.getElementById(objet);
+    if ( el.style.display != 'none' ) {
+        el.style.display = 'none';
     }
-    //-->
-            </script>
-            <div id="header">
-                <span id="home">
-                    <a href="#{facesContext.externalContext.requestContextPath}/">#{i18nTemplate['toplinks.home']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/download.jsp">#{i18nTemplate['menu.download']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/help/help.jsp">#{i18nTemplate['menu.help']}</a>
-                </span>
-                <span id="toplinks">
-                    <c:choose>
-                        <c:when test="${sessionScope.account==null}" >
-                            #{i18nTemplate['toplinks.notRegistered']} <a href="#{facesContext.externalContext.requestContextPath}/registrationForm.jsp">#{i18nTemplate['toplinks.subscribe']}</a>
-                        </c:when>
-                        <c:otherwise>
-                            #{i18nTemplate['toplinks.welcome']} ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');">#{i18nTemplate['toplinks.workspace']}&#9660;</a>
-                            <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
-                                <li>
-                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/admin/workspacesMenu.jsp">
-                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                             onmouseout="this.style.backgroundColor='';this.style.color='';">#{i18nTemplate['toplinks.admin']}</div></a>
-                                </li>
-                                <hr/>
-                                <c:forEach var="item" items="${administeredWorkspaces}">
-                                    <li>
-                                        <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/document-management/${item.value.id}">
-                                            <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                                 onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
-                                    </li>
-                                </c:forEach>
+    else {
+        el.style.display = '';
+    }
+}
+//-->
+        </script>       
 
-                                <c:forEach var="item" items="${regularWorkspaces}">
-                                    <li>
-                                        <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/document-management/${item.id}">
-                                            <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                                 onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
-                                    </li>
-                                </c:forEach>
 
+
+
+        <div id="page">
+
+
+
+            <div class="navbar navbar-fixed-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <!--<span class="brand-plm"></span>-->
+                        <img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/>
+                        <a class="brand" href="#">
+                            DocDoku<strong>PLM</strong>
+                        </a>
+                        <div class="nav-collapse">
+                            <ul class="nav">
+                                <li><a href="#{facesContext.externalContext.requestContextPath}/"><i class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a></li>
+                                <li><a href="#{facesContext.externalContext.requestContextPath}/download.jsp"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}</a></li>
+                                <li><a href="#{facesContext.externalContext.requestContextPath}/help/help.jsp">#{i18nTemplate['menu.help']}</a></li>
                             </ul>
+                            <ul class="nav pull-right">
+                                <c:choose>
+                                    <c:when test="${sessionScope.account==null}" >
+                                        <li id="registration_link_container">#{i18nTemplate['toplinks.notRegistered']} <a href="#{facesContext.externalContext.requestContextPath}/registrationForm.jsp">#{i18nTemplate['toplinks.subscribe']}</a></li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        #{i18nTemplate['toplinks.welcome']} ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');">#{i18nTemplate['toplinks.workspace']}<span style="font-size: 8px; margin-left: 2px;">&#9660;</span></a>
+                                        <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
+                                            <li>
+                                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/admin/workspacesMenu.jsp">
+                                                    <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                         onmouseout="this.style.backgroundColor='';this.style.color='';">#{i18nTemplate['toplinks.admin']}</div></a>
+                                            </li>
+                                            <hr/>
+                                            <c:forEach var="item" items="${administeredWorkspaces}">
+                                                <li>
+                                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/document-management/${item.value.id}">
+                                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                             onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
+                                                </li>
+                                            </c:forEach>
 
-                            | <a href="#{facesContext.externalContext.requestContextPath}/admin/accountEditionForm.jsp">#{i18nTemplate['toplinks.account']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/admin/logout.jsp">#{i18nTemplate['toplinks.logout']}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </span>
-            </div>
+                                            <c:forEach var="item" items="${regularWorkspaces}">
+                                                <li>
+                                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/document-management/${item.id}">
+                                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
+                                                             onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
+                                                </li>
+                                            </c:forEach>
+
+                                        </ul>
+
+                                        | <a href="#{facesContext.externalContext.requestContextPath}/admin/accountEditionForm.jsp">#{i18nTemplate['toplinks.account']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/admin/logout.jsp">#{i18nTemplate['toplinks.logout']}</a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </ul>
+                        </div>
+
+                    </div><!--container-->
+                </div><!--navbar-inner-->
+            </div><!--navbar-fixed-top-->
+
+
+
+
+
+
+
 
             <div id="content">
                 <ui:insert name="content"/>
             </div>
 
-            <div id="footer">
-                <p>Copyright 2006-2011 - <a href="http://www.docdoku.com">DocDoku</a></p>
+            <div id="footer">        
+                <p>Copyright 2006-2012 - <a href="http://www.docdoku.com">DocDoku</a></p>
             </div>
+
         </div>
     </h:body>
 

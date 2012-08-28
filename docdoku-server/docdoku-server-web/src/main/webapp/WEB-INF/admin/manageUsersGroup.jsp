@@ -8,7 +8,6 @@
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <title><fmt:message key="title"/></title>
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
         <meta http-equiv="Content-Script-Type" content="text/javascript"/>
     </head>
     
@@ -33,7 +32,7 @@
                             </tr>
                             <c:forEach var="user" items="${group.users}">
                                 <tr>
-                                    <td valign="middle">&nbsp;<input type="checkbox" value="${user.login}" class="box" name="users"/></td>
+                                    <td valign="middle">&nbsp;<input type="checkbox" value="${user.login}" name="users"/></td>
                                     <td>${user.name}</td>
                                     <td><a href="mailto:${user.email}">${user.email}</a></td>                                  
                                 </tr>

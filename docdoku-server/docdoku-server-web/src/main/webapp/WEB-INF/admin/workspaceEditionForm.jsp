@@ -8,7 +8,6 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <title><fmt:message key="title"/></title>
     <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
     <meta http-equiv="Content-Script-Type" content="text/javascript"/>
     <script src="<%=request.getContextPath()%>/js/adminForm.js" type="text/javascript"></script>
 </head>
@@ -35,7 +34,7 @@
     </select>    
     <label for="description"><fmt:message key="section.description"/>:</label>
     <textarea id="description" name="description" cols="40" rows="4">${selectedWorkspace.description}</textarea>
-    <input name="folderLocked" <c:if test="${selectedWorkspace.folderLocked}">checked="checked" </c:if>id="folderLocked" value="true" class="box" type="checkbox"/>
+    <input name="folderLocked" <c:if test="${selectedWorkspace.folderLocked}">checked="checked" </c:if>id="folderLocked" value="true" type="checkbox"/>
            <label for="folderLocked"><fmt:message key="section.freeze_folders"/></label>
     <input type="submit" class="button" value="<fmt:message key="section.save"/>" name="submit" alt="<fmt:message key="section.save"/>"/>
 </fieldset></form>

@@ -8,7 +8,6 @@
         <title>DocDoku: error</title>
         <link rel="Shortcut Icon"
               type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css" media="screen"/>
     </head>
     <%
             application.log("Unexpected error:", exception);
