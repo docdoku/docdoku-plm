@@ -32,6 +32,10 @@ SceneManager.prototype = {
 
     initScene: function() {
         this.container = $('div#container');
+        // Init frame
+        if (this.container.length === 0) {
+            this.container = $('div#frameContainer');
+        }
         this.scene = new THREE.Scene();
     },
 

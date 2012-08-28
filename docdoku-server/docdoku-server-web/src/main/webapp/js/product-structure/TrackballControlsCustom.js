@@ -501,6 +501,10 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 	}
 
 	function mousewheel(event) {
+
+		event.preventDefault();
+		event.stopPropagation();
+		
 		_this.zoomCameraWheel(-event.wheelDeltaY * 0.0001);
 	}
 
