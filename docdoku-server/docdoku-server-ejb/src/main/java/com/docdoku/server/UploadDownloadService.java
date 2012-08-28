@@ -125,7 +125,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     
     @RolesAllowed("users")
     @Override
-    public void uploadToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName, int quality,
+    public void uploadGeometryToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName, int quality,
             @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
         PartIterationKey partIPK = null;
         File vaultFile = null;
@@ -140,7 +140,24 @@ public class UploadDownloadService implements IUploadDownloadWS {
         outStream.close();
         productService.saveGeometryInPartIteration(partIPK, fileName, quality, vaultFile.length());
     }
-    
+
+    @RolesAllowed("users")
+    @Override
+    public void uploadToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
+            @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
+        PartIterationKey partIPK = null;
+        File vaultFile = null;
+
+        partIPK = new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspaceId, partMNumber), partRVersion), iteration);
+        vaultFile = productService.saveFileInPartIteration(partIPK, fileName, 0);
+
+        vaultFile.getParentFile().mkdirs();
+        vaultFile.createNewFile();
+        OutputStream outStream = new BufferedOutputStream(new FileOutputStream(vaultFile));
+        data.writeTo(outStream);
+        outStream.close();
+        productService.saveFileInPartIteration(partIPK, fileName, vaultFile.length());
+    }    
 
     @RolesAllowed("users")
     @Override

@@ -19,14 +19,18 @@
  */
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.meta.InstanceAttribute;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,7 +58,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @IdClass(com.docdoku.core.product.PartIterationKey.class)
 @Entity
-public class PartIteration implements Serializable, Comparable<PartIteration> {
+public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration> {
     
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
@@ -70,7 +74,7 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
 
     @OrderBy("quality")
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(inverseJoinColumns = {
+    @JoinTable(name="PARTITERATION_GEOMETRY", inverseJoinColumns = {
         @JoinColumn(name = "GEOMETRY_FULLNAME", referencedColumnName = "FULLNAME")
     },
     joinColumns = {
@@ -81,6 +85,18 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
     })
     private List<Geometry> geometries = new LinkedList<Geometry>();
 
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(name="PARTITERATION_BINARYRESOURCE", inverseJoinColumns = {
+        @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
+    },
+    joinColumns = {
+        @JoinColumn(name = "PARTITERATION_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+        @JoinColumn(name = "PARTITERATION_PARTMASTER_NUMBER", referencedColumnName = "PARTMASTER_NUMBER"),
+        @JoinColumn(name = "PARTITERATION_PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
+        @JoinColumn(name = "PARTITERATION_ITERATION", referencedColumnName = "ITERATION")
+    })
+    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();    
+    
     private String iterationNote;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -184,6 +200,25 @@ public class PartIteration implements Serializable, Comparable<PartIteration> {
         this.iterationNote = iterationNote;
     }
 
+    
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+    
+    public boolean removeFile(BinaryResource pBinaryResource){
+        return attachedFiles.remove(pBinaryResource);
+    }
+    
+    public void addFile(BinaryResource pBinaryResource){
+        attachedFiles.add(pBinaryResource);
+    }
+    
+    @Override
+    public Set<BinaryResource> getAttachedFiles() {
+        return attachedFiles;
+    }
+ 
+    
     
     public Date getCreationDate() {
         return creationDate;

@@ -20,13 +20,18 @@
 
 package com.docdoku.core.services;
 
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigSpec;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Layer;
 import com.docdoku.core.product.Marker;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.PartUsageLink;
 import java.io.File;
 import javax.jws.WebService;
 import java.util.List;
@@ -42,10 +47,11 @@ public interface IProductManagerWS{
     PartMaster filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
     ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException;
     PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, String pPartMasterDescription, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException;
-    PartRevision undoCheckOut(com.docdoku.core.product.PartRevisionKey pPartRPK) throws com.docdoku.core.services.NotAllowedException, com.docdoku.core.services.PartRevisionNotFoundException, com.docdoku.core.services.UserNotFoundException, com.docdoku.core.services.UserNotActiveException, com.docdoku.core.services.WorkspaceNotFoundException;
-    PartRevision checkIn(com.docdoku.core.product.PartRevisionKey pPartRPK) throws com.docdoku.core.services.PartRevisionNotFoundException, com.docdoku.core.services.UserNotFoundException, com.docdoku.core.services.WorkspaceNotFoundException, com.docdoku.core.services.AccessRightException, com.docdoku.core.services.NotAllowedException;
-    java.io.File saveGeometryInPartIteration(com.docdoku.core.product.PartIterationKey pPartIPK, java.lang.String pName, int quality, long pSize) throws com.docdoku.core.services.UserNotFoundException, com.docdoku.core.services.UserNotActiveException, com.docdoku.core.services.WorkspaceNotFoundException, com.docdoku.core.services.NotAllowedException, com.docdoku.core.services.PartRevisionNotFoundException, com.docdoku.core.services.FileAlreadyExistsException, com.docdoku.core.services.CreationException;
-    PartRevision updatePartIteration(com.docdoku.core.product.PartIterationKey pKey, java.lang.String pIterationNote, com.docdoku.core.product.PartIteration.Source source, java.util.List<com.docdoku.core.product.PartUsageLink> pUsageLinks, java.util.List<com.docdoku.core.meta.InstanceAttribute> pAttributes) throws com.docdoku.core.services.UserNotFoundException, com.docdoku.core.services.WorkspaceNotFoundException, com.docdoku.core.services.AccessRightException, com.docdoku.core.services.NotAllowedException, com.docdoku.core.services.PartRevisionNotFoundException;
+    PartRevision undoCheckOut(PartRevisionKey pPartRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    PartRevision checkIn(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
+    java.io.File saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    java.io.File saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    PartRevision updatePartIteration(PartIterationKey pKey, java.lang.String pIterationNote, PartIteration.Source source, java.util.List<PartUsageLink> pUsageLinks, java.util.List<InstanceAttribute> pAttributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException;
     File getDataFile(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
     List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;

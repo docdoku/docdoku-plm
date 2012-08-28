@@ -237,6 +237,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 dataManager.delData(file);
             }
 
+            for (BinaryResource file : partIte.getAttachedFiles()) {
+                dataManager.delData(file);
+            }
+            
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             partIDAO.removeIteration(partIte);
             partR.setCheckOutDate(null);
@@ -319,6 +323,40 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else {
                 file.setContentLength(pSize);
                 file.setQuality(quality);
+            }
+            return dataManager.getVaultFile(file);
+        } else {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
+        }
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public File saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+        if (!NamingConvention.correct(pName)) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+        }
+
+        PartRevisionDAO partRDAO = new PartRevisionDAO(em);
+        PartRevision partR = partRDAO.loadPartR(pPartIPK.getPartRevision());
+        PartIteration partI = partR.getIteration(pPartIPK.getIteration());
+        if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user) && partR.getLastIteration().equals(partI)) {
+            BinaryResource file = null;
+            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + pName;
+
+            for (BinaryResource bin : partI.getAttachedFiles()) {
+                if (bin.getFullName().equals(fullName)) {
+                    file = bin;
+                    break;
+                }
+            }
+            if (file == null) {               
+                file = new BinaryResource(fullName, pSize);             
+                new BinaryResourceDAO(em).createBinaryResource(file);
+                partI.addFile(file);
+            } else {
+                file.setContentLength(pSize);
             }
             return dataManager.getVaultFile(file);
         } else {

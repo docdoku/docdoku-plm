@@ -20,10 +20,8 @@
 
 package com.docdoku.core.common;
 
-import com.docdoku.core.product.Geometry;
 import java.io.Serializable;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * <a href="BinaryResource.html">BinaryResource</a> is the representation
@@ -33,7 +31,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
-@XmlSeeAlso({Geometry.class})
 @Inheritance()
 @Entity
 public class BinaryResource implements Serializable, Comparable<BinaryResource>{
