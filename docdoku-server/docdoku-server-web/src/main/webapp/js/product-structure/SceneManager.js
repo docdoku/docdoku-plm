@@ -3,7 +3,7 @@ function SceneManager(options) {
     var options = options || {};
 
     var defaultsOptions = {
-        typeLoader: 'json',
+        typeLoader: 'binary',
         typeMaterial: 'face'
     }
 
