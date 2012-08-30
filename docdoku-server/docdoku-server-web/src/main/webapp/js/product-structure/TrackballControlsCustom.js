@@ -37,6 +37,11 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
 	this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
+	// touch vars
+
+	var startY;
+	var touchZoomingFactor = 5;
+
 	// internals
 
 	this.target = new THREE.Vector3();
@@ -508,8 +513,6 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 		_this.zoomCameraWheel(-event.wheelDeltaY * 0.0001);
 	}
 
-	var startY;
-
 	function touchstart( event ) {
 
 		var touch = event.touches[0];
@@ -546,7 +549,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 		if (_state === STATE.ZOOM) {
 
 			// 2 fingers : zoom in / out
-			event.wheelDeltaY = (startY - touch.clientY)*5;
+			event.wheelDeltaY = (startY - touch.clientY) * touchZoomingFactor;
 			mousewheel(event);
 			startY = touch.clientY;
 
