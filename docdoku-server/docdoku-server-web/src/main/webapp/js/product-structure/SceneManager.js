@@ -106,8 +106,8 @@ SceneManager.prototype = {
     },
 
     loadWindowResize: function() {
-        var windowResize = THREEx.windowresize(this.renderer, this.camera, this.container);
-    }
+        var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.container);
+    },
 
     animate: function() {
         var self = this;
