@@ -64,7 +64,7 @@ SceneManager.prototype = {
         if (Modernizr.touch){
             $('#side_controls_container').hide();
             $('#bottom_controls_container').hide();
-            $('#scene_container').width(100+'%');
+            $('#scene_container').width(90+'%');
             $('#center_container').height(83+'%');
         } else {
             new ControlManager( this.controls );
