@@ -26,6 +26,7 @@ SceneManager.prototype = {
         this.initAxes();
         this.initStats();
         this.initRenderer();
+        this.loadWindowResize();
         this.initPinManager();
         this.animate();
     },
@@ -103,6 +104,10 @@ SceneManager.prototype = {
         this.renderer.setSize( this.container.width(), this.container.height() );
         this.container.append( this.renderer.domElement );
     },
+
+    loadWindowResize: function() {
+        var windowResize = THREEx.windowresize(this.renderer, this.camera, this.container);
+    }
 
     animate: function() {
         var self = this;

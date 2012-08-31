@@ -221,6 +221,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.domevent.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.windowresize.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
