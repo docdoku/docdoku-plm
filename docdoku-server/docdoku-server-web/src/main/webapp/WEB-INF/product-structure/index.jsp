@@ -218,6 +218,7 @@
 <script src="<%=request.getContextPath()%>/js/product-structure/app.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/modernizr.custom.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.domevent.js"></script>

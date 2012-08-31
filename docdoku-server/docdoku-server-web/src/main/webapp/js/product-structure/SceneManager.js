@@ -61,7 +61,14 @@ SceneManager.prototype = {
 
         this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
-        new ControlManager( this.controls );
+        if (Modernizr.touch){
+            $('#side_controls_container').hide();
+            $('#bottom_controls_container').hide();
+            $('#scene_container').width(100+'%');
+            $('#center_container').height(83+'%');
+        } else {
+            new ControlManager( this.controls );
+        }
     },
 
     initPinManager: function() {
