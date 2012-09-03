@@ -73,8 +73,8 @@ define([
         //DOM Events
         events:{
             "click .editable-list-cancel-editor":"bindCancelButton",
-            "change input.item-selection":"bindItemSelected",
-            "click .editable-list-adder":"bindAddItem"
+            "change input.item-selection":"bindItemSelected"
+            /*"click .editable-list-adder":"bindAddItem"*/
         },
 
 
@@ -213,7 +213,7 @@ define([
 
 
         fullTemplate:function () {
-            return this.listTemplate() + this.creationEditorTemplate() + this.controlBarTemplate();
+            return  this.creationEditorTemplate() + this.controlBarTemplate() + this.listTemplate();
         },
 
         listTemplate:function () {
@@ -244,7 +244,7 @@ define([
 
         controlBarTemplate:function () {
             var controls = "{{#editable}}<div id='editable-list-controls-{{listId}}'>" +
-                "<button id='editable-list-add-item-{{listId}}' class='btn editable-list-adder'>{{i18n.APPEND}}</button>" +
+                /*"<button id='editable-list-add-item-{{listId}}' class='btn editable-list-adder'>{{i18n.APPEND}}</button>" +*/
                 "<button id='editable-list-cancel-editor-{{listId}}' class='btn cancel editable-list-cancel-editor'>{{i18n.CANCEL}}</button>" +
                 "</div>{{/editable}}\n";
             return controls;

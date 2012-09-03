@@ -20,6 +20,7 @@ define(function () {
 		"DELETE_SELECTION_?":			"Supprimer la sélection ?",
 		"DELETE":						"Supprimer",
 		"DELETE_TAG_?":					"Supprimer le libellé ?",
+        "DESCRIPTION":                  "Description",
 		"DOCUMENT":						"Document",
 		"DOCUMENT_S_DESCRIPTION":		"Description du document",
 		"DOCUMENT_S_REFERENCE":			"Référence du document",

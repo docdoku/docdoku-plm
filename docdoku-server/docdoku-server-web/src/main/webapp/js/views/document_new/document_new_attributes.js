@@ -30,7 +30,14 @@ define([
 				type: "TEXT",
 				value: ""
 			});
-		}
+		},
+        addAndFillAttribute: function(attribute){
+            this.collection.add({
+                name: attribute.getName(),
+                type: attribute.getType(),
+                value: attribute.getValue()
+            });
+        }
 	});
 	return DocumentNewAttributesView;
 });

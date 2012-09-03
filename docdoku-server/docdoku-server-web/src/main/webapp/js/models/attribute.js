@@ -5,6 +5,7 @@ define([
 
     var Attribute = Backbone.Model.extend({
         initialize:function () {
+
             var self = this;
             this.className = "Attribute";
 
@@ -47,6 +48,7 @@ define([
 
         //from backbone Doc : If the attributes are valid, don't return anything from validate
         validate:function () {
+
             if (kumo.any([this.getType(), this.getName(), this.getValue()])) {
                 return i18n.VALIDATION_FAILED_FOR+this.getName();
             }
@@ -63,7 +65,8 @@ define([
                         break;
 
                     case Attribute.types.BOOLEAN :
-                        value = Boolean(value);
+                        //value=Boolean(value);
+                        value = (value=="true") ? true : false;
                         this.set({value : value}, {silent:true});//fixing missed conversion
                         ok = (value === true || value === false) && typeof(value) == "boolean";
                         break;

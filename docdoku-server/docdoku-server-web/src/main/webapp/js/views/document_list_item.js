@@ -2,12 +2,14 @@ define([
 	"i18n",
 	"common/date",
 	"views/checkbox_list_item",
-	"views/iteration/iteration_edit",
+    /*"views/document_edit",*/
+    "views/iteration/iteration_edition",
 	"text!templates/document_list_item.html"
 ], function (
 	i18n,
 	date,
 	CheckboxListItemView,
+    /*DocumentEditView,*/
     IterationEditView,
 	template
 ) {
@@ -46,19 +48,24 @@ define([
 				y: targetOffset.top + (target.height() / 2)
 			};
 			this.model.fetch().success(function () {
-                //alert("top : "+that.model.className);
+
+
+                /*that.editView = that.addSubView(
+                    new DocumentEditView({
+                        model: that.model
+                    })
+                );
+                $("#content").append(that.editView.el);
+                that.editView.renderAt(offset);*/
 
                 new IterationEditView({
                     model: that.model
                 }).show();
 
-                /*that.editView = that.addSubView(
 
-				);*/
-				//$("#content").append(that.editView.el);
-				//that.editView.renderAt(offset);
-			});
-		}
-	});
-	return DocumentListItemView;
+
+            });
+        }
+    });
+    return DocumentListItemView;
 });
