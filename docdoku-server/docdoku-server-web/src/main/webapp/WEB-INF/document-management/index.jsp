@@ -13,6 +13,8 @@
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>      
 	<link rel="stylesheet/less" href="<%=request.getContextPath()%>/less/style.less">
+        <link rel="stylesheet/less" href="<%=request.getContextPath()%>/less/document-management/style.less">
+
         
 		<script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
 
