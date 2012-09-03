@@ -26,7 +26,7 @@ SceneManager.prototype = {
         this.initAxes();
         this.initStats();
         this.initRenderer();
-        this.initPinManager();
+        this.initLayerManager();
         this.animate();
     },
 
@@ -63,11 +63,13 @@ SceneManager.prototype = {
         new ControlManager( this.controls );
     },
 
-    initPinManager: function() {
-        this.pinManager = new PinManager(this.scene, this.camera, this.renderer, this.controls, this.container[0]);
-        this.pinManager.addPins();
-        this.pinManager.bindEvent();
-        this.pinManager.rescalePins(0);
+    initLayerManager: function() {
+        var self = this;
+        require(["LayerManager"], function(LayerManager) {
+            self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container[0]);
+            self.layerManager.bindControlEvents();
+            self.layerManager.rescaleMarkers(0);
+        });
     },
 
     initLights: function() {

@@ -19,6 +19,8 @@
     
     <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
 
+    <script src="<%=request.getContextPath()%>/js/lib/require/1.0.8/require.min.js"></script>
+
     <script type="text/javascript">
 
         var APP_CONFIG = {
@@ -26,6 +28,16 @@
             productId:"${productID}",
             login:"${login}"
         };
+
+        require.config({
+            baseUrl: "${request.contextPath}/js/product-structure",
+            paths: {
+                "require": "../lib/require/1.0.8/require.min",
+                "text": "../lib/require/1.0.8/text.min"
+            },
+            locale: "<%=request.getLocale()%>"
+        });
+        require(["app"]);
 
         $(document).ready(function() {
             populateProductsMenu();
@@ -215,7 +227,6 @@
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_item_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_metadata_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/bom_item_view.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/app.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
@@ -224,7 +235,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/PinManager.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/LayerManager.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/TrackballControlsCustom.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 
