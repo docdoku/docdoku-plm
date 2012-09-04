@@ -19,6 +19,8 @@
     
     <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
 
+    <script src="<%=request.getContextPath()%>/js/lib/require/1.0.8/require.min.js"></script>
+
     <script type="text/javascript">
 
         var APP_CONFIG = {
@@ -26,6 +28,16 @@
             productId:"${productID}",
             login:"${login}"
         };
+
+        require.config({
+            baseUrl: "${request.contextPath}/js/product-structure",
+            paths: {
+                "require": "../lib/require/1.0.8/require.min",
+                "text": "../lib/require/1.0.8/text.min"
+            },
+            locale: "<%=request.getLocale()%>"
+        });
+        require(["app"]);
 
         $(document).ready(function() {
             populateProductsMenu();
@@ -132,10 +144,10 @@
                         <a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
                     </div>
 
-                    <div id="managePin">
-                        <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-minus icon-pin-manager"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-plus icon-pin-manager"></i></a>
-                        <a href="#" class="moveBtn moveBtnCenter"><i id="pinState" class="icon-pin icon-pin-full icon-navigation"></i></a>
+                    <div id="manageMarker">
+                        <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-minus icon-marker-manager"></i></a>
+                        <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-plus icon-marker-manager"></i></a>
+                        <a href="#" class="moveBtn moveBtnCenter"><i id="markerState" class="icon-marker icon-marker-full icon-navigation"></i></a>
                     </div>
                 </div>
             </div>
@@ -172,20 +184,13 @@
 
     </div>
 
-    <div class="modal hide fade" id="issueModal">
+    <div class="modal hide fade" id="markerModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3 id="issueTitle"></h3>
+            <h3 id="markerTitle"></h3>
         </div>
         <div class="modal-body">
-            <p><b>Author:</b> <span id="issueAuthor"></span></p>
-            <p><b>Date:</b> <span id="issueDate"></span></p>
-            <p><b>Description:</b> <span id="issueDesc"></span></p>
-            <p><b>Comment:</b> <span id="issueComment"></span></p>
-            <p><b>Zone:</b> <span id="issueZone"></span></p>
-            <p><b>Responsible:</b> <span id="issueResponsible"></span></p>
-            <p><b>Criticity:</b> <span id="issueCriticity"></span></p>
-            <p><b>MSN:</b> <span id="issueMsn"></span></p>
+            <p><b>Description:</b> <span id="markerDesc"></span></p>
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
@@ -215,7 +220,6 @@
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_item_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/part_metadata_view.js"></script>
 <script src="<%=request.getContextPath()%>/js/product-structure/views/bom_item_view.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/app.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
@@ -224,7 +228,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/PinManager.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/LayerManager.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/TrackballControlsCustom.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 

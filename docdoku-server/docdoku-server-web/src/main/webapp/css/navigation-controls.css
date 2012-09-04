@@ -4,7 +4,7 @@
 
 #navigationMenu a {text-decoration: none;}
 
-#moveSpace, #moveMap, #managePin {
+#moveSpace, #moveMap, #manageMarker {
 	position: relative;
 	height: 100px;
 	width: 100px;
@@ -97,7 +97,7 @@
 }
 
 /* 
- * PIN MANAGER 
+ * LAYER MANAGER
  */
 
 .icon-navigation {
@@ -113,14 +113,14 @@
 	padding-left: 10px;
 }
 
-.icon-pin-manager {
+.icon-marker-manager {
     color: #FEFEFE;
     font-size: 16px;
     text-shadow:1px 1px 3px #000;
     margin-top: 3px;
 }
 
-.icon-pin {
+.icon-marker {
     width: 0.8em;
     height: 0.8em;
     -webkit-border-radius: 5em;
@@ -129,36 +129,36 @@
     margin-left: 5px;
 }
 
-.icon-pin-full {
+.icon-marker-full {
     width: 0.8em;
     height: 0.8em;
     color: #FFFFFF;
     background-color: #fff;
 }
 
-.icon-pin-empty {
+.icon-marker-empty {
     width: 0.7em;
     height: 0.7em;
     border: white 2px solid;
 }
 
-.icon-pin-dotted {
+.icon-marker-dotted {
     width: 0.7em;
     height: 0.7em;
     border: white 2px dotted;
 }
 
-#managePin .moveBtnLeft i {
+#manageMarker .moveBtnLeft i {
     padding-left: 5px;
     padding-top: 1px;
 }
 
-#managePin .moveBtnRight i {
+#manageMarker .moveBtnRight i {
     padding-left: 8px;
     padding-top: 1px;
 }
 
-#managePin .moveBtnCenter {
+#manageMarker .moveBtnCenter {
     box-shadow: 2px 4px 4px -4px rgba(0,0,0,0.4),
     2px -4px 4px -4px rgba(0,0,0,0.4);
     border-top: 1px solid;
