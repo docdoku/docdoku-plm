@@ -9,6 +9,12 @@ define([
     var Layer = Backbone.Model.extend({
 
         initialize: function() {
+            this.set('material', new THREE.MeshLambertMaterial({
+                //http://paulirish.com/2009/random-hex-color-code-snippets/
+                color: this.has('color') ? this.get('color') : "0x" + (Math.random()*0xFFFFFF<<0).toString(16),
+                opacity: 1,
+                transparent: true
+            }));
             this.set('markers', new MarkerCollection());
             this.getMarkers().on("reset", this._addAllMarkersToScene, this);
             this.getMarkers().on("add", this._addMarkerToScene, this);
@@ -20,14 +26,20 @@ define([
             return this.get('markers');
         },
 
+        getMaterial: function() {
+            return this.get('material');
+        },
+
         createMarker: function(title, description, x, y, z) {
-            this.getMarkers().add({
+            var marker = new Marker({
                 title: title,
                 description: description,
                 x: x,
                 y: y,
                 z: z
             });
+            this.getMarkers().add(marker);
+            return marker;
         },
 
         removeMarker: function(marker) {
@@ -40,7 +52,7 @@ define([
         },
 
         _addMarkerToScene: function(marker) {
-            sceneManager.layerManager.addMeshFromMarker(marker);
+            sceneManager.layerManager.addMeshFromMarker(marker, this.getMaterial());
         },
 
         _removeAllMarkers: function() {

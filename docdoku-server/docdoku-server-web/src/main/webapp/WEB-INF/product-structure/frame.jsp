@@ -69,20 +69,13 @@
 
     <div id="frameContainer"></div>        
 
-    <div class="modal hide fade" id="issueModal">
+    <div class="modal hide fade" id="markerModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3 id="issueTitle"></h3>
+            <h3 id="markerTitle"></h3>
         </div>
         <div class="modal-body">
-            <p><b>Author:</b> <span id="issueAuthor"></span></p>
-            <p><b>Date:</b> <span id="issueDate"></span></p>
-            <p><b>Description:</b> <span id="issueDesc"></span></p>
-            <p><b>Comment:</b> <span id="issueComment"></span></p>
-            <p><b>Zone:</b> <span id="issueZone"></span></p>
-            <p><b>Responsible:</b> <span id="issueResponsible"></span></p>
-            <p><b>Criticity:</b> <span id="issueCriticity"></span></p>
-            <p><b>MSN:</b> <span id="issueMsn"></span></p>
+            <p><b>Description:</b> <span id="markerDesc"></span></p>
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
@@ -117,7 +110,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/PinManager.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/LayerManager.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/TrackballControlsCustom.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 

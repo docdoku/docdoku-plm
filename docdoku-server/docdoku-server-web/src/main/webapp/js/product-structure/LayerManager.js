@@ -21,21 +21,14 @@ define([
         this.renderer = renderer;
         this.controls = controls;
         this.container = container;
-        this.markerStateControl = $('#pinState');
+        this.markerStateControl = $('#markerState');
         this.layersCollection = new LayerCollection();
-
-        this.markerMaterial = new THREE.MeshLambertMaterial({
-            color: 0xFF0000,
-            opacity: 1,
-            transparent: true
-        });
-
         domEvent = new THREEx.DomEvent(camera, container);
     };
 
     LayerManager.prototype = {
 
-        addMeshFromMarker: function(marker) {
+        addMeshFromMarker: function(marker, material) {
             // set up the sphere vars
             var radius = 50,
                 segments = 16,
@@ -50,7 +43,7 @@ define([
                     segments,
                     rings
                 ),
-                this.markerMaterial
+                material
             );
 
             markerMesh.position.set(marker.getX(), marker.getY(), marker.getZ());
@@ -76,21 +69,16 @@ define([
             this._removeMesh(marker.cid);
         },
 
-        removeAllMeshs: function() {
-            for (var cid in this.meshs) {
-                this._removeMesh(cid);
-            }
-        },
-
         _removeMesh: function(cid) {
             domEvent.unbind(this.meshs[cid], 'click');
             this.scene.remove(this.meshs[cid]);
             delete this.meshs[cid];
         },
 
-        createLayer: function(name) {
+        createLayer: function(name, color) {
             var layer = new Layer({
-                name : name
+                name : name,
+                color: color
             });
             this.layersCollection.add(layer);
             return layer;
@@ -100,28 +88,36 @@ define([
             this.layersCollection.remove(layer);
         },
 
-        rescaleMarkers: function(value) {
-            _.each(this.meshs, function(markerMesh) {
-                markerMesh.scale.x += value;
-                markerMesh.scale.y += value;
-                markerMesh.scale.z += value;
+        removeAllLayers: function() {
+            this.layersCollection.each(function(layer) {
+                layer.trigger('remove');
             });
+            this.layersCollection.reset({silent: true});
+        },
+
+        rescaleMarkers: function(value) {
+            for (var cid in this.meshs) {
+                var currentMesh = this.meshs[cid];
+                currentMesh.scale.x += value;
+                currentMesh.scale.y += value;
+                currentMesh.scale.z += value;
+            };
         },
 
         changeMarkerState: function() {
             switch(this.state) {
                 case STATE.FULL  :
-                    this.markerStateControl.removeClass('icon-pin-full').addClass('icon-pin-empty');
+                    this.markerStateControl.removeClass('icon-marker-full').addClass('icon-marker-empty');
                     this.changeOpacityOnMarker(0.4);
                     this.state = STATE.TRANSPARENT;
                     break;
                 case STATE.TRANSPARENT :
-                    this.markerStateControl.removeClass('icon-pin-empty').addClass('icon-pin-dotted');
+                    this.markerStateControl.removeClass('icon-marker-empty').addClass('icon-marker-dotted');
                     this.changeOpacityOnMarker(0);
                     this.state = STATE.HIDDEN;
                     break;
                 case STATE.HIDDEN:
-                    this.markerStateControl.removeClass('icon-pin-dotted').addClass('icon-pin-full');
+                    this.markerStateControl.removeClass('icon-marker-dotted').addClass('icon-marker-full');
                     this.changeOpacityOnMarker(1);
                     this.state = STATE.FULL;
                     break;
@@ -129,36 +125,30 @@ define([
         },
 
         changeOpacityOnMarker: function(opacity) {
-            _.each(this.meshs, function(markerMesh) {
-                markerMesh.material.opacity = opacity;
-            });
+            for (var cid in this.meshs) {
+                this.meshs[cid].material.opacity = opacity;
+            }
         },
 
         bindControlEvents: function() {
             var self = this;
-            $('#managePin .moveBtnLeft').click(function() {
+            $('#manageMarker .moveBtnLeft').click(function() {
                 self.rescaleMarkers(-0.5);
             });
 
-            $('#managePin .moveBtnRight').click(function() {
+            $('#manageMarker .moveBtnRight').click(function() {
                 self.rescaleMarkers(0.5);
             });
 
-            $('#managePin .moveBtnCenter').click(function() {
+            $('#manageMarker .moveBtnCenter').click(function() {
                 self.changeMarkerState();
             });
         },
 
         showPopup: function(marker) {
-            $('#issueTitle').text(marker.getTitle());
-            $('#issueAuthor').text(marker.getDescription());
-            $('#issueDate').text(marker.getDescription());
-            $('#issueDesc').text(marker.getDescription());
-            $('#issueComment').html(marker.getDescription());
-            $('#issueZone').text(marker.getDescription());
-            $('#issueResponsible').text(marker.getDescription());
-            $('#issueCriticity').text(marker.getDescription());
-            $('#issueModal').modal('show');
+            $('#markerTitle').text(marker.getTitle());
+            $('#markerDesc').text(marker.getDescription());
+            $('#markerModal').modal('show');
         }
 
     }
