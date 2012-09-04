@@ -75,7 +75,7 @@
 
 </head>
 <body>
-<%@ include file="/WEB-INF/explorer_header.jspf" %>
+<%@ include file="/WEB-INF/header.jspf" %>
 
 <div id="workspace">
 
