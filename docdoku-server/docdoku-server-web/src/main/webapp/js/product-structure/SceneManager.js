@@ -26,6 +26,7 @@ SceneManager.prototype = {
         this.initAxes();
         this.initStats();
         this.initRenderer();
+        this.loadWindowResize();
         this.initLayerManager();
         this.animate();
     },
@@ -60,7 +61,14 @@ SceneManager.prototype = {
 
         this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
-        new ControlManager( this.controls );
+        if (Modernizr.touch){
+            $('#side_controls_container').hide();
+            $('#bottom_controls_container').hide();
+            $('#scene_container').width(90+'%');
+            $('#center_container').height(83+'%');
+        } else {
+            new ControlManager( this.controls );
+        }
     },
 
     initLayerManager: function() {
@@ -104,6 +112,10 @@ SceneManager.prototype = {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize( this.container.width(), this.container.height() );
         this.container.append( this.renderer.domElement );
+    },
+
+    loadWindowResize: function() {
+        var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.container);
     },
 
     animate: function() {
