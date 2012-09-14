@@ -28,6 +28,3 @@ function areEquals(field1,field2,message)
   return true;	
 }
 
-/*
- *
- */

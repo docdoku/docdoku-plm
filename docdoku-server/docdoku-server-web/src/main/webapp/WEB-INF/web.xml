@@ -2,7 +2,7 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
+        <param-value>Production</param-value>
     </context-param>
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
@@ -39,10 +39,6 @@
         </session-timeout>
     </session-config>
     <servlet-mapping>
-        <servlet-name>RegistrationForm</servlet-name>
-        <url-pattern>/registrationForm</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>HelpPage</servlet-name>
         <url-pattern>/help</url-pattern>
     </servlet-mapping>
@@ -61,19 +57,14 @@
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/admin/*</url-pattern>
-    </filter-mapping>
+        <url-pattern>/faces/admin/*</url-pattern>
+        <url-pattern>/document-management/*</url-pattern>
+        <url-pattern>/product-structure/*</url-pattern>
+        <url-pattern>/home</url-pattern>
+    </filter-mapping>    
     <filter-mapping>
         <filter-name>AdminWorkspaceFilter</filter-name>
         <url-pattern>/admin/workspace/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/document-management/*</url-pattern>
-        <url-pattern>/product-structure/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/home</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
@@ -82,10 +73,6 @@
     <servlet>
         <servlet-name>VoteServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.RegisterServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CreateWorkspaceServlet</servlet-name>
@@ -112,10 +99,6 @@
         <servlet-class>com.docdoku.server.http.UpdateWorkspaceServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UpdateAccountServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.UpdateAccountServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AddUserServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.AddUserServlet</servlet-class>
     </servlet>
@@ -140,10 +123,6 @@
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>RegistrationForm</servlet-name>
-        <jsp-file>/registrationForm.jsp</jsp-file>
-    </servlet>
-    <servlet>
         <servlet-name>HelpPage</servlet-name>
         <jsp-file>/help/help.jsp</jsp-file>
     </servlet>
@@ -154,10 +133,6 @@
     <servlet-mapping>
         <servlet-name>VoteServlet</servlet-name>
         <url-pattern>/action/vote</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CreateWorkspaceServlet</servlet-name>
@@ -182,10 +157,6 @@
     <servlet-mapping>
         <servlet-name>UpdateWorkspaceServlet</servlet-name>
         <url-pattern>/admin/workspace/updateWorkspace</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateAccountServlet</servlet-name>
-        <url-pattern>/admin/updateAccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddUserServlet</servlet-name>

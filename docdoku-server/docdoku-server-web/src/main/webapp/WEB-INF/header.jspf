@@ -44,11 +44,11 @@
                         <c:when test="${sessionScope.account==null}">
                             <ul class="nav">
                                  <li><a href="<%=request.getContextPath()%>/"><i class="icon-home"></i><fmt:message key="toplinks.home"/></a></li>
-                                 <li><a href="<%=request.getContextPath()%>/download.jsp"><i class="icon-download-alt"></i><fmt:message key="menu.download"/></a></li>
+                                 <li><a href="<%=request.getContextPath()%>/faces/download.xhtml"><i class="icon-download-alt"></i><fmt:message key="menu.download"/></a></li>
                                  <li><a href="<%=request.getContextPath()%>/help/help.jsp"><fmt:message key="menu.help"/></a></li>
                             </ul>
                             <ul class="nav pull-right">                          
-                                <li id="registration_link_container"><fmt:message key="toplinks.notRegistered"/> <a href="<%=request.getContextPath()%>/registrationForm.jsp"><fmt:message key="toplinks.subscribe"/></a></li>
+                                <li id="registration_link_container"><fmt:message key="toplinks.notRegistered"/> <a href="<%=request.getContextPath()%>/faces/registrationForm.xhtml"><fmt:message key="toplinks.subscribe"/></a></li>
                             </ul>
                             
                         </c:when>
@@ -122,7 +122,7 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a href="<%=request.getContextPath()%>/admin/accountEditionForm.jsp">
+                                            <a href="<%=request.getContextPath()%>/faces/admin/accountEditionForm.xhtml">
                                                 <i class="icon-user"></i>
                                                 <fmt:message key="toplinks.account"/>
                                             </a>
@@ -143,7 +143,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="<%=request.getContextPath()%>/download.jsp" target="_blank" id="download_link"><!----></a>
+                                    <a href="<%=request.getContextPath()%>/faces/download.xhtml" target="_blank" id="download_link"><!----></a>
                                 </li>
                                 <li>
                                     <a href="<%=request.getContextPath()%>/help/help.jsp" target="_blank" id="help_link"><!----></a>

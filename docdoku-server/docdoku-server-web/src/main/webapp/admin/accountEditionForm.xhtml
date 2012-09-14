@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nAccountEdition" basename="com.docdoku.server.localization.admin.accountEditionForm_resource"/>
+            #{i18nAccountEdition['title']}
+        </ui:define>
+        <ui:define name="content">
+            <h:outputScript library="default" name="js/admin.js" target="head" />
+            <h2>#{i18nAccountEdition['main.title']}</h2>
+
+            <h3>#{i18nAccountEdition['section.title']}</h3>
+            <h:form id="account">
+                <fieldset>
+                    <span id="login">#{i18nAccountEdition['section.login']} #{account.login}</span><br/>
+
+                    <h:outputLabel value="#{i18nAccountEdition['section.name']}*:" for="name"/>
+                    <h:inputText id="name" value="#{account.name}" size="20" maxlength="255"/>
+
+                    <h:outputLabel value="#{i18nAccountEdition['section.email']}*:" for="email"/>
+                    <h:inputText id="email" value="#{account.email}" size="20" maxlength="255"/>
+
+                    <br/>
+                    <h:selectBooleanCheckbox style="display: inline;" value="true" title="#{i18nAccountEdition['section.change_password']}" id="changePassword" onclick="uncheckPasswordFields();"/>
+                    <h:outputLabel style="display: inline;" value="#{i18nAccountEdition['section.change_password']}" for="changePassword"/>
+
+                    <h:outputLabel value="#{i18nAccountEdition['section.password']}*:" for="password"/>
+                    <h:inputSecret label="#{i18nAccountEdition['section.password']}" binding="#{newPasswordInput}" id="password" value="#{accountBean.password}" immediate="true" required="true" size="20" maxlength="50"/>
+
+                    <h:outputLabel value="#{i18nAccountEdition['section.confirmPassword']}*:" for="confirmPassword"/>
+                    <h:inputSecret label="#{i18nAccountEdition['section.confirmPassword']}" binding="#{confirmPasswordInput}" id="confirmPassword" immediate="true" required="true" size="20" maxlength="50"/>
+
+                    <h:inputHidden value="true">
+                        <f:validator validatorId="samePasswordValidator" />
+                        <f:attribute name="newPasswordInput" value="#{newPasswordInput}" />
+                        <f:attribute name="confirmPasswordInput" value="#{confirmPasswordInput}" />
+                    </h:inputHidden>
+
+                    <hr/>
+                    <h:commandButton styleClass="btn" action="#{accountBean.updateAccount}" value="#{i18nAccountEdition['section.save']}" alt="#{i18nAccountEdition['section.save']}"/>
+
+                </fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

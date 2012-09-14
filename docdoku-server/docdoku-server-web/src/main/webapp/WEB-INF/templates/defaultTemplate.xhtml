@@ -6,110 +6,161 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
     <f:loadBundle var="i18nTemplate" basename="com.docdoku.server.localization.header_footer_resource"/>
-    <f:loadBundle var="i18nRecoveryRequestForm" basename="com.docdoku.server.localization.recoveryRequestForm_resource"/>
-    <f:loadBundle var="i18nRecovery" basename="com.docdoku.server.localization.recovery_resource"/>
-    <f:loadBundle var="i18nRecoveryForm" basename="com.docdoku.server.localization.recoveryForm_resource"/>
-    <f:loadBundle var="i18nRecoveryRequested" basename="com.docdoku.server.localization.recoveryRequested_resource"/>
     <h:head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
         <title><ui:insert name="title"/></title>
-        <link rel="Shortcut Icon" type="image/ico" href="#{facesContext.externalContext.requestContextPath}/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/css/font-awesome.css"/>
-        <link rel="stylesheet/less" type="text/css" href="#{facesContext.externalContext.requestContextPath}/less/common/style.less"/>
+        <link rel="Shortcut Icon" type="image/ico" href="#{request.contextPath}/images/favicon.ico"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.css"/>
+        <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/common/style.less"/>
 
-        <script src="#{facesContext.externalContext.requestContextPath}/js/lib/jquery-1.7.1.min.js"></script>
-        <script src="#{facesContext.externalContext.requestContextPath}/js/lib/less-1.2.1.min.js"></script>
-        <script src="#{facesContext.externalContext.requestContextPath}/js/lib/bootstrap-2.0.2.min.js"></script>
+        <script src="#{request.contextPath}/js/lib/jquery-1.7.1.min.js"></script>
+        <script src="#{request.contextPath}/js/lib/less-1.2.1.min.js"></script>
+        <script src="#{request.contextPath}/js/lib/bootstrap-2.0.2.min.js"></script>
     </h:head>
 
-    <h:body>
-
-        <script type="text/javascript">
-<!--
-function switchMenu(objet){
-    var el = document.getElementById(objet);
-    if ( el.style.display != 'none' ) {
-        el.style.display = 'none';
-    }
-    else {
-        el.style.display = '';
-    }
-}
-//-->
-        </script>       
-
-
-
+    <h:body>      
 
         <div id="page">
+            <h:form>
+                <div class="navbar navbar-fixed-top">
+                    <div class="navbar-inner">
+                        <div class="container-fluid">
+                            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </a>
+                            <!--<span class="brand-plm"></span>-->
+                            <img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/>
+                            <a class="brand" href="#">
+                                DocDoku<strong>PLM</strong>
+                            </a>
+                            <div class="nav-collapse">
 
-
-
-            <div class="navbar navbar-fixed-top">
-                <div class="navbar-inner">
-                    <div class="container-fluid">
-                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </a>
-                        <!--<span class="brand-plm"></span>-->
-                        <img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/>
-                        <a class="brand" href="#">
-                            DocDoku<strong>PLM</strong>
-                        </a>
-                        <div class="nav-collapse">
-                            <ul class="nav">
-                                <li><a href="#{facesContext.externalContext.requestContextPath}/"><i class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a></li>
-                                <li><a href="#{facesContext.externalContext.requestContextPath}/download.jsp"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}</a></li>
-                                <li><a href="#{facesContext.externalContext.requestContextPath}/help/help.jsp">#{i18nTemplate['menu.help']}</a></li>
-                            </ul>
-                            <ul class="nav pull-right">
                                 <c:choose>
-                                    <c:when test="${sessionScope.account==null}" >
-                                        <li id="registration_link_container">#{i18nTemplate['toplinks.notRegistered']} <a href="#{facesContext.externalContext.requestContextPath}/registrationForm.jsp">#{i18nTemplate['toplinks.subscribe']}</a></li>
+                                    <c:when test="${sessionScope.account==null}">
+                                        <ul class="nav">
+                                            <li><a href="#{request.contextPath}/"><i class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a></li>
+                                            <li><a href="#{request.contextPath}/faces/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}</a></li>
+                                            <li><a href="#{request.contextPath}/help/help.jsp">#{i18nTemplate['menu.help']}</a></li>
+                                        </ul>
+                                        <ul class="nav pull-right">                          
+                                            <li id="registration_link_container">#{i18nTemplate['toplinks.notRegistered']} <a href="#{request.contextPath}/faces/registrationForm.xhtml">#{i18nTemplate['toplinks.subscribe']}</a></li>
+                                        </ul>
                                     </c:when>
                                     <c:otherwise>
-                                        #{i18nTemplate['toplinks.welcome']} ${sessionScope.account.name} | <a href="#" onClick="this.blur();switchMenu('menu');">#{i18nTemplate['toplinks.workspace']}<span style="font-size: 8px; margin-left: 2px;">&#9660;</span></a>
-                                        <ul id="menu" style="position:absolute; right: 180px; z-index: 10; display:none; background-color:white; list-style-type: none; margin:0px; padding:0px; border:1px solid;">
-                                            <li>
-                                                <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/admin/workspacesMenu.jsp">
-                                                    <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                                         onmouseout="this.style.backgroundColor='';this.style.color='';">#{i18nTemplate['toplinks.admin']}</div></a>
-                                            </li>
-                                            <hr/>
-                                            <c:forEach var="item" items="${administeredWorkspaces}">
-                                                <li>
-                                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/document-management/${item.value.id}">
-                                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                                             onmouseout="this.style.backgroundColor='';this.style.color='';">${item.value.id}</div></a>
-                                                </li>
-                                            </c:forEach>
 
-                                            <c:forEach var="item" items="${regularWorkspaces}">
-                                                <li>
-                                                    <a style="text-decoration:none" onClick="switchMenu('menu');" href="#{facesContext.externalContext.requestContextPath}/document-management/${item.id}">
-                                                        <div style="cursor: pointer; padding-left:10px; padding-right:30px;" onmouseover="this.style.backgroundColor='#0061c0';this.style.color='#ffffff';"
-                                                             onmouseout="this.style.backgroundColor='';this.style.color='';">${item.id}</div></a>
-                                                </li>
-                                            </c:forEach>
+
+
+                                        <ul class="nav" id="header_left_menu">
+
+                                            <!-- home link -->
+                                            <!--<li>
+                                                <a href="#" id="home_link" title="Home"><i class="icon-home"></i></a>
+                                            </li>-->
+
+                                            <!-- current workspace & workspaces dropdown menu-->
+                                            <li class="dropdown" id="workspace_container">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="icon-home"></i>
+                                                    #{i18nTemplate['toplinks.workspace']}: <b>${workspaceID}</b>
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <c:forEach var="item" items="${administeredWorkspaces}">
+                                                        <c:if test="${workspaceID!=item.value.id}">
+                                                            <li>
+                                                                <a href="#{request.contextPath}/document-management/${item.value.id}">
+                                                                    ${item.value.id}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                    <c:forEach var="item" items="${regularWorkspaces}">
+                                                        <c:if test="${workspaceID!=item.id}">
+                                                            <li>
+                                                                <a href="#{request.contextPath}/document-management/${item.id}">
+                                                                    ${item.id}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </ul>
+                                            </li>
+
+                                            <!-- my products dropdown menu-->
+
+                                            <li class="dropdown" id="product_container">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="icon-briefcase"></i>
+                                                    #{i18nTemplate['toplinks.product']}
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                </ul>
+                                            </li>
+
+                                            <!-- my documents link-->
+
+                                            <li>
+                                                <a href="#{request.contextPath}/document-management/${workspaceID}">
+                                                    <i class="icon-file"></i>
+                                                    #{i18nTemplate['toplinks.document']}
+                                                </a>
+                                            </li>
+
+
 
                                         </ul>
-
-                                        | <a href="#{facesContext.externalContext.requestContextPath}/admin/accountEditionForm.jsp">#{i18nTemplate['toplinks.account']}</a> | <a href="#{facesContext.externalContext.requestContextPath}/admin/logout.jsp">#{i18nTemplate['toplinks.logout']}</a>
+                                        <ul class="nav pull-right">
+                                            <li class="dropdown" id="account_name_node">
+                                                <a href="#" class="dropdown-toggle" id="account_name_link" data-toggle="dropdown">
+                                                    <i class="icon-user"></i>
+                                                    ${sessionScope.account.name}
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a href="#{request.contextPath}/faces/admin/accountEditionForm.xhtml">
+                                                            <i class="icon-user"></i>
+                                                            #{i18nTemplate['toplinks.account']}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#{request.contextPath}/admin/workspacesMenu.jsp">
+                                                            <i class="icon-cog"></i>
+                                                            #{i18nTemplate['toplinks.admin']}
+                                                        </a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <h:commandLink action="#{connectionBean.logout}">     
+                                                            <i class="icon-off"></i>
+                                                            #{i18nTemplate['toplinks.logout']}
+                                                        </h:commandLink>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#{request.contextPath}/faces/download.xhtml" target="_blank" id="download_link"><!----></a>
+                                            </li>
+                                            <li>
+                                                <a href="#{request.contextPath}/help/help.jsp" target="_blank" id="help_link"><!----></a>
+                                            </li>
+                                        </ul>
                                     </c:otherwise>
                                 </c:choose>
-                            </ul>
-                        </div>
-
-                    </div><!--container-->
-                </div><!--navbar-inner-->
-            </div><!--navbar-fixed-top-->
-
+                            </div>
+                        </div><!--container-->
+                    </div><!--navbar-inner-->
+                </div><!--navbar-fixed-top-->
+            </h:form>
             <div id="content">
                 <ui:insert name="content"/>
             </div>
-
+            <h:messages layout="list" styleClass="alert alert-block" infoClass="alert alert-block alert-info" warnClass="alert alert-block alert-error">
+            </h:messages>
             <div id="footer">        
                 <p>Copyright 2006-2012 - <a href="http://www.docdoku.com">DocDoku</a></p>
             </div>

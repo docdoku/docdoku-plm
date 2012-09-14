@@ -25,8 +25,6 @@
         <div id="page">
             <%@ include file="/WEB-INF/header.jspf" %>
 
-
-
             <div id="content">
                 <div class="well" id="login_form_container">
                     <h3><i class="icon-lock"></i><fmt:message key="login.title"/></h3>

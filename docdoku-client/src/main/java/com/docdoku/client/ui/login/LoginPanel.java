@@ -58,7 +58,7 @@ public class LoginPanel extends JPanel {
         mUserLabel = new JLabel(I18N.BUNDLE.getString("User_label"));
         mPasswordLabel = new JLabel(I18N.BUNDLE.getString("Password_label"));
         
-        String form = "registrationForm";
+        String form = "/faces/registrationForm.xhtml";
         mAccountLink = new WebLink(I18N.BUNDLE.getString("Login_link"),Config.getHTTPCodebase().toString()+form);
         
         mWorkspaceText = new JTextField("", 10);
