@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License  
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
 package com.docdoku.server.http;
 
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -34,8 +33,12 @@ import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -71,12 +74,14 @@ public class UploadDownloadServlet extends HttpServlet {
 
         try {
             String login = pRequest.getRemoteUser();
-            String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
+            //String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
+            //remove empty entries because of Three.js that generates url with double /
+            String[] pathInfos = UploadDownloadServlet.removeEmptyEntries(pRequest.getRequestURI().split("/"));
             int offset;
             if (pRequest.getContextPath().equals("")) {
-                offset = 2;
+                offset = 1;
             } else {
-                offset = 3;
+                offset = 2;
             }
 
 
@@ -122,8 +127,8 @@ public class UploadDownloadServlet extends HttpServlet {
                 pResponse.setContentType(contentType);
                 fileToOutput = dataFile;
             }
-            
-            int cacheSeconds=86400;
+
+            int cacheSeconds = 86400;
             pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);
             DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -131,7 +136,7 @@ public class UploadDownloadServlet extends HttpServlet {
             cal.add(Calendar.SECOND, cacheSeconds);
             pResponse.setHeader("Expires", httpDateFormat.format(cal.getTime()));
             pResponse.setHeader("Pragma", "");
-            
+
             pResponse.setContentLength((int) fileToOutput.length());
             ServletOutputStream httpOut = pResponse.getOutputStream();
             InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
@@ -226,13 +231,24 @@ public class UploadDownloadServlet extends HttpServlet {
             throw new ServletException("Error while uploading the file.", pEx);
         } finally {
             try {
-                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus()==Status.STATUS_MARKED_ROLLBACK) {
+                if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                     utx.rollback();
                 }
             } catch (Exception pRBEx) {
                 throw new ServletException("Rollback failed.", pRBEx);
             }
         }
+    }
+
+    private static String[] removeEmptyEntries(String[] entries) {
+        List<String> elements = new LinkedList<String>(Arrays.asList(entries));
+        
+        for (Iterator<String> it = elements.iterator();it.hasNext();) {
+            if (it.next().isEmpty()) {
+                it.remove();
+            }
+        }
+        return elements.toArray(new String[elements.size()]);
     }
 
     @Override
