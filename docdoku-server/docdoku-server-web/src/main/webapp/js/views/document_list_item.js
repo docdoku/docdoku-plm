@@ -22,7 +22,7 @@ define([
 		},
 		modelToJSON: function () {
 			var data = this.model.toJSON();
-			if (this.lastIteration) {
+			if (this.model.lastIteration) {
 				data.lastIteration = this.model.lastIteration.toJSON();
 			}
 
