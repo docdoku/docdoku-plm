@@ -149,6 +149,9 @@
                         <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-plus icon-marker-manager"></i></a>
                         <a href="#" class="moveBtn moveBtnCenter"><i id="markerState" class="icon-marker icon-marker-full icon-navigation"></i></a>
                     </div>
+
+                    <div id="layer-wrapper"></div>
+
                 </div>
             </div>
             <div id="scene_container">

@@ -77,6 +77,7 @@ SceneManager.prototype = {
             self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container[0]);
             self.layerManager.bindControlEvents();
             self.layerManager.rescaleMarkers(0);
+            self.layerManager.renderList();
         });
     },
 

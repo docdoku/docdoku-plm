@@ -1,9 +1,11 @@
 define([
     "collections/layer_collection",
-    "models/layer"
+    "models/layer",
+    "views/layers-list-view"
 ], function (
     LayerCollection,
-    Layer
+    Layer,
+    LayersListView
 ) {
 
     var STATE = { FULL : 0, TRANSPARENT : 1, HIDDEN : 2};
@@ -27,6 +29,10 @@ define([
     };
 
     LayerManager.prototype = {
+
+        renderList: function() {
+            new LayersListView({collection: this.layersCollection}).render();
+        },
 
         addMeshFromMarker: function(marker, material) {
             // set up the sphere vars

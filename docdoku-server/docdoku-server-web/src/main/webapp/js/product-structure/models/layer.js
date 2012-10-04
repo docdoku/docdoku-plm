@@ -16,7 +16,6 @@ define([
                 transparent: true
             }));
             this.set('markers', new MarkerCollection());
-            this.getMarkers().on("reset", this._addAllMarkersToScene, this);
             this.getMarkers().on("add", this._addMarkerToScene, this);
             this.getMarkers().on("remove", this._removeMarkerFromScene, this);
             this.on('remove', this._removeAllMarkers, this);
@@ -24,6 +23,10 @@ define([
 
         getMarkers: function() {
             return this.get('markers');
+        },
+
+        countMarkers: function() {
+            return this.getMarkers().length;
         },
 
         getMaterial: function() {
@@ -44,6 +47,11 @@ define([
 
         removeMarker: function(marker) {
             this.getMarkers().remove(marker);
+        },
+
+        removeAllMarkers: function() {
+            this._removeAllMarkers();
+            this.getMarkers().reset();
         },
 
         _addAllMarkersToScene: function() {
