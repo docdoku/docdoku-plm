@@ -18,16 +18,10 @@ define(function() {
             this.model.getMarkers().on('add remove reset', this.render, this);
         },
 
-        template: "<i class=\"icon-eye-open start\"></i><span class=\"color\" style=\"background-color:{{color}}\">&nbsp;</span><p>{{ name }} ({{ countMarkers }})</p><i class=\"icon-pencil end\"></i><input class=\"edit\" type=\"text\" value=\"{{ name }}\">",
+        template: "<i class=\"icon-eye-open start\"></i><span class=\"color\" style=\"background-color:{{getHexaColor}}\">&nbsp;</span><p>{{ attributes.name }} ({{ countMarkers }})</p><i class=\"icon-pencil end\"></i><input class=\"edit\" type=\"text\" value=\"{{ attributes.name }}\">",
 
         render: function() {
-            var data = {
-                name: this.model.get('name'),
-                countMarkers: this.model.countMarkers(),
-                shown: this.model.get('shown'),
-                color: this.model.getHexaColor()
-            }
-            this.$el.html(Mustache.render(this.template, data));
+            this.$el.html(Mustache.render(this.template, this.model));
             this.$el.toggleClass('shown', this.model.get('shown'));
             var editing = this.model.get('editing')
             this.$el.toggleClass('editing', editing);
