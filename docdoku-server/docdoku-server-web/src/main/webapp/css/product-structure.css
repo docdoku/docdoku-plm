@@ -235,10 +235,12 @@ html{
 /* Layers List */
 
 div#layer-wrapper {
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.75);
+    border-radius: 8px;
 }
 
 div#layer-wrapper nav {
-    max-height: 205px;
+    max-height: 204px;
     overflow-y: auto;
     -webkit-overflow-scrolling:touch;
     border-bottom-right-radius: 8px;
@@ -250,6 +252,8 @@ div#layer-wrapper ul {
     margin: 0;
     padding: 0;
     background-color: white;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
 }
 
 div#layer-wrapper ul#layer-header {
@@ -265,12 +269,11 @@ div#layer-wrapper ul#layer-header {
 div#layer-wrapper li {
     margin: 0px;
     position: relative;
+    height: 30px;
     line-height: 30px;
     padding: 5px 40px 5px 50px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     border-bottom: 1px solid #ccc;
+    list-style-type: none;
 }
 
 div#layer-wrapper i {
@@ -281,16 +284,24 @@ div#layer-wrapper i {
     color: black;
 }
 
-div#layer-wrapper i:hover {
-    opacity: 1;
+div#layer-wrapper nav li:last-child {
+    border-bottom: none;
 }
 
-div#layer-wrapper i.active {
+div#layer-wrapper nav li {
+    color: #999;
+}
+
+div#layer-wrapper nav li.shown {
+    color: #434C64;
+}
+
+div#layer-wrapper li.shown i.start {
     opacity: 1;
 }
 
 div#layer-wrapper i.start {
-    left: 5px;
+    left: 7px;
     top: 7px;
 }
 
@@ -301,5 +312,68 @@ div#layer-wrapper i.end{
 
 div#layer-wrapper ul#layer-header i {
     color: white;
+}
+
+div#layer-wrapper ul#layer-header i.end {
     opacity: 1;
+}
+
+.edit {
+    position: relative;
+    margin: 0 0 0 -4px;
+    width: 100%;
+    height: 30px;
+    font-family: inherit;
+    border: 0;
+    outline: none;
+    color: inherit;
+    border: 1px solid #999;
+    box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+}
+
+div#layer-wrapper li.editing i.end {
+    opacity: 1;
+}
+
+li.editing {
+    border-bottom: none;
+    padding: 0;
+}
+
+li.editing .edit {
+    display: block;
+}
+
+li.editing p {
+    display: none;
+}
+
+div#layer-wrapper p {
+    margin: 0px;
+    padding: 0px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 30px;
+}
+
+li .edit {
+    display: none;
+}
+
+div#layer-wrapper .color {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    display: block;
+    width: 5px;
+    height: 100%;
+}
+
+div#layer-wrapper nav li:last-child .color {
+    border-bottom-left-radius: 8px;
 }

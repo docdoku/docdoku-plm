@@ -5,7 +5,15 @@ define([
 ) {
 
     var LayerCollection = Backbone.Collection.extend({
-        model: Layer
+
+        model: Layer,
+
+        toggleAllShown: function(allShown) {
+            this.each(function(layer) {
+                layer.setShown(allShown);
+            });
+        }
+
     });
 
     return LayerCollection;

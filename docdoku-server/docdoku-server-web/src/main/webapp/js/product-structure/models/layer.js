@@ -8,17 +8,40 @@ define([
 
     var Layer = Backbone.Model.extend({
 
+        defaults: {
+            name : "new layer",
+            shown: true,
+            editing: false
+        },
+
+        toggleEditing: function() {
+            this.set('editing', !this.get('editing'));
+        },
+
+        toggleShow: function() {
+            var shown = !this.get('shown');
+            this.setShown(shown);
+        },
+
+        setShown: function(shown) {
+            this.set('shown', shown);
+            shown ? this._addAllMarkersToScene() : this._removeAllMarkersFromScene();
+        },
+
         initialize: function() {
-            this.set('material', new THREE.MeshLambertMaterial({
+            if (!this.has('color')) {
                 //http://paulirish.com/2009/random-hex-color-code-snippets/
-                color: this.has('color') ? this.get('color') : "0x" + (Math.random()*0xFFFFFF<<0).toString(16),
+                this.set('color', ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6))
+            }
+            this.set('material', new THREE.MeshLambertMaterial({
+                color: "0x" + this.get('color'),
                 opacity: 1,
                 transparent: true
             }));
             this.set('markers', new MarkerCollection());
             this.getMarkers().on("add", this._addMarkerToScene, this);
             this.getMarkers().on("remove", this._removeMarkerFromScene, this);
-            this.on('remove', this._removeAllMarkers, this);
+            this.on('remove', this._removeAllMarkersFromScene, this);
         },
 
         getMarkers: function() {
@@ -50,25 +73,28 @@ define([
         },
 
         removeAllMarkers: function() {
-            this._removeAllMarkers();
+            this._removeAllMarkersFromScene();
             this.getMarkers().reset();
         },
 
         _addAllMarkersToScene: function() {
-            this._removeAllMarkers();
-            this.getMarkers().each(this._addMarkerToScene, this);
+            _.each(this.getMarkers().notOnScene(), this._addMarkerToScene, this);
         },
 
         _addMarkerToScene: function(marker) {
             sceneManager.layerManager.addMeshFromMarker(marker, this.getMaterial());
         },
 
-        _removeAllMarkers: function() {
-            this.getMarkers().each(this._removeMarkerFromScene, this);
+        _removeAllMarkersFromScene: function() {
+            _.each(this.getMarkers().onScene(), this._removeMarkerFromScene, this);
         },
 
         _removeMarkerFromScene: function(marker) {
             sceneManager.layerManager.removeMeshFromMarker(marker);
+        },
+
+        getHexaColor: function() {
+            return "#" + this.get('color');
         }
 
     });

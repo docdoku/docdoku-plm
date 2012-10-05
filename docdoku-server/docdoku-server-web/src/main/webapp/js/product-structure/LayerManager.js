@@ -69,10 +69,13 @@ define([
             this.meshs[marker.cid] = markerMesh;
 
             markerMesh.geometry.dynamic = true;
+
+            marker.set('onScene', true);
         },
 
         removeMeshFromMarker: function(marker) {
             this._removeMesh(marker.cid);
+            marker.set('onScene', false);
         },
 
         _removeMesh: function(cid) {
@@ -81,11 +84,14 @@ define([
             delete this.meshs[cid];
         },
 
-        createLayer: function(name, color) {
-            var layer = new Layer({
-                name : name,
-                color: color
-            });
+        createLayer: function(name) {
+            if (name) {
+                var layer = new Layer({
+                    name : name
+                });
+            } else {
+                var layer = new Layer();
+            }
             this.layersCollection.add(layer);
             return layer;
         },
