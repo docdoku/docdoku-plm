@@ -38,14 +38,17 @@ define([
                 opacity: 1,
                 transparent: true
             });
-            this.set('markers', new MarkerCollection());
-            this.getMarkers().on("add", this._addMarkerToScene, this);
-            this.getMarkers().on("remove", this._removeMarkerFromScene, this);
+            this.markers = new MarkerCollection();
+            this.markers.localStorage = new Store("plm:layers:" + this.get('_id') + ":markers");
+            this.markers.on("add", this._addMarkerToScene, this);
+            this.markers.on("remove", this._removeMarkerFromScene, this);
+            this.markers.on("reset", this._onResetMarkers, this);
+            this.markers.fetch();
             this.on('remove', this._removeAllMarkersFromScene, this);
         },
 
         getMarkers: function() {
-            return this.get('markers');
+            return this.markers;
         },
 
         countMarkers: function() {
@@ -64,7 +67,7 @@ define([
                 y: y,
                 z: z
             });
-            this.getMarkers().add(marker);
+            this.getMarkers().create(marker);
             return marker;
         },
 
@@ -95,6 +98,10 @@ define([
 
         getHexaColor: function() {
             return "#" + this.get('color');
+        },
+
+        _onResetMarkers: function() {
+            this.getMarkers().each(this._addMarkerToScene, this);
         }
 
     });
