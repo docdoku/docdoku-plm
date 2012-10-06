@@ -92,7 +92,7 @@ define([
             } else {
                 var layer = new Layer();
             }
-            this.layersCollection.add(layer);
+            this.layersCollection.create(layer);
             return layer;
         },
 

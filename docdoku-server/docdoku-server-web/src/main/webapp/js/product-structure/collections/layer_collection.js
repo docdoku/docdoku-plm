@@ -8,6 +8,8 @@ define([
 
         model: Layer,
 
+        localStorage: new Store("plm:layers"),
+
         toggleAllShown: function(allShown) {
             this.each(function(layer) {
                 layer.setShown(allShown);

@@ -33,11 +33,11 @@ define([
                 //http://paulirish.com/2009/random-hex-color-code-snippets/
                 this.set('color', ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6))
             }
-            this.set('material', new THREE.MeshLambertMaterial({
+            this.material = new THREE.MeshLambertMaterial({
                 color: "0x" + this.get('color'),
                 opacity: 1,
                 transparent: true
-            }));
+            });
             this.set('markers', new MarkerCollection());
             this.getMarkers().on("add", this._addMarkerToScene, this);
             this.getMarkers().on("remove", this._removeMarkerFromScene, this);
@@ -53,7 +53,7 @@ define([
         },
 
         getMaterial: function() {
-            return this.get('material');
+            return this.material;
         },
 
         createMarker: function(title, description, x, y, z) {
@@ -82,7 +82,7 @@ define([
         },
 
         _addMarkerToScene: function(marker) {
-            sceneManager.layerManager.addMeshFromMarker(marker, this.getMaterial());
+            sceneManager.layerManager.addMeshFromMarker(marker, this.material);
         },
 
         _removeAllMarkersFromScene: function() {

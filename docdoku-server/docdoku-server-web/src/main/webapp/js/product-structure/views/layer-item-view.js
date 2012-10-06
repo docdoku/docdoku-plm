@@ -42,7 +42,7 @@ define(function() {
 
         stopEditing: function() {
             var value = this.input.val();
-            this.model.set({
+            this.model.save({
                 name: value,
                 editing: false
             });
