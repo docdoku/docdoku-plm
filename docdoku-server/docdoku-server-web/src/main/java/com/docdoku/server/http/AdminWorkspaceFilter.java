@@ -65,7 +65,7 @@ public class AdminWorkspaceFilter implements Filter {
                     chain.doFilter(request, response);
                     break;
                 default:
-                    httpResponse.sendRedirect(httpRequest.getContextPath()+"/admin/workspacesMenu.jsp");
+                    httpResponse.sendRedirect(httpRequest.getContextPath()+"/faces/admin/workspacesMenu.xhtml");
             }
         } else
             chain.doFilter(request, response);

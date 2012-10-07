@@ -128,7 +128,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="<%=request.getContextPath()%>/admin/workspacesMenu.jsp">
+                                            <a href="<%=request.getContextPath()%>/faces/admin/workspace/workspacesMenu.xhtml">
                                                 <i class="icon-cog"></i>
                                                 <fmt:message key="toplinks.admin"/>
                                             </a>

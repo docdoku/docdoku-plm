@@ -62,7 +62,7 @@ public class RegistrationBean {
         sessionHTTP.setAttribute("administeredWorkspaces", new HashMap<String, Workspace>());
         sessionHTTP.setAttribute("regularWorkspaces", new HashSet<Workspace>());
 
-        return "/WEB-INF/register.xhtml";
+        return "/register.xhtml";
     }
 
     public String getLogin() {

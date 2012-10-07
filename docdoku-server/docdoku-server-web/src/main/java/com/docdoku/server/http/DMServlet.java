@@ -68,7 +68,7 @@ public class DMServlet extends HttpServlet {
             }
 
             if(workspaceID == null){
-                pResponse.sendRedirect(pRequest.getContextPath() + "/admin/workspacesMenu.jsp");
+                pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
             }else{
                 pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/" + workspaceID);
             }

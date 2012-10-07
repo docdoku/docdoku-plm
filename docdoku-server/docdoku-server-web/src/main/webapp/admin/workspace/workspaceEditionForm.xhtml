@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nWorkspaceEdition" basename="com.docdoku.server.localization.admin.workspaceEditionForm_resource"/>
+            #{i18nWorkspaceEdition['title']}
+        </ui:define>
+        <ui:define name="content">
+            <h2>#{i18nWorkspaceEdition['main.title']}</h2>
+
+            <h3>#{i18nWorkspaceEdition['section.title']}</h3>
+            <h:form>
+                <fieldset>                
+                    <span id="id">#{i18nWorkspaceEdition['section.id']} #{adminStateBean.selectedWorkspace}</span><br/>
+                    
+                    <h:outputLabel value="#{i18nWorkspaceEdition['section.admin']}:" for="admin"/>
+                    <h:selectOneMenu label="#{i18nWorkspaceEdition['section.admin']}" required="true" id="admin" value="#{workspaceBean.workspaceAdmin}">               
+                        <f:selectItems value="#{adminStateBean.users}" var="u" itemLabel="#{u.name}" itemValue="#{u.login}" />
+                    </h:selectOneMenu> 
+                    
+                    <h:outputLabel value="#{i18nWorkspaceEdition['section.description']}:" for="description"/>
+                    <h:inputTextarea value="#{workspaceBean.workspaceDescription}" id="description" cols="40" rows="4"/>
+
+                    <br/>
+                    <h:selectBooleanCheckbox value="#{workspaceBean.freezeFolders}" style="display: inline;" title="#{i18nWorkspaceEdition['section.freeze_folders']}" id="folderLocked"/>
+                    <h:outputLabel style="display: inline;" value="#{i18nWorkspaceEdition['section.freeze_folders']}" for="folderLocked"/>
+                    <br/>
+                    <h:commandButton styleClass="btn" action="#{workspaceBean.updateWorkspace}" value="#{i18nWorkspaceEdition['section.save']}" alt="#{i18nWorkspaceEdition['section.save']}"/>
+
+                </fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

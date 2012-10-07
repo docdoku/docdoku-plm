@@ -23,7 +23,8 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 
 /**
- *
+ * Identity class of <a href="PartMaster.html">PartMaster</a> objects.
+ * 
  * @author Florent Garin
  */
 public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, Cloneable {

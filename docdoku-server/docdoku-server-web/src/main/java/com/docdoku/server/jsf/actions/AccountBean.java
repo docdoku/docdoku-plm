@@ -25,10 +25,7 @@ import com.docdoku.core.services.IUserManagerLocal;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 @ManagedBean(name = "accountBean")
@@ -54,7 +51,7 @@ public class AccountBean {
                 
         userManager.updateAccount(account.getName(), account.getEmail(), account.getLanguage(), password);
 
-        return "/WEB-INF/editAccount.xhtml";
+        return "/admin/editAccount.xhtml";
     }
 
     public String getPassword() {

@@ -17,7 +17,7 @@
                 <fieldset>
                     <h:outputLabel value="#{i18nRecoveryRequestForm['section.login']}*:" for="login"/>
                     <h:inputText id="login" value="#{recoveryBean.login}" size="20" maxlength="50"/>
-                    <hr/>
+                    <br/>
                     <h:commandButton styleClass="btn" action="#{recoveryBean.sendRecoveryMessage}" value="#{i18nRecoveryRequestForm['section.send']}" alt="#{i18nRecoveryRequestForm['section.send']}"/>
                 </fieldset>
             </h:form>

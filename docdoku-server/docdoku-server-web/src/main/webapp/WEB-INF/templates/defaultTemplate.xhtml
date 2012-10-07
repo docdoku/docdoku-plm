@@ -42,11 +42,12 @@
                                     <c:when test="${sessionScope.account==null}">
                                         <ul class="nav">
                                             <li><a href="#{request.contextPath}/"><i class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a></li>
-                                            <li><a href="#{request.contextPath}/faces/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}</a></li>
+                                            
+                                            <li><h:link outcome="/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}</h:link></li>
                                             <li><a href="#{request.contextPath}/help/help.jsp">#{i18nTemplate['menu.help']}</a></li>
                                         </ul>
                                         <ul class="nav pull-right">                          
-                                            <li id="registration_link_container">#{i18nTemplate['toplinks.notRegistered']} <a href="#{request.contextPath}/faces/registrationForm.xhtml">#{i18nTemplate['toplinks.subscribe']}</a></li>
+                                            <li id="registration_link_container">#{i18nTemplate['toplinks.notRegistered']} <h:link value="#{i18nTemplate['toplinks.subscribe']}" outcome="/registrationForm.xhtml"/></li>
                                         </ul>
                                     </c:when>
                                     <c:otherwise>
@@ -122,16 +123,16 @@
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="#{request.contextPath}/faces/admin/accountEditionForm.xhtml">
+                                                        <h:link outcome="/admin/accountEditionForm.xhtml">
                                                             <i class="icon-user"></i>
                                                             #{i18nTemplate['toplinks.account']}
-                                                        </a>
+                                                        </h:link>
                                                     </li>
                                                     <li>
-                                                        <a href="#{request.contextPath}/admin/workspacesMenu.jsp">
+                                                        <h:link outcome="/admin/workspace/workspacesMenu.xhtml">
                                                             <i class="icon-cog"></i>
                                                             #{i18nTemplate['toplinks.admin']}
-                                                        </a>
+                                                        </h:link>
                                                     </li>
                                                     <li class="divider"></li>
                                                     <li>
@@ -141,12 +142,6 @@
                                                         </h:commandLink>
                                                     </li>
                                                 </ul>
-                                            </li>
-                                            <li>
-                                                <a href="#{request.contextPath}/faces/download.xhtml" target="_blank" id="download_link"><!----></a>
-                                            </li>
-                                            <li>
-                                                <a href="#{request.contextPath}/help/help.jsp" target="_blank" id="help_link"><!----></a>
                                             </li>
                                         </ul>
                                     </c:otherwise>

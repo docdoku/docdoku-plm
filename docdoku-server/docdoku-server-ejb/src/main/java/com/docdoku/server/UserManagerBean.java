@@ -189,6 +189,21 @@ public class UserManagerBean implements IUserManagerLocal {
 
         return workspaces;
     }
+    
+    @RolesAllowed("users")
+    @Override
+    public Workspace getWorkspace(String workspaceId) {
+        User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
+        Workspace workspace=null;
+        for (int i = 0; i < users.length; i++) {
+            if(users[i].getWorkspace().getId().equals(workspaceId)){
+                workspace=users[i].getWorkspace();
+                break;
+            }
+        }
+
+        return workspace;
+    }
 
     @RolesAllowed("users")
     @Override

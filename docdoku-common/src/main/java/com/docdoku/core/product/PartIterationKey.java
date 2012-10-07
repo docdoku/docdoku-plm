@@ -23,7 +23,8 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 
 /**
- *
+ * Identity class of <a href="PartIteration.html">PartIteration</a> objects.
+ * 
  * @author Florent Garin
  */
 public class PartIterationKey implements Serializable {

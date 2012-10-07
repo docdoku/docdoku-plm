@@ -13,7 +13,6 @@
     <c:remove var="account" scope="session"/>
     <c:remove var="administeredWorkspaces" scope="session"/>
     <c:remove var="regularWorkspaces" scope="session"/>
-    <c:remove var="selectedWorkspace" scope="session"/> 
     <%request.logout();%>
     
     <body>

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nUserAddingForm" basename="com.docdoku.server.localization.admin.userAddingForm_resource"/>
+            #{i18nUserAddingForm['title']}
+        </ui:define>
+        <ui:define name="content">
+
+            <div id="sidebar" class="well well-large">
+                <h3>#{i18nUserAddingForm['sidebar.title']}</h3>
+                <p>#{i18nUserAddingForm['sidebar.text']}</p>         
+            </div>
+
+            <h2>#{i18nUserAddingForm['main.title']}</h2>
+            <h3>#{i18nUserAddingForm['section.title']}</h3>
+
+
+            <h:form>
+                <fieldset>
+                    <h:outputLabel value="#{i18nUserAddingForm['section.login']}*:" for="login"/>
+                    <h:inputText required ="true" id="login" value="#{workspaceBean.loginToAdd}" size="20" maxlength="50"/>
+                    <br/>
+                    <h:commandButton styleClass="btn" action="#{workspaceBean.addUser}" value="#{i18nUserAddingForm['section.add']}" alt="#{i18nUserAddingForm['section.add']}"/>
+                </fieldset>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+</html>

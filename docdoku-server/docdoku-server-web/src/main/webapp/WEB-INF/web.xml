@@ -50,10 +50,10 @@
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.http.AuthFilter</filter-class>
     </filter>
-    <filter>
+<!--    <filter>
         <filter-name>AdminWorkspaceFilter</filter-name>
         <filter-class>com.docdoku.server.http.AdminWorkspaceFilter</filter-class>
-    </filter>
+    </filter>-->
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/admin/*</url-pattern>
@@ -62,10 +62,11 @@
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/home</url-pattern>
     </filter-mapping>    
-    <filter-mapping>
+<!--    <filter-mapping>
         <filter-name>AdminWorkspaceFilter</filter-name>
         <url-pattern>/admin/workspace/*</url-pattern>
-    </filter-mapping>
+        <url-pattern>/faces/admin/workspace/*</url-pattern>
+    </filter-mapping>-->
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
         <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>
@@ -73,34 +74,6 @@
     <servlet>
         <servlet-name>VoteServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateWorkspaceServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.CreateWorkspaceServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateGroupServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.CreateGroupServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ManageUsersGroupServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.ManageUsersGroupServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ManageUsersServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.ManageUsersServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>WorkspaceEditionFormServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.WorkspaceEditionFormServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateWorkspaceServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.UpdateWorkspaceServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AddUserServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.AddUserServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DocumentServlet</servlet-name>
@@ -135,34 +108,6 @@
         <url-pattern>/action/vote</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CreateWorkspaceServlet</servlet-name>
-        <url-pattern>/admin/createWorkspace</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateGroupServlet</servlet-name>
-        <url-pattern>/admin/createGroup</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ManageUsersServlet</servlet-name>
-        <url-pattern>/admin/workspace/manageUsers</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ManageUsersGroupServlet</servlet-name>
-        <url-pattern>/admin/workspace/manageUsersGroup</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>WorkspaceEditionFormServlet</servlet-name>
-        <url-pattern>/admin/workspace/workspaceEditionForm</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateWorkspaceServlet</servlet-name>
-        <url-pattern>/admin/workspace/updateWorkspace</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddUserServlet</servlet-name>
-        <url-pattern>/admin/workspace/addUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>DocumentServlet</servlet-name>
         <url-pattern>/documents/*</url-pattern>
     </servlet-mapping>
@@ -190,17 +135,6 @@
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    <!--    <security-constraint>
-        <display-name>Web App Pages</display-name>
-        <web-resource-collection>
-            <web-resource-name>Pages</web-resource-name>
-            <url-pattern>/admin/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <description/>
-            <role-name>users</role-name>
-        </auth-constraint>
-    </security-constraint>-->
     <security-constraint>
         <display-name>HTTP actions</display-name>
         <web-resource-collection>
@@ -237,14 +171,4 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-    <!--
-<login-config>
-    <auth-method>FORM</auth-method>
-    <realm-name>docdokuRealm</realm-name>
-    <form-login-config>
-        <form-login-page>/WEB-INF/login.jsp</form-login-page>
-        <form-error-page>/WEB-INF/login.jsp</form-error-page>
-    </form-login-config>
-</login-config>
--->
 </web-app>

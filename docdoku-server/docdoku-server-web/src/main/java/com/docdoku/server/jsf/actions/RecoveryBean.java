@@ -50,7 +50,7 @@ public class RecoveryBean {
             passwordRRUuid="";
         
         userManager.recoverPassword(passwordRRUuid, newPassword);
-        return "/WEB-INF/recovery.xhtml";
+        return "/recovery.xhtml";
     }
 
     public String sendRecoveryMessage() throws AccountNotFoundException {
@@ -59,7 +59,7 @@ public class RecoveryBean {
         PasswordRecoveryRequest passwdRR = userManager.createPasswordRecoveryRequest(account.getLogin());
         mailer.sendPasswordRecovery(account, passwdRR.getUuid());
 
-        return "/WEB-INF/recoveryRequested.xhtml";
+        return "/recoveryRequested.xhtml";
     }
 
     public String getLogin() {

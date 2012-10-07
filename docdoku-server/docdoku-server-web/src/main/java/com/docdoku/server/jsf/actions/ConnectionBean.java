@@ -41,10 +41,9 @@ public class ConnectionBean {
         HttpSession session = (HttpSession) request.getSession();
         session.removeAttribute("account");
         session.removeAttribute("administeredWorkspaces");
-        session.removeAttribute("regularWorkspaces");
-        session.removeAttribute("selectedWorkspace");                
+        session.removeAttribute("regularWorkspaces");               
         request.logout();
-        return "/WEB-INF/logout.xhtml";
+        return "/admin/logout.xhtml";
     }
 
   

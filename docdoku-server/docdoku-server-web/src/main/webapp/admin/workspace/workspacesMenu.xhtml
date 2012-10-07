@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nWorkspacesMenu" basename="com.docdoku.server.localization.admin.workspacesMenu_resource"/>
+            #{i18nWorkspacesMenu['title']}
+        </ui:define>
+        <ui:define name="content">
+            <div id="sidebar" class="well well-large">
+                <h3>#{i18nWorkspacesMenu['sidebar.title']}</h3>
+                <p>#{i18nWorkspacesMenu['sidebar.text']}</p>               
+            </div>
+            <h2>#{i18nWorkspacesMenu['main.title']}</h2>
+            <h3>#{i18nWorkspacesMenu['section.title']}</h3>
+            <h:form>
+                <fieldset>
+                    <h:link value="#{i18nWorkspacesMenu['section.create']}" outcome="/admin/workspace/workspaceCreationForm.xhtml"/>
+                    <h:outputLabel value="#{i18nWorkspacesMenu['section.select']}:" for="selectedWorkspace"/>
+                    <h:selectOneMenu label="#{i18nWorkspacesMenu['section.selectName']}" required="true" id="selectedWorkspace" value="#{adminStateBean.selectedWorkspace}">
+                        <f:selectItems value="#{administeredWorkspaces}" var="w" itemLabel="#{w.value.id}" itemValue="#{w.value.id}" />
+                    </h:selectOneMenu> 
+                    <br/>
+                    <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> | <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/>
+                </fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

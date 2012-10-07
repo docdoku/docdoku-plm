@@ -82,7 +82,6 @@ public class AuthFilter implements Filter {
                 regularWorkspaces.removeAll(administeredWorkspaces.values());
                 sessionHTTP.setAttribute("regularWorkspaces", regularWorkspaces);
 
-                sessionHTTP.removeAttribute("selectedWorkspace");
                 chain.doFilter(request, response);
             } catch (AccountNotFoundException pANFEx) {
                 throw new ServletException("Error while fetching your account.", pANFEx);

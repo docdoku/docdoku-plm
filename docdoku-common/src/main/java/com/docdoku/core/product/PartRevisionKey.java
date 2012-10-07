@@ -23,7 +23,8 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 
 /**
- *
+ * Identity class of <a href="PartRevision.html">PartRevision</a> objects.
+ * 
  * @author Florent Garin
  */
 public class PartRevisionKey implements Serializable, Comparable<PartRevisionKey>, Cloneable {
