@@ -57,8 +57,12 @@
         </dependency>
 
 
-
-
+        <!-- WebSocket -->
+        <dependency>
+          <groupId>org.glassfish.grizzly</groupId>
+          <artifactId>grizzly-websockets</artifactId>
+          <version>1.9.46</version>
+        </dependency>
 
         <!-- docdoku core -->
         <dependency>
