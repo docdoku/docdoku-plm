@@ -224,6 +224,7 @@
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
+            <a href="#" class="btn btn-danger">Delete marker</a>
         </div>
     </div>
 

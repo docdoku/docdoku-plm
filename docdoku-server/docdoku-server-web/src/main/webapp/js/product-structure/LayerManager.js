@@ -163,6 +163,10 @@ define([
             $('#markerTitle').text(marker.getTitle());
             $('#markerDesc').text(marker.getDescription());
             $('#markerModal').modal('show');
+            $('#markerModal .btn-danger').off('click').on('click', function() {
+                marker.destroy();
+                $('#markerModal').modal('hide');
+            });
         }
 
     }
