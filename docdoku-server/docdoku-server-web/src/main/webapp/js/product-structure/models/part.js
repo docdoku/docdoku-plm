@@ -33,14 +33,18 @@ define(function() {
 
             var self = this;
 
+
+            var levelGeometry1 = (isIpad) ? 0.8 : 0.5;
+            var levelGeometry2 = (isIpad) ? 0.5 : 0.2;
+
             _.each(this.getFiles(), function(file) {
                 var filename = '/files/' + file.fullName;
                 switch (file.quality) {
                     case 0:
-                        self.addLevelGeometry(filename, 0.5, false);
+                        self.addLevelGeometry(filename, levelGeometry1, false);
                         break;
                     case 1:
-                        self.addLevelGeometry(filename, 0.2, true);
+                        self.addLevelGeometry(filename, levelGeometry2, true);
                         break;
                 }
             });
