@@ -342,6 +342,8 @@ public interface IProductManagerWS{
      * Integer value that uniquely identifies the layer to return
      * 
      * @return
+     * The layer to fetch
+     * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -360,6 +362,8 @@ public interface IProductManagerWS{
      * The user friendly name of the layer
      * 
      * @return
+     * The newly created layer
+     * 
      * @throws UserNotFoundException
      * @throws WorkspaceNotFoundException
      * @throws AccessRightException
@@ -389,6 +393,8 @@ public interface IProductManagerWS{
      * The z axis coordinate of the marker
      * 
      * @return
+     * The newly created marker
+     * 
      * @throws LayerNotFoundException
      * @throws UserNotFoundException
      * @throws WorkspaceNotFoundException
