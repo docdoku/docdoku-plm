@@ -29,8 +29,9 @@
     <script src="<%=request.getContextPath()%>/js/lib/kumo.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
-    <script src="<%=request.getContextPath()%>/js/lib/backbone.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/backbone-0.9.2.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/backbone-localstorage.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/custom-backbone-sync.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.2.min.js"></script>
 
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/instance.js"></script>
@@ -55,6 +56,8 @@
             productId:"${productID}",
             login:"${login}"
         };
+
+        var isIpad = navigator.userAgent.indexOf("iPad") != -1;
 
         $(document).ready(function() {
 
