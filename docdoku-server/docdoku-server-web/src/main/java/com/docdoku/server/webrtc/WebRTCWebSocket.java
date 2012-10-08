@@ -20,9 +20,9 @@
 
 package com.docdoku.server.webrtc;
 
-import com.sun.grizzly.websockets.DefaultWebSocket;
-import com.sun.grizzly.websockets.ProtocolHandler;
-import com.sun.grizzly.websockets.WebSocketListener;
+import org.glassfish.grizzly.websockets.DefaultWebSocket;
+import org.glassfish.grizzly.websockets.ProtocolHandler;
+import org.glassfish.grizzly.websockets.WebSocketListener;
 
 
 public class WebRTCWebSocket extends DefaultWebSocket {

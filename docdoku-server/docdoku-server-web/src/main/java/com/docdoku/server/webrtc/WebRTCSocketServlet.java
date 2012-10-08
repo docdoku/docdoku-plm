@@ -20,7 +20,7 @@
 
 package com.docdoku.server.webrtc;
 
-import com.sun.grizzly.websockets.WebSocketEngine;
+import org.glassfish.grizzly.websockets.WebSocketEngine;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

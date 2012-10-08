@@ -21,11 +21,11 @@ package com.docdoku.server.webrtc;
 
 import com.docdoku.server.webrtc.util.Helper;
 import com.docdoku.server.webrtc.util.Room;
-import com.sun.grizzly.websockets.DataFrame;
-import com.sun.grizzly.websockets.ProtocolHandler;
-import com.sun.grizzly.websockets.WebSocket;
-import com.sun.grizzly.websockets.WebSocketApplication;
-import com.sun.grizzly.websockets.WebSocketListener;
+import org.glassfish.grizzly.websockets.DataFrame;
+import org.glassfish.grizzly.websockets.ProtocolHandler;
+import org.glassfish.grizzly.websockets.WebSocket;
+import org.glassfish.grizzly.websockets.WebSocketApplication;
+import org.glassfish.grizzly.websockets.WebSocketListener;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,8 +34,8 @@ public class WebRTCApplication extends WebSocketApplication {
     private static final ConcurrentMap<String, WebRTCWebSocket> channels = new ConcurrentHashMap<String, WebRTCWebSocket>();
 
     @Override
-    public WebSocket createWebSocket(ProtocolHandler protocolHandler, WebSocketListener[] listeners) {
-        return new WebRTCWebSocket(protocolHandler, listeners);
+    public WebSocket createSocket(ProtocolHandler handler, org.glassfish.grizzly.http.HttpRequestPacket requestPacket, WebSocketListener[] listeners) {
+        return new WebRTCWebSocket(handler, listeners);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class WebRTCApplication extends WebSocketApplication {
     }
 
     @Override
-    public boolean isApplicationRequest(com.sun.grizzly.tcp.Request rqst) {
+    public boolean isApplicationRequest(org.glassfish.grizzly.http.HttpRequestPacket rqst) {
         return true;//"/webrtc".equals(rqst.getRequestURI());
     }
 

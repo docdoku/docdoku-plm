@@ -63,6 +63,16 @@
           <artifactId>grizzly-websockets</artifactId>
           <version>2.2.9</version>
         </dependency>
+        <dependency>
+          <groupId>org.glassfish.grizzly</groupId>
+          <artifactId>grizzly-framework</artifactId>
+          <version>2.2.9</version>
+        </dependency>
+        <dependency>
+          <groupId>org.glassfish.grizzly</groupId>
+          <artifactId>grizzly-http</artifactId>
+          <version>2.2.9</version>
+        </dependency>
 
         <!-- docdoku core -->
         <dependency>
