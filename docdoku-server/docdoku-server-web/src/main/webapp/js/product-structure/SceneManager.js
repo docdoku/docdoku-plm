@@ -83,7 +83,8 @@ SceneManager.prototype = {
         for (var j = 0; j<numbersOfMeshes; j++) {
             self.domEventForMarkerCreation.bind(this.meshesBindedForMarkerCreation[j], 'click', function(e) {
                 var intersectPoint = e.target.intersectPoint;
-                layer.createMarker("Nouveau marker", "description", intersectPoint.x, intersectPoint.y, intersectPoint.z);
+                $('#creationMarkerModal').modal('show');
+                //layer.createMarker("Nouveau marker", "description", intersectPoint.x, intersectPoint.y, intersectPoint.z);
             });
         }
 

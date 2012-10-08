@@ -1,22 +1,28 @@
-window.PartMetadataView = Backbone.View.extend({
+define (function() {
+    var PartMetadataView = Backbone.View.extend({
 
-    el:$("#part_metadata_container"),
+        el:$("#part_metadata_container"),
 
-    events: {
-        "click button#part_metadata_close_button"   : "closePartMetadata"
-    },
+        events: {
+            "click button#part_metadata_close_button"   : "closePartMetadata"
+        },
 
-    render: function(){
+        render: function(){
 
-        var part_metadata_html = Mustache.render(
-            $('#part_metadata_template').html(), this.model);
+            var part_metadata_html = Mustache.render(
+                $('#part_metadata_template').html(), this.model);
 
-        this.$el.append(part_metadata_html);
-    },
+            this.$el.append(part_metadata_html);
 
-    closePartMetadata: function(){
-        $("#part_metadata_container").hide();
-        $("#bottom_controls_container").show();
-    }
+            return this;
+        },
 
+        closePartMetadata: function(){
+            $("#part_metadata_container").hide();
+            $("#bottom_controls_container").show();
+        }
+
+    });
+
+    return PartMetadataView;
 });

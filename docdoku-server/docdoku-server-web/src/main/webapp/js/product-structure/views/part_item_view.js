@@ -1,37 +1,43 @@
-window.PartItemView = Backbone.View.extend({
+define([
+    "views/part_metadata_view"
+], function (
+    PartMetadataView
+) {
 
-    tagName:'li',
+    var PartItemView = Backbone.View.extend({
 
-    template: _.template("<input type='checkbox' value=''>"+
-                        "<a href='#'>" +
-                            "<label class='checkbox'>" +
-                                "<%= number %>" +
-                            "</label>" +
-                        "</a>"),
+        tagName:'li',
 
-    events: {
-        "click li a"   : "showPartMetadata"
-    },
+        template: _.template("<input type='checkbox' value=''><a href='#'><label class='checkbox'><%= number %></label></a>"),
 
-    render: function(){
+        events: {
+            "click li a"   : "showPartMetadata"
+        },
 
-        this.$el.html(this.template(this.model.toJSON()));
+        render: function() {
 
-        if(this.model.isNode()){
-            this.$el.find('label').addClass("isNode");
+            this.$el.html(this.template(this.model.toJSON()));
+
+            if(this.model.isNode()){
+                this.$el.find('label').addClass("isNode");
+            }
+
+            return this;
+        },
+
+        showPartMetadata:function(e) {
+            e.stopPropagation();
+
+            $("#part_metadata_container").empty();
+            var partMetadataView = new PartMetadataView({model: this.model});
+            partMetadataView.render();
+
+            $("#bottom_controls_container").hide();
+            $("#part_metadata_container").show();
         }
 
-        return this;
-    },
+    });
 
-    showPartMetadata:function(e){
-        e.stopPropagation();
+    return PartItemView;
 
-        $("#part_metadata_container").empty();
-        var partMetadataView = new PartMetadataView({model: this.model});
-        partMetadataView.render();
-
-        $("#bottom_controls_container").hide();
-        $("#part_metadata_container").show();
-    }
 });

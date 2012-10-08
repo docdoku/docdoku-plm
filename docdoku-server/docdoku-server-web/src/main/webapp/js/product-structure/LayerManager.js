@@ -85,7 +85,7 @@ define([
         },
 
         createLayer: function(name) {
-            var layerId = Math.random()*9999999;
+            var layerId = guid();
             if (name) {
                 var layer = new Layer({
                     _id: layerId,

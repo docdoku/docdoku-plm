@@ -1,127 +1,133 @@
-window.Part = Backbone.Model.extend({
+define(function() {
 
-    defaults: {
-        workspaceId: null,
-        name: null,
-        number: null,
-        version: null,
-        description: null,
-        files: null,
-        components: [],
-        isNode: false
-    },
+    var Part = Backbone.Model.extend({
 
-    idAttribute: "number",
+        defaults: {
+            workspaceId: null,
+            name: null,
+            number: null,
+            version: null,
+            description: null,
+            files: null,
+            components: [],
+            isNode: false
+        },
 
-    initialize : function() {
-        this.idle = true;
-        this.levels = [];
+        idAttribute: "number",
 
-        if (this.getComponents().length > 0) {
-            this.set('isNode', true, {silent: true});
-        }
+        initialize : function() {
+            this.idle = true;
+            this.levels = [];
 
-        var radiusAttribute = _.find(this.getAttributes(), function(attribute) {
-            return attribute.name == 'radius';
-        });
+            if (this.getComponents().length > 0) {
+                this.set('isNode', true, {silent: true});
+            }
 
-        if (radiusAttribute) {
-            this.radius = radiusAttribute.value;
-        }
+            var radiusAttribute = _.find(this.getAttributes(), function(attribute) {
+                return attribute.name == 'radius';
+            });
 
-        var self = this;
+            if (radiusAttribute) {
+                this.radius = radiusAttribute.value;
+            }
 
-        _.each(this.getFiles(), function(file) {
-            var filename = '/files/' + file.fullName;
-            switch (file.quality) {
-                case 0:
-                    self.addLevelGeometry(filename, 0.5, false);
+            var self = this;
+
+            _.each(this.getFiles(), function(file) {
+                var filename = '/files/' + file.fullName;
+                switch (file.quality) {
+                    case 0:
+                        self.addLevelGeometry(filename, 0.5, false);
+                        break;
+                    case 1:
+                        self.addLevelGeometry(filename, 0.2, true);
+                        break;
+                }
+            });
+
+            _.each(this.get('instances'), function(instanceRaw) {
+
+                var instance = new Instance(
+                    self,
+                    instanceRaw.tx*10,
+                    instanceRaw.ty*10,
+                    instanceRaw.tz*10,
+                    instanceRaw.rx,
+                    instanceRaw.ry,
+                    instanceRaw.rz
+                );
+
+                sceneManager.instances.push(instance);
+
+            });
+
+        },
+
+        getName : function() {
+            return this.get('name');
+        },
+
+        getNumber : function() {
+            return this.get('number');
+        },
+
+        getVersion : function() {
+            return this.get('version');
+        },
+
+        getDescription : function() {
+            return this.get('description');
+        },
+
+        getFiles : function() {
+            return this.get('files');
+        },
+
+        getComponents : function() {
+            return this.get('components');
+        },
+
+        getAttributes: function() {
+            return this.get('attributes')
+        },
+
+        getWorkspaceId : function() {
+            return this.get('workspaceId');
+        },
+
+        getIteration : function() {
+            return this.get('iteration');
+        },
+
+        isStandardPart : function() {
+            return this.get('standardPart');
+        },
+
+        isNode: function() {
+            return this.get('isNode');
+        },
+
+        addLevelGeometry: function(filename, visibleFromRating, computeVertexNormals) {
+            for (var i = 0; i<this.levels.length ; i++) {
+                if (visibleFromRating < this.levels[i].visibleFromRating) {
                     break;
-                case 1:
-                    self.addLevelGeometry(filename, 0.2, true);
-                    break;
+                }
             }
-        });
+            this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating, computeVertexNormals));
+        },
 
-        _.each(this.get('instances'), function(instanceRaw) {
-
-            var instance = new Instance(
-                self,
-                instanceRaw.tx*10,
-                instanceRaw.ty*10,
-                instanceRaw.tz*10,
-                instanceRaw.rx,
-                instanceRaw.ry,
-                instanceRaw.rz
-            );
-
-            sceneManager.instances.push(instance);
-
-        });
-
-    },
-
-    getName : function() {
-        return this.get('name');
-    },
-
-    getNumber : function() {
-        return this.get('number');
-    },
-
-    getVersion : function() {
-        return this.get('version');
-    },
-
-    getDescription : function() {
-        return this.get('description');
-    },
-
-    getFiles : function() {
-        return this.get('files');
-    },
-
-    getComponents : function() {
-        return this.get('components');
-    },
-
-    getAttributes: function() {
-        return this.get('attributes')
-    },
-
-    getWorkspaceId : function() {
-        return this.get('workspaceId');
-    },
-
-    getIteration : function() {
-        return this.get('iteration');
-    },
-
-    isStandardPart : function() {
-        return this.get('standardPart');
-    },
-
-    isNode: function() {
-        return this.get('isNode');
-    },
-
-    addLevelGeometry: function(filename, visibleFromRating, computeVertexNormals) {
-        for (var i = 0; i<this.levels.length ; i++) {
-            if (visibleFromRating < this.levels[i].visibleFromRating) {
-                break;
+        getLevelGeometry: function(rating) {
+            for (var i = this.levels.length-1; i>=0 ; i--) {
+                if (rating > this.levels[i].visibleFromRating) {
+                    return this.levels[i];
+                }
             }
+            //no level found for this rating
+            return null;
         }
-        this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating, computeVertexNormals));
-    },
 
-    getLevelGeometry: function(rating) {
-        for (var i = this.levels.length-1; i>=0 ; i--) {
-            if (rating > this.levels[i].visibleFromRating) {
-                return this.levels[i];
-            }
-        }
-        //no level found for this rating
-        return null;
-    }
+    });
+
+    return Part;
 
 });

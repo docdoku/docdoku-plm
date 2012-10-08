@@ -16,10 +16,37 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/product-structure.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/navigation-controls.css"/>
     <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/product-structure/style.less">
-    
+
     <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
 
     <script src="<%=request.getContextPath()%>/js/lib/require/1.0.8/require.min.js"></script>
+
+    <script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
+
+    <script src="<%=request.getContextPath()%>/js/lib/date.format.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/kumo.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/backbone.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/backbone-localstorage.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.2.min.js"></script>
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/instance.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/levelGeometry.js"></script>
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/modernizr.custom.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.domevent.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.windowresize.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/TrackballControlsCustom.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 
     <script type="text/javascript">
 
@@ -29,23 +56,23 @@
             login:"${login}"
         };
 
-        require.config({
-            baseUrl: "${request.contextPath}/js/product-structure",
-            paths: {
-                "require": "../lib/require/1.0.8/require.min",
-                "text": "../lib/require/1.0.8/text.min"
-            },
-            locale: "<%=request.getLocale()%>"
-        });
-        require(["app"]);
-
         $(document).ready(function() {
-            populateProductsMenu();
 
-            _.templateSettings = {
-                evaluate : /\{\[([\s\S]+?)\]\}/g,
-                interpolate : /\{\{([\s\S]+?)\}\}/g
-            };
+            require.config({
+                baseUrl: "${request.contextPath}/js/product-structure",
+                paths: {
+                    "require": "../lib/require/1.0.8/require.min",
+                    "text": "../lib/require/1.0.8/text.min"
+                },
+                locale: "<%=request.getLocale()%>"
+            });
+
+
+            require(["app"], function(AppView) {
+                new AppView();
+            });
+
+            populateProductsMenu();
 
         });
 
@@ -193,50 +220,28 @@
             <h3 id="markerTitle"></h3>
         </div>
         <div class="modal-body">
-            <p><b>Description:</b> <span id="markerDesc"></span></p>
+            <p><b>Description :</b> <span id="markerDesc"></span></p>
         </div>
         <div class="modal-footer">
             <a href="#" class="btn" data-dismiss="modal">Close</a>
         </div>
     </div>
 
+    <div class="modal hide fade" id="creationMarkerModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <input type="text" placeholder="Name" />
+        </div>
+        <div class="modal-body">
+            <textarea type="text" placeholder="Description" /></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+            <a href="#" class="btn btn-primary">Save marker</a>
+        </div>
+    </div>
+
 </div>
-
-
-<script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
-
-<script src="<%=request.getContextPath()%>/js/lib/date.format.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/kumo.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/jquery.maskedinput-1.3.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/backbone.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/backbone-localstorage.js"></script>
-<script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.2.min.js"></script>
-
-
-<script src="<%=request.getContextPath()%>/js/product-structure/models/part.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/instance.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/models/levelGeometry.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/collections/partCollection.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/views/part_node_view.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/views/part_item_view.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/views/part_metadata_view.js"></script>
-<script src="<%=request.getContextPath()%>/js/product-structure/views/bom_item_view.js"></script>
-
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery.treeview.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/modernizr.custom.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Three.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/Stats.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.domevent.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/threex.windowresize.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/visualization/VisualizationUtils.js"></script>
-
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/ControlManager.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/LayerManager.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/TrackballControlsCustom.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/product-structure/SceneManager.js"></script>
 
 </body>
 </html>
