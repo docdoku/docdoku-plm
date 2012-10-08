@@ -227,16 +227,15 @@
         </div>
     </div>
 
-    <div class="modal hide fade" id="creationMarkerModal">
+    <div class="modal hide fade" id="creationMarkersModal">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">×</button>
             <input type="text" placeholder="Name" />
         </div>
         <div class="modal-body">
-            <textarea type="text" placeholder="Description" /></p>
+            <textarea type="text" placeholder="Description"></textarea>
         </div>
         <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+            <a href="#" class="btn cancel">Cancel</a>
             <a href="#" class="btn btn-primary">Save marker</a>
         </div>
     </div>

@@ -377,3 +377,13 @@ div#layer-wrapper .color {
 div#layer-wrapper nav li:last-child .color {
     border-bottom-left-radius: 8px;
 }
+
+div#creationMarkersModal textarea {
+    height: 90%;
+    width: 90%;
+}
+
+div#creationMarkersModal input {
+    width: 50%;
+    margin-bottom: 0px;
+}

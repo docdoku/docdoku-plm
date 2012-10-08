@@ -29,6 +29,7 @@ SceneManager.prototype = {
         this.initRenderer();
         this.loadWindowResize();
         this.initLayerManager();
+        this.initMarkersModal();
         this.animate();
     },
 
@@ -72,6 +73,28 @@ SceneManager.prototype = {
         }
     },
 
+    initMarkersModal: function() {
+
+        var self = this;
+
+        this.markersModal = $('#creationMarkersModal');
+        this.markersModalInputName = this.markersModal.find('input');
+        this.markersModalInputDescription = this.markersModal.find('textarea')
+        this.createMarkerButton = this.markersModal.find('.btn-primary');
+
+        this.closeMarkersModal = function() {
+            self.markersModal.modal('hide');
+            self.markersModalInputName.val("");
+            self.markersModalInputDescription.val("");
+            self.createMarkerButton.off('click');
+        };
+
+        this.markersModal.find('.cancel').on('click', function() {
+            self.closeMarkersModal();
+        });
+
+    },
+
     startMarkerCreationMode: function(layer) {
         var self = this;
 
@@ -79,18 +102,31 @@ SceneManager.prototype = {
 
         this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances,function(instance) { return instance.mesh != null }), 'mesh');
 
+
+        var onIntersect = function(intersectPoint) {
+
+            self.createMarkerButton.on('click', function() {
+                layer.createMarker(self.markersModalInputName.val(), self.markersModalInputDescription.val(), intersectPoint.x, intersectPoint.y, intersectPoint.z);
+                self.closeMarkersModal();
+            });
+
+            self.markersModal.modal('show');
+            self.markersModalInputName.focus();
+
+        }
+
         var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
+
         for (var j = 0; j<numbersOfMeshes; j++) {
             self.domEventForMarkerCreation.bind(this.meshesBindedForMarkerCreation[j], 'click', function(e) {
-                var intersectPoint = e.target.intersectPoint;
-                $('#creationMarkerModal').modal('show');
-                //layer.createMarker("Nouveau marker", "description", intersectPoint.x, intersectPoint.y, intersectPoint.z);
+                onIntersect(e.target.intersectPoint);
             });
         }
 
     },
 
     stopMarkerCreationMode: function() {
+        $("#creationMarkersModal .btn-primary").off('click');
         var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
         for (var j = 0; j<numbersOfMeshes; j++) {
             this.domEventForMarkerCreation.unbind(this.meshesBindedForMarkerCreation[j], 'click');
