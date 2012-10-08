@@ -335,20 +335,20 @@ div#layer-wrapper ul#layer-header i.end {
     font-smoothing: antialiased;
 }
 
-div#layer-wrapper li.editing i.end {
+div#layer-wrapper li.editingMarkers i.end {
     opacity: 1;
 }
 
-li.editing {
+li.editingName {
     border-bottom: none;
     padding: 0;
 }
 
-li.editing .edit {
+li.editingName .edit {
     display: block;
 }
 
-li.editing p {
+li.editingName p {
     display: none;
 }
 

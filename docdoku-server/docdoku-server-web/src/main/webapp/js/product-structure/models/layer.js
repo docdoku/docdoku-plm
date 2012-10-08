@@ -11,11 +11,26 @@ define([
         defaults: {
             name : "new layer",
             shown: true,
-            editing: false
+            editingName: false,
+            editingMarkers: false
         },
 
-        toggleEditing: function() {
-            this.set('editing', !this.get('editing'));
+        setEditingName: function(editingName) {
+            this.set('editingName', editingName);
+        },
+
+        toggleEditingMarkers: function() {
+            if (this.get('editingMarkers')) {
+                this.collection.setAllEditingMarkers(false);
+            } else {
+                this.collection.setAllEditingMarkers(false);
+                this.setEditingMarkers(true);
+            }
+        },
+
+        setEditingMarkers: function(editingMarkers) {
+            this.set('editingMarkers', editingMarkers);
+            editingMarkers ? sceneManager.startMarkerCreationMode(this) : sceneManager.stopMarkerCreationMode(this);
         },
 
         toggleShow: function() {

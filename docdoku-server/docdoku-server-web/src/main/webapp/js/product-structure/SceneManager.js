@@ -14,6 +14,7 @@ function SceneManager(options) {
     this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
     this.instances = [];
+    this.meshesBindedForMarkerCreation = [];
 }
 
 SceneManager.prototype = {
@@ -68,6 +69,30 @@ SceneManager.prototype = {
             $('#center_container').height(83+'%');
         } else {
             new ControlManager( this.controls );
+        }
+    },
+
+    startMarkerCreationMode: function(layer) {
+        var self = this;
+
+        this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container[0]);
+
+        this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances,function(instance) { return instance.mesh != null }), 'mesh');
+
+        var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
+        for (var j = 0; j<numbersOfMeshes; j++) {
+            self.domEventForMarkerCreation.bind(this.meshesBindedForMarkerCreation[j], 'click', function(e) {
+                var intersectPoint = e.target.intersectPoint;
+                layer.createMarker("Nouveau marker", "description", intersectPoint.x, intersectPoint.y, intersectPoint.z);
+            });
+        }
+
+    },
+
+    stopMarkerCreationMode: function() {
+        var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
+        for (var j = 0; j<numbersOfMeshes; j++) {
+            this.domEventForMarkerCreation.unbind(this.meshesBindedForMarkerCreation[j], 'click');
         }
     },
 

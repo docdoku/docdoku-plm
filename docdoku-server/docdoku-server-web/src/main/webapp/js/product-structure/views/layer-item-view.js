@@ -6,10 +6,10 @@ define(function() {
 
         events: {
             "click i.start"   : "toggleShow",
-            "dblclick"        : "toggleEditing",
-            "blur .edit"      : "stopEditing",
-            "keypress .edit"  : "stopEditingOnEnter",
-            "click i.end"     : "toggleEditing"
+            "dblclick"        : "startEditingName",
+            "blur .edit"      : "stopEditingName",
+            "keypress .edit"  : "stopEditingNameOnEnter",
+            "click i.end"     : "toggleEditingMarkers"
         },
 
         initialize: function() {
@@ -23,12 +23,13 @@ define(function() {
         render: function() {
             this.$el.html(Mustache.render(this.template, this.model));
             this.$el.toggleClass('shown', this.model.get('shown'));
-            var editing = this.model.get('editing')
-            this.$el.toggleClass('editing', editing);
+            var editingName = this.model.get('editingName')
+            this.$el.toggleClass('editingName', editingName);
             this.input = this.$('.edit');
-            if (editing) {
+            if (editingName) {
                 this.input.focus();
             }
+            this.$el.toggleClass('editingMarkers', this.model.get('editingMarkers'));
             return this;
         },
 
@@ -36,20 +37,24 @@ define(function() {
             this.model.toggleShow();
         },
 
-        toggleEditing: function() {
-            this.model.toggleEditing();
+        toggleEditingMarkers: function() {
+            this.model.toggleEditingMarkers();
         },
 
-        stopEditing: function() {
+        startEditingName: function() {
+            this.model.setEditingName(true);
+        },
+
+        stopEditingName: function() {
             var value = this.input.val();
             this.model.save({
                 name: value,
-                editing: false
+                editingName: false
             });
         },
 
-        stopEditingOnEnter: function(e) {
-            if (e.keyCode == 13) this.stopEditing();
+        stopEditingNameOnEnter: function(e) {
+            if (e.keyCode == 13) this.stopEditingName();
         }
 
     });

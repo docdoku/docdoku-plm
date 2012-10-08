@@ -10,10 +10,20 @@ define([
 
         localStorage: new Store("plm:layers"),
 
-        toggleAllShown: function(allShown) {
+        setAllShown: function(allShown) {
             this.each(function(layer) {
                 layer.setShown(allShown);
             });
+        },
+
+        areInEditingMarkers: function() {
+            return this.where({editingMarkers: true});
+        },
+
+        setAllEditingMarkers: function(editingMarkers) {
+            _.each(this.areInEditingMarkers(), function(layer) {
+                layer.setEditingMarkers(editingMarkers);
+            }, this);
         }
 
     });

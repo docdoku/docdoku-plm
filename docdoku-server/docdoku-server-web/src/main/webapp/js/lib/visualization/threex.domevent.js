@@ -265,16 +265,21 @@ THREEx.DomEvent.prototype.unbind	= function(object3d, eventName, callback)
 	if( !objectCtx.events[eventName+'Handlers'] )	objectCtx.events[eventName+'Handlers']	= [];
 
 	var handlers	= objectCtx.events[eventName+'Handlers'];
-	for(var i = 0; i < handlers.length; i++){
-		var handler	= handlers[i];
-		
-		//if callback specified, only remove handlers with matching callbacks
-		if( callback && callback != handler.callback )	continue;
-		//remove handler
-		handlers.splice(i, 1);
-		//move index back one since the length has change
-		i--;
-	}
+
+    if (callback) {
+        for(var i = 0; i < handlers.length; i++){
+            var handler	= handlers[i];
+
+            //if callback specified, only remove handlers with matching callbacks
+            if( callback && callback != handler.callback )	continue;
+            //remove handler
+            handlers.splice(i, 1);
+            //move index back one since the length has change
+            i--;
+        }
+    } else {
+        handlers = []
+    }
 	
 	//if the handlers list is empty, remove the list
 	if(handlers.length===0) delete objectCtx.events[eventName+'Handlers'];
@@ -361,6 +366,7 @@ THREEx.DomEvent.prototype._onEvent	= function(eventName, mouseX, mouseY, origDom
 	// init some vairables
 	var intersect	= intersects[0];
 	var object3d	= intersect.object;
+    object3d.intersectPoint = intersect.point;
 	var objectCtx	= this._objectCtxGet(object3d);
 	if( !objectCtx )	return;
 

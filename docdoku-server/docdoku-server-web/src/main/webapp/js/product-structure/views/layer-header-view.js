@@ -24,7 +24,7 @@ define(function() {
         toggleAllShow: function() {
             this.allShown = !this.allShown;
             this.render();
-            this.$el.trigger('layers:toggleAllShown', this.allShown);
+            this.$el.trigger('layers:setAllShown', this.allShown);
         },
 
         addLayer: function() {

@@ -11,7 +11,7 @@ define([
         el: 'div#layer-wrapper',
 
         events: {
-            "layers:toggleAllShown" : "toggleAllShown",
+            "layers:setAllShown" : "setAllShown",
             "layers:addLayer" : "addLayer"
         },
 
@@ -52,15 +52,15 @@ define([
             this.listContainer.append(this.template_empty_view);
         },
 
-        toggleAllShown: function(e, allShown) {
+        setAllShown: function(e, allShown) {
             e.stopPropagation();
-            this.collection.toggleAllShown(allShown);
+            this.collection.setAllShown(allShown);
         },
 
         addLayer: function(e) {
             e.stopPropagation();
             var layer = sceneManager.layerManager.createLayer();
-            layer.set('editing', true);
+            layer.set('editingName', true);
         }
 
     });
