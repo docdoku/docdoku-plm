@@ -15,7 +15,20 @@ import javax.servlet.http.HttpServletResponse;
 public class WebRTCMessageServlet extends HttpServlet {
 
     @Override
+    protected void doPost(HttpServletRequest pRequest,
+            HttpServletResponse pResponse)
+            throws ServletException, IOException {
+        handleRequest(pRequest, pResponse);
+    }
+    @Override
     protected void doGet(HttpServletRequest pRequest,
+            HttpServletResponse pResponse)
+            throws ServletException, IOException {
+        handleRequest(pRequest, pResponse);
+    }
+    
+    
+    private void handleRequest(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
             throws ServletException, IOException {
         String message = Helper.getStringFromStream(pRequest.getInputStream());

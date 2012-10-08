@@ -31,10 +31,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.ConfigurationItemNotFoundException;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.server.rest.dto.CADInstanceDTO;
 import com.docdoku.server.rest.dto.ConfigurationItemDTO;
 import com.docdoku.server.rest.dto.GeometryDTO;
@@ -65,6 +62,9 @@ public class ProductResource {
     private IProductManagerLocal productService;
     private Mapper mapper;
 
+    @EJB
+    private LayerResource layerResource;
+            
     public ProductResource() {
     }
 
@@ -109,6 +109,12 @@ public class ProductResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
+    
+    @Path("{ciId}/layers")
+    @Produces("application/json;charset=UTF-8")
+    public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
+        return layerResource;
     }
 
     private PartDTO createDTO(PartUsageLink usageLink) {

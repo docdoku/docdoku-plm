@@ -20,20 +20,32 @@
 
 package com.docdoku.server.webrtc;
 
-import org.glassfish.grizzly.websockets.WebSocketEngine;
+import com.sun.grizzly.websockets.WebSocketEngine;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 
-@WebServlet(name = "WebRTCSocketServlet", urlPatterns = {"/webRTCSocket"})
+@WebServlet(name = "WebRTCSocketServlet", urlPatterns = {"/webRTCSocketServlet"})
 public class WebRTCSocketServlet  extends HttpServlet {
 
     private final WebRTCApplication app = new WebRTCApplication();
 
+    /*
     @Override
     public void init(ServletConfig config) throws ServletException {
         WebSocketEngine.getEngine().register(app);
+    }*/
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        WebSocketEngine.getEngine().register(
+            config.getServletContext().getContextPath() + "/webRTCSocket", app);
+    }
+    
+    @Override
+    public void destroy() {
+        WebSocketEngine.getEngine().unregister(app);
     }
 }

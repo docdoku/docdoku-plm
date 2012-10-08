@@ -4,7 +4,6 @@
 <head>
 <link rel="canonical" href="${roomLink}"/>
 <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
-<link rel="stylesheet" type="text/css" href="css/main.css" />
 </head>
 <body>
 <script type="text/javascript">
@@ -117,7 +116,7 @@
   function sendMessage(message) {
     var msgString = JSON.stringify(message);
     console.log('C->S: ' + msgString);
-    path = '/${PATH}/webRTCMessage?r=${roomKey}' + '&u=${me}';
+    path = 'http://${serverName}:8080/${PATH}webRTCMessage?r=${roomKey}' + '&u=${me}';
     var xhr = new XMLHttpRequest();
     xhr.open('POST', path, true);
     xhr.send(msgString);
