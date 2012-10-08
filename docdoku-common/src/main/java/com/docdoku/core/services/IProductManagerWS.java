@@ -38,8 +38,10 @@ import java.util.List;
 
 
 /**
- * The product service which is the entry point for the API related for products
- * definition and manipulation.
+ * The product service which is the entry point for the API related to products
+ * definition and manipulation. The client of these functions must
+ * be authenticated and have read or write access rights on the workspace
+ * where the operations occur.
  * 
  * @author Florent Garin
  * @version 1.1, 03/10/12
@@ -56,7 +58,7 @@ public interface IProductManagerWS{
      * <a href="ConfigSpec.html">ConfigSpec</a>.
      * 
      * @param ciKey
-     * The product to resolve
+     * The product structure to resolve
      * 
      * @param configSpec
      * The rules for the resolution algorithm
@@ -79,7 +81,7 @@ public interface IProductManagerWS{
      * The workspace in which the product structure will be created
      * 
      * @param id
-     * The id of the product structure which is unique inside
+     * The id of the product structure which must be unique inside
      * the workspace context
      * 
      * @param description
@@ -101,10 +103,11 @@ public interface IProductManagerWS{
     ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException;
     
     /**
-     * Creates a <a href="PartMaster.html">PartMaster</a>. Be aware that
-     * the created item will still be in checked out state when returned.
+     * Creates a new <a href="PartMaster.html">PartMaster</a>. Be aware that
+     * the created item will still be in checkout state when returned.
      * Hence the calling client code has the opportunity to perform final
-     * modification on the first <a href="PartIteration.html">PartIteration</a>.
+     * modifications on the first, iteration number 1,
+     * <a href="PartIteration.html">PartIteration</a>.
      * 
      * @param workspaceId
      * The workspace in which the part master will be created
@@ -126,13 +129,13 @@ public interface IProductManagerWS{
      * The id of the workflow template that will be instantiated and attached
      * to the created part master. Actually, it's the first 
      * <a href="PartRevision.html">PartRevision</a> that will hold
-     * the link to the workflow. Obviously this parameter may be null, it's not
-     * mandatory to rely on workflows for product definitions. 
+     * the reference to the workflow. Obviously this parameter may be null,
+     * it's not mandatory to rely on workflows for product definitions. 
      * 
      * @param partRevisionDescription
-     * The description of the first revision, version A, of the item
-     * which is created in the same time than
-     * the <a href="PartMaster.html">PartMaster</a>.
+     * The description of the first revision, version A, of the item.
+     * This revision will be created in the same time than
+     * the <a href="PartMaster.html">PartMaster</a> itself.
      * 
      * @return
      * The created part master instance
@@ -187,12 +190,27 @@ public interface IProductManagerWS{
     PartRevision checkIn(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
     
     /**
+     * Creates a <a href="Geometry.html">Geometry</a> file,
+     * a specialized kind of binary resource which contains CAD data, and
+     * attachs it to the part iteration passed as parameter.
+     * The part must be in the checkout state and the calling user must have
+     * write access rights to the part.
      * 
      * @param partIPK
+     * The id of the part iteration on which the file will be attached
+     * 
      * @param name
+     * The name of the binary resource to create
+     * 
      * @param quality
+     * The quality of the CAD file, starts at 0, smaller is greater
+     * 
      * @param size
+     * Number of bytes of the physical file
+     * 
      * @return
+     * The physical file, a java.io.File instance, that now needs to be created
+     * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -204,11 +222,24 @@ public interface IProductManagerWS{
     java.io.File saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     
     /**
+     * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>
+     * object, and attachs it to the part iteration instance passed
+     * as parameter. The part must be in the checkout state and
+     * the calling user must have write access rights to the part.
+     * 
      * 
      * @param partIPK
+     * The id of the part iteration on which the file will be attached
+     * 
      * @param name
+     * The name of the binary resource to create
+     * 
      * @param size
+     * Number of bytes of the physical file
+     * 
      * @return
+     * The physical file, a java.io.File instance, that now needs to be created
+     * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -254,9 +285,16 @@ public interface IProductManagerWS{
     PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException;
     
     /**
+     * Returns the java.io.File object that references the physical file of the
+     * supplied binary resource.
      * 
      * @param fullName
+     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
+     * data file will be returned
+     * 
      * @return
+     * The physical file of the binary resource
+     * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -266,11 +304,11 @@ public interface IProductManagerWS{
     File getDataFile(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
     
     /**
-     * Retrieves all product structures that belong to the given workspace
+     * Retrieves all product structures that belong to the given workspace.
      * 
      * @param workspaceId
      * The workspace which is the first level context
-     * where all producte and parts are referenced
+     * where all products and parts are referenced
      * 
      * @return
      * The list of product structures
@@ -283,12 +321,14 @@ public interface IProductManagerWS{
     
     /**
      * Retrieves all layers of the given product structure, ie
-     * <a href="ConfigurationItem.html">ConfigurationItem</a>
+     * <a href="ConfigurationItem.html">ConfigurationItem</a>.
      * 
      * @param key
      * The id of the configuration item
      * 
      * @return
+     * The list of all layers of the current configuration item
+     * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -296,8 +336,11 @@ public interface IProductManagerWS{
     List<Layer> getLayers(ConfigurationItemKey key) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     
     /**
+     * Retrieves a given layer.
      * 
      * @param id
+     * Integer value that uniquely identifies the layer to return
+     * 
      * @return
      * @throws UserNotFoundException
      * @throws UserNotActiveException
@@ -307,9 +350,15 @@ public interface IProductManagerWS{
     Layer getLayer(int id) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException;
     
     /**
+     * Creates a new layer on a given product structure.
      * 
      * @param key
+     * The identifier object of the configuration item wherein the layer will
+     * be created
+     * 
      * @param name
+     * The user friendly name of the layer
+     * 
      * @return
      * @throws UserNotFoundException
      * @throws WorkspaceNotFoundException
@@ -319,13 +368,26 @@ public interface IProductManagerWS{
     Layer createLayer(ConfigurationItemKey key, String name) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException;
     
     /**
+     * Creates a new marker that will be a member of the given layer.
      * 
      * @param layerId
+     * The layer id on which the marker will be created
+     * 
      * @param title
+     * The title of the marker
+     * 
      * @param description
+     * The description of the marker
+     * 
      * @param x
+     * The x axis coordinate of the marker
+     * 
      * @param y
+     * The y axis coordinate of the marker
+     * 
      * @param z
+     * The z axis coordinate of the marker
+     * 
      * @return
      * @throws LayerNotFoundException
      * @throws UserNotFoundException
