@@ -387,3 +387,7 @@ div#creationMarkersModal input {
     width: 50%;
     margin-bottom: 0px;
 }
+
+div#scene_container.markersCreationMode {
+    cursor: crosshair;
+}

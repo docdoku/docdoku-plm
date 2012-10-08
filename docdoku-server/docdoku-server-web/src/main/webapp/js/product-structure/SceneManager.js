@@ -96,6 +96,9 @@ SceneManager.prototype = {
     },
 
     startMarkerCreationMode: function(layer) {
+
+        $("#scene_container").addClass("markersCreationMode");
+
         var self = this;
 
         this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container[0]);
@@ -126,6 +129,9 @@ SceneManager.prototype = {
     },
 
     stopMarkerCreationMode: function() {
+
+        $("#scene_container").removeClass("markersCreationMode");
+
         $("#creationMarkersModal .btn-primary").off('click');
         var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
         for (var j = 0; j<numbersOfMeshes; j++) {

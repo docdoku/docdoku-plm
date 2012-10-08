@@ -18,7 +18,7 @@ define(function() {
             this.model.getMarkers().on('add remove reset', this.render, this);
         },
 
-        template: "<i class=\"icon-eye-open start\"></i><span class=\"color\" style=\"background-color:{{getHexaColor}}\">&nbsp;</span><p>{{ attributes.name }} ({{ countMarkers }})</p><i class=\"icon-pencil end\"></i><input class=\"edit\" type=\"text\" value=\"{{ attributes.name }}\">",
+        template: "<i class=\"icon-eye-open start\"></i><span class=\"color\" style=\"background-color:{{getHexaColor}}\">&nbsp;</span><p>{{ attributes.name }} ({{ countMarkers }})</p><i class=\"icon-pushpin end\"></i><input class=\"edit\" type=\"text\" value=\"{{ attributes.name }}\">",
 
         render: function() {
             this.$el.html(Mustache.render(this.template, this.model));
