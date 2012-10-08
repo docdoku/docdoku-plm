@@ -39,7 +39,6 @@ define([
         initialize: function() {
             sceneManager = new SceneManager();
             var allParts = new PartCollection();
-            console.log(allParts)
             var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
             allParts.fetch();
             sceneManager.init();
