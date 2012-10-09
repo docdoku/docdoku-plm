@@ -25,8 +25,7 @@ import java.io.Serializable;
 
 public class LayerDTO implements Serializable{
 
-   
-    
+    private int id;
     private String name;
    
     public LayerDTO() {
@@ -36,6 +35,11 @@ public class LayerDTO implements Serializable{
         this.name=pName;
     }
 
+    public LayerDTO(int pId, String pName) {
+        this.id = pId;
+        this.name = pName;
+    }
+
     public String getName() {
         return name;
     }
@@ -43,6 +47,13 @@ public class LayerDTO implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    
-  
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

@@ -64,7 +64,7 @@ public class LayerResource {
             List<Layer> layers = productService.getLayers(ciKey);
             LayerDTO[] layerDtos = new LayerDTO[layers.size()];
             for (int i = 0; i < layers.size(); i++) {                
-                layerDtos[i] = new LayerDTO(layers.get(i).getName());
+                layerDtos[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName());
             }
             return layerDtos;
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -80,7 +80,7 @@ public class LayerResource {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             Layer l = productService.createLayer(ciKey, layer.getName());
-            return new LayerDTO(l.getName());
+            return new LayerDTO(l.getId(), l.getName());
             
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
