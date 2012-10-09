@@ -11,15 +11,15 @@ define([
         template: _.template("<input type='checkbox' value=''><a href='#'><label class='checkbox'><%= number %></label></a>"),
 
         events: {
-            "click li a"   : "showPartMetadata"
+            "click a": "showPartMetadata"
         },
 
         render: function() {
 
-            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.html(this.template({number: this.model.attributes.number}));
 
             if(this.model.isNode()){
-                this.$el.find('label').addClass("isNode");
+                this.$('label').addClass("isNode");
             }
 
             return this;
@@ -29,8 +29,7 @@ define([
             e.stopPropagation();
 
             $("#part_metadata_container").empty();
-            var partMetadataView = new PartMetadataView({model: this.model});
-            partMetadataView.render();
+            new PartMetadataView({model: this.model}).render();
 
             $("#bottom_controls_container").hide();
             $("#part_metadata_container").show();
