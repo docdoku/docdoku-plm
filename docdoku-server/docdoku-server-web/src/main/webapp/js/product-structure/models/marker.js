@@ -2,6 +2,10 @@ define(function() {
 
     var Marker = Backbone.Model.extend({
 
+        toJSON: function() {
+            return _.pick(this.attributes, 'id', 'title', 'description', 'x', 'y', 'z');
+        },
+
         getX: function() {
             return this.get('x');
         },

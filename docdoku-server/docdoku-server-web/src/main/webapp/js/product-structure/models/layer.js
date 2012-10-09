@@ -57,8 +57,7 @@ define([
                 opacity: 1,
                 transparent: true
             });
-            this.markers = new MarkerCollection();
-            this.markers.localStorage = new Store("plm:layers:" + this.get('_id') + ":markers");
+            this.markers = new MarkerCollection([], {urlLayer: this.url()});
             this.markers.on("add", this._addMarkerToScene, this);
             this.markers.on("remove", this._removeMarkerFromScene, this);
             this.markers.on("reset", this._onResetMarkers, this);
