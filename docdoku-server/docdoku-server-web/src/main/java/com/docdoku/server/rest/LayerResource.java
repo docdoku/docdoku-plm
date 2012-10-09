@@ -85,5 +85,20 @@ public class LayerResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-    }   
+    }
+
+    @PUT
+    @Path("{layerId}")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public LayerDTO updateLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer) {
+        try {
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+            Layer l = productService.updateLayer(ciKey, layerId, layer.getName());
+            return new LayerDTO(l.getId(), l.getName());
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
 }

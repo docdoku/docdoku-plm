@@ -443,6 +443,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @Override
+    public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
+        Layer layer = getLayer(pId);
+        layer.setName(pName);
+        return layer;
+    }
+
+    @Override
     public Marker createMarker(int pLayerId, String pTitle, String pDescription, double pX, double pY, double pZ) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
         Layer layer = new LayerDAO(em).loadLayer(pLayerId);
         User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
