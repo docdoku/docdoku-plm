@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 public class MarkerDTO implements Serializable{
 
-  
+    private int id;
       
     private String title;
     private String description;
@@ -45,8 +45,16 @@ public class MarkerDTO implements Serializable{
         this.y=pY;
         this.z=pZ;
     }
-    
-    
+
+    public MarkerDTO(int pId, String pTitle, String pDescription, double pX, double pY, double pZ) {
+        this.id = pId;
+        this.title = pTitle;
+        this.description = pDescription;
+        this.x = pX;
+        this.y = pY;
+        this.z = pZ;
+    }
+
 
     public void setDescription(String description) {
         this.description = description;
@@ -89,6 +97,12 @@ public class MarkerDTO implements Serializable{
         return z;
     }
 
-  
-    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

@@ -112,7 +112,6 @@ public class ProductResource {
     }
     
     @Path("{ciId}/layers")
-    @Produces("application/json;charset=UTF-8")
     public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         return layerResource;
     }

@@ -21,16 +21,21 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Layer;
+import com.docdoku.core.product.Marker;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.LayerDTO;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+
+import com.docdoku.server.rest.dto.MarkerDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -45,7 +50,7 @@ public class LayerResource {
 
     @EJB
     private IProductManagerLocal productService;
-    
+
     private Mapper mapper;
 
     public LayerResource() {
@@ -54,7 +59,7 @@ public class LayerResource {
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    } 
+    }
 
     @GET
     @Produces("application/json;charset=UTF-8")
@@ -99,6 +104,57 @@ public class LayerResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
+
+    /*
+    @Path("{layerId}/markers")
+    public MarkerResource processMarkers(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId) {
+        try {
+            Layer layer = productService.getLayer(layerId);
+            return new MarkerResource(layer);
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+    */
+
+    @GET
+    @Path("{layerId}/markers")
+    @Produces("application/json;charset=UTF-8")
+    public MarkerDTO[] getMarkersInLayer(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId){
+        try {
+            Layer layer = productService.getLayer(layerId);
+            Set<Marker> markers = layer.getMarkers();
+            Marker[] markersArray = markers.toArray(new Marker[0]);
+            MarkerDTO[] markersDTO = new MarkerDTO[markers.size()];
+            for (int i = 0; i < markersArray.length; i++) {
+                markersDTO[i] = new MarkerDTO(markersArray[i].getId(), markersArray[i].getTitle(),markersArray[i].getDescription(), markersArray[i].getX(), markersArray[i].getY(), markersArray[i].getZ());
+            }
+            return markersDTO;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @POST
+    @Path("{layerId}/markers")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public MarkerDTO createMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, MarkerDTO markerDTO) {
+        try {
+            Marker marker = productService.createMarker(layerId, markerDTO.getTitle(), markerDTO.getDescription(), markerDTO.getX(), markerDTO.getY(), markerDTO.getZ());
+            return new MarkerDTO(marker.getId(), marker.getTitle(), marker.getDescription(), marker.getX(), marker.getY(), marker.getZ());
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @DELETE
+    @Path("{layerId}/markers/{markerId}")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public Response deleteMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, @PathParam("markerId") int markerId) {
+        return null;
     }
 
 }
