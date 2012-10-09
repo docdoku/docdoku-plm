@@ -14,6 +14,7 @@ function SceneManager(options) {
     this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
     this.instances = [];
+    this.meshesBindedForMarkerCreation = [];
 }
 
 SceneManager.prototype = {
@@ -28,6 +29,7 @@ SceneManager.prototype = {
         this.initRenderer();
         this.loadWindowResize();
         this.initLayerManager();
+        this.initMarkersModal();
         this.animate();
     },
 
@@ -71,12 +73,79 @@ SceneManager.prototype = {
         }
     },
 
+    initMarkersModal: function() {
+
+        var self = this;
+
+        this.markersModal = $('#creationMarkersModal');
+        this.markersModalInputName = this.markersModal.find('input');
+        this.markersModalInputDescription = this.markersModal.find('textarea')
+        this.createMarkerButton = this.markersModal.find('.btn-primary');
+
+        this.closeMarkersModal = function() {
+            self.markersModal.modal('hide');
+            self.markersModalInputName.val("");
+            self.markersModalInputDescription.val("");
+            self.createMarkerButton.off('click');
+        };
+
+        this.markersModal.find('.cancel').on('click', function() {
+            self.closeMarkersModal();
+        });
+
+    },
+
+    startMarkerCreationMode: function(layer) {
+
+        $("#scene_container").addClass("markersCreationMode");
+
+        var self = this;
+
+        this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container[0]);
+
+        this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances,function(instance) { return instance.mesh != null }), 'mesh');
+
+
+        var onIntersect = function(intersectPoint) {
+
+            self.createMarkerButton.on('click', function() {
+                layer.createMarker(self.markersModalInputName.val(), self.markersModalInputDescription.val(), intersectPoint.x, intersectPoint.y, intersectPoint.z);
+                self.closeMarkersModal();
+            });
+
+            self.markersModal.modal('show');
+            self.markersModalInputName.focus();
+
+        }
+
+        var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
+
+        for (var j = 0; j<numbersOfMeshes; j++) {
+            self.domEventForMarkerCreation.bind(this.meshesBindedForMarkerCreation[j], 'click', function(e) {
+                onIntersect(e.target.intersectPoint);
+            });
+        }
+
+    },
+
+    stopMarkerCreationMode: function() {
+
+        $("#scene_container").removeClass("markersCreationMode");
+
+        $("#creationMarkersModal .btn-primary").off('click');
+        var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
+        for (var j = 0; j<numbersOfMeshes; j++) {
+            this.domEventForMarkerCreation.unbind(this.meshesBindedForMarkerCreation[j], 'click');
+        }
+    },
+
     initLayerManager: function() {
         var self = this;
         require(["LayerManager"], function(LayerManager) {
             self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container[0]);
             self.layerManager.bindControlEvents();
             self.layerManager.rescaleMarkers(0);
+            self.layerManager.renderList();
         });
     },
 

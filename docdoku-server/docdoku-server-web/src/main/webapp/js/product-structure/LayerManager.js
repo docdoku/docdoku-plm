@@ -1,9 +1,11 @@
 define([
     "collections/layer_collection",
-    "models/layer"
+    "models/layer",
+    "views/layers-list-view"
 ], function (
     LayerCollection,
-    Layer
+    Layer,
+    LayersListView
 ) {
 
     var STATE = { FULL : 0, TRANSPARENT : 1, HIDDEN : 2};
@@ -27,6 +29,10 @@ define([
     };
 
     LayerManager.prototype = {
+
+        renderList: function() {
+            new LayersListView({collection: this.layersCollection}).render();
+        },
 
         addMeshFromMarker: function(marker, material) {
             // set up the sphere vars
@@ -63,10 +69,13 @@ define([
             this.meshs[marker.cid] = markerMesh;
 
             markerMesh.geometry.dynamic = true;
+
+            marker.set('onScene', true);
         },
 
         removeMeshFromMarker: function(marker) {
             this._removeMesh(marker.cid);
+            marker.set('onScene', false);
         },
 
         _removeMesh: function(cid) {
@@ -75,12 +84,17 @@ define([
             delete this.meshs[cid];
         },
 
-        createLayer: function(name, color) {
-            var layer = new Layer({
-                name : name,
-                color: color
-            });
-            this.layersCollection.add(layer);
+        createLayer: function(name) {
+            var layerId = guid();
+            if (name) {
+                var layer = new Layer({
+                    _id: layerId,
+                    name : name
+                });
+            } else {
+                var layer = new Layer({_id: layerId});
+            }
+            this.layersCollection.create(layer);
             return layer;
         },
 
@@ -149,6 +163,10 @@ define([
             $('#markerTitle').text(marker.getTitle());
             $('#markerDesc').text(marker.getDescription());
             $('#markerModal').modal('show');
+            $('#markerModal .btn-danger').off('click').on('click', function() {
+                marker.destroy();
+                $('#markerModal').modal('hide');
+            });
         }
 
     }
