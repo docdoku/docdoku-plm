@@ -13,8 +13,8 @@ define(function() {
         },
 
         initialize: function() {
-            this.model.bind('destroy', this.remove, this);
-            this.model.bind('change', this.render, this);
+            this.model.on('destroy', this.remove, this);
+            this.model.on('change:editingName change:editingMarkers change:shown', this.render, this);
             this.model.getMarkers().on('add remove reset', this.render, this);
         },
 
@@ -47,14 +47,20 @@ define(function() {
 
         stopEditingName: function() {
             var value = this.input.val();
-            this.model.save({
-                name: value,
-                editingName: false
-            });
+            if (this.model.get("name") != value) {
+                this.model.save({
+                    name: value,
+                    editingName: false
+                });
+            } else {
+                this.model.set('editingName', false);
+            }
         },
 
         stopEditingNameOnEnter: function(e) {
-            if (e.keyCode == 13) this.stopEditingName();
+            if (e.keyCode == 13) {
+                this.input[0].blur();
+            }
         }
 
     });

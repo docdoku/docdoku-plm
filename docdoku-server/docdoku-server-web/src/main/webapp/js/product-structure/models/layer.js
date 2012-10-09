@@ -15,6 +15,10 @@ define([
             editingMarkers: false
         },
 
+        toJSON: function() {
+            return _.pick(this.attributes, 'id', 'name');
+        },
+
         setEditingName: function(editingName) {
             this.set('editingName', editingName);
         },

@@ -23,17 +23,18 @@ define([
         },
 
         addAll: function() {
+            if (this.collection.length > 0) {
+                this.listContainer.empty();
+            }
             this.collection.each(this.addOne, this);
         },
 
         addOne: function(layer) {
-            var layerItemView = new LayerItemView({model: layer});
-
             /* if this is the first layer, remove the empty view */
             if (this.collection.length == 1) {
                 this.listContainer.empty();
             }
-
+            var layerItemView = new LayerItemView({model: layer});
             this.listContainer.prepend(layerItemView.render().el);
         },
 

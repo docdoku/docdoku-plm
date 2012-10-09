@@ -85,14 +85,12 @@ define([
         },
 
         createLayer: function(name) {
-            var layerId = guid();
             if (name) {
                 var layer = new Layer({
-                    _id: layerId,
                     name : name
                 });
             } else {
-                var layer = new Layer({_id: layerId});
+                var layer = new Layer();
             }
             this.layersCollection.create(layer);
             return layer;

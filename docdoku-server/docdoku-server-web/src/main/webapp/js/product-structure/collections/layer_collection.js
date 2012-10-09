@@ -8,7 +8,7 @@ define([
 
         model: Layer,
 
-        localStorage: new Store("plm:layers"),
+        url: "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/layers",
 
         setAllShown: function(allShown) {
             this.each(function(layer) {
