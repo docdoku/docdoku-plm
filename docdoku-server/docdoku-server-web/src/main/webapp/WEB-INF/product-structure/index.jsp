@@ -24,7 +24,7 @@
     <script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
 
     <script src="<%=request.getContextPath()%>/js/lib/date.format.js"></script>
-    <script src="<%=request.getContextPath()%>/js/lib/underscore-1.3.1.min.js"></script>
+    <script src="<%=request.getContextPath()%>/js/lib/underscore-1.4.2.min.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/mustache-0.5.0-dev.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/kumo.js"></script>
     <script src="<%=request.getContextPath()%>/js/lib/jquery-ui-1.8.19.min.js"></script>
