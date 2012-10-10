@@ -14,9 +14,19 @@ define([
             "click a": "showPartMetadata"
         },
 
+        initialize: function() {
+            _.bindAll(this, ["onChangeInput"]);
+        },
+
+        onChangeInput: function(e) {
+            this.$("input").prop("checked", e.currentTarget.checked);
+        },
+
         render: function() {
 
             this.$el.html(this.template({number: this.model.attributes.number}));
+
+            this.$el.children("input").on("change", this.onChangeInput);
 
             if(this.model.isNode()){
                 this.$('label').addClass("isNode");
