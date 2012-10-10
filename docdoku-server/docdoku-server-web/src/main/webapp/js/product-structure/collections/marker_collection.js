@@ -12,10 +12,6 @@ define([
             return this.urlLayer + "/markers";
         },
 
-        initialize: function(models, options) {
-            this.urlLayer = options.urlLayer;
-        },
-
         onScene: function() {
             return this.where({onScene: true});
         },

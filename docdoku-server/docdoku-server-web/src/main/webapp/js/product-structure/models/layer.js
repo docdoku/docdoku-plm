@@ -57,12 +57,20 @@ define([
                 opacity: 1,
                 transparent: true
             });
-            this.markers = new MarkerCollection([], {urlLayer: this.url()});
+            this.markers = new MarkerCollection();
             this.markers.on("add", this._addMarkerToScene, this);
             this.markers.on("remove", this._removeMarkerFromScene, this);
             this.markers.on("reset", this._onResetMarkers, this);
-            this.markers.fetch();
             this.on('remove', this._removeAllMarkersFromScene, this);
+            this.on('change:id', this._setMarkersUrl);
+            if (!this.isNew()) {
+                this._setMarkersUrl();
+                this.markers.fetch();
+            }
+        },
+
+        _setMarkersUrl: function() {
+            this.markers.urlLayer = this.url();
         },
 
         getMarkers: function() {
