@@ -15,18 +15,24 @@ define([
         },
 
         initialize: function() {
-            _.bindAll(this, ["onChangeInput"]);
+            _.bindAll(this, ["onChangeCheckbox"]);
         },
 
-        onChangeInput: function(e) {
-            this.$("input").prop("checked", e.currentTarget.checked);
+        onChangeCheckbox: function(e) {
+            //find all inputs, including children inputs
+            this.$("ul input").prop("checked", e.currentTarget.checked).trigger("change");
+            this.model.filtered = e.currentTarget.checked;
         },
 
         render: function() {
 
             this.$el.html(this.template({number: this.model.attributes.number}));
 
-            this.$el.children("input").on("change", this.onChangeInput);
+            this.input = this.$("input");
+
+            //we can't use the events hash because we only need to bind
+            //the input of this view (right now sub parts are not rendered yet)
+            this.input.on("change", this.onChangeCheckbox);
 
             if(this.model.isNode()){
                 this.$('label').addClass("isNode");

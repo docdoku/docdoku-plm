@@ -22,7 +22,7 @@ window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
 Instance.prototype = {
 
     getRating: function() {
-        return this.part.radius / this.getDistance(sceneManager.camera.position);
+        return this.part.filtered ? this.part.radius / this.getDistance(sceneManager.camera.position) : 0;
     },
 
     getDistance: function(position) {
