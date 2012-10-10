@@ -95,7 +95,6 @@ public class Layer implements Serializable{
         this.configurationItem=pConfigurationItem;
     }
     
-    
     public User getAuthor() {
         return author;
     }
@@ -129,7 +128,6 @@ public class Layer implements Serializable{
         this.name = name;
     }
 
-    
     public int getId() {
         return id;
     }
@@ -149,8 +147,9 @@ public class Layer implements Serializable{
     public void addMarker(Marker marker) {
         this.markers.add(marker);
     }
-    
 
-    
-    
+    public void removeMarker(Marker marker) {
+        this.markers.remove(marker);
+    }
+
 }

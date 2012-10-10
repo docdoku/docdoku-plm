@@ -40,25 +40,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.AccessRightException;
-import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
-import com.docdoku.core.services.ConfigurationItemNotFoundException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.FileAlreadyExistsException;
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.LayerNotFoundException;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.PartMasterAlreadyExistsException;
-import com.docdoku.core.services.PartMasterNotFoundException;
-import com.docdoku.core.services.PartRevisionNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkflowModelNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
@@ -462,6 +444,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         layer.addMarker(marker);
         return marker;
     }
-        
+
+    @Override
+    public void deleteMarker(int pLayerId, int pMarkerId) throws WorkspaceNotFoundException, UserNotActiveException, LayerNotFoundException, UserNotFoundException, AccessRightException, MarkerNotFoundException {
+        Layer layer = new LayerDAO(em).loadLayer(pLayerId);
+        User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
+        Locale locale = new Locale(user.getLanguage());
+        Marker marker = new MarkerDAO(locale, em).loadMarker(pMarkerId);
+
+        if (layer.getMarkers().contains(marker)) {
+            layer.removeMarker(marker);
+            em.flush();
+            new MarkerDAO(locale, em).removeMarker(pMarkerId);
+        } else {
+            throw new MarkerNotFoundException(locale, pMarkerId);
+        }
+
+    }
 
 }

@@ -20,6 +20,8 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.product.Marker;
+import com.docdoku.core.services.MarkerNotFoundException;
+
 import java.util.Locale;
 
 import javax.persistence.EntityManager;
@@ -34,10 +36,23 @@ public class MarkerDAO {
         mLocale = pLocale;
     }
 
-
-
     public void createMarker(Marker pMarker) {
         em.persist(pMarker);
         em.flush();
     }
+
+    public Marker loadMarker(int pId) throws MarkerNotFoundException {
+        Marker marker = em.find(Marker.class, pId);
+        if (marker == null) {
+            throw new MarkerNotFoundException(mLocale, pId);
+        } else {
+            return marker;
+        }
+    }
+
+    public void removeMarker(int pId) throws MarkerNotFoundException {
+        Marker marker = loadMarker(pId);
+        em.remove(marker);
+    }
+
 }

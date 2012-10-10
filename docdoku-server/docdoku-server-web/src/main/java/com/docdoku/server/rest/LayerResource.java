@@ -154,7 +154,12 @@ public class LayerResource {
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
     public Response deleteMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, @PathParam("markerId") int markerId) {
-        return null;
+        try {
+            productService.deleteMarker(layerId, markerId);
+            return Response.status(Response.Status.OK).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
 }
