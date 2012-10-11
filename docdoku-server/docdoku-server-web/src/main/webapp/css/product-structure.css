@@ -189,13 +189,16 @@ select#ata_selector{
 
 #config_spec_container{
     background-image: -webkit-linear-gradient(top, #7A99C1, #2C4361);
-    padding-left: 15px;
+    bottom: -2px;
+    position: absolute;
+    width: 100%;
 }
 
 #config_spec_container span{
     color: white;
     text-shadow: 0px 1px 1px black;
     font-weight: bold;
+    margin-left: 15px;
 }
 
 #context_selector_list{
