@@ -216,6 +216,7 @@
                 <button class="btn header_btn-custom" id="metadata_view_btn"><i class="icon-info-sign"></i></button>
                 <button class="btn header_btn-custom" id="bom_view_btn"><i class="icon-list"></i></button>
             </div>
+            <button class="btn header_btn-custom" id="export_scene_btn"><i class="icon-upload-alt"></i> <b>Export</b></button>
         </div>
 
         <div id="center_container">
@@ -305,6 +306,17 @@
             <a href="#" class="btn cancel">Cancel</a>
             <a href="#" class="btn btn-primary">Save marker</a>
         </div>
+    </div>
+
+    <div class="modal hide fade" id="exportSceneModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3 id="exportSceneTitle">Embed Scene</h3>
+        </div>
+        <div class="modal-body">
+            <textarea type="text" placeholder="Lorem ipsum dolor sit alamet"></textarea>
+        </div>
+
     </div>
 
 </div>
