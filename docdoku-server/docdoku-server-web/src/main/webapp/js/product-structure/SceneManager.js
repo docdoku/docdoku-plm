@@ -34,11 +34,15 @@ SceneManager.prototype = {
         this.animate();
     },
 
-    initExportScene: function(){
+    initExportScene:function () {
 
-           $("#export_scene_btn").click(function(){
-               $("#exportSceneModal").modal('show');
-           });
+        $("#export_scene_btn").click(function () {
+            $("#exportSceneModal").modal('show');
+        });
+
+        $("#exportSceneModal").on("shown",function(){
+            $("#exportSceneModal .modal-body textarea").select();
+        });
 
     },
 

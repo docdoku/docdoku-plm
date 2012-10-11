@@ -314,7 +314,7 @@
             <h3 id="exportSceneTitle">Embed Scene</h3>
         </div>
         <div class="modal-body">
-            <textarea type="text" placeholder="Lorem ipsum dolor sit alamet"></textarea>
+            <textarea type="text" placeholder="">Lorem ipsum dolor sit alamet</textarea>
         </div>
 
     </div>
