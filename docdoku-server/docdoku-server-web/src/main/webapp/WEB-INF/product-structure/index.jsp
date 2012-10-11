@@ -104,7 +104,7 @@
                 </div>
                 <div class="span4">
                     <span class="part_metadata_key">Author :</span>
-                    <span class="part_metadata_value">{{getAuthor}}</span>
+                    <span class="part_metadata_value" id="part_metadata_author"><a>{{getAuthor}} <i class="icon-facetime-video"></i></a></span>
                 </div>
             </div>
         </div>
