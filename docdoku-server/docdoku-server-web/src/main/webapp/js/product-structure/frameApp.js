@@ -1,34 +1,40 @@
 var sceneManager;
 
-window.FrameAppView = Backbone.View.extend({
+define([
+    "collections/part_collection"
+], function (
+    PartCollection
+    ) {
 
-    el: $("#workspace"),
+    var FrameAppView = Backbone.View.extend({
 
-    initialize: function() {
-    	var self = this;
-        sceneManager = new SceneManager();
-        var allParts = new PartCollection();
-        allParts.bind('reset', function() {
-       		self.parseAllParts(allParts.models);
-        });
-        allParts.fetch();
-        sceneManager.init();
-    },
+        el: $("#workspace"),
 
-    parseAllParts: function(parts) {
-    	_.each(parts, this.parsePart, this);
-    },
+        initialize: function() {
+            var self = this;
+            sceneManager = new SceneManager();
+            var allParts = new PartCollection();
+            allParts.bind('reset', function() {
+                self.parseAllParts(allParts.models);
+            });
+            allParts.fetch();
+            sceneManager.init();
+        },
 
-    parsePart: function(part) {
-        if (part.isNode()) {
-        	var subParts = new PartCollection();
-        	subParts.add(part.getComponents());
-        	this.parseAllParts(subParts.models);
+        parseAllParts: function(parts) {
+            _.each(parts, this.parsePart, this);
+        },
+
+        parsePart: function(part) {
+            if (part.isNode()) {
+                var subParts = new PartCollection();
+                subParts.add(part.getComponents());
+                this.parseAllParts(subParts.models);
+            }
         }
-    }
 
-});
+    });
 
-$(document).ready(function() {
-    window.App = new FrameAppView();
+    return FrameAppView;
+
 });

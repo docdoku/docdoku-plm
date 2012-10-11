@@ -210,9 +210,14 @@ html{
 
 #frameContainer {
   margin : 0;
+  padding: 0;
   height: 100%;
   width: 100%;
-  border: 1px black dotted;
+}
+
+#frameContainer canvas {
+    height: 100%;
+    width: 100%;
 }
 
 #info {
