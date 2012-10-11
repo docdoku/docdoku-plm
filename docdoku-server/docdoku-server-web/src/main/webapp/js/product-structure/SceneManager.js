@@ -26,7 +26,7 @@ SceneManager.prototype = {
         this.initControls();
         this.initLights();
         this.initAxes();
-        this.initStats();
+        //this.initStats();
         this.initRenderer();
         this.loadWindowResize();
         this.initLayerManager();
@@ -207,7 +207,7 @@ SceneManager.prototype = {
         });
         this.render();
         this.controls.update();
-        this.stats.update();
+        //this.stats.update();
     },
 
     render: function() {

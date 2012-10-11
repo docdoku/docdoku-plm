@@ -325,7 +325,15 @@
         <div class="modal-body">
             <textarea type="text" placeholder="">Lorem ipsum dolor sit alamet</textarea>
         </div>
+    </div>
 
+    <div class="modal hide fade" id="webRtcModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">hangup</button>
+            <h3></h3>
+        </div>
+        <div class="modal-body">
+        </div>
     </div>
 
 </div>

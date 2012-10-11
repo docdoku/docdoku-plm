@@ -96,7 +96,14 @@ define(function() {
         },
 
         getWebRtcUrlRoom: function() {
-            return "/webRTCRoom?r=1";
+            var getIntFromString = function(str) {
+                var count = 0;
+                for (var i = 0 ; i < str.length ; i++){
+                    count += str.charCodeAt(i)*60*i;
+                }
+                return count;
+            }
+            return "/webRTCRoom?r=" + getIntFromString(this.getAuthor());
         },
 
         getAttributes: function() {
