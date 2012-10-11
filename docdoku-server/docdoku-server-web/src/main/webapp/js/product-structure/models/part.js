@@ -91,6 +91,14 @@ define(function() {
             return this.get('components');
         },
 
+        getAuthor: function() {
+            return this.get('author');
+        },
+
+        getWebRtcUrlRoom: function() {
+            return "/webRTCRoom?r=1";
+        },
+
         getAttributes: function() {
             return this.get('attributes')
         },

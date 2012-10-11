@@ -28,7 +28,8 @@ import java.util.List;
  * @author Florent Garin
  */
 public class PartDTO implements Serializable{
-    
+
+    private String author;
     private String workspaceId;
     private String number;
     private String name;
@@ -137,7 +138,13 @@ public class PartDTO implements Serializable{
     public List<InstanceAttributeDTO> getAttributes() {
         return attributes;
     }
-    
-    
-    
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
 }

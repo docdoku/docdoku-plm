@@ -84,17 +84,27 @@
         <button type="button" class="close" id="part_metadata_close_button">×</button>
         <div class="row">
             <div class="span5">
-                <div class="span5">
+                <div class="span4">
+                    <span class="part_metadata_key">Name :</span>
+                    <span class="part_metadata_value">{{getName}}</span>
+                </div>
+                <div class="span4">
                     <span class="part_metadata_key">Version :</span>
-                    <span class="part_metadata_value" id="part_metadata_version">{{getVersion}}</span>
+                    <span class="part_metadata_value">{{getVersion}}</span>
                 </div>
-                <div class="span5">
+                <div class="span4">
                     <span class="part_metadata_key">Iteration :</span>
-                    <span class="part_metadata_value" id="part_metadata_iteration">{{getIteration}}</span>
+                    <span class="part_metadata_value">{{getIteration}}</span>
                 </div>
-                <div class="span5">
+            </div>
+            <div class="span4">
+                <div class="span4">
                     <span class="part_metadata_key">Description :</span>
-                    <span class="part_metadata_value" id="part_metadata_description">{{getDescription}}</span>
+                    <span class="part_metadata_value">{{getDescription}}</span>
+                </div>
+                <div class="span4">
+                    <span class="part_metadata_key">Author :</span>
+                    <span class="part_metadata_value">{{getAuthor}}</span>
                 </div>
             </div>
         </div>

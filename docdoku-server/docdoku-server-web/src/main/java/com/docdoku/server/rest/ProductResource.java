@@ -123,12 +123,12 @@ public class ProductResource {
         dto.setDescription(pm.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
+        dto.setAuthor(pm.getAuthor().getName());
 
         List<GeometryDTO> lstFiles = new ArrayList<GeometryDTO>();
         List<CADInstanceDTO> lstInstances = new ArrayList<CADInstanceDTO>();
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
         List<PartDTO> components = new ArrayList<PartDTO>();
-
 
         for (CADInstance cadInstance : usageLink.getCadInstances()) {
             lstInstances.add(mapper.map(cadInstance, CADInstanceDTO.class));
