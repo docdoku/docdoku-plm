@@ -53,7 +53,7 @@
 
   function openChannel() {
     console.log("Opening channel.");
-	var location = "ws://${serverName}:8080/webRTCSocket";
+	var location = "ws://${serverName}:8088/webRTCSocket";
     channel = new WebSocket(location);
 	channel.onopen    = onChannelOpened;
 	channel.onmessage = onChannelMessage;
@@ -138,7 +138,7 @@
   function sendMessage(message) {
     var msgString = JSON.stringify(message);
     console.log('C->S: ' + msgString);
-    path = 'http://${serverName}:8080/${PATH}webRTCMessage?r=${roomKey}' + '&u=${me}';
+    path = 'http://${serverName}:${serverPort}/${PATH}webRTCMessage?r=${roomKey}' + '&u=${me}';
     var xhr = new XMLHttpRequest();
     xhr.open('POST', path, true);
     xhr.send(msgString);
