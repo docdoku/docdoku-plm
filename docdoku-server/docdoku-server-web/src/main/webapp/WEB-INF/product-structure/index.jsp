@@ -323,14 +323,14 @@
             <h3 id="exportSceneTitle">Embed Scene</h3>
         </div>
         <div class="modal-body">
-            <textarea type="text" placeholder="">Lorem ipsum dolor sit alamet</textarea>
+            <textarea type="text" placeholder=""><iframe width="640" height="480" src="http://plm.docdoku.net/product-structure/Airbus/A400M/visualization" frameborder="0"></iframe></textarea>
         </div>
     </div>
 
     <div class="modal hide fade" id="webRtcModal">
         <div class="modal-header">
-            <h3></h3>
             <button type="button" class="btn btn-primary" data-dismiss="modal" id="hangup_webrtc_call_btn">hangup</button>
+            <h3></h3>
         </div>
         <div class="modal-body">
         </div>
