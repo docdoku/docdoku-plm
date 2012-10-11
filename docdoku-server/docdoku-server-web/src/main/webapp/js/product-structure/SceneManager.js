@@ -20,6 +20,7 @@ function SceneManager(options) {
 SceneManager.prototype = {
 
     init: function() {
+        this.initExportScene()
         this.initScene();
         this.initCamera();
         this.initControls();
@@ -31,6 +32,18 @@ SceneManager.prototype = {
         this.initLayerManager();
         this.initMarkersModal();
         this.animate();
+    },
+
+    initExportScene:function () {
+
+        $("#export_scene_btn").click(function () {
+            $("#exportSceneModal").modal('show');
+        });
+
+        $("#exportSceneModal").on("shown",function(){
+            $("#exportSceneModal .modal-body textarea").select();
+        });
+
     },
 
     initScene: function() {

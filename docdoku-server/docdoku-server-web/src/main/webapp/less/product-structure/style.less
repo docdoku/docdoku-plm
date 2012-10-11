@@ -82,13 +82,20 @@ body{
 }
 
 #top_controls_container{
-    width: 100%;
+    width: 80%;
     height: 5%;
     padding-top: 20px;
+    position: relative;
 }
 
 #top_controls_container button.active{
     color: white;
+}
+
+#export_scene_btn{
+    top: 20px;
+    right: -15px;
+    position: absolute;
 }
 
 #top_buttons{
@@ -155,7 +162,7 @@ body{
     border: 1px #94ADCC dashed;
 }
 #product_nav_list_container{
-    margin-top: 10px;
+    margin-top: 40px;
     height: 80%;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
@@ -262,4 +269,16 @@ body{
 
 .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
     background-color: #EFF2F7;
+}
+
+#exportSceneModal{
+    width: 400px;
+    height: 200px;
+    margin-left: -200px;
+    margin-top:-100px;
+}
+
+#exportSceneModal textarea{
+    height: 30%;
+    width: 97%;
 }
