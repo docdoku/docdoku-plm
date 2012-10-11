@@ -134,6 +134,10 @@ html{
     margin-top: 10px;
 }
 
+#product_nav_list {
+    width: 100%;
+}
+
 #product_nav_list ul {
     background-color: transparent;
     margin-top: 5px;
@@ -141,6 +145,7 @@ html{
 
 #product_nav_list li {
     margin-left:0px;
+    width: 100%;
 }
 
 #product_nav_list li.active {
