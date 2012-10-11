@@ -208,13 +208,12 @@
             </nav>
         </div>
 
-        <select id="context_selector_list">
-            <option>contexte</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-        </select>
+        <div id="config_spec_container">
+            <span>Config Spec</span>
+            <select id="context_selector_list">
+                <option selected="">Latest</option>
+            </select>
+        </div>
 
     </div>
 

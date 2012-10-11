@@ -187,26 +187,26 @@ select#ata_selector{
     margin-right:0px;
 }
 
+#config_spec_container{
+    background-image: -webkit-linear-gradient(top, #7A99C1, #2C4361);
+    padding-left: 15px;
+}
+
+#config_spec_container span{
+    color: white;
+    text-shadow: 0px 1px 1px black;
+    font-weight: bold;
+}
 
 #context_selector_list{
+    font-size: 13px;
     cursor: pointer;
     margin-left: 0px;
-    color: white;
-    background-image: -webkit-linear-gradient(top, #7A99C1, #2C4361);
-    text-shadow: 0px 1px 0px black;
-    font-weight: bold;
-    display: block;
-    height: 5%;
-    text-transform: capitalize;
     padding-top: 0px;
-    font-size: 15px;
     border: none;
-    background-color: #EFF2F7;
-    width: 100%;
-    -webkit-appearance: none;
-    border-radius: 0px;
-    margin-top: 1px;
-    display:none;
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 50%;
 }
 
 /*
