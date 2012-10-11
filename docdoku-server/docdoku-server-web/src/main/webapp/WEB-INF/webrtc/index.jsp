@@ -4,6 +4,28 @@
 <head>
 <link rel="canonical" href="${roomLink}"/>
 <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
+
+<style type="text/css">
+#local video{
+    z-index: 10;
+    bottom: 0px;
+    position: absolute;
+    right: 0px;
+    height: 30%;
+    width: 20%;
+    opacity: 1;
+}
+
+    #remote{
+        height: 100%;
+        width: 100%;
+        background-color: #CCC;
+        position: absolute;
+        top: 0px;
+        z-index: 9;
+    }
+</style>
+
 </head>
 <body>
 <script type="text/javascript">
