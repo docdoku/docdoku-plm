@@ -329,8 +329,8 @@
 
     <div class="modal hide fade" id="webRtcModal">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">hangup</button>
             <h3></h3>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="hangup_webrtc_call_btn">hangup</button>
         </div>
         <div class="modal-body">
         </div>
