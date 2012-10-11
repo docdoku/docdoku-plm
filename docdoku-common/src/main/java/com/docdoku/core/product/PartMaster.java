@@ -228,6 +228,29 @@ public class PartMaster implements Serializable {
         return workspace == null ? "" : workspace.getId();
     }
     
+    
+    @Override
+    public boolean equals(Object pObj) {
+        if (this == pObj) {
+            return true;
+        }
+        if (!(pObj instanceof PartMaster))
+            return false;
+        PartMaster partM = (PartMaster) pObj;
+        return ((partM.number.equals(number)) && (partM.getWorkspaceId().equals(getWorkspaceId())));
+        
+    }
+ 
+    @Override
+    public int hashCode() {
+        int hash = 1;
+	hash = 31 * hash + getWorkspaceId().hashCode();
+	hash = 31 * hash + number.hashCode();
+	return hash;
+    }
+
+
+    
     @Override
     public String toString() {
         return number;

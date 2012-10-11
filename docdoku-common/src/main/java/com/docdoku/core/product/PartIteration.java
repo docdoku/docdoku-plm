@@ -124,7 +124,9 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
     @OrderColumn(name="COMPONENT_ORDER")
-    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    //@OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    //TODO LAZY vs EAGER ???
+    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(
     inverseJoinColumns={
         @JoinColumn(name="COMPONENT_ID", referencedColumnName="ID")

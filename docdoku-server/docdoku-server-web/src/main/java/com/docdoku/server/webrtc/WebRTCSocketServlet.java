@@ -27,7 +27,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 
-@WebServlet(name = "WebRTCSocketServlet", urlPatterns = {"/webRTCSocketServlet"})
+@WebServlet(name = "WebRTCSocketServlet", urlPatterns = {"/webRTCSocket"})
 public class WebRTCSocketServlet  extends HttpServlet {
 
     private final WebRTCApplication app = new WebRTCApplication();
