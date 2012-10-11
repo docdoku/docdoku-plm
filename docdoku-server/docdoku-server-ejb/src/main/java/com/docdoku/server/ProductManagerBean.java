@@ -79,6 +79,7 @@ import javax.persistence.PersistenceContext;
 import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
 import javax.jws.WebService;
+import javax.persistence.TypedQuery;
 
 
 
