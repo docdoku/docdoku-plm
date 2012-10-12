@@ -97,7 +97,7 @@
                     <span class="part_metadata_value">{{getIteration}}</span>
                 </div>
             </div>
-            <div class="span4">
+            <div class="span3">
                 <div class="span4">
                     <span class="part_metadata_key">Description :</span>
                     <span class="part_metadata_value">{{getDescription}}</span>
@@ -231,30 +231,31 @@
         <div id="center_container">
             <div id="side_controls_container">
                 <div id="navigationMenu">
-                    <div id="moveSpace">
-                        <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-caret-right icon-navigation"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnBottom"><i class="icon-caret-down icon-navigation"></i></a>
-                        <a href="#" class="moveBtn moveBtnCenter"><i class="icon-undo icon-navigation"></i></a>
+                    <div id="navigationMenuContainer">
+                        <div id="moveSpace">
+                            <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-caret-right icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnBottom"><i class="icon-caret-down icon-navigation"></i></a>
+                            <a href="#" class="moveBtn moveBtnCenter"><i class="icon-undo icon-navigation"></i></a>
+                        </div>
+
+                        <div id="moveMap">
+                            <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-caret-right icon-navigation"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnBottom"><i class="icon-caret-down icon-navigation"></i></a>
+                            <a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
+                        </div>
+
+                        <div id="manageMarker">
+                            <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-minus icon-marker-manager"></i></a>
+                            <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-plus icon-marker-manager"></i></a>
+                            <a href="#" class="moveBtn moveBtnCenter"><i id="markerState" class="icon-marker icon-marker-full icon-navigation"></i></a>
+                        </div>
+                        <hr/>
+                        <div id="layer-wrapper"><ul id="layer-header"></ul><nav><ul></ul></nav></div>
                     </div>
-
-                    <div id="moveMap">
-                        <a href="#" class="moveBtnSide moveBtnTop"><i class="icon-caret-up icon-navigation"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-caret-left icon-navigation"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-caret-right icon-navigation"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnBottom"><i class="icon-caret-down icon-navigation"></i></a>
-                        <a href="#" class="moveBtn moveBtnCenter"><i class="icon-fullscreen icon-navigation"></i></a>
-                    </div>
-
-                    <div id="manageMarker">
-                        <a href="#" class="moveBtnSide moveBtnLeft"><i class="icon-minus icon-marker-manager"></i></a>
-                        <a href="#" class="moveBtnSide moveBtnRight"><i class="icon-plus icon-marker-manager"></i></a>
-                        <a href="#" class="moveBtn moveBtnCenter"><i id="markerState" class="icon-marker icon-marker-full icon-navigation"></i></a>
-                    </div>
-
-                    <div id="layer-wrapper"><ul id="layer-header"></ul><nav><ul></ul></nav></div>
-
                 </div>
             </div>
             <div id="scene_container">
