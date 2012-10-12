@@ -20,20 +20,15 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.common.Workspace;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.regex.Pattern;
 
-public class PSServlet extends HttpServlet {
+public class VisualizationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -82,7 +77,7 @@ public class PSServlet extends HttpServlet {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.jsp").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher("/WEB-INF/product-structure/frame.jsp").forward(pRequest, pResponse);
         }
     }
 }

@@ -323,7 +323,7 @@
             <h3 id="exportSceneTitle">Embed Scene</h3>
         </div>
         <div class="modal-body">
-            <textarea type="text" placeholder=""><iframe width="640" height="480" src="http://plm.docdoku.net/product-structure/Airbus/A400M/visualization" frameborder="0"></iframe></textarea>
+            <textarea type="text" placeholder=""><iframe width="640" height="480" src="http://plm.docdoku.net/visualization/Airbus/A400M/" frameborder="0"></iframe></textarea>
         </div>
     </div>
 
