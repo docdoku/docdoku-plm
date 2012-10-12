@@ -254,6 +254,7 @@ select#ata_selector{
 div#layer-wrapper {
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.75);
     border-radius: 8px;
+    margin-top: 260px;
 }
 
 div#layer-wrapper nav {
