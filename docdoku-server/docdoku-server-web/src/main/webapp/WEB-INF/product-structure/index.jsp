@@ -83,7 +83,7 @@
         <h1><i class="icon-cog"></i>{{getNumber}}</h1>
         <button type="button" class="close" id="part_metadata_close_button">×</button>
         <div class="row">
-            <div class="span5">
+            <div class="span3">
                 <div class="span4">
                     <span class="part_metadata_key">Name :</span>
                     <span class="part_metadata_value">{{getName}}</span>
