@@ -10,6 +10,7 @@ define (function() {
         initialize: function() {
             this.webRtcModal = $("#webRtcModal");
             this.webRtcModalBody = this.webRtcModal.find(".modal-body");
+            this.webRtcModalTitle = this.webRtcModal.find("h3");
             _.bindAll(this, ["callAuthor"]);
         },
 
@@ -35,6 +36,7 @@ define (function() {
             var self = this;
             this.webRtcModal.one('shown', function() {
                 self.webRtcModalBody.html("<iframe src=\""+ self.model.getWebRtcUrlRoom() +"\" />");
+                self.webRtcModalTitle.text("Call to " + self.model.getAuthor());
             });
             this.webRtcModal.one('hidden', function() {
                 self.webRtcModalBody.empty();

@@ -88,6 +88,10 @@
         <servlet-class>com.docdoku.server.http.PSServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>VisualizationServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.VisualizationServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>CalendarServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.CalendarServlet</servlet-class>
     </servlet>
@@ -118,6 +122,10 @@
     <servlet-mapping>
         <servlet-name>PSServlet</servlet-name>
         <url-pattern>/product-structure/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VisualizationServlet</servlet-name>
+        <url-pattern>/visualization/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CalendarServlet</servlet-name>

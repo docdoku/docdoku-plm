@@ -19,7 +19,7 @@
     #remote{
         height: 100%;
         width: 100%;
-        background-color: #CCC;
+        background-color: rgba(0,0,0,0.15);
         position: absolute;
         top: 0px;
         z-index: 9;
