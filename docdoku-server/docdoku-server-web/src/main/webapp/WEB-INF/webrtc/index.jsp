@@ -6,23 +6,25 @@
 <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
 
 <style type="text/css">
-#local video{
-    z-index: 10;
-    bottom: 0px;
-    position: absolute;
-    right: 0px;
-    height: 30%;
-    width: 20%;
-    opacity: 1;
-}
+    #card{
+        position:relative;
+    }
+
+    #local{
+        position:absolute;
+        width:100%;
+    }
+
+    #mini{
+        width: 30%;
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        height: 30%;
+    }
 
     #remote{
-        height: 100%;
-        width: 100%;
-        background-color: rgba(0,0,0,0.15);
-        position: absolute;
-        top: 0px;
-        z-index: 9;
+        position: relative;
     }
 </style>
 
