@@ -26,6 +26,7 @@ define([
         },
 
         parsePart: function(part) {
+            part.filtered = true;
             if (part.isNode()) {
                 var subParts = new PartCollection();
                 subParts.add(part.getComponents());
