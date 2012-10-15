@@ -22,6 +22,8 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.common.Workspace;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Set;
@@ -79,10 +81,21 @@ public class PSServlet extends HttpServlet {
             
         }
         else {
+            pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
             pRequest.getRequestDispatcher("/WEB-INF/product-structure/index.jsp").forward(pRequest, pResponse);
         }
+    }
+
+    private static String getUrlRoot(HttpServletRequest pRequest) {
+        URL url = null;
+        try {
+            url = new URL(new URL(pRequest.getRequestURL().toString()),"");
+        } catch (MalformedURLException e) {
+            return null;
+        }
+        return url.toString();
     }
 }
