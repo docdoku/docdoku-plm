@@ -92,7 +92,7 @@ public class PSServlet extends HttpServlet {
     private static String getUrlRoot(HttpServletRequest pRequest) {
         URL url = null;
         try {
-            url = new URL(new URL(pRequest.getRequestURL().toString()),"");
+            url = new URL(new URL(pRequest.getRequestURL().toString()),"/");
         } catch (MalformedURLException e) {
             return null;
         }
