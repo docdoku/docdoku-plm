@@ -96,6 +96,7 @@ define(function() {
         },
 
         getWebRtcUrlRoom: function() {
+            //TODO find a better system for room number
             var getIntFromString = function(str) {
                 var count = 0;
                 for (var i = 0 ; i < str.length ; i++){
