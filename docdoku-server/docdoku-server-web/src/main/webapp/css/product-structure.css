@@ -65,10 +65,6 @@ html{
     height: 28px;
 }
 
-select#ata_selector{
-    width:200px;
-}
-
 #nav_list_controls{
     padding-right: 15px;
     padding-left: 15px;
