@@ -1,15 +1,10 @@
-#navigationMenu {
-    height: 100%;
-    width: 100%;
-}
-
-#navigationMenu a {text-decoration: none;}
-
-#navigationMenuContainer{
+#navigationMenuContainer {
     width:100%;
     height: 276px;
     position: relative;
 }
+
+#navigationMenuContainer a {text-decoration: none;}
 
 #moveSpace,
 #moveMap,
