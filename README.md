@@ -25,3 +25,7 @@ You have a full description of the [Installation Guide](https://github.com/docdo
 ## Coding 
 
 You may use clone or fork the code on GitHub. Thought you can use it with Maven in any IDE, the code is also configured for working with Netbeans without Maven.
+
+## License
+
+GPL version 3
