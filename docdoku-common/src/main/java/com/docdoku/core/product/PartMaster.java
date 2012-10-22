@@ -59,7 +59,7 @@ import javax.persistence.TemporalType;
 @Entity
 public class PartMaster implements Serializable {
 
-    @Column(length = 50)
+    @Column(length = 255)
     @Id
     private String number = "";
     
