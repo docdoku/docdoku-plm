@@ -96,16 +96,18 @@ public class ProductResource {
     @GET
     @Path("{ciId}")
     @Produces("application/json;charset=UTF-8")
-    public PartDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType) {
+    public PartDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = new LatestConfigSpec();
-            PartMaster root = productService.filterProductStructure(ciKey, cs);
-
-            PartUsageLink rootUsageLink = new PartUsageLink();
-            rootUsageLink.setComponent(root);
-
-            return createDTO(rootUsageLink);
+         
+            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink);
+            
+            if (depth==null)
+                return createDTO(rootUsageLink, -1);
+            else
+                return createDTO(rootUsageLink, depth);
+            
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -116,10 +118,11 @@ public class ProductResource {
         return layerResource;
     }
 
-    private PartDTO createDTO(PartUsageLink usageLink) {
+    private PartDTO createDTO(PartUsageLink usageLink, int depth) {
         PartMaster pm = usageLink.getComponent();
         
         PartDTO dto = new PartDTO(pm.getWorkspaceId(), pm.getNumber());
+        dto.setPartUsageLinkId(usageLink.getId());
         dto.setDescription(pm.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
@@ -145,9 +148,13 @@ public class ProductResource {
             for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
                 lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
             }
-            for (PartUsageLink component : partI.getComponents()) {
-                components.add(createDTO(component));
+            if(depth!=0){
+                depth--;
+                for (PartUsageLink component : partI.getComponents()) {
+                    components.add(createDTO(component, depth));
+                }
             }
+            
             dto.setVersion(partI.getPartVersion());
             dto.setIteration(partI.getIteration());
         }

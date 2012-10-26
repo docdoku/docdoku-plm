@@ -55,7 +55,7 @@ public class AddLinkActionListener implements ActionListener {
                     String title = source.getDocMTitle();
                     Version version = source.getVersion();
                     User author = source.getAuthor();
-                    String type = source.getType();
+                    String type = source.getDocumentType();
                     String[] tags = source.getTags();
                     SearchQuery.AbstractAttributeQuery[] attrs = source.getInstanceAttributes();
                     String content = source.getContent();

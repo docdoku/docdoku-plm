@@ -58,7 +58,7 @@ public class SearchAction extends ClientAbstractAction {
                     source.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));          
                     String id = source.getId();
                     String title = source.getDocMTitle();
-                    String type = source.getType();
+                    String type = source.getDocumentType();
                     Version version = source.getVersion();
                     User author = source.getAuthor();
                     String[] tags=source.getTags();

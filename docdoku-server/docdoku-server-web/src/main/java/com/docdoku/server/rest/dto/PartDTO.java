@@ -39,6 +39,7 @@ public class PartDTO implements Serializable{
     private List<GeometryDTO> files;
     private boolean standardPart;
     
+    private int partUsageLinkId;
     private List<PartDTO> components;
     private List<CADInstanceDTO> instances;
     private List<InstanceAttributeDTO> attributes;
@@ -109,6 +110,14 @@ public class PartDTO implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getPartUsageLinkId() {
+        return partUsageLinkId;
+    }
+
+    public void setPartUsageLinkId(int partUsageLinkId) {
+        this.partUsageLinkId = partUsageLinkId;
     }
 
     public void setNumber(String number) {

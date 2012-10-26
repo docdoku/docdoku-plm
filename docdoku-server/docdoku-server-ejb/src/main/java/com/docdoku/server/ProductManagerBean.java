@@ -53,6 +53,7 @@ import com.docdoku.server.dao.MarkerDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.dao.PartMasterDAO;
 import com.docdoku.server.dao.PartRevisionDAO;
+import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.WorkflowModelDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.vault.DataManager;
@@ -109,19 +110,28 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartMaster filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+    public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
-        ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
-        PartMaster root = ci.getDesignItem();
-        em.detach(root);
+        PartUsageLink rootUsageLink;
+        
+        if(partUsageLink==null){
+            ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
+            rootUsageLink = new PartUsageLink();
+            rootUsageLink.setComponent(ci.getDesignItem());
+        }else{
+            rootUsageLink=new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
+        }
+        
+        em.detach(rootUsageLink.getComponent());
 
         if (configSpec instanceof LatestConfigSpec) {
-            filterLatestConfigSpec(root);
+            filterLatestConfigSpec(rootUsageLink.getComponent());
         }
-        return root;
+        return rootUsageLink;
     }
 
     private PartMaster filterLatestConfigSpec(PartMaster root){
+        
         PartRevision partR = root.getLastRevision();
         PartIteration partI = null;
         

@@ -55,7 +55,8 @@ public interface IProductManagerWS{
      * Resolves the product structure identified by the supplied
      * <a href="ConfigurationItemKey.html">ConfigurationItemKey</a>.
      * The resolution is made according to the given
-     * <a href="ConfigSpec.html">ConfigSpec</a>.
+     * <a href="ConfigSpec.html">ConfigSpec</a> and starts at the specified
+     * part usage link if any.
      * 
      * @param ciKey
      * The product structure to resolve
@@ -63,8 +64,14 @@ public interface IProductManagerWS{
      * @param configSpec
      * The rules for the resolution algorithm
      * 
+     * @param partUsageLink
+     * The part usage link id, if null starts from the root part
+     * 
+     * @param depth
+     * The fetch depth
+     * 
      * @return
-     * The resolved product, actually its root part master
+     * The resolved product
      * 
      * @throws ConfigurationItemNotFoundException
      * @throws WorkspaceNotFoundException
@@ -72,8 +79,7 @@ public interface IProductManagerWS{
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      */
-    PartMaster filterProductStructure(ConfigurationItemKey ciKey, ConfigSpec configSpec) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
-    
+    PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException; 
     /**
      * Creates a new product structure.
      * 

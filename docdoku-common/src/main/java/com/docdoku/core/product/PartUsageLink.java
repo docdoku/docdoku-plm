@@ -85,6 +85,11 @@ public class PartUsageLink implements Serializable {
     public PartUsageLink() {
     }
 
+    public int getId() {
+        return id;
+    }    
+    
+
     public double getAmount() {
         return amount;
     }

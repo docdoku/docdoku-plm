@@ -105,7 +105,7 @@ public class SearchDialog extends JDialog implements ActionListener {
         return mSearchPanel.getVersion();
     }
 
-    public String getType() {
+    public String getDocumentType() {
         return mSearchPanel.getType();
     }
     
