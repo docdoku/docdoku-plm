@@ -121,7 +121,8 @@ public class ProductResource {
     private PartDTO createDTO(PartUsageLink usageLink, int depth) {
         PartMaster pm = usageLink.getComponent();
         
-        PartDTO dto = new PartDTO(pm.getWorkspaceId(), pm.getNumber());
+        PartDTO dto = new PartDTO();
+        dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getId());
         dto.setDescription(pm.getDescription());
         dto.setName(pm.getName());
@@ -154,7 +155,7 @@ public class ProductResource {
                     components.add(createDTO(component, depth));
                 }
             }
-            
+            dto.setAssembly(partI.isAssembly());
             dto.setVersion(partI.getPartVersion());
             dto.setIteration(partI.getIteration());
         }

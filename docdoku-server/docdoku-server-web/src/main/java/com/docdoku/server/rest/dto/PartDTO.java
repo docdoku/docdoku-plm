@@ -30,7 +30,6 @@ import java.util.List;
 public class PartDTO implements Serializable{
 
     private String author;
-    private String workspaceId;
     private String number;
     private String name;
     private String version;
@@ -38,6 +37,7 @@ public class PartDTO implements Serializable{
     private String description;
     private List<GeometryDTO> files;
     private boolean standardPart;
+    private boolean assembly;
     
     private int partUsageLinkId;
     private List<PartDTO> components;
@@ -47,8 +47,7 @@ public class PartDTO implements Serializable{
         
     }
     
-    public PartDTO(String workspaceId, String number) {
-        this.workspaceId=workspaceId;
+    public PartDTO(String number) {
         this.number=number;
     }
 
@@ -56,8 +55,12 @@ public class PartDTO implements Serializable{
         return number;
     }
 
-    public String getWorkspaceId() {
-        return workspaceId;
+    public boolean isAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(boolean assembly) {
+        this.assembly = assembly;
     }
 
     public boolean isStandardPart() {
@@ -126,10 +129,6 @@ public class PartDTO implements Serializable{
 
     public void setStandardPart(boolean standardPart) {
         this.standardPart = standardPart;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
     }
 
     public List<CADInstanceDTO> getInstances() {
