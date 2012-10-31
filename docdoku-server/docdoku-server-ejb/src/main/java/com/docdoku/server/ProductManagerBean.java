@@ -117,6 +117,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if(partUsageLink==null){
             ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
             rootUsageLink = new PartUsageLink();
+            rootUsageLink.setId(-1);
             rootUsageLink.setComponent(ci.getDesignItem());
         }else{
             rootUsageLink=new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
