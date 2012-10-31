@@ -114,7 +114,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLink rootUsageLink;
         
-        if(partUsageLink==null){
+        if(partUsageLink==null || partUsageLink==-1){
             ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
             rootUsageLink = new PartUsageLink();
             rootUsageLink.setId(-1);
