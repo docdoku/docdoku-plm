@@ -2,8 +2,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-      <artifactId>docdoku-plm</artifactId>
       <groupId>com.docdoku</groupId>
+      <artifactId>docdoku-plm</artifactId>
       <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>com.docdoku</groupId>
@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>docdoku-common</name>
-    <url>http://www.ow2.org/view/ActivitiesDashboard/DocDoku</url>
+    <url>http://www.docdokuplm.com</url>
     <build>
         <plugins>
             <plugin>
@@ -21,6 +21,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>

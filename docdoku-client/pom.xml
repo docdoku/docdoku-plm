@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-      <artifactId>docdoku-plm</artifactId>
       <groupId>com.docdoku</groupId>
+      <artifactId>docdoku-plm</artifactId>
       <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>com.docdoku</groupId>
@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>docdoku-client</name>
-    <url>http://www.ow2.org/view/ActivitiesDashboard/DocDoku</url>
+    <url>http://www.docdokuplm.com</url>
     <build>
         <plugins>
             <plugin>
@@ -22,6 +22,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>
@@ -34,18 +35,13 @@
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
-        <dependency> 
-            <groupId>org.apache.openejb</groupId> 
-            <artifactId>javaee-api</artifactId> 
-            <version>6.0-4</version> 
-        </dependency>
             
-<!--        <dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>
         </dependency>
-        -->
+        
         
         <dependency>
             <groupId>commons-codec</groupId>
@@ -68,40 +64,31 @@
             <version>2.2.3</version>
         </dependency>
         <dependency>
-            <groupId>com.jyloo</groupId>
+            <groupId>synthetica</groupId>
             <artifactId>synthetica</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/synthetica.jar</systemPath>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.jyloo</groupId>
+            <groupId>synthetica</groupId>
             <artifactId>synthetica-addons</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/syntheticaAddons.jar</systemPath>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.jyloo</groupId>
+            <groupId>synthetica</groupId>
             <artifactId>synthetica-bluemoon</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/syntheticaBlueMoon.jar</systemPath>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.jyloo</groupId>
+            <groupId>synthetica</groupId>
             <artifactId>synthetica-bluemoon-addon</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/syntheticaBlueMoonAddon.jar</systemPath>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>uk.co.mmscomputing</groupId>
             <artifactId>scanner</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/scanner.jar</systemPath>
+            <version>1.0</version>
         </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -109,4 +96,10 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>repo</id>
+            <url>file://${project.basedir}/repo</url>
+        </repository>
+    </repositories>
 </project>
