@@ -385,7 +385,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 			lastPosition.copy( _this.object.position );
 
 		}
-	}
+	};
 
 	// listeners
 
@@ -458,6 +458,8 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
 		}
 
+		document.addEventListener( 'mouseup', mouseup, false );
+
 	}
 
 	function mousemove( event ) {
@@ -503,6 +505,8 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
 		_state = STATE.NONE;
 
+		document.removeEventListener( 'mouseup', mouseup, false );
+
 	}
 
 	function mousewheel(event) {
@@ -538,6 +542,8 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 			mousedown( event );
 
 		}
+
+		document.domElement.addEventListener( 'touchend', mouseup, false );
 	}
 
 	function touchmove( event ) {
@@ -561,11 +567,23 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 		}
 	}
 
+	function touchend( event ) {
+
+		if ( ! _this.enabled ) return;
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		_state = STATE.NONE;
+
+		document.removeEventListener( 'touchend', touchend, false );
+
+	}
+
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
 	this.domElement.addEventListener( 'mousemove', mousemove, false );
 	this.domElement.addEventListener( 'mousedown', mousedown, false );
-	this.domElement.addEventListener( 'mouseup', mouseup, false );
 
 	window.addEventListener( 'keydown', keydown, false );
 	window.addEventListener( 'keyup', keyup, false );
@@ -575,6 +593,4 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
 	this.domElement.addEventListener( 'touchmove', touchmove, false );
 	this.domElement.addEventListener( 'touchstart', touchstart, false );
-	this.domElement.addEventListener( 'touchend', mouseup, false );
-
 };
