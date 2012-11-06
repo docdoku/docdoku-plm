@@ -54,7 +54,7 @@ import javax.xml.ws.soap.MTOM;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 @MTOM
 @Local(IUploadDownloadWS.class)

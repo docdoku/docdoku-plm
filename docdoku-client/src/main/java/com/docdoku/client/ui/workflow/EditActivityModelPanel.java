@@ -71,6 +71,7 @@ public abstract class EditActivityModelPanel extends JPanel implements ActionLis
     
     private void createListener() {
         mTaskModelsList.addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent pE) {
                 int numberOfSelection = mTaskModelsList.getSelectedIndices().length;
                 switch (numberOfSelection) {
@@ -109,6 +110,7 @@ public abstract class EditActivityModelPanel extends JPanel implements ActionLis
         mTaskModelsList.setTask(index,pNewTask);
     }
     
+    @Override
     public void actionPerformed(ActionEvent pAE) {
         String command = pAE.getActionCommand();
         if (command.equals(I18N.BUNDLE.getString("EditTask_button")))

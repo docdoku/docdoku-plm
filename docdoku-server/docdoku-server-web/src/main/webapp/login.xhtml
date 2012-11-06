@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nLogin" basename="com.docdoku.server.localization.index_resource"/>
+            #{i18nLogin['title']}
+        </ui:define>
+        <ui:define name="content">
+            <div class="well" id="login_form_container">
+                <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
+                <h:form>
+                    <p>
+                        <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
+                        <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
+                    </p>
+
+                    <p>
+                        <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
+                        <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
+                    </p>
+
+                    <p id="login_button_container">
+                        <h:commandButton styleClass="btn header_btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
+                    </p>
+
+                    <p>
+                        <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
+                    </p>
+                </h:form>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+</html>

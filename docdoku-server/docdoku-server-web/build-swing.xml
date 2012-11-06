@@ -15,7 +15,7 @@
             <fileset dir="${web.docbase.dir}/apps/lib" includes="**/*.jar" />
         </apply>
 
-        <signjar alias="docdoku4" storepass="changeit">
+        <signjar alias="docdoku6" storepass="changeit">
             <path>
                 <fileset dir="${web.docbase.dir}/apps/lib" includes="**/*.jar" />
             </path>
@@ -46,8 +46,8 @@
             </filelist>
         </apply>
 
-        <signjar jar="${web.docbase.dir}/apps/docdoku-client.jar" alias="docdoku4" storepass="changeit"/>
-        <signjar jar="${web.docbase.dir}/apps/docdoku-common.jar" alias="docdoku4" storepass="changeit"/>
+        <signjar jar="${web.docbase.dir}/apps/docdoku-client.jar" alias="docdoku6" storepass="changeit"/>
+        <signjar jar="${web.docbase.dir}/apps/docdoku-common.jar" alias="docdoku6" storepass="changeit"/>
 
         <apply executable="pack200" parallel="false" dest="${web.docbase.dir}/apps">
             <arg value="-J-Xmx256M"/>

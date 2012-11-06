@@ -50,10 +50,6 @@
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.http.AuthFilter</filter-class>
     </filter>
-<!--    <filter>
-        <filter-name>AdminWorkspaceFilter</filter-name>
-        <filter-class>com.docdoku.server.http.AdminWorkspaceFilter</filter-class>
-    </filter>-->
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/admin/*</url-pattern>
@@ -62,11 +58,6 @@
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/home</url-pattern>
     </filter-mapping>    
-<!--    <filter-mapping>
-        <filter-name>AdminWorkspaceFilter</filter-name>
-        <url-pattern>/admin/workspace/*</url-pattern>
-        <url-pattern>/faces/admin/workspace/*</url-pattern>
-    </filter-mapping>-->
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
         <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>

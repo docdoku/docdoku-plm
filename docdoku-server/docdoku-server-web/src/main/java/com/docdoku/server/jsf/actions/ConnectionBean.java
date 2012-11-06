@@ -19,6 +19,16 @@
  */
 package com.docdoku.server.jsf.actions;
 
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.AccountNotFoundException;
+import com.docdoku.core.services.IUserManagerLocal;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -29,7 +39,12 @@ import javax.servlet.http.HttpSession;
 @ManagedBean(name = "connectionBean")
 @RequestScoped
 public class ConnectionBean {
+    
+    @EJB
+    private IUserManagerLocal userManager;
 
+    private String login;
+    private String password;
 
     public ConnectionBean() {
     }
@@ -41,10 +56,47 @@ public class ConnectionBean {
         HttpSession session = (HttpSession) request.getSession();
         session.removeAttribute("account");
         session.removeAttribute("administeredWorkspaces");
-        session.removeAttribute("regularWorkspaces");               
+        session.removeAttribute("regularWorkspaces");
         request.logout();
         return "/admin/logout.xhtml";
     }
 
-  
+    public String logIn() throws ServletException, AccountNotFoundException {
+        //TODO switch to a more JSF style code
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());     
+        HttpSession session = (HttpSession) request.getSession();
+        request.login(login, password);
+
+        Account account = userManager.getAccount(login);
+        session.setAttribute("account", account);
+
+        Map<String, Workspace> administeredWorkspaces = new HashMap<String, Workspace>();
+        for (Workspace wks : userManager.getAdministratedWorkspaces()) {
+            administeredWorkspaces.put(wks.getId(), wks);
+        }
+        session.setAttribute("administeredWorkspaces", administeredWorkspaces);
+
+        Set<Workspace> regularWorkspaces = new HashSet<Workspace>();
+        regularWorkspaces.addAll(Arrays.asList(userManager.getWorkspaces()));
+        regularWorkspaces.removeAll(administeredWorkspaces.values());
+        session.setAttribute("regularWorkspaces", regularWorkspaces);
+
+        return "/document-management/index.xhtml";
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

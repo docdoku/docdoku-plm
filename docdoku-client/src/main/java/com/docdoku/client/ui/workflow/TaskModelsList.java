@@ -22,17 +22,19 @@ package com.docdoku.client.ui.workflow;
 
 import com.docdoku.core.workflow.TaskModel;
 
+import java.lang.Integer;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 
 public class TaskModelsList extends JList {
 
     private DefaultListModel mTasksListModel = new DefaultListModel();
-    private Map<String, TaskModel> mLabel2Task = new HashMap<String, TaskModel>();
+    private LinkedList<TaskModel> mIndex2Task = new LinkedList<TaskModel>();
 
     public TaskModelsList() {
         setModel(mTasksListModel);
@@ -45,16 +47,14 @@ public class TaskModelsList extends JList {
     }
 
     public void setTask(int pIndex, TaskModel pTask){
-        String label=pTask.getTitle() + "/" + pTask.getWorker();
-        String oldLabel=(String)mTasksListModel.get(pIndex);
-        mLabel2Task.remove(oldLabel);
-        mLabel2Task.put(label,pTask);
+        String label=pTask.getTitle() + "/" + pTask.getWorker().getName();
+        mIndex2Task.set(pIndex,pTask);
         mTasksListModel.set(pIndex,label);
     }
 
     public void setTasks(Collection<TaskModel> pTasks) {
         mTasksListModel.clear();
-        mLabel2Task.clear();
+        mIndex2Task.clear();
         Iterator<TaskModel> iti = pTasks.iterator();
         while (iti.hasNext()) {
             addTask(iti.next());
@@ -62,15 +62,15 @@ public class TaskModelsList extends JList {
     }
 
     public void addTask(TaskModel pTask) {
-        String label=pTask.getTitle() + "/" + pTask.getWorker();
-        mLabel2Task.put(label,pTask);
+        String label=pTask.getTitle() + "/" + pTask.getWorker().getName();
+        mIndex2Task.add(pTask);
         mTasksListModel.addElement(label);
     }
 
     public void removeTask(TaskModel pTask) {
-        String label=pTask.getTitle() + "/" + pTask.getWorker();
-        mLabel2Task.remove(label);
-        mTasksListModel.removeElement(label);
+        int i = mIndex2Task.indexOf(pTask);
+        mIndex2Task.remove(i);
+        mTasksListModel.remove(i);
     }
 
     public void addTask(TaskModel[] pTasks) {
@@ -86,46 +86,50 @@ public class TaskModelsList extends JList {
     }
 
     public void removeSelectedValues() {
-        Object[] selectedValues = super.getSelectedValues();
-        for (Object selectedValue : selectedValues) {
-            mLabel2Task.remove(selectedValue);
-            mTasksListModel.removeElement(selectedValue);
+        int[] selectedIndices = super.getSelectedIndices();
+        for (int selectedIndex : selectedIndices) {
+            mIndex2Task.remove(selectedIndex);
+            mTasksListModel.remove(selectedIndex);
         }
     }
 
     public void moveUpTaskModel(int pSelectedIndex) {
         if (pSelectedIndex > 0) {
             Object selectedObject = mTasksListModel.remove(pSelectedIndex);
-            mTasksListModel.add(--pSelectedIndex,selectedObject);
-            setSelectedIndex(pSelectedIndex);
+            mTasksListModel.add(pSelectedIndex-1,selectedObject);
+            setSelectedIndex(pSelectedIndex-1);
+            
+            TaskModel selectedTask = mIndex2Task.remove(pSelectedIndex);
+            mIndex2Task.add(pSelectedIndex-1,selectedTask);
         }
     }
 
     public void moveDownTaskModel(int pSelectedIndex) {
         if (pSelectedIndex < mTasksListModel.size() - 1) {
             Object selectedObject = mTasksListModel.remove(pSelectedIndex);
-            mTasksListModel.add(++pSelectedIndex,selectedObject);
-            setSelectedIndex(pSelectedIndex);
+            mTasksListModel.add(pSelectedIndex+1,selectedObject);
+            setSelectedIndex(pSelectedIndex+1);
+            
+            TaskModel selectedTask = mIndex2Task.remove(pSelectedIndex);
+            mIndex2Task.add(pSelectedIndex+1,selectedTask);
         }
     }
 
     public TaskModel firstElement(){
-        String label = (String) mTasksListModel.firstElement();
-        return mLabel2Task.get(label);
+        return mIndex2Task.peekFirst();
     }
 
     public TaskModel lastElement(){
-        String label = (String) mTasksListModel.lastElement();
-        return mLabel2Task.get(label);
+        return mIndex2Task.peekLast();
     }
 
     @Override
     public TaskModel[] getSelectedValues() {
-        Object[] selectedValues = super.getSelectedValues();
-        TaskModel[] tasks = new TaskModel[selectedValues.length];
+        int[] selectedIndices = super.getSelectedIndices();
+        TaskModel[] tasks = new TaskModel[selectedIndices.length];
         int i = 0;
-        for (Object selectedValue : selectedValues) {
-            tasks[i++] = mLabel2Task.get(selectedValue);
+        for (int selectedIndex : selectedIndices) {
+            tasks[i++] = mIndex2Task.get(selectedIndex);
         }
         return tasks;
 
