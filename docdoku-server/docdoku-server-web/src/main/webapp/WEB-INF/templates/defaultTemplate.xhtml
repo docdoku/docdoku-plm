@@ -14,9 +14,9 @@
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.css"/>
         <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/common/style.less"/>
 
-        <script src="#{request.contextPath}/js/lib/jquery-1.7.1.min.js"></script>
-        <script src="#{request.contextPath}/js/lib/less-1.2.1.min.js"></script>
-        <script src="#{request.contextPath}/js/lib/bootstrap-2.0.2.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/less-1.2.1.min.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/bootstrap-2.0.2.min.js"></script>
     </h:head>
 
     <h:body>      
@@ -89,7 +89,6 @@
                                                     </c:forEach>
                                                 </ul>
                                             </li>
-
                                             <!-- my products dropdown menu-->
 
                                             <li class="dropdown" id="product_container">
@@ -98,7 +97,7 @@
                                                     #{i18nTemplate['toplinks.product']}
                                                     <span class="caret"></span>
                                                 </a>
-                                                <ul class="dropdown-menu">
+                                                <ul class="dropdown-menu">                                                                                                 
                                                 </ul>
                                             </li>
 

@@ -47,7 +47,7 @@ public class AuthFilter implements Filter {
         Account account = (Account) sessionHTTP.getAttribute("account");
 
         if (account == null) {
-            httpRequest.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            httpRequest.getRequestDispatcher("/faces/login.xhtml").forward(request, response);
         } else {
             chain.doFilter(request, response);
         }

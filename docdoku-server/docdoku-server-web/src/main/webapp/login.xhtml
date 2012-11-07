@@ -13,7 +13,7 @@
         <ui:define name="content">
             <div class="well" id="login_form_container">
                 <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
-                <h:form>
+                <h:form id="login_form">
                     <p>
                         <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
                         <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>

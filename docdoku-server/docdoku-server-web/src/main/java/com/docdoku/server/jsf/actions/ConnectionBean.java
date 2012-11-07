@@ -23,6 +23,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +63,7 @@ public class ConnectionBean {
         return "/admin/logout.xhtml";
     }
 
-    public String logIn() throws ServletException, AccountNotFoundException {
+    public void logIn() throws ServletException, AccountNotFoundException, IOException {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());     
         HttpSession session = (HttpSession) request.getSession();
@@ -81,7 +83,9 @@ public class ConnectionBean {
         regularWorkspaces.removeAll(administeredWorkspaces.values());
         session.setAttribute("regularWorkspaces", regularWorkspaces);
 
-        return "/document-management/index.xhtml";
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        ec.redirect(request.getContextPath() + "/document-management/");
     }
 
     public String getLogin() {

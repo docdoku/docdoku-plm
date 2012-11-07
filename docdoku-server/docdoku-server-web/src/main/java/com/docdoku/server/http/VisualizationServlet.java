@@ -20,16 +20,23 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.services.IProductManagerLocal;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.regex.Pattern;
+import javax.ejb.EJB;
 
 public class VisualizationServlet extends HttpServlet {
 
+    @EJB
+    private IProductManagerLocal productService;
+    
     @Override
     protected void doGet(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
@@ -74,6 +81,14 @@ public class VisualizationServlet extends HttpServlet {
             
         }
         else {
+            List<ConfigurationItem> products = null;
+            try {
+                products = productService.getConfigurationItems(workspaceID);
+            } catch (Exception ex) {
+                //Dropdown menu will not be able to be displayed
+                //TODO log it
+            }
+            pRequest.setAttribute("products", products);
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
