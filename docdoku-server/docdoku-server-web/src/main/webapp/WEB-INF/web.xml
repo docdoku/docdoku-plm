@@ -44,7 +44,7 @@
     </servlet-mapping>
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
-        <location>/WEB-INF/error.jsp</location>
+        <location>/faces/error.xhtml</location>
     </error-page>
     <filter>
         <filter-name>AuthFilter</filter-name>

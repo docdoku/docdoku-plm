@@ -92,7 +92,7 @@ public class VisualizationServlet extends HttpServlet {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/WEB-INF/product-structure/frame.jsp").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher("/faces/product-structure/frame.xhtml").forward(pRequest, pResponse);
         }
     }
 }

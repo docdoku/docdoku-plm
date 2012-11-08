@@ -13,7 +13,6 @@
         
         <div id="page">
             
-            <%@ include file="/WEB-INF/header.jspf" %>
             
             <div id="content">
                 
@@ -37,7 +36,6 @@
                 <h4><fmt:message key="category8.question4"/></h4>
                 <blockquote><p><fmt:message key="category8.answer4"/></p></blockquote>
             </div>
-            <%@ include file="/WEB-INF/footer.jspf" %>
         </div>
         
     </body>
