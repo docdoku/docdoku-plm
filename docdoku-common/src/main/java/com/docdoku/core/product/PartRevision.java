@@ -42,6 +42,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -55,6 +56,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.1, 31/10/11
  * @since   V1.1
  */
+@Table(name="PARTREVISION")
 @IdClass(PartRevisionKey.class)
 @Entity
 public class PartRevision implements Serializable {
@@ -63,7 +65,7 @@ public class PartRevision implements Serializable {
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="PARTMASTER_NUMBER", referencedColumnName="NUMBER"),
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTNUMBER"),
         @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private PartMaster partMaster;
@@ -89,14 +91,14 @@ public class PartRevision implements Serializable {
     private String description;
     
     @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
-    @JoinTable(
+    @JoinTable(name="PARTREVISION_EFFECTIVITY",
     inverseJoinColumns={
         @JoinColumn(name="EFFECTIVITY_ID", referencedColumnName="ID")
     },
     joinColumns={
-        @JoinColumn(name="PARTREVISION_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="PARTREVISION_PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
-        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION")
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+        @JoinColumn(name="VERSION", referencedColumnName="VERSION")
     })
     private Set<Effectivity> effectivities = new HashSet<Effectivity>();
     

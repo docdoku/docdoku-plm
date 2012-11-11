@@ -23,6 +23,7 @@ package com.docdoku.core.product;
 
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -34,6 +35,7 @@ import javax.persistence.TemporalType;
  * @version 1.1, 18/10/11
  * @since   V1.1
  */
+@Table(name="DATEBASEDEFFECTIVITY")
 @Entity
 public class DateBasedEffectivity extends Effectivity{
 

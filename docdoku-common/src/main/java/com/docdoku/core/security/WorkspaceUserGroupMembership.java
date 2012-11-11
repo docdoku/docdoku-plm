@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Class that holds information on how a specific user group belongs to a
@@ -35,6 +36,7 @@ import javax.persistence.ManyToOne;
  * @version 1.1, 08/07/09
  * @since   V1.1
  */
+@Table(name="WORKSPACEUSERGROUPMEMBERSHIP")
 @javax.persistence.IdClass(com.docdoku.core.security.WorkspaceUserGroupMembershipKey.class)
 @javax.persistence.Entity
 public class WorkspaceUserGroupMembership implements Serializable {

@@ -20,6 +20,8 @@
 
 package com.docdoku.core.security;
 
+import javax.persistence.Table;
+
 /**
  * Useful class for adding users to a security group. 
  * Actually, all users belong to, and only to, the "users" group.
@@ -28,6 +30,7 @@ package com.docdoku.core.security;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="USERGROUPMAPPING")
 @javax.persistence.Entity
 public class UserGroupMapping implements java.io.Serializable {
     

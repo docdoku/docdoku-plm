@@ -44,6 +44,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -56,6 +57,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.1, 18/05/11
  * @since   V1.1
  */
+@Table(name="PARTITERATION")
 @IdClass(com.docdoku.core.product.PartIterationKey.class)
 @Entity
 public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration> {
@@ -63,7 +65,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION"),
         @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
@@ -78,22 +80,22 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "GEOMETRY_FULLNAME", referencedColumnName = "FULLNAME")
     },
     joinColumns = {
-        @JoinColumn(name = "PARTITERATION_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
-        @JoinColumn(name = "PARTITERATION_PARTMASTER_NUMBER", referencedColumnName = "PARTMASTER_NUMBER"),
-        @JoinColumn(name = "PARTITERATION_PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
-        @JoinColumn(name = "PARTITERATION_ITERATION", referencedColumnName = "ITERATION")
+        @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+        @JoinColumn(name = "PARTMASTER_PARTNUMBER", referencedColumnName = "PARTMASTER_PARTNUMBER"),
+        @JoinColumn(name = "PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
+        @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
     private List<Geometry> geometries = new LinkedList<Geometry>();
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(name="PARTITERATION_BINARYRESOURCE", inverseJoinColumns = {
+    @JoinTable(name="PARTITERATION_BINRES", inverseJoinColumns = {
         @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
     },
     joinColumns = {
-        @JoinColumn(name = "PARTITERATION_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
-        @JoinColumn(name = "PARTITERATION_PARTMASTER_NUMBER", referencedColumnName = "PARTMASTER_NUMBER"),
-        @JoinColumn(name = "PARTITERATION_PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
-        @JoinColumn(name = "PARTITERATION_ITERATION", referencedColumnName = "ITERATION")
+        @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+        @JoinColumn(name = "PARTMASTER_PARTNUMBER", referencedColumnName = "PARTMASTER_PARTNUMBER"),
+        @JoinColumn(name = "PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
+        @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();    
     
@@ -111,29 +113,29 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
 
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @MapKey(name="name")
-    @JoinTable(
+    @JoinTable(name="PARTITERATION_ATTRIBUTE",
     inverseJoinColumns={
         @JoinColumn(name="INSTANCEATTRIBUTE_ID", referencedColumnName="ID")
     },
     joinColumns={
-        @JoinColumn(name="PARTITERATION_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="PARTITERATION_PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
-        @JoinColumn(name="PARTITERATION_PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
-        @JoinColumn(name="PARTITERATION_ITERATION", referencedColumnName="ITERATION")
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+        @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 
     @OrderColumn(name="COMPONENT_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinTable(
+    @JoinTable(name="PARTITERATION_PARTUSAGELINK",
     inverseJoinColumns={
         @JoinColumn(name="COMPONENT_ID", referencedColumnName="ID")
     },
     joinColumns={
-        @JoinColumn(name="PARTITERATION_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="PARTITERATION_PARTMASTER_NUMBER", referencedColumnName="PARTMASTER_NUMBER"),
-        @JoinColumn(name="PARTITERATION_PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
-        @JoinColumn(name="PARTITERATION_ITERATION", referencedColumnName="ITERATION")
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+        @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
     private List<PartUsageLink> components=new LinkedList<PartUsageLink>();
     

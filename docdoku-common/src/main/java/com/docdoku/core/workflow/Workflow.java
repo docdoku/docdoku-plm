@@ -34,6 +34,7 @@ import javax.persistence.Id;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="WORKFLOW")
 @javax.persistence.Entity
 public class Workflow implements Serializable, Cloneable {
 

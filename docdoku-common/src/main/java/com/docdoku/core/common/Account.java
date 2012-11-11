@@ -22,6 +22,7 @@ package com.docdoku.core.common;
 
 import java.io.Serializable;
 import java.util.*;
+import javax.persistence.Table;
 
 /**
  * The <a href="Account.html">Account</a> class represents a user
@@ -31,6 +32,7 @@ import java.util.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="ACCOUNT")
 @javax.persistence.Entity
 public class Account implements Serializable, Cloneable {
 

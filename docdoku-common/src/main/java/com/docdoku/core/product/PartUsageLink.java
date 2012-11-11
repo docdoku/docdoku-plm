@@ -25,17 +25,18 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.persistence.Table;
 
 /**
  * A link between an assembly represented as
@@ -46,6 +47,7 @@ import javax.persistence.OrderColumn;
  * @version 1.1, 15/10/11
  * @since   V1.1
  */
+@Table(name="PARTUSAGELINK")
 @Entity
 public class PartUsageLink implements Serializable {
 
@@ -61,11 +63,15 @@ public class PartUsageLink implements Serializable {
     private String comment;
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name = "COMPONENT_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+        @JoinColumn(name = "COMPONENT_PARTNUMBER", referencedColumnName = "PARTNUMBER")
+    })
     private PartMaster component;
     
     @OrderColumn(name="PARTSUBSTITUTE_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinTable(
+    @JoinTable(name="PUSAGELINK_PSUBSTITUTELINK",
     inverseJoinColumns={
         @JoinColumn(name="PARTSUBSTITUTE_ID", referencedColumnName="ID")
     },

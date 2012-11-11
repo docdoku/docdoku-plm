@@ -22,6 +22,7 @@
 package com.docdoku.core.product;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
@@ -30,6 +31,7 @@ import javax.persistence.Entity;
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
+@Table(name="LATESTCONFIGSPEC")
 @Entity
 public class LatestConfigSpec extends ConfigSpec{
 

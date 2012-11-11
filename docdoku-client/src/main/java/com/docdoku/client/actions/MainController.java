@@ -142,11 +142,11 @@ public class MainController {
         }
     }
 
-    public DocumentMaster checkIn(DocumentMaster pDocumentMaster) throws Exception {
+    public DocumentMaster checkInDocument(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Checking In document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.checkIn(pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.checkInDocument(pDocumentMaster.getKey()));
             MainModel.getInstance().updater.checkIn(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -159,11 +159,11 @@ public class MainController {
         }
     }
 
-    public DocumentMaster checkOut(DocumentMaster pDocumentMaster) throws Exception {
+    public DocumentMaster checkOutDocument(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Checking Out document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.checkOut(pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.checkOutDocument(pDocumentMaster.getKey()));
             MainModel.getInstance().updater.checkOut(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -176,11 +176,11 @@ public class MainController {
         }
     }
 
-    public DocumentMaster undoCheckOut(DocumentMaster pDocumentMaster) throws Exception {
+    public DocumentMaster undoCheckOutDocument(DocumentMaster pDocumentMaster) throws Exception {
         try {
             System.out.println("Undoing Check Out document master " + pDocumentMaster);
             DocumentMaster newDocumentMaster;
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.undoCheckOut(pDocumentMaster.getKey()));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.undoCheckOutDocument(pDocumentMaster.getKey()));
             MainModel.getInstance().updater.undoCheckOut(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {

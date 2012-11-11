@@ -22,7 +22,6 @@ package com.docdoku.core.workflow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedList;
 import javax.persistence.*;
 
 /**
@@ -34,6 +33,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="SERIALACTIVITYMODEL")
 @Entity
 public class SerialActivityModel extends ActivityModel {
 

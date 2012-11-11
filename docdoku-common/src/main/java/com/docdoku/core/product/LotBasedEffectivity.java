@@ -22,6 +22,7 @@
 package com.docdoku.core.product;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * LotBasedEffectivity indicates that an item is effective while a
@@ -31,6 +32,7 @@ import javax.persistence.Entity;
  * @version 1.1, 18/10/11
  * @since   V1.1
  */
+@Table(name="LOTBASEDEFFECTIVITY")
 @Entity
 public class LotBasedEffectivity extends Effectivity{
 

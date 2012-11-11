@@ -174,7 +174,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      */
-    PartRevision undoCheckOut(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    PartRevision undoCheckOutPart(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     
     /**
      * Checks in the supplied part revision so its latest iteration,
@@ -193,7 +193,7 @@ public interface IProductManagerWS{
      * @throws AccessRightException
      * @throws NotAllowedException
      */
-    PartRevision checkIn(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
+    PartRevision checkInPart(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
     
     /**
      * Creates a <a href="Geometry.html">Geometry</a> file,

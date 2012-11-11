@@ -20,9 +20,9 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * A concrete implementation of a subscription.
@@ -33,6 +33,7 @@ import javax.persistence.Entity;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="ITERATIONCHANGESUBSCRIPTION")
 @Entity
 public class IterationChangeSubscription extends Subscription{
     

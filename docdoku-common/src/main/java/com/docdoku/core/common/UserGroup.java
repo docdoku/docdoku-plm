@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 /**
  * Class which gathers users in a workspace context.
@@ -36,6 +37,7 @@ import javax.persistence.ManyToMany;
  * @version 1.1, 8/07/09
  * @since   V1.1
  */
+@Table(name="USERGROUP")
 @javax.persistence.IdClass(com.docdoku.core.common.UserGroupKey.class)
 @javax.persistence.Entity
 public class UserGroup implements Serializable, Cloneable {
@@ -52,7 +54,7 @@ public class UserGroup implements Serializable, Cloneable {
     private Workspace workspace;
 
     @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(
+    @JoinTable(name="USERGROUP_USER",
     inverseJoinColumns={
         @JoinColumn(name="USER_LOGIN", referencedColumnName="LOGIN"),
        @JoinColumn(name="USER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")

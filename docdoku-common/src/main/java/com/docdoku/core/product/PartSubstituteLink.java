@@ -24,15 +24,16 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.Table;
 
 /**
  * This class is related to a <a href="PartUsageLink.html">PartUsageLink</a>
@@ -42,6 +43,7 @@ import javax.persistence.OrderColumn;
  * @version 1.1, 16/10/11
  * @since   V1.1
  */
+@Table(name="PARTSUBSTITUTELINK")
 @Entity
 public class PartSubstituteLink implements Serializable {
 
@@ -52,6 +54,10 @@ public class PartSubstituteLink implements Serializable {
     private String comment;
     
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumns({
+        @JoinColumn(name = "SUBSTITUTE_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
+        @JoinColumn(name = "SUBSTITUTE_PARTNUMBER", referencedColumnName = "PARTNUMBER")
+    })
     private PartMaster substitute;
 
     @OrderColumn(name = "CADINSTANCE_ORDER")

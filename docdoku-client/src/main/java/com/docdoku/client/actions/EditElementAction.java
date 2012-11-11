@@ -129,7 +129,7 @@ public class EditElementAction extends ClientAbstractAction {
                     public void run() {
                         try {
                             mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                            final DocumentMaster newDocM = MainController.getInstance().checkOut(docM);
+                            final DocumentMaster newDocM = MainController.getInstance().checkOutDocument(docM);
                             FileIO.rmDir(Config.getCheckOutFolder(newDocM));
                             for (BinaryResource remoteFile : newDocM.getLastIteration().getAttachedFiles()) {
                                 try {

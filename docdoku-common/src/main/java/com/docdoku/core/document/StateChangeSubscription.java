@@ -20,9 +20,9 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Subscription on the event that is triggered when the state of the workflow
@@ -32,6 +32,7 @@ import javax.persistence.Entity;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="STATECHANGESUBSCRIPTION")
 @Entity
 public class StateChangeSubscription extends Subscription{
     

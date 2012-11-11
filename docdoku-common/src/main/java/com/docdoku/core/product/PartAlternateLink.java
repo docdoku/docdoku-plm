@@ -49,7 +49,7 @@ public class PartAlternateLink implements Serializable {
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="ALTERNATE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="ALTERNATE_NUMBER", referencedColumnName="NUMBER")})
+        @JoinColumn(name="ALTERNATE_PARTNUMBER", referencedColumnName="PARTNUMBER")})
     private PartMaster alternate;
 
 
