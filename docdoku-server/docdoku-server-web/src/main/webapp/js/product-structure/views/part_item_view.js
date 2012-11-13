@@ -8,7 +8,7 @@ define([
 
         tagName:'li',
 
-        template: _.template("<input type='checkbox' value=''><a href='#'><label class='checkbox'><%= number %></label></a>"),
+        template: _.template("<input type='checkbox' value=''><a href='#'><label class='checkbox'><%= number %> (<%= count %>)</label></a>"),
 
         events: {
             "click a": "showPartMetadata"
@@ -26,7 +26,7 @@ define([
 
         render: function() {
 
-            this.$el.html(this.template({number: this.model.attributes.number}));
+            this.$el.html(this.template({number: this.model.attributes.number, count: this.model.attributes.instances.length}));
 
             this.input = this.$("input");
 
