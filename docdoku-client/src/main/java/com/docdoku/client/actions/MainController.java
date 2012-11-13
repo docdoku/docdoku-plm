@@ -46,7 +46,6 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.ProgressMonitorFileDataSource;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
-import com.sun.xml.ws.developer.JAXWSProperties;
 import java.awt.Component;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -282,7 +281,7 @@ public class MainController {
         try {
             Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
             try {
-                if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                     mFileService.uploadToDocument(model.getWorkspace().getId(), pDocument.getDocumentMasterId(), pDocument.getDocumentMasterVersion(), pDocument.getIteration(), pLocalFile.getName(), data);
                 } else {
                     //workaround mode
@@ -301,9 +300,9 @@ public class MainController {
                 }
                 
                 //error encountered, try again, workaround mode
-                if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                     System.out.println("Disabling chunked mode");
-                    ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
+                    ctxt.remove(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
                     uploadFileWithServlet(pParent, pLocalFile, getServletURL(pDocument, pLocalFile));
                 } else {
                     //we were already not using the chunked mode
@@ -337,7 +336,7 @@ public class MainController {
         try {
             Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
             try {
-                if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                     mFileService.uploadToTemplate(model.getWorkspace().getId(), pTemplate.getId(), pLocalFile.getName(), data);
                 } else {
                     //workaround mode
@@ -349,9 +348,9 @@ public class MainController {
                 }
                 //error encountered, try again, workaround mode
 
-                if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                     System.out.println("Disabling chunked mode");
-                    ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
+                    ctxt.remove(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
                     uploadFileWithServlet(pParent, pLocalFile, getServletURL(pTemplate, pLocalFile));
                 } else {
                     //we were already not using the chunked mode

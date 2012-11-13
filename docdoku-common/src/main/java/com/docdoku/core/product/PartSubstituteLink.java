@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,6 +52,8 @@ public class PartSubstituteLink implements Serializable {
     @Id
     private int id;
     private String referenceDescription;
+    
+    @Column(name="COMMENTDATA")
     private String comment;
     
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

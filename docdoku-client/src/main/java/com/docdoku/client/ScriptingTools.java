@@ -20,10 +20,10 @@
 
 package com.docdoku.client;
 
+import com.docdoku.client.data.Config;
 import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.services.IUploadDownloadWS;
-import com.sun.xml.ws.developer.JAXWSProperties;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class ScriptingTools {
         UploadDownloadService service = new UploadDownloadService(new URL(url),new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
         IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class,feature);
         Map context = ((BindingProvider)proxy).getRequestContext();
-        context.put(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);
+        context.put(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);
         context.put( BindingProvider.USERNAME_PROPERTY, login);
         context.put( BindingProvider.PASSWORD_PROPERTY, password);
         return proxy;

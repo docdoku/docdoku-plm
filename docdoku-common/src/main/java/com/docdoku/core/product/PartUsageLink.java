@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -60,6 +61,8 @@ public class PartUsageLink implements Serializable {
     private String unit;
     
     private String referenceDescription;
+    
+    @Column(name="COMMENTDATA")
     private String comment;
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)

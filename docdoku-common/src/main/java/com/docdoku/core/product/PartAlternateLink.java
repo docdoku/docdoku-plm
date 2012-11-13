@@ -20,6 +20,7 @@
 package com.docdoku.core.product;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -44,6 +45,8 @@ public class PartAlternateLink implements Serializable {
 
     
     private String referenceDescription;
+    
+    @Column(name="COMMENTDATA")
     private String comment;
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)

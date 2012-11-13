@@ -38,6 +38,8 @@ public class Config {
 
     private static URL sHTTPCodebase;
 
+    public static final String HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
+    
     public final static int CHUNK_SIZE = 1024*8;
     public final static int BUFFER_CAPACITY = 1024*32;
     public final static File LOCAL_TEMP_FOLDER = new File(System.getProperty("java.io.tmpdir"),"docdoku");
