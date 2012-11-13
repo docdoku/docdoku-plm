@@ -32,11 +32,8 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.CADInstanceDTO;
-import com.docdoku.server.rest.dto.ConfigurationItemDTO;
-import com.docdoku.server.rest.dto.GeometryDTO;
-import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.PartDTO;
+import com.docdoku.server.rest.dto.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -166,5 +163,77 @@ public class ProductResource {
         dto.setAttributes(lstAttributes);
         dto.setComponents(components);
         return dto;
+    }
+
+    @GET
+    @Path("{ciId}/instances")
+    @Produces("application/json;charset=UTF-8")
+    public ArrayList<InstanceDTO> getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
+        try {
+
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+            ConfigSpec cs = new LatestConfigSpec();
+
+            String[] partUsageIdsString = path.split("-");
+            ArrayList<Integer> usageLinksPath = new ArrayList<Integer>();
+
+            for (int i = 0; i < partUsageIdsString.length; i++) {
+                usageLinksPath.add(Integer.parseInt(partUsageIdsString[i]));
+            }
+
+            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinksPath.get(0));
+
+            usageLinksPath.remove(0);
+
+            ArrayList<InstanceDTO> instancesDTO = getInstancesDTO(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinksPath);
+
+            return instancesDTO;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    public ArrayList<InstanceDTO> getInstancesDTO(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, ArrayList<Integer> filterPath) {
+
+        ArrayList<InstanceDTO> instancesDTO = new ArrayList<InstanceDTO>();
+
+        PartMaster pm = usageLink.getComponent();
+        PartRevision partR = pm.getLastRevision();
+        PartIteration partI = partR.getLastIteration();
+
+        String partIterationId = new StringBuilder().append(pm.getNumber())
+                .append("-")
+                .append(partR.getVersion())
+                .append("-")
+                .append(partI.getIteration()).toString();
+
+        for (CADInstance instance : usageLink.getCadInstances()) {
+
+            //compute absolutes values
+            double atx = tx + instance.getTx();
+            double aty = ty + instance.getTy();
+            double atz = tz + instance.getTz();
+            double arx = rx + instance.getRx();
+            double ary = ry + instance.getRy();
+            double arz = rz + instance.getRz();
+
+            if (partI.getGeometries().size() > 0) {
+                instancesDTO.add(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz));
+            } else {
+                for (PartUsageLink component : partI.getComponents()) {
+                    if (filterPath.isEmpty()) {
+                        instancesDTO.addAll(getInstancesDTO(component, atx, aty, atz, arx, ary, arz, filterPath));
+                    } else if (component.getId() == filterPath.get(0)) {
+                        ArrayList<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filterPath);
+                        copyWithoutCurrentId.remove(0);
+                        instancesDTO.addAll(getInstancesDTO(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId));
+                    }
+                }
+            }
+
+        }
+
+        return instancesDTO;
     }
 }
