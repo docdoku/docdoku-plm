@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.docdoku.client;
 
 import com.docdoku.client.data.Config;
@@ -35,53 +34,61 @@ import javax.xml.ws.soap.MTOMFeature;
  * @author Florent GARIN
  */
 public class ScriptingTools {
-    
-    public final static String DEFAULT_DOCUMENT_WSDL_LOCATION="http://localhost:8080/services/document?wsdl";
-    public final static String DEFAULT_PRODUCT_WSDL_LOCATION="http://localhost:8080/services/product?wsdl";   
-    public final static String DEFAULT_FILE_MANAGER_WSDL_LOCATION="http://localhost:8080/services/UploadDownload?wsdl";
-    
-    
-    private ScriptingTools(){}
-    
-    public static IDocumentManagerWS createDocumentService(String url, String login, String password) throws MalformedURLException, Exception{
-        DocumentService service = new DocumentService(new URL(url),new javax.xml.namespace.QName("http://server.docdoku.com/", "DocumentManagerBeanService"));
-        IDocumentManagerWS port= service.getPort(IDocumentManagerWS.class);
-        ((BindingProvider)port).getRequestContext().put( BindingProvider.USERNAME_PROPERTY, login);
-        ((BindingProvider)port).getRequestContext().put( BindingProvider.PASSWORD_PROPERTY, password);
-     
+
+    public final static String DEFAULT_DOCUMENT_WSDL_LOCATION = "http://localhost:8080/services/document?wsdl";
+    public final static String DEFAULT_PRODUCT_WSDL_LOCATION = "http://localhost:8080/services/product?wsdl";
+    public final static String DEFAULT_FILE_MANAGER_WSDL_LOCATION = "http://localhost:8080/services/UploadDownload?wsdl";
+
+    static {
+        String version = System.getProperty("java.version"); 
+        if (version.startsWith("1.7")) {
+            Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE = Config.JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE;        
+        } else {
+            Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE = Config.JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE;
+        }
+    }
+    private ScriptingTools() {
+        
+    }
+
+    public static IDocumentManagerWS createDocumentService(String url, String login, String password) throws MalformedURLException, Exception {
+        DocumentService service = new DocumentService(new URL(url), new javax.xml.namespace.QName("http://server.docdoku.com/", "DocumentManagerBeanService"));
+        IDocumentManagerWS port = service.getPort(IDocumentManagerWS.class);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+
         return port;
     }
 
-    public static IProductManagerWS createProductService(String url, String login, String password) throws MalformedURLException, Exception{
-        ProductService service = new ProductService(new URL(url),new javax.xml.namespace.QName("http://server.docdoku.com/", "ProductManagerBeanService"));
-        IProductManagerWS port= service.getPort(IProductManagerWS.class);
-        ((BindingProvider)port).getRequestContext().put( BindingProvider.USERNAME_PROPERTY, login);
-        ((BindingProvider)port).getRequestContext().put( BindingProvider.PASSWORD_PROPERTY, password);
-     
+    public static IProductManagerWS createProductService(String url, String login, String password) throws MalformedURLException, Exception {
+        ProductService service = new ProductService(new URL(url), new javax.xml.namespace.QName("http://server.docdoku.com/", "ProductManagerBeanService"));
+        IProductManagerWS port = service.getPort(IProductManagerWS.class);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+
         return port;
-    }    
-    
-    public static IUploadDownloadWS createFileManagerService(String url, String login, String password) throws MalformedURLException{
+    }
+
+    public static IUploadDownloadWS createFileManagerService(String url, String login, String password) throws MalformedURLException {
         MTOMFeature feature = new MTOMFeature();
-        UploadDownloadService service = new UploadDownloadService(new URL(url),new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
-        IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class,feature);
-        Map context = ((BindingProvider)proxy).getRequestContext();
+        UploadDownloadService service = new UploadDownloadService(new URL(url), new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
+        IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class, feature);
+        Map context = ((BindingProvider) proxy).getRequestContext();
         context.put(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);
-        context.put( BindingProvider.USERNAME_PROPERTY, login);
-        context.put( BindingProvider.PASSWORD_PROPERTY, password);
+        context.put(BindingProvider.USERNAME_PROPERTY, login);
+        context.put(BindingProvider.PASSWORD_PROPERTY, password);
         return proxy;
     }
-    
-    public static IProductManagerWS createProductService(String login, String password) throws MalformedURLException, Exception{
-        return createProductService(DEFAULT_PRODUCT_WSDL_LOCATION,login,password);
-    }
-    
-    public static IDocumentManagerWS createDocumentService(String login, String password) throws MalformedURLException, Exception{
-        return createDocumentService(DEFAULT_DOCUMENT_WSDL_LOCATION,login,password);
+
+    public static IProductManagerWS createProductService(String login, String password) throws MalformedURLException, Exception {
+        return createProductService(DEFAULT_PRODUCT_WSDL_LOCATION, login, password);
     }
 
-    public static IUploadDownloadWS createFileManagerService(String login, String password) throws MalformedURLException, Exception{
-        return createFileManagerService(DEFAULT_FILE_MANAGER_WSDL_LOCATION,login,password);
+    public static IDocumentManagerWS createDocumentService(String login, String password) throws MalformedURLException, Exception {
+        return createDocumentService(DEFAULT_DOCUMENT_WSDL_LOCATION, login, password);
     }
-    
+
+    public static IUploadDownloadWS createFileManagerService(String login, String password) throws MalformedURLException, Exception {
+        return createFileManagerService(DEFAULT_FILE_MANAGER_WSDL_LOCATION, login, password);
+    }
 }

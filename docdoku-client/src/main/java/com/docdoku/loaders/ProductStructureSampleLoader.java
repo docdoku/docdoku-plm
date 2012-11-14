@@ -44,6 +44,8 @@ import com.docdoku.core.services.UserNotFoundException;
 import com.docdoku.core.services.WorkflowModelNotFoundException;
 import com.docdoku.core.services.WorkspaceNotFoundException;
 import java.io.Console;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -69,10 +71,67 @@ public class ProductStructureSampleLoader {
         fm = ScriptingTools.createFileManagerService(serverURL + "/services/UploadDownload?wsdl", login, password);
 
         System.out.println("importing data...");
-        createBikeSampleProduct();
+        //createBikeSampleProduct();
+        createBuildingSampleProduct();
         System.out.println("...done!");
     }
 
+    private static void createBuildingSampleProduct() throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, PartRevisionNotFoundException, UserNotActiveException, FileAlreadyExistsException, IOException {
+/*
+        PartMaster rootEDF = pm.createPartMaster(workspace, "EDF", "EDF", "", false, null, "created by loader");
+        pm.createConfigurationItem(workspace, "EDF", "EDF Building", "EDF");
+
+        PartMaster componentM = pm.createPartMaster(workspace, "Building-EDF", "", "", false, null, "");
+        List<PartUsageLink> subParts = new ArrayList<PartUsageLink>();
+        PartUsageLink link = new PartUsageLink();
+        link.setAmount(1);
+        link.setComponent(componentM);
+        List<CADInstance> cads = new ArrayList<CADInstance>();
+        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D, CADInstance.Positioning.ABSOLUTE));
+        link.setCadInstances(cads);
+        subParts.add(link);
+
+        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "EDF"), "A"), 1), "created by loader", PartIteration.Source.MAKE, subParts, null);
+
+
+        PartRevision componentR = componentM.getLastRevision();
+        PartIteration componentI = componentR.getLastIteration();
+
+        List<InstanceAttribute> attrs = new ArrayList<InstanceAttribute>();
+        InstanceNumberAttribute instanceAttribute = new InstanceNumberAttribute("radius", 9000000000f);
+        attrs.add(instanceAttribute);
+        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "Building-EDF"), "A"), 1), "created by loader", PartIteration.Source.MAKE, null, attrs);
+
+
+        URL jsonURL = new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/EDF/EDF.js").toURI().toURL();
+        URL binURL = new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/EDF/EDF.bin").toURI().toURL();
+
+        DataHandler dh = new DataHandler(jsonURL);
+        fm.uploadGeometryToPart(workspace, "Building-EDF", "A", 1, "EDF.js", 0, dh);
+
+        dh = new DataHandler(binURL);
+        fm.uploadToPart(workspace, "Building-EDF", "A", 1, "EDF.bin", dh);
+        */
+        uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/EDF/"),"Building-EDF", "A", 1);
+
+    }
+    
+            
+    private static void uploadMaterials(File folder, String partNumber, String partVersion, int iteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException{
+        String[] mats = folder.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String name) {
+                return name.endsWith(".jpg");
+            }
+        });
+        
+        for(String mat:mats){
+            URL matURL = new File(folder.getAbsolutePath() + File.separator + mat).toURI().toURL();
+            DataHandler dh = new DataHandler(matURL);
+            fm.uploadToPart(workspace, partNumber, partVersion, iteration, mat, dh);
+        }
+    }
+    
     private static void createBikeSampleProduct() throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, PartRevisionNotFoundException, UserNotActiveException, FileAlreadyExistsException, IOException {
 
         PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader");

@@ -38,7 +38,10 @@ public class Config {
 
     private static URL sHTTPCodebase;
 
-    public static final String HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
+    
+    public static String HTTP_CLIENT_STREAMING_CHUNK_SIZE;
+    public final static String JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";    
+    public final static String JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.ws.transport.http.client.streaming.chunk.size";
     
     public final static int CHUNK_SIZE = 1024*8;
     public final static int BUFFER_CAPACITY = 1024*32;
