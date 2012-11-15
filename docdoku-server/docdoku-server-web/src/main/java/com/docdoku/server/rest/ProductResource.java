@@ -101,7 +101,7 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = new LatestConfigSpec();
          
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink);
+            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
             
             if (depth==null)
                 return createDTO(rootUsageLink, -1);
