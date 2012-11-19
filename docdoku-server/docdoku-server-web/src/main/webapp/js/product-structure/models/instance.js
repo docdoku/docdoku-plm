@@ -1,4 +1,4 @@
-window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
+window.Instance = function(partIteration, tx, ty, tz, rx, ry, rz) {
 
     this.position = {
         x: tx,
@@ -13,7 +13,7 @@ window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
     };
 
     this.levelGeometry = null;
-    this.part = part;
+    this.partIteration = partIteration;
     this.mesh = null;
     this.idle = true;
 
@@ -22,7 +22,7 @@ window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
 Instance.prototype = {
 
     getRating: function() {
-        return this.part.filtered ? this.part.radius / this.getDistance(sceneManager.camera.position) : 0;
+        return this.partIteration.radius / this.getDistance(sceneManager.camera.position);
     },
 
     getDistance: function(position) {
@@ -34,14 +34,14 @@ Instance.prototype = {
      */
     update: function() {
 
-        if (this.idle && this.part.idle) {
+        if (this.idle && this.partIteration.idle) {
 
             this.idle = false;
-            this.part.idle = false;
+            this.partIteration.idle = false;
 
             var rating = this.getRating();
             //get the level corresponding of this rating
-            var levelGeometry = this.part.getLevelGeometry(rating);
+            var levelGeometry = this.partIteration.getLevelGeometry(rating);
 
             //if we need to switch geometry
             if (this.needSwitch(levelGeometry)) {
@@ -50,12 +50,12 @@ Instance.prototype = {
 
                 this.switchTo(levelGeometry, function() {
                     self.idle = true;
-                    self.part.idle = true;
+                    self.partIteration.idle = true;
                 });
 
             } else {
                 this.idle = true;
-                this.part.idle = true;
+                this.partIteration.idle = true;
             }
 
         }

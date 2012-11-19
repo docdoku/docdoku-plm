@@ -110,10 +110,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
+    public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLink rootUsageLink;
-        
+
         if(partUsageLink==null || partUsageLink==-1){
             ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
             rootUsageLink = new PartUsageLink();
@@ -126,12 +126,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         em.detach(rootUsageLink.getComponent());
 
         if (configSpec instanceof LatestConfigSpec) {
-            filterLatestConfigSpec(rootUsageLink.getComponent());
+            if (depth == null) {
+                filterLatestConfigSpec(rootUsageLink.getComponent(), -1);
+            } else {
+                filterLatestConfigSpec(rootUsageLink.getComponent(), depth);
+            }
         }
         return rootUsageLink;
     }
 
-    private PartMaster filterLatestConfigSpec(PartMaster root){
+    private PartMaster filterLatestConfigSpec(PartMaster root, int depth){
         
         PartRevision partR = root.getLastRevision();
         PartIteration partI = null;
@@ -147,17 +151,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         
         if(partI !=null){
-            for(PartUsageLink usageLink:partI.getComponents()){
-                filterLatestConfigSpec(usageLink.getComponent());
-                
-                for(PartSubstituteLink subLink:usageLink.getSubstitutes()){
-                    filterLatestConfigSpec(subLink.getSubstitute());
+            if (depth != 0) {
+                depth--;
+                for(PartUsageLink usageLink:partI.getComponents()){
+                    filterLatestConfigSpec(usageLink.getComponent(), depth);
+
+                    for(PartSubstituteLink subLink:usageLink.getSubstitutes()){
+                        filterLatestConfigSpec(subLink.getSubstitute(), 0);
+                    }
                 }
             }
         }
         
         for(PartAlternateLink alternateLink:root.getAlternates()){
-            filterLatestConfigSpec(alternateLink.getAlternate());
+            filterLatestConfigSpec(alternateLink.getAlternate(), 0);
         }
         return root;
     }

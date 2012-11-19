@@ -93,12 +93,12 @@ public class ProductResource {
     @GET
     @Path("{ciId}")
     @Produces("application/json;charset=UTF-8")
-    public PartDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
+    public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = new LatestConfigSpec();
          
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink);
+            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
             
             if (depth==null)
                 return createDTO(rootUsageLink, -1);
@@ -115,34 +115,26 @@ public class ProductResource {
         return layerResource;
     }
 
-    private PartDTO createDTO(PartUsageLink usageLink, int depth) {
+    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) {
         PartMaster pm = usageLink.getComponent();
-        
-        PartDTO dto = new PartDTO();
+        ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getId());
         dto.setDescription(pm.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
+        dto.setAmount(usageLink.getCadInstances().size());
 
-        List<GeometryDTO> lstFiles = new ArrayList<GeometryDTO>();
-        List<CADInstanceDTO> lstInstances = new ArrayList<CADInstanceDTO>();
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
-        List<PartDTO> components = new ArrayList<PartDTO>();
+        List<ComponentDTO> components = new ArrayList<ComponentDTO>();
 
-        for (CADInstance cadInstance : usageLink.getCadInstances()) {
-            lstInstances.add(mapper.map(cadInstance, CADInstanceDTO.class));
-        }
         PartRevision partR = pm.getLastRevision();
         PartIteration partI = null;
         if(partR !=null)
             partI = partR.getLastIteration();
         
         if(partI !=null){
-            for (Geometry geometry : partI.getGeometries()) {
-                lstFiles.add(mapper.map(geometry, GeometryDTO.class));
-            }
             for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
                 lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
             }
@@ -156,10 +148,7 @@ public class ProductResource {
             dto.setVersion(partI.getPartVersion());
             dto.setIteration(partI.getIteration());
         }
-        
-        
-        dto.setFiles(lstFiles);
-        dto.setInstances(lstInstances);
+
         dto.setAttributes(lstAttributes);
         dto.setComponents(components);
         return dto;
@@ -181,7 +170,7 @@ public class ProductResource {
                 usageLinksPath.add(Integer.parseInt(partUsageIdsString[i]));
             }
 
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinksPath.get(0));
+            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinksPath.get(0), 0);
 
             usageLinksPath.remove(0);
 
@@ -208,18 +197,29 @@ public class ProductResource {
                 .append("-")
                 .append(partI.getIteration()).toString();
 
+        List<GeometryDTO> files = new ArrayList<GeometryDTO>();
+        List<InstanceAttributeDTO> attributes = new ArrayList<InstanceAttributeDTO>();
+
+        for (Geometry geometry : partI.getGeometries()) {
+            files.add(mapper.map(geometry, GeometryDTO.class));
+        }
+
+        for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+            attributes.add(mapper.map(attr, InstanceAttributeDTO.class));
+        }
+
         for (CADInstance instance : usageLink.getCadInstances()) {
 
             //compute absolutes values
-            double atx = tx + instance.getTx();
-            double aty = ty + instance.getTy();
-            double atz = tz + instance.getTz();
+            double atx = tx + getRelativeTxAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
+            double aty = ty + getRelativeTyAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
+            double atz = tz + getRelativeTzAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
             double arx = rx + instance.getRx();
             double ary = ry + instance.getRy();
             double arz = rz + instance.getRz();
 
             if (partI.getGeometries().size() > 0) {
-                instancesDTO.add(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz));
+                instancesDTO.add(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz, files, attributes));
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
                     if (filterPath.isEmpty()) {
@@ -235,5 +235,32 @@ public class ProductResource {
         }
 
         return instancesDTO;
+    }
+
+    private double getRelativeTxAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
+
+        double a = Math.cos(ry) * Math.cos(rz);
+        double b = -Math.cos(rx) * Math.sin(rz) + Math.sin(rx) * Math.sin(ry) * Math.cos(rz);
+        double c = Math.sin(rx) * Math.sin(rz) + Math.cos(rx) * Math.sin(ry) * Math.cos(rz);
+
+        return a*tx + b*ty + c*tz;
+    }
+
+    private double getRelativeTyAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
+
+        double d = Math.cos(ry) * Math.sin(rz);
+        double e = Math.cos(rx) * Math.cos(rz) + Math.sin(rx) * Math.sin(ry) * Math.sin(rz);
+        double f = -Math.sin(rx) * Math.cos(rz) + Math.cos(rx) * Math.sin(ry) * Math.sin(rz);
+
+        return d*tx + e*ty + f*tz;
+    }
+
+    private double getRelativeTzAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
+
+        double g = -Math.sin(ry);
+        double h = Math.sin(rx) * Math.cos(ry);
+        double i = Math.cos(rx) * Math.cos(ry);
+
+        return g*tx + h*ty + i*tz;
     }
 }

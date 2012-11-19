@@ -1,12 +1,6 @@
 var sceneManager;
 
-define([
-    "collections/part_collection",
-    "views/part_node_view"
-], function (
-    PartCollection,
-    PartNodeView
-) {
+define(["views/parts_tree_view"], function (PartsTreeView) {
 
     var AppView = Backbone.View.extend({
 
@@ -14,7 +8,6 @@ define([
 
         events: {
             "click #scene_view_btn"   : "showScene",
-            "click #metadata_view_btn"   : "showMetadata",
             "click #bom_view_btn"   : "showBom"
         },
 
@@ -23,10 +16,6 @@ define([
             $("#part_metadata_container").hide();
             $("#bottom_controls_container").hide();
             $("#center_container").show();
-        },
-
-        showMetadata:function(){
-
         },
 
         showBom:function(){
@@ -38,9 +27,7 @@ define([
 
         initialize: function() {
             sceneManager = new SceneManager();
-            var allParts = new PartCollection();
-            var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
-            allParts.fetch();
+            new PartsTreeView().render();
             sceneManager.init();
         }
 

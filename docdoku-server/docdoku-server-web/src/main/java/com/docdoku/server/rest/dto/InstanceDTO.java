@@ -1,6 +1,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * User: jmaffre
@@ -44,10 +45,16 @@ public class InstanceDTO implements Serializable {
      */
     private double rz;
 
-    public InstanceDTO() {
-    }
+    /**
+     * List of geometry files with their qualities
+     */
+    private List<GeometryDTO> files;
 
-    public InstanceDTO(String partIterationId, double tx, double ty, double tz, double rx, double ry, double rz) {
+    private List<InstanceAttributeDTO> attributes;
+
+    public InstanceDTO() {}
+
+    public InstanceDTO(String partIterationId, double tx, double ty, double tz, double rx, double ry, double rz, List<GeometryDTO> files, List<InstanceAttributeDTO> attributes) {
         this.partIterationId = partIterationId;
         this.tx = tx;
         this.ty = ty;
@@ -55,6 +62,8 @@ public class InstanceDTO implements Serializable {
         this.rx = rx;
         this.ry = ry;
         this.rz = rz;
+        this.files = files;
+        this.attributes = attributes;
     }
 
     public String getPartIterationId() {
@@ -112,4 +121,21 @@ public class InstanceDTO implements Serializable {
     public void setRz(double rz) {
         this.rz = rz;
     }
+
+    public List<GeometryDTO> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<GeometryDTO> files) {
+        this.files = files;
+    }
+
+    public List<InstanceAttributeDTO> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<InstanceAttributeDTO> attributes) {
+        this.attributes = attributes;
+    }
+
 }

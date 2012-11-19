@@ -14,6 +14,7 @@ function SceneManager(options) {
     this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
     this.instances = [];
+    this.partIterations = {}
     this.meshesBindedForMarkerCreation = [];
 }
 
@@ -26,7 +27,7 @@ SceneManager.prototype = {
         this.initControls();
         this.initLights();
         this.initAxes();
-        //this.initStats();
+        this.initStats();
         this.initRenderer();
         this.loadWindowResize();
         this.initLayerManager();
@@ -207,7 +208,7 @@ SceneManager.prototype = {
         });
         this.render();
         this.controls.update();
-        //this.stats.update();
+        this.stats.update();
     },
 
     render: function() {
@@ -224,6 +225,18 @@ SceneManager.prototype = {
             this.instances[j].update(this.camera);
         }
 
+    },
+
+    addPartIteration: function(partIteration) {
+        this.partIterations[partIteration.partIterationId] = partIteration;
+    },
+
+    getPartIteration: function(partIterationId) {
+        return this.hasPartIteration(partIterationId) ? this.partIterations[partIterationId] : null;
+    },
+
+    hasPartIteration: function(partIterationId) {
+        return _.has(this.partIterations, partIterationId);
     }
 
 }
