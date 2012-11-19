@@ -21,6 +21,7 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Defines a numerical custom attribute of a document.
@@ -29,6 +30,7 @@ import javax.persistence.Entity;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="INSTANCENUMBERATTRIBUTE")
 @Entity
 public class InstanceNumberAttribute extends InstanceAttribute{
 

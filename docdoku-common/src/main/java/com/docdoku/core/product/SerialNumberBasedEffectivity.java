@@ -22,6 +22,7 @@
 package com.docdoku.core.product;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * SerialNumberBasedEffectivity indicates that an item is effective while a
@@ -31,6 +32,7 @@ import javax.persistence.Entity;
  * @version 1.1, 18/10/11
  * @since   V1.1
  */
+@Table(name="SERIALNUMBERBASEDEFFECTIVITY")
 @Entity
 public class SerialNumberBasedEffectivity extends Effectivity{
 

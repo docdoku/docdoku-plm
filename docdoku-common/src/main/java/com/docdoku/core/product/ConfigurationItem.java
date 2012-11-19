@@ -29,6 +29,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * This class represents an entire product or some portion
@@ -45,6 +46,7 @@ import javax.persistence.NamedQuery;
  * @version 1.1, 31/10/11
  * @since   V1.1
  */
+@Table(name="CONFIGURATIONITEM")
 @NamedQuery(name="ConfigurationItem.getEffectivities",query="SELECT e FROM Effectivity e WHERE e.configurationItem = :configurationItem")
 @javax.persistence.IdClass(com.docdoku.core.product.ConfigurationItemKey.class)
 @Entity
@@ -68,7 +70,7 @@ public class ConfigurationItem implements Serializable {
      */
     @ManyToOne(fetch= FetchType.LAZY, optional=false)
     @JoinColumns({
-        @JoinColumn(name = "PARTMASTER_NUMBER", referencedColumnName = "NUMBER"),
+        @JoinColumn(name = "PARTMASTER_PARTNUMBER", referencedColumnName = "PARTNUMBER"),
         @JoinColumn(name = "PARTMASTER_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private PartMaster designItem;

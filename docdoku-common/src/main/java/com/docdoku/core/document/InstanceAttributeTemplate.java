@@ -32,6 +32,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -44,6 +45,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.1, 23/01/12
  * @since   V1.0
  */
+@Table(name="INSTANCEATTRIBUTETEMPLATE")
 @javax.persistence.IdClass(com.docdoku.core.document.InstanceAttributeTemplateKey.class)
 @Entity
 public class InstanceAttributeTemplate implements Serializable {

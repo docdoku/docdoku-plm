@@ -20,7 +20,6 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
 import java.io.Serializable;
 import javax.persistence.FetchType;
@@ -49,9 +48,9 @@ public abstract class Subscription implements Serializable{
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="OBSERVEDDOCUMENTMASTER_ID", referencedColumnName="ID"),
-        @JoinColumn(name="OBSERVEDDOCUMENTMASTER_VERSION", referencedColumnName="VERSION"),
-        @JoinColumn(name="OBSERVEDDOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+        @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="ID"),
+        @JoinColumn(name="DOCUMENTMASTER_VERSION", referencedColumnName="VERSION"),
+        @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     protected DocumentMaster observedDocumentMaster;
     
@@ -64,15 +63,15 @@ public abstract class Subscription implements Serializable{
     private String subscriberLogin="";
     
     
-    @javax.persistence.Column(name = "OBSERVEDDOCUMENTMASTER_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String observedDocumentMasterWorkspaceId="";
     
-    @javax.persistence.Column(name = "OBSERVEDDOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String observedDocumentMasterVersion="";
     
-    @javax.persistence.Column(name = "OBSERVEDDOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String observedDocumentMasterId="";
     

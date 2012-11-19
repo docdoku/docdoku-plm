@@ -51,7 +51,7 @@ public class ConnectionBean {
     public ConnectionBean() {
     }
 
-    public String logout() throws ServletException {
+    public String logOut() throws ServletException {
 
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());

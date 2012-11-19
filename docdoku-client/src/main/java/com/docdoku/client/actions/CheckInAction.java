@@ -69,7 +69,7 @@ public class CheckInAction extends ClientAbstractAction {
                             
                         }
                     }
-                    DocumentMaster newDocM = controller.checkIn(docM);
+                    DocumentMaster newDocM = controller.checkInDocument(docM);
                     FileIO.rmDir(Config.getCheckOutFolder(newDocM));
                     Prefs.removeDocNode(newDocM);
                 }  catch (Exception pEx) {

@@ -30,9 +30,15 @@
             <p><h:outputText value="#{i18nDownload['section1.text1']}" escape="false" /></p>
             <p>#{i18nDownload['section1.text2']}</p>
             <script type="text/javascript" src="http://java.com/js/deployJava.js"></script>
+            Java 6
             <script type="text/javascript">
                 //deployJava.launchButtonPNG='http://download.oracle.com/javase/tutorial/images/DukeWave.gif';
-                deployJava.createWebStartLaunchButton('#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/apps/docdoku_client.jnlp','1.6.0_10+');
+                deployJava.createWebStartLaunchButton('#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/apps/docdoku_client.jnlp','1.6.0_10');
+            </script>
+            <br/>
+            Java 7
+            <script type="text/javascript">
+                deployJava.createWebStartLaunchButton('#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/apps/docdoku_clientj7.jnlp','1.7.0');
             </script>
             <!--<a href="<%=request.getContextPath()%>/apps/docdoku_client.jnlp">Go!</a>-->
 

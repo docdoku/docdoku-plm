@@ -39,6 +39,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -51,6 +52,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="DOCUMENTITERATION")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentIterationKey.class)
 @javax.persistence.Entity
 public class DocumentIteration implements Serializable, FileHolder, Comparable<DocumentIteration>, Cloneable {
@@ -81,15 +83,15 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     
     
     @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
-    @JoinTable(
+    @JoinTable(name="DOCUMENTITERATION_BINRES",
     inverseJoinColumns={
         @JoinColumn(name="ATTACHEDFILE_FULLNAME", referencedColumnName="FULLNAME")
     },
     joinColumns={
-        @JoinColumn(name="DOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
-        @JoinColumn(name="DOCUMENT_ITERATION", referencedColumnName="ITERATION")
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+        @JoinColumn(name="DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
     
@@ -110,15 +112,15 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @MapKey(name="name")
-    @JoinTable(
+    @JoinTable(name="DOCUMENTITERATION_ATTRIBUTE",
     inverseJoinColumns={
         @JoinColumn(name="INSTANCEATTRIBUTE_ID", referencedColumnName="ID")
     },
     joinColumns={
-        @JoinColumn(name="DOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-        @JoinColumn(name="DOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
-        @JoinColumn(name="DOCUMENT_ITERATION", referencedColumnName="ITERATION")
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+        @JoinColumn(name="DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
     private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
 

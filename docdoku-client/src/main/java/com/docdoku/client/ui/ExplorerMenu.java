@@ -66,7 +66,6 @@ public class ExplorerMenu extends JMenuBar {
     private ButtonMenu mUser;
     private ButtonMenu mSetting;
     
-    private JMenuItem mHelpOnline;
     private ButtonMenu mShortcuts;
     private JMenuItem mAbout;
     
@@ -181,12 +180,9 @@ public class ExplorerMenu extends JMenuBar {
         
         img = Toolkit.getDefaultToolkit().getImage(ExplorerMenu.class.getResource("/com/docdoku/client/resources/icons/help.png"));
         ImageIcon helpIcon = new ImageIcon(img);
-        mHelpOnline = new JMenuItem(I18N.BUNDLE.getString("HeplMenuOption_title"), helpIcon);
-        mHelpOnline.setMnemonic(I18N.getCharBundle("HeplMenuOption_mnemonic_key"));
-        
+                
         mShortcuts = new ButtonMenu(pStatusLabel);
         
-        help.add(mHelpOnline);
         help.add(mShortcuts);
         help.add(mAbout);
     }
@@ -226,22 +222,6 @@ public class ExplorerMenu extends JMenuBar {
         mUser.setAction(pActionFactory.getEditUserAction());
         mSetting.setAction(pActionFactory.getSettingAction());
         
-        mHelpOnline.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent pAE) {
-                try {
-                    String page = "help";
-                    Desktop.getDesktop().browse(new URI(Config.getHTTPCodebase().toString()+page));
-                } catch (Exception pEx) {
-                    String message = pEx.getMessage()==null?I18N.BUNDLE
-                            .getString("Error_unknown"):pEx.getMessage();
-                    JOptionPane.showMessageDialog(null,
-                            message, I18N.BUNDLE
-                            .getString("Error_title"),
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
         mShortcuts.setAction(pActionFactory.getDisplayShortcutsAction());
         mAbout.addActionListener(new ActionListener() {
             @Override

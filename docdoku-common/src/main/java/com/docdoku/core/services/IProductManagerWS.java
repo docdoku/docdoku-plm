@@ -80,6 +80,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      */
     PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException;
+    
     /**
      * Creates a new product structure.
      * 
@@ -174,7 +175,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      */
-    PartRevision undoCheckOut(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    PartRevision undoCheckOutPart(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     
     /**
      * Checks in the supplied part revision so its latest iteration,
@@ -193,7 +194,7 @@ public interface IProductManagerWS{
      * @throws AccessRightException
      * @throws NotAllowedException
      */
-    PartRevision checkIn(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
+    PartRevision checkInPart(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
     
     /**
      * Creates a <a href="Geometry.html">Geometry</a> file,

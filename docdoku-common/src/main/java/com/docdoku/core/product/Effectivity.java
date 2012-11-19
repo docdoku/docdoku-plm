@@ -26,10 +26,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @version 1.1, 14/10/11
  * @since   V1.1
  */
+@Table(name="EFFECTIVITY")
 @XmlSeeAlso({DateBasedEffectivity.class, SerialNumberBasedEffectivity.class, LotBasedEffectivity.class})
 @Inheritance()
 @Entity

@@ -21,12 +21,12 @@
 package com.docdoku.core.meta;
 
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @since   V1.0
  */
 
+@Table(name="INSTANCEATTRIBUTE")
 @XmlSeeAlso({InstanceTextAttribute.class, InstanceNumberAttribute.class, InstanceDateAttribute.class, InstanceBooleanAttribute.class, InstanceURLAttribute.class})
 @Inheritance()
 @Entity

@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Class that belongs to the ACL classe and makes the mapping between a user
@@ -37,6 +38,7 @@ import javax.persistence.ManyToOne;
  * @version 1.1, 17/07/09
  * @since   V1.1
  */
+@Table(name="ACLUSERENTRY")
 @Entity
 @javax.persistence.IdClass(com.docdoku.core.security.ACLUserEntryKey.class)
 public class ACLUserEntry implements Serializable, Cloneable {

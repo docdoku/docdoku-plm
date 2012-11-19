@@ -33,6 +33,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="SERIALACTIVITY")
 @Entity
 public class SerialActivity extends Activity {
     

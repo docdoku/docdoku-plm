@@ -24,6 +24,7 @@ package com.docdoku.core.common;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.Table;
 
 /**
  * The context in which documents, workflow models, document templates and all
@@ -33,6 +34,7 @@ import javax.persistence.FetchType;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="WORKSPACE")
 @javax.persistence.Entity
 public class Workspace implements Serializable, Cloneable {
 

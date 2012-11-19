@@ -25,13 +25,14 @@ LevelGeometry.prototype = {
     getGeometry: function(callback) {
         if (this.geometry == null) {
             var self = this;
+            var texturePath = this.filename.substring(0,this.filename.lastIndexOf('/'));
             sceneManager.loader.load(this.filename, function(geometry) {
                 if (self.computeVertexNormals) {
                     geometry.computeVertexNormals();
                 }
                 self.geometry = geometry;
                 callback(self.geometry);
-            }, 'images');
+            }, texturePath);
         } else {
             callback(this.geometry);
         }

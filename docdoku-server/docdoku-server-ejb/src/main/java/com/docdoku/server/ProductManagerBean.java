@@ -82,8 +82,6 @@ import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.persistence.TypedQuery;
 
-
-
 @DeclareRoles("users")
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
@@ -114,15 +112,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLink rootUsageLink;
 
-        if(partUsageLink==null || partUsageLink==-1){
+
+        if (partUsageLink == null || partUsageLink == -1) {
             ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
             rootUsageLink = new PartUsageLink();
             rootUsageLink.setId(-1);
             rootUsageLink.setComponent(ci.getDesignItem());
-        }else{
-            rootUsageLink=new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
+        } else {
+            rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
         }
-        
+
         em.detach(rootUsageLink.getComponent());
 
         if (configSpec instanceof LatestConfigSpec) {
@@ -135,40 +134,40 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return rootUsageLink;
     }
 
-    private PartMaster filterLatestConfigSpec(PartMaster root, int depth){
-        
+    private PartMaster filterLatestConfigSpec(PartMaster root, int depth) {
         PartRevision partR = root.getLastRevision();
         PartIteration partI = null;
-        
-        if(partR !=null)
+
+        if (partR != null) {
             partI = partR.getLastIteration();
-        
-        if(root.getPartRevisions().size()>1){
+        }
+
+        if (root.getPartRevisions().size() > 1) {
             root.getPartRevisions().retainAll(Collections.singleton(partR));
         }
-        if(partR !=null && partR.getNumberOfIterations()>1){
+        if (partR != null && partR.getNumberOfIterations() > 1) {
             partR.getPartIterations().retainAll(Collections.singleton(partI));
         }
-        
-        if(partI !=null){
+
+        if (partI != null) {
             if (depth != 0) {
                 depth--;
-                for(PartUsageLink usageLink:partI.getComponents()){
+                for (PartUsageLink usageLink : partI.getComponents()) {
                     filterLatestConfigSpec(usageLink.getComponent(), depth);
 
-                    for(PartSubstituteLink subLink:usageLink.getSubstitutes()){
+                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
                         filterLatestConfigSpec(subLink.getSubstitute(), 0);
                     }
                 }
             }
         }
-        
-        for(PartAlternateLink alternateLink:root.getAlternates()){
+
+        for (PartAlternateLink alternateLink : root.getAlternates()) {
             filterLatestConfigSpec(alternateLink.getAlternate(), 0);
         }
         return root;
     }
-    
+
     @RolesAllowed("users")
     @Override
     public ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException {
@@ -228,7 +227,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartRevision undoCheckOut(PartRevisionKey pPartRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public PartRevision undoCheckOutPart(PartRevisionKey pPartRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
@@ -241,7 +240,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             for (BinaryResource file : partIte.getAttachedFiles()) {
                 dataManager.delData(file);
             }
-            
+
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             partIDAO.removeIteration(partIte);
             partR.setCheckOutDate(null);
@@ -254,7 +253,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartRevision checkIn(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException {
+    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
@@ -295,7 +294,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new FileNotFoundException(userLocale, pFullName);
         }
     }
-    
+
     @RolesAllowed("users")
     @Override
     public File saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
@@ -317,8 +316,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     break;
                 }
             }
-            if (file == null) {               
-                file = new Geometry(quality, fullName, pSize);             
+            if (file == null) {
+                file = new Geometry(quality, fullName, pSize);
                 new BinaryResourceDAO(em).createBinaryResource(file);
                 partI.addGeometry(file);
             } else {
@@ -352,8 +351,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     break;
                 }
             }
-            if (file == null) {               
-                file = new BinaryResource(fullName, pSize);             
+            if (file == null) {
+                file = new BinaryResource(fullName, pSize);
                 new BinaryResourceDAO(em).createBinaryResource(file);
                 partI.addFile(file);
             } else {
@@ -364,8 +363,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
         }
     }
-    
-    
+
     @RolesAllowed("users")
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
@@ -373,7 +371,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ConfigurationItemDAO(new Locale(user.getLanguage()), em).findAllConfigurationItems(pWorkspaceId);
     }
 
-    
     @RolesAllowed("users")
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException {
@@ -417,14 +414,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException{
+    public List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         return new LayerDAO(new Locale(user.getLanguage()), em).findAllLayers(pKey);
     }
 
     @RolesAllowed("users")
     @Override
-    public Layer getLayer(int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException{     
+    public Layer getLayer(int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException {
         Layer layer = new LayerDAO(em).loadLayer(pId);
         User user = userManager.checkWorkspaceReadAccess(layer.getConfigurationItem().getWorkspaceId());
         return layer;
@@ -432,13 +429,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public Layer createLayer(ConfigurationItemKey pKey, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException{
+    public Layer createLayer(ConfigurationItemKey pKey, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
         ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
         Layer layer = new Layer(pName, user, ci);
         Date now = new Date();
         layer.setCreationDate(now);
-        
+
         new LayerDAO(new Locale(user.getLanguage()), em).createLayer(layer);
         return layer;
     }
@@ -458,7 +455,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Marker marker = new Marker(pTitle, user, pDescription, pX, pY, pZ);
         Date now = new Date();
         marker.setCreationDate(now);
-        
+
         new MarkerDAO(new Locale(user.getLanguage()), em).createMarker(marker);
         layer.addMarker(marker);
         return marker;
@@ -480,9 +477,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
-
 }
-
 //TODO when using layers and markers, check for concordance
 //TODO add a method to update a marker
 //TODO use dozer

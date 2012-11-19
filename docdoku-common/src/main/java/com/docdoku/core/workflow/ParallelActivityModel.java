@@ -34,6 +34,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="PARALLELACTIVITYMODEL")
 @Entity
 public class ParallelActivityModel extends ActivityModel {
 

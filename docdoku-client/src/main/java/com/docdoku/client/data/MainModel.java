@@ -48,14 +48,13 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.workflow.WorkflowModelKey;
-import com.sun.xml.ws.developer.JAXWSProperties;
-import com.sun.xml.ws.developer.StreamingDataHandler;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import javax.activation.DataHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
@@ -913,9 +912,9 @@ public class MainModel {
             try {
                 Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
                 try {
-                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
-                        StreamingDataHandler dh = (StreamingDataHandler) mFileService.downloadFromDocument(getWorkspace().getId(), pDocument.getDocumentMasterId(), pDocument.getDocumentMasterVersion(), pDocument.getIteration(), pBin.getName());
-                        downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
+                    if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                        DataHandler dh =  mFileService.downloadFromDocument(getWorkspace().getId(), pDocument.getDocumentMasterId(), pDocument.getDocumentMasterVersion(), pDocument.getIteration(), pBin.getName());
+                        downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.getInputStream());
                     } else {
                         //workaround mode
                         downloadFileWithServlet(pParent, localFile, getServletURL(pDocument, pBin.getName()));
@@ -924,9 +923,9 @@ public class MainModel {
                     if (ex.getCause() instanceof InterruptedIOException) {
                         throw ex;
                     }
-                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                    if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                         System.out.println("Disabling chunked mode");
-                        ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
+                        ctxt.remove(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
                         downloadFileWithServlet(pParent, localFile, getServletURL(pDocument, pBin.getName()));
                     } else {
                         //we were already not using the chunked mode
@@ -966,9 +965,9 @@ public class MainModel {
             try {
                 Map<String, Object> ctxt = ((BindingProvider) mFileService).getRequestContext();
                 try {
-                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
-                        StreamingDataHandler dh = (StreamingDataHandler) mFileService.downloadFromTemplate(model.getWorkspace().getId(), pTemplate.getId(), pBin.getName());
-                        downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.readOnce());
+                    if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                        DataHandler dh = mFileService.downloadFromTemplate(model.getWorkspace().getId(), pTemplate.getId(), pBin.getName());
+                        downloadFile(pParent, localFile, (int) pBin.getContentLength(), dh.getInputStream());
                     } else {
                         //workaround mode
                         downloadFileWithServlet(pParent, localFile, getServletURL(pTemplate, pBin.getName()));
@@ -978,9 +977,9 @@ public class MainModel {
                     if (ex.getCause() instanceof InterruptedIOException) {
                         throw ex;
                     }
-                    if (ctxt.containsKey(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
+                    if (ctxt.containsKey(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE)) {
                         System.out.println("Disabling chunked mode");
-                        ctxt.remove(JAXWSProperties.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
+                        ctxt.remove(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE);
                         downloadFileWithServlet(pParent, localFile, getServletURL(pTemplate, pBin.getName()));
                     } else {
                         //we were already not using the chunked mode

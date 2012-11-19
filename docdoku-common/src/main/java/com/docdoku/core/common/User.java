@@ -30,6 +30,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="USERDATA")
 @javax.persistence.IdClass(com.docdoku.core.common.UserKey.class)
 @javax.persistence.Entity
 public class User implements Serializable, Cloneable {

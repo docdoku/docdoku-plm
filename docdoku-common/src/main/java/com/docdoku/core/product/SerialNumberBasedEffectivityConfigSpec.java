@@ -21,7 +21,9 @@
 
 package com.docdoku.core.product;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * A kind of <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
@@ -31,12 +33,14 @@ import javax.persistence.Entity;
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
+@Table(name="SERIALNUMBERBASEDEFFCS")
 @Entity
 public class SerialNumberBasedEffectivityConfigSpec extends EffectivityConfigSpec{
 
     /**
      * The serial number of the particular item specified by the context.
      */
+    @Column(name="NUMBERCONFIG")
     private String number;
 
     public SerialNumberBasedEffectivityConfigSpec() {

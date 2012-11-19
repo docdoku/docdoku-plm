@@ -37,6 +37,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -49,6 +50,7 @@ import javax.persistence.TemporalType;
  * @version 1.1, 14/08/12
  * @since   V1.1
  */
+@Table(name="LAYER")
 @Entity
 @NamedQuery(name="Layer.findLayersByConfigurationItem",query="SELECT DISTINCT l FROM Layer l WHERE l.configurationItem.id = :configurationItemId AND l.configurationItem.workspace.id = :workspaceId")
 public class Layer implements Serializable{
@@ -70,7 +72,7 @@ public class Layer implements Serializable{
     private String name;
     
     @ManyToMany(fetch= FetchType.LAZY)
-    @JoinTable(
+    @JoinTable(name="LAYER_MARKER",
     inverseJoinColumns={
         @JoinColumn(name="MARKER_ID", referencedColumnName="ID")
     },

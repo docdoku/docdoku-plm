@@ -54,7 +54,7 @@ public class CheckOutAction extends ClientAbstractAction {
                 try {
                     mOwner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     MainController controller = MainController.getInstance();
-                    DocumentMaster newDocM = controller.checkOut(docM);
+                    DocumentMaster newDocM = controller.checkOutDocument(docM);
                     FileIO.rmDir(Config.getCheckOutFolder(newDocM));
                     for(BinaryResource remoteFile:newDocM.getLastIteration().getAttachedFiles()){
                         try{

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <ui:composition template="/WEB-INF/templates/frameTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nPS" basename="com.docdoku.server.localization.explorer_resource"/>
+            #{i18nPS['title']}
+        </ui:define>
+        <ui:define name="styles">     
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/product-structure.css"/>   
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/navigation-controls.css"/>
+        <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less"/>
+        </ui:define>
+        <ui:define name="scripts"> 
+                
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery.treeview.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js"></script>
+
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Three.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js"></script>
+
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/ControlManager.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/SceneManager.js"></script>
+
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js"></script>
+
+        <script type="text/javascript">
+            var APP_CONFIG = {
+                workspaceId:"${workspaceID}",
+                productId:"${productID}",
+                login:"${login}"
+            };
+
+            var isIpad = navigator.userAgent.indexOf("iPad") != -1;
+
+            $(document).ready(function() {
+
+                require.config({
+                    baseUrl: "${request.contextPath}/js/product-structure",
+                    paths: {
+                        "require": "../lib/require/1.0.8/require.min",
+                        "text": "../lib/require/1.0.8/text.min"
+                    },
+                    locale: "#{request.locale}"
+                });
+
+
+                require(["frameApp"], function(FrameView) {
+                    new FrameView();
+                });
+            });                
+        </script>
+        
+        <script type="text/x-underscore-template" id="part_metadata_template">
+            <h1><i class="icon-cog"></i>{{getNumber}}</h1>
+            <button type="button" class="close" id="part_metadata_close_button">×</button>
+            <div class="row">
+                <div class="span3">
+                    <div class="span4">
+                        <span class="part_metadata_key">Name :</span>
+                        <span class="part_metadata_value">{{getName}}</span>
+                    </div>
+                    <div class="span4">
+                        <span class="part_metadata_key">Version :</span>
+                        <span class="part_metadata_value">{{getVersion}}</span>
+                    </div>
+                    <div class="span4">
+                        <span class="part_metadata_key">Iteration :</span>
+                        <span class="part_metadata_value">{{getIteration}}</span>
+                    </div>
+                </div>
+                <div class="span3">
+                    <div class="span4">
+                        <span class="part_metadata_key">Description :</span>
+                        <span class="part_metadata_value">{{getDescription}}</span>
+                    </div>
+                    <div class="span4">
+                        <span class="part_metadata_key">Author :</span>
+                        <span class="part_metadata_value" id="part_metadata_author">{{getAuthor}}</span>
+                    </div>
+                </div>
+            </div>
+        </script>
+        </ui:define>
+        
+        <ui:define name="content">                    
+            <div id="frameWorkspace">
+                <div id="frameContainer"></div>        
+                <div class="modal hide fade" id="markerModal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                        <h3 id="markerTitle"></h3>
+                    </div>
+                    <div class="modal-body">
+                        <p><b>Description:</b> <span id="markerDesc"></span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#" class="btn" data-dismiss="modal">Close</a>
+                    </div>
+                </div>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

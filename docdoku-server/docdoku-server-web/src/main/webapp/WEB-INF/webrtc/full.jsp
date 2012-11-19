@@ -6,8 +6,6 @@
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
         <title><fmt:message key="title"/></title>
-        <meta name="keywords" content="<fmt:message key="meta.keywords"/>" />
-        <meta name="description" content="<fmt:message key="meta.description"/>" />
 
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
@@ -21,15 +19,12 @@
     <body>
 
         <div id="page">
-            <%@ include file="/WEB-INF/header.jspf" %>
 
             <div id="content">
 
 Sorry, this room is full. <a href="${roomLink}">Click here</a> to try again.  
 
             </div>
-
-            <%@ include file="/WEB-INF/footer.jspf" %>
         </div>
     </body>
 </html>
