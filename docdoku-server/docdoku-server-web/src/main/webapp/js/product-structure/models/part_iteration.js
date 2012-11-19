@@ -51,15 +51,45 @@ define(function() {
         },
 
         addInstance: function(instanceRaw) {
-            sceneManager.instances.push(new Instance(
-                this,
-                instanceRaw.tx*10,
-                instanceRaw.ty*10,
-                instanceRaw.tz*10,
-                instanceRaw.rx,
-                instanceRaw.ry,
-                instanceRaw.rz
-            ));
+
+            var position = {
+                x: instanceRaw.tx*10,
+                y: instanceRaw.ty*10,
+                z: instanceRaw.tz*10
+            }
+
+            var rotation = {
+                x: instanceRaw.rx,
+                y: instanceRaw.ry,
+                z: instanceRaw.rz
+            }
+
+            var numbersOfInstances = sceneManager.instances.length;
+
+            var found = false;
+
+            for (var j = 0; j<numbersOfInstances; j++) {
+                var currentInstance  = sceneManager.instances[j];
+                if (currentInstance.partIteration.partIterationId == this.partIterationId
+                    && _.isEqual(currentInstance.position, position)
+                    && _.isEqual(currentInstance.rotation, rotation)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                sceneManager.instances.push(new Instance(
+                    this,
+                    instanceRaw.tx*10,
+                    instanceRaw.ty*10,
+                    instanceRaw.tz*10,
+                    instanceRaw.rx,
+                    instanceRaw.ry,
+                    instanceRaw.rz
+                ));
+            }
+
         },
 
         removeInstance: function(instanceRaw) {

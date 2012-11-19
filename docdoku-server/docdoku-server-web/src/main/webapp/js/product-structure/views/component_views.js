@@ -51,7 +51,10 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         },
 
         onChangeCheckbox: function(event) {
-            this.model.putOnScene();
+            if (event.target.checked)
+                this.model.putOnScene();
+            else
+                this.model.removeFromScene();
         },
 
         render: function() {
