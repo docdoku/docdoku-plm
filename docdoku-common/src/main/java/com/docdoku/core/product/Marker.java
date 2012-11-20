@@ -39,6 +39,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -51,6 +52,7 @@ import javax.persistence.TemporalType;
  * @version 1.1, 14/08/12
  * @since   V1.1
  */
+@Table(name="MARKER")
 @Entity
 public class Marker implements Serializable{
 
@@ -59,7 +61,7 @@ public class Marker implements Serializable{
     private int id;
 
     @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
-    @JoinTable(
+    @JoinTable(name="MARKER_EFFECTIVITY",
     inverseJoinColumns={
         @JoinColumn(name="EFFECTIVITY_ID", referencedColumnName="ID")
     },
@@ -69,10 +71,10 @@ public class Marker implements Serializable{
     private Set<Effectivity> effectivities = new HashSet<Effectivity>();
         
     @ManyToMany(fetch= FetchType.LAZY)
-    @JoinTable(
+    @JoinTable(name="MARKER_PARTMASTER",
     inverseJoinColumns={
         @JoinColumn(name="RELATEDPART_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="RELATEDPART_NUMBER", referencedColumnName="NUMBER")
+        @JoinColumn(name="RELATEDPART_PARTNUMBER", referencedColumnName="PARTNUMBER")
     },
     joinColumns={
         @JoinColumn(name="MARKER_ID", referencedColumnName="ID")

@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="DOCUMENTTODOCUMENTLINK")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentToDocumentLinkKey.class)
 @javax.persistence.Entity
 public class DocumentToDocumentLink implements Serializable, Cloneable{
@@ -45,47 +47,48 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="FROMDOCUMENT_ITERATION", referencedColumnName="ITERATION"),
-        @JoinColumn(name="FROMDOCUMENT_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-        @JoinColumn(name="FROMDOCUMENT_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
-        @JoinColumn(name="FROMDOCUMENT_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+        @JoinColumn(name="FROM_ITERATION", referencedColumnName="ITERATION"),
+        @JoinColumn(name="FROM_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+        @JoinColumn(name="FROM_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name="FROM_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private DocumentIteration fromDocument;
     
-    @Column(name = "FROMDOCUMENT_ITERATION", nullable = false, insertable = false, updatable = false)
+    @Column(name = "FROM_ITERATION", nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private int fromDocumentIteration;
     
-    @Column(name = "FROMDOCUMENT_DOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "FROM_DOCUMENTMASTER_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String fromDocumentDocumentMasterId="";
     
-    @Column(name = "FROMDOCUMENT_DOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
+    @Column(name = "FROM_DOCUMENTMASTER_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String fromDocumentDocumentMasterVersion="";
     
-    @Column(name = "FROMDOCUMENT_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "FROM_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String fromDocumentWorkspaceId="";
     
     
     
-    @Column(name = "TODOCUMENT_ITERATION")
+    @Column(name = "TO_ITERATION")
     @javax.persistence.Id
     private int toDocumentIteration;
 
-    @Column(name = "TODOCUMENT_DOCUMENTMASTER_ID", length=50)
+    @Column(name = "TO_DOCUMENTMASTER_ID", length=50)
     @javax.persistence.Id
     private String toDocumentDocumentMasterId="";
 
-    @Column(name = "TODOCUMENT_DOCUMENTMASTER_VERSION", length=10)
+    @Column(name = "TO_DOCUMENTMASTER_VERSION", length=10)
     @javax.persistence.Id
     private String toDocumentDocumentMasterVersion="";
 
-    @Column(name = "TODOCUMENT_WORKSPACE_ID", length=50)
+    @Column(name = "TO_WORKSPACE_ID", length=50)
     @javax.persistence.Id
     private String toDocumentWorkspaceId="";
     
+    @Column(name="COMMENTDATA")
     private String comment;
     
     

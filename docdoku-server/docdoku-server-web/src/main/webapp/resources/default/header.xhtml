@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <body>
+        <composite:interface>
+            <composite:attribute name="formStyle" required="false"/>
+        </composite:interface>
+        
+        <composite:implementation>
+            <h:form style="#{cc.attrs.formStyle}">
+                <div class="navbar navbar-fixed-top">
+                    <div class="navbar-inner">
+                        <div class="container-fluid">
+                            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </a>
+                            <!--<span class="brand-plm"></span>-->
+                            <img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/>
+                            <a class="brand" href="#">
+                                DocDoku<strong>PLM</strong>
+                            </a>
+                            <div class="nav-collapse">
+
+                                <c:choose>
+                                    <c:when test="${sessionScope.account==null}">
+                                        <ul class="nav">
+                                            <li><a href="#{request.contextPath}/"><i class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a></li>
+
+                                            <li><h:link outcome="/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}</h:link></li>
+                                        </ul>
+                                        <ul class="nav pull-right">                          
+                                            <li id="registration_link_container">#{i18nTemplate['toplinks.notRegistered']} <h:link value="#{i18nTemplate['toplinks.subscribe']}" outcome="/registrationForm.xhtml"/></li>
+                                        </ul>
+                                    </c:when>
+                                    <c:otherwise>
+
+
+
+                                        <ul class="nav" id="header_left_menu">
+
+                                            <!-- home link -->
+                                            <!--<li>
+                                                <a href="#" id="home_link" title="Home"><i class="icon-home"></i></a>
+                                            </li>-->
+
+                                            <!-- current workspace & workspaces dropdown menu-->
+                                            <li class="dropdown" id="workspace_container">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="icon-home"></i>
+                                                    #{i18nTemplate['toplinks.workspace']}: <b>${workspaceID}</b>
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <c:forEach var="item" items="${administeredWorkspaces}">
+                                                        <c:if test="${workspaceID!=item.value.id}">
+                                                            <li>
+                                                                <a href="#{request.contextPath}/document-management/${item.value.id}">
+                                                                    ${item.value.id}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                    <c:forEach var="item" items="${regularWorkspaces}">
+                                                        <c:if test="${workspaceID!=item.id}">
+                                                            <li>
+                                                                <a href="#{request.contextPath}/document-management/${item.id}">
+                                                                    ${item.id}
+                                                                </a>
+                                                            </li>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </ul>
+                                            </li>
+                                            <!-- my products dropdown menu-->
+
+                                            <li class="dropdown" id="product_container">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="icon-briefcase"></i>
+                                                    #{i18nTemplate['toplinks.product']}
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">                                                  
+                                                    <c:forEach var="item" items="${products}">                                                    
+                                                        <li>
+                                                            <a href="#{request.contextPath}/product-structure/${workspaceID}/${item.id}">
+                                                                ${item.id}
+                                                            </a>
+                                                        </li>                               
+                                                    </c:forEach>                                                 
+                                                </ul>
+                                            </li>
+
+                                            <!-- my documents link-->
+
+                                            <li>
+                                                <a href="#{request.contextPath}/document-management/${workspaceID}">
+                                                    <i class="icon-file"></i>
+                                                    #{i18nTemplate['toplinks.document']}
+                                                </a>
+                                            </li>
+
+
+
+                                        </ul>
+                                        <ul class="nav pull-right">
+                                            <li class="dropdown" id="account_name_node">
+                                                <a href="#" class="dropdown-toggle" id="account_name_link" data-toggle="dropdown">
+                                                    <i class="icon-user"></i>
+                                                    ${sessionScope.account.name}
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <h:link outcome="/admin/accountEditionForm.xhtml">
+                                                            <i class="icon-user"></i>
+                                                            #{i18nTemplate['toplinks.account']}
+                                                        </h:link>
+                                                    </li>
+                                                    <li>
+                                                        <h:link outcome="/admin/workspace/workspacesMenu.xhtml">
+                                                            <i class="icon-cog"></i>
+                                                            #{i18nTemplate['toplinks.admin']}
+                                                        </h:link>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <h:commandLink action="#{connectionBean.logOut}">     
+                                                            <i class="icon-off"></i>
+                                                            #{i18nTemplate['toplinks.logout']}
+                                                        </h:commandLink>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div><!--container-->
+                    </div><!--navbar-inner-->
+                </div><!--navbar-fixed-top-->
+            </h:form>
+        </composite:implementation>
+    </body>
+</html>

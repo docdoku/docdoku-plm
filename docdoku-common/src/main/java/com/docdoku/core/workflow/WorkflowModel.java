@@ -38,6 +38,7 @@ import javax.persistence.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="WORKFLOWMODEL")
 @javax.persistence.IdClass(com.docdoku.core.workflow.WorkflowModelKey.class)
 @javax.persistence.Entity
 public class WorkflowModel implements Serializable, Cloneable {

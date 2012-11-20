@@ -23,6 +23,7 @@ package com.docdoku.core.document;
 import java.io.Serializable;
 import java.util.Stack;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * The <a href="Folder.html">Folder</a>
@@ -33,6 +34,7 @@ import javax.persistence.ManyToOne;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="FOLDER")
 @javax.persistence.Entity
 public class Folder implements Serializable, Comparable<Folder> {
        

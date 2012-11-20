@@ -33,6 +33,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * This class can be attached to a
@@ -45,6 +46,7 @@ import javax.persistence.OneToMany;
  * @version 1.1, 17/07/09
  * @since   V1.1
  */
+@Table(name="ACL")
 @Entity
 public class ACL implements Serializable, Cloneable{
 

@@ -38,6 +38,7 @@ import javax.persistence.*;
  * @version 1.1, 23/01/12
  * @since   V1.0
  */
+@Table(name="DOCUMENTMASTER")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @javax.persistence.Entity
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
@@ -96,7 +97,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     private Folder location;
     
     @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(
+    @JoinTable(name="DOCUMENTMASTER_TAG",
     inverseJoinColumns={
         @JoinColumn(name="TAG_LABEL", referencedColumnName="LABEL"),
         @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")        

@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="ACTIVITYMODEL")
 @javax.persistence.IdClass(com.docdoku.core.workflow.ActivityModelKey.class)
 @XmlSeeAlso({SerialActivityModel.class, ParallelActivityModel.class})
 @Inheritance()

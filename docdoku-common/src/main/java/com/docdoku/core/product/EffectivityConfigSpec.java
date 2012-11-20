@@ -24,6 +24,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
+@Table(name="EFFECTIVITYCONFIGSPEC")
 @XmlSeeAlso({DateBasedEffectivityConfigSpec.class, SerialNumberBasedEffectivityConfigSpec.class, LotBasedEffectivityConfigSpec.class})
 @Entity
 public abstract class EffectivityConfigSpec extends ConfigSpec {

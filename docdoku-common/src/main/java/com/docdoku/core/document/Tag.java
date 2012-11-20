@@ -24,6 +24,7 @@ import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.Table;
 
 /**
  * A tag is just a label pinned on a document.  
@@ -32,6 +33,7 @@ import javax.persistence.FetchType;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="TAG")
 @javax.persistence.IdClass(com.docdoku.core.document.TagKey.class)
 @javax.persistence.Entity
 public class Tag implements Serializable {

@@ -219,7 +219,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            DocumentMaster docM = documentService.checkIn(new DocumentMasterKey(workspaceId, docId, docVersion));
+            DocumentMaster docM = documentService.checkInDocument(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
@@ -242,7 +242,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            DocumentMaster docM = documentService.checkOut(new DocumentMasterKey(workspaceId, docId, docVersion));
+            DocumentMaster docM = documentService.checkOutDocument(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
@@ -266,7 +266,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
 
-            DocumentMaster docM = documentService.undoCheckOut(new DocumentMasterKey(workspaceId, docId, docVersion));
+            DocumentMaster docM = documentService.undoCheckOutDocument(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());

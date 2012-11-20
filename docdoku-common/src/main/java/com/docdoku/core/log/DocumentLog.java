@@ -26,6 +26,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * The <code>DocumentLog</code> class represents an entry in the log
@@ -35,6 +36,7 @@ import javax.persistence.NamedQuery;
  * @version 1.1, 22/09/11
  * @since   V1.1
  */
+@Table(name="DOCUMENTLOG")
 @javax.persistence.Entity
 @NamedQueries ({
     @NamedQuery(name="findLogByDocumentAndUserAndEvent", query="SELECT l FROM DocumentLog l WHERE l.userLogin = :userLogin AND l.documentWorkspaceId = :documentWorkspaceId AND l.documentDocumentMasterId = :documentDocumentMasterId AND l.documentDocumentMasterVersion = :documentDocumentMasterVersion AND l.documentIteration = :documentIteration and l.event = :event ORDER BY l.logDate")

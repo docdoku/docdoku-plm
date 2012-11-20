@@ -21,7 +21,9 @@
 
 package com.docdoku.core.product;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
@@ -31,12 +33,14 @@ import javax.persistence.Entity;
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
+@Table(name="LOTBASEDEFFCS")
 @Entity
 public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec{
 
     /**
      * The lot id of the particular batch of items specified by the context.
      */
+    @Column(name="LOTIDCONFIG")
     private String lotId;
 
     public LotBasedEffectivityConfigSpec() {

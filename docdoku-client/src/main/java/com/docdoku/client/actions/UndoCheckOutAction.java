@@ -48,7 +48,7 @@ public class UndoCheckOutAction extends ClientAbstractAction {
         DocumentMaster docM = mOwner.getSelectedDocM();
         MainController controller = MainController.getInstance();
         try {
-            DocumentMaster newDocM = controller.undoCheckOut(docM);
+            DocumentMaster newDocM = controller.undoCheckOutDocument(docM);
             FileIO.rmDir(Config.getCheckOutFolder(newDocM));
             Prefs.removeDocNode(newDocM);
         } catch (Exception pEx) {

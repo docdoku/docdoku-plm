@@ -21,6 +21,7 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Defines an URL type custom attribute of a document.
@@ -29,6 +30,7 @@ import javax.persistence.Entity;
  * @version 1.0 23/07/2009
  * @since   V1.0
  */
+@Table(name="INSTANCEURLATTRIBUTE")
 @Entity
 public class InstanceURLAttribute extends InstanceAttribute {
 

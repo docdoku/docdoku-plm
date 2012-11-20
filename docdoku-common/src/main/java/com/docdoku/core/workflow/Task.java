@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="TASK")
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskKey.class)
 @Entity
 public class Task implements Serializable, Cloneable {

@@ -20,9 +20,8 @@
 
 package com.docdoku.core.security;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
+import javax.persistence.Table;
 
 /**
  * Represents a password recovery request. This class makes the link between
@@ -32,6 +31,7 @@ import java.util.UUID;
  * @version 1.0, 01/04/11
  * @since   V1.0
  */
+@Table(name="PASSWORDRECOVERYREQUEST")
 @javax.persistence.Entity
 public class PasswordRecoveryRequest implements java.io.Serializable {
     

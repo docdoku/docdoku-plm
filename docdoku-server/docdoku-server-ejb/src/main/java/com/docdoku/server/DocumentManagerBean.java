@@ -703,7 +703,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster checkOut(DocumentMasterKey pDocMPK)
+    public DocumentMaster checkOutDocument(DocumentMasterKey pDocMPK)
             throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
@@ -813,7 +813,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster undoCheckOut(DocumentMasterKey pDocMPK)
+    public DocumentMaster undoCheckOutDocument(DocumentMasterKey pDocMPK)
             throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
@@ -836,7 +836,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster checkIn(DocumentMasterKey pDocMPK)
+    public DocumentMaster checkInDocument(DocumentMasterKey pDocMPK)
             throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);

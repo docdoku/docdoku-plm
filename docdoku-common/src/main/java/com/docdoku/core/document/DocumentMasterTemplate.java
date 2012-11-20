@@ -41,6 +41,7 @@ import javax.persistence.*;
  * @version 1.1, 23/01/12
  * @since   V1.0
  */
+@Table(name="DOCUMENTMASTERTEMPLATE")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterTemplateKey.class)
 @javax.persistence.Entity
 public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
@@ -60,12 +61,12 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     private String mask;
     
     @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
-    @JoinTable(
+    @JoinTable(name="DOCUMENTMASTERTEMPLATE_BINRES",
         inverseJoinColumns={
             @JoinColumn(name="ATTACHEDFILE_FULLNAME", referencedColumnName="FULLNAME")
         },
         joinColumns={
-            @JoinColumn(name="DOCUMENTMASTERTEMPLATE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
             @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
         }
     )

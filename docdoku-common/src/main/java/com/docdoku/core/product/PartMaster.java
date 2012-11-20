@@ -42,6 +42,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -55,11 +56,12 @@ import javax.persistence.TemporalType;
  * @version 1.1, 18/05/11
  * @since   V1.1
  */
+@Table(name="PARTMASTER")
 @IdClass(PartMasterKey.class)
 @Entity
 public class PartMaster implements Serializable {
 
-    @Column(length = 255)
+    @Column(name="PARTNUMBER", length = 255)
     @Id
     private String number = "";
     
@@ -78,7 +80,7 @@ public class PartMaster implements Serializable {
     @OrderColumn(name="ALTERNATE_ORDER")
     @CollectionTable(name="PARTMASTER_ALTERNATE",joinColumns={
         @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-        @JoinColumn(name="PARTMASTER_NUMBER", referencedColumnName="NUMBER")
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTNUMBER")
     })    
     @ElementCollection(fetch = FetchType.LAZY)
     private List<PartAlternateLink> alternates = new LinkedList<PartAlternateLink>();

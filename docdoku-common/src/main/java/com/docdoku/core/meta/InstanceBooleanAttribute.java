@@ -21,6 +21,7 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Defines a boolean type custom attribute of a document.
@@ -29,6 +30,7 @@ import javax.persistence.Entity;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
+@Table(name="INSTANCEBOOLEANATTRIBUTE")
 @Entity
 public class InstanceBooleanAttribute extends InstanceAttribute{
 

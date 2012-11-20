@@ -23,6 +23,7 @@ package com.docdoku.core.product;
 
 import com.docdoku.core.common.BinaryResource;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Wraps a CAD file providing quality information.
@@ -32,6 +33,7 @@ import javax.persistence.Entity;
  * @version 1.1, 20/07/12
  * @since   V1.1
  */
+@Table(name="GEOMETRY")
 @Entity
 public class Geometry extends BinaryResource{
 
