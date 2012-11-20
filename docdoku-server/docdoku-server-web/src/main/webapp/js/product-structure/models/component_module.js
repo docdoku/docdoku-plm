@@ -104,7 +104,10 @@ define(["models/part_iteration"], function (PartIteration) {
         removeFromScene: function() {
             $.getJSON(this.getInstancesUrl(), function(instances) {
                 _.each(instances, function(instance) {
-                    sceneManager.getPartIteration(instance.partIterationId).removeInstance(instance);
+                    var partIteration = sceneManager.getPartIteration(instance.partIterationId);
+                    if (partIteration != null) {
+                        partIteration.removeInstance(instance);
+                    }
                 });
             });
         }

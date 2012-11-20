@@ -218,7 +218,7 @@ public class ProductResource {
             double ary = ry + instance.getRy();
             double arz = rz + instance.getRz();
 
-            if (partI.getGeometries().size() > 0) {
+            if (partI.getGeometries().size() > 0 && filterPath.isEmpty()) {
                 instancesDTO.add(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz, files, attributes));
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
