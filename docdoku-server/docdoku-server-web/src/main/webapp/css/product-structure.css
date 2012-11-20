@@ -135,7 +135,8 @@ html{
 }
 
 #product_nav_list {
-    width: 100%;
+    width: 400px;
+    padding-left: 5px;
 }
 
 #product_nav_list ul {
