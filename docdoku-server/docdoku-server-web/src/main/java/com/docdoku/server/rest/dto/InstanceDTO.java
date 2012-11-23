@@ -2,12 +2,15 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 
 /**
- * User: jmaffre
- * Date: 13/11/12
- * Time: 12:51
+ *
+ * @author Julien Maffre
  */
+@XmlRootElement
 public class InstanceDTO implements Serializable {
 
     /**
