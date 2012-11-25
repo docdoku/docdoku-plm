@@ -135,9 +135,9 @@ public class UploadDownloadServlet extends HttpServlet {
 
             long lastModified = fileToOutput.lastModified();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");
-            setLastModifiedHeaders(lastModified, pResponse);
             
             if(lastModified>ifModified){
+                setLastModifiedHeaders(lastModified, pResponse);
                 pResponse.setContentLength((int) fileToOutput.length());
                 ServletOutputStream httpOut = pResponse.getOutputStream();
                 InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);

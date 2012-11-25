@@ -33,6 +33,9 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
@@ -41,6 +44,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -58,10 +63,9 @@ public class ProductResource {
     @EJB
     private IProductManagerLocal productService;
     private Mapper mapper;
-
     @EJB
     private LayerResource layerResource;
-            
+
     public ProductResource() {
     }
 
@@ -97,19 +101,20 @@ public class ProductResource {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = new LatestConfigSpec();
-         
+
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
-            
-            if (depth==null)
+
+            if (depth == null) {
                 return createDTO(rootUsageLink, -1);
-            else
+            } else {
                 return createDTO(rootUsageLink, depth);
-            
+            }
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-    
+
     @Path("{ciId}/layers")
     public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         return layerResource;
@@ -131,14 +136,15 @@ public class ProductResource {
 
         PartRevision partR = pm.getLastRevision();
         PartIteration partI = null;
-        if(partR !=null)
+        if (partR != null) {
             partI = partR.getLastIteration();
-        
-        if(partI !=null){
+        }
+
+        if (partI != null) {
             for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
                 lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
             }
-            if(depth!=0){
+            if (depth != 0) {
                 depth--;
                 for (PartUsageLink component : partI.getComponents()) {
                     components.add(createDTO(component, depth));
@@ -157,30 +163,40 @@ public class ProductResource {
     @GET
     @Path("{ciId}/instances")
     @Produces("application/json;charset=UTF-8")
-    public Response getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
+    public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
         try {
-            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs = new LatestConfigSpec();
+            //Because some AS (like Glassfish) forbids the use of CacheControl
+            //when authenticated we use the LastModified header to fake
+            //a similar behavior (12 hours of cache)
+            Calendar cal = new GregorianCalendar();
+            cal.add(Calendar.HOUR, -12);
+            Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
+            if (rb != null) {
+                return rb.build();
+            } else {
 
-            String[] partUsageIdsString = path.split("-");
-            List<Integer> usageLinkPaths = new ArrayList<Integer>();
+                CacheControl cc = new CacheControl();
+                //this request is resources consuming so we cache the response for 12 hours
+                cc.setMaxAge(60 * 60 * 12);
 
-            for (int i = 0; i < partUsageIdsString.length; i++) {
-                usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));
+                ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+                ConfigSpec cs = new LatestConfigSpec();
+
+                String[] partUsageIdsString = path.split("-");
+                List<Integer> usageLinkPaths = new ArrayList<Integer>();
+
+                for (int i = 0; i < partUsageIdsString.length; i++) {
+                    usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));
+                }
+
+                PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+
+                usageLinkPaths.remove(0);
+
+                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths)).build();
             }
-
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
-
-            usageLinkPaths.remove(0);
-            CacheControl cc = new CacheControl();
-            //this request is resources consuming so we cache the response for 1 hour
-            cc.setMaxAge(60*60);
-            cc.setNoCache(false);
-            return Response.ok().cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths)).build();
-
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-
 }
