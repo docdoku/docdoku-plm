@@ -40,6 +40,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -155,7 +157,7 @@ public class ProductResource {
     @GET
     @Path("{ciId}/instances")
     @Produces("application/json;charset=UTF-8")
-    public InstanceCollection getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
+    public Response getInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = new LatestConfigSpec();
@@ -170,8 +172,11 @@ public class ProductResource {
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
 
             usageLinkPaths.remove(0);
-
-            return new InstanceCollection(rootUsageLink, usageLinkPaths);
+            CacheControl cc = new CacheControl();
+            //this request is resources consuming so we cache the response for 1 hour
+            cc.setMaxAge(60*60);
+            cc.setNoCache(false);
+            return Response.ok().cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths)).build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

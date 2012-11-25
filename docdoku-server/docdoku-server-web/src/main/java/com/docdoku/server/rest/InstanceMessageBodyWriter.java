@@ -66,13 +66,12 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     
     private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
     
-    private byte[] leftSquareBrace;
-    private byte[] rightSquareBrace;
-    private byte[] comma;
-    private boolean addComma=false;
+
+    private ThreadLocal<byte[]> tlComma = new ThreadLocal<byte[]>();
+    private ThreadLocal<Boolean> tlAddComma = new ThreadLocal<Boolean>();
     
-    private JSONMarshaller marshaller;
-    private OutputStream entityStream;
+    private ThreadLocal<JSONMarshaller> tlMarshaller=new ThreadLocal<JSONMarshaller>();
+    private ThreadLocal<OutputStream> tlEntityStream=new ThreadLocal<OutputStream>();
     
     @Context
     protected Providers providers;
@@ -93,27 +92,32 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     public void writeTo(InstanceCollection object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         try {
             //Class<?> domainClass = getDomainClass(genericType);
-            this.entityStream=entityStream;
-            this.marshaller = ((JSONJAXBContext)getJAXBContext(InstanceDTO.class, mediaType)).createJSONMarshaller();
+            setEntityStream(entityStream);
+            setMarshaller(((JSONJAXBContext)getJAXBContext(InstanceDTO.class, mediaType)).createJSONMarshaller());
             Map<String, String> mediaTypeParameters = mediaType.getParameters();
             String charSet="UTF-8";
             if(mediaTypeParameters.containsKey(CHARSET)) {
                 charSet = mediaTypeParameters.get(CHARSET);
-                this.marshaller.setProperty(Marshaller.JAXB_ENCODING, charSet);
+                getMarshaller().setProperty(Marshaller.JAXB_ENCODING, charSet);
             }
             
             PartUsageLink rootUsageLink = object.getRootUsageLink();
             List<Integer> usageLinkPaths = object.getUsageLinkPaths();
-            leftSquareBrace = "[".getBytes(charSet);
-            rightSquareBrace = "]".getBytes(charSet);
-            comma = ",".getBytes(charSet);
+            byte[] leftSquareBrace = "[".getBytes(charSet);
+            byte[] rightSquareBrace = "]".getBytes(charSet);
+            setComma(",".getBytes(charSet));
             
-            this.addComma=false;
-            this.entityStream.write(leftSquareBrace);
+            setAddComma(false);
+            getEntityStream().write(leftSquareBrace);
             generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths);
-            this.entityStream.write(rightSquareBrace);
+            getEntityStream().write(rightSquareBrace);
         } catch (JAXBException ex) {
             throw new WebApplicationException(ex);
+        }finally{
+            tlEntityStream.remove();
+            tlMarshaller.remove();
+            tlAddComma.remove();
+            tlComma.remove();
         }
 
     }
@@ -166,11 +170,11 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             double arz = rz + instance.getRz();
 
             if (partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
-                if(addComma)
-                    this.entityStream.write(comma);
+                if(getAddComma())
+                    getEntityStream().write(getComma());
                 
-                this.marshaller.marshallToJSON(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz, files, attributes), entityStream);
-                addComma=true;
+                getMarshaller().marshallToJSON(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz, files, attributes), getEntityStream());
+                setAddComma(true);
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
                     if (filteredPath.isEmpty()) {
@@ -213,6 +217,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     }
     
     
+    
     private Class<?> getDomainClass(Type genericType) {
         if(genericType instanceof Class) {
             return (Class<?>) genericType;
@@ -222,4 +227,38 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             return null;
         }
     }
+    
+    
+    private byte[] getComma(){
+        return tlComma.get();
+    }
+    
+    private void setComma(byte[] c){
+        tlComma.set(c);
+    }
+    
+    private boolean getAddComma(){
+        return tlAddComma.get();
+    }
+    
+    private void setAddComma(boolean b){
+        tlAddComma.set(b);
+    }
+    
+    private OutputStream getEntityStream(){
+        return tlEntityStream.get();
+    }
+    
+    private void setEntityStream(OutputStream out){
+        tlEntityStream.set(out);
+    }
+    
+    private JSONMarshaller getMarshaller(){
+        return tlMarshaller.get();
+    }
+    
+    private void setMarshaller(JSONMarshaller m){
+        tlMarshaller.set(m);
+    }
+    
 }
