@@ -11,7 +11,7 @@
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
         <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/common/style.less"/>
 
-        <script src="<%=request.getContextPath()%>/js/lib/jquery-1.7.1.min.js"></script>
+        <script src="<%=request.getContextPath()%>/js/lib/jquery-1.8.2.min.js"></script>
         <script src="<%=request.getContextPath()%>/js/lib/less-1.2.1.min.js"></script>
         <script src="<%=request.getContextPath()%>/js/lib/bootstrap-2.0.2.min.js"></script>
     </head> 
