@@ -14,6 +14,7 @@ function SceneManager(options) {
     this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
     this.instances = [];
+    this.instancesMap = {};
     this.partIterations = {}
     this.meshesBindedForMarkerCreation = [];
 }
@@ -219,10 +220,10 @@ SceneManager.prototype = {
 
     updateInstances: function() {
 
-        var _frustum = new THREE.Frustum()
-        _projScreenMatrix = new THREE.Matrix4()
-        _projScreenMatrix.multiply( this.camera.projectionMatrix, this.camera.matrixWorldInverse );
-        _frustum.setFromMatrix( _projScreenMatrix );
+        var _frustum = new THREE.Frustum();
+        var _projScreenMatrix = new THREE.Matrix4();
+        _projScreenMatrix.multiply(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
+        _frustum.setFromMatrix(_projScreenMatrix);
 
         var numbersOfInstances = this.instances.length;
 
@@ -237,11 +238,39 @@ SceneManager.prototype = {
     },
 
     getPartIteration: function(partIterationId) {
-        return this.hasPartIteration(partIterationId) ? this.partIterations[partIterationId] : null;
+        return this.partIterations[partIterationId];
     },
 
     hasPartIteration: function(partIterationId) {
         return _.has(this.partIterations, partIterationId);
+    },
+
+    addInstanceOnScene: function(instance) {
+        this.instancesMap[instance.id] = instance;
+        sceneManager.instances.push(instance);
+    },
+
+    removeInstanceFromScene: function(instanceId) {
+        var numbersOfInstances = sceneManager.instances.length;
+
+        var index = null;
+
+        for (var j = 0; j<numbersOfInstances; j++) {
+            if (sceneManager.instances[j].id == instanceId) {
+                index = j;
+                break;
+            }
+        }
+
+        if (index != null) {
+            sceneManager.instances[j].clearMeshAndLevelGeometry();
+            sceneManager.instances.splice(index, 1);
+            delete this.instancesMap[instanceId];
+        }
+    },
+
+    isOnScene: function(instanceId) {
+        return _.has(this.instancesMap, instanceId);
     }
 
 }

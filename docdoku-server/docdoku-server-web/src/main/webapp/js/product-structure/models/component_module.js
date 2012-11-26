@@ -92,21 +92,40 @@ define(["models/part_iteration"], function (PartIteration) {
 
         putOnScene: function() {
             $.getJSON(this.getInstancesUrl(), function(instances) {
-                _.each(instances, function(instance) {
-                    if (!sceneManager.hasPartIteration(instance.partIterationId)) {
-                        sceneManager.addPartIteration(new PartIteration(instance));
+                _.each(instances, function(instanceRaw) {
+
+                    //do something only if this instance is not on scene
+                    if (!sceneManager.isOnScene(instanceRaw.id)) {
+
+                        //if we deal with this partIteration for the fist time, we need to create it
+                        if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
+                            sceneManager.addPartIteration(new PartIteration(instanceRaw));
+                        }
+
+                        var partIteration = sceneManager.getPartIteration(instanceRaw.partIterationId);
+
+                        //finally we create the instance and add it to the scene
+                        sceneManager.addInstanceOnScene(new Instance(
+                            instanceRaw.id,
+                            partIteration,
+                            instanceRaw.tx*10,
+                            instanceRaw.ty*10,
+                            instanceRaw.tz*10,
+                            instanceRaw.rx,
+                            instanceRaw.ry,
+                            instanceRaw.rz
+                        ));
                     }
-                    sceneManager.getPartIteration(instance.partIterationId).addInstance(instance);
+
                 });
             });
         },
 
         removeFromScene: function() {
             $.getJSON(this.getInstancesUrl(), function(instances) {
-                _.each(instances, function(instance) {
-                    var partIteration = sceneManager.getPartIteration(instance.partIterationId);
-                    if (partIteration != null) {
-                        partIteration.removeInstance(instance);
+                _.each(instances, function(instanceRaw) {
+                    if (sceneManager.isOnScene(instanceRaw.id)) {
+                        sceneManager.removeInstanceFromScene(instanceRaw.id);
                     }
                 });
             });
@@ -136,11 +155,12 @@ define(["models/part_iteration"], function (PartIteration) {
 
         parse: function(response) {
             if (this.isRoot) {
+                response.path = null;
                 return [response];
             } else {
                 var self = this;
                 return _.map(response.components, function(component) {
-                    var path = _.isUndefined(self.path) ? component.partUsageLinkId : self.path + '-' + component.partUsageLinkId;
+                    var path = self.path == null ? component.partUsageLinkId : self.path + '-' + component.partUsageLinkId;
                     return _.extend(component, {path: path})
                 });
             }
