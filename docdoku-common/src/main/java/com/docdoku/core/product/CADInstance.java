@@ -22,7 +22,11 @@
 package com.docdoku.core.product;
 
 import java.io.Serializable;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Represents a CAD instance of a specific part defined in a
@@ -35,10 +39,16 @@ import javax.persistence.Embeddable;
  * @version 1.1, 20/07/12
  * @since   V1.1
  */
-@Embeddable
+@Table(name="CADINSTANCE")
+@Entity
 public class CADInstance implements Serializable{
 
 
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id
+    private int id;
+    
+    
     /**
      * Translation on x axis.
      */
@@ -144,5 +154,14 @@ public class CADInstance implements Serializable{
     public void setTz(double tz) {
         this.tz = tz;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
 
 }

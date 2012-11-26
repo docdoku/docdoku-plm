@@ -48,48 +48,45 @@ import javax.persistence.Table;
  * @version 1.1, 15/10/11
  * @since   V1.1
  */
-@Table(name="PARTUSAGELINK")
+@Table(name = "PARTUSAGELINK")
 @Entity
 public class PartUsageLink implements Serializable {
 
-    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
-    
     private double amount;
     private String unit;
-    
     private String referenceDescription;
-    
-    @Column(name="COMMENTDATA")
+    @Column(name = "COMMENTDATA")
     private String comment;
-    
-    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "COMPONENT_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
         @JoinColumn(name = "COMPONENT_PARTNUMBER", referencedColumnName = "PARTNUMBER")
     })
     private PartMaster component;
-    
-    @OrderColumn(name="PARTSUBSTITUTE_ORDER")
-    @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinTable(name="PUSAGELINK_PSUBSTITUTELINK",
-    inverseJoinColumns={
-        @JoinColumn(name="PARTSUBSTITUTE_ID", referencedColumnName="ID")
+    @OrderColumn(name = "PARTSUBSTITUTE_ORDER")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "PUSAGELINK_PSUBSTITUTELINK",
+    inverseJoinColumns = {
+        @JoinColumn(name = "PARTSUBSTITUTE_ID", referencedColumnName = "ID")
     },
-    joinColumns={
-        @JoinColumn(name="PARTUSAGELINK_ID", referencedColumnName="ID")
+    joinColumns = {
+        @JoinColumn(name = "PARTUSAGELINK_ID", referencedColumnName = "ID")
     })
-    private List<PartSubstituteLink> substitutes=new LinkedList<PartSubstituteLink>();
-
+    private List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
     
-    @OrderColumn(name="CADINSTANCE_ORDER")
-    @CollectionTable(name="PARTUSAGELINK_CADINSTANCE",joinColumns={
-        @JoinColumn(name="PARTUSAGELINK_ID", referencedColumnName="ID")
+    @OrderColumn(name = "CADINSTANCE_ORDER")
+    @JoinTable(name = "PARTUSAGELINK_CADINSTANCE",
+    inverseJoinColumns = {
+        @JoinColumn(name = "CADINSTANCE_ID", referencedColumnName = "ID")
+    },
+    joinColumns = {
+        @JoinColumn(name = "PARTUSAGELINK_ID", referencedColumnName = "ID")
     })
-    @ElementCollection(fetch=FetchType.LAZY)
-    private List<CADInstance> cadInstances=new LinkedList<CADInstance>();
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CADInstance> cadInstances = new LinkedList<CADInstance>();
 
     public PartUsageLink() {
     }
@@ -101,8 +98,6 @@ public class PartUsageLink implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
 
     public double getAmount() {
         return amount;
@@ -159,6 +154,4 @@ public class PartUsageLink implements Serializable {
     public void setCadInstances(List<CADInstance> cadInstances) {
         this.cadInstances = cadInstances;
     }
-    
-    
 }

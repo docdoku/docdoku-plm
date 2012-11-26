@@ -61,6 +61,7 @@
     <class>com.docdoku.core.workflow.WorkflowModel</class>
     <class>com.docdoku.core.product.Marker</class>
     <class>com.docdoku.core.product.Layer</class>
+    <class>com.docdoku.core.product.CADInstance</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.logging.level" value="FINE"/>

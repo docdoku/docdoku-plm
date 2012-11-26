@@ -2,7 +2,6 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -13,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class InstanceDTO implements Serializable {
 
+    private int id;
+    
     /**
      * Id of part iteration
      */
@@ -57,7 +58,8 @@ public class InstanceDTO implements Serializable {
 
     public InstanceDTO() {}
 
-    public InstanceDTO(String partIterationId, double tx, double ty, double tz, double rx, double ry, double rz, List<GeometryDTO> files, List<InstanceAttributeDTO> attributes) {
+    public InstanceDTO(int id, String partIterationId, double tx, double ty, double tz, double rx, double ry, double rz, List<GeometryDTO> files, List<InstanceAttributeDTO> attributes) {
+        this.id=id;
         this.partIterationId = partIterationId;
         this.tx = tx;
         this.ty = ty;
@@ -140,5 +142,15 @@ public class InstanceDTO implements Serializable {
     public void setAttributes(List<InstanceAttributeDTO> attributes) {
         this.attributes = attributes;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
 
 }

@@ -168,12 +168,13 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             double arx = rx + instance.getRx();
             double ary = ry + instance.getRy();
             double arz = rz + instance.getRz();
-
+            int id = instance.getId();
+            
             if (partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
                 if(getAddComma())
                     getEntityStream().write(getComma());
                 
-                getMarshaller().marshallToJSON(new InstanceDTO(partIterationId, atx, aty, atz, arx, ary, arz, files, attributes), getEntityStream());
+                getMarshaller().marshallToJSON(new InstanceDTO(id, partIterationId, atx, aty, atz, arx, ary, arz, files, attributes), getEntityStream());
                 setAddComma(true);
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
