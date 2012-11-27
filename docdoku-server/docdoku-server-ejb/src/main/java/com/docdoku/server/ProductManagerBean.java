@@ -80,7 +80,6 @@ import javax.persistence.PersistenceContext;
 import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
 import javax.jws.WebService;
-import javax.persistence.TypedQuery;
 
 @DeclareRoles("users")
 @Local(IProductManagerLocal.class)
@@ -106,6 +105,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         dataManager = new DataManagerImpl(new File(vaultPath));
     }
 
+    @RolesAllowed("users")
+    @Override
+    public List<List<PartUsageLink>> findPartUsages(ConfigurationItemKey pKey, PartMasterKey pPartMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
+        PartUsageLinkDAO linkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
+        List<List<PartUsageLink>> usagePaths = linkDAO.findPartUsagePaths(pPartMKey);
+        //TODO filter by configuration item
+        return usagePaths;
+    }
+    
+    
     @RolesAllowed("users")
     @Override
     public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {

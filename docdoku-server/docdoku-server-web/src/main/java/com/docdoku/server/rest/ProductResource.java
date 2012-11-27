@@ -26,6 +26,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.LatestConfigSpec;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.security.UserGroupMapping;
@@ -115,6 +116,31 @@ public class ProductResource {
         }
     }
 
+    @GET
+    @Path("{ciId}/paths")
+    @Produces("application/json;charset=UTF-8")
+    public String[] searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
+        try {
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+            List<List<PartUsageLink>> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
+            String[] paths=new String[usagePaths.size()];
+            StringBuilder sb=new StringBuilder();
+            for(int i=0;i<usagePaths.size();i++){
+                List<PartUsageLink> usagePath=usagePaths.get(i);
+                for(PartUsageLink link:usagePath){
+                    sb.append(link.getId());
+                    sb.append("-");
+                }
+                sb.deleteCharAt(sb.length()-1);
+                paths[i]=sb.toString();
+            }
+            return paths;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+    
     @Path("{ciId}/layers")
     public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         return layerResource;
@@ -181,18 +207,22 @@ public class ProductResource {
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
                 ConfigSpec cs = new LatestConfigSpec();
-
-                String[] partUsageIdsString = path.split("-");
+                PartUsageLink rootUsageLink;
                 List<Integer> usageLinkPaths = new ArrayList<Integer>();
+                if(path != null && !path.equals("null")){
+                    String[] partUsageIdsString = path.split("-");
+                    
 
-                for (int i = 0; i < partUsageIdsString.length; i++) {
-                    usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));
+                    for (int i = 0; i < partUsageIdsString.length; i++) {
+                        usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));
+                    }
+
+                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                    usageLinkPaths.remove(0);
+                }else{
+                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);                  
                 }
-
-                PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
-
-                usageLinkPaths.remove(0);
-
+                
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths)).build();
             }
         } catch (com.docdoku.core.services.ApplicationException ex) {

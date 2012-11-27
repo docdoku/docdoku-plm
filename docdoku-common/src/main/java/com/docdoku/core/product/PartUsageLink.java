@@ -35,6 +35,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
@@ -50,6 +52,10 @@ import javax.persistence.Table;
  */
 @Table(name = "PARTUSAGELINK")
 @Entity
+@NamedQueries({
+    @NamedQuery(name="PartUsageLink.findByComponent",query="SELECT u FROM PartUsageLink u WHERE u.component.number = :partNumber AND u.component.workspace.id = :workspaceId"),
+    @NamedQuery(name="PartUsageLink.getPartOwner",query="SELECT p FROM PartIteration p WHERE :usage MEMBER OF p.components")
+})
 public class PartUsageLink implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
