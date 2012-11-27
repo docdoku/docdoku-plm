@@ -220,15 +220,17 @@ SceneManager.prototype = {
 
     updateInstances: function() {
 
+        /*
         var _frustum = new THREE.Frustum();
         var _projScreenMatrix = new THREE.Matrix4();
         _projScreenMatrix.multiply(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
         _frustum.setFromMatrix(_projScreenMatrix);
+        */
 
         var numbersOfInstances = this.instances.length;
 
         for (var j = 0; j<numbersOfInstances; j++) {
-            this.instances[j].update(_frustum);
+            this.instances[j].update();
         }
 
     },
