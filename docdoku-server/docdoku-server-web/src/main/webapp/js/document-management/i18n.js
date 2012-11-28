@@ -70,6 +70,7 @@ define(function () {
 		"VERSION":						"Version",
 		"WORKFLOWS":					"Workflows",
 		"WORKFLOW":						"Workflow",
+        "WORKFLOW_NAME_PLACEHOLDER":    "Nom du nouveau workflow",
 		"WORKSPACES":					"Workspaces",
         "VALIDATION_FAILED_FOR":        "Validation échouée pour "
 	};

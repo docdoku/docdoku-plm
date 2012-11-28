@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import com.docdoku.server.rest.dto.UserDTO;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,8 +45,8 @@ public class WorkflowModelDTO implements Serializable {
         this.workspaceId = workspaceId;
         this.id = id;
     }
-    
-        public WorkflowModelDTO(String id, UserDTO pAuthor) {
+
+    public WorkflowModelDTO(String id, UserDTO pAuthor) {
         this.id = id;
         this.reference = id;
         this.author = pAuthor;
@@ -115,6 +116,6 @@ public class WorkflowModelDTO implements Serializable {
     public void setReference(String reference) {
         this.reference = reference;
     }
-    
-    
+
+
 }
