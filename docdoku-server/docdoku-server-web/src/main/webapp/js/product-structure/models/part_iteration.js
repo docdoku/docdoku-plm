@@ -29,8 +29,8 @@ define(function() {
                     this.radius = radiusAttribute.value;
                 }
 
-                var levelGeometry1 = (isIpad) ? 1.0 : 0.7;
-                var levelGeometry2 = (isIpad) ? 0.7 : 0.4;
+                var levelGeometry1 = (isIpad) ? 0.9 : 0.6;
+                var levelGeometry2 = (isIpad) ? 0.6 : 0.3;
 
                 var self = this;
 
