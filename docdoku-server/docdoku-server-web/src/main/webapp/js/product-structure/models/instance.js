@@ -23,9 +23,11 @@ window.Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
 
 Instance.prototype = {
 
-    getRating: function() {
-        //var inFrustum = this.isInFrustum(_frustum);
-        var inFrustum = true;
+    getRating: function(frustum) {
+        var inFrustum = this.isInFrustum(frustum);
+        if(!inFrustum)
+            console.log("not in frustum:"+this.partIteration.partIterationId);
+        //var inFrustum = true;
         return inFrustum ? this.partIteration.radius / this.getDistance(sceneManager.camera.position) : 0;
     },
 
@@ -33,14 +35,14 @@ Instance.prototype = {
         return Math.sqrt(Math.pow(position.x - this.position.x, 2) + Math.pow(position.y - this.position.y, 2) + Math.pow(position.z - this.position.z, 2));
     },
 
-    isInFrustum: function(_frustum) {
+    isInFrustum: function(frustum) {
 
         if (_.isUndefined(this.matrixWorld)) {
             return true;
         }
 
         var distance = 0.0;
-        var planes = _frustum.planes;
+        var planes = frustum.planes;
         var matrix = this.matrixWorld;
         var me = matrix.elements;
         var radius = this.partIteration.radius * matrix.getMaxScaleOnAxis();
@@ -58,14 +60,14 @@ Instance.prototype = {
     /**
      * Update instance 3d model if needed
      */
-    update: function() {
+    update: function(frustum) {
 
         if (this.idle && this.partIteration.idle) {
 
             this.idle = false;
             this.partIteration.idle = false;
 
-            var rating = this.getRating();
+            var rating = this.getRating(frustum);
             //get the level corresponding of this rating
             var levelGeometry = this.partIteration.getLevelGeometry(rating);
 

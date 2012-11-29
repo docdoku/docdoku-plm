@@ -13,6 +13,8 @@ function SceneManager(options) {
     this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
     this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
+    this.updateOffset=0;
+    this.updateCycleLength=250;
     this.instances = [];
     this.instancesMap = {};
     this.partIterations = {}
@@ -118,7 +120,7 @@ SceneManager.prototype = {
 
         this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container[0]);
 
-        this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances,function(instance) { return instance.mesh != null }), 'mesh');
+        this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances,function(instance) {return instance.mesh != null}), 'mesh');
 
 
         var onIntersect = function(intersectPoint) {
@@ -219,20 +221,22 @@ SceneManager.prototype = {
     },
 
     updateInstances: function() {
-
-        /*
-        var _frustum = new THREE.Frustum();
-        var _projScreenMatrix = new THREE.Matrix4();
-        _projScreenMatrix.multiply(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
-        _frustum.setFromMatrix(_projScreenMatrix);
-        */
-
-        var numbersOfInstances = this.instances.length;
-
-        for (var j = 0; j<numbersOfInstances; j++) {
-            this.instances[j].update();
+             
+        var frustum = new THREE.Frustum();
+        var projScreenMatrix = new THREE.Matrix4();
+        projScreenMatrix.multiply(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
+        frustum.setFromMatrix(projScreenMatrix); 
+            
+        var updateIndex = Math.min((this.updateOffset+this.updateCycleLength), this.instances.length);
+        for (var j = this.updateOffset; j<updateIndex; j++) {
+            this.instances[j].update(frustum);
         }
-
+        if(updateIndex <this.instances.length){
+            this.updateOffset=updateIndex;
+        }else{
+            this.updateOffset=0;
+        }
+            
     },
 
     addPartIteration: function(partIteration) {
