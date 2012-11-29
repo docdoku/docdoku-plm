@@ -1,6 +1,6 @@
 var sceneManager;
 
-define(["views/parts_tree_view"], function (PartsTreeView) {
+define(["views/search_view", "views/parts_tree_view"], function (SearchView, PartsTreeView) {
 
     var AppView = Backbone.View.extend({
 
@@ -27,7 +27,15 @@ define(["views/parts_tree_view"], function (PartsTreeView) {
 
         initialize: function() {
             sceneManager = new SceneManager();
-            new PartsTreeView().render();
+
+            var searchView = new SearchView();
+
+            console.log(searchView.collection);
+
+            new PartsTreeView({
+                resultPathCollection: searchView.collection
+            }).render();
+
             sceneManager.init();
         }
 

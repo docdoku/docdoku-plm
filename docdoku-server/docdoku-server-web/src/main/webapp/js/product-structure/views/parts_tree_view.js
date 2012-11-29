@@ -13,6 +13,7 @@ define(["models/component_module", "views/component_views"], function (Component
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });
             new ComponentViews.Components({
                 collection: rootCollection,
+                resultPathCollection: this.options.resultPathCollection,
                 parentView: this.$el,
                 parentChecked: false
             });

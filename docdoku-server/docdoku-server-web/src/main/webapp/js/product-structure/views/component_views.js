@@ -24,8 +24,9 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
             var optionsForComponentView = {
                 model: component,
                 isLast: isLast,
-                checkedAtInit: this.options.parentChecked
-            }
+                checkedAtInit: this.options.parentChecked,
+                resultPathCollection: this.options.resultPathCollection
+            };
 
             var componentView = component.isAssembly() ? new ComponentViews.Assembly(optionsForComponentView) : new ComponentViews.Leaf(optionsForComponentView);
 
@@ -48,6 +49,19 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
 
         initialize: function() {
             _.bindAll(this, ["onChangeCheckbox"]);
+            this.options.resultPathCollection.bind('reset', this.onAllResultPathAdded, this);
+        },
+
+        onAllResultPathAdded: function() {
+            if(this.options.resultPathCollection.length == 0)
+                this.$el.removeClass("resultPath");
+            else
+                this.options.resultPathCollection.each(this.onResultPathAdded,this);
+        },
+
+        onResultPathAdded: function(resultPath) {
+            if(resultPath.path.indexOf(this.model.attributes.partUsageLinkId) !== -1)
+                this.$el.addClass("resultPath");
         },
 
         onChangeCheckbox: function(event) {
@@ -64,6 +78,8 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
             if (this.options.isLast) {
                 this.$el.addClass('last');
             }
+
+            this.onAllResultPathAdded();
 
             return this;
         },
@@ -97,6 +113,19 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         initialize: function() {
             this.isExpanded = false;
             _.bindAll(this, ["onChangeCheckbox"]);
+            this.options.resultPathCollection.bind('reset', this.onAllResultPathAdded, this);
+        },
+
+        onAllResultPathAdded: function() {
+            if(this.options.resultPathCollection.length == 0)
+                this.$el.removeClass("resultPath");
+            else
+                this.options.resultPathCollection.each(this.onResultPathAdded,this);
+        },
+
+        onResultPathAdded: function(resultPath) {
+            if(resultPath.path.indexOf(this.model.attributes.partUsageLinkId) !== -1)
+                this.$el.addClass("resultPath");
         },
 
         onChangeCheckbox: function(event) {
@@ -118,6 +147,8 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
                     .addClass('lastExpandable-hitarea');
             }
 
+            this.onAllResultPathAdded();
+
             return this;
         },
 
@@ -126,7 +157,8 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
             if (needLoading) new ComponentViews.Components({
                 collection: this.model.children,
                 parentView: this.$el,
-                parentChecked: this.isChecked()
+                parentChecked: this.isChecked(),
+                resultPathCollection: this.options.resultPathCollection
             });
         },
 
