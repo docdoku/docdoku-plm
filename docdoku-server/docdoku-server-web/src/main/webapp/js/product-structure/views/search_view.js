@@ -15,16 +15,7 @@ define([
         initialize: function() {
             this.searchInput = this.$el.find('input');
             this.collection = new ResultPathCollection();
-            this.collection.bind('reset', this.onAllResultPathAdded, this);
         },
-
-            onAllResultPathAdded: function() {
-                this.collection.each(this.onResultPathAdded,this);
-            },
-
-            onResultPathAdded: function(resultPath) {
-                console.log(resultPath.path);
-            },
 
         search: function(){
             var searchString = this.searchInput.val().trim();
