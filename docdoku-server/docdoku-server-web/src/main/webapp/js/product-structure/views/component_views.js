@@ -87,6 +87,8 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         showPartMetadata:function(e) {
             e.stopPropagation();
 
+            sceneManager.setPathForIframe(this.model.getPath());
+
             $("#part_metadata_container").empty();
             new PartMetadataView({model: this.model}).render();
 
@@ -163,7 +165,6 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         },
 
         toggleExpand: function() {
-
             this.$el.toggleClass('expandable collapsable')
                 .children('.hitarea')
                 .toggleClass('expandable-hitarea collapsable-hitarea');
@@ -185,6 +186,8 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
 
         showPartMetadata:function(e) {
             e.stopPropagation();
+
+            sceneManager.setPathForIframe(this.model.getPath());
 
             $("#part_metadata_container").empty();
             new PartMetadataView({model: this.model}).render();

@@ -56,7 +56,6 @@ public class PSServlet extends HttpServlet {
 
         String workspaceID = null;
         String productID = null;
-        String templateType = null;
         
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
@@ -66,12 +65,6 @@ public class PSServlet extends HttpServlet {
 
         try {
             productID = URLDecoder.decode(pathInfos[offset+1], "UTF-8");
-        } catch (IndexOutOfBoundsException ex) {
-            
-        }
-        
-        try {
-            templateType = URLDecoder.decode(pathInfos[offset+2], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
             
         }

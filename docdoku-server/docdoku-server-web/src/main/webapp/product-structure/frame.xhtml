@@ -39,6 +39,15 @@
                 login:"${login}"
             };
 
+            var SCENE_INIT = {
+                camera: {
+                    x:"${cameraX}",
+                    y:"${cameraY}",
+                    z:"${cameraZ}"
+                },
+                pathForIframe: "${pathToLoad}"
+            };
+
             var isIpad = navigator.userAgent.indexOf("iPad") != -1;
 
             $(document).ready(function() {

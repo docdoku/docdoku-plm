@@ -30,9 +30,7 @@ define(["views/search_view", "views/parts_tree_view"], function (SearchView, Par
 
             var searchView = new SearchView();
 
-            console.log(searchView.collection);
-
-            new PartsTreeView({
+            var partsTreeView = new PartsTreeView({
                 resultPathCollection: searchView.collection
             }).render();
 

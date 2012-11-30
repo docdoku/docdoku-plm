@@ -39,6 +39,8 @@
                 login:"${login}"
             };
 
+            var SCENE_INIT = {};
+
             var isIpad = navigator.userAgent.indexOf("iPad") != -1;
 
             $(document).ready(function() {
@@ -233,7 +235,7 @@
                         <h3 id="exportSceneTitle">Embed Scene</h3>
                     </div>
                     <div class="modal-body">
-                        <textarea type="text" placeholder=""><iframe width="640" height="480" src="${urlRoot}visualization/${workspaceID}/${productID}/" frameborder="0"></iframe></textarea>
+                        <textarea type="text" placeholder=""></textarea>
                     </div>
                 </div>
 

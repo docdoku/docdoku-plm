@@ -53,7 +53,14 @@ public class VisualizationServlet extends HttpServlet {
 
         String workspaceID = null;
         String productID = null;
-        String templateType = null;
+        float cameraX, cameraY, cameraZ;
+        String pathToLoad;
+
+        cameraX = Float.parseFloat(pRequest.getParameter("cameraX"));
+        cameraY = Float.parseFloat(pRequest.getParameter("cameraY"));
+        cameraZ = Float.parseFloat(pRequest.getParameter("cameraZ"));
+
+        pathToLoad = pRequest.getParameter("pathToLoad");
         
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
@@ -63,12 +70,6 @@ public class VisualizationServlet extends HttpServlet {
 
         try {
             productID = URLDecoder.decode(pathInfos[offset+1], "UTF-8");
-        } catch (IndexOutOfBoundsException ex) {
-            
-        }
-        
-        try {
-            templateType = URLDecoder.decode(pathInfos[offset+2], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
             
         }
@@ -92,6 +93,10 @@ public class VisualizationServlet extends HttpServlet {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
+            pRequest.setAttribute("cameraX", cameraX);
+            pRequest.setAttribute("cameraY", cameraY);
+            pRequest.setAttribute("cameraZ", cameraZ);
+            pRequest.setAttribute("pathToLoad", pathToLoad);
             pRequest.getRequestDispatcher("/faces/product-structure/frame.xhtml").forward(pRequest, pResponse);
         }
     }

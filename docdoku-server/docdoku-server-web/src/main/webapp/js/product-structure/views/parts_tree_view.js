@@ -10,8 +10,8 @@ define(["models/component_module", "views/component_views"], function (Component
         },
 
         render: function() {
-            var rootCollection = new ComponentModule.Collection([], { isRoot: true });
-            new ComponentViews.Components({
+           var rootCollection = new ComponentModule.Collection([], { isRoot: true });
+           new ComponentViews.Components({
                 collection: rootCollection,
                 resultPathCollection: this.options.resultPathCollection,
                 parentView: this.$el,
