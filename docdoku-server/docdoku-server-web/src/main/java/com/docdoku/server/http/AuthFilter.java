@@ -45,9 +45,11 @@ public class AuthFilter implements Filter {
 
         HttpSession sessionHTTP = httpRequest.getSession();
         Account account = (Account) sessionHTTP.getAttribute("account");
-
+        
         if (account == null) {
-            httpRequest.getRequestDispatcher("/faces/login.xhtml").forward(request, response);
+            String qs=httpRequest.getQueryString();
+            String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
+            httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + originURL).forward(request, response);
         } else {
             chain.doFilter(request, response);
         }

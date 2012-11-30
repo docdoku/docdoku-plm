@@ -5,6 +5,10 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html">
 
+    <f:metadata>
+        <f:viewParam name="originURL" value="#{connectionBean.originURL}"/>
+    </f:metadata>
+    
     <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
         <ui:define name="title">
             <f:loadBundle var="i18nLogin" basename="com.docdoku.server.localization.index_resource"/>
@@ -14,6 +18,7 @@
             <div class="well" id="login_form_container">
                 <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
                 <h:form id="login_form">
+                    <h:inputHidden value="#{connectionBean.originURL}"/>
                     <p>
                         <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
                         <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
