@@ -48,6 +48,8 @@ public class ConnectionBean {
     private String login;
     private String password;
 
+    private String originURL;
+    
     public ConnectionBean() {
     }
 
@@ -85,7 +87,10 @@ public class ConnectionBean {
 
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
-        ec.redirect(request.getContextPath() + "/document-management/");
+        if(originURL!=null && originURL.length()>1)
+            ec.redirect(originURL);
+        else
+            ec.redirect(request.getContextPath() + "/document-management/");
     }
 
     public String getLogin() {
@@ -103,4 +108,14 @@ public class ConnectionBean {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getOriginURL() {
+        return originURL;
+    }
+
+    public void setOriginURL(String originURL) {
+        this.originURL = originURL;
+    }
+    
+    
 }

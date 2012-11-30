@@ -53,7 +53,7 @@ import javax.persistence.Table;
 @Table(name = "PARTUSAGELINK")
 @Entity
 @NamedQueries({
-    @NamedQuery(name="PartUsageLink.findByComponent",query="SELECT u FROM PartUsageLink u WHERE u.component.number = :partNumber AND u.component.workspace.id = :workspaceId"),
+    @NamedQuery(name="PartUsageLink.findByComponent",query="SELECT u FROM PartUsageLink u WHERE u.component.number LIKE :partNumber AND u.component.workspace.id = :workspaceId"),
     @NamedQuery(name="PartUsageLink.getPartOwner",query="SELECT p FROM PartIteration p WHERE :usage MEMBER OF p.components")
 })
 public class PartUsageLink implements Serializable {

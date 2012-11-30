@@ -124,8 +124,9 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             List<List<PartUsageLink>> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
             String[] paths=new String[usagePaths.size()];
-            StringBuilder sb=new StringBuilder();
+            
             for(int i=0;i<usagePaths.size();i++){
+                StringBuilder sb=new StringBuilder();
                 List<PartUsageLink> usagePath=usagePaths.get(i);
                 for(PartUsageLink link:usagePath){
                     sb.append(link.getId());

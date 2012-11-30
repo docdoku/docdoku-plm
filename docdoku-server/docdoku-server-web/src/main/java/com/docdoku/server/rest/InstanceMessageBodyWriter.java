@@ -170,7 +170,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             double arz = rz + instance.getRz();
             int id = instance.getId();
             
-            if (partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
+            if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
                 if(getAddComma())
                     getEntityStream().write(getComma());
                 
