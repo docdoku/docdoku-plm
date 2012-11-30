@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.docdoku.core.common.Account;
+import java.net.URLEncoder;
 
 public class AuthFilter implements Filter {
 
@@ -49,7 +50,7 @@ public class AuthFilter implements Filter {
         if (account == null) {
             String qs=httpRequest.getQueryString();
             String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-            httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + originURL).forward(request, response);
+            httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
         } else {
             chain.doFilter(request, response);
         }
