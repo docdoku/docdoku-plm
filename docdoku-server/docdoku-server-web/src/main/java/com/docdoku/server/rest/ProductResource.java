@@ -122,12 +122,12 @@ public class ProductResource {
     public String[] searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            List<List<PartUsageLink>> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
+            List<PartUsageLink[]> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
             String[] paths=new String[usagePaths.size()];
             
             for(int i=0;i<usagePaths.size();i++){
                 StringBuilder sb=new StringBuilder();
-                List<PartUsageLink> usagePath=usagePaths.get(i);
+                PartUsageLink[] usagePath=usagePaths.get(i);
                 for(PartUsageLink link:usagePath){
                     sb.append(link.getId());
                     sb.append("-");

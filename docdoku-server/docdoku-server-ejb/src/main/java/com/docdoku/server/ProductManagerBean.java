@@ -107,10 +107,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public List<List<PartUsageLink>> findPartUsages(ConfigurationItemKey pKey, PartMasterKey pPartMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
+    public List<PartUsageLink[]> findPartUsages(ConfigurationItemKey pKey, PartMasterKey pPartMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLinkDAO linkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
-        List<List<PartUsageLink>> usagePaths = linkDAO.findPartUsagePaths(pPartMKey);
+        List<PartUsageLink[]> usagePaths = linkDAO.findPartUsagePaths(pPartMKey);
         //TODO filter by configuration item
         return usagePaths;
     }

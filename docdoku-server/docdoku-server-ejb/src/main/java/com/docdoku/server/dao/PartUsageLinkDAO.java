@@ -47,9 +47,9 @@ public class PartUsageLinkDAO {
     }
 
     
-    public List<List<PartUsageLink>> findPartUsagePaths(PartMasterKey pPartMKey){
+    public List<PartUsageLink[]> findPartUsagePaths(PartMasterKey pPartMKey){
         List<PartUsageLink> usages= findPartUsages(pPartMKey.getWorkspace(),pPartMKey.getNumber()); 
-        List<List<PartUsageLink>> usagePaths = new ArrayList<List<PartUsageLink>>();
+        List<PartUsageLink[]> usagePaths = new ArrayList<PartUsageLink[]>();
         for(PartUsageLink usage:usages){
             List<PartUsageLink> path=new ArrayList<PartUsageLink>();
             path.add(usage);
@@ -59,7 +59,7 @@ public class PartUsageLinkDAO {
         return usagePaths;
     }
     
-    private void createPath(PartUsageLink currentUsage, List<PartUsageLink> currentPath, List<List<PartUsageLink>> usagePaths){
+    private void createPath(PartUsageLink currentUsage, List<PartUsageLink> currentPath, List<PartUsageLink[]> usagePaths){
         
         PartIteration owner = em.createNamedQuery("PartUsageLink.getPartOwner",PartIteration.class)
                 .setParameter("usage", currentUsage)
@@ -72,7 +72,7 @@ public class PartUsageLinkDAO {
             createPath(parentUsage, newPath, usagePaths);
         }
         if(parentUsages.isEmpty())
-            usagePaths.add(currentPath);
+            usagePaths.add(currentPath.toArray(new PartUsageLink[currentPath.size()]));
               
     }
     

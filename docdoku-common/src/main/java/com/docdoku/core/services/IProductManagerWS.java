@@ -70,7 +70,7 @@ public interface IProductManagerWS{
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      */
-    List<List<PartUsageLink>> findPartUsages(ConfigurationItemKey ciKey, PartMasterKey partMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    List<PartUsageLink[]> findPartUsages(ConfigurationItemKey ciKey, PartMasterKey partMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     
     /**
      * Resolves the product structure identified by the supplied
