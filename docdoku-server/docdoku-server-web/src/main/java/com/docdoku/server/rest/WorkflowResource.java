@@ -106,7 +106,7 @@ public class WorkflowResource {
                 activityModels[i] = mapper.map(activityModelDTOsList.get(i), ActivityModel.class);
             }
 
-            WorkflowModel workflowModel = documentService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getId(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
+            WorkflowModel workflowModel = documentService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
 
             User workflowAuthor = workflowModel.getAuthor();
             UserDTO workflowAuthorDTO = mapper.map(workflowAuthor,UserDTO.class);

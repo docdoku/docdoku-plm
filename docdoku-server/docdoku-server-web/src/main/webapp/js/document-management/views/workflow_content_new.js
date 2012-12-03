@@ -30,7 +30,6 @@ define([
             var name = this.nameInput.val();
             if (name) {
                 this.collection.create({
-                    id: name,
                     reference: name,
                     finalLifeCycleState: "totoFinalCycle"
 

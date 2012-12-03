@@ -29,7 +29,6 @@ import java.util.List;
 
 public class WorkflowModelDTO implements Serializable {
 
-    private String workspaceId;
     private String id;
     private String reference;
     private String finalLifeCycleState;
@@ -41,8 +40,7 @@ public class WorkflowModelDTO implements Serializable {
         activityModels = new ArrayList<ActivityModelDTO>();
     }
 
-    public WorkflowModelDTO(String workspaceId, String id) {
-        this.workspaceId = workspaceId;
+    public WorkflowModelDTO(String id) {
         this.id = id;
     }
 
@@ -54,14 +52,6 @@ public class WorkflowModelDTO implements Serializable {
 
     public String getId() {
         return id;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
     }
 
     public void setId(String id) {
@@ -109,7 +99,6 @@ public class WorkflowModelDTO implements Serializable {
     }
 
     public String getReference() {
-        reference = this.id;
         return reference;
     }
 
