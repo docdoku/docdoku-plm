@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.ConfigSpec;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
@@ -59,6 +60,7 @@ import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -127,6 +129,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
             rootUsageLink = new PartUsageLink();
             rootUsageLink.setId(-1);
+            rootUsageLink.setAmount(1d);
+            List<CADInstance> cads = new ArrayList<CADInstance>();
+            cads.add(new CADInstance(0d,0d,0d,0d,0d,0d,CADInstance.Positioning.ABSOLUTE));
+            rootUsageLink.setCadInstances(cads);
             rootUsageLink.setComponent(ci.getDesignItem());
         } else {
             rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
