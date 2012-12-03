@@ -10,9 +10,8 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/home/lod3d/data/vault</env-entry-value>
-<!--            <env-entry-value>/Users/flo/Library/DocDoku/vault</env-entry-value>-->
-<!--		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>-->
+<!--                <env-entry-value>/home/lod3d/data/vault</env-entry-value>-->
+		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -20,9 +19,8 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/home/lod3d/data/vault</env-entry-value>
-<!--            <env-entry-value>/Users/flo/Library/DocDoku/vault</env-entry-value>-->
-<!--		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>-->
+<!--                <env-entry-value>/home/lod3d/data/vault</env-entry-value>-->
+		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -30,9 +28,8 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/home/lod3d/data/vault</env-entry-value>
-<!--            <env-entry-value>/Users/flo/Library/DocDoku/vault</env-entry-value>-->
-<!--		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>-->
+<!--                <env-entry-value>/home/lod3d/data/vault</env-entry-value>-->
+		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -40,9 +37,8 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/home/lod3d/data/index</env-entry-value>
-<!--            <env-entry-value>/Users/flo/Library/DocDoku/index</env-entry-value>-->
-<!--		<env-entry-value>/var/lib/docdoku/index</env-entry-value>-->
+<!--                <env-entry-value>/home/lod3d/data/index</env-entry-value>-->
+		<env-entry-value>/var/lib/docdoku/index</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -58,9 +54,8 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/home/lod3d/data/index</env-entry-value>
-<!--            <env-entry-value>/Users/flo/Library/DocDoku/index</env-entry-value>-->
-<!--		<env-entry-value>/var/lib/docdoku/index</env-entry-value>-->
+<!--                <env-entry-value>/home/lod3d/data/index</env-entry-value>-->
+		<env-entry-value>/var/lib/docdoku/index</env-entry-value>
             </env-entry>
         </session>
     </enterprise-beans>
