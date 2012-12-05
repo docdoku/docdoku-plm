@@ -71,8 +71,8 @@ public class ProductStructureSampleLoader {
         fm = ScriptingTools.createFileManagerService(serverURL + "/services/UploadDownload?wsdl", login, password);
 
         System.out.println("importing data...");
-        //createBikeSampleProduct();
-        createBuildingSampleProduct();
+        createBikeSampleProduct();
+        //createBuildingSampleProduct();
         System.out.println("...done!");
     }
 
