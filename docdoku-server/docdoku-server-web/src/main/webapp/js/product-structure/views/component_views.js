@@ -1,4 +1,4 @@
-define(["models/component_module", "views/part_metadata_view"], function (ComponentModule, PartMetadataView) {
+define(["models/component_module"], function (ComponentModule) {
 
     var ComponentViews = {}
 
@@ -6,15 +6,19 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
 
         tagName:'ul',
 
-        initialize:function(){
-            this.collection.bind("reset", this.addAllComponentsView,this);
-            this.collection.bind("add", this.addComponentView,this);
+        initialize: function() {
             this.options.parentView.append(this.el);
-            this.collection.fetch();
+            if (this.collection.isEmpty()) {
+                this.collection.bind("reset", this.addAllComponentsView, this);
+                this.collection.bind("add", this.addComponentView, this);
+                this.collection.fetch();
+            } else {
+                this.addAllComponentsView();
+            }
         },
 
         addAllComponentsView: function() {
-            this.collection.each(this.addComponentView,this);
+            this.collection.each(this.addComponentView, this);
         },
 
         addComponentView: function(component) {
@@ -43,7 +47,7 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox'><%= number %> (<%= amount %>)</label></a>"),
 
         events: {
-            "click a": "showPartMetadata",
+            "click a": "onComponentSelected",
             "change input:first": "onChangeCheckbox"
         },
 
@@ -84,16 +88,9 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
             return this;
         },
 
-        showPartMetadata:function(e) {
+        onComponentSelected: function(e) {
             e.stopPropagation();
-
-            sceneManager.setPathForIframe(this.model.getPath());
-
-            $("#part_metadata_container").empty();
-            new PartMetadataView({model: this.model}).render();
-
-            $("#bottom_controls_container").hide();
-            $("#part_metadata_container").show();
+            this.$("a").trigger("component_selected", [this.model]);
         }
 
     });
@@ -107,7 +104,7 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a>"),
 
         events: {
-            "click a:first": "showPartMetadata",
+            "click a:first": "onComponentSelected",
             "change input:first": "onChangeCheckbox",
             "click .hitarea:first": "onToggleExpand"
         },
@@ -155,13 +152,15 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
         },
 
         onToggleExpand: function() {
-            var needLoading = this.toggleExpand();
-            if (needLoading) new ComponentViews.Components({
-                collection: this.model.children,
-                parentView: this.$el,
-                parentChecked: this.isChecked(),
-                resultPathCollection: this.options.resultPathCollection
-            });
+            this.toggleExpand();
+            if (!this.hasChildrenNodes()) {
+                new ComponentViews.Components({
+                    collection: this.model.children,
+                    parentView: this.$el,
+                    parentChecked: this.isChecked(),
+                    resultPathCollection: this.options.resultPathCollection
+                });
+            }
         },
 
         toggleExpand: function() {
@@ -180,21 +179,16 @@ define(["models/component_module", "views/part_metadata_view"], function (Compon
             var childrenNode = this.$(">ul");
 
             this.isExpanded ? childrenNode.show() : childrenNode.hide();
-
-            return this.isExpanded && childrenNode.length == 0;
         },
 
-        showPartMetadata:function(e) {
+        hasChildrenNodes: function() {
+            var childrenNode = this.$(">ul");
+            return childrenNode.length > 0;
+        },
+
+        onComponentSelected: function(e) {
             e.stopPropagation();
-
-            sceneManager.setPathForIframe(this.model.getPath());
-
-            $("#part_metadata_container").empty();
-            new PartMetadataView({model: this.model}).render();
-
-            $("#bottom_controls_container").hide();
-            $("#part_metadata_container").show();
-
+            this.$("a").trigger("component_selected", [this.model]);
         },
 
         isChecked: function() {

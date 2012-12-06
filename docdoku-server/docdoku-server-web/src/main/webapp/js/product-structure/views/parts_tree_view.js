@@ -6,17 +6,30 @@ define(["models/component_module", "views/component_views"], function (Component
 
         events: {
             "change input": "checkChildrenInputs",
-            "change li": "checkParentsInputs"
+            "change li": "checkParentsInputs",
+            "component_selected a": "onComponentSelected"
+        },
+
+        setSelectedComponent: function(component) {
+            this.componentSelected = component;
         },
 
         render: function() {
-           var rootCollection = new ComponentModule.Collection([], { isRoot: true });
-           new ComponentViews.Components({
+            var rootCollection = new ComponentModule.Collection([], { isRoot: true });
+
+            rootCollection.on("reset", function(collection) {
+                //the default selected component is the root
+                this.setSelectedComponent(collection.first());
+            }, this);
+
+            new ComponentViews.Components({
                 collection: rootCollection,
                 resultPathCollection: this.options.resultPathCollection,
                 parentView: this.$el,
                 parentChecked: false
             });
+
+            return this;
         },
 
         checkChildrenInputs: function(event) {
@@ -45,6 +58,12 @@ define(["models/component_module", "views/component_views"], function (Component
                     }
                 }
             }
+        },
+
+        onComponentSelected: function(e, componentModel) {
+            e.stopPropagation();
+            this.setSelectedComponent(componentModel);
+            this.trigger("component_selected");
         }
 
     });
