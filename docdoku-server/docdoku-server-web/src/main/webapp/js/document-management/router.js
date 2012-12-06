@@ -1,20 +1,20 @@
 define([
-	"require",
 	"common/singleton_decorator",
 	"views/folder_nav",
 	"views/tag_nav",
 	"views/workflow_nav",
 	"views/template_nav",
-	"views/checkedout_nav"
+	"views/checkedout_nav",
+    "views/workflow_model_editor"
 ],
 function (
-	require,
 	singletonDecorator,
 	FolderNavView,
 	TagNavView,
 	WorkflowNavView,
 	TemplateNavView,
-	CheckedoutNavView
+	CheckedoutNavView,
+    WorkflowModelEditorView
 ) {
 	var Router = Backbone.Router.extend({
 		routes: {
@@ -24,6 +24,7 @@ function (
 			"tags/:id": 		"tag",
 			"templates":		"templates",
 			"workflows":		"workflows",
+            "workflow-model-editor":  "workflowModelEditor",
 			"checkedouts":		"checkedouts",
 			"tasks":			"tasks",
 			"":					"defaults"
@@ -49,6 +50,11 @@ function (
 			var view = WorkflowNavView.getInstance();
 			view.showContent();
 		},
+        workflowModelEditor: function() {
+            this.defaults();
+            var workflowModelEditorView = new WorkflowModelEditorView();
+            workflowModelEditorView.render();
+        },
 		templates: function() {
 			this.defaults();
 			var view = TemplateNavView.getInstance();

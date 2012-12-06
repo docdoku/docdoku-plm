@@ -1,12 +1,14 @@
 define([
+    "require",
 	"views/content",
 	"views/workflow_list",
-	"views/workflow_content_new",
+	"views/workflow_editor",
 	"text!templates/workflow_content_list.html"
 ], function (
+    require,
 	ContentView,
 	WorkflowListView,
-	WorkflowContentNewView,
+    WorkflowEditorView,
 	template
 ) {
 	var WorkflowContentListView = ContentView.extend({
@@ -32,11 +34,18 @@ define([
 			this.$el.find(".actions .delete")[action]();
 		},
 		actionNew : function () {
+            this.router = require("router").getInstance();
+            this.router.navigate("workflow-model-editor", {trigger: true});
+            /*
+            var workflowEditorView = new WorkflowEditorView();
+            workflowEditorView.render();
+            this.$el.html(workflowEditorView.el);
+            */
+            /*
 			var view = this.addSubView(
-				new WorkflowContentNewView({
-                    collection: this.listView.collection
-                })
+				new WorkflowEditorView()
 			).render();
+			*/
 			return false;
 		},
 		actionDelete: function () {

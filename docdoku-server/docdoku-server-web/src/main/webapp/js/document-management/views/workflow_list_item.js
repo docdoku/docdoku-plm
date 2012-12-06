@@ -7,7 +7,7 @@ define([
 ) {
 	var WorkflowListItemView = CheckboxListItemView.extend({
 		template: Mustache.compile(template),
-		tagName: "tr",
+		tagName: "tr"
 	});
 	return WorkflowListItemView;
 });

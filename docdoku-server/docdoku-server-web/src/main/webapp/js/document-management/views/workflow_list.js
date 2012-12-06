@@ -12,13 +12,13 @@ define([
 	var WorkflowListView = CheckboxListView.extend({
 		template: Mustache.compile(template),
 		collection: function () {
-			return WorkflowList.getInstance();
+			return new WorkflowList;
 		},
 		itemViewFactory: function (model) {
 			return new WorkflowListItemView({
 				model: model
 			});
-		},
+		}
 	});
 	return WorkflowListView;
 });
