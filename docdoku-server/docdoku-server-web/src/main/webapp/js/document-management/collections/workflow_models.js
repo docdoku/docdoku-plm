@@ -1,12 +1,12 @@
 define([
-	"models/workflow"
+	"models/workflow_model"
 ], function (
-	Workflow
+	WorkflowModel
 ) {
-	var WorkflowList = Backbone.Collection.extend({
-		model: Workflow,
+	var WorkflowModels = Backbone.Collection.extend({
+		model: WorkflowModel,
         url: "/api/workspaces/" + APP_CONFIG.workspaceId + "/workflows"
 	});
 
-	return WorkflowList;
+	return WorkflowModels;
 });
