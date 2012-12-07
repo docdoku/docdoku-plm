@@ -24,6 +24,6 @@ VisualizationUtils.rotateAroundWorldAxis= function(object, rx, ry, rz) {
     rotWorldMatrixZ.makeRotationAxis(VisualizationUtils.zAxisNormalized, rz);
 
     object.matrix = rotWorldMatrixZ.multiplySelf(rotWorldMatrixY).multiplySelf(rotWorldMatrixX);
-    object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+    object.rotation.setEulerFromRotationMatrix(object.matrix, "XYZ");
 
 }

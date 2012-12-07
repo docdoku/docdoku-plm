@@ -53,7 +53,7 @@ define([
                 this.set('color', ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6))
             }
             this.material = new THREE.MeshLambertMaterial({
-                color: "0x" + this.get('color'),
+                color:  parseInt('0x' + this.get('color'), 16),
                 opacity: 1,
                 transparent: true
             });

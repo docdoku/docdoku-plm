@@ -76,7 +76,7 @@ body{
 }
 
 #mainPanel {
-    /*position: relative;*/
+    position: relative;
     margin-left: 250px;
     height: 100%;
     width:auto;
@@ -152,8 +152,12 @@ body{
 }
 
 .nav-list > li > a, .nav-list .nav-header {
-                margin-right:0px;
-            }
+    margin-right:0px;
+}
+
+.nav-list li.resultPath > a label{
+    background-color: yellow;
+}
 
 .header_btn-custom {
     .buttonBackground(#7A99C1, #2C4361);
@@ -197,10 +201,12 @@ body{
 }
 
 #part_metadata_container{
-    margin-top: 15px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     border-top: 3px solid #768AA8;
     background-color: #96AAC6;
-    height: 83px;
+    height: 100px;
     display: none;
     z-index: 10;
 }

@@ -1,47 +1,82 @@
 var sceneManager;
 
-define([
-    "collections/part_collection",
-    "views/part_node_view"
-], function (
-    PartCollection,
-    PartNodeView
-) {
+define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view"], function (SearchView, PartsTreeView, BomView, PartMetadataView) {
 
     var AppView = Backbone.View.extend({
 
         el: $("#workspace"),
 
         events: {
-            "click #scene_view_btn"   : "showScene",
-            "click #metadata_view_btn"   : "showMetadata",
-            "click #bom_view_btn"   : "showBom"
+            "click #scene_view_btn": "sceneMode",
+            "click #bom_view_btn": "bomMode"
         },
 
-        showScene:function(){
-            $("#bom_table_container").hide();
-            $("#part_metadata_container").hide();
-            $("#bottom_controls_container").hide();
-            $("#center_container").show();
+        updateBom: function() {
+            this.bomView.update(this.partsTreeView.componentSelected);
         },
 
-        showMetadata:function(){
-
+        sceneMode: function() {
+            this.inBomMode = false;
+            this.bomModeButton.removeClass("active");
+            this.sceneModeButton.addClass("active");
+            this.bomContainer.hide();
+            this.centerSceneContainer.show();
+            this.sceneBottomControlsContainer.show();
         },
 
-        showBom:function(){
-            $("#part_metadata_container").hide();
-            $("#center_container").hide();
-            $("#bottom_controls_container").hide();
-            $("#bom_table_container").show();
+        bomMode: function() {
+            this.inBomMode = true;
+            this.sceneModeButton.removeClass("active");
+            this.bomModeButton.addClass("active");
+            this.centerSceneContainer.hide();
+            this.sceneBottomControlsContainer.hide();
+            this.bomContainer.show();
+            this.updateBom();
+        },
+
+        isInBomMode: function() {
+            return this.inBomMode;
         },
 
         initialize: function() {
+
+            this.sceneModeButton = this.$("#scene_view_btn");
+            this.bomModeButton = this.$("#bom_view_btn");
+            this.bomContainer = this.$("#bom_table_container");
+            this.sceneBottomControlsContainer = this.$("#bottom_controls_container");
+            this.centerSceneContainer = this.$("#center_container");
+            this.partMetadataContainer = this.$("#part_metadata_container");
+
+            this.inBomMode = false;
+
+            this.bomView = new BomView();
+
             sceneManager = new SceneManager();
-            var allParts = new PartCollection();
-            var partNodeView = new PartNodeView({collection:allParts, parentView: $("#product_nav_list")});
-            allParts.fetch();
+
+            var searchView = new SearchView();
+
+            this.partsTreeView = new PartsTreeView({
+                resultPathCollection: searchView.collection
+            }).render();
+
+            this.partsTreeView.on("component_selected", this.onComponentSelected, this);
+
             sceneManager.init();
+        },
+
+        onComponentSelected: function() {
+            if (this.isInBomMode()) {
+                this.updateBom();
+            }
+            this.showPartMetadata();
+            sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
+        },
+
+        //TODO better panel for part metadata
+        showPartMetadata:function() {
+            this.partMetadataContainer.empty();
+            new PartMetadataView({model: this.partsTreeView.componentSelected}).render();
+            this.partMetadataContainer.show();
         }
 
     });

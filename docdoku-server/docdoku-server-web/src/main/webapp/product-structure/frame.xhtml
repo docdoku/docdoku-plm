@@ -16,11 +16,10 @@
         <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less"/>
         </ui:define>
         <ui:define name="scripts"> 
-                
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery.treeview.js"></script>
+
         <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Three.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three-r51.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js"></script>
@@ -38,6 +37,15 @@
                 workspaceId:"${workspaceID}",
                 productId:"${productID}",
                 login:"${login}"
+            };
+
+            var SCENE_INIT = {
+                camera: {
+                    x:"${cameraX}",
+                    y:"${cameraY}",
+                    z:"${cameraZ}"
+                },
+                pathForIframe: "${pathToLoad}"
             };
 
             var isIpad = navigator.userAgent.indexOf("iPad") != -1;

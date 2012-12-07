@@ -24,6 +24,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,8 @@ public class ConnectionBean {
     private String login;
     private String password;
 
+    private String originURL;
+    
     public ConnectionBean() {
     }
 
@@ -85,7 +88,10 @@ public class ConnectionBean {
 
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
-        ec.redirect(request.getContextPath() + "/document-management/");
+        if(originURL!=null && originURL.length()>1)
+            ec.redirect(URLDecoder.decode(originURL,"UTF-8"));
+        else
+            ec.redirect(request.getContextPath() + "/document-management/");
     }
 
     public String getLogin() {
@@ -103,4 +109,14 @@ public class ConnectionBean {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getOriginURL() {
+        return originURL;
+    }
+
+    public void setOriginURL(String originURL) {
+        this.originURL = originURL;
+    }
+    
+    
 }

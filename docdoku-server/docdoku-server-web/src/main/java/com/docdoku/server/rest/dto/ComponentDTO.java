@@ -25,9 +25,9 @@ import java.util.List;
 
 /**
  *
- * @author Florent Garin
+ * @author Julien Maffre
  */
-public class PartDTO implements Serializable{
+public class ComponentDTO implements Serializable{
 
     private String author;
     private String number;
@@ -35,19 +35,16 @@ public class PartDTO implements Serializable{
     private String version;
     private int iteration;
     private String description;
-    private List<GeometryDTO> files;
     private boolean standardPart;
     private boolean assembly;
-    
     private int partUsageLinkId;
-    private List<PartDTO> components;
-    private List<CADInstanceDTO> instances;
+    private List<ComponentDTO> components;
+    private int amount;
     private List<InstanceAttributeDTO> attributes;
-    public PartDTO(){
-        
-    }
-    
-    public PartDTO(String number) {
+
+    public ComponentDTO() {}
+
+    public ComponentDTO(String number) {
         this.number=number;
     }
 
@@ -75,7 +72,7 @@ public class PartDTO implements Serializable{
         this.iteration = iteration;
     }
 
-    public List<PartDTO> getComponents() {
+    public List<ComponentDTO> getComponents() {
         return components;
     }
 
@@ -83,15 +80,11 @@ public class PartDTO implements Serializable{
         return description;
     }
 
-    public List<GeometryDTO> getFiles() {
-        return files;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setComponents(List<PartDTO> components) {
+    public void setComponents(List<ComponentDTO> components) {
         this.components = components;
     }
 
@@ -105,10 +98,6 @@ public class PartDTO implements Serializable{
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public void setFiles(List<GeometryDTO> files) {
-        this.files = files;
     }
 
     public void setName(String name) {
@@ -131,14 +120,6 @@ public class PartDTO implements Serializable{
         this.standardPart = standardPart;
     }
 
-    public List<CADInstanceDTO> getInstances() {
-        return instances;
-    }
-
-    public void setInstances(List<CADInstanceDTO> instances) {
-        this.instances = instances;
-    }
-
     public void setAttributes(List<InstanceAttributeDTO> attributes) {
         this.attributes = attributes;
     }
@@ -155,4 +136,11 @@ public class PartDTO implements Serializable{
         this.author = author;
     }
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 }

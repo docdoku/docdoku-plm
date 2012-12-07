@@ -74,6 +74,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
         try {
             String login = pRequest.getRemoteUser();
+            
             //String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
             //remove empty entries because of Three.js that generates url with double /
             String[] pathInfos = UploadDownloadServlet.removeEmptyEntries(pRequest.getRequestURI().split("/"));
@@ -90,6 +91,8 @@ public class UploadDownloadServlet extends HttpServlet {
             String fullName = null;
 
             if (elementType.equals("documents")) {
+                //documents are versioned objects so we can rely on client cache without any risk 
+                setCacheHeaders(86400, pResponse);
                 String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
@@ -100,6 +103,8 @@ public class UploadDownloadServlet extends HttpServlet {
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
             } else if (elementType.equals("parts")) {
+                //parts are versioned objects so we can rely on client cache without any risk 
+                setCacheHeaders(86400, pResponse);
                 String partNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String version = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
@@ -128,28 +133,27 @@ public class UploadDownloadServlet extends HttpServlet {
                 fileToOutput = dataFile;
             }
 
-            int cacheSeconds = 86400;
-            pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);
-            DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-            httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-            Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.SECOND, cacheSeconds);
-            pResponse.setHeader("Expires", httpDateFormat.format(cal.getTime()));
-            pResponse.setHeader("Pragma", "");
+            long lastModified = fileToOutput.lastModified();
+            long ifModified = pRequest.getDateHeader("If-Modified-Since");
+            
+            if(lastModified>ifModified){
+                setLastModifiedHeaders(lastModified, pResponse);
+                pResponse.setContentLength((int) fileToOutput.length());
+                ServletOutputStream httpOut = pResponse.getOutputStream();
+                InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
 
-            pResponse.setContentLength((int) fileToOutput.length());
-            ServletOutputStream httpOut = pResponse.getOutputStream();
-            InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
-
-            byte[] data = new byte[CHUNK_SIZE];
-            int length;
-            while ((length = input.read(data)) != -1) {
-                httpOut.write(data, 0, length);
+                byte[] data = new byte[CHUNK_SIZE];
+                int length;
+                while ((length = input.read(data)) != -1) {
+                    httpOut.write(data, 0, length);
+                }
+                input.close();
+                httpOut.flush();
+                httpOut.close();
+            }else{
+                pResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
-            input.close();
-            httpOut.flush();
-            httpOut.close();
-
+            
         } catch (Exception pEx) {
             throw new ServletException("Error while downloading the file.", pEx);
         }
@@ -249,6 +253,28 @@ public class UploadDownloadServlet extends HttpServlet {
             }
         }
         return elements.toArray(new String[elements.size()]);
+    }
+    
+    
+    
+    private void setLastModifiedHeaders(long lastModified, HttpServletResponse pResponse){
+        DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+        httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar cal = new GregorianCalendar();
+        cal.setTimeInMillis(lastModified);
+        pResponse.setHeader("Last-Modified", httpDateFormat.format(cal.getTime()));
+        pResponse.setHeader("Pragma", "");
+    }
+    
+    
+    private void setCacheHeaders(int cacheSeconds, HttpServletResponse pResponse){
+        pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);
+        DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+        httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.SECOND, cacheSeconds);
+        pResponse.setHeader("Expires", httpDateFormat.format(cal.getTime()));
+        pResponse.setHeader("Pragma", "");
     }
 
     @Override

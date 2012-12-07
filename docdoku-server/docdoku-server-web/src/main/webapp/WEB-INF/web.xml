@@ -38,10 +38,6 @@
             30
         </session-timeout>
     </session-config>
-    <servlet-mapping>
-        <servlet-name>HelpPage</servlet-name>
-        <url-pattern>/help</url-pattern>
-    </servlet-mapping>
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/faces/error.xhtml</location>
@@ -56,6 +52,7 @@
         <url-pattern>/faces/admin/*</url-pattern>
         <url-pattern>/document-management/*</url-pattern>
         <url-pattern>/product-structure/*</url-pattern>
+        <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
     </filter-mapping>    
     <servlet>
@@ -90,10 +87,6 @@
         <servlet-name>UploadDownloadServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>HelpPage</servlet-name>
-        <jsp-file>/help/help.jsp</jsp-file>
-    </servlet>
     <servlet-mapping>
         <servlet-name>JnlpDownloadServlet</servlet-name>
         <url-pattern>/apps/*</url-pattern>
@@ -126,14 +119,14 @@
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/files/*</url-pattern>
     </servlet-mapping>
-    <servlet>
+<!--    <servlet>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     <security-constraint>
         <display-name>HTTP actions</display-name>
         <web-resource-collection>

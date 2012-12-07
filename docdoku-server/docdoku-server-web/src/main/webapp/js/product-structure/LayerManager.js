@@ -40,9 +40,6 @@ define([
                 segments = 16,
                 rings = 16;
 
-            // create a new mesh with
-            // sphere geometry - we will cover
-            // the sphereMaterial next!
             var markerMesh = new THREE.Mesh(
                 new THREE.SphereGeometry(
                     radius,

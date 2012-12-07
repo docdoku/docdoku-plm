@@ -88,6 +88,7 @@ public class DocumentToDocumentLink implements Serializable, Cloneable{
     @javax.persistence.Id
     private String toDocumentWorkspaceId="";
     
+    @Column(name="COMMENTDATA")
     private String comment;
     
     

@@ -1,4 +1,6 @@
-window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
+window.Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
+
+    this.id = id;
 
     this.position = {
         x: tx,
@@ -13,7 +15,7 @@ window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
     };
 
     this.levelGeometry = null;
-    this.part = part;
+    this.partIteration = partIteration;
     this.mesh = null;
     this.idle = true;
 
@@ -21,27 +23,51 @@ window.Instance = function(part, tx, ty, tz, rx, ry, rz) {
 
 Instance.prototype = {
 
-    getRating: function() {
-        return this.part.filtered ? this.part.radius / this.getDistance(sceneManager.camera.position) : 0;
+    getRating: function(frustum) {
+        var inFrustum = this.isInFrustum(frustum);
+        //var inFrustum = true;
+        return inFrustum ? this.partIteration.radius / this.getDistance(sceneManager.camera.position) : 0;
     },
 
     getDistance: function(position) {
         return Math.sqrt(Math.pow(position.x - this.position.x, 2) + Math.pow(position.y - this.position.y, 2) + Math.pow(position.z - this.position.z, 2));
     },
 
+    isInFrustum: function(frustum) {
+
+        if (_.isUndefined(this.matrixWorld)) {
+            return true;
+        }
+
+        var distance = 0.0;
+        var planes = frustum.planes;
+        var matrix = this.matrixWorld;
+        var me = matrix.elements;
+        var radius = this.partIteration.radius * matrix.getMaxScaleOnAxis();
+
+        for ( var i = 0; i < 6; i ++ ) {
+
+            distance = planes[ i ].x * me[12] + planes[ i ].y * me[13] + planes[ i ].z * me[14] + planes[ i ].w;
+            if ( distance <= - radius ) return false;
+
+        }
+
+        return true;
+    },
+
     /**
      * Update instance 3d model if needed
      */
-    update: function() {
+    update: function(frustum) {
 
-        if (this.idle && this.part.idle) {
+        if (this.idle && this.partIteration.idle) {
 
             this.idle = false;
-            this.part.idle = false;
+            this.partIteration.idle = false;
 
-            var rating = this.getRating();
+            var rating = this.getRating(frustum);
             //get the level corresponding of this rating
-            var levelGeometry = this.part.getLevelGeometry(rating);
+            var levelGeometry = this.partIteration.getLevelGeometry(rating);
 
             //if we need to switch geometry
             if (this.needSwitch(levelGeometry)) {
@@ -50,12 +76,12 @@ Instance.prototype = {
 
                 this.switchTo(levelGeometry, function() {
                     self.idle = true;
-                    self.part.idle = true;
+                    self.partIteration.idle = true;
                 });
 
             } else {
                 this.idle = true;
-                this.part.idle = true;
+                this.partIteration.idle = true;
             }
 
         }
@@ -96,10 +122,13 @@ Instance.prototype = {
     loadMeshFromLevelGeometry: function(levelGeometry, callback) {
         var self = this;
         levelGeometry.getGeometry(function(geometry) {
+            geometry.dynamic = false;
             var mesh = new THREE.Mesh(geometry, sceneManager.material);
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
-            mesh.doubleSided = false;
+            mesh.matrixAutoUpdate = false;
+            mesh.updateMatrix();
+            self.matrixWorld = mesh.matrixWorld;
             callback(mesh);
         });
     },

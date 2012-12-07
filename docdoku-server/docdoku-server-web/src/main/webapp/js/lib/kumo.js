@@ -205,13 +205,6 @@ var kumo = {
 
 };
 
-
-var f = function (i, j) {
-    console.log("calcul : " + (i + j));
-}
-kumo.tryFunction(this, f, 2, 3);
-
-
 if (!window.console) {
     console = {
         log:function () {

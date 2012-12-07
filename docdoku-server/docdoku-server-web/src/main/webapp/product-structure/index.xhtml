@@ -16,11 +16,10 @@
         <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less"/>
         </ui:define>
         <ui:define name="scripts"> 
-                
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery.treeview.js"></script>
+
         <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Three.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three-r51.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js"></script>
@@ -39,6 +38,8 @@
                 productId:"${productID}",
                 login:"${login}"
             };
+
+            var SCENE_INIT = {};
 
             var isIpad = navigator.userAgent.indexOf("iPad") != -1;
 
@@ -234,7 +235,7 @@
                         <h3 id="exportSceneTitle">Embed Scene</h3>
                     </div>
                     <div class="modal-body">
-                        <textarea type="text" placeholder=""><iframe width="640" height="480" src="${urlRoot}visualization/${workspaceID}/${productID}/" frameborder="0"></iframe></textarea>
+                        <textarea type="text" placeholder=""></textarea>
                     </div>
                 </div>
 

@@ -52,7 +52,7 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
         RandomAccessFile raf = new RandomAccessFile(file, "r");
 
         int length;
-        int totalWritedLength = 0;
+        int totalWrittenLength = 0;
         byte[] bytes = new byte[BLOCK_SIZE];
 
         if (range != null) {
@@ -62,13 +62,13 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
             raf.skipBytes((int) range.getMin());
 
             while ((length = raf.read(bytes)) != -1) {
-                if (totalWritedLength + length < lengthOfTheBytesRange) {
+                if (totalWrittenLength + length < lengthOfTheBytesRange) {
                     output.write(bytes, 0, length);
-                    totalWritedLength += length;
+                    totalWrittenLength += length;
                 } else {
-                    int lengthToWrite = lengthOfTheBytesRange - totalWritedLength;
+                    int lengthToWrite = lengthOfTheBytesRange - totalWrittenLength;
                     output.write(bytes, 0, lengthToWrite);
-                    totalWritedLength += lengthToWrite;
+                    totalWrittenLength += lengthToWrite;
                     break;
                 }
             }
@@ -76,7 +76,7 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
         } else {
             while ((length = raf.read(bytes)) != -1) {
                 output.write(bytes, 0, length);
-                totalWritedLength += length;
+                totalWrittenLength += length;
             }
         }
 

@@ -29,6 +29,7 @@ import com.docdoku.core.product.Marker;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.product.PartUsageLink;
@@ -50,6 +51,26 @@ import java.util.List;
 @WebService
 public interface IProductManagerWS{
     
+    /**
+     * Searchs all instances of a part and returns their paths, defined by a
+     * serie of usage links, from the top of the structure to their own usage
+     * link.
+     * 
+     * @param ciKey
+     * The configuration item under which context the search is made
+     * 
+     * @param partMKey
+     * The id of the part master to search on the structure
+     * 
+     * 
+     * @return
+     * The usage paths to all instances of the supplied part
+     * 
+     * @throws WorkspaceNotFoundException
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     */
+    List<PartUsageLink[]> findPartUsages(ConfigurationItemKey ciKey, PartMasterKey partMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     
     /**
      * Resolves the product structure identified by the supplied
@@ -79,7 +100,8 @@ public interface IProductManagerWS{
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      */
-    PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException; 
+    PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException;
+    
     /**
      * Creates a new product structure.
      * 
