@@ -1,5 +1,5 @@
 define([
-	"collections/workflow",
+	"collections/workflow_models",
 	"views/checkbox_list",
 	"views/workflow_list_item",
 	"text!templates/workflow_list.html"

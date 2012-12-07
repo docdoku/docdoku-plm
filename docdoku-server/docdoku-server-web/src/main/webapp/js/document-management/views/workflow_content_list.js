@@ -2,7 +2,7 @@ define([
     "require",
 	"views/content",
 	"views/workflow_list",
-	"views/workflow_editor",
+	"views/workflow_model_editor",
 	"text!templates/workflow_content_list.html"
 ], function (
     require,
