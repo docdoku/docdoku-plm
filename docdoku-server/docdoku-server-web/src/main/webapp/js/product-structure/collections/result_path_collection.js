@@ -8,7 +8,13 @@ define([
 
         model: ResultPath,
 
-        url: function(){
+        contains: function(partUsageLinkId) {
+            return this.some(function(resultPath) {
+                return resultPath.contains(partUsageLinkId);
+            });
+        },
+
+        url: function() {
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/paths?partNumber=" + encodeURIComponent(this.searchString);
         }
 

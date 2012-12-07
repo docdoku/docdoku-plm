@@ -2,9 +2,15 @@ define(function () {
 
     var ResultPath = Backbone.Model.extend({
 
+        contains: function(partUsageLinkId) {
+            return _.indexOf(this.partUsageLinks, partUsageLinkId);
+        },
+
         parse: function(response) {
             if (response) {
-                this.path = response;
+                this.partUsageLinks = _.map(response.split('-'), function(partUsageLinkIdString) {
+                    return parseInt(partUsageLinkIdString, 10);
+                });
             }
         },
 

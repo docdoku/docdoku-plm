@@ -57,15 +57,11 @@ define(["models/component_module"], function (ComponentModule) {
         },
 
         onAllResultPathAdded: function() {
-            if(this.options.resultPathCollection.length == 0)
-                this.$el.removeClass("resultPath");
-            else
-                this.options.resultPathCollection.each(this.onResultPathAdded,this);
-        },
-
-        onResultPathAdded: function(resultPath) {
-            if(resultPath.path.indexOf(this.model.attributes.partUsageLinkId) !== -1)
+            if (this.options.resultPathCollection.contains(this.model.attributes.partUsageLinkId)) {
                 this.$el.addClass("resultPath");
+            } else {
+                this.$el.removeClass("resultPath");
+            }
         },
 
         onChangeCheckbox: function(event) {
@@ -116,15 +112,11 @@ define(["models/component_module"], function (ComponentModule) {
         },
 
         onAllResultPathAdded: function() {
-            if(this.options.resultPathCollection.length == 0)
-                this.$el.removeClass("resultPath");
-            else
-                this.options.resultPathCollection.each(this.onResultPathAdded,this);
-        },
-
-        onResultPathAdded: function(resultPath) {
-            if(resultPath.path.indexOf(this.model.attributes.partUsageLinkId) !== -1)
+            if (this.options.resultPathCollection.contains(this.model.attributes.partUsageLinkId)) {
                 this.$el.addClass("resultPath");
+            } else {
+                this.$el.removeClass("resultPath");
+            }
         },
 
         onChangeCheckbox: function(event) {

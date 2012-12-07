@@ -19,10 +19,12 @@ define([
 
         search: function(){
             var searchString = this.searchInput.val().trim();
-            this.collection.reset();
-            if(searchString.length > 0){
+
+            if(searchString.length > 0) {
                 this.collection.searchString = searchString;
                 this.collection.fetch();
+            } else {
+                this.collection.reset();
             }
         }
 
