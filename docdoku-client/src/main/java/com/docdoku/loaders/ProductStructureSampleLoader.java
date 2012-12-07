@@ -71,17 +71,17 @@ public class ProductStructureSampleLoader {
         fm = ScriptingTools.createFileManagerService(serverURL + "/services/UploadDownload?wsdl", login, password);
 
         System.out.println("importing data...");
-        createBikeSampleProduct();
-        //createBuildingSampleProduct();
+        //createBikeSampleProduct();
+        createBuildingSampleProduct();
         System.out.println("...done!");
     }
 
     private static void createBuildingSampleProduct() throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, PartRevisionNotFoundException, UserNotActiveException, FileAlreadyExistsException, IOException {
-/*
-        PartMaster rootEDF = pm.createPartMaster(workspace, "EDF", "EDF", "", false, null, "created by loader");
-        pm.createConfigurationItem(workspace, "EDF", "EDF Building", "EDF");
+        /*
+        pm.createPartMaster(workspace, "modiffinal", "modiffinal", "", false, null, "created by loader");
+        pm.createConfigurationItem(workspace, "modiffinal", "modiffinal Building", "modiffinal");
 
-        PartMaster componentM = pm.createPartMaster(workspace, "Building-EDF", "", "", false, null, "");
+        PartMaster componentM = pm.createPartMaster(workspace, "Building-modiffinal", "", "", false, null, "");
         List<PartUsageLink> subParts = new ArrayList<PartUsageLink>();
         PartUsageLink link = new PartUsageLink();
         link.setAmount(1);
@@ -91,7 +91,7 @@ public class ProductStructureSampleLoader {
         link.setCadInstances(cads);
         subParts.add(link);
 
-        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "EDF"), "A"), 1), "created by loader", PartIteration.Source.MAKE, subParts, null);
+        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "modiffinal"), "A"), 1), "created by loader", PartIteration.Source.MAKE, subParts, null);
 
 
         PartRevision componentR = componentM.getLastRevision();
@@ -100,19 +100,19 @@ public class ProductStructureSampleLoader {
         List<InstanceAttribute> attrs = new ArrayList<InstanceAttribute>();
         InstanceNumberAttribute instanceAttribute = new InstanceNumberAttribute("radius", 9000000000f);
         attrs.add(instanceAttribute);
-        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "Building-EDF"), "A"), 1), "created by loader", PartIteration.Source.MAKE, null, attrs);
+        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "Building-modiffinal"), "A"), 1), "created by loader", PartIteration.Source.MAKE, null, attrs);
 
 
-        URL jsonURL = new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/EDF/EDF.js").toURI().toURL();
-        URL binURL = new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/EDF/EDF.bin").toURI().toURL();
+        URL jsonURL = new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/modiffinal.js").toURI().toURL();
+        URL binURL = new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/modiffinal.bin").toURI().toURL();
 
         DataHandler dh = new DataHandler(jsonURL);
-        fm.uploadGeometryToPart(workspace, "Building-EDF", "A", 1, "EDF.js", 0, dh);
+        fm.uploadGeometryToPart(workspace, "Building-modiffinal", "A", 1, "modiffinal.js", 0, dh);
 
         dh = new DataHandler(binURL);
-        fm.uploadToPart(workspace, "Building-EDF", "A", 1, "EDF.bin", dh);
+        fm.uploadToPart(workspace, "Building-modiffinal", "A", 1, "modiffinal.bin", dh);
         */
-        uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/EDF/"),"Building-EDF", "A", 1);
+        uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/"),"Building-modiffinal", "A", 1);
 
     }
     
@@ -121,7 +121,7 @@ public class ProductStructureSampleLoader {
         String[] mats = folder.list(new FilenameFilter() {
             @Override
             public boolean accept(File file, String name) {
-                return name.endsWith(".jpg");
+                return name.endsWith(".jpg") || name.endsWith(".JPG");
             }
         });
         
