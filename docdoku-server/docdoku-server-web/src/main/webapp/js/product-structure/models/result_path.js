@@ -8,7 +8,6 @@ define(function () {
 
         parse: function(response) {
             if (response) {
-                this.partUsageLinks
                 this.partUsageLinks = _.map(response.split('-'), function(partUsageLinkIdString) {
                     return parseInt(partUsageLinkIdString, 10);
                 });
