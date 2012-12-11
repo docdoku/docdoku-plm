@@ -5,6 +5,7 @@ define([
     var ActivityModels = Backbone.Collection.extend({
 
         model: ActivityModel
+
     });
 
     return ActivityModels;

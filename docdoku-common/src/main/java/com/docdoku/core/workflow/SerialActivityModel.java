@@ -41,7 +41,7 @@ public class SerialActivityModel extends ActivityModel {
     
     public SerialActivityModel() {
     }
-    
+
     public SerialActivityModel(WorkflowModel pWorkflowModel, int pStep, List<TaskModel> pTaskModels, String pLifeCycleState) {
         super(pWorkflowModel, pStep, pTaskModels, pLifeCycleState);      
     }

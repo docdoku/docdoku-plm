@@ -445,6 +445,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
+        em.flush();
     }
 
     @RolesAllowed("users")

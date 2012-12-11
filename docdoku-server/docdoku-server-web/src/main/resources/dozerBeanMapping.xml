@@ -23,7 +23,11 @@
             <converter type="com.docdoku.server.rest.util.InstanceAttributeDozerConverter" >
                 <class-a>com.docdoku.core.meta.InstanceAttribute</class-a>
                 <class-b>com.docdoku.server.rest.dto.InstanceAttributeDTO</class-b>
-            </converter>     
+            </converter>
+            <converter type="com.docdoku.server.rest.util.ActivityModelDozerConverter" >
+                <class-a>com.docdoku.core.workflow.ActivityModel</class-a>
+                <class-b>com.docdoku.server.rest.dto.ActivityModelDTO</class-b>
+            </converter>
         </custom-converters>    
     </configuration>
     

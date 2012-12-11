@@ -23,7 +23,6 @@ define([
     ActivityModelEditorView
     ) {
     var WorkflowModelEditorView = Backbone.View.extend({
-        template: Mustache.render(template, {i18n: i18n}),
 
         el: "#content",
 
@@ -34,29 +33,48 @@ define([
         },
 
         initialize: function() {
-            this.model = new WorkflowModel();
-            this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
-            this.model.attributes.activityModels.bind('reset', this.addAllActivity, this);
-            //this.model.activityList.fetch();
+            this.subviews = [];
+
+            if(_.isUndefined(this.options.workflowModelId)){
+                this.model = new WorkflowModel();
+                this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
+            }else{
+                this.model = new WorkflowModel({
+                    id: this.options.workflowModelId
+                });
+
+                var self = this;
+
+                this.model.fetch({success: function(){ self.addAllActivity(); } });
+            }
         },
 
         addAllActivity: function() {
-            this.collection.each(this.addOne, this);
+            this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
+            this.model.attributes.activityModels.each(this.addOneActivity, this);
         },
 
         addOneActivity: function(activityModel) {
             var activityModelEditorView = new ActivityModelEditorView({model: activityModel});
+            this.subviews.push(activityModelEditorView);
             activityModelEditorView.render();
             this.activitiesUL.append(activityModelEditorView.el);
         },
 
         addActivityAction: function(){
-            this.model.attributes.activityModels.add(new ActivityModel());
+            this.model.attributes.activityModels.add(new ActivityModel({
+                lifeCycleState: "Activity "+this.model.attributes.activityModels.length
+            }));
             return false;
         },
 
+        activityPositionChanged: function(oldPosition, newPosition){
+            var activityModel = this.model.attributes.activityModels.at(oldPosition);
+            this.model.attributes.activityModels.remove(activityModel, {silent:true});
+            this.model.attributes.activityModels.add(activityModel, {silent:true, at:newPosition});
+        },
+
         gotoWorkflows: function() {
-            this.undelegateEvents();
             this.router = require("router").getInstance();
             this.router.navigate("workflows", {trigger: true});
         },
@@ -73,7 +91,8 @@ define([
             if (reference) {
                 this.model.save(
                     {
-                        reference: reference
+                        reference: reference,
+                        finalLifeCycleState: this.model.attributes.activityModels.last().attributes.lifeCycleState
                     },
                     {
                         success: function(){
@@ -89,9 +108,29 @@ define([
         },
 
         render: function() {
+            var self = this;
+
+            this.template = Mustache.render(template, {i18n: i18n, workflow: this.model.attributes});
             this.$el.html(this.template);
+
             this.activitiesUL = this.$el.find("ul#activity-list");
+            this.activitiesUL.sortable({
+                start: function(event, ui) {
+                    ui.item.oldPosition = ui.item.index();
+                },
+                stop: function(event, ui) {
+                    self.activityPositionChanged(ui.item.oldPosition, ui.item.index());
+                }
+            });
+
             return this;
+        },
+
+        unbindAllEvents: function(){
+            _.each(this.subviews, function(subview){
+                subview.unbindAllEvents();
+            });
+            this.undelegateEvents();
         }
 
     });

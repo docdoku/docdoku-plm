@@ -7,18 +7,34 @@ define([
     ) {
     var TaskModelEditorView = Backbone.View.extend({
 
-        template: Mustache.render(template),
-
         tagName: "li",
+
         className: "task-section",
 
+        events: {
+            "click button.delete-task" : "deleteTaskAction"
+        },
+
         initialize: function () {
-            this.model = new TaskModel();
+            if(_.isUndefined(this.model))
+                this.model = new TaskModel();
+
+            this.template = Mustache.render(template, {task: this.model.attributes});
+        },
+
+        deleteTaskAction: function(){
+            this.model.collection.remove(this.model);
+            this.unbindAllEvents();
+            this.remove();
         },
 
         render: function() {
             this.$el.html(this.template);
             return this;
+        },
+
+        unbindAllEvents: function(){
+            this.undelegateEvents();
         }
 
     });

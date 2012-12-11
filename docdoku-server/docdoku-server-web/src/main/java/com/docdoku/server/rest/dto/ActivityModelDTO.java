@@ -20,21 +20,42 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Emmanuel Nhan
- *
- */
-public abstract class ActivityModelDTO implements Serializable {
+public class ActivityModelDTO implements Serializable {
 
-    protected List<TaskModelDTO> taskModels;
-    protected String lifeCycleState;
+    private int step;
+    private List<TaskModelDTO> taskModels;
+    private String lifeCycleState;
+    private Type type;
+    public enum Type {
+
+        SERIAL, PARALLEL
+    }
+
+    private Integer tasksToComplete;
 
     public ActivityModelDTO() {
         this.taskModels = new ArrayList<TaskModelDTO>();
+    }
+
+    public ActivityModelDTO(int step, List<TaskModelDTO> taskModels, String lifeCycleState, Type type, Integer tasksToComplete) {
+        this.step = step;
+        this.taskModels = taskModels;
+        this.lifeCycleState = lifeCycleState;
+        this.type = type;
+        this.tasksToComplete = tasksToComplete;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
     }
 
     public void addTaskModel(TaskModelDTO m) {
@@ -47,6 +68,22 @@ public abstract class ActivityModelDTO implements Serializable {
 
     public List<TaskModelDTO> getTaskModels() {
         return this.taskModels;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Integer getTasksToComplete() {
+        return tasksToComplete;
+    }
+
+    public void setTasksToComplete(Integer tasksToComplete) {
+        this.tasksToComplete = tasksToComplete;
     }
 
     public void setLifeCycleState(String lifeCycleState) {

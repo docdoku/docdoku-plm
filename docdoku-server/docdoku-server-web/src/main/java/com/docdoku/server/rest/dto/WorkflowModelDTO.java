@@ -44,6 +44,15 @@ public class WorkflowModelDTO implements Serializable {
         this.id = id;
     }
 
+    public WorkflowModelDTO(String id, String reference, String finalLifeCycleState, UserDTO author, Date creationDate, List<ActivityModelDTO> activityModels) {
+        this.id = id;
+        this.reference = reference;
+        this.finalLifeCycleState = finalLifeCycleState;
+        this.author = author;
+        this.creationDate = creationDate;
+        this.activityModels = activityModels;
+    }
+
     public WorkflowModelDTO(String id, UserDTO pAuthor) {
         this.id = id;
         this.reference = id;

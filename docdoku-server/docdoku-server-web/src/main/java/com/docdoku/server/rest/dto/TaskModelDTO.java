@@ -29,12 +29,21 @@ import java.io.Serializable;
  */
 public class TaskModelDTO implements Serializable {
 
+    private int num;
     private String title;
     private String instructions;
     private UserDTO worker;
     private int duration;
 
     public TaskModelDTO() {
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 
     public int getDuration() {

@@ -5,14 +5,23 @@ define([
 
         defaults: function() {
             return {
+                type: "SERIAL",
                 taskModels: new TaskModels()
             };
         },
 
-        parse: function(response) {
-            response.taskModels = new TaskModels(response.taskModels);
-            return response;
+        initialize: function() {
+            if(_.isUndefined(this.attributes.taskModels.models))
+                this.attributes.taskModels = new TaskModels(this.attributes.taskModels);
+        },
+
+        toJSON: function() {
+            var index = this.collection.indexOf(this);
+            _.extend(this.attributes, {step: index});
+
+            return _.clone(this.attributes);
         }
+
     });
 
     return ActivityModel;

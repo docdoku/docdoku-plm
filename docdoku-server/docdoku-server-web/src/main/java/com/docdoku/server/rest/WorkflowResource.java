@@ -20,14 +20,12 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.meta.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.WorkflowModelKey;
-import com.docdoku.server.rest.dto.ActivityModelDTO;
-import com.docdoku.server.rest.dto.UserDTO;
-import com.docdoku.server.rest.dto.WorkflowModelDTO;
+import com.docdoku.core.workflow.*;
+import com.docdoku.server.rest.dto.*;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -39,7 +37,10 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.docdoku.server.rest.dto.ActivityModelDTO.Type.SERIAL;
 
 /**
  *
@@ -84,6 +85,19 @@ public class WorkflowResource {
         }
     }
 
+    @GET
+    @Produces("application/json;charset=UTF-8")
+    @Path("{workflowModelId}")
+    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId) {
+        try{
+            WorkflowModel workflowModel = documentService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+            WorkflowModelDTO workflowModelDTO = mapper.map(workflowModel, WorkflowModelDTO.class);
+            return workflowModelDTO;
+        }  catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     @DELETE
     @Path("{workflowModelId}")
     public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId){
@@ -95,26 +109,41 @@ public class WorkflowResource {
         }
     }
 
+    @PUT
+    @Produces("application/json;charset=UTF-8")
+    @Path("{workflowModelId}")
+    public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist) {
+        try {
+
+            documentService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+
+            return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            ex.printStackTrace();
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     @POST
     @Produces("application/json;charset=UTF-8")
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
+
             List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
 
             ActivityModel[] activityModels = new ActivityModel[activityModelDTOsList.size()];
-            for(int i=0; i<activityModels.length; i++){
+            for(int i=0; i<activityModelDTOsList.size(); i++){
                 activityModels[i] = mapper.map(activityModelDTOsList.get(i), ActivityModel.class);
             }
 
             WorkflowModel workflowModel = documentService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
 
-            User workflowAuthor = workflowModel.getAuthor();
-            UserDTO workflowAuthorDTO = mapper.map(workflowAuthor,UserDTO.class);
-            WorkflowModelDTO dto = new WorkflowModelDTO(workflowModel.getId(), workflowAuthorDTO);
-
+            WorkflowModelDTO dto = mapper.map(workflowModel, WorkflowModelDTO.class);
             return dto;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
+            ex.printStackTrace();
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
