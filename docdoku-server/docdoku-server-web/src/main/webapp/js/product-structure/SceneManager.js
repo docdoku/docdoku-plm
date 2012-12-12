@@ -94,12 +94,8 @@ SceneManager.prototype = {
         this.controls.rotateSpeed = 3.0;
         this.controls.zoomSpeed = 5;
         this.controls.panSpeed = 1;
-
-        //this.controls.noZoom = false;
-        //this.controls.noPan = false;
-
         this.controls.staticMoving = true;
-        this.controls.dynamicDampingFactor = 0.3;
+        this.controls.dynamicDampingFactor = 1;
 
         this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
