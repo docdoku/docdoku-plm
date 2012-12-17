@@ -12,7 +12,8 @@ define(["views/bom_item_view"], function (BomItemView) {
             this.tbody.empty();
             if (component.isAssembly()) {
                 if (component.children.isEmpty()) {
-                    component.children.on('reset', this.addAllBomItem, this).fetch();
+                    this.listenTo(component.children, 'reset', this.addAllBomItem);
+                    component.children.fetch();
                 } else {
                     this.addAllBomItem(component.children);
                 }

@@ -13,9 +13,9 @@ define(function() {
         },
 
         initialize: function() {
-            this.model.on('destroy', this.remove, this);
-            this.model.on('change:editingName change:editingMarkers change:shown', this.render, this);
-            this.model.getMarkers().on('add remove reset', this.render, this);
+            this.listenTo(this.model, 'destroy', this.remove)
+                .listenTo(this.model, 'change:editingName change:editingMarkers change:shown', this.render)
+                .listenTo(this.model.getMarkers(), 'add remove reset', this.render);
         },
 
         template: "<i class=\"icon-eye-open start\"></i><span class=\"color\" style=\"background-color:{{getHexaColor}}\">&nbsp;</span><p>{{ attributes.name }} ({{ countMarkers }})</p><i class=\"icon-pushpin end\"></i><input class=\"edit\" type=\"text\" value=\"{{ attributes.name }}\">",

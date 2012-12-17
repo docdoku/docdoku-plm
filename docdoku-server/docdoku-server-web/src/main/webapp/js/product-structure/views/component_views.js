@@ -9,8 +9,8 @@ define(["models/component_module"], function (ComponentModule) {
         initialize: function() {
             this.options.parentView.append(this.el);
             if (this.collection.isEmpty()) {
-                this.collection.bind("reset", this.addAllComponentsView, this);
-                this.collection.bind("add", this.addComponentView, this);
+                this.listenTo(this.collection, 'reset', this.addAllComponentsView)
+                    .listenTo(this.collection, 'add', this.addComponentView);
                 this.collection.fetch();
             } else {
                 this.addAllComponentsView();
@@ -53,7 +53,7 @@ define(["models/component_module"], function (ComponentModule) {
 
         initialize: function() {
             _.bindAll(this, ["onChangeCheckbox"]);
-            this.options.resultPathCollection.bind('reset', this.onAllResultPathAdded, this);
+            this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
         },
 
         onAllResultPathAdded: function() {
@@ -108,7 +108,7 @@ define(["models/component_module"], function (ComponentModule) {
         initialize: function() {
             this.isExpanded = false;
             _.bindAll(this, ["onChangeCheckbox"]);
-            this.options.resultPathCollection.bind('reset', this.onAllResultPathAdded, this);
+            this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
         },
 
         onAllResultPathAdded: function() {
@@ -186,7 +186,6 @@ define(["models/component_module"], function (ComponentModule) {
         isChecked: function() {
             return this.input.prop('checked');
         }
-
 
     });
 

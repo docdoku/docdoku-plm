@@ -17,10 +17,10 @@ define(["models/component_module", "views/component_views"], function (Component
         render: function() {
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });
 
-            rootCollection.on("reset", function(collection) {
+            this.listenTo(rootCollection, 'reset', function(collection) {
                 //the default selected component is the root
                 this.setSelectedComponent(collection.first());
-            }, this);
+            });
 
             new ComponentViews.Components({
                 collection: rootCollection,

@@ -17,8 +17,8 @@ define([
 
         initialize: function() {
             this.listContainer = this.$("nav > ul");
-            this.collection.bind('add', this.addOne, this);
-            this.collection.bind('reset', this.addAll, this);
+            this.listenTo(this.collection, 'add', this.addOne)
+                .listenTo(this.collection, 'reset', this.addAll);
             this.collection.fetch();
         },
 
