@@ -61,7 +61,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
             type = ActivityModelDTO.Type.SERIAL;
         } else if (activityModel instanceof ParallelActivityModel) {
             type = ActivityModelDTO.Type.PARALLEL;
-            tasksToComplete = activityModelDTO.getTasksToComplete();
+            tasksToComplete = ((ParallelActivityModel) activityModel).getTasksToComplete();
         } else {
             throw new IllegalArgumentException("ActivityModel type not supported");
         }

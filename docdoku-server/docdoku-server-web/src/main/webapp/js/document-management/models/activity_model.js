@@ -6,13 +6,16 @@ define([
         defaults: function() {
             return {
                 type: "SERIAL",
+                tasksToComplete: 0,
                 taskModels: new TaskModels()
             };
         },
 
         initialize: function() {
-            if(_.isUndefined(this.attributes.taskModels.models))
-                this.attributes.taskModels = new TaskModels(this.attributes.taskModels);
+            if(_.isUndefined(this.get("taskModels").models))
+                this.set({
+                    taskModels: new TaskModels(this.get("taskModels"))
+                });
         },
 
         toJSON: function() {

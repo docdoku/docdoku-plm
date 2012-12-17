@@ -1,5 +1,11 @@
-<div class="activity parallel">
-    <div class="activity-topbar">{{activity.lifeCycleState}}<button class="delete-activity" title="delete activity">x</button></div>
+<div class="activity {{activity.type}}">
+    <div class="activity-topbar">
+        <button class="switch-activity" title="switch activity"><-></button>
+        <input class="activity-name" type="text" placeholder="{{i18n.ACTIVITY_NAME_PLACEHOLDER}}" value="{{activity.lifeCycleState}}"/>
+        <button class="delete-activity" title="delete activity">x</button>
+    </div>
+    <label for="tasksToComplete-{{cid}}" class="tasksToComplete">Nombre de tâche à completer</label>
+    <input id="tasksToComplete-{{cid}}" class="tasksToComplete" type="number" step="1" min="0" max="{{activity.taskModels.length}}" value="{{activity.tasksToComplete}}"/>
     <button class="add-task" title="add task">add task</button>
     <ul class="task-list">
     </ul>

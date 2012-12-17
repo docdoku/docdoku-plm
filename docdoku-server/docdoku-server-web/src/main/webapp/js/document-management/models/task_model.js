@@ -1,11 +1,17 @@
-define(
-    function () {
+define([
+    "models/user"
+],function (
+    User
+) {
     var TaskModel = Backbone.Model.extend({
 
         defaults: {
-            title: "Task",
-            instructions: "attention!",
             duration: 25
+        },
+
+        initialize: function() {
+            if(!_.isUndefined(this.attributes.worker))
+                this.attributes.worker = new User(this.attributes.worker);
         },
 
         toJSON: function() {

@@ -72,6 +72,8 @@ define(function () {
 		"WORKFLOW":						"Workflow",
         "NEW_WORKFLOW":                 "Créer un nouveau workflow",
         "WORKFLOW_NAME_PLACEHOLDER":    "Nom du nouveau workflow",
+        "ACTIVITY_NAME_PLACEHOLDER":    "Nom de l'activité",
+        "TASK_NAME_PLACEHOLDER":        "Nom de la tâche",
 		"WORKSPACES":					"Workspaces",
         "VALIDATION_FAILED_FOR":        "Validation échouée pour "
 	};

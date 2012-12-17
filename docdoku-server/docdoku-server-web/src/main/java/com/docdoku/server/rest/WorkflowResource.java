@@ -130,11 +130,22 @@ public class WorkflowResource {
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
 
+            User[] users = documentService.getUsers(workspaceId);
+
             List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
 
             ActivityModel[] activityModels = new ActivityModel[activityModelDTOsList.size()];
             for(int i=0; i<activityModelDTOsList.size(); i++){
                 activityModels[i] = mapper.map(activityModelDTOsList.get(i), ActivityModel.class);
+
+                List<TaskModel> taskModelList = activityModels[i].getTaskModels();
+                for(TaskModel taskModel : taskModelList){
+                    String login = taskModel.getWorker().getLogin();
+                    for(int j=0; j<users.length; j++){
+                        if(users[j].getLogin().equals(login))
+                            taskModel.setWorker(users[j]);
+                    }
+                }
             }
 
             WorkflowModel workflowModel = documentService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);

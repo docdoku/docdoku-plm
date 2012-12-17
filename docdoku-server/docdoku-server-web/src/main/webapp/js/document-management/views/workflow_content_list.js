@@ -36,16 +36,6 @@ define([
 		actionNew : function () {
             this.router = require("router").getInstance();
             this.router.navigate("workflow-model-editor", {trigger: true});
-            /*
-            var workflowEditorView = new WorkflowEditorView();
-            workflowEditorView.render();
-            this.$el.html(workflowEditorView.el);
-            */
-            /*
-			var view = this.addSubView(
-				new WorkflowEditorView()
-			).render();
-			*/
 			return false;
 		},
 		actionDelete: function () {

@@ -2,6 +2,26 @@ div#workflow-editor {
 
     padding: 20px;
 
+    ul {
+        cursor: move;
+    }
+
+    div.activity{
+        &.SERIAL{
+            input, label{
+                &.tasksToComplete{
+                    display: none;
+                }
+            }
+        }
+        &.PARALLEL{
+            input.tasksToComplete{
+                width: 30px;
+            }
+        }
+    }
+
+
     /*li.activity-section {
 
         display: inline-block;

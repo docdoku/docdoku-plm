@@ -32,7 +32,6 @@ public class ActivityModelDTO implements Serializable {
     private String lifeCycleState;
     private Type type;
     public enum Type {
-
         SERIAL, PARALLEL
     }
 

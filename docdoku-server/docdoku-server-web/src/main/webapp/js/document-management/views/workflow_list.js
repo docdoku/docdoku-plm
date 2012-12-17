@@ -11,7 +11,7 @@ define([
 ) {
 	var WorkflowListView = CheckboxListView.extend({
 		template: Mustache.compile(template),
-		collection: function () {
+        collection: function () {
 			return new WorkflowList;
 		},
 		itemViewFactory: function (model) {

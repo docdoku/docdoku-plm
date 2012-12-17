@@ -12,7 +12,8 @@ define([
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
     "models/activity_model",
-    "views/activity_model_editor"
+    "views/activity_model_editor",
+    "collections/users"
 
 ], function (
     require,
@@ -20,7 +21,8 @@ define([
     WorkflowModel,
     template,
     ActivityModel,
-    ActivityModelEditorView
+    ActivityModelEditorView,
+    Users
     ) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
@@ -34,6 +36,9 @@ define([
 
         initialize: function() {
             this.subviews = [];
+
+            this.users = new Users();
+            this.users.fetch({async: false});
 
             if(_.isUndefined(this.options.workflowModelId)){
                 this.model = new WorkflowModel();
@@ -55,16 +60,14 @@ define([
         },
 
         addOneActivity: function(activityModel) {
-            var activityModelEditorView = new ActivityModelEditorView({model: activityModel});
+            var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: this.users});
             this.subviews.push(activityModelEditorView);
             activityModelEditorView.render();
             this.activitiesUL.append(activityModelEditorView.el);
         },
 
         addActivityAction: function(){
-            this.model.attributes.activityModels.add(new ActivityModel({
-                lifeCycleState: "Activity "+this.model.attributes.activityModels.length
-            }));
+            this.model.attributes.activityModels.add(new ActivityModel());
             return false;
         },
 
@@ -86,7 +89,7 @@ define([
 
         saveAction: function () {
             var self = this;
-            var reference = this.$el.find("input.name").first().val();
+            var reference = this.$("input.workflow-name").first().val();
 
             if (reference) {
                 this.model.save(
@@ -108,12 +111,20 @@ define([
         },
 
         render: function() {
-            var self = this;
 
             this.template = Mustache.render(template, {i18n: i18n, workflow: this.model.attributes});
+
             this.$el.html(this.template);
 
-            this.activitiesUL = this.$el.find("ul#activity-list");
+            this.bindDomElements();
+
+            return this;
+        },
+
+        bindDomElements: function(){
+            var self = this;
+
+            this.activitiesUL = this.$("ul#activity-list");
             this.activitiesUL.sortable({
                 start: function(event, ui) {
                     ui.item.oldPosition = ui.item.index();
@@ -122,8 +133,6 @@ define([
                     self.activityPositionChanged(ui.item.oldPosition, ui.item.index());
                 }
             });
-
-            return this;
         },
 
         unbindAllEvents: function(){
