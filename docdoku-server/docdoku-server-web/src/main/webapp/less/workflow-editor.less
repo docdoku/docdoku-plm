@@ -2,85 +2,190 @@ div#workflow-editor {
 
     padding: 20px;
 
-    ul {
-        cursor: move;
+    div#start, div#end {
+        margin: 0px auto 8px auto;
+        width: 64px;
+        height: 64px;
+    }
+    button#add-activity {
+        display: block;
+        margin: 0px auto 8px auto;
+        width: 64px;
+        height: 64px;
+        background-image: url("http://localhost:8080/less/../images/workflow/add-activity.svg");
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: 0;
     }
 
-    div.activity{
-        &.SERIAL{
-            input, label{
-                &.tasksToComplete{
-                    display: none;
-                }
-            }
-        }
-        &.PARALLEL{
-            input.tasksToComplete{
-                width: 30px;
-            }
-        }
-    }
-
-
-    /*li.activity-section {
-
+    label {
         display: inline-block;
-
-        > div {
-            min-height: 200px;
-            min-width: 64px;
-        }
-
-        div#start {
-            background: url("../images/workflow/start.png") no-repeat 0px;
-        }
-
-        div#end {
-            background: url("../images/workflow/end.png") no-repeat 0px;
-        }
-
-        div.add-activity {
-            width: 128px;
-            background: url("../images/workflow/add-activity.png") no-repeat 48px;
-        }
     }
 
-    ul {
-       margin: 0;
-       padding: 0;
-       display: inline-block;
+    button {
+        box-shadow: none;
+        background: none;
+        border: none;
     }
 
-    ul.activitylist{
+    ul#activity-list {
+        margin: 0;
+        list-style: none;
 
-        li.activity {
+        li.activity-section {
+            text-align: center;
 
-            border: 1px solid black;
+            div.activity {
+                cursor: move;
+                display: inline-block;
+                background-color: white;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+                border-radius: 4px;
+                margin: 8px 0px;
 
-            > div {
-                min-height:128px;
-                min-width: 64px;
-            }
+                div.activity-topbar{
+                    text-align: left;
+                    background-color: rgba(0,97,192,0.8);
+                    border-radius: 4px 4px 0px 0px;
 
-            div.add-task {
-                background: url("../images/workflow/add-task.png") no-repeat 16px;
-            }
+                    button.switch-activity{
+                        float: left;
+                        margin: 2px;
+                        width: 32px;
+                        height: 32px;
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                        background-position: 0;
+                    }
 
-            al {
-                > div {
-                    display: inline-block;
+                    input.activity-name {
+                        font-size: 15px;
+                        font-weight: bold;
+                        margin: 2px 20px;
+                    }
+
+                    button.delete-activity{
+                        float: right;
+                        margin: 2px;
+                        width: 32px;
+                        height: 32px;
+                        background-image: url("http://localhost:8080/less/../images/workflow/delete-activity.svg");
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                        background-position: 0;
+                    }
+                }
+
+                button.add-task {
+                    display: block;
+                    margin: 0 auto;
+                    width: 48px;
+                    height: 48px;
+                    background-image: url("http://localhost:8080/less/../images/workflow/add-task.svg");
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                    background-position: 0;
+                }
+
+                ul.task-list{
+                    margin: 0;
+                    list-style: none;
+
+                    li.task-section {
+                        div.task{
+                            text-align: left;
+                            cursor: move;
+                            background-color: white;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+                            border-radius: 4px;
+                            margin: 6px;
+
+                            div.task-topbar {
+                                text-align: left;
+                                background-color: rgba(0,97,192,0.6);
+                                border-radius: 4px 4px 0px 0px;
+
+                                input.task-name {
+                                    font-weight: bold;
+                                    margin: 2px 20px 2px 2px;
+                                }
+
+                                button.delete-task{
+                                    float: right;
+                                    margin: 2px;
+                                    width: 32px;
+                                    height: 32px;
+                                    background-image: url("http://localhost:8080/less/../images/workflow/delete-task.svg");
+                                    background-repeat: no-repeat;
+                                    background-size: contain;
+                                    background-position: 0;
+                                }
+                            }
+
+                            >label{
+                                text-align: right;
+                                width: 77px;
+                                line-height: 25px;
+                                margin: 5px;
+                            }
+
+                            >textarea, >select{
+                                margin: 5px 1px 5px 0
+                            }
+                        }
+                    }
+                }
+
+                &.SERIAL {
+                    div.activity-topbar{
+                        min-width: 336px;
+
+                        button.switch-activity{
+                            -webkit-transform: rotate(90deg);
+                            background-image: url("http://localhost:8080/less/../images/workflow/serial.svg");
+                        }
+
+                        input, label {
+                            &.tasksToComplete {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    div.task{
+                        margin: 12px 8px !important;
+                    }
+                }
+
+                &.PARALLEL {
+                    div.activity-topbar{
+                        min-width: 558px;
+
+                        button.switch-activity{
+                            background-image: url("http://localhost:8080/less/../images/workflow/parallel.svg");
+                        }
+
+                        label.tasksToComplete {
+                            float: left;
+                            margin: 2px;
+                            line-height: 32px;
+                            color: white;
+                            text-shadow: 0 1px black;
+                        }
+
+                        input.tasksToComplete {
+                            float: left;
+                            margin: 2px;
+                            width: 30px;
+                        }
+                    }
+
+                    li.task-section {
+                        display: inline-block;
+                    }
                 }
             }
 
-            .parallel {
-            }
-
-            ul.tasklist {
-                li.task {
-                    width: 128px;
-                    border: 1px solid blue;
-                }
-            }
         }
-    }*/
+    }
 }
