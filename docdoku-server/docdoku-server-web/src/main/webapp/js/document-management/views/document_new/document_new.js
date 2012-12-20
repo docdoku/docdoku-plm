@@ -17,7 +17,7 @@ define([
 
 		initialize: function () {
 			ModalView.prototype.initialize.apply(this, arguments);
-			this.events["submit #form-" + this.cid] = "primaryAction";
+			this.events["submit #form-" + this.cid] = "onSubmitForm";
 		},
 
 		rendered: function () {
@@ -44,7 +44,7 @@ define([
 			this.workflowsView.collection.fetch();
 		},
 
-		primaryAction: function () {
+        onSubmitForm: function () {
 			var reference = $("#form-" + this.cid + " .reference").val();
 
             if (reference) {
