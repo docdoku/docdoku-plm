@@ -1,0 +1,19 @@
+<div class="actions">
+    <input class="workflow-name" type="text" autofocus placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}" value="{{workflow.id}}"/>
+    <button class="btn cancel">
+        {{i18n.CANCEL}}
+    </button>
+    <button class="btn btn-primary">
+        {{i18n.SAVE}}
+    </button>
+</div>
+<div id="workflow-editor">
+    <div id="start">
+        <img src="../../../images/workflow/start-alt.png" alt="start">
+    </div>
+    <ul id="activity-list"></ul>
+    <button id="add-activity" class="btn" title="{{i18n.ADD_ACTIVITY}}"></button>
+    <div id="end">
+        <img src="../../../images/workflow/end-alt.png" alt="end">
+    </div>
+</div>

@@ -25,7 +25,7 @@ define([
 			this.addSubView(
 				new WorkflowContentListView()
 			).render();
-		},
+		}
 	});
 	WorkflowNavView = singletonDecorator(WorkflowNavView);
 	return WorkflowNavView;

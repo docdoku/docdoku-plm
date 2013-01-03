@@ -1,5 +1,5 @@
 define([
-	"collections/workflow",
+	"collections/workflow_models",
 	"views/checkbox_list",
 	"views/workflow_list_item",
 	"text!templates/workflow_list.html"
@@ -11,14 +11,14 @@ define([
 ) {
 	var WorkflowListView = CheckboxListView.extend({
 		template: Mustache.compile(template),
-		collection: function () {
-			return WorkflowList.getInstance();
+        collection: function () {
+			return new WorkflowList;
 		},
 		itemViewFactory: function (model) {
 			return new WorkflowListItemView({
 				model: model
 			});
-		},
+		}
 	});
 	return WorkflowListView;
 });

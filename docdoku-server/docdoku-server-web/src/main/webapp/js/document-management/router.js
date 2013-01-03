@@ -1,20 +1,21 @@
 define([
-	"require",
 	"common/singleton_decorator",
 	"views/folder_nav",
 	"views/tag_nav",
 	"views/workflow_nav",
 	"views/template_nav",
-	"views/checkedout_nav"
+	"views/checkedout_nav",
+    "views/workflow_model_editor",
+    "models/workflow_model"
 ],
 function (
-	require,
 	singletonDecorator,
 	FolderNavView,
 	TagNavView,
 	WorkflowNavView,
 	TemplateNavView,
-	CheckedoutNavView
+	CheckedoutNavView,
+    WorkflowModelEditorView
 ) {
 	var Router = Backbone.Router.extend({
 		routes: {
@@ -24,6 +25,8 @@ function (
 			"tags/:id": 		"tag",
 			"templates":		"templates",
 			"workflows":		"workflows",
+            "workflow-model-editor/:workflowModelId":  "workflowModelEditor",
+            "workflow-model-editor":  "workflowModelEditorNew",
 			"checkedouts":		"checkedouts",
 			"tasks":			"tasks",
 			"":					"defaults"
@@ -49,6 +52,28 @@ function (
 			var view = WorkflowNavView.getInstance();
 			view.showContent();
 		},
+        workflowModelEditor: function(workflowModelId) {
+            this.defaults();
+
+            if(!_.isUndefined(this.workflowModelEditorView))
+                this.workflowModelEditorView.unbindAllEvents();
+
+            this.workflowModelEditorView = new WorkflowModelEditorView({
+                workflowModelId: workflowModelId
+            });
+
+            this.workflowModelEditorView.render();
+        },
+        workflowModelEditorNew: function() {
+            this.defaults();
+
+            if(!_.isUndefined(this.workflowModelEditorView))
+                this.workflowModelEditorView.unbindAllEvents();
+
+            this.workflowModelEditorView = new WorkflowModelEditorView();
+
+            this.workflowModelEditorView.render();
+        },
 		templates: function() {
 			this.defaults();
 			var view = TemplateNavView.getInstance();

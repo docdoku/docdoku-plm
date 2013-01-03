@@ -16,7 +16,7 @@ define([
 		},
 		destroyed: function () {
 			this.$el.html("");
-		},
+		}
 	});
 	return ContentView;
 });

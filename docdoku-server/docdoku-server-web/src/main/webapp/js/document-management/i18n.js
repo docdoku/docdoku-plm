@@ -70,6 +70,18 @@ define(function () {
 		"VERSION":						"Version",
 		"WORKFLOWS":					"Workflows",
 		"WORKFLOW":						"Workflow",
+        "NEW_WORKFLOW":                 "Créer un nouveau workflow",
+        "WORKFLOW_NAME_PLACEHOLDER":    "Nom du nouveau workflow",
+        "ADD_ACTIVITY":                 "Ajouter une activité",
+        "SWITCH_MODE":                  "Changer de mode",
+        "NB_TASKS_TO_COMPLETE":         "Nombre de tâches à completer",
+        "ACTIVITY_NAME_PLACEHOLDER":    "Nom de l'activité",
+        "DELETE_ACTIVITY":              "Supprimer l'activité",
+        "ADD_TASK":                     "Ajouter une tâche",
+        "TASK_NAME_PLACEHOLDER":        "Nom de la tâche",
+        "DELETE_TASK":                  "Supprimer la tâche",
+        "INSTRUCTIONS":                 "Instructions",
+        "RESPONSABLE":                  "Responsable",
 		"WORKSPACES":					"Workspaces",
         "VALIDATION_FAILED_FOR":        "Validation échouée pour "
 	};

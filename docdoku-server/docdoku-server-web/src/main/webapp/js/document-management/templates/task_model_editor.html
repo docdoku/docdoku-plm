@@ -1,0 +1,15 @@
+<div class="task">
+    <div class="task-topbar">
+        <input class="task-name" type="text" placeholder="{{i18n.TASK_NAME_PLACEHOLDER}}" value="{{task.title}}"/>
+        <button class="btn delete-task" title="{{i18n.DELETE_TASK}}"></button>
+    </div>
+    <label for="instructions-{{cid}}">{{i18n.INSTRUCTIONS}}</label>
+    <textarea id="instructions-{{cid}}" class="instructions" rows="2">{{task.instructions}}</textarea>
+    </br>
+    <label for="worker-{{cid}}">{{i18n.RESPONSABLE}}</label>
+    <select id="worker-{{cid}}" class="worker">
+        {{#users}}
+        <option {{#selected}}selected{{/selected}} value="{{login}}">{{login}}</option>
+        {{/users}}
+    </select>
+</div>

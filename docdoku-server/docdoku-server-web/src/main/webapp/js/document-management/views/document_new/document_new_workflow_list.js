@@ -1,5 +1,5 @@
 define([
-	"collections/workflow",
+	"collections/workflow_models",
 	"views/base",
 	"text!templates/document_new/document_new_workflow_select.html"
 ], function (

@@ -225,7 +225,6 @@
                         </goals>
                     </execution>
                 </executions>
-
             </plugin>
         </plugins>
         <finalName>docdoku-server-web</finalName>

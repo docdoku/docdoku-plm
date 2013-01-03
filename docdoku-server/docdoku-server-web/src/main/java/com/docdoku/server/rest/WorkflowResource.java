@@ -20,12 +20,12 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.meta.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.WorkflowModelKey;
-import com.docdoku.server.rest.dto.UserDTO;
-import com.docdoku.server.rest.dto.WorkflowModelDTO;
+import com.docdoku.core.workflow.*;
+import com.docdoku.server.rest.dto.*;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -36,7 +36,11 @@ import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import static com.docdoku.server.rest.dto.ActivityModelDTO.Type.SERIAL;
 
 /**
  *
@@ -70,8 +74,8 @@ public class WorkflowResource {
             
             for(int i=0; i<workflowModels.length; i++){
                 User workflowAuhtor = workflowModels[i].getAuthor();
-                UserDTO worflowAuthor = mapper.map(workflowAuhtor,UserDTO.class);
-                dtos[i]=new WorkflowModelDTO(workflowModels[i].getId(), worflowAuthor);
+                UserDTO workflowAuthorDTO = mapper.map(workflowAuhtor,UserDTO.class);
+                dtos[i]=new WorkflowModelDTO(workflowModels[i].getId(), workflowAuthorDTO);
             }
             
             return dtos;
@@ -81,13 +85,76 @@ public class WorkflowResource {
         }
     }
 
+    @GET
+    @Produces("application/json;charset=UTF-8")
+    @Path("{workflowModelId}")
+    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId) {
+        try{
+            WorkflowModel workflowModel = documentService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+            WorkflowModelDTO workflowModelDTO = mapper.map(workflowModel, WorkflowModelDTO.class);
+            return workflowModelDTO;
+        }  catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     @DELETE
-    @Path("{workflowModelId}")    
-        public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId){
+    @Path("{workflowModelId}")
+    public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId){
         try {
             documentService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             return Response.status(Response.Status.OK).build();
         }  catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Produces("application/json;charset=UTF-8")
+    @Path("{workflowModelId}")
+    public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist) {
+        try {
+
+            documentService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+
+            return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            ex.printStackTrace();
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @POST
+    @Produces("application/json;charset=UTF-8")
+    public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
+        try {
+
+            User[] users = documentService.getUsers(workspaceId);
+
+            List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
+
+            ActivityModel[] activityModels = new ActivityModel[activityModelDTOsList.size()];
+            for(int i=0; i<activityModelDTOsList.size(); i++){
+                activityModels[i] = mapper.map(activityModelDTOsList.get(i), ActivityModel.class);
+
+                List<TaskModel> taskModelList = activityModels[i].getTaskModels();
+                for(TaskModel taskModel : taskModelList){
+                    String login = taskModel.getWorker().getLogin();
+                    for(int j=0; j<users.length; j++){
+                        if(users[j].getLogin().equals(login))
+                            taskModel.setWorker(users[j]);
+                    }
+                }
+            }
+
+            WorkflowModel workflowModel = documentService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
+
+            WorkflowModelDTO dto = mapper.map(workflowModel, WorkflowModelDTO.class);
+            return dto;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            ex.printStackTrace();
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

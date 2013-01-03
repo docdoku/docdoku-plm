@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import com.docdoku.server.rest.dto.UserDTO;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +29,6 @@ import java.util.List;
 
 public class WorkflowModelDTO implements Serializable {
 
-    private String workspaceId;
     private String id;
     private String reference;
     private String finalLifeCycleState;
@@ -40,12 +40,20 @@ public class WorkflowModelDTO implements Serializable {
         activityModels = new ArrayList<ActivityModelDTO>();
     }
 
-    public WorkflowModelDTO(String workspaceId, String id) {
-        this.workspaceId = workspaceId;
+    public WorkflowModelDTO(String id) {
         this.id = id;
     }
-    
-        public WorkflowModelDTO(String id, UserDTO pAuthor) {
+
+    public WorkflowModelDTO(String id, String reference, String finalLifeCycleState, UserDTO author, Date creationDate, List<ActivityModelDTO> activityModels) {
+        this.id = id;
+        this.reference = reference;
+        this.finalLifeCycleState = finalLifeCycleState;
+        this.author = author;
+        this.creationDate = creationDate;
+        this.activityModels = activityModels;
+    }
+
+    public WorkflowModelDTO(String id, UserDTO pAuthor) {
         this.id = id;
         this.reference = id;
         this.author = pAuthor;
@@ -53,14 +61,6 @@ public class WorkflowModelDTO implements Serializable {
 
     public String getId() {
         return id;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
     }
 
     public void setId(String id) {
@@ -108,13 +108,12 @@ public class WorkflowModelDTO implements Serializable {
     }
 
     public String getReference() {
-        reference = this.id;
         return reference;
     }
 
     public void setReference(String reference) {
         this.reference = reference;
     }
-    
-    
+
+
 }
