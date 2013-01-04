@@ -116,8 +116,6 @@ SceneManager.prototype = {
             $('#side_controls_container').hide();
             $('#scene_container').width(90 + '%');
             $('#center_container').height(83 + '%');
-        } else {
-            new ControlManager(this.controls);
         }
     },
 
