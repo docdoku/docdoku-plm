@@ -20,6 +20,7 @@ function SceneManager(options) {
     this.instancesMap = {};
     this.partIterations = {}
     this.meshesBindedForMarkerCreation = [];
+    this.clock = new THREE.Clock();
 }
 
 SceneManager.prototype = {
@@ -89,23 +90,30 @@ SceneManager.prototype = {
     },
 
     initControls: function() {
-        this.controls = new THREE.TrackballControlsCustom(this.camera, this.container[0]);
+        this.controls = new THREE.FirstPersonControlsCustom(this.camera, this.container[0]);
+        //this.controls = new THREE.TrackballControlsCustom(this.camera, this.container[0]);
 
-        this.controls.rotateSpeed = 3.0;
-        this.controls.zoomSpeed = 5;
+
+        // FPS
+        this.controls.movementSpeed = 1000;
+        this.controls.lookSpeed = 0.075;
+        this.controls.lookVertical = false;
+
+        // Trackball
+        /*this.controls.rotateSpeed = 3.0;
+        this.controls.zoomSpeed = 50;
         this.controls.panSpeed = 1;
 
-        //this.controls.noZoom = false;
-        //this.controls.noPan = false;
+        this.controls.noZoom = false;
+        this.controls.noPan = false;
 
         this.controls.staticMoving = true;
-        this.controls.dynamicDampingFactor = 0.3;
+        this.controls.dynamicDampingFactor = 0.3;*/
 
-        this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
+        //this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
         if (Modernizr.touch) {
             $('#side_controls_container').hide();
-            $('#bottom_controls_container').hide();
             $('#scene_container').width(90 + '%');
             $('#center_container').height(83 + '%');
         } else {
@@ -235,7 +243,10 @@ SceneManager.prototype = {
             self.animate();
         });
         this.render();
-        this.controls.update();
+        //this.controls.update();
+        // FPS
+        this.controls.update(this.clock.getDelta());
+
         this.stats.update();
     },
 

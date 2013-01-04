@@ -8,7 +8,7 @@ define([
     LayersListView
 ) {
 
-    var STATE = { FULL : 0, TRANSPARENT : 1, HIDDEN : 2};
+    var STATE = { FULL : 0, TRANSPARENT : 1};
     var mouse = new THREE.Vector2(),
         offset = new THREE.Vector3(),
         INTERSECTED, SELECTED,
@@ -23,7 +23,7 @@ define([
         this.renderer = renderer;
         this.controls = controls;
         this.container = container;
-        this.markerStateControl = $('#markerState');
+        this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
         domEvent = new THREEx.DomEvent(camera, container);
     };
@@ -116,17 +116,12 @@ define([
         changeMarkerState: function() {
             switch(this.state) {
                 case STATE.FULL  :
-                    this.markerStateControl.removeClass('icon-marker-full').addClass('icon-marker-empty');
+                    this.markerStateControl.removeClass('icon-circle').addClass('icon-circle-blank');
                     this.changeOpacityOnMarker(0.4);
                     this.state = STATE.TRANSPARENT;
                     break;
                 case STATE.TRANSPARENT :
-                    this.markerStateControl.removeClass('icon-marker-empty').addClass('icon-marker-dotted');
-                    this.changeOpacityOnMarker(0);
-                    this.state = STATE.HIDDEN;
-                    break;
-                case STATE.HIDDEN:
-                    this.markerStateControl.removeClass('icon-marker-dotted').addClass('icon-marker-full');
+                    this.markerStateControl.removeClass('icon-circle-blank').addClass('icon-circle');
                     this.changeOpacityOnMarker(1);
                     this.state = STATE.FULL;
                     break;
@@ -141,15 +136,15 @@ define([
 
         bindControlEvents: function() {
             var self = this;
-            $('#manageMarker .moveBtnLeft').click(function() {
+            $('#markerZoomLess').click(function() {
                 self.rescaleMarkers(-0.5);
             });
 
-            $('#manageMarker .moveBtnRight').click(function() {
+            $('#markerZoomMore').click(function() {
                 self.rescaleMarkers(0.5);
             });
 
-            $('#manageMarker .moveBtnCenter').click(function() {
+            $('#markerState').click(function() {
                 self.changeMarkerState();
             });
         },

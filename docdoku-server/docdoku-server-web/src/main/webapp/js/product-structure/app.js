@@ -21,7 +21,6 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
             this.sceneModeButton.addClass("active");
             this.bomContainer.hide();
             this.centerSceneContainer.show();
-            this.sceneBottomControlsContainer.show();
         },
 
         bomMode: function() {
@@ -29,7 +28,6 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
             this.sceneModeButton.removeClass("active");
             this.bomModeButton.addClass("active");
             this.centerSceneContainer.hide();
-            this.sceneBottomControlsContainer.hide();
             this.bomContainer.show();
             this.updateBom();
         },
@@ -43,7 +41,6 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
             this.sceneModeButton = this.$("#scene_view_btn");
             this.bomModeButton = this.$("#bom_view_btn");
             this.bomContainer = this.$("#bom_table_container");
-            this.sceneBottomControlsContainer = this.$("#bottom_controls_container");
             this.centerSceneContainer = this.$("#center_container");
             this.partMetadataContainer = this.$("#part_metadata_container");
 
