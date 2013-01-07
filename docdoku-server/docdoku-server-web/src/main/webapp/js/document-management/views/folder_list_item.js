@@ -20,7 +20,6 @@ define([
 	template
 ) {
 	var FolderListItemView = ListItemView.extend({
-		__name__: "FolderListItemView",
 		template: Mustache.compile(template),
 		tagName: "li",
 		className: "folder",
@@ -37,7 +36,7 @@ define([
 				"click .header .actions .new-folder":	"actionNewFolder",
 				"click .header .actions .edit":			"actionEdit",
 				"click .header .actions .delete":		"actionDelete",
-				"mouseleave .header":					"hideActions",
+				"mouseleave .header":					"hideActions"
 			});
 			this.events['click [data-target="#items-' + this.cid + '"]'] = "toggle";
 		},
