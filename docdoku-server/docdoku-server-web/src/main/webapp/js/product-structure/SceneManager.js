@@ -147,7 +147,7 @@ SceneManager.prototype = {
 
         var self = this;
 
-        this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container[0]);
+        this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container);
 
         this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
             return instance.mesh != null
@@ -190,7 +190,7 @@ SceneManager.prototype = {
     initLayerManager: function() {
         var self = this;
         require(["LayerManager"], function(LayerManager) {
-            self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container[0]);
+            self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container);
             self.layerManager.bindControlEvents();
             self.layerManager.rescaleMarkers(0);
             self.layerManager.renderList();

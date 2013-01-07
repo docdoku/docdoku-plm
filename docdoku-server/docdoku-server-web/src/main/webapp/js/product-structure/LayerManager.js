@@ -12,8 +12,7 @@ define([
     var mouse = new THREE.Vector2(),
         offset = new THREE.Vector3(),
         INTERSECTED, SELECTED,
-        projector = new THREE.Projector(),
-        domEvent;
+        projector = new THREE.Projector();
 
     var LayerManager = function( scene, camera, renderer, controls, container ) {
         this.scene = scene;
@@ -25,7 +24,7 @@ define([
         this.container = container;
         this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
-        domEvent = new THREEx.DomEvent(camera, container);
+        this.domEvent = new THREEx.DomEvent(camera, container);
     };
 
     LayerManager.prototype = {
@@ -53,7 +52,7 @@ define([
 
             var self = this;
 
-            domEvent.bind(markerMesh, 'click', function(){
+            this.domEvent.bind(markerMesh, 'click', function(){
                 if (self.state != STATE.HIDDEN) {
                     self.showPopup(marker);
                 }
@@ -76,7 +75,7 @@ define([
         },
 
         _removeMesh: function(cid) {
-            domEvent.unbind(this.meshs[cid], 'click');
+            this.domEvent.unbind(this.meshs[cid], 'click');
             this.scene.remove(this.meshs[cid]);
             delete this.meshs[cid];
         },
