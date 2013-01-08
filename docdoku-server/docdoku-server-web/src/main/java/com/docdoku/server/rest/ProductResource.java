@@ -56,14 +56,15 @@ import org.dozer.Mapper;
  * @author Florent Garin
  */
 @Stateless
-@Path("workspaces/{workspaceId}/products")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductResource {
 
     @EJB
     private IProductManagerLocal productService;
+
     private Mapper mapper;
+
     @EJB
     private LayerResource layerResource;
 

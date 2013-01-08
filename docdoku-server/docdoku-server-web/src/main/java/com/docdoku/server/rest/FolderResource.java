@@ -19,22 +19,12 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
-import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.DocumentCreationDTO;
-import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.FolderDTO;
-import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -48,17 +38,22 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 @Stateless
-@Path("workspaces/{workspaceId}/folders")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class FolderResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+
+    @EJB
+    private DocumentsResource documentsResource;
+
     @EJB
     private IUserManagerLocal userManager;
+
     @Context
     private UriInfo context;
+
     private Mapper mapper;
 
     public FolderResource() {
@@ -69,13 +64,17 @@ public class FolderResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
+    @Path("{folderId}/documents/")
+    public DocumentsResource getDocumentsResource() {
+        return documentsResource;
+    }
+
     /**
-     * Retrieves representation of an instance of FolderResource
+     * Retrieves representation of folders located at the root of the given workspace
      *
-     * @param parent folder path
-     * @return the array of sub-folders
+     * @param workspaceId
+     * @return the array of folders
      */
-    
     @GET
     @Produces("application/json;charset=UTF-8")
     public FolderDTO[] getRootFoldersJson(@PathParam("workspaceId") String workspaceId) {
@@ -133,40 +132,8 @@ public class FolderResource {
         }
     }
 
-    @GET
-    @Path("{folderId}/documents/")
-    @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getMasterDocumentsWithSpecifiedTagJson(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId) {
-
-        try {
-
-            String decodedCompletePath = Tools.replaceColonWithSlash(folderId);
-            
-            String pCompletePath = Tools.stripTrailingSlash(decodedCompletePath);
-            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(pCompletePath);
-            DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
-
-            for (int i = 0; i < docM.length; i++) {
-                dtos[i] = mapper.map(docM[i], DocumentMasterDTO.class);
-                dtos[i].setPath(docM[i].getLocation().getCompletePath());
-                dtos[i].setLifeCycleState(docM[i].getLifeCycleState());
-                dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
-            }
-
-            return dtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-
-    }
-
     /**
      * PUT method for updating or creating an instance of FolderResource
-     *
-     * @param complete path of the folder to create or move and the folder to
-     * create or the destination folder in case of a move operation as an entity
-     * body (with its completePath attribute)
-     *
      */
     @PUT
     @Consumes("application/json;charset=UTF-8")
@@ -233,64 +200,10 @@ public class FolderResource {
         }
     }
     
-    @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
-    @Path("{folderId}/documents/")
-    public DocumentMasterDTO createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO,@PathParam("folderId") String folderId) {
-
-        String pDocMID = docCreationDTO.getReference();
-        String pTitle = docCreationDTO.getTitle();
-        String pDescription = docCreationDTO.getDescription();
-
-        String decodedCompletePath = Tools.replaceColonWithSlash(folderId);             
-        String pParentFolder = Tools.stripTrailingSlash(decodedCompletePath);
-        
-        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-        String pDocMTemplateId = docCreationDTO.getTemplateId();
-
-
-        /*
-         * Null value for test purpose only
-         */
-        ACLDTO acl = null;
-
-
-        try {
-            ACLUserEntry[] userEntries = null;
-            ACLUserGroupEntry[] userGroupEntries = null;
-            if (acl != null) {
-                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries[i] = new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
-                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-                i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    userGroupEntries[i] = new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-            }
-
-           DocumentMaster createdDocMs =  documentService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-           DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
-           docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
-           docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
-           
-            return docMsDTO;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-    
     /**
      * DELETE method for deleting an instance of FolderResource
      *
-     * @param parent folder path
+     * @param completePath the folder path
      * @return the array of the documents that have also been deleted
      */
     @DELETE

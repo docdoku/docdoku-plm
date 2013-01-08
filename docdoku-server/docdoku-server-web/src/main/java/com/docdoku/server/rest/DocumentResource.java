@@ -32,17 +32,14 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.exceptions.ApplicationException;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.transaction.UserTransaction;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -50,18 +47,12 @@ import java.util.List;
 import java.util.Map;
 
 @Stateless
-@Path("workspaces/{workspaceId}/documents")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class DocumentResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
-    private final static int CHUNK_SIZE = 1024 * 8;
-    private final static int BUFFER_CAPACITY = 1024 * 16;
-    @Resource
-    private UserTransaction utx;
-
 
     private Mapper mapper;
 
@@ -73,121 +64,13 @@ public class DocumentResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
-    /**
-     * Retrieves representation of an instance of
-     * com.docdoku.server.rest.DocumentResource
-     *
-     * @return an instance of com.docdoku.core.document.DocumentMaster
-     */
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getRootDocuments(@PathParam("workspaceId") String workspaceId) {
-
-        try {
-
-            String wksId = Tools.stripTrailingSlash(workspaceId);
-            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(wksId);
-            DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
-
-            for (int i = 0; i < docM.length; i++) {
-                dtos[i] = mapper.map(docM[i], DocumentMasterDTO.class);
-                dtos[i].setPath(docM[i].getLocation().getCompletePath());
-                dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
-            }
-
-            return dtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-
-    }
-
-//    @GET
-//    @Path()
-//    @Produces("application/json;charset=UTF-8")
-//    public DocumentMasterDTO[] getIterationChangeEventSubscriptions(@PathParam("workspaceId") String workspaceId) {
-//
-//        try {
-//
-//            DocumentMasterKey[] docMKey = documentService.getIterationChangeEventSubscriptions(workspaceId);
-//            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
-//
-//            for (int i = 0; i < docMKey.length; i++) {
-//                DocumentMasterDTO dto = new DocumentMasterDTO();
-//                dto.setWorkspaceID(docMKey[i].getWorkspaceId());
-//                dto.setId(docMKey[i].getId());
-//                dto.setReference(docMKey[i].getId());
-//                dto.setVersion(docMKey[i].getVersion());
-//                data[i] = dto;
-//            }
-//
-//            return data;
-//
-//        } catch (com.docdoku.core.services.ApplicationException ex) {
-//            throw new RESTException(ex.toString(), ex.getMessage());
-//        }
-//
-//    }
-//
-//    @GET
-//    @Path()
-//    @Produces("application/json;charset=UTF-8")
-//    public DocumentMasterDTO[] getStateChangeEventSubscriptions(@PathParam("workspaceId") String workspaceId) {
-//
-//        try {
-//
-//            DocumentMasterKey[] docMKey = documentService.getStateChangeEventSubscriptions(workspaceId);
-//            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
-//
-//            for (int i = 0; i < docMKey.length; i++) {
-//                DocumentMasterDTO dto = new DocumentMasterDTO();
-//                dto.setWorkspaceID(docMKey[i].getWorkspaceId());
-//                dto.setId(docMKey[i].getId());
-//                dto.setReference(docMKey[i].getId());
-//                dto.setVersion(docMKey[i].getVersion());
-//                data[i] = dto;
-//            }
-//
-//            return data;
-//
-//        } catch (com.docdoku.core.services.ApplicationException ex) {
-//            throw new RESTException(ex.toString(), ex.getMessage());
-//        }
-//
-//    }
-//
-    @GET
-    @Path("checkedout")
-    @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
-
-        try {
-            DocumentMaster[] checkedOutdocMs = documentService.getCheckedOutDocumentMasters(workspaceId);
-            DocumentMasterDTO[] checkedOutdocMsDTO = new DocumentMasterDTO[checkedOutdocMs.length];
-
-            for (int i = 0; i < checkedOutdocMs.length; i++) {
-                checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
-                checkedOutdocMsDTO[i].setPath(checkedOutdocMs[i].getLocation().getCompletePath());
-                checkedOutdocMsDTO[i] = Tools.createLightDocumentMasterDTO(checkedOutdocMsDTO[i]);
-            }
-
-            return checkedOutdocMsDTO;
-
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-
-    @GET
-    @Path("{docKey}")
-    @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO getDocM(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
-
+    public DocumentMasterDTO getDocumentMaster(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
 
         int lastDash = docKey.lastIndexOf('-');
         String id = docKey.substring(0, lastDash);
         String version = docKey.substring(lastDash + 1, docKey.length());
-
 
         try {
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
@@ -202,16 +85,10 @@ public class DocumentResource {
         }
     }
 
-    /**
-     * PUT method for updating or creating an instance of DocumentResource
-     *
-     * @param content representation for the resource
-     * @return an HTTP response with content of the updated or created resource.
-     */
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    @Path("{docKey}/checkin")
+    @Path("/checkin")
     public DocumentMasterDTO checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
 
@@ -234,7 +111,7 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    @Path("{docKey}/checkout")
+    @Path("/checkout")
     public DocumentMasterDTO checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
 
@@ -258,7 +135,7 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    @Path("{docKey}/undocheckout")
+    @Path("/undocheckout")
     public DocumentMasterDTO undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
 
@@ -282,7 +159,7 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    @Path("{docKey}/move")
+    @Path("/move")
     public DocumentMasterDTO moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, DocumentCreationDTO docCreationDTO) {
         try {
 
@@ -307,7 +184,7 @@ public class DocumentResource {
     }
 
     @PUT
-    @Path("{docKey}/notification/iterationChange/subscribe")
+    @Path("/notification/iterationChange/subscribe")
     public Response subscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
             int lastDash = docKey.lastIndexOf('-');
@@ -323,7 +200,7 @@ public class DocumentResource {
     }
 
     @PUT
-    @Path("{docKey}/notification/iterationChange/unsubscribe")
+    @Path("/notification/iterationChange/unsubscribe")
     public Response unsubscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
             int lastDash = docKey.lastIndexOf('-');
@@ -339,7 +216,7 @@ public class DocumentResource {
     }
 
     @PUT
-    @Path("{docKey}/notification/stateChange/subscribe")
+    @Path("/notification/stateChange/subscribe")
     public Response subscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
             int lastDash = docKey.lastIndexOf('-');
@@ -355,7 +232,7 @@ public class DocumentResource {
     }
 
     @PUT
-    @Path("{docKey}/notification/stateChange/unsubscribe")
+    @Path("/notification/stateChange/unsubscribe")
     public Response unsubscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
         try {
             int lastDash = docKey.lastIndexOf('-');
@@ -372,14 +249,13 @@ public class DocumentResource {
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
-    @Path("{docKey}/iterations/{docIteration}")
+    @Path("/iterations/{docIteration}")
     public DocumentIterationDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, DocumentIterationDTO data) {
         try {
 
             int lastDash = docKey.lastIndexOf('-');
             String pID = docKey.substring(0, lastDash);
             String pVersion = docKey.substring(lastDash + 1, docKey.length());
-            String pWorkspaceId = workspaceId;
             String pRevisionNote = data.getRevisionNote();
             int pIteration = Integer.parseInt(docIteration);
 
@@ -389,16 +265,16 @@ public class DocumentResource {
                 links = createDocumentIterationKey(linkedDocs);
             }
 
-
             List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
             InstanceAttribute[] attributes = null;
             if (instanceAttributes != null) {
                 attributes = createInstanceAttribute(instanceAttributes);
             }
 
-            DocumentMaster docM = documentService.updateDocument(new DocumentIterationKey(pWorkspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
+            DocumentMaster docM = documentService.updateDocument(new DocumentIterationKey(workspaceId, pID, pVersion, pIteration), pRevisionNote, attributes, links);
             DocumentIterationDTO docDTO = mapper.map(docM.getLastIteration(), DocumentIterationDTO.class);
             return docDTO;
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -408,7 +284,7 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    @Path("{docKey}/newVersion")
+    @Path("/newVersion")
     public DocumentMasterDTO[] createNewVersion(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, DocumentCreationDTO docCreationDTO) {
 
         int lastDash = docKey.lastIndexOf('-');
@@ -418,7 +294,6 @@ public class DocumentResource {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-
 
         /*
          * Null value for test purpose only
@@ -465,7 +340,7 @@ public class DocumentResource {
     @PUT
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    @Path("{docKey}/tags")
+    @Path("/tags")
     public DocumentMasterDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, TagDTO[] tagDtos) {
 
         int lastDash = docKey.lastIndexOf('-');
@@ -489,72 +364,7 @@ public class DocumentResource {
         }
     }
 
-    /**
-     *
-     * POST method
-     *
-     */
-    @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO createRootDocumentMaster(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO) {
-
-        String pDocMID = docCreationDTO.getReference();
-        String pTitle = docCreationDTO.getTitle();
-        String pDescription = docCreationDTO.getDescription();
-        String pParentFolder = Tools.stripTrailingSlash(workspaceId);
-        String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-        String pDocMTemplateId = docCreationDTO.getTemplateId();
-
-
-
-        /*
-         * Null value for test purpose only
-         */
-        ACLDTO acl = null;
-
-
-        try {
-            ACLUserEntry[] userEntries = null;
-            ACLUserGroupEntry[] userGroupEntries = null;
-            if (acl != null) {
-                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries[i] = new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
-                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-                i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    userGroupEntries[i] = new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-            }
-
-            DocumentMaster createdDocMs = documentService.createDocumentMaster(pParentFolder, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
-            DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
-            docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
-            docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
-
-            return docMsDTO;
-
-
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-
-    /**
-     * DELETE method for deleting an instance of DocumentResource
-     *
-     * @param parent folder path
-     * @return the array of the documents that have also been deleted
-     */
     @DELETE
-    @Path("{docKey}")
     @Produces("application/json;charset=UTF-8")
     public Response deleteDocument(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
 
@@ -572,7 +382,7 @@ public class DocumentResource {
 
     @DELETE
     @Consumes("application/json;charset=UTF-8")
-    @Path("{docKey}/iterations/{docIteration}/files/{fileName}")
+    @Path("/iterations/{docIteration}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
         try {
             int lastDash = docKey.lastIndexOf('-');

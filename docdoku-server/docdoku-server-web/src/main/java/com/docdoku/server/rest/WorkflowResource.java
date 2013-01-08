@@ -43,13 +43,13 @@ import org.dozer.Mapper;
  * @author Yassine Belouad
  */
 @Stateless
-@Path("workspaces/{workspaceId}/workflows")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkflowResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+
     private Mapper mapper;
 
     public WorkflowResource() {

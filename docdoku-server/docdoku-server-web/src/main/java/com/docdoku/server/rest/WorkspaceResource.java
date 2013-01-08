@@ -24,7 +24,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.*;
+import javax.ws.rs.Path;
 
 @Stateless
 @Path("workspaces/{workspaceId}")
@@ -33,10 +33,10 @@ import javax.ws.rs.*;
 public class WorkspaceResource {
 
     @EJB
-    private Documents documents;
+    private DocumentsResource documents;
 
     @EJB
-    private Folders folders;
+    private FolderResource folders;
 
     @EJB
     private DocumentTemplateResource templates;
@@ -48,21 +48,18 @@ public class WorkspaceResource {
     private TagResource tags;
 
     @EJB
-    private UserResource users;
-
-    @EJB
     private WorkflowResource workflows;
 
     public WorkspaceResource() {
     }
 
     @Path("/documents")
-    public Documents documents() {
+    public DocumentsResource documents() {
         return documents;
     }
 
     @Path("/folders") 
-    public Folders folders() {
+    public FolderResource folders() {
         return folders;
     }
 
@@ -79,11 +76,6 @@ public class WorkspaceResource {
     @Path("/tags")
     public TagResource tags() {
         return tags;
-    }
-
-    @Path("/users")
-    public UserResource users() {
-        return users;
     }
 
     @Path("/workflows")
