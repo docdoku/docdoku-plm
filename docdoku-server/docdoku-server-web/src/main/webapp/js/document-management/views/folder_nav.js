@@ -8,13 +8,12 @@ define([
 	template
 ) {
 	var FolderNavView = FolderListItemView.extend({
-		__name__: "FolderNavView",
 		template: Mustache.compile(template),
 		el: "#folder-nav",
 		initialize: function () {
 			FolderListItemView.prototype.initialize.apply(this, arguments);
 			this.render();
-		},
+		}
 	});
 	FolderNavView = singletonDecorator(FolderNavView);
 	return FolderNavView;

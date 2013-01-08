@@ -40,7 +40,6 @@ import org.dozer.Mapper;
  * @author Yassine Belouad
  */
 @Stateless
-@Path("workspaces/{workspaceId}/tags")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class TagResource {
@@ -114,9 +113,6 @@ public class TagResource {
     
     /**
      * DELETE method for deleting an instance of TagResource
-     *
-     * @param parent folder path
-     * @return the array of the documents that have also been deleted
      */
     @DELETE
     @Path("{tagId}")

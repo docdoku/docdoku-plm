@@ -2,14 +2,12 @@ define([
 	"i18n",
 	"common/date",
 	"views/checkbox_list_item",
-    /*"views/document_edit",*/
     "views/iteration/iteration_edition",
 	"text!templates/document_list_item.html"
 ], function (
 	i18n,
 	date,
 	CheckboxListItemView,
-    /*DocumentEditView,*/
     IterationEditView,
 	template
 ) {
@@ -22,8 +20,8 @@ define([
 		},
 		modelToJSON: function () {
 			var data = this.model.toJSON();
-			if (this.model.lastIteration) {
-				data.lastIteration = this.model.lastIteration.toJSON();
+			if (this.model.hasIterations()) {
+				data.lastIteration = this.model.getLastIteration().toJSON();
 			}
 
 			// Format dates
@@ -41,29 +39,10 @@ define([
 		},
 		actionEdit: function (evt) {
 			var that = this;
-			var target = $(evt.target); 
-			var targetOffset = target.offset(); 
-			var offset = {
-				x: targetOffset.left + target.width(),
-				y: targetOffset.top + (target.height() / 2)
-			};
 			this.model.fetch().success(function () {
-
-
-                /*that.editView = that.addSubView(
-                    new DocumentEditView({
-                        model: that.model
-                    })
-                );
-                $("#content").append(that.editView.el);
-                that.editView.renderAt(offset);*/
-
                 new IterationEditView({
                     model: that.model
                 }).show();
-
-
-
             });
         }
     });
