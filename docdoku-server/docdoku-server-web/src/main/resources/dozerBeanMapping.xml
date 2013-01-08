@@ -28,6 +28,10 @@
                 <class-a>com.docdoku.core.workflow.ActivityModel</class-a>
                 <class-b>com.docdoku.server.rest.dto.ActivityModelDTO</class-b>
             </converter>
+            <converter type="com.docdoku.server.rest.util.ActivityDozerConverter" >
+                <class-a>com.docdoku.core.workflow.Activity</class-a>
+                <class-b>com.docdoku.server.rest.dto.ActivityDTO</class-b>
+            </converter>
         </custom-converters>    
     </configuration>
     

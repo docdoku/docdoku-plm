@@ -20,19 +20,16 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.meta.*;
+import org.dozer.DozerConverter;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.ParallelActivityModel;
 import com.docdoku.core.workflow.SerialActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
-import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.TaskModelDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.DozerConverter;
 import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +95,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
                 return parallelActivityModel;
             }
             default:{
-                throw new IllegalArgumentException("Instance attribute not supported");
+                throw new IllegalArgumentException("ActivityModelDTO type not supported");
             }
         }
     }

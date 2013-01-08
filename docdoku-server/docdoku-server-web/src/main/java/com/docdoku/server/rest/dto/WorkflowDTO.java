@@ -26,10 +26,9 @@ import java.util.List;
 
 public class WorkflowDTO implements Serializable {
 
-    private List<ActivityDTO> activities;
-    private String finalLifeCycleState;
-    private String workspaceId;
     private int id;
+    private String finalLifeCycleState;
+    private List<ActivityDTO> activities;
 
     public WorkflowDTO() {
         activities = new ArrayList<ActivityDTO>();
@@ -71,10 +70,6 @@ public class WorkflowDTO implements Serializable {
         this.id = id;
     }
 
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
     public int getCurrentStep() {
         int i = 0;
         for (ActivityDTO activity : activities) {
@@ -86,7 +81,4 @@ public class WorkflowDTO implements Serializable {
         return i;
     }
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
 }

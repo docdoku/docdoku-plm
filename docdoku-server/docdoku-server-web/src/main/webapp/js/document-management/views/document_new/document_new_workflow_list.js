@@ -8,13 +8,19 @@ define([
 	template
 ) {
 	var DocumentNewWorkflowListView = BaseView.extend({
+
 		template: Mustache.compile(template),
+
 		collection: function () {
-			return WorkflowList.getInstance();
+            var collection = new WorkflowList();
+            collection.fetch();
+			return collection;
 		},
+
 		collectionReset: function () {
 			this.render();
 		},
+
 		collectionToJSON: function () {
 			var data = BaseView.prototype.collectionToJSON.call(this);
 			data.unshift({
@@ -22,11 +28,14 @@ define([
 			});
 			return data;
 		},
+
 		selected: function () {
 			var id = $("#select-" + this.cid).val();
 			var model = this.collection.get(id);
 			return model;
-		},
+		}
+
 	});
+
 	return DocumentNewWorkflowListView;
 });

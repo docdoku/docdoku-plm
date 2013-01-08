@@ -25,15 +25,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class ActivityDTO implements Serializable {
+public class ActivityDTO implements Serializable {
 
-    protected List<TaskDTO> tasks;
-    protected String lifeCycleState;
-    protected boolean stopped;
-    protected boolean complete;
-    
+    private int step;
+    private List<TaskDTO> tasks;
+    private String lifeCycleState;
+    private Type type;
+    private Integer tasksToComplete;
+    private boolean complete;
+    private boolean stopped;
+    public enum Type {
+        SERIAL, PARALLEL;
+    }
+
+    public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped) {
+        this.step = step;
+        this.tasks = tasks;
+        this.lifeCycleState = lifeCycleState;
+        this.type = type;
+        this.tasksToComplete = tasksToComplete;
+        this.complete = complete;
+        this.stopped = stopped;
+    }
+
     public ActivityDTO() {
         tasks = new ArrayList<TaskDTO>();
+    }
+
+    public Integer getTasksToComplete() {
+        return tasksToComplete;
+    }
+
+    public void setTasksToComplete(Integer tasksToComplete) {
+        this.tasksToComplete = tasksToComplete;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public List<TaskDTO> getTasks() {
@@ -66,5 +98,13 @@ public abstract class ActivityDTO implements Serializable {
 
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
     }
 }
