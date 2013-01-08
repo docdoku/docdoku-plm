@@ -58,7 +58,8 @@ define([
 
                 this.collection.create(data, {
                     success: this.success,
-                    error: this.error
+                    error: this.error,
+                    wait: true
                 });
             }
 
@@ -67,7 +68,7 @@ define([
 
         success: function(model, response) {
             var that = this;
-            model.lastIteration.save({
+            model.getLastIteration().save({
                 instanceAttributes: this.attributesView.collection.toJSON()
             }, {
                 success: function() {

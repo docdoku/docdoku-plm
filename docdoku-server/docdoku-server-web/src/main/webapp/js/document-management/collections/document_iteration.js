@@ -4,19 +4,18 @@ define([
 	DocumentIteration
 ) {
 	var DocumentIterationList = Backbone.Collection.extend({
+
 		model: DocumentIteration,
 
+        setDocument: function(document) {
+            this.document = document;
+        },
 
-
-
-		url: function () {
-			return "/api/workspaces/"
-				+ APP_CONFIG.workspaceId
-				+ "/documents/"
-				+ this.document.id
-				+ "/iterations";
+		url: function() {
+		    return this.document.url() + "/iterations";
 		}
+
 	});
-    DocumentIterationList.className="DocumentIterationList";
+
 	return DocumentIterationList;
 });

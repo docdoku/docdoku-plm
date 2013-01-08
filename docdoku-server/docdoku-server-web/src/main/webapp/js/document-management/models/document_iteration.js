@@ -66,28 +66,18 @@ define([
             return this.get("workspaceId");
         },
 
-        getDocument : function(){
-            return this.get("document");
-        },
-
         getReference : function(){
-            return this.getDocKey()+"-"+this.getIteration();
+            return this.getDocKey() + "-" + this.getIteration();
         },
 
         getIteration : function(){
             return this.get("iteration");
         },
+
         getDocKey : function(){
             return  this.get("documentMasterId")+"-"+this.get("documentMasterVersion");
         },
 
-        url : function(){
-            kumo.assertNotAny([ this.get("workspaceId"), this.get("documentMasterId"), this.get("documentMasterVersion")]);
-            var baseUrl ="/api/workspaces/" + this.get("workspaceId")+ "/documents/"+this.getDocKey();
-            return baseUrl+"/iterations/"+this.getIteration();
-
-
-        },
         //TODO : deprecated
         getUrl : function(){
             return this.url();
