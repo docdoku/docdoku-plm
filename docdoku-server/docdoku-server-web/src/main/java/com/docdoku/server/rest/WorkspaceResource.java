@@ -50,6 +50,9 @@ public class WorkspaceResource {
     @EJB
     private WorkflowResource workflows;
 
+    @EJB
+    private UserResource users;
+
     public WorkspaceResource() {
     }
 
@@ -81,6 +84,11 @@ public class WorkspaceResource {
     @Path("/workflows")
     public WorkflowResource workflows() {
         return workflows;
+    }
+
+    @Path("/users")
+    public UserResource users() {
+        return users;
     }
 
 }
