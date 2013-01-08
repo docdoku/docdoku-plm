@@ -96,8 +96,8 @@ SceneManager.prototype = {
 
         // FPS
         this.controls.movementSpeed = 1000;
-        this.controls.lookSpeed = 0.075;
-        this.controls.lookVertical = false;
+        this.controls.lookSpeed = 0.150;
+        this.controls.lookVertical = true;
 
         // Trackball
         /*this.controls.rotateSpeed = 3.0;
