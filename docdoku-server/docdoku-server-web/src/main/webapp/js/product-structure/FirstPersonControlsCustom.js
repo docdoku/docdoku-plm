@@ -10,20 +10,8 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
     this.lookVertical = true;
     this.autoForward = false;
-    // this.invertVertical = false;
 
     this.activeLook = true;
-
-    this.heightSpeed = false;
-    this.heightCoef = 1.0;
-    this.heightMin = 0.0;
-    this.heightMax = 1.0;
-
-    this.constrainVertical = false;
-    this.verticalMin = 0;
-    this.verticalMax = Math.PI;
-
-    this.autoSpeedFactor = 0.0;
 
     this.mouseX = 0;
     this.mouseY = 0;
@@ -40,8 +28,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.moveRight = false;
     this.freeze = true;
     this.movement = false;
-
-    this.mouseDragOn = false;
 
     this.viewHalfX = 0;
     this.viewHalfY = 0;
@@ -106,7 +92,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
             console.log("mouseX: "+this.mouseX);
             console.log("mouseY: "+this.mouseY);
 
-            this.mouseDragOn = true;
             this.freeze = false;
 
             this.domElement.addEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
@@ -122,8 +107,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
         // Release second mouse button
         if ( this.activeLook && event.button == 2 ) {
-
-            this.mouseDragOn = false;
             this.freeze = true;
 
             this.domElement.removeEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
@@ -268,9 +251,7 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         } else {
             return;
         }
-
     };
-
 
     this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
     this.domElement.addEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
@@ -280,15 +261,10 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.domElement.addEventListener( 'mousewheel', bind(this, this.onMouseWheel), false );
 
     function bind( scope, fn ) {
-
         return function () {
-
             fn.apply( scope, arguments );
-
         };
-
     };
 
     this.handleResize();
-
 };
