@@ -1,19 +1,31 @@
 <div class="actions">
-    <input class="workflow-name" type="text" autofocus placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}" value="{{workflow.id}}"/>
+    <input id="workflow-name" type="text" autofocus placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}" value="{{workflow.id}}" required/>
     <button class="btn cancel">
         {{i18n.CANCEL}}
     </button>
     <button class="btn btn-primary">
-        {{i18n.SAVE}}
+        {{#workflow.id}}{{i18n.SAVE}}{{/workflow.id}}
+        {{^workflow.id}}{{i18n.CREATE}}{{/workflow.id}}
     </button>
 </div>
 <div id="workflow-editor">
-    <div id="start">
-        <img src="../../../images/workflow/start-alt.png" alt="start">
-    </div>
-    <ul id="activity-list"></ul>
-    <button id="add-activity" class="btn" title="{{i18n.ADD_ACTIVITY}}"></button>
-    <div id="end">
-        <img src="../../../images/workflow/end-alt.png" alt="end">
-    </div>
+    <ul id="activity-list">
+        <li class="section">
+            <div id="start">
+                <i class="icon-circle-blank"></i>
+                <input type="text" value="{{i18n.START}}" disabled>
+            </div>
+        </li>
+        <li id="add-activity-section" class="section">
+            <button id="add-activity" class="btn" title="{{i18n.ADD_ACTIVITY}}">
+                <i class="icon-plus"></i>
+            </button>
+        </li>
+        <li class="section">
+            <div id="end">
+                <i class="icon-circle"></i>
+                <input id="final-state" type="text" placeholder="{{i18n.FINAL_STATE_PLACEHOLDER}}" value="{{workflow.finalLifeCycleState}}"/>
+            </div>
+        </li>
+    </ul>
 </div>

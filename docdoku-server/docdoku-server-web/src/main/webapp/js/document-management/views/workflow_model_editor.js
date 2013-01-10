@@ -50,7 +50,10 @@ define([
 
                 var self = this;
 
-                this.model.fetch({success: function(){ self.addAllActivity(); } });
+                this.model.fetch({success: function(){
+                    self.inputFinalState.val(self.model.get('finalLifeCycleState'));
+                    self.addAllActivity();
+                } });
             }
         },
 
@@ -63,7 +66,7 @@ define([
             var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: this.users});
             this.subviews.push(activityModelEditorView);
             activityModelEditorView.render();
-            this.activitiesUL.append(activityModelEditorView.el);
+            this.liAddActivitySection.before(activityModelEditorView.el);
         },
 
         addActivityAction: function(){
@@ -89,13 +92,13 @@ define([
 
         saveAction: function () {
             var self = this;
-            var reference = this.$("input.workflow-name").first().val();
+            var reference = this.inputWorkflowName.val();
 
             if (reference) {
                 this.model.save(
                     {
                         reference: reference,
-                        finalLifeCycleState: this.model.attributes.activityModels.last().attributes.lifeCycleState
+                        finalLifeCycleState: self.inputFinalState.val()
                     },
                     {
                         success: function(){
@@ -106,7 +109,9 @@ define([
                         }
                     }
                 );
-            }
+            } else
+                this.inputWorkflowName.focus();
+
             return false
         },
 
@@ -124,8 +129,17 @@ define([
         bindDomElements: function(){
             var self = this;
 
+            this.inputWorkflowName = this.$("input#workflow-name");
+
+            this.inputFinalState = this.$("input#final-state");
+
+            this.liAddActivitySection = this.$("li#add-activity-section");
+
             this.activitiesUL = this.$("ul#activity-list");
             this.activitiesUL.sortable({
+                items: "li.activity-section",
+                handle: ".activity-topbar",
+                tolerance: "pointer",
                 start: function(event, ui) {
                     ui.item.oldPosition = ui.item.index();
                 },

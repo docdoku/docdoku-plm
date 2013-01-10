@@ -20,7 +20,7 @@ define([
             "click button.add-task" : "addTaskAction",
             "click button.switch-activity" : "switchActivityAction",
             "click button.delete-activity" : "deleteActivityAction",
-            "change input.activity-name":  "lifeCycleStateChanged",
+            "change input.activity-state":  "lifeCycleStateChanged",
             "change input.tasksToComplete":  "tasksToCompleteChanged"
         },
 
@@ -28,7 +28,17 @@ define([
 
             this.subviews = [];
 
-            this.template = Mustache.render(template,{cid: this.model.cid, activity: this.model.attributes, i18n: i18n});
+            var switchModeTitle;
+            switch(this.model.get("type")){
+                case "SERIAL":
+                    switchModeTitle = i18n.GOTO_PARALLEL_MODE;
+                    break;
+                case "PARALLEL":
+                    switchModeTitle = i18n.GOTO_SERIAL_MODE;
+                    break;
+            }
+
+            this.template = Mustache.render(template,{cid: this.model.cid, activity: this.model.attributes, switchModeTitle: switchModeTitle, i18n: i18n});
 
             this.model.attributes.taskModels.bind('add', this.addOneTask, this);
             this.model.attributes.taskModels.bind('remove', this.removeOneTask, this);
@@ -54,9 +64,14 @@ define([
         },
 
         updateMaxTasksToComplete: function(){
+            var cntTasks = this.model.get("taskModels").length
+
             this.inputTasksToComplete.attr({
-                MAX: this.model.get("taskModels").length
+                MAX: cntTasks
             });
+
+            if(this.inputTasksToComplete.val() > cntTasks)
+                this.inputTasksToComplete.val(cntTasks);
         },
 
         addTaskAction: function(){
@@ -72,6 +87,7 @@ define([
                     });
                     this.activityDiv.removeClass("SERIAL");
                     this.activityDiv.addClass("PARALLEL");
+                    this.buttonSwitchActivity.attr({title:i18n.GOTO_SERIAL_MODE});
                     break;
                 case "PARALLEL":
                     this.model.set({
@@ -79,6 +95,7 @@ define([
                     });
                     this.activityDiv.removeClass("PARALLEL");
                     this.activityDiv.addClass("SERIAL");
+                    this.buttonSwitchActivity.attr({title:i18n.GOTO_PARALLEL_MODE});
                     break;
             }
             return false;
@@ -123,13 +140,16 @@ define([
 
             this.activityDiv = this.$("div.activity");
 
-            this.inputLifeCycleState = this.$('input.activity-name');
+            this.buttonSwitchActivity = this.$('button.switch-activity');
+
+            this.inputLifeCycleState = this.$('input.activity-state');
 
             this.inputTasksToComplete = this.$('input.tasksToComplete');
 
             this.tasksUL = this.$("ul.task-list");
-
             this.tasksUL.sortable({
+                handle: "i.icon-reorder",
+                tolerance: "pointer",
                 start: function(event, ui) {
                     ui.item.oldPosition = ui.item.index();
                 },
