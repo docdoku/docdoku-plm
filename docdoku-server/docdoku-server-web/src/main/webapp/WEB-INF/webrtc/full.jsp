@@ -8,7 +8,7 @@
         <title><fmt:message key="title"/></title>
 
         <link rel="Shortcut Icon" type="image/ico" href="<%=request.getContextPath()%>/images/favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.css"/>
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/font-awesome.min.css"/>
         <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/common/style.less"/>
 
         <script src="<%=request.getContextPath()%>/js/lib/jquery-1.8.2.min.js"></script>

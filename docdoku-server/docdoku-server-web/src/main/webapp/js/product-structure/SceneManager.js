@@ -20,6 +20,7 @@ function SceneManager(options) {
     this.instancesMap = {};
     this.partIterations = {}
     this.meshesBindedForMarkerCreation = [];
+    this.clock = new THREE.Clock();
 }
 
 SceneManager.prototype = {
@@ -89,23 +90,18 @@ SceneManager.prototype = {
     },
 
     initControls: function() {
-        this.controls = new THREE.TrackballControlsCustom(this.camera, this.container[0]);
+        this.controls = new THREE.FirstPersonControlsCustom(this.camera, this.container[0]);     
 
-        this.controls.rotateSpeed = 3.0;
-        this.controls.zoomSpeed = 5;
-        this.controls.panSpeed = 1;
-        this.controls.staticMoving = true;
-        this.controls.dynamicDampingFactor = 1;
-
-        this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
-
+        // FPS
+        this.controls.movementSpeed = 1000;
+        this.controls.lookSpeed = 0.150;
+        this.controls.lookVertical = true;
+        this.controls.lon = -90;
+        
         if (Modernizr.touch) {
             $('#side_controls_container').hide();
-            $('#bottom_controls_container').hide();
             $('#scene_container').width(90 + '%');
             $('#center_container').height(83 + '%');
-        } else {
-            new ControlManager(this.controls);
         }
     },
 
@@ -137,7 +133,7 @@ SceneManager.prototype = {
 
         var self = this;
 
-        this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container[0]);
+        this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.container);
 
         this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
             return instance.mesh != null
@@ -180,7 +176,7 @@ SceneManager.prototype = {
     initLayerManager: function() {
         var self = this;
         require(["LayerManager"], function(LayerManager) {
-            self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container[0]);
+            self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.container);
             self.layerManager.bindControlEvents();
             self.layerManager.rescaleMarkers(0);
             self.layerManager.renderList();
@@ -231,7 +227,10 @@ SceneManager.prototype = {
             self.animate();
         });
         this.render();
-        this.controls.update();
+
+        // FPS
+        this.controls.update(this.clock.getDelta());
+
         this.stats.update();
     },
 
