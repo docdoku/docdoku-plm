@@ -93,11 +93,11 @@ SceneManager.prototype = {
         this.controls = new THREE.FirstPersonControlsCustom(this.camera, this.container[0]);
         //this.controls = new THREE.TrackballControlsCustom(this.camera, this.container[0]);
 
-
         // FPS
         this.controls.movementSpeed = 1000;
         this.controls.lookSpeed = 0.150;
         this.controls.lookVertical = true;
+        this.controls.lon = -90;
 
         // Trackball
         /*this.controls.rotateSpeed = 3.0;

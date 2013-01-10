@@ -35,25 +35,17 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.zoomWheel = 0;
 
     if ( this.domElement !== document ) {
-
         this.domElement.setAttribute( 'tabindex', -1 );
-
     }
-
-    //
 
     this.handleResize = function () {
 
         if ( this.domElement === document ) {
-
             this.viewHalfX = window.innerWidth / 2;
             this.viewHalfY = window.innerHeight / 2;
-
         } else {
-
             this.viewHalfX = this.domElement.offsetWidth / 2;
             this.viewHalfY = this.domElement.offsetHeight / 2;
-
         }
 
     };
@@ -66,18 +58,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
         event.preventDefault();
 
-        if ( this.domElement === document ) {
-            this.mouseX = event.pageX - this.viewHalfX;
-            this.mouseY = event.pageY - this.viewHalfY;
-        } else {
-            var offvar = $('div#container').offset();
-            this.mouseX = event.pageX - offvar.left - this.viewHalfX;
-            this.mouseY = event.pageY - offvar.top - this.viewHalfY;
-        }
-
-        console.log("mouseX: "+this.mouseX);
-        console.log("mouseY: "+this.mouseY);
-
         // Click second mouse button
         if ( this.activeLook && event.button == 2 ) {
             if ( this.domElement === document ) {
@@ -88,9 +68,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
                 this.mouseX = event.pageX - offvar.left - this.viewHalfX;
                 this.mouseY = event.pageY - offvar.top - this.viewHalfY;
             }
-
-            console.log("mouseX: "+this.mouseX);
-            console.log("mouseY: "+this.mouseY);
 
             this.freeze = false;
 
@@ -108,7 +85,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         // Release second mouse button
         if ( this.activeLook && event.button == 2 ) {
             this.freeze = true;
-
             this.domElement.removeEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
             this.domElement.removeEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
         }
@@ -118,10 +94,8 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.onMouseMove = function ( event ) {
 
         if ( this.domElement === document ) {
-
             this.mouseX = event.pageX - this.viewHalfX;
             this.mouseY = event.pageY - this.viewHalfY;
-
         } else {
             var offvar = $('div#container').offset();
             this.mouseX = event.pageX - offvar.left - this.viewHalfX;
@@ -133,9 +107,7 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.onMouseWheel = function ( event ) {
 
         if ( this.domElement !== document ) {
-
             this.domElement.focus();
-
         }
 
         event.preventDefault();
@@ -154,7 +126,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         event.preventDefault();
 
         switch ( event.keyCode ) {
-
             case 38: /*up*/
             case 90: /*Z*/ this.moveForward = true; this.movement=true; break;
 
@@ -176,7 +147,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.onKeyUp = function ( event ) {
 
         switch( event.keyCode ) {
-
             case 38: /*up*/
             case 90: /*Z*/ this.moveForward = false; this.movement=false; break;
 
@@ -191,7 +161,6 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
             case 82: /*R*/ this.moveUp = false; this.movement=false; break;
             case 70: /*F*/ this.moveDown = false; this.movement=false; break;
-
         }
 
     };
@@ -234,6 +203,7 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
             }
 
             this.lon += this.mouseX * actualLookSpeed;
+
             if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed;
 
             this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
