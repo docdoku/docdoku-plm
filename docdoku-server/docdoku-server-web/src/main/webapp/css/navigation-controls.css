@@ -55,13 +55,3 @@
     height: 0.7em;
     border: white 2px dotted;
 }
-
-#manageMarker .moveBtnCenter {
-    box-shadow: 2px 4px 4px -4px rgba(0,0,0,0.4),
-    2px -4px 4px -4px rgba(0,0,0,0.4);
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-color: #1F2F45;
-    width: 26px;
-    height: 25px;
-}

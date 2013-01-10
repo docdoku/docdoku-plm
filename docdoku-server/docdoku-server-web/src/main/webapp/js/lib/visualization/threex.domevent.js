@@ -216,14 +216,12 @@ THREEx.DomEvent.prototype.domElementLeft = function(){
 //returns x percentage of mouse event
 THREEx.DomEvent.prototype.domElementX = function(clientX){
 	return +((clientX-this._domElementjQuery.offset().left) / this.domElementWidth()) * 2 - 1;
-    //return +((clientX-this.domElementLeft()) / this.domElementWidth()) * 2 - 1;
 
 }
 
 //returns y percentage of mouse event
 THREEx.DomEvent.prototype.domElementY = function(clientY){
 	return -((clientY-this._domElementjQuery.offset().top) / this.domElementHeight()) * 2 + 1;
-    //return -((clientY-this.domElementTop()) / this.domElementHeight()) * 2 + 1;
 }
 
 /*
