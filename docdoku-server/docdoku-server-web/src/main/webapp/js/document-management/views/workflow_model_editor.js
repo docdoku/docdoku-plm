@@ -13,23 +13,18 @@ define([
     "text!templates/workflow_model_editor.html",
     "collections/users",
     "models/activity_model"
-], function (
-    require,
-    i18n,
-    WorkflowModel,
-    template,
-    Users,
-    ActivityModel
-    ) {
+], function(require, i18n, WorkflowModel, template, Users, ActivityModel) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
         el: "#content",
 
         events: {
-            "click .actions #cancel-workflow" : "cancelAction",
-            "click .actions #save-workflow" : "saveAction",
-            "click .actions #copy-workflow" : "copyAction",
-            "click button#add-activity" : "addActivityAction"
+            "click .actions #cancel-workflow": "cancelAction",
+            "click .actions #save-workflow": "saveAction",
+            "click .actions #copy-workflow": "copyAction",
+            "click #save-copy-workflow-btn": "saveCopyAction",
+            "click #cancel-copy-workflow-btn": "cancelCopyAction",
+            "click button#add-activity": "addActivityAction"
         },
 
         initialize: function() {
@@ -38,17 +33,17 @@ define([
             this.users = new Users();
             this.users.fetch({async: false});
 
-            if(_.isUndefined(this.options.workflowModelId)){
+            if (_.isUndefined(this.options.workflowModelId)) {
                 this.model = new WorkflowModel();
                 this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
-            }else{
+            } else {
                 this.model = new WorkflowModel({
                     id: this.options.workflowModelId
                 });
 
                 var self = this;
 
-                this.model.fetch({success: function(){
+                this.model.fetch({success: function() {
                     self.inputFinalState.val(self.model.get('finalLifeCycleState'));
                     self.addAllActivity();
                 } });
@@ -70,15 +65,15 @@ define([
             });
         },
 
-        addActivityAction: function(){
+        addActivityAction: function() {
             this.model.attributes.activityModels.add(new ActivityModel());
             return false;
         },
 
-        activityPositionChanged: function(oldPosition, newPosition){
+        activityPositionChanged: function(oldPosition, newPosition) {
             var activityModel = this.model.attributes.activityModels.at(oldPosition);
-            this.model.attributes.activityModels.remove(activityModel, {silent:true});
-            this.model.attributes.activityModels.add(activityModel, {silent:true, at:newPosition});
+            this.model.attributes.activityModels.remove(activityModel, {silent: true});
+            this.model.attributes.activityModels.add(activityModel, {silent: true, at: newPosition});
         },
 
         gotoWorkflows: function() {
@@ -86,12 +81,12 @@ define([
             this.router.navigate("workflows", {trigger: true});
         },
 
-        cancelAction: function () {
+        cancelAction: function() {
             this.gotoWorkflows();
             return false;
         },
 
-        saveAction: function () {
+        saveAction: function() {
             var self = this;
             var reference = this.inputWorkflowName.val();
 
@@ -102,26 +97,31 @@ define([
                         finalLifeCycleState: self.inputFinalState.val()
                     },
                     {
-                        success: function(){
+                        success: function() {
                             self.gotoWorkflows();
                         },
-                        error: function(model, xhr){
+                        error: function(model, xhr) {
                             console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
+                            self.inputWorkflowName.focus();
                         }
                     }
                 );
             } else
                 this.inputWorkflowName.focus();
 
-            return false
+            return false;
         },
 
-        copyAction: function () {
-            var self = this;
-            var reference = this.inputWorkflowName.val();
-            reference = prompt(i18n.RENAME_WORKFLOW_COPY,reference);
+        copyAction: function() {
+            this.modalCopyWorkflow.modal("show");
+            return false;
+        },
 
-            if (reference!=null && reference!="") {
+        saveCopyAction: function() {
+            var self = this;
+            var reference = this.inputWorkflowCopyName.val();
+
+            if (reference != null && reference != "") {
                 delete this.model.id;
                 this.model.save(
                     {
@@ -129,17 +129,21 @@ define([
                         finalLifeCycleState: self.inputFinalState.val()
                     },
                     {
-                        success: function(){
+                        success: function() {
+                            self.modalCopyWorkflow.modal("hide");
                             self.gotoWorkflows();
                         },
-                        error: function(model, xhr){
+                        error: function(model, xhr) {
                             console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
+                            self.inputWorkflowCopyName.focus();
                         }
                     }
                 );
             }
+        },
 
-            return false
+        cancelCopyAction: function() {
+            this.modalCopyWorkflow.modal("hide");
         },
 
         render: function() {
@@ -153,8 +157,11 @@ define([
             return this;
         },
 
-        bindDomElements: function(){
+        bindDomElements: function() {
             var self = this;
+
+            this.modalCopyWorkflow = this.$("div#modal-copy-workflow");
+            this.inputWorkflowCopyName = this.$("input#workflow-copy-name");
 
             this.inputWorkflowName = this.$("input#workflow-name");
 
@@ -176,8 +183,8 @@ define([
             });
         },
 
-        unbindAllEvents: function(){
-            _.each(this.subviews, function(subview){
+        unbindAllEvents: function() {
+            _.each(this.subviews, function(subview) {
                 subview.unbindAllEvents();
             });
             this.undelegateEvents();
