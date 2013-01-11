@@ -18,19 +18,25 @@
  * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.common;
+package com.docdoku.server.rest.dto;
 
-import java.util.Set;
+import java.io.Serializable;
 
-/**
- * Interface implemented by objects that hold binary files.  
- * 
- * @author Florent Garin
- * @version 1.0, 02/06/08
- * @since   V1.0
- */
-public interface FileHolder {
-    
-    public Set<BinaryResource> getAttachedFiles();
-    
+
+public class ParallelActivityDTO extends ActivityDTO implements Serializable {
+
+    private int tasksToComplete;
+
+    public ParallelActivityDTO() {
+    }
+
+    public int getTasksToComplete() {
+        return tasksToComplete;
+    }
+
+    public void setTasksToComplete(int tasksToComplete) {
+        this.tasksToComplete = tasksToComplete;
+    }
+
+
 }
