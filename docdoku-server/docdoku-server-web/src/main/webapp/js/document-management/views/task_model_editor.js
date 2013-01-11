@@ -39,10 +39,10 @@ define([
 
             var users = [];
             _.each(this.options.users.models, function(user){
-                if(self.model.get("worker") && self.model.get("worker").get("login") == user.get("login"))
-                    users.push({login: user.get("login"), selected: true});
+                if(self.model.get("worker") && self.model.get("worker").get("name") == user.get("name"))
+                    users.push({name: user.get("name"), selected: true});
                 else
-                    users.push({login: user.get("login"), selected: false});
+                    users.push({name: user.get("name"), selected: false});
             });
 
             this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, users: users, i18n: i18n});
@@ -71,9 +71,9 @@ define([
         },
 
         workerSelected: function(e){
-            var loginSelected = e.target.value;
+            var nameSelected = e.target.value;
             var userSelected = _.find(this.options.users.models, function(user){
-                return loginSelected == user.get("login");
+                return nameSelected == user.get("name");
             });
             this.model.set({
                 worker: userSelected

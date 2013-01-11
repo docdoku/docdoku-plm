@@ -1,12 +1,17 @@
 <div class="actions">
     <input id="workflow-name" type="text" autofocus placeholder="{{i18n.WORKFLOW_NAME_PLACEHOLDER}}" value="{{workflow.id}}" required/>
-    <button class="btn cancel">
+    <button id="cancel-workflow" class="btn">
         {{i18n.CANCEL}}
     </button>
-    <button class="btn btn-primary">
+    <button id="save-workflow" class="btn btn-primary">
         {{#workflow.id}}{{i18n.SAVE}}{{/workflow.id}}
         {{^workflow.id}}{{i18n.CREATE}}{{/workflow.id}}
     </button>
+    {{#workflow.id}}
+        <button id="copy-workflow" class="btn">
+            {{i18n.COPY}}
+        </button>
+    {{/workflow.id}}
 </div>
 <div id="workflow-editor">
     <ul id="activity-list">

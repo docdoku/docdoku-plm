@@ -2,14 +2,12 @@ define([
     "i18n",
     "models/activity_model",
     "text!templates/activity_model_editor.html",
-    "models/task_model",
-    "views/task_model_editor"
+    "models/task_model"
 ], function (
     i18n,
     ActivityModel,
     template,
-    TaskModel,
-    TaskModelEditorView
+    TaskModel
     ) {
     var ActivityModelEditorView = Backbone.View.extend({
 
@@ -50,13 +48,16 @@ define([
         },
 
         addOneTask: function(taskModel) {
+            var self = this;
 
             this.updateMaxTasksToComplete();
 
-            var taskModelEditorView = new TaskModelEditorView({model: taskModel, users: this.options.users});
-            this.subviews.push(taskModelEditorView);
-            taskModelEditorView.render();
-            this.tasksUL.append(taskModelEditorView.el);
+            require(["views/task_model_editor"], function(TaskModelEditorView) {
+                var taskModelEditorView = new TaskModelEditorView({model: taskModel, users: self.options.users});
+                self.subviews.push(taskModelEditorView);
+                taskModelEditorView.render();
+                self.tasksUL.append(taskModelEditorView.el);
+            });
         },
 
         removeOneTask: function(){

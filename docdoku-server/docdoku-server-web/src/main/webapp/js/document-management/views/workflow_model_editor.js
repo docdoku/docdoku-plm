@@ -11,26 +11,24 @@ define([
     "i18n",
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
-    "models/activity_model",
-    "views/activity_model_editor",
-    "collections/users"
-
+    "collections/users",
+    "models/activity_model"
 ], function (
     require,
     i18n,
     WorkflowModel,
     template,
-    ActivityModel,
-    ActivityModelEditorView,
-    Users
+    Users,
+    ActivityModel
     ) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
         el: "#content",
 
         events: {
-            "click .actions .cancel" : "cancelAction",
-            "click .actions .btn-primary" : "saveAction",
+            "click .actions #cancel-workflow" : "cancelAction",
+            "click .actions #save-workflow" : "saveAction",
+            "click .actions #copy-workflow" : "copyAction",
             "click button#add-activity" : "addActivityAction"
         },
 
@@ -63,10 +61,13 @@ define([
         },
 
         addOneActivity: function(activityModel) {
-            var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: this.users});
-            this.subviews.push(activityModelEditorView);
-            activityModelEditorView.render();
-            this.liAddActivitySection.before(activityModelEditorView.el);
+            var self = this;
+            require(["views/activity_model_editor"], function(ActivityModelEditorView) {
+                var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: self.users});
+                self.subviews.push(activityModelEditorView);
+                activityModelEditorView.render();
+                self.liAddActivitySection.before(activityModelEditorView.el);
+            });
         },
 
         addActivityAction: function(){
@@ -111,6 +112,32 @@ define([
                 );
             } else
                 this.inputWorkflowName.focus();
+
+            return false
+        },
+
+        copyAction: function () {
+            var self = this;
+            var reference = this.inputWorkflowName.val();
+            reference = prompt(i18n.RENAME_WORKFLOW_COPY,reference);
+
+            if (reference!=null && reference!="") {
+                delete this.model.id;
+                this.model.save(
+                    {
+                        reference: reference,
+                        finalLifeCycleState: self.inputFinalState.val()
+                    },
+                    {
+                        success: function(){
+                            self.gotoWorkflows();
+                        },
+                        error: function(model, xhr){
+                            console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
+                        }
+                    }
+                );
+            }
 
             return false
         },
