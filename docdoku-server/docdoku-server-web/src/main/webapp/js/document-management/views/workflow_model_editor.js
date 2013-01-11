@@ -11,26 +11,24 @@ define([
     "i18n",
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
-    "models/activity_model",
-    "views/activity_model_editor",
-    "collections/users"
-
+    "collections/users",
+    "models/activity_model"
 ], function (
     require,
     i18n,
     WorkflowModel,
     template,
-    ActivityModel,
-    ActivityModelEditorView,
-    Users
+    Users,
+    ActivityModel
     ) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
         el: "#content",
 
         events: {
-            "click .actions .cancel" : "cancelAction",
-            "click .actions .btn-primary" : "saveAction",
+            "click .actions #cancel-workflow" : "cancelAction",
+            "click .actions #save-workflow" : "saveAction",
+            "click .actions #copy-workflow" : "copyAction",
             "click button#add-activity" : "addActivityAction"
         },
 
@@ -50,7 +48,10 @@ define([
 
                 var self = this;
 
-                this.model.fetch({success: function(){ self.addAllActivity(); } });
+                this.model.fetch({success: function(){
+                    self.inputFinalState.val(self.model.get('finalLifeCycleState'));
+                    self.addAllActivity();
+                } });
             }
         },
 
@@ -60,10 +61,13 @@ define([
         },
 
         addOneActivity: function(activityModel) {
-            var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: this.users});
-            this.subviews.push(activityModelEditorView);
-            activityModelEditorView.render();
-            this.activitiesUL.append(activityModelEditorView.el);
+            var self = this;
+            require(["views/activity_model_editor"], function(ActivityModelEditorView) {
+                var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: self.users});
+                self.subviews.push(activityModelEditorView);
+                activityModelEditorView.render();
+                self.liAddActivitySection.before(activityModelEditorView.el);
+            });
         },
 
         addActivityAction: function(){
@@ -89,13 +93,40 @@ define([
 
         saveAction: function () {
             var self = this;
-            var reference = this.$("input.workflow-name").first().val();
+            var reference = this.inputWorkflowName.val();
 
             if (reference) {
                 this.model.save(
                     {
                         reference: reference,
-                        finalLifeCycleState: this.model.attributes.activityModels.last().attributes.lifeCycleState
+                        finalLifeCycleState: self.inputFinalState.val()
+                    },
+                    {
+                        success: function(){
+                            self.gotoWorkflows();
+                        },
+                        error: function(model, xhr){
+                            console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
+                        }
+                    }
+                );
+            } else
+                this.inputWorkflowName.focus();
+
+            return false
+        },
+
+        copyAction: function () {
+            var self = this;
+            var reference = this.inputWorkflowName.val();
+            reference = prompt(i18n.RENAME_WORKFLOW_COPY,reference);
+
+            if (reference!=null && reference!="") {
+                delete this.model.id;
+                this.model.save(
+                    {
+                        reference: reference,
+                        finalLifeCycleState: self.inputFinalState.val()
                     },
                     {
                         success: function(){
@@ -107,6 +138,7 @@ define([
                     }
                 );
             }
+
             return false
         },
 
@@ -124,8 +156,17 @@ define([
         bindDomElements: function(){
             var self = this;
 
+            this.inputWorkflowName = this.$("input#workflow-name");
+
+            this.inputFinalState = this.$("input#final-state");
+
+            this.liAddActivitySection = this.$("li#add-activity-section");
+
             this.activitiesUL = this.$("ul#activity-list");
             this.activitiesUL.sortable({
+                items: "li.activity-section",
+                handle: ".activity-topbar",
+                tolerance: "pointer",
                 start: function(event, ui) {
                     ui.item.oldPosition = ui.item.index();
                 },
