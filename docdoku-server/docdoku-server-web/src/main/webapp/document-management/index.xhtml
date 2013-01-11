@@ -5,6 +5,10 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html">
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
+        <ui:define name="styles">
+            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/style.less"/>
+            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/attribute-edit.less"/>
+        </ui:define>
         <ui:define name="title">
             <f:loadBundle var="i18nDM" basename="com.docdoku.server.localization.explorer_resource"/>
             #{i18nDM['title']}
