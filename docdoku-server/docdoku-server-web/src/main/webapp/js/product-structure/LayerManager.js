@@ -25,6 +25,7 @@ define([
         this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
         this.domEvent = new THREEx.DomEvent(camera, container);
+        this.markerScale = new THREE.Vector3(1,1,1);
     };
 
     LayerManager.prototype = {
@@ -60,6 +61,9 @@ define([
 
             // add the sphere to the scene
             this.scene.add( markerMesh );
+
+            // rescale the marker to the others markers scale
+            markerMesh.scale = this.markerScale;
 
             //save the mesh for further reuse
             this.meshs[marker.cid] = markerMesh;
@@ -103,12 +107,10 @@ define([
             this.layersCollection.reset({silent: true});
         },
 
-        rescaleMarkers: function(value) {
+        rescaleMarkers: function() {
             for (var cid in this.meshs) {
                 var currentMesh = this.meshs[cid];
-                currentMesh.scale.x += value;
-                currentMesh.scale.y += value;
-                currentMesh.scale.z += value;
+                currentMesh.scale = this.markerScale;
             };
         },
 
@@ -135,16 +137,32 @@ define([
 
         bindControlEvents: function() {
             var self = this;
-            $('#markerZoomLess').click(function() {
-                self.rescaleMarkers(-0.5);
+            $('#markerZoomLess').click(function(e) {
+                if(self.markerScale.length()>0) {
+                    self.markerScale.addScalar(-0.5);
+                    self.rescaleMarkers();
+                }
+
+                // Avoid to toggle button
+                e.stopImmediatePropagation();
+                $('#markerZoomLess').removeClass('active');
             });
 
-            $('#markerZoomMore').click(function() {
-                self.rescaleMarkers(0.5);
+            $('#markerZoomMore').click(function(e) {
+                self.markerScale.addScalar(0.5);
+                self.rescaleMarkers();
+
+                // Avoid to toggle button
+                e.stopImmediatePropagation();
+                $('#markerZoomMore').removeClass('active');
             });
 
-            $('#markerState').click(function() {
+            $('#markerState').click(function(e) {
                 self.changeMarkerState();
+
+                // Avoid to toggle button
+                e.stopImmediatePropagation();
+                $('#markerState').removeClass('active');
             });
         },
 
