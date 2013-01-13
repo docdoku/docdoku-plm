@@ -17,8 +17,7 @@
     <context-param>
         <param-name>OO_HOME</param-name>
         <!--<param-value>C:\Program Files\OpenOffice.org 3</param-value>-->
-        <param-value>/usr/lib/openoffice</param-value>
-        <!--<param-value>/opt/openoffice.org3</param-value>-->
+        <param-value>/usr/lib/libreoffice</param-value>
     </context-param>
     <context-param>
         <param-name>OO_PORT</param-name>
