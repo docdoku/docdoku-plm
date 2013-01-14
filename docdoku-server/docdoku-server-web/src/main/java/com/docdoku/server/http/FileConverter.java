@@ -25,11 +25,9 @@ import com.developpez.adiguba.shell.Shell;
 import com.docdoku.core.util.FileIO;
 import java.io.File;
 import java.io.IOException;
-import net.sf.jodconverter.OfficeDocumentConverter;
-import net.sf.jodconverter.office.ManagedProcessOfficeManager;
-import net.sf.jodconverter.office.ManagedProcessOfficeManagerConfiguration;
-import net.sf.jodconverter.office.OfficeConnectionMode;
-import net.sf.jodconverter.office.OfficeManager;
+import org.artofsolving.jodconverter.OfficeDocumentConverter;
+import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
+import org.artofsolving.jodconverter.office.OfficeManager;
 
 
 public class FileConverter {
@@ -96,9 +94,10 @@ public class FileConverter {
             return pdfFile;
         }
 
-        ManagedProcessOfficeManagerConfiguration cfg = new ManagedProcessOfficeManagerConfiguration(OfficeConnectionMode.socket(ooPort));
-        cfg.setOfficeHome(new File(ooHome));
-        OfficeManager officeManager = new ManagedProcessOfficeManager(cfg);
+        OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
+                .setOfficeHome(new File(ooHome))
+                .setPortNumber(ooPort)
+                .buildOfficeManager();
         officeManager.start();
         OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
         converter.convert(fileToConvert, pdfFile);
