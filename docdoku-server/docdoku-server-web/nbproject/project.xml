@@ -13,7 +13,7 @@
                     <file>${file.reference.Shell.jar}</file>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.jodconverter-3.0-beta-2.jar}</file>
+                    <file>${file.reference.jodconverter-core-3.0-beta-4.jar}</file>
                 </library>
                 <library dirs="200">
                     <file>${libs.restlib_gfv3ee6.classpath}</file>
