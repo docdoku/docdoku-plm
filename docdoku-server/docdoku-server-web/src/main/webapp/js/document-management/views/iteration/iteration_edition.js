@@ -19,11 +19,7 @@ define([
 
         template:Mustache.compile(template),
 
-
         initialize: function() {
-
-            /*the model is the MasterDocument*/
-            kumo.assert(this.model.className == "Document");
 
             /*we are fetching the last iteration*/
             this.iteration = this.model.getLastIteration();

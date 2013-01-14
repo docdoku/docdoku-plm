@@ -56,6 +56,7 @@ define(function () {
 		"REVISION_NOTE":				"Note de révision",
 		"SAVED":						"Sauvegardé",
 		"SAVE":							"Enregistrer",
+        "CLOSE":					    "Fermer",
         "COPY":							"Copier",
 		"TAGS":							"Libellés",
 		"TASKS":						"Tâches",

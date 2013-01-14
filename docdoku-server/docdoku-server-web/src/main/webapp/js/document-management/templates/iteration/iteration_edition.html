@@ -83,7 +83,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
                             <div class="controls">
-                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" disabled="disabled">
+                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^master.checkOutDate}}disabled="disabled"{{/master.checkOutDate}}>
                             </div>
                         </div>
                         <div class="control-group">
@@ -111,9 +111,16 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" form="form-{{view.cid}}">
-            {{i18n.OK}}
-        </button>
-        <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        {{#master.checkOutDate}}
+            <button class="btn btn-primary" form="form-{{view.cid}}">
+                {{i18n.SAVE}}
+            </button>
+            <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        {{/master.checkOutDate}}
+        {{^master.checkOutDate}}
+            <button class="btn cancel" form="form-{{view.cid}}">
+                {{i18n.CLOSE}}
+            </button>
+        {{/master.checkOutDate}}
     </div>
 </div>
