@@ -34,6 +34,21 @@ define([
             new LayersListView({collection: this.layersCollection}).render();
         },
 
+        updateCamera: function(camera, controls) {
+            this.camera = camera;
+            this.controls = controls;
+
+            this.layersCollection.each(function(layer) {
+                layer._removeAllMarkersFromScene();
+            });
+
+            this.domEvent = new THREEx.DomEvent(camera, this.container);
+
+            this.layersCollection.each(function(layer) {
+                layer._addAllMarkersToScene();
+            });
+        },
+
         addMeshFromMarker: function(marker, material) {
             // set up the sphere vars
             var radius = 50,
