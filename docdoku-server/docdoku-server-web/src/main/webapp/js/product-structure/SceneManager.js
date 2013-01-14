@@ -18,9 +18,12 @@ function SceneManager(options) {
 
     this.instances = [];
     this.instancesMap = {};
-    this.partIterations = {}
+    this.partIterations = {};
     this.meshesBindedForMarkerCreation = [];
     this.clock = new THREE.Clock();
+
+    this.STATECONTROL = { FPC : 0, TBC : 0};
+    this.stateControl = this.STATECONTROL.FPC;
 }
 
 SceneManager.prototype = {
@@ -30,6 +33,7 @@ SceneManager.prototype = {
         this.initScene();
         this.initCamera();
         this.initControls();
+        this.bindSwitchControlEvents();
         this.initLights();
         this.initAxes();
         this.initStats();
@@ -79,7 +83,7 @@ SceneManager.prototype = {
         this.scene = new THREE.Scene();
     },
 
-    initCamera: function(position) {
+    initCamera: function() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 50000);
         if (!_.isUndefined(SCENE_INIT.camera)) {
             console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z)
@@ -90,19 +94,86 @@ SceneManager.prototype = {
     },
 
     initControls: function() {
-        this.controls = new THREE.FirstPersonControlsCustom(this.camera, this.container[0]);     
 
-        // FPS
-        this.controls.movementSpeed = 1000;
-        this.controls.lookSpeed = 0.150;
-        this.controls.lookVertical = true;
-        this.controls.lon = -90;
-        
+        this.setFirstPersonControls();
+
         if (Modernizr.touch) {
             $('#side_controls_container').hide();
             $('#scene_container').width(90 + '%');
             $('#center_container').height(83 + '%');
         }
+    },
+
+    bindSwitchControlEvents: function() {
+        var self = this;
+        $('#flying_mode_view_btn').click(function(e) {
+            self.updateNewCamera();
+            self.setFirstPersonControls();
+            self.updateLayersManager();
+        });
+
+        $('#tracking_mode_view_btn').click(function(e) {
+            self.updateNewCamera();
+            self.setTrackBallControls();
+            self.updateLayersManager();
+        });
+    },
+
+    setFirstPersonControls: function() {
+
+        if(this.controls != null) {
+            this.controls.destroyControl();
+            this.controls = null;
+        }
+
+        this.controls = new THREE.FirstPersonControlsCustom(this.camera, this.container[0]);
+
+        this.controls.movementSpeed = 1000;
+        this.controls.lookSpeed = 0.150;
+        this.controls.lookVertical = true;
+        this.controls.lon = -90;
+
+        this.stateControl = this.STATECONTROL.FPC;
+    },
+
+    setTrackBallControls: function() {
+
+        if(this.controls != null) {
+            this.controls.destroyControl();
+            this.controls = null;
+        }
+
+        this.controls = new THREE.TrackballControlsCustom(this.camera, this.container[0]);
+
+        this.controls.rotateSpeed = 3.0;
+        this.controls.zoomSpeed = 10;
+        this.controls.panSpeed = 1;
+
+        this.controls.noZoom = false;
+        this.controls.noPan = false;
+
+        this.controls.staticMoving = true;
+        this.controls.dynamicDampingFactor = 0.3;
+
+        this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
+
+        this.stateControl = this.STATECONTROL.TBC;
+
+    },
+
+    updateNewCamera: function() {
+        // Best solution but setting rotation does not work (waiting for bug fix in Threejs)
+        //this.camera.position.set(0, 10, 10000);
+        //this.camera.rotation.set(0, 0 , 0);
+
+        this.scene.remove(this.camera);
+        this.initCamera();
+        this.addLightsToCamera();
+
+    },
+
+    updateLayersManager: function() {
+        this.layerManager.updateCamera(this.camera, this.controls);
     },
 
     initMarkersModal: function() {
@@ -111,7 +182,7 @@ SceneManager.prototype = {
 
         this.markersModal = $('#creationMarkersModal');
         this.markersModalInputName = this.markersModal.find('input');
-        this.markersModalInputDescription = this.markersModal.find('textarea')
+        this.markersModalInputDescription = this.markersModal.find('textarea');
         this.createMarkerButton = this.markersModal.find('.btn-primary');
 
         this.closeMarkersModal = function() {
@@ -187,6 +258,10 @@ SceneManager.prototype = {
         var ambient = new THREE.AmbientLight(0x101030);
         this.scene.add(ambient);
 
+        this.addLightsToCamera();
+    },
+
+    addLightsToCamera: function() {
         var dirLight = new THREE.DirectionalLight(0xffffff);
         dirLight.position.set(200, 200, 1000).normalize();
         this.camera.add(dirLight);
@@ -228,8 +303,14 @@ SceneManager.prototype = {
         });
         this.render();
 
-        // FPS
-        this.controls.update(this.clock.getDelta());
+        switch (this.stateControl) {
+            case this.STATECONTROL.FPC:
+                this.controls.update(this.clock.getDelta());
+                break;
+            case this.STATECONTROL.TBC:
+                this.controls.update();
+                break;
+        }
 
         this.stats.update();
     },
