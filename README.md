@@ -28,4 +28,4 @@ You may use clone or fork the code on GitHub. Thought you can use it with Maven 
 
 ## License
 
-GPL version 3
+AGPL version 3
