@@ -15,7 +15,8 @@ define(["models/part_iteration"], function (PartIteration) {
             partUsageLinkId: null,
             amount: 0,
             components: [],
-            assembly: false
+            assembly: false,
+            mail: null
         },
 
         isAssembly: function() {
@@ -65,19 +66,7 @@ define(["models/part_iteration"], function (PartIteration) {
         getAuthor: function() {
             return this.get('author');
         },
-
-        getWebRtcUrlRoom: function() {
-            //TODO find a better system for room number
-            var getIntFromString = function(str) {
-                var count = 0;
-                for (var i = 0 ; i < str.length ; i++){
-                    count += str.charCodeAt(i)*60*i;
-                }
-                return count;
-            }
-            return "/webRTCRoom?r=" + getIntFromString(this.getAuthor());
-        },
-
+       
         getIteration: function() {
             return this.get('iteration');
         },
