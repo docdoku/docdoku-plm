@@ -10,7 +10,7 @@
             #{i18nDM['title']}
         </ui:define>
         <ui:define name="scripts">
-            <script type="text/javascript">
+            <script type="text/javascript">   
                 var APP_CONFIG = {
                         workspaceId: "${workspaceID}",
                         login: "${login}"
@@ -20,11 +20,15 @@
                             baseUrl: "${request.contextPath}/js/document-management",
                             paths: {
                                     "require": "../lib/require/1.0.8/require.min",
-                                    "text": "../lib/require/1.0.8/text.min"
+                                    "text": "../lib/require/1.0.8/text.min",
+                                    "notifications-module":"../notifications-module/",
+                                    "chat-module" : "../chat-module/"
                             },
                             locale: "#{request.locale}"
                     });
                     require(["app"]);
+                    require(["notifications-module/app",
+                             "chat-module/app"]);
                 });
             </script>
         </ui:define>

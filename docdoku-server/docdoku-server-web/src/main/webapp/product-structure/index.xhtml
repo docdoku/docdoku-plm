@@ -49,7 +49,9 @@
                     baseUrl: "${request.contextPath}/js/product-structure",
                     paths: {
                         "require": "../lib/require/1.0.8/require.min",
-                        "text": "../lib/require/1.0.8/text.min"
+                        "text": "../lib/require/1.0.8/text.min",
+                        "notifications-module":"../notifications-module/",
+                        "chat-module" : "../chat-module/"
                     },
                     locale: "#{request.locale}"
                 });
@@ -58,6 +60,10 @@
                 require(["app"], function(AppView) {
                     new AppView();
                 });
+
+                require(["notifications-module/app",
+                         "chat-module/app"]);
+
             });                
         </script>
         <script type="text/x-underscore-template" id="part_metadata_template">
