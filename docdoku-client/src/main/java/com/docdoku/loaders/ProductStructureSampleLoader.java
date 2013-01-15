@@ -71,8 +71,8 @@ public class ProductStructureSampleLoader {
         fm = ScriptingTools.createFileManagerService(serverURL + "/services/UploadDownload?wsdl", login, password);
 
         System.out.println("importing data...");
-        //createBikeSampleProduct();
-        createBuildingSampleProduct();
+        createBikeSampleProduct();
+        //createBuildingSampleProduct();
         System.out.println("...done!");
     }
 
@@ -112,7 +112,7 @@ public class ProductStructureSampleLoader {
         dh = new DataHandler(binURL);
         fm.uploadToPart(workspace, "Building-modiffinal", "A", 1, "modiffinal.bin", dh);
         */
-        uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/"),"Building-modiffinal", "A", 1);
+        //uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/"),"Building-modiffinal", "A", 1);
 
     }
     
