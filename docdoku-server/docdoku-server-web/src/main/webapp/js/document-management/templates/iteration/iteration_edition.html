@@ -83,7 +83,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
                             <div class="controls">
-                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^master.checkOutDate}}disabled="disabled"{{/master.checkOutDate}}>
+                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^editMode}}disabled="disabled"{{/editMode}}>
                             </div>
                         </div>
                         <div class="control-group">
