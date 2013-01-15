@@ -2,19 +2,14 @@ define([
     "views/components/modal",
     "views/iteration/file_editor",
     "views/iteration/attribute_editor",
-    //  "views/attributes/attributes",
-    // "views/document_new/document_new_template_list",
-    // "views/document_new/document_new_workflow_list",
     "views/components/editable_list_view",
-    "views/document_new/document_new_attributes",
+    "views/document_new/document_attributes",
     "text!templates/iteration/iteration_edition.html",
     "text!templates/attributes/attribute_item.html",
     "i18n",
     "common/date"
-], function (ModalView, FileEditor, AttributeEditor, //  AttributesView,
-             //DocumentNewTemplateListView,
-             //DocumentNewWorkflowListView,
-             EditableListView, DocumentNewAttributesView, template, attributePartial, i18n, date) {
+], function (ModalView, FileEditor, AttributeEditor, EditableListView, DocumentAttributesView, template, attributePartial, i18n, date) {
+
     var IterationEditView = ModalView.extend({
 
         template:Mustache.compile(template),
@@ -51,11 +46,10 @@ define([
             this.deleteSubViews();
 
             var data = {
+                editMode:  this.model.isCheckout(),
                 iteration: this.iteration.toJSON(),
                 master: this.model.toJSON(),
                 reference: this.iteration.getReference(),
-                //attributes : attrHtml,
-                // files : filesViewHtml,
                 i18n: i18n
             }
 
@@ -73,6 +67,13 @@ define([
                 );
             }
 
+            if (data.iteration.creationDate) {
+                data.iteration.creationDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.iteration.creationDate
+                );
+            }
+
             /*Main window*/
             var html = this.template(data);
             this.$el.html(html);
@@ -84,17 +85,17 @@ define([
 
             this.customAttributesView =
                 this.addSubView(
-                    new DocumentNewAttributesView({
+                    new DocumentAttributesView({
                         el:"#iteration-additional-attributes-container"
                     })
-                );
+            );
+
+            this.customAttributesView.setEditMode(this.model.isCheckout());
             this.customAttributesView.render();
 
             var that = this;
 
-            var iterationAttributes = this.iteration.getAttributes();
-            iterationAttributes.each(function (item) {
-                item.validate();
+            this.iteration.getAttributes().each(function (item) {
                 that.customAttributesView.addAndFillAttribute(item);
             });
 
@@ -132,9 +133,10 @@ define([
 
         primaryAction: function() {
 
-            /*saving new attributes*/
+            /*saving iteration*/
             this.iteration.save({
-                instanceAttributes:this.customAttributesView.collection.toJSON()
+                revisionNote: this.$('#inputRevisionNote').val(),
+                instanceAttributes: this.customAttributesView.collection.toJSON()
             });
 
             /*There is a parsing problem at saving time*/

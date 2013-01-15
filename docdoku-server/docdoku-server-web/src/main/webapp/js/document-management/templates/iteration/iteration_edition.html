@@ -111,16 +111,16 @@
         </div>
     </div>
     <div class="modal-footer">
-        {{#master.checkOutDate}}
+        {{#editMode}}
             <button class="btn btn-primary" form="form-{{view.cid}}">
                 {{i18n.SAVE}}
             </button>
             <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
-        {{/master.checkOutDate}}
-        {{^master.checkOutDate}}
+        {{/editMode}}
+        {{^editMode}}
             <button class="btn cancel" form="form-{{view.cid}}">
                 {{i18n.CLOSE}}
             </button>
-        {{/master.checkOutDate}}
+        {{/editMode}}
     </div>
 </div>
