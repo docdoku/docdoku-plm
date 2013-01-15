@@ -2,37 +2,28 @@ define([
     "views/components/modal",
     "views/iteration/file_editor",
     "views/iteration/attribute_editor",
-    //  "views/attributes/attributes",
-    // "views/document_new/document_new_template_list",
-    // "views/document_new/document_new_workflow_list",
     "views/components/editable_list_view",
-    "views/document_new/document_new_attributes",
-    "text!templates/iteration/iteration_new.html",
+    "views/document_new/document_attributes",
+    "text!templates/iteration/iteration_edition.html",
     "text!templates/attributes/attribute_item.html",
-    "i18n"
-], function (ModalView, FileEditor, AttributeEditor, //  AttributesView,
-             //DocumentNewTemplateListView,
-             //DocumentNewWorkflowListView,
-             EditableListView, DocumentNewAttributesView, template, attributePartial, i18n) {
+    "i18n",
+    "common/date"
+], function (ModalView, FileEditor, AttributeEditor, EditableListView, DocumentAttributesView, template, attributePartial, i18n, date) {
+
     var IterationEditView = ModalView.extend({
 
         template:Mustache.compile(template),
 
-
-        initialize:function () {
-
-            /*the model is the MasterDocument*/
-            kumo.assert(this.model.className == "Document");
+        initialize: function() {
 
             /*we are fetching the last iteration*/
             this.iteration = this.model.getLastIteration();
 
             ModalView.prototype.initialize.apply(this, arguments);
 
-
         },
 
-        validation:function () {
+        validation: function() {
 
             /*checking attributes*/
             var ok = true;
@@ -50,18 +41,37 @@ define([
         },
 
 
-        render:function () {
+        render: function() {
             var self = this;
             this.deleteSubViews();
 
-
             var data = {
-                iteration:this.iteration.toJSON(),
-                master:this.model.toJSON(),
-                reference:this.iteration.getReference(),
-                //attributes : attrHtml,
-                // files : filesViewHtml,
-                _:i18n
+                editMode:  this.model.isCheckout(),
+                iteration: this.iteration.toJSON(),
+                master: this.model.toJSON(),
+                reference: this.iteration.getReference(),
+                i18n: i18n
+            }
+
+            if (data.master.creationDate) {
+                data.master.creationDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.master.creationDate
+                );
+            }
+
+            if (data.master.checkOutDate) {
+                data.master.checkOutDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.master.checkOutDate
+                );
+            }
+
+            if (data.iteration.creationDate) {
+                data.iteration.creationDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.iteration.creationDate
+                );
             }
 
             /*Main window*/
@@ -75,17 +85,17 @@ define([
 
             this.customAttributesView =
                 this.addSubView(
-                    new DocumentNewAttributesView({
+                    new DocumentAttributesView({
                         el:"#iteration-additional-attributes-container"
                     })
-                );
+            );
+
+            this.customAttributesView.setEditMode(this.model.isCheckout());
             this.customAttributesView.render();
 
             var that = this;
 
-            var iterationAttributes = this.iteration.getAttributes();
-            iterationAttributes.each(function (item) {
-                item.validate();
+            this.iteration.getAttributes().each(function (item) {
                 that.customAttributesView.addAndFillAttribute(item);
             });
 
@@ -121,16 +131,12 @@ define([
             return this;
         },
 
-        rendered:function () {
+        primaryAction: function() {
 
-
-        },
-
-        primaryAction:function () {
-
-            /*saving new attributes*/
+            /*saving iteration*/
             this.iteration.save({
-                instanceAttributes:this.customAttributesView.collection.toJSON()
+                revisionNote: this.$('#inputRevisionNote').val(),
+                instanceAttributes: this.customAttributesView.collection.toJSON()
             });
 
             /*There is a parsing problem at saving time*/
@@ -162,7 +168,7 @@ define([
 
         },
 
-        cancelAction:function () {
+        cancelAction: function() {
 
             /*deleting unwanted files that have been added by upload*/
             var filesToDelete = this.filesView.newItems;
@@ -184,7 +190,7 @@ define([
          * Here are some jquery adjustments to render the list specially
          */
 
-        cutomizeRendering:function () {
+        cutomizeRendering: function() {
 
             this.filesView.on("list:selected", function (selectedObject, index, line) {
                 line.addClass("stroke");
@@ -203,7 +209,7 @@ define([
          * Extract datas needed for the partial
          */
 
-        fileDataMapper:function (file) {
+        fileDataMapper: function(file) {
 
             return {
                 created:file.isCreated(),
@@ -214,14 +220,11 @@ define([
             }
         },
 
-        getPrimaryButton:function () {
+        getPrimaryButton: function() {
             var button = this.$el.find("div.modal-footer button.btn-primary");
             kumo.assertNotEmpty(button, "can't find primary button");
             return button;
         }
-
-
-
 
     });
     return IterationEditView;
