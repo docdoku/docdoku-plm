@@ -11,7 +11,6 @@ define([
 		template: Mustache.compile(template),
 		initialize: function () {
 			ModalView.prototype.initialize.apply(this, arguments);
-			this.events["submit #form-" + this.cid] = "primaryAction";
 		},
 		rendered: function () {
 			this.attributesView = this.addSubView(
