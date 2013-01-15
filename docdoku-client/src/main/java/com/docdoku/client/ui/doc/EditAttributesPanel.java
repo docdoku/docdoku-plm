@@ -59,7 +59,7 @@ import org.jdesktop.swingx.JXDatePicker;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class EditAttributesPanel extends JPanel implements ActionListener{
 
@@ -133,7 +133,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
         mAttributesPanel.removeAll();
         layoutAttributesPanel();
 
-        mAttributesPanel.invalidate();
+        mAttributesPanel.revalidate();
         mAttributesPanel.repaint();
         
     }
@@ -184,7 +184,7 @@ public class EditAttributesPanel extends JPanel implements ActionListener{
                 mAttributesPanel.removeAll();
                 layoutAttributesPanel();
                 mRemoveButton.setEnabled(false);
-                mAttributesPanel.invalidate();
+                mAttributesPanel.revalidate();
                 mAttributesPanel.repaint();
             }
         });
