@@ -3,27 +3,30 @@ define([
     "views/iteration/file_editor",
     "views/iteration/attribute_editor",
     "views/components/editable_list_view",
-    "views/document_new/document_attributes",
-    "text!templates/iteration/iteration_edition.html",
+    "views/document_new/document_new_attributes",
+    "text!templates/iteration/iteration_new.html",
     "text!templates/attributes/attribute_item.html",
-    "i18n",
-    "common/date"
-], function (ModalView, FileEditor, AttributeEditor, EditableListView, DocumentAttributesView, template, attributePartial, i18n, date) {
-
+    "i18n"
+], function (ModalView, FileEditor, AttributeEditor, EditableListView, DocumentNewAttributesView, template, attributePartial, i18n) {
     var IterationEditView = ModalView.extend({
 
         template:Mustache.compile(template),
 
-        initialize: function() {
+
+        initialize:function () {
+
+            /*the model is the MasterDocument*/
+            kumo.assert(this.model.className == "Document");
 
             /*we are fetching the last iteration*/
             this.iteration = this.model.getLastIteration();
 
             ModalView.prototype.initialize.apply(this, arguments);
 
+
         },
 
-        validation: function() {
+        validation:function () {
 
             /*checking attributes*/
             var ok = true;
@@ -41,37 +44,18 @@ define([
         },
 
 
-        render: function() {
+        render:function () {
             var self = this;
             this.deleteSubViews();
 
+
             var data = {
-                editMode:  this.model.isCheckout(),
-                iteration: this.iteration.toJSON(),
-                master: this.model.toJSON(),
-                reference: this.iteration.getReference(),
-                i18n: i18n
-            }
-
-            if (data.master.creationDate) {
-                data.master.creationDate = date.formatTimestamp(
-                    i18n._DATE_FORMAT,
-                    data.master.creationDate
-                );
-            }
-
-            if (data.master.checkOutDate) {
-                data.master.checkOutDate = date.formatTimestamp(
-                    i18n._DATE_FORMAT,
-                    data.master.checkOutDate
-                );
-            }
-
-            if (data.iteration.creationDate) {
-                data.iteration.creationDate = date.formatTimestamp(
-                    i18n._DATE_FORMAT,
-                    data.iteration.creationDate
-                );
+                iteration:this.iteration.toJSON(),
+                master:this.model.toJSON(),
+                reference:this.iteration.getReference(),
+                //attributes : attrHtml,
+                // files : filesViewHtml,
+                _:i18n
             }
 
             /*Main window*/
@@ -85,17 +69,17 @@ define([
 
             this.customAttributesView =
                 this.addSubView(
-                    new DocumentAttributesView({
+                    new DocumentNewAttributesView({
                         el:"#iteration-additional-attributes-container"
                     })
-            );
-
-            this.customAttributesView.setEditMode(this.model.isCheckout());
+                );
             this.customAttributesView.render();
 
             var that = this;
 
-            this.iteration.getAttributes().each(function (item) {
+            var iterationAttributes = this.iteration.getAttributes();
+            iterationAttributes.each(function (item) {
+                item.validate();
                 that.customAttributesView.addAndFillAttribute(item);
             });
 
@@ -104,39 +88,38 @@ define([
             /*File Tab*/
             kumo.assertNotEmpty($("#iteration-files"), "no tab for files");
 
-            /*main view*/
-            var files = this.iteration.getAttachedFiles();
-            var filePartial = "{{#created}}<a href='{{url}}'>{{shortName}}</a>{{/created}}" + //created : link
-                "{{^created}}{{shortName}}{{/created}}"; //not created : only shortName
+            /* Editor : generate a View for each file and handle the upload progress bar*/
+            this.fileEditor = new FileEditor({
+                documentIteration:this.iteration
+            });
 
-
+            /* ListView */
             this.filesView = new EditableListView({
                 model:this.iteration.getAttachedFiles(), /*domain objects set directly in view.model*/
                 editable:true, /*we will have to look at view.options.editable*/
-                itemPartial:filePartial,
-                dataMapper:this.fileDataMapper, /*datas needed in partial*/
-                listName:"Attached files for " + this.iteration//,
+                listName:"Attached files for " + this.iteration,
+                editor : this.fileEditor
                 //el : $("#iteration-files")
             }).render();
+            this.fileEditor.setWidget(this.filesView);
+
+            /* Add the ListView to the tab */
             $("#iteration-files").append(this.filesView.$el);
 
-            /*defines the view when we create a new File*/
-            this.fileEditor = new FileEditor({
-                documentIteration:this.iteration,
-                widget:this.filesView
-            });
-
             this.cutomizeRendering();
-
             return this;
         },
 
-        primaryAction: function() {
+        rendered:function () {
 
-            /*saving iteration*/
+
+        },
+
+        primaryAction:function () {
+
+            /*saving new attributes*/
             this.iteration.save({
-                revisionNote: this.$('#inputRevisionNote').val(),
-                instanceAttributes: this.customAttributesView.collection.toJSON()
+                instanceAttributes:this.customAttributesView.collection.toJSON()
             });
 
             /*There is a parsing problem at saving time*/
@@ -168,7 +151,7 @@ define([
 
         },
 
-        cancelAction: function() {
+        cancelAction:function () {
 
             /*deleting unwanted files that have been added by upload*/
             var filesToDelete = this.filesView.newItems;
@@ -190,7 +173,7 @@ define([
          * Here are some jquery adjustments to render the list specially
          */
 
-        cutomizeRendering: function() {
+        cutomizeRendering:function () {
 
             this.filesView.on("list:selected", function (selectedObject, index, line) {
                 line.addClass("stroke");
@@ -205,22 +188,7 @@ define([
             this.fileEditor.render();
         },
 
-        /*
-         * Extract datas needed for the partial
-         */
-
-        fileDataMapper: function(file) {
-
-            return {
-                created:file.isCreated(),
-                url:file.isCreated() ? file.getUrl() : false,
-                shortName:file.getShortName(),
-                fullName:file.getFullName(),
-                cid:file.cid
-            }
-        },
-
-        getPrimaryButton: function() {
+        getPrimaryButton:function () {
             var button = this.$el.find("div.modal-footer button.btn-primary");
             kumo.assertNotEmpty(button, "can't find primary button");
             return button;

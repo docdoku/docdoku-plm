@@ -1,0 +1,13 @@
+{{#items}}
+<li id='item-{{cid}}' class='list-item editable-list-item'>
+    {{#editable}}<input class='item-selection' type='checkbox' value='{{cid}}' />{{/editable}} {{! delete Button }}
+    <div class='item-component' data-cid='{{cid}}'></div> {{! custom display of the object }}
+</li>
+{{/items}}
+
+{{#editable}}
+<div id='editable-list-controls-{{listId}}' class='editable-list-controls'>
+    <button id='editable-list-add-item-{{listId}}' class='btn editable-list-adder'>{{i18n.APPEND}}</button>
+    <button id='editable-list-cancel-editor-{{listId}}' class='btn cancel editable-list-cancel-editor'>{{i18n.CANCEL}}</button>
+</div>
+{{/editable}}

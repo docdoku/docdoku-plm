@@ -1,20 +1,14 @@
 define([
-    "i18n"
-], function (i18n) {
+    "i18n",
+    "text!templates/components/editable-list-view.html"
+], function (i18n, template) {
     var EditableListView = Backbone.View.extend({
 
-        debug:true,
         className:'editable-list',
-        // id:this.cid,
-
-
-
-
         tagName:'ul',
 
         initialize:function () {
             var self = this;
-            //this.$el.addClass('editable-list');
             //Check validity
 
             if (kumo.devMode) {
@@ -39,31 +33,30 @@ define([
                         "an editor must have a getComponent(widget, item, isSelected, row) method to render the item"
                     )
                 }
+                kumo.assert(this.model instanceof Backbone.Collection, "The model must be a Backbone.Collection");
 
-                //checking each object is a Model with an cid
-                _.each(this.getModels(), function (item) {
-                    kumo.assert(kumo.isNotEmpty(item.cid), "items in the list model must have a cid");
-                });
             }
 
 
             //initialize :
+            this.$el.attr("data-list-id", this.cid);
 
             //events
-            this.on("state:working", this.onWorking);
-            this.on("state:idle", this.onIdle);
-            this.on("state:cancel", this.onCancel);
-            this.on("list:added", this.onItemAdded);
+            this.on("list:modelChanged", this.onModelChanged);
 
             /**
              * Also declaring for other objects :
-             * list:addItem -> the ul element
-             * list:selected -> selectedObject, li element
-             * list:unselected -> unselectedObject, li element
+             * state:idle : waiting for a user action
+             * state:cancel : cancelButton has been clicked
+             * state:working : addButton has been clicked, or other long action
+             * list:addItem ->
+             * list:selected -> selectedObject, li element : a component has been selected
+             * list:unselected -> unselectedObject, li element : a component has been unselected
+             * list:error -> message : when something goes wrong
+             * component:rendered : after component is rendered, before state:idle
              */
 
-
-                //state lists
+            //state lists
             this.components = []; // Warning : Backbone Collections takes only Models object.
             this.selection = new Backbone.Collection();
             this.newItems = new Backbone.Collection();
@@ -73,43 +66,16 @@ define([
         //DOM Events
         events:{
             "click .editable-list-cancel-editor":"bindCancelButton",
-            "change input.item-selection":"bindItemSelected"
-            /*"click .editable-list-adder":"bindAddItem"*/
+            "change input.item-selection":"bindItemSelected",
+            "click .editable-list-adder":"bindAddItem"
         },
 
 
-        //states
+        //states : these methods may be redefined by other lists
         onWorking:function () {
-          /*  try {
-                this.getAddButton().attr('disabled', 'disabled');
-            } catch (e) {
-                //no addButton
-            }
-
-
-            try {
-                this.getCancelButton().show();
-            } catch (e) {
-                //no cancelButton
-            }*/
-
-
         },
 
         onIdle:function () {
-          /*  try {
-                this.getAddButton().removeAttr('disabled');
-            } catch (e) {
-                //no addButton
-            }
-
-            try {
-                this.getCancelButton().hide();
-            } catch (e) {
-                //no cancelButton
-            }*/
-
-
         },
 
         onCancel:function () {
@@ -133,7 +99,7 @@ define([
         bindItemSelected:function (evt) {
             var checkbox = $(evt.target);
             var cid = checkbox.val();
-            var selectedObject = this.model.getByCid(cid);
+            var selectedObject = this.model.get(cid);
             kumo.assertNotEmpty(selectedObject, "Can't find selectedObject");
             var index = this.model.indexOf(selectedObject);
 
@@ -151,35 +117,21 @@ define([
 
         render:function () {
 
-            var itemPartial, itemsData;
-            if (this.options.itemPartial) {
-                itemPartial = this.options.itemPartial
-                itemsData = this.model.map(this.options.dataMapper);//Extract data from the item collection
-            } else if (this.options.editor) {
-                itemPartial = "<div class='item-component' data-cid='{{cid}}'></div>";
-                itemsData = this.model.map(function (item) {
-                    return {
-                        cid:item.cid
-                    }
-                }); // returns only cid
-
-            } else {
-                console.error("A list must render either item partials, or item components");
-            }
-
-            var fullTemplate = this.fullTemplate();
+            var itemsData = this.model.map(function (item) {
+                return {
+                    cid:item.cid
+                }
+            });
 
             var data = {
                 listId:this.cid,
                 items:itemsData,
-                editable:this.options.editable,
+                editable:this.options.editable===false ? false : true, //by default it's editable
                 i18n:i18n
             };
 
-            var html = Mustache.render(fullTemplate,
-                data,
-                {itemPartial:itemPartial}
-            );
+            //new way
+            var html = Mustache.render(template, data);
             this.$el.html(html);
 
             if (this.options.editor) {
@@ -200,7 +152,6 @@ define([
             var row = 0;
             this.components = [];
             this.model.each(function (item) {
-                console.log("row : " + row);
                 var isSelected = widget.selection.include(item);
                 var component = editor.getComponent(widget, item, isSelected, row);
                 widget.components.push(component);
@@ -211,55 +162,28 @@ define([
             });
         },
 
+        addItem : function(item){
 
-        fullTemplate:function () {
-            return  this.creationEditorTemplate() + this.controlBarTemplate() + this.listTemplate();
+            if (! this.model.include(item)){
+                this.model.add(item);
+                this.newItems.add(item);
+                this.trigger ("list:modelChanged", item);
+            }else{
+                this.trigger ("list:error", i18n.errors.OBJECT_ALREADY_IN_LIST(item));
+            }
         },
 
-        listTemplate:function () {
-
-            var list =
-                "{{#items}}\n" +
-                    "<li id='item-{{cid}}' class='list-item editable-list-item'>\n" +
-                    "{{#editable}}<input class='item-selection' type='checkbox' value='{{cid}}' />{{/editable}}\n" + //delete Button
-                    "{{>itemPartial}}" + //custom display of the object
-                    "</li>\n" +
-                    "{{/items}}\n";
-
-
-            return list;
+        removeItem : function(item){
+            this.model.remove(item);
+            this.newItems.remove(item);
+            this.trigger ("list:modelChanged", item);
         },
 
-
-        creationEditorTemplate:function () {
-            return "<div id='editable-list-editor-{{listId}}' class='editable-list-editor'></div>"
-        },
-
-
-        getCreationEditorPlace:function () {
-            var elt = this.$el.find("#editable-list-editor-" + this.cid);
-            kumo.assertNotEmpty(elt, "can't find editor-place element");
-            return elt;
-        },
-
-        controlBarTemplate:function () {
-            var controls = "{{#editable}}<div id='editable-list-controls-{{listId}}'>" +
-                /*"<button id='editable-list-add-item-{{listId}}' class='btn editable-list-adder'>{{i18n.APPEND}}</button>" +*/
-                "<button id='editable-list-cancel-editor-{{listId}}' class='btn cancel editable-list-cancel-editor'>{{i18n.CANCEL}}</button>" +
-                "</div>{{/editable}}\n";
-            return controls;
-        },
-
-
-        onItemAdded:function (item) {
-
-            this.model.add(item);
-            this.getNewItems().add(item); // later list is disabled
+        onModelChanged:function (item) {
             this.render();
             this.trigger("state:idle");
 
         },
-
 
         getNewItems:function () {
             //kumo.assert(this.options.editable, "Can't get new items if not editable");
@@ -276,7 +200,6 @@ define([
             });
             return result;
         },
-
 
         getControlsElement:function () {
             var controlsElement = $("#editable-list-controls-" + this.cid);
@@ -304,8 +227,29 @@ define([
             var button = this.$el.find("button.editable-list-cancel-editor");
             kumo.assertNotEmpty(button, "Can't find cancel Button");
             return button;
-        }
+        },
 
+        enableAddButton : function(enable){
+            var button = this.$el.find(".editable-list-adder");
+            if (kumo.isNotEmpty(button)){
+                if (enable===false){
+                    button.attr('disabled', 'disabled');
+                }else{
+                    button.removeAttr('disabled')
+                }
+            }
+        },
+
+        displayCancelButton : function(show){
+            var button = this.$el.find("button.editable-list-cancel-editor");
+            if (kumo.isNotEmpty(button)){
+                if (show===false){
+                    button.hide()
+                }else{
+                    button.show();
+                }
+            }
+        }
     });
     return EditableListView;
 });
