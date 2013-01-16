@@ -1,34 +1,8 @@
 define([
-    "i18n",
-    "models/document_iteration"
-], function (i18n, iteration) {
+    "i18n"
+], function (i18n) {
 
     var Attribute = Backbone.Model.extend({
-        initialize:function () {
-
-            var self = this;
-            this.className = "Attribute";
-
-            //expected : documentIteration
-            kumo.assertNotEmpty(this.attributes.type,
-                "an Attribute Model should have type");
-            kumo.assert(
-                _.any(Attribute.types,
-                    function (val) {
-                        return val == self.getType()
-                    }),
-                "Attribute type : " + this.getType() + " not in " + JSON.stringify(Attribute.types)
-            );
-
-            switch (this.getType()){
-                //forcing number
-                case Attribute.types.NUMBER :
-                case Attribute.types.DATE :
-                    this.set("value", parseFloat(this.getValue()));
-            }
-
-            //_.bindAll(this);
-        },
 
         getType:function () {
             return this.get("type");
@@ -47,11 +21,8 @@ define([
         },
 
         //from backbone Doc : If the attributes are valid, don't return anything from validate
-        validate:function () {
+        validate_:function () {
 
-            if (kumo.any([this.getType(), this.getName(), this.getValue()])) {
-                return i18n.VALIDATION_FAILED_FOR+this.getName();
-            }
             try{
                 var value = this.getValue();
                 var ok = true;

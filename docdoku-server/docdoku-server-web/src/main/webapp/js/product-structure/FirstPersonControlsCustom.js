@@ -223,6 +223,15 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         }
     };
 
+    this.destroyControl = function() {
+        this.domElement.removeEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+        this.domElement.removeEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
+        this.domElement.removeEventListener( 'keydown', bind( this, this.onKeyDown ), false );
+        this.domElement.removeEventListener( 'keyup', bind( this, this.onKeyUp ), false );
+        this.domElement.removeEventListener( 'DOMMouseScroll', bind(this, this.onMouseWheel), false );
+        this.domElement.removeEventListener( 'mousewheel', bind(this, this.onMouseWheel), false );
+    };
+
     this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
     this.domElement.addEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
     this.domElement.addEventListener( 'keydown', bind( this, this.onKeyDown ), false );

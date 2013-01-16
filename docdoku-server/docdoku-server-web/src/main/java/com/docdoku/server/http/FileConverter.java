@@ -2,20 +2,20 @@
  * DocDoku, Professional Open Source
  * Copyright 2006 - 2013 DocDoku SARL
  *
- * This file is part of DocDoku.
+ * This file is part of DocDokuPLM.
  *
- * DocDoku is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDoku is distributed in the hope that it will be useful,  
+ * DocDokuPLM is distributed in the hope that it will be useful,  
  * but WITHOUT ANY WARRANTY; without even the implied warranty of  
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU General Public License for more details.  
+ * GNU Affero General Public License for more details.  
  *  
- * You should have received a copy of the GNU General Public License  
- * along with DocDoku.  If not, see <http://www.gnu.org/licenses/>.  
+ * You should have received a copy of the GNU Affero General Public License  
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
 package com.docdoku.server.http;
@@ -25,11 +25,9 @@ import com.developpez.adiguba.shell.Shell;
 import com.docdoku.core.util.FileIO;
 import java.io.File;
 import java.io.IOException;
-import net.sf.jodconverter.OfficeDocumentConverter;
-import net.sf.jodconverter.office.ManagedProcessOfficeManager;
-import net.sf.jodconverter.office.ManagedProcessOfficeManagerConfiguration;
-import net.sf.jodconverter.office.OfficeConnectionMode;
-import net.sf.jodconverter.office.OfficeManager;
+import org.artofsolving.jodconverter.OfficeDocumentConverter;
+import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
+import org.artofsolving.jodconverter.office.OfficeManager;
 
 
 public class FileConverter {
@@ -96,9 +94,10 @@ public class FileConverter {
             return pdfFile;
         }
 
-        ManagedProcessOfficeManagerConfiguration cfg = new ManagedProcessOfficeManagerConfiguration(OfficeConnectionMode.socket(ooPort));
-        cfg.setOfficeHome(new File(ooHome));
-        OfficeManager officeManager = new ManagedProcessOfficeManager(cfg);
+        OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
+                .setOfficeHome(new File(ooHome))
+                .setPortNumber(ooPort)
+                .buildOfficeManager();
         officeManager.start();
         OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
         converter.convert(fileToConvert, pdfFile);
