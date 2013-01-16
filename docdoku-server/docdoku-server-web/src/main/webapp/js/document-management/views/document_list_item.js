@@ -12,31 +12,36 @@ define([
 	template
 ) {
 	var DocumentListItemView = CheckboxListItemView.extend({
+
 		template: Mustache.compile(template),
+
 		tagName: "tr",
+
 		initialize: function () {
 			CheckboxListItemView.prototype.initialize.apply(this, arguments);
 			this.events["click .reference"] = this.actionEdit;
 		},
+
 		modelToJSON: function () {
 			var data = this.model.toJSON();
 			if (this.model.hasIterations()) {
 				data.lastIteration = this.model.getLastIteration().toJSON();
+                data.lastIteration.creationDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.lastIteration.creationDate
+                );
 			}
 
-			// Format dates
-			if (data.lastIteration && data.lastIteration.creationDate) {
-				data.lastIteration.creationDate = date.formatTimestamp(
-					i18n._DATE_FORMAT,
-					data.lastIteration.creationDate);
-			}
-			if (data.checkOutDate) {
-				data.checkOutDate = date.formatTimestamp(
-					i18n._DATE_FORMAT,
-					data.checkOutDate);
-			}
+            if (this.model.isCheckout()) {
+                data.checkOutDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.checkOutDate
+                );
+            }
+
 			return data;
 		},
+
 		actionEdit: function (evt) {
 			var that = this;
 			this.model.fetch().success(function () {
@@ -45,6 +50,8 @@ define([
                 }).show();
             });
         }
+
     });
+
     return DocumentListItemView;
 });

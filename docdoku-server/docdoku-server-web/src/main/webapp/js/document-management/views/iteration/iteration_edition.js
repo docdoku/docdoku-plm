@@ -42,35 +42,32 @@ define([
 
 
         render: function() {
-            var self = this;
             this.deleteSubViews();
 
             var data = {
                 editMode:  this.model.isCheckout(),
-                iteration: this.iteration.toJSON(),
                 master: this.model.toJSON(),
-                reference: this.iteration.getReference(),
                 i18n: i18n
             }
 
-            if (data.master.creationDate) {
-                data.master.creationDate = date.formatTimestamp(
-                    i18n._DATE_FORMAT,
-                    data.master.creationDate
-                );
-            }
+            data.master.creationDate = date.formatTimestamp(
+                i18n._DATE_FORMAT,
+                data.master.creationDate
+            );
 
-            if (data.master.checkOutDate) {
-                data.master.checkOutDate = date.formatTimestamp(
-                    i18n._DATE_FORMAT,
-                    data.master.checkOutDate
-                );
-            }
-
-            if (data.iteration.creationDate) {
+            if (this.model.hasIterations()) {
+                data.iteration = this.iteration.toJSON();
+                data.reference = this.iteration.getReference();
                 data.iteration.creationDate = date.formatTimestamp(
                     i18n._DATE_FORMAT,
                     data.iteration.creationDate
+                );
+            }
+
+            if (this.model.isCheckout()) {
+                data.master.checkOutDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.master.checkOutDate
                 );
             }
 
@@ -95,33 +92,31 @@ define([
 
             var that = this;
 
-            this.iteration.getAttributes().each(function (item) {
-                that.customAttributesView.addAndFillAttribute(item);
-            });
+            if (this.model.hasIterations()) {
+                this.iteration.getAttributes().each(function (item) {
+                    that.customAttributesView.addAndFillAttribute(item);
+                });
 
-            /***************************************************************/
-
-            /*File Tab*/
-            kumo.assertNotEmpty($("#iteration-files"), "no tab for files");
-
-            /* Editor : generate a View for each file and handle the upload progress bar*/
-            this.fileEditor = new FileEditor({
-                documentIteration:this.iteration
-            });
-
-            /* ListView */
-            this.filesView = new EditableListView({
-                model:this.iteration.getAttachedFiles(), /*domain objects set directly in view.model*/
-                editable:true, /*we will have to look at view.options.editable*/
-                listName:"Attached files for " + this.iteration,
-                editor : this.fileEditor
-            }).render();
-            this.fileEditor.setWidget(this.filesView);
-
-            /* Add the ListView to the tab */
-            $("#iteration-files").append(this.filesView.$el);
-
-            this.cutomizeRendering();
+                /* Editor : generate a View for each file and handle the upload progress bar*/
+                this.fileEditor = new FileEditor({
+                    documentIteration:this.iteration
+                });
+    
+                /* ListView */
+                this.filesView = new EditableListView({
+                    model:this.iteration.getAttachedFiles(), /*domain objects set directly in view.model*/
+                    editable:true, /*we will have to look at view.options.editable*/
+                    listName:"Attached files for " + this.iteration,
+                    editor : this.fileEditor
+                }).render();
+                this.fileEditor.setWidget(this.filesView);
+    
+                /* Add the ListView to the tab */
+                $("#iteration-files").append(this.filesView.$el);
+    
+                this.cutomizeRendering();
+    
+            }
 
             return this;
         },
@@ -165,17 +160,21 @@ define([
 
         cancelAction: function() {
 
-            /*deleting unwanted files that have been added by upload*/
-            var filesToDelete = this.filesView.newItems;
+            if (this.model.hasIterations()) {
 
-            /*we need to reverse read because model.destroy() remove elements from collection*/
-            while (filesToDelete.length != 0) {
-                var file = filesToDelete.pop();
-                file.destroy({
-                    error:function () {
-                        alert("file " + file + " could not be deleted");
-                    }
-                });
+                /*deleting unwanted files that have been added by upload*/
+                var filesToDelete = this.filesView.newItems;
+
+                /*we need to reverse read because model.destroy() remove elements from collection*/
+                while (filesToDelete.length != 0) {
+                    var file = filesToDelete.pop();
+                    file.destroy({
+                        error:function () {
+                            alert("file " + file + " could not be deleted");
+                        }
+                    });
+                }
+
             }
 
             ModalView.prototype.cancelAction.call(this);
