@@ -13,7 +13,7 @@ define([
     "text!templates/workflow_model_editor.html",
     "models/activity_model",
     "views/activity_model_editor",
-    "collections/users"
+    "common-objects/collections/users"
 
 ], function (
     require,

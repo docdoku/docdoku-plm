@@ -2,11 +2,11 @@
 <application version="6" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
   <display-name>docdoku-plm</display-name>
   <module>
-    <ejb>docdoku-server-ejb-1.0-SNAPSHOT.jar</ejb>
+    <ejb>docdoku-server-ejb.jar</ejb>
   </module>
   <module>
     <web>
-      <web-uri>docdoku-server-web-1.0-SNAPSHOT.war</web-uri>
+      <web-uri>docdoku-server-web.war</web-uri>
       <context-root>/</context-root>
     </web>
   </module>

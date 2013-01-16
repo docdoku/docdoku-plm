@@ -64,6 +64,7 @@ public class ProductResource {
     @EJB
     private IProductManagerLocal productService;
     private Mapper mapper;
+
     @EJB
     private LayerResource layerResource;
 
@@ -156,6 +157,7 @@ public class ProductResource {
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
+        dto.setAuthorLogin(pm.getAuthor().getLogin());
         dto.setAmount(usageLink.getCadInstances().size());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();

@@ -1,5 +1,5 @@
 define([
-    "models/user"
+    "common-objects/models/user"
 ],function (
     User
 ) {

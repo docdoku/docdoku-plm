@@ -50,8 +50,8 @@
                     paths: {
                         "require": "../lib/require/1.0.8/require.min",
                         "text": "../lib/require/1.0.8/text.min",
-                        "notifications-module":"../notifications-module/",
-                        "chat-module" : "../chat-module/"
+                        "modules":"../modules",
+                        "common-objects":"../common-objects"
                     },
                     locale: "#{request.locale}"
                 });
@@ -61,8 +61,10 @@
                     new AppView();
                 });
 
-                require(["notifications-module/app",
-                         "chat-module/app"]);
+                require(["modules/user-popover-module/app",
+                         "modules/notifications-module/app",
+                         "modules/chat-module/app",
+                         "modules/webrtc-module/app"]);
 
             });                
         </script>
@@ -248,15 +250,22 @@
                     </div>
                 </div>
 
-                <div class="modal hide fade" id="webRtcModal">
+                <div class="modal hide fade" id="webrtc_module_modal">
                     <div class="modal-header">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="hangup_webrtc_call_btn">hangup</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="webrtc_hangup_btn">Hangup</button>
                         <h3></h3>
                     </div>
-                    <div class="modal-body">
+                    <div id="webrtc_modal_body">
+                        <video id="webrtc_local_video" autoplay="autoplay"/>
+                        <video id="webrtc_remote_video" autoplay="autoplay" />
                     </div>
                 </div>
 
+            </div>
+        </ui:define>
+        <ui:define name="preFooter">
+            <div id="preFooter">
+                <div id="chat_module"></div>
             </div>
         </ui:define>
     </ui:composition>

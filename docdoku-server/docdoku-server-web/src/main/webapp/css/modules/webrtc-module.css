@@ -1,0 +1,28 @@
+#webrtc_module_modal{
+    height: 90%;
+    margin-top: -45%;
+    margin-left: -45%;
+    width: 90%;
+    max-height: 675px;
+}
+#webrtc_module_modal > .modal-header {
+    height: 30px;
+}
+#webrtc_module_modal > .modal-header > #webrtc_hangup_btn{
+    float:right;
+}
+
+#webrtc_module_modal> #webrtc_modal_body {
+    text-align: center;
+}
+
+#webrtc_module_modal> #webrtc_modal_body > video {
+    background: black;
+}
+#webrtc_module_modal> #webrtc_modal_body > #webrtc_local_video{
+    max-width:200px;
+    max-height:200px;
+}
+#webrtc_module_modal> #webrtc_modal_body > #webrtc_remote_video{
+
+}

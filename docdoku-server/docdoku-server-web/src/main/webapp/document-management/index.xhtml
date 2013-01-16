@@ -21,19 +21,22 @@
                             paths: {
                                     "require": "../lib/require/1.0.8/require.min",
                                     "text": "../lib/require/1.0.8/text.min",
-                                    "notifications-module":"../notifications-module/",
-                                    "chat-module" : "../chat-module/"
+                                    "modules":"../modules",
+                                    "common-objects":"../common-objects"
                             },
                             locale: "#{request.locale}"
                     });
+
                     require(["app"]);
-                    require(["notifications-module/app",
-                             "chat-module/app"]);
+
+                    require(["modules/user-popover-module/app",
+                             "modules/notifications-module/app",
+                             "modules/chat-module/app",
+                             "modules/webrtc-module/app"]);
                 });
             </script>
         </ui:define>
-        <ui:define name="content">    
-
+        <ui:define name="content">
             <div id="workspace"></div>
         </ui:define>
     </ui:composition>

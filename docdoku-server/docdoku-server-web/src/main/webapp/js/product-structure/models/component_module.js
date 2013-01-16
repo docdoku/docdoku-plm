@@ -1,6 +1,6 @@
 define(["models/part_iteration"], function (PartIteration) {
 
-    var ComponentModule = {}
+    var ComponentModule = {};
 
     ComponentModule.Model = Backbone.Model.extend({
 
@@ -10,6 +10,7 @@ define(["models/part_iteration"], function (PartIteration) {
             version: null,
             description: null,
             author: null,
+            authorLogin: null,
             iteration: null,
             standardPart: false,
             partUsageLinkId: null,
@@ -66,7 +67,11 @@ define(["models/part_iteration"], function (PartIteration) {
         getAuthor: function() {
             return this.get('author');
         },
-       
+
+        getAuthorLogin: function() {
+            return this.get('authorLogin');
+        },
+
         getIteration: function() {
             return this.get('iteration');
         },

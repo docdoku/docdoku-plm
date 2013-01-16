@@ -15,10 +15,8 @@ define (function() {
             var part_metadata_html = Mustache.render(
                 $('#part_metadata_template').html(), this.model);
 
-            this.$el.append(part_metadata_html);            
-            $(".author-popover").authorPopover(this.model.getAuthor(),this.model.getName(),"top");          
-            //$(".author-popover").authorPopover(this.model.getAuthor(),this.model.getName(),"top",this.model.getEmail());          
-
+            this.$el.append(part_metadata_html);
+            this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"top");
 
             return this;
         },
