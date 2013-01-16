@@ -4,22 +4,33 @@ define([
 	ListItemView
 ) {
 	var DocumentNewAttributeListItemView = ListItemView.extend({
+
 		tagName: "div",
-		initialize: function () {
+
+        editMode: true,
+
+        setEditMode: function(editMode) {
+            this.editMode = editMode;
+        },
+
+		initialize: function() {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events[ "change .type"] = "typeChanged";
 			this.events[ "change .name"] = "updateName";
 			this.events[ "change .value"] = "updateValue";
 			this.events[ "click .remove"] = "removeAction";
 		},
-		rendered: function () {
+
+		rendered: function() {
 			var type = this.model.get("type");
 			this.$el.find("select.type:first").val(type);
 		},
-		removeAction: function () {
+
+		removeAction: function() {
 			this.model.destroy();
 		},
-		typeChanged: function (evt) {
+
+		typeChanged: function(evt) {
 			var type = $(evt.target).val();
 			var oldType = this.model.get("type");
 			this.model.set({
@@ -28,20 +39,35 @@ define([
 			});
 			this.model.collection.trigger("reset");
 		},
-		updateName: function () {
+
+		updateName: function() {
 			this.model.set({
 				name: this.$el.find("input.name:first").val()
 			});
 		},
-		updateValue: function () {
+
+		updateValue: function() {
 			var el = this.$el.find("input.value:first");
 			this.model.set({
 				value: this.getValue(el)
 			});
 		},
-		getValue: function (el) {
+
+		getValue: function(el) {
 			return el.val();
-		}
+		},
+
+        render: function() {
+            this.deleteSubViews();
+            var partials = this.partials ? this.partials : null;
+            var data = this.renderData();
+            data.editMode = this.editMode;
+            this.$el.html(this.template(data, partials));
+            this.rendered();
+            return this;
+        }
+
 	});
+
 	return DocumentNewAttributeListItemView;
 });

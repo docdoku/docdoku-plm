@@ -13,6 +13,8 @@ define([
 
 		template: Mustache.compile(template),
 
+        editMode: true,
+
 		collection: function () {
 			return new Backbone.Collection();
 		},
@@ -24,8 +26,6 @@ define([
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.events["click .add"] = this.addAttribute;
-            //default to edit mode
-            this.setEditMode(true);
 		},
 
         render: function() {
@@ -46,6 +46,7 @@ define([
 					collection: this.collection
 				})
 			);
+            this.attributesView.setEditMode(this.editMode);
 		},
 
 		addAttribute: function () {
