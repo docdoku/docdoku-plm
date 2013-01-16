@@ -75,11 +75,6 @@ define([
             var html = this.template(data);
             this.$el.html(html);
 
-            /*Attributes tab*/
-            kumo.assertNotEmpty($("#iteration-attributes"), "no tab for attributes");
-
-            /***** Document new attributes component re-use and upgrade *****/
-
             this.customAttributesView =
                 this.addSubView(
                     new DocumentAttributesView({

@@ -14,23 +14,35 @@ define([
 	DocumentNewAttributeListItemUrlView
 ) {
 	DocumentNewAttributeListView = ListView.extend({
-		typeViewMapping: {
+
+        typeViewMapping: {
 				"BOOLEAN":	DocumentNewAttributeListItemBooleanView,
 				"DATE":		DocumentNewAttributeListItemDateView,
 				"NUMBER":	DocumentNewAttributeListItemNumberView,
 				"TEXT":		DocumentNewAttributeListItemTextView,
 				"URL":		DocumentNewAttributeListItemUrlView
 		},
+
+        editMode: true,
+
 		itemViewFactory: function (model) {
 			var type = model.get("type");
 			var constructor = this.typeViewMapping[type];
-			return new constructor({
-				model: model
-			});
+            var view = new constructor({
+                model: model
+            });
+            view.setEditMode(this.editMode);
+			return view;
 		},
+
 		collectionAdd: function (model) {
 			this.createItemView(model);
-		}
+		},
+
+        setEditMode: function(editMode) {
+            this.editMode = editMode;
+        }
+
 	});
 	return DocumentNewAttributeListView;
 });
