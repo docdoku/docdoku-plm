@@ -104,27 +104,22 @@ define([
             /*File Tab*/
             kumo.assertNotEmpty($("#iteration-files"), "no tab for files");
 
-            /*main view*/
-            var files = this.iteration.getAttachedFiles();
-            var filePartial = "{{#created}}<a href='{{url}}'>{{shortName}}</a>{{/created}}" + //created : link
-                "{{^created}}{{shortName}}{{/created}}"; //not created : only shortName
+            /* Editor : generate a View for each file and handle the upload progress bar*/
+            this.fileEditor = new FileEditor({
+                documentIteration:this.iteration
+            });
 
-
+            /* ListView */
             this.filesView = new EditableListView({
                 model:this.iteration.getAttachedFiles(), /*domain objects set directly in view.model*/
                 editable:true, /*we will have to look at view.options.editable*/
-                itemPartial:filePartial,
-                dataMapper:this.fileDataMapper, /*datas needed in partial*/
-                listName:"Attached files for " + this.iteration//,
-                //el : $("#iteration-files")
+                listName:"Attached files for " + this.iteration,
+                editor : this.fileEditor
             }).render();
-            $("#iteration-files").append(this.filesView.$el);
+            this.fileEditor.setWidget(this.filesView);
 
-            /*defines the view when we create a new File*/
-            this.fileEditor = new FileEditor({
-                documentIteration:this.iteration,
-                widget:this.filesView
-            });
+            /* Add the ListView to the tab */
+            $("#iteration-files").append(this.filesView.$el);
 
             this.cutomizeRendering();
 
@@ -203,21 +198,6 @@ define([
             });
 
             this.fileEditor.render();
-        },
-
-        /*
-         * Extract datas needed for the partial
-         */
-
-        fileDataMapper: function(file) {
-
-            return {
-                created:file.isCreated(),
-                url:file.isCreated() ? file.getUrl() : false,
-                shortName:file.getShortName(),
-                fullName:file.getFullName(),
-                cid:file.cid
-            }
         },
 
         getPrimaryButton: function() {
