@@ -27,9 +27,9 @@ define([
 		addAttribute: function () {
 			this.collection.add({
 				name: "",
-				attributeType: "TEXT",
+				attributeType: "TEXT"
 			});
-		},
+		}
 	});
 	return TemplateNewAttributesView;
 });
