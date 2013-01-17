@@ -1,77 +1,46 @@
 define([
 	"i18n",
 	"common/date",
-	"views/base",
+	"views/components/modal",
 	"views/template_new_attributes",
-	"text!templates/template_edit.html"
+	"text!templates/template_new.html"
 ], function (
 	i18n,
 	date,
-	BaseView,
+	ModalView,
 	TemplateNewAttributesView,
 	template
 ) {
-	var DocumentEditView = BaseView.extend({
-		className: "template-edit",
+	var TemplateEditView = ModalView.extend({
+
 		template: Mustache.compile(template),
+
 		initialize: function () {
-			BaseView.prototype.initialize.apply(this, arguments);
+            ModalView.prototype.initialize.apply(this, arguments);
 			// destroy previous template edit view if any
-			if (DocumentEditView._instance) {
-				DocumentEditView._oldInstance = DocumentEditView._instance;
+			if (TemplateEditView._instance) {
+                TemplateEditView._oldInstance = TemplateEditView._instance;
 			}
 			// keep track of the created template edit view
-			DocumentEditView._instance = this;
+            TemplateEditView._instance = this;
+		},
 
-			this.events["click header .close"] = "closeAction";
-			this.events["click footer .cancel"] = "closeAction";
-			this.events["click footer .btn-primary"] = "primaryAction";
-		},
-		modelToJSON: function () {
-			var data = this.model.toJSON();
-			// Format dates
-			if (data.creationDate) {
-				data.creationDate = date.formatTimestamp(
-					i18n._DATE_FORMAT,
-					data.creationDate);
-			}
-			return data;
-		},
-		renderAt: function (offset) {
-			this.offset = offset;
-			if (DocumentEditView._oldInstance) {
-				DocumentEditView._oldInstance.hide();
-				_.delay(this.render, 100);
-			} else {
-				this.render();
-			}
-		},
 		rendered: function () {
-			this.$el.css("left", this.offset.x)
 			this.attributesView = this.addSubView(
 				new TemplateNewAttributesView({
-					el: "#attributes-" + this.cid,
+                    el: "#tab-attributes-" + this.cid
 				})
-			)
+			);
 			this.attributesView.render();
 			this.attributesView.collection.reset(this.model.get("attributeTemplates"));
 		},
-		hide: function () {
-			var that = this;
-			this.$el.fadeOut(250, function () {
-				that.destroy();
-			});
-		},
-		closeAction: function () {
-			this.hide();
-			return false;
-		},
+
 		primaryAction: function () {
+            this.model.unset("reference");
 			this.model.save({
 				documentType: $("#form-" + this.cid + " .type").val(),
 				mask: $("#form-" + this.cid + " .mask").val(),
-				idGenerated: $("#form-" + this.cid + " .id-generated")
-					.attr("checked") ? true : false,
+				idGenerated: $("#form-" + this.cid + " .id-generated").attr("checked") ? true : false,
 				attributeTemplates: this.attributesView.collection.toJSON()
 			}, {
 				success: this.success,
@@ -79,6 +48,22 @@ define([
 			});
 			return false;
 		},
+
+        success: function (model, response) {
+            this.hide();
+        },
+
+        error: function (model, error) {
+            this.collection.remove(model);
+            if (error.responseText) {
+                this.alert({
+                    type: "error",
+                    message: error.responseText
+                });
+            } else {
+                console.error(error);
+            }
+        }
 	});
-	return DocumentEditView;
+	return TemplateEditView;
 });

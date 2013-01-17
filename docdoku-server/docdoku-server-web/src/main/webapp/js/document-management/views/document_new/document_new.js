@@ -1,12 +1,12 @@
 define([
 	"views/components/modal",
-	"views/document_new/document_new_attributes",
+	"views/document_new/document_attributes",
 	"views/document_new/document_new_template_list",
 	"views/document_new/document_new_workflow_list",
 	"text!templates/document_new/document_new.html"
 ], function (
 	ModalView,
-	DocumentNewAttributesView,
+	DocumentAttributesView,
 	DocumentNewTemplateListView,
 	DocumentNewWorkflowListView,
 	template
@@ -22,7 +22,7 @@ define([
 
         rendered: function() {
             this.attributesView = this.addSubView(
-                new DocumentNewAttributesView({
+                new DocumentAttributesView({
                     el: "#tab-attributes-" + this.cid
                 })
             );

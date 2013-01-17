@@ -36,7 +36,11 @@ define([
 		},
 		selectionChanged: function () {
 			var action = this.listView.checkedViews().length > 0 ? "show" : "hide";
-			this.$el.find(".actions .checkout-group")[action]();
+            if (action == "show") {
+                this.$el.find(".actions .checkout-group").css('display', 'inline-block');
+            } else {
+                this.$el.find(".actions .checkout-group").hide();
+            }
 			this.$el.find(".actions .delete")[action]();
 		},
 		actionCheckout: function () {
