@@ -16,7 +16,7 @@ define(function () {
 		"CREATION_DATE":				"Date de création",
 		"DATE":							"Date",
 		"_DATE_FORMAT":					"dd-mm-yyyy HH:MM:ss",
-		"_DATE_PICKER_DATE_FORMAT":     "yy-mm-dd",
+		"_DATE_PICKER_DATE_FORMAT":     "yyyy-mm-dd",
 		"DELETE_FOLDER_?":				"Supprimer le dossier ?",
 		"DELETE_SELECTION_?":			"Supprimer la sélection ?",
 		"DELETE":						"Supprimer",
