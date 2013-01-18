@@ -43,6 +43,8 @@ define([
 
             //events
             this.on("list:modelChanged", this.onModelChanged);
+            this.on("state:idle", this.onIdle);
+            this.on("state:cancel", this.onCancel);
 
             /**
              * Also declaring for other objects :
@@ -56,7 +58,7 @@ define([
              * component:rendered : after component is rendered, before state:idle
              */
 
-            //state lists
+
             this.components = []; // Warning : Backbone Collections takes only Models object.
             this.selection = new Backbone.Collection();
             this.newItems = new Backbone.Collection();
@@ -65,9 +67,9 @@ define([
 
         //DOM Events
         events:{
-            "click .editable-list-cancel-editor":"bindCancelButton",
-            "change input.item-selection":"bindItemSelected",
-            "click .editable-list-adder":"bindAddItem"
+            "click .editable-list-cancel-editor":"cancelButtonClicked",
+            "change input.item-selection":"itemSelectionChanged",
+            "click .editable-list-adder":"addItemClicked"
         },
 
 
@@ -76,6 +78,8 @@ define([
         },
 
         onIdle:function () {
+            this.getCancelButton().hide();
+            this.enableAddButton(true);
         },
 
         onCancel:function () {
@@ -86,17 +90,16 @@ define([
             return this.model.models;
         },
 
-        bindAddItem:function () {
+        addItemClicked:function () {
             this.trigger("state:working");
             this.trigger("list:addItem", this.getCreationEditorPlace());
         },
 
-        bindCancelButton:function () {
-            //this.getCreationEditorPlace().empty();
+        cancelButtonClicked:function () {
             this.trigger("state:cancel");
         },
 
-        bindItemSelected:function (evt) {
+        itemSelectionChanged:function (evt) {
             var checkbox = $(evt.target);
             var cid = checkbox.val();
             var selectedObject = this.model.get(cid);
@@ -109,7 +112,7 @@ define([
                 this.selection.add(selectedObject);
             } else {
                 this.trigger("list:unselected", selectedObject, index, checkbox.parents("li"));
-                kumo.assert(!_.include(this.selection, selectedObject), "The selection does not the selectedObject " + selectedObject);
+                kumo.assert(!_.include(this.selection, selectedObject), "The selection does not contain the selectedObject " + selectedObject);
                 this.selection.remove(selectedObject);
             }
 
@@ -138,7 +141,6 @@ define([
                 this.renderComponents();
             }
 
-            this.getCancelButton().hide();
             this.trigger("component:rendered");
             this.trigger("state:idle");
 
@@ -182,11 +184,9 @@ define([
         onModelChanged:function (item) {
             this.render();
             this.trigger("state:idle");
-
         },
 
         getNewItems:function () {
-            //kumo.assert(this.options.editable, "Can't get new items if not editable");
             return this.newItems;
         },
 
