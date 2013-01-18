@@ -1,26 +1,26 @@
 define([
 	"i18n",
-	"views/document_new/document_new_attribute_list_item",
-	"text!templates/partials/document_new_attribute_list_item.html",
-	"text!templates/document_new/document_new_attribute_list_item_date.html",
+	"views/document/document_attribute_list_item",
+	"text!templates/partials/document_attribute_list_item.html",
+	"text!templates/document/document_attribute_list_item_date.html",
     "common/date"
 ], function (
 	i18n,
-	DocumentNewAttributeListItemView,
-	document_new_attribute_list_item,
+	DocumentAttributeListItemView,
+	document_attribute_list_item,
 	template,
     date
 ) {
-	var DocumentNewAttributeListItemDateView = DocumentNewAttributeListItemView.extend({
+	var DocumentAttributeListItemDateView = DocumentAttributeListItemView.extend({
 
 		template: Mustache.compile(template),
 
 		partials: {
-			document_new_attribute_list_item: document_new_attribute_list_item
+			document_attribute_list_item: document_attribute_list_item
 		},
 
 		initialize: function () {
-			DocumentNewAttributeListItemView.prototype.initialize.apply(this, arguments);
+            DocumentAttributeListItemView.prototype.initialize.apply(this, arguments);
 		},
 
         /**
@@ -58,6 +58,6 @@ define([
 
 	});
 
-	return DocumentNewAttributeListItemDateView;
+	return DocumentAttributeListItemDateView;
 
 });

@@ -1,7 +1,7 @@
 define([
 	"collections/folder_document",
 	"views/content_document_list",
-	"views/document_new/document_new",
+	"views/document/document_new",
 	"text!templates/content_document_list_checkout_button_group.html",
 	"text!templates/folder_document_list.html"
 ], function (

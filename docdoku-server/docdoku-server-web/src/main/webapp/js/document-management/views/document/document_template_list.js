@@ -1,13 +1,13 @@
 define([
 	"collections/template",
 	"views/base",
-	"text!templates/document_new/document_new_template_select.html"
+	"text!templates/document/document_template_select.html"
 ], function (
 	TemplateList,
 	BaseView,
 	template
 ) {
-	var DocumentNewTemplateListView = BaseView.extend({
+	var DocumentTemplateListView = BaseView.extend({
 		template: Mustache.compile(template),
 		collection: function () {
 			return TemplateList.getInstance();
@@ -67,7 +67,7 @@ define([
 					elId.val(data);
 				}
 			}, "html"); // TODO: fixe the webservice return type (actualy: json)
-		},
+		}
 	});
-	return DocumentNewTemplateListView;
+	return DocumentTemplateListView;
 });

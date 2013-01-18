@@ -1,11 +1,11 @@
 define([
 	"views/base",
-	"views/document_new/document_new_attribute_list",
-	"text!templates/document_new/document_attributes.html",
+	"views/document/document_attribute_list",
+	"text!templates/document/document_attributes.html",
     "i18n"
 ], function (
 	BaseView,
-	DocumentNewAttributeListView,
+	DocumentAttributeListView,
 	template,
     i18n
 ) {
@@ -41,7 +41,7 @@ define([
 
 		rendered: function () {
 			this.attributesView = this.addSubView(
-				new DocumentNewAttributeListView({
+				new DocumentAttributeListView({
 					el: "#items-" + this.cid,
 					collection: this.collection
 				})

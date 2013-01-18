@@ -1,13 +1,13 @@
 define([
 	"collections/workflow_models",
 	"views/base",
-	"text!templates/document_new/document_new_workflow_select.html"
+	"text!templates/document/document_workflow_select.html"
 ], function (
 	WorkflowList,
 	BaseView,
 	template
 ) {
-	var DocumentNewWorkflowListView = BaseView.extend({
+	var DocumentWorkflowListView = BaseView.extend({
 
 		template: Mustache.compile(template),
 
@@ -37,5 +37,5 @@ define([
 
 	});
 
-	return DocumentNewWorkflowListView;
+	return DocumentWorkflowListView;
 });

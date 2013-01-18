@@ -2,14 +2,13 @@ define([
     "views/components/modal",
     "views/iteration/file_editor",
     "views/components/editable_list_view",
-    "views/document_new/document_attributes",
-    "text!templates/iteration/iteration_edition.html",
-    "text!templates/attributes/attribute_item.html",
+    "views/document/document_attributes",
+    "text!templates/iteration/document_iteration.html",
     "i18n",
     "common/date"
-], function (ModalView, FileEditor, EditableListView, DocumentAttributesView, template, attributePartial, i18n, date) {
+], function (ModalView, FileEditor, EditableListView, DocumentAttributesView, template, i18n, date) {
 
-    var IterationEditView = ModalView.extend({
+    var IterationView = ModalView.extend({
 
         template:Mustache.compile(template),
 
@@ -200,5 +199,5 @@ define([
         }
 
     });
-    return IterationEditView;
+    return IterationView;
 });

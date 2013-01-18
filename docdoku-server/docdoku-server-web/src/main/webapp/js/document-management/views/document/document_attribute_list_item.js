@@ -3,7 +3,7 @@ define([
 ], function (
 	ListItemView
 ) {
-	var DocumentNewAttributeListItemView = ListItemView.extend({
+	var DocumentAttributeListItemView = ListItemView.extend({
 
 		tagName: "div",
 
@@ -69,5 +69,5 @@ define([
 
 	});
 
-	return DocumentNewAttributeListItemView;
+	return DocumentAttributeListItemView;
 });

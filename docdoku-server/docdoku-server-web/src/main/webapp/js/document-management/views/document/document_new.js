@@ -1,14 +1,14 @@
 define([
 	"views/components/modal",
-	"views/document_new/document_attributes",
-	"views/document_new/document_new_template_list",
-	"views/document_new/document_new_workflow_list",
-	"text!templates/document_new/document_new.html"
+	"views/document/document_attributes",
+	"views/document/document_template_list",
+	"views/document/document_workflow_list",
+	"text!templates/document/document_new.html"
 ], function (
 	ModalView,
 	DocumentAttributesView,
-	DocumentNewTemplateListView,
-	DocumentNewWorkflowListView,
+	DocumentTemplateListView,
+	DocumentWorkflowListView,
 	template
 ) {
 	var DocumentNewView = ModalView.extend({
@@ -29,7 +29,7 @@ define([
             this.attributesView.render();
 
             this.templatesView = this.addSubView(
-                new DocumentNewTemplateListView({
+                new DocumentTemplateListView({
                     el: "#templates-" + this.cid,
                     attributesView: this.attributesView
                 })
@@ -37,7 +37,7 @@ define([
             this.templatesView.collection.fetch();
 
             this.workflowsView = this.addSubView(
-                new DocumentNewWorkflowListView({
+                new DocumentWorkflowListView({
                     el: "#workflows-" + this.cid
                 })
             );
