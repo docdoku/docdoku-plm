@@ -52,7 +52,7 @@ define([
 				});
 			}
 			return false;
-		},
+		}
 	});
 	return TemplateContentListView;
 });

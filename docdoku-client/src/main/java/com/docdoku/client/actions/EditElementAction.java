@@ -142,7 +142,7 @@ public class EditElementAction extends ClientAbstractAction {
                                 @Override
                                 public void run() {
                                     new EditDocDialog(mOwner, newDocM.getLastIteration(), okAction,
-                                    editAction, addAttributeAction, addLinkAction, scanAction);
+                                    editAction, scanAction, addAttributeAction, addLinkAction);
                                 }
                             });
                             

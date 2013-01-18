@@ -241,6 +241,7 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
     public void showShortcutsPanel(){
         mFolderTree.setSelectionPath(null);
         setContentPane(mShortcutsPanel);
+        mShortcutsPanel.invalidate();
     }
 
     private void createListener() {

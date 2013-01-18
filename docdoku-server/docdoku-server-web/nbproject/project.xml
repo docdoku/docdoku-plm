@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
             <name>docdoku-server-web</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <web-module-libraries>
                 <library dirs="200">
                     <file>${reference.docdoku-common.jar}</file>

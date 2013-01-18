@@ -21,9 +21,11 @@ define([
 		modelToJSON: function () {
 			var data = this.model.toJSON();
 			// Format dates
-			data.creationDate = date.formatTimestamp(
-				i18n._DATE_FORMAT,
-				data.creationDate);
+            if(!_.isUndefined(data.creationDate)){
+                data.creationDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.creationDate);
+            }
 			return data;
 		},
 		actionEdit: function (evt) {
@@ -40,10 +42,9 @@ define([
 						model: that.model
 					})
 				);
-				$("#content").append(that.editView.el);
-				that.editView.renderAt(offset);
+				$("#content").after(that.editView.el);
 			});
-		},
+		}
 	});
 	return TemplateListItemView;
 });

@@ -65,6 +65,10 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                     this.fetch();
                 }
             });
+        },
+
+        isCheckout: function() {
+            return !_.isNull(this.attributes.checkOutDate);
         }
 
     });

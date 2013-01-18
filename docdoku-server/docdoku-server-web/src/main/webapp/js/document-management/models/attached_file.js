@@ -10,8 +10,16 @@ define([
             this.className = "AttachedFile";
             //expected : documentIteration
             kumo.assertNotEmpty(this.get("created"), "created attribute not set at AttachedFile creation");
+        },
 
-            //_.bindAll(this);
+        /**
+         * implementation is : return _.clone(this.attributes);
+         * We must remove the documentIteration object to avoid stack overflow
+        **/
+        toJSON : function(){
+            var attr = _.clone(this.attributes);
+            delete attr.documentIteration;
+            return attr;
         },
 
         getDocumentIteration : function(){
