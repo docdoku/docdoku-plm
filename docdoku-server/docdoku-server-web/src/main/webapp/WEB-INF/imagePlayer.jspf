@@ -6,7 +6,7 @@
         </td>
         <td><a href="${filePath}">${fileName}</a></td>
     </tr>
-</table>
+</table><!-- ! -->
 <div style="display:none;" id="img${index}">
     <div align="right">
         <a href="#">
