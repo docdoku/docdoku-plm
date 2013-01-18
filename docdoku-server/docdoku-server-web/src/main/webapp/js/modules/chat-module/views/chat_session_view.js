@@ -10,6 +10,7 @@ define(["modules/chat-module/i18n",
             +"<div class='chat_session_header'>"
             +"<span class='chat_session_title'><i class='icon-envelope'></i>  <%= chatSession.remoteUser %> | <%= chatSession.context %></span>"
             +"<i class='icon-remove'></i>"
+            +"<i class='icon-facetime-video'></i>"
             +"</div>"
             +"<ul class='chat_session_messages'></ul>"
             +"<div class='chat_session_reply'>"
@@ -24,6 +25,7 @@ define(["modules/chat-module/i18n",
         events : {
             "submit form" : "onSubmitForm",
             "click .icon-remove" : "onClose",
+            "click .icon-facetime-video" : "onVideoButtonClick",
             "click .chat_session_title":"onGlobalClick",
             "click .chat_session_messages":"onGlobalClick",
             "click input[name=chat_message_session_input]":"onGlobalClick"
@@ -39,7 +41,7 @@ define(["modules/chat-module/i18n",
 
             this.collection.bind('add', this.add, this);
 
-            _(this).bindAll("onSubmitForm","onClose","onGlobalClick");
+            _(this).bindAll("onSubmitForm","onClose","onGlobalClick","onVideoButtonClick");
 
         },
 
@@ -120,6 +122,7 @@ define(["modules/chat-module/i18n",
                     that.$el.css("bottom","auto");
                 }
             });
+
             // override jquery style, better behavior
             this.$el.css("position","absolute");
 
@@ -132,22 +135,20 @@ define(["modules/chat-module/i18n",
 
             if(!textInput.value.length) return false;
 
-
-            mainChannel.sendJSON({
+            // build the message
+            var message = {
                 type: ChannelMessagesType.CHAT_MESSAGE,
-                callee: this.remoteUser,
+                remoteUser: this.remoteUser,
                 message: textInput.value,
-                context: this.context
-            });
+                context: this.context,
+                sender:APP_CONFIG.login
+            };
 
+            // send it to remote
+            mainChannel.sendJSON(message);
 
-            Backbone.Events.trigger('NewChatMessage', {
-                remoteUser:this.remoteUser,
-                sender:APP_CONFIG.login,
-                message:textInput.value,
-                type:"chat_message",
-                context: this.context
-            });
+            // trigger message render on local
+            Backbone.Events.trigger('NewChatMessage', message);
 
             textInput.value = "";
 
@@ -178,6 +179,10 @@ define(["modules/chat-module/i18n",
             if(!this.isOnTop){
                 Backbone.Events.trigger("ChatSessionFocusRequired",this);
             }
+        },
+
+        onVideoButtonClick:function(){
+            Backbone.Events.trigger('NewWebRTCSession', {remoteUser:this.remoteUser,context:this.context});
         },
 
         setOnTop:function(){

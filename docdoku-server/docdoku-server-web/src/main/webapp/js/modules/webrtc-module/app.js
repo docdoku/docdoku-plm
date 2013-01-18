@@ -3,59 +3,107 @@ define([
     "modules/webrtc-module/views/webrtc_module_view"
 ], function (i18n, WebRTCModuleView) {
 
-    var webRTCModuleView = new WebRTCModuleView();
+    var webRTCModuleView = new WebRTCModuleView().render();
 
-    // handle tests
-    // trigger it : Backbone.Events.trigger('WebRTCTest');
-    Backbone.Events.on('WebRTCTest', webRTCModuleView.runCall);
-
-    // handle accept
-    Backbone.Events.on('AcceptWebRTCInvite', webRTCModuleView.onAcceptWebRTCInvite);
-
-    // handle reject
-    Backbone.Events.on('RejectWebRTCInvite', webRTCModuleView.onRejectWebRTCInvite);
-
-    // handle status change
-    Backbone.Events.on('WebRTCStatusChanged', webRTCModuleView.onWebRTCStatusChanged);
-
-    // handle new session
+    // handle new webRtc session initiated by local user
     Backbone.Events.on('NewWebRTCSession', webRTCModuleView.onNewWebRTCSession);
+
+    // handle accept for local user
+    Backbone.Events.on('CallAcceptedByLocalUser', webRTCModuleView.onCallAcceptedByLocalUser);
+    // handle reject for local user
+    Backbone.Events.on('CallRejectedByLocalUser', webRTCModuleView.onCallRejectedByLocalUser);
+
+    // handle accept for remote user
+    Backbone.Events.on('CallAcceptedByRemoteUser', webRTCModuleView.onCallAcceptedByRemoteUser);
+    // handle reject for remote user
+    Backbone.Events.on('CallRejectedByRemoteUser', webRTCModuleView.onCallRejectedByRemoteUser);
+
+    // handle hang up from remote
+    Backbone.Events.on('CallHangUpByRemoteUser', webRTCModuleView.onCallHangUpByRemoteUser);
+
+    // handle status change for channel listener
+    Backbone.Events.on('WebRTCStatusChanged', webRTCModuleView.onWebRTCStatusChanged);
 
     // Websocket Listener
     var webRTCInvitationListener = new ChannelListener({
 
+        // messages listened
+        messagePattern : /^WEBRTC_.+/,
+
+        webRtcSignalTypes : [
+            ChannelMessagesType.WEBRTC_ANSWER,
+            ChannelMessagesType.WEBRTC_BYE,
+            ChannelMessagesType.WEBRTC_CANDIDATE,
+            ChannelMessagesType.WEBRTC_OFFER
+        ],
+
         isApplicable: function (messageType) {
-            return messageType == ChannelMessagesType.WEBRTC_INVITE;
+            return messageType.match(this.messagePattern) != null
+                || _.indexOf(this.webRtcSignalTypes,messageType) > -1 ;
         },
 
         onMessage: function (message) {
 
-            var notification = {
+            if(message.error){
+                webRTCModuleView.onError(message);
+                return;
+            }
 
-                title: i18n["VIDEO_INVITE_NOTIFICATION_TITLE"],
+            if(_.indexOf(this.webRtcSignalTypes,message.type) > -1){
+                webRTCModuleView.processSignalingMessage(message);
+                return;
+            }
 
-                content: message.remoteUser + " " + i18n["VIDEO_INVITE"],
+            if(message.type == ChannelMessagesType.WEBRTC_ACCEPT){
+                // remote user accept
+                Backbone.Events.trigger('CallAcceptedByRemoteUser', message);
+                return;
+            }
 
-                actions: [
-                    {
-                        title: i18n["ACCEPT_VIDEO_INVITE"],
+            if(message.type == ChannelMessagesType.WEBRTC_REJECT){
+                // remote user reject the invite
+                Backbone.Events.trigger('CallRejectedByRemoteUser', message);
+                return;
+            }
 
-                        handler: function () {
-                            Backbone.Events.trigger('AcceptWebRTCInvite', message);
+            if(message.type == ChannelMessagesType.WEBRTC_HANGUP){
+                // remote user reject
+                Backbone.Events.trigger('CallHangUpByRemoteUser', message);
+                return;
+            }
+
+            if(message.type == ChannelMessagesType.WEBRTC_INVITE){
+
+                // remote user invites local user
+
+                var notification = {
+
+                    title: i18n["VIDEO_INVITE_NOTIFICATION_TITLE"],
+
+                    content: message.remoteUser + " " + i18n["VIDEO_INVITE"],
+
+                    actions: [
+                        {
+                            title: i18n["ACCEPT_VIDEO_INVITE"],
+
+                            handler: function () {
+                                Backbone.Events.trigger('CallAcceptedByLocalUser', message);
+                            }
+                        },
+                        {
+                            title: i18n["REJECT_VIDEO_INVITE"],
+
+                            handler: function () {
+                                Backbone.Events.trigger('CallRejectedByLocalUser', message);
+                            }
                         }
-                    },
-                    {
-                        title: i18n["REJECT_VIDEO_INVITE"],
+                    ]
 
-                        handler: function () {
-                            Backbone.Events.trigger('RejectWebRTCInvite', message);
-                        }
-                    }
-                ]
+                };
 
-            };
+                Backbone.Events.trigger('NewNotification', notification);
 
-            Backbone.Events.trigger('NewNotification', notification);
+            }
 
         },
 
@@ -68,34 +116,3 @@ define([
     mainChannel.addChannelListener(webRTCInvitationListener);
 
 });
-/*
-
-function videoCall(authorLogin) {
-
-    var webRtcModal = $("#webRtcModal");
-    var webRtcModalBody = webRtcModal.find(".modal-body");
-    var webRtcModalTitle = webRtcModal.find("h3");
-
-
-    webRtcModal.one('shown', function () {
-        webRtcModalBody.html("<iframe src=\"" + getWebRtcUrlRoom(authorLogin) + "\" />");
-        webRtcModalTitle.text("Call to " + authorLogin);
-    });
-    webRtcModal.one('hidden', function () {
-        webRtcModalBody.empty();
-    });
-
-    webRtcModal.modal('show');
-}
-
-function getWebRtcUrlRoom(authorLogin) {
-    var getIntFromString = function (str) {
-        var count = 0;
-        for (var i = 0; i < str.length; i++) {
-            count += str.charCodeAt(i) * 60 * i;
-        }
-        return count;
-    }
-    return "/webRTCRoom?r=" + getIntFromString(authorLogin);
-}
-*/

@@ -57,7 +57,7 @@ define(["common-objects/collections/users"],
 
                                 // handle webrtc button click event
                                 $tip.find(".webRTC_invite_button").one("click", function (ev) {
-                                    Backbone.Events.trigger('NewWebRTCSession', user.get("login"));
+                                    Backbone.Events.trigger('NewWebRTCSession', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context });
                                     hideTip();
                                 });
 

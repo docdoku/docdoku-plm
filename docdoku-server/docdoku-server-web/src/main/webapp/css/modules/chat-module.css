@@ -45,7 +45,12 @@
     right: 7px;
     cursor:pointer;
 }
-
+#chat_module > .chat_session > .chat_session_header > .icon-facetime-video{
+    position: absolute;
+    top: 3px;
+    right: 27px;
+    cursor:pointer;
+}
 #chat_module > .chat_session > ul.chat_session_messages{
     width: 100%;
     margin: 10px 0 0 0;
