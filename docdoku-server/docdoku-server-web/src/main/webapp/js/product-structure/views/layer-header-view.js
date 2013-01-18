@@ -1,4 +1,4 @@
-define(function() {
+define(["!i18n!localization/nls/product-structure-strings"], function (i18n) {
 
     var LayerHeaderView = Backbone.View.extend({
 
@@ -13,7 +13,7 @@ define(function() {
             this.allShown = true;
         },
 
-        template: '<i class="icon-eye-open start"></i>Layers<i class="icon-plus end"></i>',
+        template: '<i class="icon-eye-open start"></i>'+ i18n.LAYERS + '<i class="icon-plus end"></i>',
 
         render: function() {
             this.$el.html(this.template);

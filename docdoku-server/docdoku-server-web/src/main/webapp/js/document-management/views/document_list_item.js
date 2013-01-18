@@ -1,5 +1,5 @@
 define([
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"common/date",
 	"views/checkbox_list_item",
     "views/iteration/document_iteration",

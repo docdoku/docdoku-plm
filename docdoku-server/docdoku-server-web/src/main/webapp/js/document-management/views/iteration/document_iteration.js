@@ -4,7 +4,7 @@ define([
     "views/components/editable_list_view",
     "views/document/document_attributes",
     "text!templates/iteration/document_iteration.html",
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "common/date"
 ], function (ModalView, FileEditor, EditableListView, DocumentAttributesView, template, i18n, date) {
 

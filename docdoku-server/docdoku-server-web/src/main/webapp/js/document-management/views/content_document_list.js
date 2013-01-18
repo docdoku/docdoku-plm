@@ -1,5 +1,5 @@
 define([
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"views/content",
 	"views/document_list",
 	"text!templates/content_document_list_checkout_button_group.html",

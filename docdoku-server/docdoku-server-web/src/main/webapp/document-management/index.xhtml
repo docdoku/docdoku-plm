@@ -21,12 +21,13 @@
                 };
                 $(document).ready(function() {
                     require.config({
-                            baseUrl: "${request.contextPath}/js/document-management",
-                            paths: {
-                                    "require": "../lib/require/1.0.8/require.min",
-                                    "text": "../lib/require/1.0.8/text.min"
-                            },
-                            locale: "#{request.locale}"
+                        baseUrl: "${request.contextPath}/js/document-management",
+                        paths: {
+                                "require": "../lib/require/require.min-2.1.2",
+                                "text": "../lib/require/text-2.0.3",
+                                "i18n": "../lib/require/i18n-2.0.1",
+                                "localization": "../localization"
+                        }
                     });
                     require(["app"]);
                 });

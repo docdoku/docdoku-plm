@@ -2,7 +2,7 @@ define([
 	"views/base",
 	"views/document/document_attribute_list",
 	"text!templates/document/document_attributes.html",
-    "i18n"
+    "i18n!localization/nls/document-management-strings"
 ], function (
 	BaseView,
 	DocumentAttributeListView,

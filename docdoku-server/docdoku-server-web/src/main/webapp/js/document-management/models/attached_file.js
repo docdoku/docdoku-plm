@@ -1,5 +1,5 @@
 define([
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "models/document_iteration"
 ], function (
     i18n,

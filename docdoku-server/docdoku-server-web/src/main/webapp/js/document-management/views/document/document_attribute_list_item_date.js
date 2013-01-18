@@ -1,5 +1,5 @@
 define([
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"views/document/document_attribute_list_item",
 	"text!templates/partials/document_attribute_list_item.html",
 	"text!templates/document/document_attribute_list_item_date.html",

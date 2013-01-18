@@ -3,7 +3,7 @@
 		<a class="close" data-dismiss="modal">×</a>
 		<h3>
             {{model.id}}
-            {{^model.id}}<span class="icon"></span>{{_.NEW_TEMPLATE}}{{/model.id}}
+            {{^model.id}}<span class="icon"></span>{{i18n.NEW_TEMPLATE}}{{/model.id}}
         </h3>
 	</div>
 	<div class="modal-body">
@@ -11,40 +11,40 @@
 		<div class="tabs">
 			<ul class="nav nav-tabs">
 				<li class="active">
-					<a href="#tab-main-{{view.cid}}" data-toggle="tab">{{_.GENERAL}}</a>
+					<a href="#tab-main-{{view.cid}}" data-toggle="tab">{{i18n.GENERAL}}</a>
 				</li>
 				<li>
-					<a href="#tab-attributes-{{view.cid}}" data-toggle="tab">{{_.ATTRIBUTES}}</a>
+					<a href="#tab-attributes-{{view.cid}}" data-toggle="tab">{{i18n.ATTRIBUTES}}</a>
 				</li>
                 <li>
-                    <a href="#tab-files-{{view.cid}}" data-toggle="tab">{{_.FILES}}</a>
+                    <a href="#tab-files-{{view.cid}}" data-toggle="tab">{{i18n.FILES}}</a>
                 </li>
 			</ul>
 			<form id="form-{{view.cid}}" class="form-horizontal tab-content">
 				<div class="tab-pane active" id="tab-main-{{view.cid}}">
 					<div class="control-group">
-						<label class="control-label required" for="form-{{view.cid}}-reference">{{_.REFERENCE}}</label>
+						<label class="control-label required" for="form-{{view.cid}}-reference">{{i18n.REFERENCE}}</label>
 						<div class="controls">
 							<input type="text" class="input-xlarge reference" id="form-{{view.cid}}-reference" required value="{{model.id}}" {{#model.id}}disabled{{/model.id}}/>
 							<p class="help-block"></p>
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="form-{{view.cid}}-type">{{_.TYPE}}</label>
+						<label class="control-label" for="form-{{view.cid}}-type">{{i18n.TYPE}}</label>
 						<div class="controls">
 							<input type="text" class="input-xlarge type" id="form-{{view.cid}}-type" value="{{model.documentType}}">
 							<p class="help-block"></p>
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="form-{{view.cid}}-mask">{{_.MASK}}</label>
+						<label class="control-label" for="form-{{view.cid}}-mask">{{i18n.MASK}}</label>
 						<div class="controls">
 							<input type="text" class="input-xlarge mask" id="form-{{view.cid}}-mask" value="{{model.mask}}">
 							<p class="help-block"></p>
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="form-{{view.cid}}-id-generated">{{_.ID_GENERATION}}</label>
+						<label class="control-label" for="form-{{view.cid}}-id-generated">{{i18n.ID_GENERATION}}</label>
 						<div class="controls">
 							<input type="checkbox" class="input-xlarge id-generated" id="form-{{view.cid}}-id-generated" {{#model.idGenerated}}checked{{/model.idGenerated}}>
 							<p class="help-block"></p>
@@ -60,9 +60,9 @@
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-primary" form="form-{{view.cid}}">
-            {{#model.id}}{{_.SAVE}}{{/model.id}}
-            {{^model.id}}{{_.CREATE}}{{/model.id}}
+            {{#model.id}}{{i18n.SAVE}}{{/model.id}}
+            {{^model.id}}{{i18n.CREATE}}{{/model.id}}
 		</button>
-		<a class="btn cancel" data-dismiss="modal">{{_.CANCEL}}</a>
+		<a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
 	</div>
 </div>

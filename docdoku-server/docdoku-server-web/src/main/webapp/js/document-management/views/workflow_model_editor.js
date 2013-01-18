@@ -8,7 +8,7 @@
 
 define([
     "require",
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
     "collections/users",

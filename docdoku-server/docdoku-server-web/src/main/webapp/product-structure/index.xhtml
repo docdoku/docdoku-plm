@@ -11,7 +11,7 @@
         </ui:define>
         <ui:define name="styles">     
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css"/>
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/product-structure.css"/>   
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/product-structure.css"/>
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/navigation-controls.css"/>
         <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less"/>
         </ui:define>
@@ -48,12 +48,12 @@
                 require.config({
                     baseUrl: "${request.contextPath}/js/product-structure",
                     paths: {
-                        "require": "../lib/require/1.0.8/require.min",
-                        "text": "../lib/require/1.0.8/text.min"
-                    },
-                    locale: "#{request.locale}"
+                        "require": "../lib/require/require.min-2.1.2",
+                        "text": "../lib/require/text-2.0.3",
+                        "i18n": "../lib/require/i18n-2.0.1",
+                        "localization": "../localization"
+                    }
                 });
-
 
                 require(["app"], function(AppView) {
                     new AppView();
