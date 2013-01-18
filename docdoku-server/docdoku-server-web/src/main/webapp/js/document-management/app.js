@@ -1,5 +1,5 @@
 function debug(str){
-    console.log("DEBUG >> "+str);
+    console.log(str);
 }
 
 define([

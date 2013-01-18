@@ -30,6 +30,7 @@ import java.util.List;
 public class ComponentDTO implements Serializable{
 
     private String author;
+    private String authorLogin;
     private String number;
     private String name;
     private String version;
@@ -134,6 +135,14 @@ public class ComponentDTO implements Serializable{
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getAuthorLogin() {
+        return authorLogin;
+    }
+
+    public void setAuthorLogin(String authorLogin) {
+        this.authorLogin = authorLogin;
     }
 
     public int getAmount() {
