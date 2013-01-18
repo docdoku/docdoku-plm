@@ -112,10 +112,11 @@
                             <li><img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/></li>
                             <li><a class="brand" href="#" style="color: white">&nbsp;&nbsp;&nbsp;DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a></li>
                             <li class="active"><a href="#" OnClick="hide_all();">${docm}</a></li>
-                            <li><a href="#" OnClick="show_hide('dl');" style="color: white"><fmt:message key="sidebar.title1"/></a></li>
-                            <li><a href="#" OnClick="show_hide('lien');" style="color: white"><fmt:message key="sidebar.title2"/></a></li>
                             <li><a href="#" OnClick="show_hide('document');" style="color: white"><fmt:message key="section1.title"/></a></li>
                             <li><a href="#" OnClick="show_hide('iteration');" style="color: white"><fmt:message key="section2.title"/></a></li>
+                            <li><a href="#" OnClick="show_hide('dl');" style="color: white"><fmt:message key="sidebar.title1"/></a></li>
+                            <li><a href="#" OnClick="show_hide('dl');" style="color: white"><fmt:message key="section2.attributs"/></a></li>
+                            <li><a href="#" OnClick="show_hide('lien');" style="color: white"><fmt:message key="sidebar.title2"/></a></li>
                         </ul>
                     </div>
                 </div>
