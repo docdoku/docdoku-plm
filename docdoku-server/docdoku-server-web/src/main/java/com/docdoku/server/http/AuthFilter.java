@@ -46,7 +46,7 @@ public class AuthFilter implements Filter {
 
         HttpSession sessionHTTP = httpRequest.getSession();
         Account account = (Account) sessionHTTP.getAttribute("account");
-        
+
         if (account == null) {
             String qs=httpRequest.getQueryString();
             String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);

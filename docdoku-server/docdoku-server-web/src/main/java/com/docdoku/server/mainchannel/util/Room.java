@@ -1,7 +1,12 @@
-package com.docdoku.server.webrtc.util;
+package com.docdoku.server.mainchannel.util;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Room {
@@ -22,12 +27,12 @@ public class Room {
     
     
     
-    /** Retrieve a {@link Room} instance from database */
+    /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
     public static Room getByKeyName(String roomKey) {
         return DB.get(roomKey);
     }
 
-    /** Called to disconnect a user (eventually remove the reserved {@link Room}) 
+    /** Called to disconnect a user (eventually remove the reserved {@link com.docdoku.server.mainchannel.util.Room})
      * when one of the conference legs are cut, i.e. a WebSocket connection is closed */
     public static void disconnect(String token) {
         if (token != null) {
@@ -48,8 +53,10 @@ public class Room {
         }
     }
 
+    public static ConcurrentMap<String, Room> getDB() {
+        return DB;
+    }
 
-    
 
     /** @return a {@link String} representation of this room */
     @Override
@@ -93,7 +100,7 @@ public class Room {
         return (user != null && (user.equals(user1) || user.equals(user2)));
     }
 
-    /** Add a new participant to this room 
+    /** Add a new participant to this room
      * @return if participant is found */
     public boolean addUser(String user) {
         boolean success = true;
@@ -137,11 +144,27 @@ public class Room {
         DB.put(keyName, this);
     }
 
-    /** Delete/Remove current {@link Room} instance from database */
+    /** Delete/Remove current {@link com.docdoku.server.mainchannel.util.Room} instance from database */
     public void delete() {
         if (keyName != null) {
             DB.remove(keyName);
             keyName = null;
         }
+    }
+
+    public static void removeUserFromAllRoom(String callerLogin) {
+        //log("removeUserFromAllRoom : "+callerLogin);
+        Set<Map.Entry<String, Room>> rooms = new HashSet<Map.Entry<String, Room>>(DB.entrySet());
+        for (Map.Entry<String, Room> e : rooms) {
+            if (e.getValue().hasUser(callerLogin)) {
+                //log("REMOVE USER "+callerLogin+" from ROOM "+e.getKey());
+                e.getValue().removeUser(callerLogin);
+            }
+        }
+
+    }
+
+    public static void log(String message) {
+        Logger.getLogger(Room.class.getName()).log(Level.WARNING, "DEBUG ROOM : "+message);
     }
 }
