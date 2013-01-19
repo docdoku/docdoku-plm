@@ -18,25 +18,25 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.webrtc;
+package com.docdoku.server.mainchannel;
 
 import com.sun.grizzly.websockets.*;
 
 
-public class WebRTCWebSocket extends DefaultWebSocket {
+public class MainChannelWebSocket extends DefaultWebSocket {
     
-    private String token;
+    private String userLogin;
     
-    public WebRTCWebSocket(ProtocolHandler handler, WebSocketListener... listeners) {
+    public MainChannelWebSocket(ProtocolHandler handler, WebSocketListener... listeners) {
         super(handler, listeners);
     }
 
-    public String getToken() {
-        return token;
+    public String getUserLogin() {
+        return userLogin;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
     
     

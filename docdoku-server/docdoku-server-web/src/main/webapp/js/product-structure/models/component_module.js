@@ -1,6 +1,6 @@
 define(["models/part_iteration"], function (PartIteration) {
 
-    var ComponentModule = {}
+    var ComponentModule = {};
 
     ComponentModule.Model = Backbone.Model.extend({
 
@@ -10,12 +10,14 @@ define(["models/part_iteration"], function (PartIteration) {
             version: null,
             description: null,
             author: null,
+            authorLogin: null,
             iteration: null,
             standardPart: false,
             partUsageLinkId: null,
             amount: 0,
             components: [],
-            assembly: false
+            assembly: false,
+            mail: null
         },
 
         isAssembly: function() {
@@ -66,16 +68,8 @@ define(["models/part_iteration"], function (PartIteration) {
             return this.get('author');
         },
 
-        getWebRtcUrlRoom: function() {
-            //TODO find a better system for room number
-            var getIntFromString = function(str) {
-                var count = 0;
-                for (var i = 0 ; i < str.length ; i++){
-                    count += str.charCodeAt(i)*60*i;
-                }
-                return count;
-            }
-            return "/webRTCRoom?r=" + getIntFromString(this.getAuthor());
+        getAuthorLogin: function() {
+            return this.get('authorLogin');
         },
 
         getIteration: function() {

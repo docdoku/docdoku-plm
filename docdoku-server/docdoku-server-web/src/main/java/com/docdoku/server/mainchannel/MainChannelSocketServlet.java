@@ -17,35 +17,33 @@
  * You should have received a copy of the GNU Affero General Public License  
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
-
-package com.docdoku.server.webrtc;
+package com.docdoku.server.mainchannel;
 
 import com.sun.grizzly.websockets.WebSocketEngine;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
+@WebServlet(name = "MainChannelSocketServlet", urlPatterns = {"/mainChannelSocket"})
+public class MainChannelSocketServlet extends HttpServlet {
 
-@WebServlet(name = "WebRTCSocketServlet", urlPatterns = {"/webRTCSocket"})
-public class WebRTCSocketServlet  extends HttpServlet {
+    private final MainChannelApplication app = new MainChannelApplication();
 
-    private final WebRTCApplication app = new WebRTCApplication();
-
-    /*
     @Override
     public void init(ServletConfig config) throws ServletException {
-        WebSocketEngine.getEngine().register(app);
-    }*/
-    
-    @Override
-    public void init(ServletConfig config) throws ServletException {
+        Logger.getLogger(MainChannelSocketServlet.class.getName()).log(Level.SEVERE, "MainChannelSocketServlet : init");
+        
         WebSocketEngine.getEngine().register(
-            config.getServletContext().getContextPath() + "/webRTCSocket", app);
+                config.getServletContext().getContextPath() + "/mainChannelSocket", app);
+
     }
-    
+
     @Override
     public void destroy() {
+        System.out.println("MainChannelSocketServlet : destroy");
         WebSocketEngine.getEngine().unregister(app);
     }
 }

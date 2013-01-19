@@ -48,16 +48,26 @@
                 require.config({
                     baseUrl: "${request.contextPath}/js/product-structure",
                     paths: {
+
                         "require": "../lib/require/require.min-2.1.2",
                         "text": "../lib/require/text-2.0.3",
                         "i18n": "../lib/require/i18n-2.0.1",
-                        "localization": "../localization"
-                    }
+                        "localization": "../localization",
+                        "modules":"../modules",
+                        "common-objects":"../common-objects"
+                    },
+                    locale: "#{request.locale}"
                 });
 
                 require(["app"], function(AppView) {
                     new AppView();
                 });
+
+                require(["modules/user-popover-module/app",
+                         "modules/notifications-module/app",
+                         "modules/chat-module/app",
+                         "modules/webrtc-module/app"]);
+
             });                
         </script>
         <script type="text/x-underscore-template" id="part_metadata_template">
@@ -85,7 +95,10 @@
                     </div>
                     <div class="span4">
                         <span class="part_metadata_key">Author :</span>
-                        <span class="part_metadata_value" id="part_metadata_author"><a>{{getAuthor}} <i class="icon-facetime-video"></i></a></span>
+
+                        <span class="part_metadata_value">
+                            <a href="#" class="author-popover">{{getAuthor}}</a>    
+                        </span>  
                     </div>
                 </div>
             </div>
@@ -219,15 +232,11 @@
                     </div>
                 </div>
 
-                <div class="modal hide fade" id="webRtcModal">
-                    <div class="modal-header">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="hangup_webrtc_call_btn">hangup</button>
-                        <h3></h3>
-                    </div>
-                    <div class="modal-body">
-                    </div>
-                </div>
-
+            </div>
+        </ui:define>
+        <ui:define name="preFooter">
+            <div id="preFooter">
+                <div id="chat_module"></div>
             </div>
         </ui:define>
     </ui:composition>
