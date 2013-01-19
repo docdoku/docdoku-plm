@@ -1,6 +1,6 @@
 define([
 	"require",
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"collections/folder",
 	"views/components/list_item",
 	"views/folder_list",

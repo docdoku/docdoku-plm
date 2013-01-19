@@ -1,6 +1,6 @@
 define([
 	"require",
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"text!templates/alert.html"
 ], function (
 	require,
@@ -8,7 +8,6 @@ define([
 	alert_template
 ) {
 	var BaseView = Backbone.View.extend({
-
 
         modelEvents: {
 			"change":	"modelChange",
@@ -132,7 +131,7 @@ define([
 		},
 		renderData: function () {
 			var data = {};
-			data._ = i18n;
+			data.i18n = i18n;
 			data.view = this.viewToJSON();
 			if (this.model) data.model = this.modelToJSON();
 			if (this.collection) data.collection = this.collectionToJSON();

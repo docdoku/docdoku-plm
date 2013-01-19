@@ -8,10 +8,10 @@
 
 define([
     "require",
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
-    "collections/users",
+    "common-objects/collections/users",
     "models/activity_model"
 ], function(require, i18n, WorkflowModel, template, Users, ActivityModel) {
     var WorkflowModelEditorView = Backbone.View.extend({

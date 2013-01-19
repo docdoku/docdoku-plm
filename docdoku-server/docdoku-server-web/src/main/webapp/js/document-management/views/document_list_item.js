@@ -1,14 +1,14 @@
 define([
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"common/date",
 	"views/checkbox_list_item",
-    "views/iteration/iteration_edition",
+    "views/iteration/document_iteration",
 	"text!templates/document_list_item.html"
 ], function (
 	i18n,
 	date,
 	CheckboxListItemView,
-    IterationEditView,
+    IterationView,
 	template
 ) {
 	var DocumentListItemView = CheckboxListItemView.extend({
@@ -45,7 +45,7 @@ define([
 		actionEdit: function (evt) {
 			var that = this;
 			this.model.fetch().success(function () {
-                new IterationEditView({
+                new IterationView({
                     model: that.model
                 }).show();
             });

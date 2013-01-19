@@ -1,20 +1,20 @@
 <div class="modal new-folder">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
-		<h3><span class="icon"></span>{{_.NEW_FOLDER}}</h3>
+		<h3><span class="icon"></span>{{i18n.NEW_FOLDER}}</h3>
 	</div>
 	<div class="modal-body">
 		<div id="alerts-{{view.cid}}"></div>
 		<form id="new-folder-form" class="form-horizontal">
-			<label>{{_.NAME}}</label>
+			<label>{{i18n.NAME}}</label>
 			<input class="name" type="text" autofocus
-				placeholder="{{_.FOLDER_S_NAME}}" />
+				placeholder="{{i18n.FOLDER_S_NAME}}" />
 		</form>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-primary" form="new-folder-form">
-			{{_.CREATE}}
+			{{i18n.CREATE}}
 		</button>
-		<a class="btn cancel" data-dismiss="modal">{{_.CANCEL}}</a>
+		<a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
 	</div>
 </div>

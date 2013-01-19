@@ -1,5 +1,5 @@
 define([
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"common/date",
     "collections/attribute_collection",
     "collections/attached_file_collection"

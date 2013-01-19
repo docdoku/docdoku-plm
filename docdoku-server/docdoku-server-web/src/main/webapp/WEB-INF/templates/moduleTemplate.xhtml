@@ -15,7 +15,11 @@
         <link rel="Shortcut Icon" type="image/ico" href="#{request.contextPath}/images/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.min.css"/>
         <ui:insert name="styles"/>
-    
+
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/modules/notification-module.css"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/modules/chat-module.css"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/modules/webrtc-module.css"/>
+
         <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery-1.8.2.min.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery-ui-1.9.2.min.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/less-1.3.3.min.js"></script>
@@ -26,17 +30,21 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/kumo.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery.maskedinput-1.3.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/backbone-0.9.9.min.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/require/1.0.8/require.min.js"></script>  
-        
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/require/require.min-2.1.2.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/string.prototype.js"></script>
         <ui:insert name="scripts"/>
+
+        <script type="text/javascript" src="#{request.contextPath}/js/websocket/websocket.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/websocket/mainChannel.js"></script>
         
     </h:head>
 
     <h:body>
         <em:header formStyle="margin-bottom: 0px;"/>
-        
-
         <ui:insert name="content"/>
+
+        <div id="chat_module"></div>
+        <div id="webrtc_module"></div>
 
     </h:body>
 

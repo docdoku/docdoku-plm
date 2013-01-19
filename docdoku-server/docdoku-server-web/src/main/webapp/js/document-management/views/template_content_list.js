@@ -1,5 +1,5 @@
 define([
-	"i18n",
+	"i18n!localization/nls/document-management-strings",
 	"collections/template",
 	"views/content",
 	"views/template_list",

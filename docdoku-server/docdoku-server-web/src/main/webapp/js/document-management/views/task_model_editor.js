@@ -1,5 +1,5 @@
 define([
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "models/task_model",
     "text!templates/task_model_editor.html"
 ], function (

@@ -1,15 +1,17 @@
 define([
     "models/marker",
-    "collections/marker_collection"
+    "collections/marker_collection",
+    "!i18n!localization/nls/product-structure-strings"
 ], function (
     Marker,
-    MarkerCollection
+    MarkerCollection,
+    i18n
 ) {
 
     var Layer = Backbone.Model.extend({
 
         defaults: {
-            name : "new layer",
+            name : i18n.NEW_LAYER,
             shown: true,
             editingName: false,
             editingMarkers: false

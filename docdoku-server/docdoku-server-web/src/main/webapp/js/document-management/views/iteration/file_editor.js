@@ -1,5 +1,5 @@
 define([
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "models/attached_file",
     "collections/attached_file_collection"
 ], function (i18n, AttachedFile, AttachedFileCollection) {

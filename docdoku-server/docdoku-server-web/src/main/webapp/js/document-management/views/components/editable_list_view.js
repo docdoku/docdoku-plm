@@ -1,5 +1,5 @@
 define([
-    "i18n",
+    "i18n!localization/nls/document-management-strings",
     "text!templates/components/editable-list-view.html"
 ], function (i18n, template) {
     var EditableListView = Backbone.View.extend({
