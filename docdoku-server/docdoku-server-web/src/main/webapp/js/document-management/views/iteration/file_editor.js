@@ -73,10 +73,10 @@ define([
                 return;
             }
 
-            var shortName = form.upload.value.split(/(\\|\/)/g).pop();
+            this.shortName = form.upload.value.split(/(\\|\/)/g).pop();
 
             var newFile = new AttachedFile({
-                shortName:shortName,
+                shortName: this.shortName,
                 created : false
             });
             newFile.set("documentIteration", this.options.documentIteration);
@@ -87,11 +87,10 @@ define([
         startUpload : function(form, newFile){
 
             var self = this;
-            var widget =this.widget;
+            var widget = this.widget;
             widget.trigger("state:working");
 
             //find correct $el
-            //$("#item-"+newFile.cid).append("<span id='progress-"+newFile.cid+"'> loading ....</span>");
             var progressElement = $("#progressVisualization");
             kumo.assertNotEmpty(progressElement, "no progress element found");
             //xhr
@@ -103,7 +102,6 @@ define([
 
                 widget.on("state:cancel", function(){
                     console.log("canceling upload")
-                    //  xhr.removeEventListener("progress", uploadProgress, false);
                     xhr.abort();
                     finished();
                     return false;
@@ -127,7 +125,7 @@ define([
                 if (evt.lengthComputable) {
                     var percentComplete = Math.round(evt.loaded * 100 / evt.total);
                     progressElement.html(
-                        "<div class='progress progress-striped'>"+
+                        "<p>"+self.shortName+"</p><div class='progress progress-striped'>" +
                             "<div class='bar' style='width: "+percentComplete+"%;'></div>"+
                             "</div>");
                 }
