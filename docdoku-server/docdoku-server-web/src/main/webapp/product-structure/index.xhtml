@@ -56,7 +56,11 @@
                         "modules":"../modules",
                         "common-objects":"../common-objects"
                     },
-                    locale: "#{request.locale}"
+                    config: {
+                        i18n: {
+                            locale: "#{request.locale.language}"
+                        }
+                    }
                 });
 
                 require(["app"], function(AppView) {

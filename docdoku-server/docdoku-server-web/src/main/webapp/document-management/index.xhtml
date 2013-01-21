@@ -16,21 +16,25 @@
         <ui:define name="scripts">
             <script type="text/javascript">   
                 var APP_CONFIG = {
-                        workspaceId: "${workspaceID}",
-                        login: "${login}"
+                    workspaceId: "${workspaceID}",
+                    login: "${login}"
                 };
                 $(document).ready(function() {
                     require.config({
-                            baseUrl: "${request.contextPath}/js/document-management",
-                            paths: {
-                                    "require": "../lib/require/require.min-2.1.2",
-                                    "text": "../lib/require/text-2.0.3",
-                                    "i18n": "../lib/require/i18n-2.0.1",
-                                    "localization": "../localization",
-                                    "modules":"../modules",
-                                    "common-objects":"../common-objects"
-                            },
-                            locale: "#{request.locale}"
+                        baseUrl: "${request.contextPath}/js/document-management",
+                        paths: {
+                            "require": "../lib/require/require.min-2.1.2",
+                            "text": "../lib/require/text-2.0.3",
+                            "i18n": "../lib/require/i18n-2.0.1",
+                            "localization": "../localization",
+                            "modules": "../modules",
+                            "common-objects": "../common-objects"
+                        },
+                        config: {
+                            i18n: {
+                                locale: "#{request.locale.language}"
+                            }
+                        }
                     });
 
                     require(["app"]);
