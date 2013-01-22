@@ -1,42 +1,38 @@
 define([
-	"i18n!localization/nls/document-management-strings",
-	"views/content",
-	"views/document_list"
-], function (
-	i18n,
-	ContentView,
-	DocumentListView
-) {
-	var ContentDocumentListView = ContentView.extend({
+    "i18n!localization/nls/document-management-strings",
+    "views/content",
+    "views/document_list"
+], function(i18n, ContentView, DocumentListView) {
+    var ContentDocumentListView = ContentView.extend({
 
-		initialize: function () {
-			ContentView.prototype.initialize.apply(this, arguments);
-			this.events["click .actions .checkout"] = "actionCheckout";
-			this.events["click .actions .undocheckout"] = "actionUndocheckout";
-			this.events["click .actions .checkin"] = "actionCheckin";
-			this.events["click .actions .delete"] = "actionDelete";
-		},
+        initialize: function() {
+            ContentView.prototype.initialize.apply(this, arguments);
+            this.events["click .actions .checkout"] = "actionCheckout";
+            this.events["click .actions .undocheckout"] = "actionUndocheckout";
+            this.events["click .actions .checkin"] = "actionCheckin";
+            this.events["click .actions .delete"] = "actionDelete";
+        },
 
-		rendered: function () {
+        rendered: function() {
             this.checkoutGroup = this.$(".actions .checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");
             this.checkinButton = this.$(".checkin");
             this.deleteButton = this.$(".actions .delete");
 
-			this.listView = this.addSubView(
-				new DocumentListView({
-					el: "#list-" + this.cid,
-					collection: this.collection
-				})
-			);
-			this.collection.fetch();
+            this.listView = this.addSubView(
+                new DocumentListView({
+                    el: "#list-" + this.cid,
+                    collection: this.collection
+                })
+            );
+            this.collection.fetch();
 
-			this.listenTo(this.listView, "selectionChange", this.onStateChange);
+            this.listenTo(this.listView, "selectionChange", this.onStateChange);
             this.listenTo(this.collection, "change", this.onStateChange);
-		},
+        },
 
-        onStateChange: function () {
+        onStateChange: function() {
 
             var checkedViews = this.listView.checkedViews();
 
@@ -52,7 +48,7 @@ define([
                     break;
             }
 
-		},
+        },
 
         onNoDocumentSelected: function() {
             this.deleteButton.hide();
@@ -86,36 +82,38 @@ define([
             this.checkinButton.prop('disabled', !canUndoAndCheckin);
         },
 
-		actionCheckout: function () {
-			this.listView.eachChecked(function (view) {
-				view.model.checkout();
-			});
-			return false;
-		},
+        actionCheckout: function() {
+            this.listView.eachChecked(function(view) {
+                view.model.checkout();
+            });
+            return false;
+        },
 
-		actionUndocheckout: function () {
-			this.listView.eachChecked(function (view) {
-				view.model.undocheckout();
-			});
-			return false;
-		},
+        actionUndocheckout: function() {
+            this.listView.eachChecked(function(view) {
+                view.model.undocheckout();
+            });
+            return false;
+        },
 
-		actionCheckin: function () {
-			this.listView.eachChecked(function (view) {
-				view.model.checkin();
-			});
-			return false;
-		},
+        actionCheckin: function() {
+            this.listView.eachChecked(function(view) {
+                view.model.checkin();
+            });
+            return false;
+        },
 
-		actionDelete: function () {
-			if (confirm(i18n["DELETE_SELECTION_?"])) {
-				this.listView.eachChecked(function (view) {
-					view.model.destroy();
-				});
-			}
-			return false;
-		}
+        actionDelete: function() {
+            if (confirm(i18n["DELETE_SELECTION_?"])) {
+                this.listView.eachChecked(function(view) {
+                    view.model.destroy();
+                });
+            }
+            return false;
+        }
 
-	});
-	return ContentDocumentListView;
+    });
+
+    return ContentDocumentListView;
+
 });
