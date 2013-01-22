@@ -4,7 +4,9 @@
 <div class='progress progress-striped'>
     <div class='bar'></div>
 </div>
+{{#editMode}}
 <form enctype='multipart/form-data' class='upload-form'>
     <input name="upload" type='file' class='input-xlarge value upload-btn'/>
     <button class='btn cancel cancel-upload-btn'>{{i18n.CANCEL}}</button>
 </form>
+{{/editMode}}

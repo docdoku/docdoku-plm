@@ -41,8 +41,10 @@ define([
         render: function() {
             this.deleteSubViews();
 
+            var editMode = this.model.isCheckout();
+
             var data = {
-                editMode:  this.model.isCheckout(),
+                editMode: editMode,
                 master: this.model.toJSON(),
                 i18n: i18n
             }
@@ -92,7 +94,8 @@ define([
                 this.fileListView = new FileListView({
                     deleteBaseUrl: this.iteration.url(),
                     uploadBaseUrl: this.iteration.getUploadBaseUrl(),
-                    collection:this.iteration.getAttachedFiles()
+                    collection:this.iteration.getAttachedFiles(),
+                    editMode: editMode
                 }).render();
     
                 /* Add the fileListView to the tab */

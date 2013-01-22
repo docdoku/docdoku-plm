@@ -6,11 +6,14 @@ define([
         tagName: "li",
         className: 'file',
 
+        editMode: true,
+
         events: {
             "change input.file-check" : "fileCheckChanged"
         },
 
         initialize: function() {
+            this.editMode = this.options.editMode;
             this.model.url = this.options.deleteBaseUrl+"/files/"+this.model.get("shortName");
         },
 
@@ -29,7 +32,8 @@ define([
                 {
                     created: this.model.isCreated(),
                     url: this.model.isCreated() ? this.options.baseUrl+this.model.get("shortname") : false,
-                    shortName: this.model.get("shortName")
+                    shortName: this.model.get("shortName"),
+                    editMode: this.editMode
                 }
             ));
 

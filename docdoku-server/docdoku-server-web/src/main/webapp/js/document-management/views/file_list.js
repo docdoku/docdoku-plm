@@ -8,13 +8,15 @@ define([
         tagName: 'div',
         className: 'attachedFiles idle',
 
+        editMode: true,
+
         events: {
             "click form button.cancel-upload-btn": "cancelButtonClicked",
             "change form input.upload-btn": "newFileToUpload"
         },
 
         initialize: function() {
-            this.subviews = [];
+            this.editMode = this.options.editMode;
 
             this.filesToDelete = new Backbone.Collection();
             this.newItems = new Backbone.Collection();
@@ -30,8 +32,7 @@ define([
             var self = this;
 
             require(["views/file"], function(FileView) {
-                var fileView = new FileView({model: attachedFile, filesToDelete: self.filesToDelete, deleteBaseUrl: self.options.deleteBaseUrl});
-                self.subviews.push(fileView);
+                var fileView = new FileView({model: attachedFile, filesToDelete: self.filesToDelete, deleteBaseUrl: self.options.deleteBaseUrl, editMode: self.editMode});
                 fileView.render();
                 self.filesUL.append(fileView.el);
             });
@@ -97,7 +98,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(Mustache.render(template, {i18n: i18n}));
+            this.$el.html(Mustache.render(template, {i18n: i18n, editMode: this.editMode}));
 
             this.bindDomElements();
 
