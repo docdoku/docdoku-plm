@@ -16,8 +16,9 @@
         <ui:define name="scripts">
             <script type="text/javascript">   
                 var APP_CONFIG = {
-                    workspaceId: "${workspaceID}",
-                    login: "${login}"
+                        workspaceId: "${workspaceID}",
+                        login: "${login}",
+                        sessionId : "${session.id}"
                 };
                 $(document).ready(function() {
                     require.config({

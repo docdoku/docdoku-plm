@@ -23,6 +23,9 @@
         <param-name>OO_PORT</param-name>
         <param-value>8100</param-value>
     </context-param>
+    <listener>
+        <listener-class>com.docdoku.server.http.HttpSessionCollector</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>

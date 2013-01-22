@@ -20,21 +20,31 @@
 
 package com.docdoku.server.mainchannel;
 
+import com.docdoku.core.common.Account;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.http.HttpSessionCollector;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import com.docdoku.server.mainchannel.util.ChatMessagesBuilder;
 import com.docdoku.server.mainchannel.util.Room;
 import com.sun.grizzly.websockets.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import javax.servlet.http.HttpSession;
 
 public class MainChannelApplication extends WebSocketApplication {
 
+    // WebSockets HashMap
     private static final ConcurrentMap<String, MainChannelWebSocket> channels = new ConcurrentHashMap<String, MainChannelWebSocket>();
+
+    // Don't know an other way to pass the EJB ref to this class. Lookup fails, Injection fails.
+    // TODO : find a better way to inject or lookup the UserManagerBean
+    private IUserManagerLocal userManager;
+
+    public void setUserManager(IUserManagerLocal pUserManager) {
+        this.userManager = pUserManager;
+    }
 
     @Override
     public WebSocket createWebSocket(ProtocolHandler protocolHandler, WebSocketListener[] listeners) {
@@ -42,204 +52,8 @@ public class MainChannelApplication extends WebSocketApplication {
     }
 
     @Override
-    public void onMessage(WebSocket socket, String data) {
-
-        // Process the signaling message
-
-        MainChannelWebSocket ws = (MainChannelWebSocket) socket;
-
-        // Peer declaration : listen:username
-        if (data.startsWith("listen") && ws.getUserLogin() == null) {
-
-            String[] dataSplit = data.split(":");
-
-            if(dataSplit.length == 2){
-
-                String callerLogin = dataSplit[1];
-
-                if(callerLogin != null){
-
-                    ws.setUserLogin(callerLogin);
-                    channels.put(callerLogin, ws);
-                    send(callerLogin, ChatMessagesBuilder.BuildWelcomeMessage(callerLogin));
-
-                } else {
-                    send(callerLogin, ChatMessagesBuilder.BuildApiErrorMessage());
-                }
-            }
-
-
-        }
-
-        // Parse a JSON Message and switch on message.type
-        else {
-
-            String callerLogin = ws.getUserLogin();
-
-            try {
-
-                log("message from "+callerLogin+ " : "+data);
-
-                JSONObject jsobj = new JSONObject(data);
-                String type = jsobj.getString("type");
-
-                // Web RTC Messages
-                if (ChannelMessagesType.WEBRTC_INVITE.equals(type)) {
-
-                    String remoteUser = jsobj.getString("remoteUser");
-                    String context = jsobj.getString("context");
-
-                    log("Create new room : "+callerLogin + "-" + remoteUser);
-
-                    Room room = Room.getByKeyName(callerLogin + "-" + remoteUser);
-
-                    if(room == null)
-                        room = new Room(callerLogin + "-" + remoteUser);
-
-                    room.addUser(callerLogin);
-
-                    boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCInvitationMessage(callerLogin, context, room.key()));
-
-                    if(!sent){
-                        send(callerLogin, ChatMessagesBuilder.BuildWebRTCInvitationNotSentMessage(remoteUser));
-                    }
-
-                }
-
-                else if (ChannelMessagesType.WEBRTC_ACCEPT.equals(type)) {
-
-                    String remoteUser = jsobj.getString("remoteUser");
-                    String roomKey = jsobj.getString("roomKey");
-
-                    log("webRTC_accept get Room : "+roomKey);
-
-                    Room room = Room.getByKeyName(roomKey);
-
-                    if(room != null){
-                        room.addUser(callerLogin);
-                        boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCAcceptMessage(callerLogin,room.key()));
-                    }else{
-                        // TODO : send remote the room doesn't exist
-                    }
-
-
-                }
-
-                else if (ChannelMessagesType.WEBRTC_REJECT.equals(type)) {
-
-                    String remoteUser = jsobj.getString("remoteUser");
-                    String roomKey = jsobj.getString("roomKey");
-
-                    log("webRTC_reject get Room : "+roomKey);
-
-                    Room room = Room.getByKeyName(roomKey);
-
-                    if(room != null){
-                        boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCRejectMessage(callerLogin,room.key()));
-                    }else{
-                        // nothing to do ...
-                    }
-
-                }
-
-                else if (ChannelMessagesType.WEBRTC_HANGUP.equals(type)) {
-
-                    String remoteUser = jsobj.getString("remoteUser");
-                    String roomKey = jsobj.getString("roomKey");
-
-                    Room room = Room.getByKeyName(roomKey);
-
-                    if(room != null){
-                        room.removeUser(callerLogin);
-                        boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCHangupMessage(callerLogin,room.key()));
-                    }else{
-                        // nothing to do
-                    }
-
-                }
-
-                // webRTC P2P signaling messages
-                // forward them to remote peer in the room
-
-                else if (ChannelMessagesType.WEBRTC_ANSWER.equals(type)
-                       || ChannelMessagesType.WEBRTC_OFFER.equals(type)
-                       || ChannelMessagesType.WEBRTC_CANDIDATE.equals(type)
-                       || ChannelMessagesType.WEBRTC_BYE.equals(type)) {
-
-
-                    String roomKey = jsobj.getString("roomKey");
-                    Room room = Room.getByKeyName(roomKey);
-
-                    if(room != null){
-
-                        if(room.hasUser(callerLogin)){
-
-                            String remoteUser = room.getOtherUser(callerLogin);
-
-                            if(remoteUser != null){
-
-                                send(remoteUser,data);
-
-                            }else{
-                                // tell the user the room is empty ?
-                            }
-                        } else{
-                            // tell the user he's not in the room ?
-                        }
-                    }else{
-                        // tell the user the room doesn't exists ?
-                    }
-
-                }
-
-                // Chat Messages
-                else if (ChannelMessagesType.CHAT_MESSAGE.equals(type)) {
-                   
-                    String remoteUser = jsobj.getString("remoteUser");
-                    String message = jsobj.getString("message");
-                    String context = jsobj.getString("context");
-
-                    boolean sent = send(remoteUser, ChatMessagesBuilder.BuildChatMessage(callerLogin, context , message));
-
-                    if(!sent){
-                        send(callerLogin, ChatMessagesBuilder.BuildChatMessageNotSentMessage(remoteUser, context));
-                    }
-
-                }
-
-                // No operation found
-                else {
-                    send(callerLogin, ChatMessagesBuilder.BuildNoopMessage());
-                }
-
-            } catch (JSONException ex) {
-                // send json exception to client
-                log("JSONException on message " + ex.getMessage());
-                send(callerLogin, ChatMessagesBuilder.BuildJsonExMessage());
-            }
-
-        }
-
-    }
-
-    private static boolean send(String userLogin, String message) {
-        
-        boolean success = false;
-        
-        MainChannelWebSocket ws = channels.get(userLogin);
-        
-        if (ws != null) {
-            ws.send(message);
-            success = true;
-        }
-        
-        if (success) {
-            log("Message sent to "+userLogin+" : " + message);
-        } else {
-            log("Message not sent to "+userLogin+" : " + message);
-        }
-        
-        return success;
+    public void onConnect(WebSocket socket) {
+        // Nothing to do
     }
 
     @Override
@@ -249,50 +63,266 @@ public class MainChannelApplication extends WebSocketApplication {
 
     @Override
     public void onClose(WebSocket socket, DataFrame frame) {
-        
+
         MainChannelWebSocket ws = (MainChannelWebSocket) socket;
         String callerLogin = ws.getUserLogin();
-        
-        //log("closeWebSocket for " + callerLogin);
 
-        // TODO : remove user from Eventually rooms.
+        // if the websocket is in the hashmap, we remove it
+        // and then remove the user from all rooms he's in.
 
         if (callerLogin != null) {
             channels.remove(callerLogin);
             Room.removeUserFromAllRoom(callerLogin);
         }
-        //logChannels();
+
     }
 
     @Override
-    public void onConnect(WebSocket socket) {
-        //log("onConnect");
-        //logChannels();
+    public void onMessage(WebSocket socket, String data) {
+
+        MainChannelWebSocket ws = (MainChannelWebSocket) socket;
+
+        // Peer declaration : listen:sessionId
+
+        if (data.startsWith("listen:") && ws.getUserLogin() == null) {
+            onPeerDeclarationMessage(data, ws);
+        } else {
+
+            // Parse a JSON Message and switch on message.type
+            String callerLogin = ws.getUserLogin();
+
+            try {
+
+                JSONObject jsobj = new JSONObject(data);
+                String type = jsobj.getString("type");
+
+                switch (type) {
+
+                    case ChannelMessagesType.WEBRTC_INVITE:
+                        onWebRTCInviteMessage(callerLogin, jsobj);
+                        break;
+                    case ChannelMessagesType.WEBRTC_ACCEPT:
+                        onWebRTCAcceptMessage(callerLogin, jsobj);
+                        break;
+                    case ChannelMessagesType.WEBRTC_REJECT:
+                        onWebRTCRejectMessage(callerLogin, jsobj);
+                        break;
+                    case ChannelMessagesType.WEBRTC_HANGUP:
+                        onWebRTCHangupMessage(callerLogin, jsobj);
+                        break;
+
+                    case ChannelMessagesType.WEBRTC_ANSWER:
+                    case ChannelMessagesType.WEBRTC_OFFER:
+                    case ChannelMessagesType.WEBRTC_CANDIDATE:
+                    case ChannelMessagesType.WEBRTC_BYE:
+                        onWebRTCSignalingMessage(callerLogin, jsobj, data);
+                        break;
+
+                    case ChannelMessagesType.CHAT_MESSAGE:
+                        onChatMessage(callerLogin, jsobj);
+                        break;
+
+                    default:
+                        onUnrecognizedMessageType(callerLogin);
+                        break;
+
+                }
+
+            } catch (JSONException ex) {
+                send(callerLogin, ChatMessagesBuilder.BuildJsonExMessage());
+            }
+
+        }
+
     }
 
-    private void logChannels() {
-        //log("Channels count : " + channels.size());
-        //log("Rooms count : " + Room.getDB().size());
+    // on Message Methods
+
+    private void onPeerDeclarationMessage(String data, MainChannelWebSocket ws) {
+
+        String[] dataSplit = data.split(":");
+
+        if (dataSplit.length == 2) {
+
+            // parse the sessionId in the declaration message
+            // retrieve the user's HttpSession
+            // then, get his user login
+
+            String sessionId = dataSplit[1];
+            HttpSession httpSession = HttpSessionCollector.find(sessionId);
+            Account account = (Account) httpSession.getAttribute("account");
+
+            if (account != null) {
+
+                String callerLogin = account.getLogin();
+
+                if (callerLogin != null && !channels.containsKey(callerLogin)) {
+
+                    // store the webSocket in the hashMap
+                    // then, send him a welcome message
+
+                    ws.setUserLogin(callerLogin);
+                    channels.put(callerLogin, ws);
+                    send(callerLogin, ChatMessagesBuilder.BuildWelcomeMessage(callerLogin));
+
+                }
+
+            } else {
+
+                // user is not authenticated on server, nothing to do.
+
+            }
+        }
     }
 
-    // TODO : implement functions :
 
+    private void onWebRTCInviteMessage(String callerLogin, JSONObject jsobj) throws JSONException {
 
-    private boolean isRemoteReachable(String remoteUser){
-        return channels.containsKey(remoteUser);
+        String remoteUser = jsobj.getString("remoteUser");
+        String context = jsobj.getString("context");
+
+        if (callerIsAllowToReachCallee(callerLogin, remoteUser)) {
+
+            String roomKey = callerLogin + "-" + remoteUser;
+            Room room = Room.getByKeyName(roomKey);
+
+            if (room == null) room = new Room(roomKey);
+
+            room.addUser(callerLogin);
+
+            boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCInvitationMessage(callerLogin, context, roomKey));
+
+            if (!sent) {
+                send(callerLogin, ChatMessagesBuilder.BuildWebRTCInvitationNotSentMessage(remoteUser));
+            }
+
+        } else {
+            // send a forbiden message ?
+        }
     }
 
-    private boolean callerCanReachCallee(String caller, String callee){
+    private void onWebRTCAcceptMessage(String callerLogin, JSONObject jsobj) throws JSONException {
 
-        // TODO : Implement minimum of security
-        // TODO : allow chat and video messages only if caller and callee have a common workspace
-        // TODO :-> write JPQL named query for perfs
+        String remoteUser = jsobj.getString("remoteUser");
+        String roomKey = jsobj.getString("roomKey");
 
-        return true ;
+        Room room = Room.getByKeyName(roomKey);
+
+        if (room != null) {
+            room.addUser(callerLogin);
+            boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCAcceptMessage(callerLogin, room.key()));
+        } else {
+            // tell the user the room doesn't exist ?
+        }
+
     }
 
-    public static void log(String message) {
-        Logger.getLogger(MainChannelApplication.class.getName()).log(Level.WARNING, "DEBUG WEBSOCKET : "+message);
+    private void onWebRTCRejectMessage(String callerLogin, JSONObject jsobj) throws JSONException {
+
+        String remoteUser = jsobj.getString("remoteUser");
+        String roomKey = jsobj.getString("roomKey");
+
+        Room room = Room.getByKeyName(roomKey);
+
+        if (room != null) {
+            boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCRejectMessage(callerLogin, room.key()));
+        } else {
+            // nothing to do ...
+        }
+
     }
+
+    private void onWebRTCHangupMessage(String callerLogin, JSONObject jsobj) throws JSONException {
+
+        String remoteUser = jsobj.getString("remoteUser");
+        String roomKey = jsobj.getString("roomKey");
+
+        Room room = Room.getByKeyName(roomKey);
+
+        if (room != null) {
+            room.removeUser(callerLogin);
+            boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCHangupMessage(callerLogin, room.key()));
+        } else {
+            // nothing to do
+        }
+
+    }
+
+    // webRTC P2P signaling messages
+    // These messages are forwarded to the remote peer(s) in the room
+    private void onWebRTCSignalingMessage(String callerLogin, JSONObject jsobj, String data) throws JSONException {
+
+        String roomKey = jsobj.getString("roomKey");
+        Room room = Room.getByKeyName(roomKey);
+
+        if (room != null) {
+
+            if (room.hasUser(callerLogin)) {
+
+                String remoteUser = room.getOtherUser(callerLogin);
+
+                if (remoteUser != null) {
+
+                    send(remoteUser, data);
+
+                } else {
+                    // tell the user the room is empty ?
+                }
+            } else {
+                // tell the user he's not in the room ?
+            }
+        } else {
+            // tell the user the room doesn't exists ?
+        }
+
+    }
+
+    private void onChatMessage(String callerLogin, JSONObject jsobj) throws JSONException {
+
+        String remoteUser = jsobj.getString("remoteUser");
+        String message = jsobj.getString("message");
+        String context = jsobj.getString("context");
+
+        if (callerIsAllowToReachCallee(callerLogin, remoteUser)) {
+
+            boolean sent = send(remoteUser, ChatMessagesBuilder.BuildChatMessage(callerLogin, context, message));
+
+            if (!sent) {
+                send(callerLogin, ChatMessagesBuilder.BuildChatMessageNotSentMessage(remoteUser, context));
+            }
+
+        } else {
+            // send forbidden message ?
+        }
+
+    }
+
+    private void onUnrecognizedMessageType(String callerLogin) throws JSONException {
+        send(callerLogin, ChatMessagesBuilder.BuildNoopMessage());
+    }
+
+
+    // Send a message to given user
+    private static boolean send(String userLogin, String message) {
+
+        MainChannelWebSocket ws = channels.get(userLogin);
+
+        if (ws != null) {
+            ws.send(message);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    // Security Method
+    private boolean callerIsAllowToReachCallee(String caller, String callee) {
+        // Implement business security
+        // caller and callee must have at least one common workspace to communicate
+        return userManager.hasCommonWorkspace(caller, callee);
+
+    }
+
 
 }

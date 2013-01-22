@@ -419,6 +419,28 @@ public class UserManagerBean implements IUserManagerLocal {
         throw new AccessRightException(new Locale(user.getLanguage()), user);
     }
 
+
+
+    /*
+    * Don't expose this method on remote.
+    * Method returns true if given users have a common workspace, false otherwise.
+    * */
+
+    @Override
+    public boolean hasCommonWorkspace(String userLogin1, String userLogin2) {
+
+        if( userLogin1 != null && userLogin2 != null){
+            return ! em.createNamedQuery("findCommonWorkspacesForGivenUsers").
+                    setParameter("userLogin1", userLogin1).
+                    setParameter("userLogin2", userLogin2).
+                    getResultList().
+                    isEmpty();
+        }
+
+        return false;
+    }
+
+
     private Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
         if (!pWorkspace.getAdmin().equals(account)) {
