@@ -1,4 +1,63 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<table border="0">
+    <tr>
+        <td width="14px" height="14px">
+            <img height="10px" width="10px" id="btn${index}" src="${context}/images/plus.png" onclick="switchMenu('img${index}', 'btn${index}','${context}', '${filePath}');"/>
+        </td>
+        <td><a href="${filePath}">${fileName}</a></td>
+    </tr>
+</table>
+
+<!--<div align="left"  style="display:none;" id="img${index}" title="Player">
+    <div align="center" style="border:3px; display:block; width:443px;">
+<object type="application/x-shockwave-flash" data="${context}/players/player-viral.swf" width="+getWidth()+" height="+getHeight()+">"
+    <param name="movie" value="+getPlayerFile()+"/>
+    <param name="allowscriptaccess" value="always"/>
+    <param name="allowfullscreen" value="true"/>
+    <param name="flashvars" value="file="${filePath}"/>
+    <embed type="application/x-shockwave-flash" flashvars="file="${filePath} allowfullscreen="true" allowscriptaccess="true" src="<%=request.getContextPath()+"/players/player-viral.swf"%>" width="+getWidth()+" height="+getHeight()+"></embed>
+</object>
+    </div>
+</div>-->
+
+<div align="left"  style="display:none;" id="img${index}" title="Player">
+    <div align="center" style="border:3px; display:block; width:443px;">
+        <video width="320" height="240" controls>
+            <source src="${filePath}" type="video/mp4">
+            <source src="${filePath}" type="video/ogg">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+<!--<div align="left"  style="display:none;" id="img${index}" title="Player">
+    <div align="center" style="border:3px; display:block; width:443px;">
+        <div class="lhc">
+            <div id="video">
+                <div class="flareVideo" data-state="paused">
+                    <video class="video" preload="false" autobuffer="false">
+                        <source src="${filePath}" type="video/mp4">
+                    </video>
+                    <div class="controls">
+                        <div class="play">Play</div>
+                        <div class="pause">Pause</div>
+                        <div class="fullScreen">Full Screen</div>
+                        <div class="seek"><input type="range" step="any" class="seekRange" min="0" max="138.53024291992188"></div>
+                        <div class="volume">
+                            <div class="volMin">Minimum volume</div>
+                            <input type="range" step="0.1" max="1" class="volRange">
+                            <div class="volMax">Maximum volume</div>
+                        </div>
+                        <div class="timeMin">00:18</div>
+                        <div class="timeMax">-02:01</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<!-- <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <table  border="0" style="border-style:none" >
     <tr>
         <td width="8px" height="8px"><img height="10px" width="10px" style="border-style:solid" id="btn${i}" src="${context}/images/plus.png" onclick="switchMenu('${id}', 'btn${i}','${context}');"/></td>
@@ -15,4 +74,105 @@
             <embed type="application/x-shockwave-flash" flashvars="file="${filePath} allowfullscreen="true" allowscriptaccess="true" src="<%=request.getContextPath()+"/players/player-viral.swf"%>" width="+getWidth()+" height="+getHeight()+"></embed>
         </object>
     </div>
-</div>
+</div>-->
+
+<!-- <div align="left"  style="display:none;" id="img${index}" title="Player">
+    <div align="center" style="border:3px; display:block; width:443px;">
+        <div id="player_box">
+            <div id="home_video" class="video-js vjs-default-skin vjs-paused" width="640" height="264" style="width: 640px; height: 264px; ">
+                <video id="home_video_html5_api" class="vjs-tech" preload="none"></video>
+                <img class="vjs-poster" src="${filePath}" type="video/mp4" tabindex="-1" style="display: none; ">
+                <div class="vjs-text-track-display"></div>
+                <div class="vjs-loading-spinner" style="display: block; ">
+                    <div class="ball1"></div>
+                    <div class="ball2"></div>
+                    <div class="ball3"></div>
+                    <div class="ball4"></div>
+                    <div class="ball5"></div>
+                    <div class="ball6"></div>
+                    <div class="ball7"></div>
+                    <div class="ball8"></div>
+                </div>
+                <div class="vjs-big-play-button" tabindex="0" style="display: none; ">
+                    <span></span>
+                </div>
+                <div class="vjs-controls vjs-fade-out">
+                    <div class="vjs-play-control vjs-control  vjs-paused" tabindex="0">
+                        <div><span class="vjs-control-text">Play</span></div>
+                    </div>
+                    <div class="vjs-fullscreen-control vjs-control " tabindex="0">
+                        <div><span class="vjs-control-text">Fullscreen</span></div>
+                    </div>
+                    <div class="vjs-current-time vjs-time-controls vjs-control">
+                        <div class="vjs-current-time-display">0:00</div>
+                    </div>
+                    <div class="vjs-time-divider">
+                        <div><span>/</span></div>
+                    </div>
+                    <div class="vjs-duration vjs-time-controls vjs-control">
+                        <div class="vjs-duration-display">0:00</div>
+                    </div>
+                    <div class="vjs-remaining-time vjs-time-controls vjs-control">
+                        <div class="vjs-remaining-time-display">-0:00</div>
+                    </div>
+                    <div class="vjs-progress-control vjs-control">
+                        <div aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" tabindex="0" class="vjs-progress-holder">
+                            <div class="vjs-load-progress" style="width: 0%; ">
+                                <span class="vjs-control-text">Loaded: 0%</span>
+                            </div>
+                            <div class="vjs-play-progress" style="width: 1.47%; ">
+                                <span class="vjs-control-text">Progress: 0%</span>
+                            </div>
+                            <div class="vjs-seek-handle" style="left: 0%; ">
+                                <span class="vjs-control-text">00:00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vjs-volume-control vjs-control">
+                        <div aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" tabindex="0" class="vjs-volume-bar">
+                            <div class="vjs-volume-level" style="width: 90%; ">
+                                <span class="vjs-control-text"></span>
+                            </div>
+                            <div class="vjs-volume-handle" style="left: 80%; ">
+                                <span class="vjs-control-text"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vjs-mute-control vjs-control" tabindex="0">
+                        <div>
+                            <span class="vjs-control-text">Mute</span>
+                        </div>
+                    </div>
+                    <div class="vjs-subtitles-button vjs-menu-button vjs-control " tabindex="0" style="display: none; ">
+                        <div>
+                            <span class="vjs-control-text">Subtitles</span>
+                        </div>
+                        <ul class="vjs-menu">
+                            <li class="vjs-menu-title">Subtitles</li>
+                            <li class="vjs-menu-item" tabindex="0">Off</li>
+                        </ul>
+                    </div>
+                    <div class="vjs-captions-button vjs-menu-button vjs-control " tabindex="0">
+                        <div>
+                            <span class="vjs-control-text">Captions</span>
+                        </div>
+                        <ul class="vjs-menu">
+                            <li class="vjs-menu-title">Captions</li>
+                            <li class="vjs-menu-item" tabindex="0">Off</li>
+                            <li class="vjs-menu-item" tabindex="0">English</li>
+                        </ul>
+                    </div>
+                    <div class="vjs-chapters-button vjs-menu-button vjs-control " tabindex="0" style="display: none; ">
+                        <div>
+                            <span class="vjs-control-text">Chapters</span>
+                        </div>
+                        <ul class="vjs-menu">
+                            <li class="vjs-menu-title">Chapters</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <script>var homePlayer=_V_("home_video");</script>
+        </div>
+    </div>
+</div>-->
