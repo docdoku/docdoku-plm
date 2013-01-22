@@ -10,9 +10,10 @@ define([
     AttachedFileCollection
 ) {
 	var DocumentIteration = Backbone.Model.extend({
+
 		idAttribute: "iteration",
+
 		initialize: function () {
-            var self = this;
             this.className = "DocumentIteration";
 
             var attributes = new AttributeCollection(this.get("instanceAttributes"));

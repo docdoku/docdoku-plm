@@ -1,13 +1,11 @@
 define([
     "require",
 	"views/checkbox_list_item",
-	"text!templates/workflow_list_item.html",
-    "views/workflow_model_editor"
+	"text!templates/workflow_list_item.html"
 ], function (
     require,
 	CheckboxListItemView,
-	template,
-    WorkflowModelEditorView
+	template
 ) {
 	var WorkflowListItemView = CheckboxListItemView.extend({
 		template: Mustache.compile(template),
