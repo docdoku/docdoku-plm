@@ -30,8 +30,8 @@ define([
         render: function() {
             this.$el.html(Mustache.render(template,
                 {
-                    created: this.model.isCreated(),
-                    url: this.model.isCreated() ? this.options.baseUrl+this.model.get("shortname") : false,
+                    created: !this.model.isNew(),
+                    url: !this.model.isNew ? this.options.baseUrl+this.model.get("shortname") : false,
                     shortName: this.model.get("shortName"),
                     editMode: this.editMode
                 }
