@@ -1,4 +1,4 @@
-define(["models/component_module"], function (ComponentModule) {
+define(function() {
 
     var ComponentViews = {}
 

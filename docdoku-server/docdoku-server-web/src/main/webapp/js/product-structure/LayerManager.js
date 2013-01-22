@@ -9,10 +9,6 @@ define([
 ) {
 
     var STATE = { FULL : 0, TRANSPARENT : 1};
-    var mouse = new THREE.Vector2(),
-        offset = new THREE.Vector3(),
-        INTERSECTED, SELECTED,
-        projector = new THREE.Projector();
 
     var LayerManager = function( scene, camera, renderer, controls, container ) {
         this.scene = scene;
@@ -157,27 +153,15 @@ define([
                     self.markerScale.addScalar(-0.5);
                     self.rescaleMarkers();
                 }
-
-                // Avoid to toggle button
-                e.stopImmediatePropagation();
-                $('#markerZoomLess').removeClass('active');
             });
 
             $('#markerZoomMore').click(function(e) {
                 self.markerScale.addScalar(0.5);
                 self.rescaleMarkers();
-
-                // Avoid to toggle button
-                e.stopImmediatePropagation();
-                $('#markerZoomMore').removeClass('active');
             });
 
             $('#markerState').click(function(e) {
                 self.changeMarkerState();
-
-                // Avoid to toggle button
-                e.stopImmediatePropagation();
-                $('#markerState').removeClass('active');
             });
         },
 
