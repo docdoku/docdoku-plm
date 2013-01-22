@@ -32,7 +32,13 @@ define([
             var self = this;
 
             require(["views/file"], function(FileView) {
-                var fileView = new FileView({model: attachedFile, filesToDelete: self.filesToDelete, deleteBaseUrl: self.options.deleteBaseUrl, editMode: self.editMode});
+                var fileView = new FileView({
+                    model: attachedFile,
+                    filesToDelete: self.filesToDelete,
+                    deleteBaseUrl: self.options.deleteBaseUrl,
+                    uploadBaseUrl: self.options.uploadBaseUrl,
+                    editMode: self.editMode
+                });
                 fileView.render();
                 self.filesUL.append(fileView.el);
             });
@@ -48,8 +54,7 @@ define([
             this.uploadFileNameP.html(shortName);
 
             var newFile = new AttachedFile({
-                shortName: shortName,
-                created: false
+                shortName: shortName
             });
 
             this.xhr = new XMLHttpRequest();
