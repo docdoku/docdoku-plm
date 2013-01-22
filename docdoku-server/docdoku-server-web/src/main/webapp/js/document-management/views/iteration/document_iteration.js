@@ -41,7 +41,7 @@ define([
         render: function() {
             this.deleteSubViews();
 
-            var editMode = this.model.isCheckout();
+            var editMode = this.model.isCheckoutByConnectedUser();
 
             var data = {
                 editMode: editMode,
@@ -81,7 +81,7 @@ define([
                     })
             );
 
-            this.customAttributesView.setEditMode(this.model.isCheckout());
+            this.customAttributesView.setEditMode(editMode);
             this.customAttributesView.render();
 
             var that = this;
