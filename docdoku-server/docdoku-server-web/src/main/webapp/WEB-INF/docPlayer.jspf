@@ -7,7 +7,7 @@
         <c:set scope="page" var="locale" value="en_US"/>
     </c:otherwise>
 </c:choose>
-<script type="text/javascript">
+<!--<script type="text/javascript">
     if(window.addEventListener)
         window.addEventListener('DOMMouseScroll', handleWheel, false);
     window.onmousewheel = document.onmousewheel = handleWheel;
@@ -35,9 +35,9 @@
 </script>
 
 <script type="text/javascript">
-    <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. -->
+    <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. ->
     var swfVersionStr = "9.0.124";
-    <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
+    <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. ->
     var xiSwfUrlStr = "${expressInstallSwf}";
     var flashvars = {
         SwfFile : escape("${filePath}?type=swf"),
@@ -93,5 +93,24 @@
             document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='"
                 + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" );
         </script>
+    </div>
+</div>-->
+
+<table border="0">
+    <tr>
+        <td width="14px" height="14px">
+            <img height="10px" width="10px" id="btn${index}" src="${context}/images/plus.png" onclick="switchMenu('swf${index}', 'btn${index}','${context}');"/>
+        </td>
+        <td>
+            <a href="${filePath}">${fileName}</a>
+            <a href="${filePath}?type=pdf"><img style="border-style:none" height="20px" width="20px" src="${context}/images/pdfIcon.png" /></a>
+        </td>
+    </tr>
+</table>
+<div style="display:none;" id="swf${index}">
+    <div id="flashContent${index}">
+        <!--<iframe src="${filePath}" width="500" height="200" align="middle" name="${fileName}" style="border-color: #ff0000"></iframe>-->
+        <!--<object data="${filePath}" type="text/html" codetype="application/pdf" ></object>-->
+        <media12|embed src="${filePath}"> </embed>
     </div>
 </div>
