@@ -1,12 +1,11 @@
 define([
     "views/components/modal",
-    "views/iteration/file_editor",
-    "views/components/editable_list_view",
+    "views/file_list",
     "views/document/document_attributes",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common/date"
-], function (ModalView, FileEditor, EditableListView, DocumentAttributesView, template, i18n, date) {
+], function (ModalView, FileListView, DocumentAttributesView, template, i18n, date) {
 
     var IterationView = ModalView.extend({
 
@@ -90,25 +89,14 @@ define([
                     that.customAttributesView.addAndFillAttribute(item);
                 });
 
-                /* Editor : generate a View for each file and handle the upload progress bar*/
-                this.fileEditor = new FileEditor({
-                    documentIteration:this.iteration
-                });
-    
-                /* ListView */
-                this.filesView = new EditableListView({
-                    model:this.iteration.getAttachedFiles(), /*domain objects set directly in view.model*/
-                    editable:true, /*we will have to look at view.options.editable*/
-                    listName:"Attached files for " + this.iteration,
-                    editor : this.fileEditor
+                this.fileListView = new FileListView({
+                    deleteBaseUrl: this.iteration.url(),
+                    uploadBaseUrl: this.iteration.getUploadBaseUrl(),
+                    collection:this.iteration.getAttachedFiles()
                 }).render();
-                this.fileEditor.setWidget(this.filesView);
     
-                /* Add the ListView to the tab */
-                $("#iteration-files").append(this.filesView.$el);
-    
-                this.cutomizeRendering();
-    
+                /* Add the fileListView to the tab */
+                $("#iteration-files").append(this.fileListView.el);
             }
 
             return this;
@@ -134,8 +122,7 @@ define([
              *saving new files : nothing to do : it's already saved
              *deleting unwanted files
              */
-
-            var filesToDelete = this.filesView.selection;
+            var filesToDelete = this.fileListView.filesToDelete;
 
             /*we need to reverse read because model.destroy() remove elements from collection*/
             while (filesToDelete.length != 0) {
@@ -156,7 +143,7 @@ define([
             if (this.model.hasIterations()) {
 
                 /*deleting unwanted files that have been added by upload*/
-                var filesToDelete = this.filesView.newItems;
+                var filesToDelete = this.fileListView.newItems;
 
                 /*we need to reverse read because model.destroy() remove elements from collection*/
                 while (filesToDelete.length != 0) {
@@ -167,34 +154,12 @@ define([
                         }
                     });
                 }
-
             }
-
             ModalView.prototype.cancelAction.call(this);
-        },
-
-        /*
-         * Here are some jquery adjustments to render the list specially
-         */
-
-        cutomizeRendering: function() {
-
-            this.filesView.on("list:selected", function (selectedObject, index, line) {
-                line.addClass("stroke");
-                line.find("a").addClass("stroke");
-            });
-
-            this.filesView.on("list:unselected", function (selectedObject, index, line) {
-                line.find(".stroke").removeClass("stroke");
-                line.removeClass("stroke")
-            });
-
-            this.fileEditor.render();
         },
 
         getPrimaryButton: function() {
             var button = this.$el.find("div.modal-footer button.btn-primary");
-            kumo.assertNotEmpty(button, "can't find primary button");
             return button;
         }
 
