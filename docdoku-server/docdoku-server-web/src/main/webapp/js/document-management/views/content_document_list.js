@@ -32,11 +32,11 @@ define([
 			);
 			this.collection.fetch();
 
-			this.listenTo(this.listView, "selectionChange", this.updateActionsButtons);
-            this.listenTo(this.collection, "change", this.updateActionsButtons);
+			this.listenTo(this.listView, "selectionChange", this.onStateChange);
+            this.listenTo(this.collection, "change", this.onStateChange);
 		},
 
-		updateActionsButtons: function () {
+        onStateChange: function () {
 
             var checkedViews = this.listView.checkedViews();
 
@@ -64,13 +64,13 @@ define([
             this.checkoutGroup.css('display', 'inline-block');
 
             if (document.isCheckout()) {
-                this.checkoutButton.prop('disabled', true);
-                this.undoCheckoutButton.prop('disabled', false);
-                this.checkinButton.prop('disabled', false);
+                if (document.isCheckoutByConnectedUser()) {
+                    this.updateActionsButton(false, true);
+                } else {
+                    this.updateActionsButton(false, false);
+                }
             } else {
-                this.checkoutButton.prop('disabled', false);
-                this.undoCheckoutButton.prop('disabled', true);
-                this.checkinButton.prop('disabled', true);
+                this.updateActionsButton(true, false);
             }
 
         },
@@ -78,6 +78,12 @@ define([
         onSeveralDocumentsSelected: function() {
             this.deleteButton.show();
             this.checkoutGroup.hide();
+        },
+
+        updateActionsButton: function(canCheckout, canUndoAndCheckin) {
+            this.checkoutButton.prop('disabled', !canCheckout);
+            this.undoCheckoutButton.prop('disabled', !canUndoAndCheckin);
+            this.checkinButton.prop('disabled', !canUndoAndCheckin);
         },
 
 		actionCheckout: function () {

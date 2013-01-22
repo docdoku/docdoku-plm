@@ -18,6 +18,14 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return this.get("workspaceId");
         },
 
+        getCheckoutUser: function() {
+            return this.get('checkOutUser');
+        },
+
+        isCheckoutByConnectedUser: function() {
+            return this.isCheckout() ? this.getCheckoutUser().login == APP_CONFIG.login : false;
+        },
+
         getUrl: function() {
             return this.url();
         },
