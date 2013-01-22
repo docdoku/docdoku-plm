@@ -1,0 +1,59 @@
+div.attachedFiles{
+
+  &.idle{
+
+    p#upload-file-shortname {
+      display: none;
+    }
+
+    div.progress {
+      width: 0%;
+      display: none;
+    }
+
+    button.cancel-upload-btn {
+      display: none;
+    }
+  }
+  &.uploading{
+
+    input.upload-btn {
+      display: none;
+    }
+  }
+
+  ul#file-list{
+    margin: 0;
+  }
+  li {
+
+    margin: 4px;
+
+    list-style: none;
+
+    div.item-component{
+      display: inline-block;
+    }
+
+    .stroke {
+      text-decoration: line-through;
+      color : red;
+    }
+
+    .stroke, a.stroke, a.stroke
+    {
+      text-decoration: line-through;
+      color : red;
+    }
+
+  }
+
+  li.stroke{
+    text-decoration: line-through;
+    color : red;
+  }
+
+  input.file-delete {
+    margin : 5px;
+  }
+}
