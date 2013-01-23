@@ -98,6 +98,10 @@ public class MainChannelApplication extends WebSocketApplication {
 
                 switch (type) {
 
+                    case ChannelMessagesType.USER_STATUS:
+                        onUserStatusRequestMessage(callerLogin, jsobj);
+                        break;
+
                     case ChannelMessagesType.WEBRTC_INVITE:
                         onWebRTCInviteMessage(callerLogin, jsobj);
                         break;
@@ -135,6 +139,7 @@ public class MainChannelApplication extends WebSocketApplication {
         }
 
     }
+
 
     // on Message Methods
 
@@ -289,6 +294,24 @@ public class MainChannelApplication extends WebSocketApplication {
 
             if (!sent) {
                 send(callerLogin, ChatMessagesBuilder.BuildChatMessageNotSentMessage(remoteUser, context));
+            }
+
+        } else {
+            // send forbidden message ?
+        }
+
+    }
+
+    private void onUserStatusRequestMessage(String callerLogin, JSONObject jsobj) throws JSONException {
+
+        String remoteUser = jsobj.getString("remoteUser");
+
+        if (callerIsAllowToReachCallee(callerLogin, remoteUser)) {
+
+            if(channels.containsKey(remoteUser)){
+                send(callerLogin, ChatMessagesBuilder.BuildOnlineStatusMessage(remoteUser));
+            }else{
+                send(callerLogin, ChatMessagesBuilder.BuildOfflineStatusMessage(remoteUser));
             }
 
         } else {

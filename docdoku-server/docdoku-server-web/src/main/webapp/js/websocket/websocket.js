@@ -5,6 +5,7 @@ var ChannelStatus = {
 
 var ChannelMessagesType = {
 
+    USER_STATUS : "USER_STATUS",
     WEBRTC_INVITE: "WEBRTC_INVITE",
     WEBRTC_ACCEPT: "WEBRTC_ACCEPT",
     WEBRTC_REJECT: "WEBRTC_REJECT",

@@ -33,5 +33,5 @@ public class ChannelMessagesType {
     public static final String WEBRTC_CANDIDATE = "candidate";
 
     public static final String CHAT_MESSAGE = "CHAT_MESSAGE" ;
-    public static final String TEST = "TEST" ;
+    public static final String USER_STATUS = "USER_STATUS" ;
 }

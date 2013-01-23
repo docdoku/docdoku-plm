@@ -123,4 +123,19 @@ public class ChatMessagesBuilder {
         }
     }
 
+    public static String BuildOfflineStatusMessage(String remoteUser) throws JSONException {
+        JSONObject jsobj = new JSONObject();
+        jsobj.put("type", ChannelMessagesType.USER_STATUS);
+        jsobj.put("remoteUser", remoteUser);
+        jsobj.put("status", "OFFLINE");
+        return jsobj.toString();
+    }
+
+    public static String BuildOnlineStatusMessage(String remoteUser) throws JSONException {
+        JSONObject jsobj = new JSONObject();
+        jsobj.put("type", ChannelMessagesType.USER_STATUS);
+        jsobj.put("remoteUser", remoteUser);
+        jsobj.put("status", "ONLINE");
+        return jsobj.toString();
+    }
 }

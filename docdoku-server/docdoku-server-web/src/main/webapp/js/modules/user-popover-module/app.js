@@ -7,6 +7,7 @@ define(["common-objects/collections/users"],
             + "<span class='btn webRTC_invite_button'> Video <i class='icon-facetime-video'></i></span> "
             + "<span class='btn new_chat_session_button'>Chat <i class='icon-leaf'></i></span> "
             + "<span class='btn mailto_button'>Mail <i class='icon-envelope'></i></span>"
+            + "<span class='user-status'></span>"
             + "</div>";
 
         //
@@ -52,7 +53,17 @@ define(["common-objects/collections/users"],
                                 // get the popover tip element
                                 var $tip = $(that).data('popover').$tip;
 
-                                // set the title
+                                // Listen for the status request done
+                                Backbone.Events.on('UserStatusRequestDone', function(message){
+                                    if(message.remoteUser == userLogin){
+                                        $tip.find(".user-status").html(message.status);
+                                    }
+                                });
+
+                                // trigger the status request
+                                Backbone.Events.trigger('UserStatusRequest', user.get("login"));
+
+                                // set the popover title
                                 $tip.find(".popover-title").html(user.get("name") + " | " + APP_CONFIG.workspaceId + " : " + context);
 
                                 // handle webrtc button click event

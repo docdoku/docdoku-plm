@@ -67,7 +67,7 @@ define([
             }
 
             if(message.type == ChannelMessagesType.WEBRTC_HANGUP){
-                // remote user reject
+                // remote user hang up the call
                 Backbone.Events.trigger('CallHangUpByRemoteUser', message);
                 return;
             }
