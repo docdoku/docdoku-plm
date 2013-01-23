@@ -20,11 +20,15 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentMaster;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
@@ -61,11 +65,21 @@ public class DocumentServlet extends HttpServlet {
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
             pRequest.setAttribute("docm", docM);
 
+
+            //List<DocumentIteration> di =  docM.getDocumentIterations();
+
+            //String test=docM.getDocumentIterations().get(1).getInstanceAttributes().get(0).getName();
+            //String test="test";
+
+            //DocumentIteration di = (DocumentIteration) docM.getDocumentIterations();
+
+
+           // pRequest.setAttribute("di", test);
+
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
 
         } catch (Exception pEx) {
             throw new ServletException("Error while fetching your document.", pEx);
         }
-
     }
 }
