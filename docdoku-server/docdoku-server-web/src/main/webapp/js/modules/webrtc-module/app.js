@@ -3,26 +3,17 @@ define([
     "modules/webrtc-module/views/webrtc_module_view"
 ], function (i18n, WebRTCModuleView) {
 
+    var WEBRTC_CONFIG = {
+        ms_timeout : 30000
+    };
+
     var webRTCModuleView = new WebRTCModuleView().render();
 
     // handle new webRtc session initiated by local user
     Backbone.Events.on('NewWebRTCSession', webRTCModuleView.onNewWebRTCSession);
 
-    // handle accept for local user
-    Backbone.Events.on('CallAcceptedByLocalUser', webRTCModuleView.onCallAcceptedByLocalUser);
     // handle reject for local user
     Backbone.Events.on('CallRejectedByLocalUser', webRTCModuleView.onCallRejectedByLocalUser);
-
-    // handle accept for remote user
-    Backbone.Events.on('CallAcceptedByRemoteUser', webRTCModuleView.onCallAcceptedByRemoteUser);
-    // handle reject for remote user
-    Backbone.Events.on('CallRejectedByRemoteUser', webRTCModuleView.onCallRejectedByRemoteUser);
-
-    // handle hang up from remote
-    Backbone.Events.on('CallHangUpByRemoteUser', webRTCModuleView.onCallHangUpByRemoteUser);
-
-    // handle status change for channel listener
-    Backbone.Events.on('WebRTCStatusChanged', webRTCModuleView.onWebRTCStatusChanged);
 
     // Websocket Listener
     var webRTCInvitationListener = new ChannelListener({
@@ -56,19 +47,25 @@ define([
 
             if(message.type == ChannelMessagesType.WEBRTC_ACCEPT){
                 // remote user accept
-                Backbone.Events.trigger('CallAcceptedByRemoteUser', message);
+                webRTCModuleView.onCallAcceptedByRemoteUser(message);
                 return;
             }
 
             if(message.type == ChannelMessagesType.WEBRTC_REJECT){
                 // remote user reject the invite
-                Backbone.Events.trigger('CallRejectedByRemoteUser', message);
+                webRTCModuleView.onCallRejectedByRemoteUser(message);
                 return;
             }
 
             if(message.type == ChannelMessagesType.WEBRTC_HANGUP){
                 // remote user hang up the call
-                Backbone.Events.trigger('CallHangUpByRemoteUser', message);
+                webRTCModuleView.onCallHangUpByRemoteUser(message);
+                return;
+            }
+
+            if(message.type == ChannelMessagesType.WEBRTC_INVITE_TIMEOUT){
+                // remote user timed out
+                webRTCModuleView.onRemoteTimeout(message);
                 return;
             }
 
@@ -76,7 +73,19 @@ define([
 
                 // remote user invites local user
 
+                var notificationId = "notification_" + new Date().getTime();
+
+                // Set a timeout (eg : local user is away from keyboard)
+                var timeout = setTimeout(function(){
+
+                    webRTCModuleView.onLocalTimeout(message);
+                    Backbone.Events.trigger('RemoveNotificationRequest', notificationId);
+
+                }, WEBRTC_CONFIG.ms_timeout);
+
                 var notification = {
+
+                    id : notificationId,
 
                     title: i18n["VIDEO_INVITE_NOTIFICATION_TITLE"],
 
@@ -87,28 +96,33 @@ define([
                             title: i18n["ACCEPT_VIDEO_INVITE"],
 
                             handler: function () {
-                                Backbone.Events.trigger('CallAcceptedByLocalUser', message);
+                                clearTimeout(timeout);
+                                webRTCModuleView.onCallAcceptedByLocalUser(message);
+                                Backbone.Events.trigger('RemoveNotificationRequest', notificationId);
+
                             }
                         },
                         {
                             title: i18n["REJECT_VIDEO_INVITE"],
 
                             handler: function () {
-                                Backbone.Events.trigger('CallRejectedByLocalUser', message);
+                                clearTimeout(timeout);
+                                webRTCModuleView.onCallRejectedByLocalUser(message);
+                                Backbone.Events.trigger('RemoveNotificationRequest', notificationId);
                             }
                         }
                     ]
 
                 };
 
+                // trigger notification display in nav bar
                 Backbone.Events.trigger('NewNotification', notification);
-
             }
 
         },
 
         onStatusChanged: function (status) {
-            Backbone.Events.trigger('WebRTCStatusChanged', status);
+            webRTCModuleView.onWebRTCStatusChanged(status);
         }
 
     });

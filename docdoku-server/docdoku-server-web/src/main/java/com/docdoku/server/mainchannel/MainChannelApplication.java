@@ -105,6 +105,9 @@ public class MainChannelApplication extends WebSocketApplication {
                     case ChannelMessagesType.WEBRTC_INVITE:
                         onWebRTCInviteMessage(callerLogin, jsobj);
                         break;
+                    case ChannelMessagesType.WEBRTC_INVITE_TIMEOUT:
+                        onWebRTCInviteTimeoutMessage(callerLogin, jsobj);
+                        break;
                     case ChannelMessagesType.WEBRTC_ACCEPT:
                         onWebRTCAcceptMessage(callerLogin, jsobj);
                         break;
@@ -119,7 +122,7 @@ public class MainChannelApplication extends WebSocketApplication {
                     case ChannelMessagesType.WEBRTC_OFFER:
                     case ChannelMessagesType.WEBRTC_CANDIDATE:
                     case ChannelMessagesType.WEBRTC_BYE:
-                        onWebRTCSignalingMessage(callerLogin, jsobj, data);
+                        onWebRTCSignalingMessage(callerLogin, jsobj, data, type);
                         break;
 
                     case ChannelMessagesType.CHAT_MESSAGE:
@@ -138,9 +141,9 @@ public class MainChannelApplication extends WebSocketApplication {
 
         }
 
+        Room.debug();
+
     }
-
-
     // on Message Methods
 
     private void onPeerDeclarationMessage(String data, MainChannelWebSocket ws) {
@@ -206,6 +209,22 @@ public class MainChannelApplication extends WebSocketApplication {
         }
     }
 
+
+    private void onWebRTCInviteTimeoutMessage(String callerLogin, JSONObject jsobj)  throws JSONException {
+
+        String remoteUser = jsobj.getString("remoteUser");
+        String roomKey = jsobj.getString("roomKey");
+
+        Room room = Room.getByKeyName(roomKey);
+
+        if (room != null && room.hasUser(remoteUser)) {
+            boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCInviteTimeoutMessage(callerLogin, room.key()));
+        } else {
+            // tell the user the room doesn't exist ?
+        }
+
+    }
+
     private void onWebRTCAcceptMessage(String callerLogin, JSONObject jsobj) throws JSONException {
 
         String remoteUser = jsobj.getString("remoteUser");
@@ -213,7 +232,7 @@ public class MainChannelApplication extends WebSocketApplication {
 
         Room room = Room.getByKeyName(roomKey);
 
-        if (room != null) {
+        if (room != null && room.hasUser(remoteUser)) {
             room.addUser(callerLogin);
             boolean sent = send(remoteUser, ChatMessagesBuilder.BuildWebRTCAcceptMessage(callerLogin, room.key()));
         } else {
@@ -255,7 +274,7 @@ public class MainChannelApplication extends WebSocketApplication {
 
     // webRTC P2P signaling messages
     // These messages are forwarded to the remote peer(s) in the room
-    private void onWebRTCSignalingMessage(String callerLogin, JSONObject jsobj, String data) throws JSONException {
+    private void onWebRTCSignalingMessage(String callerLogin, JSONObject jsobj, String data, String messageType) throws JSONException {
 
         String roomKey = jsobj.getString("roomKey");
         Room room = Room.getByKeyName(roomKey);
@@ -269,6 +288,10 @@ public class MainChannelApplication extends WebSocketApplication {
                 if (remoteUser != null) {
 
                     send(remoteUser, data);
+
+                    if(messageType.equals(ChannelMessagesType.WEBRTC_BYE)){
+                        room.removeUser(callerLogin);
+                    }
 
                 } else {
                     // tell the user the room is empty ?

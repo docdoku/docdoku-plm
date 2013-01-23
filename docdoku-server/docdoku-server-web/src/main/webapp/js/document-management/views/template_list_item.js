@@ -18,6 +18,12 @@ define([
 			CheckboxListItemView.prototype.initialize.apply(this, arguments);
 			this.events["click .reference"] = this.actionEdit;
 		},
+
+        rendered:function(){
+            //console.log($(this.template).find(".author-popover"));
+            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"left");
+        },
+
 		modelToJSON: function () {
 			var data = this.model.toJSON();
 			// Format dates

@@ -2,12 +2,26 @@ define(["common-objects/collections/users"],
 
     function (Users) {
 
+        // prevent popovers to keep on top
+        $(document).click(function(event) {
+            var $popovers = $(".popover")
+            if($(event.target).parents().index($popovers) == -1) {
+                $popovers.remove();
+            }
+        });
+
+        var statusHtml = {
+            OFFLINE : "<i class='icon-user'></i> User is offline",
+            ONLINE  : "<i class='icon-user'></i> User is online"
+        }
+
         // popover content template
         var tipContent = "<div>"
-            + "<span class='btn webRTC_invite_button'> Video <i class='icon-facetime-video'></i></span> "
-            + "<span class='btn new_chat_session_button'>Chat <i class='icon-leaf'></i></span> "
-            + "<span class='btn mailto_button'>Mail <i class='icon-envelope'></i></span>"
             + "<span class='user-status'></span>"
+            + "<hr />"
+            + "<span class='btn webRTC_invite_button'><i class='icon-facetime-video'></i> Video </span> "
+            + "<span class='btn new_chat_session_button'><i class='icon-leaf'></i> Chat </span> "
+            + "<span class='btn mailto_button'><i class='icon-envelope'></i> Mail </span>"
             + "</div>";
 
         //
@@ -15,6 +29,7 @@ define(["common-objects/collections/users"],
 
         $.fn.userPopover = function (userLogin, context, placement) {
 
+            // don't show the popover if user clicks on his name
             if (userLogin == APP_CONFIG.login) return $(this);
 
             var shown = false;
@@ -29,17 +44,8 @@ define(["common-objects/collections/users"],
 
                     var that = this;
 
-                    var hideTip = function () {
-                        $(that).popover('hide');
-                        shown = false ;
-                    };
-
-                    var showTip = function(){
-                        $(that).popover('show');
-                        shown = true;
-                    };
-
                     if (!shown) {
+
                         // Fetch and display user data
                         users.fetch({"async": true, "success": function () {
 
@@ -47,16 +53,15 @@ define(["common-objects/collections/users"],
                             var user = users.where({"login": userLogin})[0];
 
                             if (user){
-
-                                showTip();
+                                $(that).popover('show');
 
                                 // get the popover tip element
                                 var $tip = $(that).data('popover').$tip;
 
                                 // Listen for the status request done
                                 Backbone.Events.on('UserStatusRequestDone', function(message){
-                                    if(message.remoteUser == userLogin){
-                                        $tip.find(".user-status").html(message.status);
+                                    if(message.remoteUser == userLogin && message.status != null){
+                                        $tip.find(".user-status").html(statusHtml[message.status]);
                                     }
                                 });
 
@@ -69,19 +74,19 @@ define(["common-objects/collections/users"],
                                 // handle webrtc button click event
                                 $tip.find(".webRTC_invite_button").one("click", function (ev) {
                                     Backbone.Events.trigger('NewWebRTCSession', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context });
-                                    hideTip();
+                                    $(that).popover('hide');
                                 });
 
                                 // handle chat button click event
                                 $tip.find(".new_chat_session_button").one("click", function (ev) {
                                     Backbone.Events.trigger('NewChatSession', {remoteUser: user.get("login"), context: APP_CONFIG.workspaceId + " : " + context});
-                                    hideTip();
+                                    $(that).popover('hide');
                                 });
 
                                 // handle mail button click event
                                 $tip.find(".mailto_button").one("click", function (ev) {
                                     window.open("mailto:" + user.get("email"));
-                                    hideTip();
+                                    $(that).popover('hide');
                                 });
                             }
 

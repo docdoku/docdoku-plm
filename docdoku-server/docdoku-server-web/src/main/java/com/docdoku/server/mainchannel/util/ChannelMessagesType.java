@@ -23,6 +23,7 @@ package com.docdoku.server.mainchannel.util;
 public class ChannelMessagesType {
 
     public static final String WEBRTC_INVITE = "WEBRTC_INVITE";
+    public static final String WEBRTC_INVITE_TIMEOUT = "WEBRTC_INVITE_TIMEOUT";
     public static final String WEBRTC_ACCEPT = "WEBRTC_ACCEPT";
     public static final String WEBRTC_REJECT = "WEBRTC_REJECT";
     public static final String WEBRTC_HANGUP = "WEBRTC_HANGUP" ;

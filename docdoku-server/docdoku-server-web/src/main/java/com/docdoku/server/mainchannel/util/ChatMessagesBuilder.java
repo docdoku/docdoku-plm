@@ -138,4 +138,12 @@ public class ChatMessagesBuilder {
         jsobj.put("status", "ONLINE");
         return jsobj.toString();
     }
+
+    public static String BuildWebRTCInviteTimeoutMessage(String callerLogin, String roomKey) throws JSONException {
+        JSONObject jsobj = new JSONObject();
+        jsobj.put("type", ChannelMessagesType.WEBRTC_INVITE_TIMEOUT);
+        jsobj.put("remoteUser", callerLogin);
+        jsobj.put("roomKey", roomKey);
+        return jsobj.toString();
+    }
 }

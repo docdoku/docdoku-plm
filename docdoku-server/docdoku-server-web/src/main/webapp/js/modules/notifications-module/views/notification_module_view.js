@@ -30,14 +30,19 @@ define(function(){
         hide:function(){            
             this.$el.hide();            
         },
-        
-        
-        onNewNotification: function(args){            
-            this.notificationCollectionView.onNewNotification(new Notification(args)); 
+
+
+        onNewNotification: function(args){
+            this.notificationCollectionView.onNewNotification(new Notification(args));
             this.$el.show(); 
             this.$el.addClass("open");
         },
-        
+
+        onRemoveNotificationRequest: function(notificationId){
+            this.notificationCollectionView.onRemoveNotificationRequest(notificationId);
+
+        },
+
         onEmptyCollection:function(){
             this.$el.hide(); 
             this.$el.removeClass("open");
