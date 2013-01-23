@@ -15,9 +15,34 @@ define([
 
             /*we are fetching the last iteration*/
             this.iteration = this.model.getLastIteration();
+            this.iterations = this.model.getIterations();
 
             ModalView.prototype.initialize.apply(this, arguments);
 
+            this.events["click a#previous-iteration"] = "onPreviousIteration";
+            this.events["click a#next-iteration"] = "onNextIteration";
+
+        },
+
+        onPreviousIteration: function() {
+            if (this.iterations.hasPreviousIteration(this.iteration)) {
+                this.switchIteration(this.iterations.previous(this.iteration))
+            }
+            return false;
+        },
+
+        onNextIteration: function() {
+            if (this.iterations.hasNextIteration(this.iteration)) {
+                this.switchIteration(this.iterations.next(this.iteration))
+            }
+            return false;
+        },
+
+        switchIteration: function(iteration) {
+            var activeTabIndex = this.$('.nav-tabs .active').index();
+            this.iteration = iteration;
+            this.render();
+            this.$('.nav-tabs li').eq(activeTabIndex).children().tab('show');
         },
 
         validation: function() {
@@ -37,7 +62,6 @@ define([
             }
         },
 
-
         render: function() {
             this.deleteSubViews();
 
@@ -47,7 +71,7 @@ define([
                 editMode: editMode,
                 master: this.model.toJSON(),
                 i18n: i18n
-            }
+            };
 
             data.master.creationDate = date.formatTimestamp(
                 i18n._DATE_FORMAT,
@@ -55,7 +79,11 @@ define([
             );
 
             if (this.model.hasIterations()) {
+                var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
+                var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
                 data.iteration = this.iteration.toJSON();
+                data.iteration.hasNextIteration = hasNextIteration;
+                data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.reference = this.iteration.getReference();
                 data.iteration.creationDate = date.formatTimestamp(
                     i18n._DATE_FORMAT,
