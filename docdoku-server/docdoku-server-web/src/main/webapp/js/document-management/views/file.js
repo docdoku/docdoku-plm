@@ -30,7 +30,7 @@ define([
         render: function() {
             this.$el.html(Mustache.render(template,
                 {
-                    url: !this.model.isNew() ? this.options.uploadBaseUrl+this.model.get("shortName") : false,
+                    url: this.options.uploadBaseUrl+this.model.get("shortName"),
                     shortName: this.model.get("shortName"),
                     editMode: this.editMode
                 }

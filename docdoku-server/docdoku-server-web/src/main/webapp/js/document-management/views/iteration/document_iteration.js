@@ -145,6 +145,10 @@ define([
 
             if (this.model.hasIterations()) {
 
+                //Abort file upload if there is one
+                if(!_.isUndefined(this.fileListView.xhr))
+                    this.fileListView.xhr.abort();
+
                 /*deleting unwanted files that have been added by upload*/
                 var filesToDelete = this.fileListView.newItems;
 
