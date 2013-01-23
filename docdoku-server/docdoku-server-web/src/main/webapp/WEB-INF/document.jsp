@@ -14,106 +14,16 @@
         <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/document/style.less"/>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/less-1.3.3.min.js"></script>
 
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery-1.8.2.min.js"></script>
+
+
         <script language="JavaScript">
-            <!--
-            var dlVisible=false;
-            var lienVisible=false;
-            var attributVisible=false;
-            var documentVisible=false;
-            var iterationVisible=false;
-
-            function show(id,visible)
-            {
-                if(document.getElementById) {
-                    document.getElementById(id).style.visibility = 'visible';
-                } else if(document.layers) {
-                    document.layers[id].visibility = 'show';
-                } else if(document.all)
-                    document.all(id).style.visibility = 'visible';
-
-                visible = true;
-            }
-
-            function hide(id,visible)
-            {
-                if(document.getElementById)
-                    document.getElementById(id).style.visibility = 'hidden';
-                else if(document.layers)
-                    document.layers[id].visibility = 'hide';
-                else if(document.all)
-                    document.all(id).style.visibility = 'hidden';
-
-                visible=false;
-            }
-
-            function show_hide(id)
-            {
-                if (id == 'dl')
-                {
-                    hide('lien',lienVisible);
-                    hide('attribut',attributVisible);
-                    hide('document',documentVisible);
-                    hide('iteration',iterationVisible);
-                    if (!dlVisible)
-                        show(id,dlVisible);
-                    else
-                        hide(id,dlVisible);
-                }
-                else if (id == 'lien')
-                {
-                    hide('dl',dlVisible);
-                    hide('attribut',attributVisible);
-                    hide('document',documentVisible);
-                    hide('iteration',iterationVisible);
-                    if (!lienVisible)
-                        show(id,lienVisible);
-                    else
-                        hide(id,lienVisible);
-                }
-                else if (id == 'attribut')
-                {
-                    hide('dl',dlVisible);
-                    hide('lien',lienVisible);
-                    hide('document',documentVisible);
-                    hide('iteration',iterationVisible);
-                    if (!attributVisible)
-                        show(id,attributVisible);
-                    else
-                        hide(id,attributVisible);
-                }
-                else if (id == 'document')
-                {
-                    hide('dl',dlVisible);
-                    hide('lien',lienVisible);
-                    hide('attribut',attributVisible);
-                    hide('iteration',iterationVisible);
-                    if (!documentVisible)
-                        show(id,documentVisible);
-                    else
-                        hide(id,documentVisible);
-                }
-                else if (id == 'iteration')
-                {
-                    hide('dl',dlVisible);
-                    hide('lien',lienVisible);
-                    hide('attribut',attributVisible);
-                    hide('document',documentVisible);
-                    if (!iterationVisible)
-                        show(id,iterationVisible);
-                    else
-                        hide(id,iterationVisible);
-                }
-            }
-
-            function hide_all()
-            {
-                hide('dl',dlVisible);
-                hide('lien',lienVisible);
-                hide('attribut',attributVisible);
-                hide('document',documentVisible);
-                hide('iteration',iterationVisible);
-            }
-            // -->
+            $(function(){
+                $(window).bind( 'hashchange', function(e) {
+                    $(".well:visible").hide();
+                    $(window.location.hash).show();
+                });
+            });
         </script>
     </head>
 
@@ -126,12 +36,12 @@
                             <ul class="nav" id="header_left_menu">
                                 <li><img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/></li>
                                 <li><a class="brand" href="#" style="color: white">&nbsp;&nbsp;&nbsp;DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a></li>
-                                <li class="active"><a href="#" OnClick="hide_all();">${docm}</a></li>
-                                <li><a href="#" OnClick="show_hide('document');" style="color: white"><fmt:message key="section1.title"/></a></li>
-                                <li><a href="#" OnClick="show_hide('iteration');" style="color: white"><fmt:message key="section2.title"/></a></li>
-                                <li><a href="#" OnClick="show_hide('attribut');" style="color: white"><fmt:message key="section2.attributs"/></a></li>
-                                <li><a href="#" OnClick="show_hide('dl');" style="color: white"><fmt:message key="sidebar.title1"/></a></li>
-                                <li><a href="#" OnClick="show_hide('lien');" style="color: white"><fmt:message key="sidebar.title2"/></a></li>
+                                <li class="active"><a href="#">${docm}</a></li>
+                                <li><a href="#general" style="color: white"><fmt:message key="section1.title"/></a></li>
+                                <li><a href="#iteration" style="color: white"><fmt:message key="section2.title"/></a></li>
+                                <li><a href="#attribut" style="color: white"><fmt:message key="section2.attributs"/></a></li>
+                                <li><a href="#file" style="color: white"><fmt:message key="sidebar.title1"/></a></li>
+                                <li><a href="#link"  style="color: white"><fmt:message key="sidebar.title2"/></a></li>
                             </ul>
                         </div>
                     </div>
@@ -142,8 +52,7 @@
         <div id="page">
             <div id="content">
                 <div id="sidebar">
-                    <div id="dl" style="visibility:hidden;" class="well">
-                    <!--<div id="dl" class="well">-->
+                    <div id="file" class="well">
                         <center><h3><fmt:message key="sidebar.title1"/></h3></center>
                         <c:forEach var="item" varStatus="status" items="${docm.lastIteration.attachedFiles}">
                             <c:set scope="request" var="context" value="<%=request.getContextPath()%>" />
@@ -173,7 +82,7 @@
                         </c:forEach>
                     </div>
 
-                    <div id="lien" style="visibility:hidden;" class="well">
+                    <div id="link" class="well">
                         <center><h3 ><fmt:message key="sidebar.title2"/></h3></center>
                         <p>
                             <c:forEach var="item" items="${docm.lastIteration.linkedDocuments}">
@@ -186,16 +95,19 @@
                     <div id="attribut" class="well">
                         <center><h3 ><fmt:message key="section2.attributs"/></h3></center>
                         <p>
-                            <c:forEach var="item" items="${docm.lastIteration.linkedDocuments}">
-                                <a href="<%=request.getContextPath()%>/documents/${item.toDocumentWorkspaceId}/${item.toDocumentDocumentMasterId}/${item.toDocumentDocumentMasterVersion}">${item.toDocumentDocumentMasterId}-${item.toDocumentDocumentMasterVersion}-${item.toDocumentIteration}</a><br/>
-                            </c:forEach>
+
+
+                                <!--${di}
+
+                                coucou-->
+
                         </p>
                     </div>
                 </div>
             </div>
 
             <div id="main">
-                <div id="document" style="visibility:hidden;" class="well">
+                <div id="general" class="well">
                     <center><h3><fmt:message key="section1.title"/></h3></center>
                     <table class="tab" border="0">
                         <tr>
@@ -238,7 +150,7 @@
                 </div>
             </div>
 
-            <div id="iteration" style="visibility:hidden;" class="well"  style="width: 5000px">
+            <div id="iteration" class="well">
                 <center><h3><fmt:message key="section2.title"/></h3></center>
                 <table class="tab2">
                     <tr>
