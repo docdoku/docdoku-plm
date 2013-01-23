@@ -84,7 +84,6 @@
     border-radius: 6px;
     box-shadow: 0 0 3px #666;
     overflow: hidden;
-
 }
 
 #webrtc_module> #webrtc_module_body > #webrtc_video_container > video.webrtc_loading {
@@ -121,4 +120,8 @@
     -o-transition: opacity 0.5s ease;
     -ms-transition: opacity  0.5s ease;
     transition: opacity 0.5s ease;
+    -webkit-transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
 }
