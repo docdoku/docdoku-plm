@@ -11,6 +11,7 @@ define([
         var nmv = new NotificationModuleView().render();
         
         Backbone.Events.on('NewNotification', nmv.onNewNotification);
-        
+        Backbone.Events.on('RemoveNotificationRequest', nmv.onRemoveNotificationRequest);
+
     
     });

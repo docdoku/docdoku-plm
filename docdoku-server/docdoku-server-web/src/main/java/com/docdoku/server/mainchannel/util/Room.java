@@ -44,7 +44,13 @@ public class Room {
         keyName = roomKey;
         put();
     }
-    
+
+    public String getUser1(){
+        return user1;
+    }
+    public String getUser2(){
+        return user2;
+    }
     
     
     /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
@@ -123,7 +129,14 @@ public class Room {
     /** Add a new participant to this room
      * @return if participant is found */
     public boolean addUser(String user) {
+
         boolean success = true;
+
+        // avoid a user to be added in the room many times.
+        if(this.hasUser(user)){
+            return success;
+        }
+
         if (user1 == null || user1.equals("")) {
             user1 = user;
         } else if (user2 == null || user2.equals("")) {
@@ -181,6 +194,23 @@ public class Room {
                 e.getValue().removeUser(callerLogin);
             }
         }
+
+    }
+
+    public static void debug(){
+
+        System.out.println("===========ROOM DEBUG BEGIN================");
+
+        Set<Map.Entry<String, Room>> rooms = new HashSet<Map.Entry<String, Room>>(DB.entrySet());
+        for (Map.Entry<String, Room> e : rooms) {
+            System.out.println("===========================");
+            System.out.println("ROOM DEBUG : roomKey = "+e.getKey());
+            System.out.println("ROOM DEBUG : occupancy = "+e.getValue().getOccupancy());
+            System.out.println("ROOM DEBUG : user1 = "+e.getValue().getUser1());
+            System.out.println("ROOM DEBUG : user2 = "+e.getValue().getUser2());
+            System.out.println("===========================");
+        }
+        System.out.println("===========ROOM DEBUG END================");
 
     }
 

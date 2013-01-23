@@ -42,6 +42,15 @@ define([
 			return data;
 		},
 
+        rendered:function(){
+
+            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"left");
+
+            if(this.model.attributes.checkOutUser != null)
+                this.$(".checkout-user-popover").userPopover(this.model.attributes.checkOutUser.login,this.model.attributes.id,"left");
+
+        },
+
 		actionEdit: function (evt) {
 			var that = this;
 			this.model.fetch().success(function () {

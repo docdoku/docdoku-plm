@@ -8,10 +8,10 @@
   z-index: @zindexPopover;
   display: none;
   padding: 5px;
-  &.top    { margin-top:  -5px; }
-  &.right  { margin-left:  5px; }
+  &.top    { margin-top:  -40px; }
+  &.right  { margin-top: -18px;  margin-left: 10px; }
   &.bottom { margin-top:   5px; }
-  &.left   { margin-left: -5px; }
+  &.left   { margin-top: -18px;  margin-left: -10px; }
   &.top .arrow    { #popoverArrow > .top(); }
   &.right .arrow  { #popoverArrow > .right(); }
   &.bottom .arrow { #popoverArrow > .bottom(); }
@@ -23,7 +23,7 @@
   }
 }
 .popover-inner {
-  padding: 3px;
+  /*padding: 3px;*/
   width: 280px;
   overflow: hidden;
   background: @black; // has to be full background declaration for IE fallback
@@ -37,6 +37,9 @@
   background-color: #f5f5f5;
   border-bottom:1px solid #eee;
   .border-radius(3px 3px 0 0);
+  #gradient > .vertical(#3F5F99, #213251);
+  color: white;
+  text-shadow: #555 0px -1px 0px;
 }
 .popover-content {
   padding: 14px;

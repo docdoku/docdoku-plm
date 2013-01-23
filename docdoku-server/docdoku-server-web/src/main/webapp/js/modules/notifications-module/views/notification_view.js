@@ -21,6 +21,7 @@ define(function(){
         render: function() {
 
             var $html;
+            var that  = this ;
 
             if(this.model.attributes.actions != undefined){
 

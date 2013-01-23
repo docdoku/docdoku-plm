@@ -3,6 +3,10 @@ define(function(){
     NotificationCollection = Backbone.Collection.extend({
 
         model: Notification,
+
+        getId:function(){
+          return this.get("id");
+        },
             
         getContent: function() {
             return this.get("content");
