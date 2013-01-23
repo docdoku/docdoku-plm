@@ -92,6 +92,35 @@ define([
             this.finished();
         },
 
+        deleteFilesToDelete: function() {
+            /*we need to reverse read because model.destroy() remove elements from collection*/
+            while (this.filesToDelete.length != 0) {
+                var file = this.filesToDelete.pop();
+                file.destroy({
+                    error:function () {
+                        alert("file " + file + " could not be deleted");
+                    }
+                });
+            }
+        },
+
+        deleteNewFiles: function() {
+            //Abort file upload if there is one
+            if(!_.isUndefined(this.xhr))
+                this.xhr.abort();
+
+            /*deleting unwanted files that have been added by upload*/
+            /*we need to reverse read because model.destroy() remove elements from collection*/
+            while (this.newItems.length != 0) {
+                var file = this.newItems.pop();
+                file.destroy({
+                    error:function () {
+                        alert("file " + file + " could not be deleted");
+                    }
+                });
+            }
+        },
+
         gotoIdleState: function() {
             this.$el.removeClass("uploading");
             this.$el.addClass("idle");
