@@ -22,11 +22,7 @@ package com.docdoku.core.security;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Class that holds information on how a specific user belongs to a workspace.
@@ -39,6 +35,9 @@ import javax.persistence.Table;
 @Table(name="WORKSPACEUSERMEMBERSHIP")
 @javax.persistence.IdClass(com.docdoku.core.security.WorkspaceUserMembershipKey.class)
 @javax.persistence.Entity
+@NamedQueries({
+        @NamedQuery(name="findCommonWorkspacesForGivenUsers", query="select w FROM WorkspaceUserMembership w where exists (select w1 from WorkspaceUserMembership w1 where w1.member.login = :userLogin1) and exists (select w2 from WorkspaceUserMembership w2 where w2.member.login = :userLogin2)")
+})
 public class WorkspaceUserMembership implements Serializable {
 
     @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)

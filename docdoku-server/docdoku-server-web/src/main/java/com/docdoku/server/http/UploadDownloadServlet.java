@@ -22,6 +22,7 @@ package com.docdoku.server.http;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -33,31 +34,25 @@ import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.regex.Pattern;
 import javax.activation.FileTypeMap;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Part;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+
+@MultipartConfig(fileSizeThreshold = 1024 * 1024)
 public class UploadDownloadServlet extends HttpServlet {
 
     @EJB
@@ -69,12 +64,12 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
-            HttpServletResponse pResponse)
+                         HttpServletResponse pResponse)
             throws ServletException, IOException {
 
         try {
             String login = pRequest.getRemoteUser();
-            
+
             //String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
             //remove empty entries because of Three.js that generates url with double /
             String[] pathInfos = UploadDownloadServlet.removeEmptyEntries(pRequest.getRequestURI().split("/"));
@@ -135,8 +130,8 @@ public class UploadDownloadServlet extends HttpServlet {
 
             long lastModified = fileToOutput.lastModified();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");
-            
-            if(lastModified>ifModified){
+
+            if (lastModified > ifModified) {
                 setLastModifiedHeaders(lastModified, pResponse);
                 pResponse.setContentLength((int) fileToOutput.length());
                 ServletOutputStream httpOut = pResponse.getOutputStream();
@@ -150,10 +145,10 @@ public class UploadDownloadServlet extends HttpServlet {
                 input.close();
                 httpOut.flush();
                 httpOut.close();
-            }else{
+            } else {
                 pResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
-            
+
         } catch (Exception pEx) {
             throw new ServletException("Error while downloading the file.", pEx);
         }
@@ -161,11 +156,6 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
-
-        boolean isMultipart = ServletFileUpload.isMultipartContent(pRequest);
-        if (!isMultipart) {
-            throw new ServletException("Error, the request doesn't contain a multipart content.");
-        }
 
         String login = pRequest.getRemoteUser();
         String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
@@ -201,29 +191,22 @@ public class UploadDownloadServlet extends HttpServlet {
                 vaultFile = documentService.saveFileInTemplate(templatePK, fileName, 0);
             }
             vaultFile.getParentFile().mkdirs();
-            vaultFile.createNewFile();
-            ServletFileUpload upload = new ServletFileUpload();
-            FileItemIterator iter = upload.getItemIterator(pRequest);
-            while (iter.hasNext()) {
-                FileItemStream item = iter.next();
-                if (!item.isFormField()) {
-                    String name = item.getFieldName();
-                    if (name.equals("upload")) {
-                        InputStream in = new BufferedInputStream(item.openStream(), BUFFER_CAPACITY);
-                        OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
+            Collection<Part> uploadedParts = pRequest.getParts();
+            for (Part item : uploadedParts) {
+                InputStream in = new BufferedInputStream(item.getInputStream(), BUFFER_CAPACITY);
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
 
-                        byte[] data = new byte[CHUNK_SIZE];
-                        int length;
-                        try {
-                            while ((length = in.read(data)) != -1) {
-                                out.write(data, 0, length);
-                            }
-                        } finally {
-                            in.close();
-                            out.close();
-                        }
+                byte[] data = new byte[CHUNK_SIZE];
+                int length;
+                try {
+                    while ((length = in.read(data)) != -1) {
+                        out.write(data, 0, length);
                     }
+                } finally {
+                    in.close();
+                    out.close();
                 }
+                break;
             }
             if (elementType.equals("documents")) {
                 documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
@@ -246,18 +229,17 @@ public class UploadDownloadServlet extends HttpServlet {
 
     private static String[] removeEmptyEntries(String[] entries) {
         List<String> elements = new LinkedList<String>(Arrays.asList(entries));
-        
-        for (Iterator<String> it = elements.iterator();it.hasNext();) {
+
+        for (Iterator<String> it = elements.iterator(); it.hasNext(); ) {
             if (it.next().isEmpty()) {
                 it.remove();
             }
         }
         return elements.toArray(new String[elements.size()]);
     }
-    
-    
-    
-    private void setLastModifiedHeaders(long lastModified, HttpServletResponse pResponse){
+
+
+    private void setLastModifiedHeaders(long lastModified, HttpServletResponse pResponse) {
         DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         Calendar cal = new GregorianCalendar();
@@ -265,9 +247,9 @@ public class UploadDownloadServlet extends HttpServlet {
         pResponse.setHeader("Last-Modified", httpDateFormat.format(cal.getTime()));
         pResponse.setHeader("Pragma", "");
     }
-    
-    
-    private void setCacheHeaders(int cacheSeconds, HttpServletResponse pResponse){
+
+
+    private void setCacheHeaders(int cacheSeconds, HttpServletResponse pResponse) {
         pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);
         DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));

@@ -1,1 +1,1 @@
-var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket", "listen" + ":" + APP_CONFIG.login);
+var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket", "listen" + ":" + APP_CONFIG.sessionId);

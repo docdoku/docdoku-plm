@@ -105,8 +105,6 @@ public class ChatMessagesBuilder {
         return jsobj.toString();
     }
 
-
-
     // Others
 
     public static String BuildNoopMessage() throws JSONException {
@@ -122,16 +120,6 @@ public class ChatMessagesBuilder {
             return jsobj.toString();
         } catch (JSONException ex) {
             return "json exception";
-        }
-    }
-
-    public static String BuildApiErrorMessage() {
-        try {
-            JSONObject jsobj = new JSONObject();
-            jsobj.put("error", "api error");
-            return jsobj.toString();
-        } catch (JSONException ex) {
-            return "api error";
         }
     }
 
