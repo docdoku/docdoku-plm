@@ -68,6 +68,7 @@ define([
 
             this.xhr.addEventListener("load", function() {
                 self.finished();
+                newFile.isNew = function(){return false;};
                 self.collection.add(newFile);
                 self.newItems.add(newFile);
             }, false);
