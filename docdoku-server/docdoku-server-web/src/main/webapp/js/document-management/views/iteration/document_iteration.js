@@ -102,6 +102,11 @@ define([
                 $("#iteration-files").append(this.fileListView.el);
             }
 
+            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"right");
+
+            if(this.model.attributes.checkOutUser != null)
+                this.$(".checkout-user-popover").userPopover(this.model.attributes.checkOutUser.login,this.model.attributes.id,"right");
+
             return this;
         },
 
@@ -125,17 +130,7 @@ define([
              *saving new files : nothing to do : it's already saved
              *deleting unwanted files
              */
-            var filesToDelete = this.fileListView.filesToDelete;
-
-            /*we need to reverse read because model.destroy() remove elements from collection*/
-            while (filesToDelete.length != 0) {
-                var file = filesToDelete.pop();
-                file.destroy({
-                    error:function () {
-                        alert("file " + file + " could not be deleted");
-                    }
-                });
-            }
+            this.fileListView.deleteFilesToDelete();
 
             this.hide();
 
@@ -144,19 +139,8 @@ define([
         cancelAction: function() {
 
             if (this.model.hasIterations()) {
-
-                /*deleting unwanted files that have been added by upload*/
-                var filesToDelete = this.fileListView.newItems;
-
-                /*we need to reverse read because model.destroy() remove elements from collection*/
-                while (filesToDelete.length != 0) {
-                    var file = filesToDelete.pop();
-                    file.destroy({
-                        error:function () {
-                            alert("file " + file + " could not be deleted");
-                        }
-                    });
-                }
+                //Abort file upload and delete new files
+                this.fileListView.deleteNewFiles();
             }
             ModalView.prototype.cancelAction.call(this);
         },

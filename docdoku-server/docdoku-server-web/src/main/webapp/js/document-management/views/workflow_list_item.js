@@ -1,13 +1,11 @@
 define([
     "require",
 	"views/checkbox_list_item",
-	"text!templates/workflow_list_item.html",
-    "views/workflow_model_editor"
+	"text!templates/workflow_list_item.html"
 ], function (
     require,
 	CheckboxListItemView,
-	template,
-    WorkflowModelEditorView
+	template
 ) {
 	var WorkflowListItemView = CheckboxListItemView.extend({
 		template: Mustache.compile(template),
@@ -16,6 +14,12 @@ define([
         initialize: function(){
             CheckboxListItemView.prototype.initialize.apply(this, arguments);
             this.events["click .reference"] = this.actionEdit;
+
+        },
+
+        rendered:function(){
+            //console.log($(this.template).find(".author-popover"));
+            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"left");
         },
 
         actionEdit: function (evt) {

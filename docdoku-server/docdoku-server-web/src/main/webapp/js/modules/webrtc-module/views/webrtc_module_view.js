@@ -41,10 +41,8 @@ define(
             isAudioMuted: false,
 
             initialize: function () {
-
                 _.bindAll(this);
                 return this.el;
-
             },
 
             render: function () {
@@ -82,7 +80,7 @@ define(
             onHangupButtonClick: function (ev) {
 
                 if (this.started) {
-                    mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey});
+                    mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey, remoteUser : APP_CONFIG.login});
                 }
 
                 this.stop();
@@ -95,16 +93,31 @@ define(
             },
 
             stop: function () {
+
                 this.started = false;
                 this.isAudioMuted = false;
                 this.isVideoMuted = false;
                 this.initiator = 0;
+
                 if (this.pc) {
+                    console.log("Closing peer connection");
                     this.pc.close();
                     this.pc = null;
                 }
+
+                if(this.localStream != null && this.localStream.stop){
+                    this.localStream.stop();
+                    this.localStream = null;
+                }
+
+                if(this.remoteStream != null && this.remoteStream.stop){
+                    this.remoteStream.stop();
+                    this.remoteStream = null;
+                }
+
                 this.localVideo.style.opacity = 0;
                 this.remoteVideo.style.opacity = 0;
+
             },
 
             exit: function () {
@@ -143,10 +156,8 @@ define(
             onNewWebRTCSession: function (sessionArgs) {
 
                 // local user initiate the call
-                this.callInitiated = true;
-                this.isWaitingForRemoteUserAccept = true;
 
-                // store session var
+                // store rtc session vars
                 this.setRemoteUser(sessionArgs.remoteUser);
                 this.setContext(sessionArgs.context);
                 this.setRoomKey(APP_CONFIG.login + "-" + this.remoteUser);
@@ -163,15 +174,14 @@ define(
             onCallAcceptedByLocalUser: function (message) {
 
                 // remote user initiate the call
-                this.callInitiated = true;
                 this.initiator = 1;
-                this.isWaitingForRemoteUserAccept = false;
 
                 this.setRemoteUser(message.remoteUser);
                 this.setContext(message.context);
                 this.setRoomKey(message.roomKey);
 
                 // tell the remote user we accept the call.
+                // this will trigger a room.addUser
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.WEBRTC_ACCEPT,
                     roomKey: message.roomKey,
@@ -198,6 +208,20 @@ define(
 
             },
 
+            onLocalTimeout: function (message) {
+                // tell the remote user we didn't answer in time
+                mainChannel.sendJSON({
+                    type: ChannelMessagesType.WEBRTC_INVITE_TIMEOUT,
+                    roomKey: message.roomKey,
+                    remoteUser: message.remoteUser
+                });
+            },
+
+            onRemoteTimeout: function (message) {
+                this.setStatus("Remote user didn't answer in time. Call aborted.");
+                this.stop();
+            },
+
             onCallAcceptedByRemoteUser: function (message) {
                 this.setStatus("Remote user has accepted the call. Waiting for connection ...");
             },
@@ -213,25 +237,19 @@ define(
             },
 
             initMedia: function () {
-                //console.log("initMedia");
 
-                // Call into getUserMedia via the adapter
                 var constraints = {"mandatory": {}, "optional": []};
 
                 try {
                     getUserMedia({'audio': true, 'video': constraints}, this.onUserMediaSuccess, this.onUserMediaError);
-                    //console.log("Requested access to local media with mediaConstraints:\n" + "  \"" + JSON.stringify(constraints) + "\"");
                 } catch (e) {
-                    alert("getUserMedia() failed. Is this a WebRTC capable browser?");
-                    //console.log("getUserMedia failed with exception: " + e.message);
+                    this.setStatus("getUserMedia() failed. Is this a WebRTC capable browser?");
                 }
-
 
             },
 
             onUserMediaSuccess: function (stream) {
 
-                //console.log("User has granted access to local media.");
                 this.localStream = stream;
                 attachMediaStream(this.localVideo, this.localStream);
                 this.localVideo.style.opacity = 1;
@@ -248,6 +266,7 @@ define(
                             remoteUser: this.remoteUser,
                             context: this.context
                         });
+                        this.setStatus("Invitation has been sent to remote user, waiting for him/her to accept.");
                     }
 
                 }
@@ -263,14 +282,9 @@ define(
 
             maybeStart: function () {
 
-                //console.log("maybeStart");
-
                 if (!this.started && this.localStream) {
-
                     this.setStatus("Connecting...");
-                    //console.log("Creating PeerConnection.");
                     this.createPeerConnection();
-                    //console.log("Adding local stream.");
                     this.pc.addStream(this.localStream);
                     this.started = true;
                     if (this.initiator)
@@ -280,17 +294,14 @@ define(
             },
 
             doCall: function () {
-                //console.log("Sending offer to peer.");
                 this.pc.createOffer(this.setLocalAndSendMessage, null, this.mediaConstraints);
             },
 
             doAnswer: function () {
-                //console.log("Sending answer to peer.");
                 this.pc.createAnswer(this.setLocalAndSendMessage, null, this.mediaConstraints);
             },
 
             setLocalAndSendMessage: function (sessionDescription) {
-                //console.log("setLocalAndSendMessage");
                 sessionDescription.sdp = preferOpus(sessionDescription.sdp);
                 this.pc.setLocalDescription(sessionDescription);
                 sessionDescription.roomKey = this.roomKey;
@@ -302,11 +313,11 @@ define(
             },
 
             createPeerConnection: function () {
-                //console.log("Create RTCPeerConnnection");
 
                 var pc_config = {"iceServers": [
                     {"url": "stun:stun.l.google.com:19302"}
                 ]};
+
                 try {
                     // Create an RTCPeerConnection via the adapter
                     this.pc = new RTCPeerConnection(pc_config);
@@ -314,7 +325,7 @@ define(
                     //console.log("Created RTCPeerConnnection with config:\n" + "  \"" +JSON.stringify(pc_config) + "\".");
                 } catch (e) {
                     //console.log("Failed to create PeerConnection, exception: " + e.message);
-                    this.Status("Cannot create RTCPeerConnection object; WebRTC is not supported by this browser.");
+                    this.setStatus("Cannot create RTCPeerConnection object; WebRTC is not supported by this browser.");
                     return;
                 }
 
@@ -367,15 +378,15 @@ define(
             },
 
             onSessionConnecting: function (message) {
-                //console.log("Session connecting.");
+                this.setStatus("Session connecting.");
             },
 
             onSessionOpened: function (message) {
-                //console.log("Session opened.");
+                this.setStatus("Session opened.");
             },
 
             onRemoteStreamAdded: function (event) {
-                //console.log("Remote stream added.");
+                this.setStatus("Remote stream added.");
                 this.remoteStream = event.stream;
                 attachMediaStream(this.remoteVideo, this.remoteStream);
                 this.waitForRemoteVideo();

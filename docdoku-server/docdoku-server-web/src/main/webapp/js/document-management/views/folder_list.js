@@ -1,11 +1,9 @@
 define([
 	"require",
-	"views/collapsible_list",
-	"views/folder_list_item"
+	"views/collapsible_list"
 ], function (
 	require,
-	CollapsibleListView,
-	FolderListItemView
+	CollapsibleListView
 ) {
 	var FolderListView = CollapsibleListView.extend({
 		itemViewFactory: function (model) {

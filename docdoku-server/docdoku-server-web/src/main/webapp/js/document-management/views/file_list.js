@@ -32,7 +32,13 @@ define([
             var self = this;
 
             require(["views/file"], function(FileView) {
-                var fileView = new FileView({model: attachedFile, filesToDelete: self.filesToDelete, deleteBaseUrl: self.options.deleteBaseUrl, editMode: self.editMode});
+                var fileView = new FileView({
+                    model: attachedFile,
+                    filesToDelete: self.filesToDelete,
+                    deleteBaseUrl: self.options.deleteBaseUrl,
+                    uploadBaseUrl: self.options.uploadBaseUrl,
+                    editMode: self.editMode
+                });
                 fileView.render();
                 self.filesUL.append(fileView.el);
             });
@@ -48,8 +54,7 @@ define([
             this.uploadFileNameP.html(shortName);
 
             var newFile = new AttachedFile({
-                shortName: shortName,
-                created: false
+                shortName: shortName
             });
 
             this.xhr = new XMLHttpRequest();
@@ -63,6 +68,7 @@ define([
 
             this.xhr.addEventListener("load", function() {
                 self.finished();
+                newFile.isNew = function(){return false;};
                 self.collection.add(newFile);
                 self.newItems.add(newFile);
             }, false);
@@ -84,6 +90,35 @@ define([
         cancelButtonClicked: function() {
             this.xhr.abort();
             this.finished();
+        },
+
+        deleteFilesToDelete: function() {
+            /*we need to reverse read because model.destroy() remove elements from collection*/
+            while (this.filesToDelete.length != 0) {
+                var file = this.filesToDelete.pop();
+                file.destroy({
+                    error:function () {
+                        alert("file " + file + " could not be deleted");
+                    }
+                });
+            }
+        },
+
+        deleteNewFiles: function() {
+            //Abort file upload if there is one
+            if(!_.isUndefined(this.xhr))
+                this.xhr.abort();
+
+            /*deleting unwanted files that have been added by upload*/
+            /*we need to reverse read because model.destroy() remove elements from collection*/
+            while (this.newItems.length != 0) {
+                var file = this.newItems.pop();
+                file.destroy({
+                    error:function () {
+                        alert("file " + file + " could not be deleted");
+                    }
+                });
+            }
         },
 
         gotoIdleState: function() {

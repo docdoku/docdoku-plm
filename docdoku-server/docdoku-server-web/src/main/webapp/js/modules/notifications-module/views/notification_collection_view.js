@@ -32,10 +32,7 @@ define(["modules/notifications-module/collections/notification_collection",
             if (this._rendered) {
                 
                 var $notificationView = $(nv.render().el);
-                
-                $notificationView.one("click",function(){
-                    that.notificationViewClicked(nv);
-                });
+                // TODO : check for a closable attribute to the notification
                 
                 $(this.el).prepend($notificationView);
 
@@ -45,6 +42,18 @@ define(["modules/notifications-module/collections/notification_collection",
  
         onNewNotification:function(notification){
             this.collection.push(notification);
+        },
+
+        onRemoveNotificationRequest:function(notificationId){
+
+            var notificationToRemove  = _(this._notificationViews).select(function(view) {
+                return view.model.attributes.id == notificationId;
+            })[0];
+
+            if(notificationToRemove){
+                this.collection.remove(notificationToRemove.model);
+            }
+
         },
  
         remove : function(model) {

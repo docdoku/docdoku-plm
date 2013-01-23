@@ -32,7 +32,6 @@ define([
 
 		typeChanged: function(evt) {
 			var type = $(evt.target).val();
-			var oldType = this.model.get("type");
 			this.model.set({
 				type: type,
 				value: "" // TODO: Validate and convert if possible between types
