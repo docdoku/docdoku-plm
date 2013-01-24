@@ -35,7 +35,7 @@ define(
                         if(message.status == "OFFLINE"){
                             that.$(".icon-user").css("opacity",0.5).attr("title",i18n.OFFLINE);
                         }else if(message.status == "ONLINE"){
-                            that.$(".icon-user").css("opacity",1).attr("title",i18n.ONFLINE);
+                            that.$(".icon-user").css("opacity",1).attr("title",i18n.ONLINE);
                         }
                     }
                 });
