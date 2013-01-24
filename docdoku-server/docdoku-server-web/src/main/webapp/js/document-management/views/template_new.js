@@ -30,6 +30,7 @@ define([
 						.attr("checked") ? true : false,
 					attributeTemplates: this.attributesView.collection.toJSON()
 				}, {
+                    wait: true,
 					success: this.success,
 					error: this.error
 				});
