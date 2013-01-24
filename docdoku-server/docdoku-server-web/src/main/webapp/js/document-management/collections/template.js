@@ -6,12 +6,12 @@ define([
 	singletonDecorator
 ) {
 	var TemplateList = Backbone.Collection.extend({
-		model: Template,
+        url: "/api/workspaces/" + APP_CONFIG.workspaceId + "/templates",
+		model: Template
 	});
-	TemplateList.prototype.__defineGetter__("url", function () {
-		return "/api/workspaces/" + APP_CONFIG.workspaceId + "/templates";
-	});
+
 	TemplateList = singletonDecorator(TemplateList);
     TemplateList.className="TemplateList";
+
 	return TemplateList;
 });

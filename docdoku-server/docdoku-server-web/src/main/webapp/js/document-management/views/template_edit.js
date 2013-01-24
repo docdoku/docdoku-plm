@@ -1,59 +1,76 @@
 define([
-	"i18n!localization/nls/document-management-strings",
-	"common/date",
-	"views/components/modal",
-	"views/template_new_attributes",
-	"text!templates/template_new.html"
-], function (
-	i18n,
-	date,
-	ModalView,
-	TemplateNewAttributesView,
-	template
-) {
-	var TemplateEditView = ModalView.extend({
+    "i18n!localization/nls/document-management-strings",
+    "common/date",
+    "views/components/modal",
+    "views/template_new_attributes",
+    "views/file_list",
+    "text!templates/template_new.html"
+], function(i18n, date, ModalView, TemplateNewAttributesView, FileListView, template) {
+    var TemplateEditView = ModalView.extend({
 
-		template: Mustache.compile(template),
+        template: Mustache.compile(template),
 
-		initialize: function () {
+        initialize: function() {
             ModalView.prototype.initialize.apply(this, arguments);
-			// destroy previous template edit view if any
-			if (TemplateEditView._instance) {
+            // destroy previous template edit view if any
+            if (TemplateEditView._instance) {
                 TemplateEditView._oldInstance = TemplateEditView._instance;
-			}
-			// keep track of the created template edit view
+            }
+            // keep track of the created template edit view
             TemplateEditView._instance = this;
-		},
+        },
 
-		rendered: function () {
-			this.attributesView = this.addSubView(
-				new TemplateNewAttributesView({
+        rendered: function() {
+            this.attributesView = this.addSubView(
+                new TemplateNewAttributesView({
                     el: "#tab-attributes-" + this.cid
-				})
-			);
-			this.attributesView.render();
-			this.attributesView.collection.reset(this.model.get("attributeTemplates"));
-		},
+                })
+            );
+            this.attributesView.render();
+            this.attributesView.collection.reset(this.model.get("attributeTemplates"));
 
-		primaryAction: function () {
+            this.fileListView = new FileListView({
+                deleteBaseUrl: this.model.url(),
+                uploadBaseUrl: this.model.getUploadBaseUrl(),
+                collection: this.model.get("attachedFiles"),
+                editMode: true
+            }).render();
+
+            /* Add the fileListView to the tab */
+            $("#tab-files-"+this.cid).append(this.fileListView.el);
+
+        },
+
+        primaryAction: function() {
             this.model.unset("reference");
-			this.model.save({
-				documentType: $("#form-" + this.cid + " .type").val(),
-				mask: $("#form-" + this.cid + " .mask").val(),
-				idGenerated: $("#form-" + this.cid + " .id-generated").attr("checked") ? true : false,
-				attributeTemplates: this.attributesView.collection.toJSON()
-			}, {
-				success: this.success,
-				error: this.error
-			});
-			return false;
-		},
+            this.model.save({
+                documentType: $("#form-" + this.cid + " .type").val(),
+                mask: $("#form-" + this.cid + " .mask").val(),
+                idGenerated: $("#form-" + this.cid + " .id-generated").attr("checked") ? true : false,
+                attributeTemplates: this.attributesView.collection.toJSON()
+            }, {
+                success: this.success,
+                error: this.error
+            });
 
-        success: function (model, response) {
+            /*
+             *saving new files : nothing to do : it's already saved
+             *deleting unwanted files
+             */
+            this.fileListView.deleteFilesToDelete();
+
+            return false;
+        },
+
+        cancelAction: function() {
+            this.fileListView.deleteNewFiles();
+        },
+
+        success: function(model, response) {
             this.hide();
         },
 
-        error: function (model, error) {
+        error: function(model, error) {
             this.collection.remove(model);
             if (error.responseText) {
                 this.alert({
@@ -64,6 +81,6 @@ define([
                 console.error(error);
             }
         }
-	});
-	return TemplateEditView;
+    });
+    return TemplateEditView;
 });

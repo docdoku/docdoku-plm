@@ -30,8 +30,8 @@ define([
 		},
 		actionEdit: function (evt) {
 			var that = this;
-			var target = $(evt.target); 
-			var targetOffset = target.offset(); 
+			var target = $(evt.target);
+			var targetOffset = target.offset();
 			var offset = {
 				x: targetOffset.left + target.width(),
 				y: targetOffset.top + (target.height() / 2)
