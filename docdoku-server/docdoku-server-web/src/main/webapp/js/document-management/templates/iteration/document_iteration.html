@@ -112,18 +112,6 @@
     </div>
     <div class="modal-footer">
 
-        {{#editMode}}
-            <button id="save-iteration" class="btn btn-primary" form="form-{{view.cid}}">
-                {{i18n.SAVE}}
-            </button>
-            <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
-        {{/editMode}}
-        {{^editMode}}
-            <button id="close-iteration" class="btn cancel close-iteration" form="form-{{view.cid}}">
-                {{i18n.CLOSE}}
-            </button>
-        {{/editMode}}
-
         {{#iteration}}
         <ul id="switch-iteration" class="pager">
             <li class="{{^hasPreviousIteration}}disabled{{/hasPreviousIteration}}">
@@ -135,6 +123,18 @@
             </li>
         </ul>
         {{/iteration}}
+
+        {{#editMode}}
+        <button id="save-iteration" class="btn btn-primary" form="form-{{view.cid}}">
+            {{i18n.SAVE}}
+        </button>
+        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        {{/editMode}}
+        {{^editMode}}
+        <button id="close-iteration" class="btn cancel close-iteration" form="form-{{view.cid}}">
+            {{i18n.CLOSE}}
+        </button>
+        {{/editMode}}
 
     </div>
 </div>
