@@ -24,7 +24,6 @@
     <jar href="lib/syntheticaAddons.jar" main="false"/>
     <jar href="lib/syntheticaBlueMoonAddon.jar" main="false"/>
     <jar href="lib/ws.jar" main="false"/>
-    <jar href="lib/javaee.jar" main="false"/>   
   </resources>
 
   <security>
