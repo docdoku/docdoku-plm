@@ -179,6 +179,21 @@ public class DocumentTemplateResource {
         }
     }
 
+    @DELETE
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{templateId}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
+        try {
+            String fileFullName = workspaceId + "/templates/" + templateId + "/" + fileName;
+
+            documentService.removeFileFromTemplate(fileFullName);
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(InstanceAttributeTemplateDTO[] dtos) {
         InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.length];
 

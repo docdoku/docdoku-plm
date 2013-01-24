@@ -49,11 +49,13 @@ define([
 
             if (reference) {
                 var workflow = this.workflowsView.selected();
+                var template = this.templatesView.selected();
                 var data = {
                     reference: reference,
                     title: $("#form-" + this.cid + " .title").val(),
                     description: $("#form-" + this.cid + " .description").val(),
-                    workflowModelId: workflow ? workflow.get("id") : null
+                    workflowModelId: workflow ? workflow.get("id") : null,
+                    templateId: template ? template.get("id") : null
                 };
 
                 this.collection.create(data, {
