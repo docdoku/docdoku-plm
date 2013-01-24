@@ -85,7 +85,8 @@ define(["common-objects/collections/users"],
 
                                 // handle mail button click event
                                 $tip.find(".mailto_button").one("click", function (ev) {
-                                    window.open("mailto:" + user.get("email"));
+                                    var mailToString =  encodeURI("mailto:"+user.get("email") + "?subject="+APP_CONFIG.workspaceId + " : " + context);
+                                    window.open(mailToString);
                                     $(that).popover('hide');
                                 });
                             }
