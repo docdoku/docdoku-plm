@@ -31,6 +31,10 @@ define([
 
         hasPreviousIteration: function(iteration) {
             return !_.isUndefined(this.previous(iteration));
+        },
+
+        isLast: function(iteration) {
+            return this.last() == iteration;
         }
 
 	});

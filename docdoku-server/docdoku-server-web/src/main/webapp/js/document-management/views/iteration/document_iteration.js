@@ -13,7 +13,6 @@ define([
 
         initialize: function() {
 
-            /*we are fetching the last iteration*/
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
 
@@ -39,10 +38,19 @@ define([
         },
 
         switchIteration: function(iteration) {
-            var activeTabIndex = this.$('.nav-tabs .active').index();
             this.iteration = iteration;
+            var activeTabIndex = this.getActiveTabIndex();
             this.render();
-            this.$('.nav-tabs li').eq(activeTabIndex).children().tab('show');
+            this.activateTab(activeTabIndex)
+
+        },
+
+        getActiveTabIndex: function() {
+            return this.tabs.filter('.active').index();
+        },
+
+        activateTab:function(index) {
+            this.tabs.eq(index).children().tab('show');
         },
 
         validation: function() {
@@ -65,7 +73,7 @@ define([
         render: function() {
             this.deleteSubViews();
 
-            var editMode = this.model.isCheckoutByConnectedUser();
+            var editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
 
             var data = {
                 editMode: editMode,
@@ -101,6 +109,8 @@ define([
             /*Main window*/
             var html = this.template(data);
             this.$el.html(html);
+
+            this.tabs = this.$('.nav-tabs li');
 
             this.customAttributesView =
                 this.addSubView(
@@ -169,7 +179,7 @@ define([
         },
 
         getPrimaryButton: function() {
-            var button = this.$el.find("div.modal-footer button.btn-primary");
+            var button = this.$("div.modal-footer button.btn-primary");
             return button;
         }
 
