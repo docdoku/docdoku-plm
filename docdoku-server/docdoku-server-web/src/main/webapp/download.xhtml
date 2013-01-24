@@ -14,7 +14,7 @@
 
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nDownload['sidebar.title']}</h3>
-                <p>#{i18nDownload['sidebar.text']}</p>               
+                <p><h:outputFormat value="#{i18nDownload['sidebar.text']}" escape="false"/></p>
             </div>
 
             <h2>#{i18nDownload['main.title']}</h2>
@@ -36,7 +36,7 @@
             </script>
             -->
             <br/>
-            <a href="<%=request.getContextPath()%>/apps/docdoku_client.jnlp">Java 6</a> | <a href="<%=request.getContextPath()%>/apps/docdoku_clientJ7.jnlp">Java 7</a>
+            <a href="#{request.contextPath}/apps/docdoku_client.jnlp">Java 6</a> | <a href="#{request.contextPath}/apps/docdoku_clientJ7.jnlp">Java 7</a>
 
 
         </ui:define>
