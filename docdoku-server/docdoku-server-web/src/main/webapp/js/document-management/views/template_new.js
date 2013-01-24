@@ -26,8 +26,7 @@ define([
 					reference: reference,
 					documentType: $("#form-" + this.cid + " .type").val(),
 					mask: $("#form-" + this.cid + " .mask").val(),
-					idGenerated: $("#form-" + this.cid + " .id-generated")
-						.attr("checked") ? true : false,
+					idGenerated: $("#form-" + this.cid + " .id-generated").is(':checked'),
 					attributeTemplates: this.attributesView.collection.toJSON()
 				}, {
                     wait: true,
