@@ -135,9 +135,9 @@ define([
                     collection:this.iteration.getAttachedFiles(),
                     editMode: editMode
                 }).render();
-    
+
                 /* Add the fileListView to the tab */
-                $("#iteration-files").append(this.fileListView.el);
+                this.$("#iteration-files").html(this.fileListView.el);
             }
 
             this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "right");
