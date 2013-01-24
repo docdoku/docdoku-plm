@@ -42,13 +42,12 @@ define([
 			return data;
 		},
 
-        rendered:function(){
-
-            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"left");
-
-            if(this.model.attributes.checkOutUser != null)
-                this.$(".checkout-user-popover").userPopover(this.model.attributes.checkOutUser.login,this.model.attributes.id,"left");
-
+        rendered: function() {
+            CheckboxListItemView.prototype.rendered.apply(this, arguments);
+            this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "left");
+            if(this.model.isCheckout()) {
+                this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "left");
+            }
         },
 
 		actionEdit: function (evt) {
