@@ -1,0 +1,8 @@
+#coworkers_access_module_entries > li > a > i{
+    float:right;
+    margin: 4px 0 0 0;
+}
+#coworkers_access_module_entries > li > a > span > i{
+    float:left;
+    margin: 4px 4px 0 0;
+}
