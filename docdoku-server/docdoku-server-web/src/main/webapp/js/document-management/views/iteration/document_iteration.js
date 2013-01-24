@@ -140,10 +140,11 @@ define([
                 $("#iteration-files").append(this.fileListView.el);
             }
 
-            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"right");
+            this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "right");
 
-            if(this.model.attributes.checkOutUser != null)
-                this.$(".checkout-user-popover").userPopover(this.model.attributes.checkOutUser.login,this.model.attributes.id,"right");
+            if (this.model.isCheckout()) {
+                this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "right");
+            }
 
             return this;
         },
