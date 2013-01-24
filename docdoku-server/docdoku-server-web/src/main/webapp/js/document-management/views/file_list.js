@@ -21,7 +21,7 @@ define([
             this.filesToDelete = new Backbone.Collection();
             this.newItems = new Backbone.Collection();
 
-            this.collection.bind('add', this.addOneFile, this);
+            this.listenTo(this.collection, 'add', this.addOneFile);
         },
 
         addAllFiles: function() {

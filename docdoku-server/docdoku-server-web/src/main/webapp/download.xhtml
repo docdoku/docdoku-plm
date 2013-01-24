@@ -14,7 +14,7 @@
 
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nDownload['sidebar.title']}</h3>
-                <p>#{i18nDownload['sidebar.text']}</p>               
+                <p><h:outputFormat value="#{i18nDownload['sidebar.text']}" escape="false"/></p>
             </div>
 
             <h2>#{i18nDownload['main.title']}</h2>
@@ -29,18 +29,14 @@
             </p>
             <p><h:outputText value="#{i18nDownload['section1.text1']}" escape="false" /></p>
             <p>#{i18nDownload['section1.text2']}</p>
+            <!--
             <script type="text/javascript" src="http://java.com/js/deployJava.js"></script>
-            Java 6
             <script type="text/javascript">
-                //deployJava.launchButtonPNG='http://download.oracle.com/javase/tutorial/images/DukeWave.gif';
                 deployJava.createWebStartLaunchButton('#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/apps/docdoku_client.jnlp','1.6.0_10');
             </script>
+            -->
             <br/>
-            Java 7
-            <script type="text/javascript">
-                deployJava.createWebStartLaunchButton('#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/apps/docdoku_clientJ7.jnlp','1.7.0');
-            </script>
-            <!--<a href="<%=request.getContextPath()%>/apps/docdoku_client.jnlp">Go!</a>-->
+            <a href="#{request.contextPath}/apps/docdoku_client.jnlp">Java 6</a> | <a href="#{request.contextPath}/apps/docdoku_clientJ7.jnlp">Java 7</a>
 
 
         </ui:define>

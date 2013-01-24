@@ -30,6 +30,7 @@ import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.util.Tools;
@@ -370,6 +371,7 @@ public class MainModel {
     private List<FolderBasedElementsTableModel> mElementTableModels;
     public final ModelUpdater updater;
     private IDocumentManagerWS mDocumentService;
+    private IWorkflowManagerWS mWorkflowService;
     private IUploadDownloadWS mFileService;
     private static MainModel sSingleton;
 
@@ -381,18 +383,19 @@ public class MainModel {
         return sSingleton;
     }
 
-    public static MainModel init(String pLogin, String pPassword, String pWorkspaceId, IDocumentManagerWS pDocumentService, IUploadDownloadWS pFileService)
+    public static MainModel init(String pLogin, String pPassword, String pWorkspaceId, IDocumentManagerWS pDocumentService, IWorkflowManagerWS pWorkflowService, IUploadDownloadWS pFileService)
             throws InitializationException {
         if (sSingleton == null) {
-            sSingleton = new MainModel(pLogin, pPassword, pWorkspaceId, pDocumentService, pFileService);
+            sSingleton = new MainModel(pLogin, pPassword, pWorkspaceId, pDocumentService, pWorkflowService, pFileService);
             return sSingleton;
         } else {
             throw new AlreadyInitializedException(MainModel.class.getName());
         }
     }
 
-    private MainModel(String pLogin, String pPassword, String pWorkspaceId, IDocumentManagerWS pDocumentService, IUploadDownloadWS pFileService) throws InitializationException {
+    private MainModel(String pLogin, String pPassword, String pWorkspaceId, IDocumentManagerWS pDocumentService, IWorkflowManagerWS pWorkflowService, IUploadDownloadWS pFileService) throws InitializationException {
         mDocumentService = pDocumentService;
+        mWorkflowService = pWorkflowService;
         mFileService = pFileService;
         mElementTableModels = new LinkedList<FolderBasedElementsTableModel>();
         try {
@@ -443,7 +446,7 @@ public class MainModel {
         if (models == null) {
             try {
                 System.out.println("Retrieving workflow models");
-                models = Tools.resetParentReferences(mDocumentService.getWorkflowModels(getWorkspace().getId()));
+                models = Tools.resetParentReferences(mWorkflowService.getWorkflowModels(getWorkspace().getId()));
                 mCache.cacheWorkflowModels(models);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -523,7 +526,7 @@ public class MainModel {
         if (workflowModel == null) {
             try {
                 System.out.println("Retrieving workflow model " + pId);
-                workflowModel = Tools.resetParentReferences(mDocumentService.getWorkflowModel(new WorkflowModelKey(getWorkspace().getId(), pId)));
+                workflowModel = Tools.resetParentReferences(mWorkflowService.getWorkflowModel(new WorkflowModelKey(getWorkspace().getId(), pId)));
                 mCache.cacheWorkflowModel(workflowModel);
             } catch (WebServiceException pWSEx) {
                 String message;

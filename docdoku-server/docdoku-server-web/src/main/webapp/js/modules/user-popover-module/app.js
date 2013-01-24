@@ -1,6 +1,9 @@
-define(["common-objects/collections/users"],
+define([
+    "i18n!localization/nls/user-popover-module-strings",
+    "common-objects/collections/users"
+    ],
 
-    function (Users) {
+    function (i18n,Users) {
 
         // prevent popovers to keep on top
         $(document).click(function(event) {
@@ -11,8 +14,8 @@ define(["common-objects/collections/users"],
         });
 
         var statusHtml = {
-            OFFLINE : "<i class='icon-user'></i> User is offline",
-            ONLINE  : "<i class='icon-user'></i> User is online"
+            OFFLINE : "<i class='icon-user'></i> "+i18n.OFFLINE,
+            ONLINE  : "<i class='icon-user'></i> "+i18n.ONLINE
         }
 
         // popover content template
@@ -21,7 +24,7 @@ define(["common-objects/collections/users"],
             + "<hr />"
             + "<span class='btn webRTC_invite_button'><i class='icon-facetime-video'></i> Video </span> "
             + "<span class='btn new_chat_session_button'><i class='icon-leaf'></i> Chat </span> "
-            + "<span class='btn mailto_button'><i class='icon-envelope'></i> Mail </span>"
+            + "<a class='btn mailto_button' href='' target='_blank'><i class='icon-envelope'></i> Mail </a>"
             + "</div>";
 
         //
@@ -84,8 +87,8 @@ define(["common-objects/collections/users"],
                                 });
 
                                 // handle mail button click event
-                                $tip.find(".mailto_button").one("click", function (ev) {
-                                    window.open("mailto:" + user.get("email"));
+                                var mailToString =  encodeURI("mailto:"+user.get("email") + "?subject="+APP_CONFIG.workspaceId + " : " + context);
+                                $tip.find(".mailto_button").attr("href",mailToString).one("click", function (ev) {
                                     $(that).popover('hide');
                                 });
                             }

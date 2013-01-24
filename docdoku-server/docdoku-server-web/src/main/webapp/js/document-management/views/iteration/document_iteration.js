@@ -13,11 +13,44 @@ define([
 
         initialize: function() {
 
-            /*we are fetching the last iteration*/
             this.iteration = this.model.getLastIteration();
+            this.iterations = this.model.getIterations();
 
             ModalView.prototype.initialize.apply(this, arguments);
 
+            this.events["click a#previous-iteration"] = "onPreviousIteration";
+            this.events["click a#next-iteration"] = "onNextIteration";
+
+        },
+
+        onPreviousIteration: function() {
+            if (this.iterations.hasPreviousIteration(this.iteration)) {
+                this.switchIteration(this.iterations.previous(this.iteration))
+            }
+            return false;
+        },
+
+        onNextIteration: function() {
+            if (this.iterations.hasNextIteration(this.iteration)) {
+                this.switchIteration(this.iterations.next(this.iteration))
+            }
+            return false;
+        },
+
+        switchIteration: function(iteration) {
+            this.iteration = iteration;
+            var activeTabIndex = this.getActiveTabIndex();
+            this.render();
+            this.activateTab(activeTabIndex)
+
+        },
+
+        getActiveTabIndex: function() {
+            return this.tabs.filter('.active').index();
+        },
+
+        activateTab:function(index) {
+            this.tabs.eq(index).children().tab('show');
         },
 
         validation: function() {
@@ -37,17 +70,16 @@ define([
             }
         },
 
-
         render: function() {
             this.deleteSubViews();
 
-            var editMode = this.model.isCheckoutByConnectedUser();
+            var editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
 
             var data = {
                 editMode: editMode,
                 master: this.model.toJSON(),
                 i18n: i18n
-            }
+            };
 
             data.master.creationDate = date.formatTimestamp(
                 i18n._DATE_FORMAT,
@@ -55,7 +87,11 @@ define([
             );
 
             if (this.model.hasIterations()) {
+                var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
+                var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
                 data.iteration = this.iteration.toJSON();
+                data.iteration.hasNextIteration = hasNextIteration;
+                data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.reference = this.iteration.getReference();
                 data.iteration.creationDate = date.formatTimestamp(
                     i18n._DATE_FORMAT,
@@ -73,6 +109,8 @@ define([
             /*Main window*/
             var html = this.template(data);
             this.$el.html(html);
+
+            this.tabs = this.$('.nav-tabs li');
 
             this.customAttributesView =
                 this.addSubView(
@@ -97,15 +135,16 @@ define([
                     collection:this.iteration.getAttachedFiles(),
                     editMode: editMode
                 }).render();
-    
+
                 /* Add the fileListView to the tab */
-                $("#iteration-files").append(this.fileListView.el);
+                this.$("#iteration-files").html(this.fileListView.el);
             }
 
-            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"right");
+            this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "right");
 
-            if(this.model.attributes.checkOutUser != null)
-                this.$(".checkout-user-popover").userPopover(this.model.attributes.checkOutUser.login,this.model.attributes.id,"right");
+            if (this.model.isCheckout()) {
+                this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "right");
+            }
 
             return this;
         },
@@ -146,7 +185,7 @@ define([
         },
 
         getPrimaryButton: function() {
-            var button = this.$el.find("div.modal-footer button.btn-primary");
+            var button = this.$("div.modal-footer button.btn-primary");
             return button;
         }
 

@@ -28,7 +28,6 @@ define(["modules/chat-module/views/chat_session_view"],function(ChatMessageSessi
         },
 
         onChatStatusChanged:function(status){
-            //console.log("status changed : "+status)
         },
 
         getChatSessionView:function(chatSessionArgs){
@@ -80,7 +79,7 @@ define(["modules/chat-module/views/chat_session_view"],function(ChatMessageSessi
         },
 
         onChatSessionFocusRequired:function(view){
-            //console.log("chat focus " + view.remoteUser)
+
             _.each(this._chatSessionViews,function(csv){
                 csv.removeFromTop();
             });

@@ -1,0 +1,16 @@
+#coworkers_access_module_entries > li > a > i{
+    float:right;
+    margin: 4px 2px 0 0;
+    opacity:0.5;
+}
+#coworkers_access_module_entries > li > a:hover > i{
+  display: block;
+    opacity:0.7;
+}
+#coworkers_access_module_entries > li > a:hover > i:hover{
+    opacity:1;
+}
+#coworkers_access_module_entries > li > a > span > i{
+    float:left;
+    margin: 4px 0 0 5px;
+}

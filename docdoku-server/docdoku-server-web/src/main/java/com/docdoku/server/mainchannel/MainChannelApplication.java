@@ -141,7 +141,7 @@ public class MainChannelApplication extends WebSocketApplication {
 
         }
 
-        Room.debug();
+        // Room.debug();
 
     }
     // on Message Methods

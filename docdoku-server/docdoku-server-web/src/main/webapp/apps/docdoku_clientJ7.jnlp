@@ -19,7 +19,6 @@
     <jar href="lib/swingx.jar" main="false"/>
     <jar href="lib/l2fprod.jar" main="false"/>
     <jar href="lib/scanner.jar" main="false"/>
-    <jar href="lib/javaee.jar" main="false"/>   
   </resources>
 
   <security>

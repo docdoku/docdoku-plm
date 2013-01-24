@@ -16,9 +16,11 @@
 				<li>
 					<a href="#tab-attributes-{{view.cid}}" data-toggle="tab">{{i18n.ATTRIBUTES}}</a>
 				</li>
+                {{#model.id}}
                 <li>
                     <a href="#tab-files-{{view.cid}}" data-toggle="tab">{{i18n.FILES}}</a>
                 </li>
+                {{/model.id}}
 			</ul>
 			<form id="form-{{view.cid}}" class="form-horizontal tab-content">
 				<div class="tab-pane active" id="tab-main-{{view.cid}}">
@@ -52,9 +54,7 @@
 					</div>
 				</div>
 				<div id="tab-attributes-{{view.cid}}" class="tab-pane attributes"></div>
-                <div id="tab-files-{{view.cid}}" class="tab-pane files">
-                    <div id="files"></div>
-                </div>
+                <div id="tab-files-{{view.cid}}" class="tab-pane files"></div>
 			</form>
 		</div>
 	</div>

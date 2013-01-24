@@ -19,9 +19,9 @@ define([
 			this.events["click .reference"] = this.actionEdit;
 		},
 
-        rendered:function(){
-            //console.log($(this.template).find(".author-popover"));
-            this.$(".author-popover").userPopover(this.model.attributes.author.login,this.model.attributes.id,"left");
+        rendered: function() {
+            CheckboxListItemView.prototype.rendered.apply(this, arguments);
+            this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "left");
         },
 
 		modelToJSON: function () {
@@ -36,8 +36,8 @@ define([
 		},
 		actionEdit: function (evt) {
 			var that = this;
-			var target = $(evt.target); 
-			var targetOffset = target.offset(); 
+			var target = $(evt.target);
+			var targetOffset = target.offset();
 			var offset = {
 				x: targetOffset.left + target.width(),
 				y: targetOffset.top + (target.height() / 2)

@@ -1,4 +1,4 @@
-define(["modules/chat-module/i18n",
+define(["i18n!localization/nls/chat-module-strings",
         "modules/chat-module/collections/chat_message_collection",
         "modules/chat-module/views/chat_message_view"],
     function(i18n,ChatMessageCollection,ChatMessageView){
@@ -16,7 +16,7 @@ define(["modules/chat-module/i18n",
             +"<div class='chat_session_reply'>"
                 +"<form class='chat_session_reply_form'>"
                     +"<input type='text' name='chat_message_session_input'/> "
-                    +"<input class='btn btn-primary' type='submit' value='"+i18n["SEND"]+"'>"
+                    +"<input class='btn btn-primary' type='submit' value='"+i18n.SEND+"'>"
                 +"</form>"
             +"</div>"
             +"</div>"
@@ -164,7 +164,7 @@ define(["modules/chat-module/i18n",
 
         onError:function(message){
             if (this._rendered) {
-                this.$("ul.chat_session_messages").append("<li class='chat_message_error'>"+i18n["ERROR"]+" : "+i18n[message.error]+"</li>");
+                this.$("ul.chat_session_messages").append("<li class='chat_message_error'>"+i18n.ERROR+" : "+i18n[message.error]+"</li>");
                 this.$el.show();
             }
         },
@@ -175,7 +175,6 @@ define(["modules/chat-module/i18n",
         },
 
         onGlobalClick:function(e){
-            //console.log("onglbclick");
             if(!this.isOnTop){
                 Backbone.Events.trigger("ChatSessionFocusRequired",this);
             }
@@ -202,14 +201,3 @@ define(["modules/chat-module/i18n",
 
     return ChatMessageSessionView;
 });
-
-// triggerChatTests(1,5);
-function triggerChatTests(start,end){
-    if((!start || !end)|| !(start<end)) return;
-
-    for(var i = start ;  i <= end ; i++ ){
-        //console.log("toto");
-        Backbone.Events.trigger('NewChatSession', {remoteUser:"user_"+i,context:"blabla"});
-    }
-}
-

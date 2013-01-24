@@ -45,7 +45,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
     @Override
     public InstanceAttributeDTO convertTo(InstanceAttribute source, InstanceAttributeDTO bdestination) {
         InstanceAttributeDTO.Type type;
-        String value;
+        String value = "";
         if (source instanceof InstanceBooleanAttribute) {
             type = InstanceAttributeDTO.Type.BOOLEAN;
             value=source.getValue()+"";
@@ -57,7 +57,8 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
             value=source.getValue()+"";
         } else if (source instanceof InstanceDateAttribute) {
             type = InstanceAttributeDTO.Type.DATE;
-            value=((InstanceDateAttribute)source).getDateValue().getTime()+"";
+            if(((InstanceDateAttribute)source).getDateValue() != null)
+                value=((InstanceDateAttribute)source).getDateValue().getTime()+"";
         } else if (source instanceof InstanceURLAttribute) {
             type = InstanceAttributeDTO.Type.URL;
             value=source.getValue()+"";

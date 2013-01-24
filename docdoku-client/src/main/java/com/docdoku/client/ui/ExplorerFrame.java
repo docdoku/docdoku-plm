@@ -58,7 +58,6 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
     private ExplorerMenu mMenuBar;
     private ExplorerPopupMenu mPopupMenu;
     private JLabel mStatusLabel;
-    private JButton mGuideBtn;
     private FolderTreeNode mSelectedFolder;
     private DocumentMaster mSelectedDocM;
     private WorkflowModel mSelectedWorkflowModel;
@@ -84,7 +83,6 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         mTransferHandler=pTransferHandler;
         mEditFolderListener=pEditFolderListener;
         mStatusLabel = new JLabel("DocDoku");
-        mGuideBtn = new JButton();
         mToolBar = new ExplorerToolBar(mStatusLabel);
         mSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         mLeftScrollPane = new JScrollPane();
@@ -122,7 +120,6 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         main.add(mSplitPane, BorderLayout.CENTER);
         mRegularPanel.add(main, BorderLayout.CENTER);
         JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        statusPanel.add(mGuideBtn);
         statusPanel.add(mStatusLabel);
         mRegularPanel.add(statusPanel, BorderLayout.SOUTH);
         
@@ -349,7 +346,6 @@ public class ExplorerFrame extends JFrame implements HasElementSelectedListeners
         mMenuBar.setActions(pActionFactory);
         mPopupMenu.setActions(pActionFactory);
         mShortcutsPanel.setActions(pActionFactory);
-        mGuideBtn.setAction(pActionFactory.getDisplayShortcutsAction());
     }
     
     public void showDocM(DocumentMaster pDocM){
