@@ -21,8 +21,6 @@ package com.docdoku.server.mainchannel;
 
 import com.docdoku.core.services.IUserManagerLocal;
 import com.sun.grizzly.websockets.WebSocketEngine;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Startup;
 import javax.servlet.ServletConfig;
@@ -30,8 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-@WebServlet(name = "MainChannelSocketServlet", urlPatterns = {"/mainChannelSocket"})
-@Startup
+@WebServlet(name = "MainChannelSocketServlet", urlPatterns = {"/mainChannelSocket"}, loadOnStartup = 1)
 public class MainChannelSocketServlet extends HttpServlet {
 
     @EJB
@@ -41,8 +38,6 @@ public class MainChannelSocketServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        Logger.getLogger(MainChannelSocketServlet.class.getName()).log(Level.SEVERE, "MainChannelSocketServlet : init");
-        
         WebSocketEngine.getEngine().register(
                 config.getServletContext().getContextPath() + "/mainChannelSocket", app);
 
@@ -52,7 +47,6 @@ public class MainChannelSocketServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        System.out.println("MainChannelSocketServlet : destroy");
         WebSocketEngine.getEngine().unregister(app);
     }
 }
