@@ -17,7 +17,7 @@ define([
 			this.events["change .value"] = "updateValue";
 		},
 		getValue: function (el) {
-			return el.attr("checked") ? true : false;
+			return el.is(':checked');
 		}
 	});
 	return DocumentAttributeListItemBooleanView;

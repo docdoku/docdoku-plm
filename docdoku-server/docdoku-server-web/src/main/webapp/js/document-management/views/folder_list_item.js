@@ -54,7 +54,7 @@ define([
 		},
 		rendered: function () {
 			var isHome = this.model ? this.model.get("home") : false;
-			var isRoot = this.model ? false : true;
+			var isRoot = _.isUndefined(this.model);
 			if (isHome) this.$el.addClass("home");
 			if (isRoot || isHome) {
 				this.$el.find(".actions .delete").remove();
