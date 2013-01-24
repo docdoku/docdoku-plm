@@ -19,11 +19,7 @@
  */
 package com.docdoku.client.actions;
 
-import com.docdoku.core.services.ApplicationException;
-import com.docdoku.core.services.WorkflowModelNotFoundException;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.core.services.*;
 import com.docdoku.core.document.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterKey;
@@ -64,6 +60,7 @@ import javax.xml.ws.WebServiceException;
 public class MainController {
 
     private IDocumentManagerWS mDocumentService;
+    private IWorkflowManagerWS mWorkflowService;
     private IUploadDownloadWS mFileService;
     private static MainController sSingleton;
 
@@ -75,16 +72,17 @@ public class MainController {
         return sSingleton;
     }
 
-    public static void init(IDocumentManagerWS pProductService, IUploadDownloadWS pFileService) {
+    public static void init(IDocumentManagerWS pProductService, IWorkflowManagerWS pWorkflowService, IUploadDownloadWS pFileService) {
         if (sSingleton == null) {
-            sSingleton = new MainController(pProductService, pFileService);
+            sSingleton = new MainController(pProductService, pWorkflowService, pFileService);
         } else {
             throw new AlreadyInitializedException(MainController.class.getName());
         }
     }
 
-    private MainController(IDocumentManagerWS pProductService, IUploadDownloadWS pFileService) {
+    private MainController(IDocumentManagerWS pProductService, IWorkflowManagerWS pWorkflowService, IUploadDownloadWS pFileService) {
         mDocumentService = pProductService;
+        mWorkflowService = pWorkflowService;
         mFileService = pFileService;
     }
 
@@ -631,7 +629,7 @@ public class MainController {
     public void delWorkflowModel(WorkflowModel pWorkflowModel) throws Exception {
         try {
             System.out.println("Deleting workflow model " + pWorkflowModel);
-            mDocumentService.deleteWorkflowModel(pWorkflowModel.getKey());
+            mWorkflowService.deleteWorkflowModel(pWorkflowModel.getKey());
             MainModel.getInstance().updater.delWorkflowModel(pWorkflowModel);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
@@ -666,11 +664,11 @@ public class MainController {
 
             //TODO remove and create in the same tx
             try {
-                mDocumentService.deleteWorkflowModel(pWorkflowModel.getKey());
+                mWorkflowService.deleteWorkflowModel(pWorkflowModel.getKey());
             } catch (WorkflowModelNotFoundException pWNFEx) {
             }
             ActivityModel[] activityModels = pWorkflowModel.getActivityModels().toArray(new ActivityModel[pWorkflowModel.getActivityModels().size()]);
-            model = Tools.resetParentReferences(mDocumentService.createWorkflowModel(pWorkflowModel.getWorkspaceId(), pWorkflowModel.getId(), pWorkflowModel.getFinalLifeCycleState(), activityModels));
+            model = Tools.resetParentReferences(mWorkflowService.createWorkflowModel(pWorkflowModel.getWorkspaceId(), pWorkflowModel.getId(), pWorkflowModel.getFinalLifeCycleState(), activityModels));
             MainModel.getInstance().updater.saveWorkflowModel(model);
             return model;
         } catch (WebServiceException pWSEx) {
@@ -743,10 +741,12 @@ public class MainController {
         try {
             ((BindingProvider) mDocumentService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
             ((BindingProvider) mDocumentService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+            ((BindingProvider) mWorkflowService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+            ((BindingProvider) mWorkflowService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
             ((BindingProvider) mFileService).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
             ((BindingProvider) mFileService).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
             mDocumentService.whoAmI(workspaceId);
-            MainModel.init(login, password, workspaceId, mDocumentService, mFileService);
+            MainModel.init(login, password, workspaceId, mDocumentService, mWorkflowService, mFileService);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();
             if (t instanceof Exception) {

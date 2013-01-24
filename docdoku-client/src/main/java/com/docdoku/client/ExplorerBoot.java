@@ -27,6 +27,7 @@ import com.docdoku.client.ui.login.LoginFrame;
 import com.docdoku.client.actions.MainController;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.data.Config;
+import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.util.FileIO;
 import java.awt.Toolkit;
 import java.net.MalformedURLException;
@@ -48,9 +49,10 @@ public class ExplorerBoot {
                 webURL = new URL(new URL(args[0]), "/" + webContext + "/");
             }
             URL documentServiceURL = new URL(webURL, "/services/document?wsdl");
+            URL workflowServiceURL = new URL(webURL, "/services/workflow?wsdl");
             URL uploadDownloadServiceURL = new URL(webURL, "/services/UploadDownload?wsdl");
             Config.setHTTPCodebase(webURL);
-            MainController.init(lookupDocumentWebService(documentServiceURL), lookupUploadDownloadWebService(uploadDownloadServiceURL));
+            MainController.init(lookupDocumentWebService(documentServiceURL), lookupWorkflowWebService(workflowServiceURL), lookupUploadDownloadWebService(uploadDownloadServiceURL));
             SwingUtilities.invokeAndWait(new Runnable() {
 
                 @Override
@@ -75,14 +77,17 @@ public class ExplorerBoot {
         UploadDownloadService service = new UploadDownloadService(pURL, new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
         IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class, feature);
         ((BindingProvider) proxy).getRequestContext().put(Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);
-        //Map context = ((BindingProvider)proxy).getRequestContext();
         return proxy;
+    }
+
+    public static IWorkflowManagerWS lookupWorkflowWebService(URL pURL) throws MalformedURLException {
+        WorkflowService service = new WorkflowService(pURL, new javax.xml.namespace.QName("http://server.docdoku.com/", "WorkflowManagerBeanService"));
+        return service.getPort(IWorkflowManagerWS.class);
     }
 
     public static IDocumentManagerWS lookupDocumentWebService(URL pURL) throws MalformedURLException {
         DocumentService service = new DocumentService(pURL, new javax.xml.namespace.QName("http://server.docdoku.com/", "DocumentManagerBeanService"));
         return service.getPort(IDocumentManagerWS.class);
-
     }
 
     private static void init() {
