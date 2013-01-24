@@ -63,12 +63,7 @@ Channel.prototype = {
     send:function(message) {
 
         console.log('C->S: ' + message);
-
         var sent = this.ws.send(message);
-        
-        if(!sent){
-            //console.log("ws not sent ! : "+message);
-        }
         
     },
 
@@ -81,8 +76,6 @@ Channel.prototype = {
     },    
     
     onopen:function(event){
-
-        //console.log("ws onopen");
         
         if(this.messageToSendOnOpen){            
             this.send(this.messageToSendOnOpen);
@@ -111,8 +104,6 @@ Channel.prototype = {
     
     onclose:function(event){
 
-        //console.log("ws onclose");
-        
         _.each(this.listeners,function(listener){            
             listener.handlers.onStatusChanged(ChannelStatus.CLOSED);            
         });
@@ -121,8 +112,6 @@ Channel.prototype = {
     
     onerror:function(event){
 
-        //console.log("ws onerror");
-        //console.log(event);
         
     },
     

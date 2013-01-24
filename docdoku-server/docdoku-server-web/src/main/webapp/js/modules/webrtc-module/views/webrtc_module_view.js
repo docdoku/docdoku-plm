@@ -65,12 +65,10 @@ define(
             },
 
             onMinimizeButtonClick: function (ev) {
-                //console.log("min")
                 this.$el.removeClass("webrtc_shown").addClass("webrtc_minimized");
             },
 
             onRestoreButtonClick: function () {
-                //console.log("restore")
                 this.$el.removeClass("webrtc_minimized").addClass("webrtc_shown");
             },
 
@@ -101,7 +99,7 @@ define(
                 this.initiator = 0;
 
                 if (this.pc) {
-                    console.log(i18n.CLOSING_PEER_CON);
+                    this.setStatus(i18n.CLOSING_PEER_CON);
                     this.pc.close();
                     this.pc = null;
                 }
@@ -199,14 +197,12 @@ define(
             },
 
             onCallRejectedByLocalUser: function (message) {
-                //console.log("Local user has rejected.");
                 // tell the remote user we reject the call.
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.WEBRTC_REJECT,
                     roomKey: message.roomKey,
                     remoteUser: message.remoteUser
                 });
-
             },
 
             onLocalTimeout: function (message) {
@@ -310,7 +306,6 @@ define(
             },
 
             onWebRTCStatusChanged: function (status) {
-                //console.log("onWebRTCStatusChanged." + status);
             },
 
             createPeerConnection: function () {
@@ -323,7 +318,6 @@ define(
                     // Create an RTCPeerConnection via the adapter
                     this.pc = new RTCPeerConnection(pc_config);
                     this.pc.onicecandidate = this.onIceCandidate;
-                    //console.log("Created RTCPeerConnnection with config:\n" + "  \"" +JSON.stringify(pc_config) + "\".");
                 } catch (e) {
                     // Failed to create PeerConnection
                     this.setStatus(i18n.CANNOT_CREATE_PC);
@@ -337,7 +331,7 @@ define(
             },
 
             processSignalingMessage: function (msg) {
-                //console.log("processSignalingMessage")
+
                 if (msg.type === ChannelMessagesType.WEBRTC_OFFER) {
 
                     // Callee creates PeerConnection

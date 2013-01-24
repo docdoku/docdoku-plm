@@ -29,8 +29,6 @@ define([
 
         // onMessage handler
         onMessage: function (message) {
-            //console.log("Listener onMessage :");
-            //console.log(message);
             Backbone.Events.trigger('NewChatMessage', message);
         },
 
