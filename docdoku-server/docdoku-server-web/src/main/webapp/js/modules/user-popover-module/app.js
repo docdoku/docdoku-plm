@@ -1,6 +1,9 @@
-define(["common-objects/collections/users"],
+define([
+    "i18n!localization/nls/user-popover-module-strings",
+    "common-objects/collections/users"
+    ],
 
-    function (Users) {
+    function (i18n,Users) {
 
         // prevent popovers to keep on top
         $(document).click(function(event) {
@@ -11,8 +14,8 @@ define(["common-objects/collections/users"],
         });
 
         var statusHtml = {
-            OFFLINE : "<i class='icon-user'></i> User is offline",
-            ONLINE  : "<i class='icon-user'></i> User is online"
+            OFFLINE : "<i class='icon-user'></i> "+i18n.OFFLINE,
+            ONLINE  : "<i class='icon-user'></i> "+i18n.ONLINE
         }
 
         // popover content template

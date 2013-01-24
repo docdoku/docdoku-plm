@@ -1,5 +1,5 @@
 define([
-    "modules/webrtc-module/i18n",
+    "i18n!localization/nls/webrtc-module-strings",
     "modules/webrtc-module/views/webrtc_module_view"
 ], function (i18n, WebRTCModuleView) {
 
@@ -87,13 +87,13 @@ define([
 
                     id : notificationId,
 
-                    title: i18n["VIDEO_INVITE_NOTIFICATION_TITLE"],
+                    title: i18n.VIDEO_INVITE_NOTIFICATION_TITLE,
 
-                    content: message.remoteUser + " " + i18n["VIDEO_INVITE"],
+                    content: message.remoteUser + " " + i18n.VIDEO_INVITE_TEXT,
 
                     actions: [
                         {
-                            title: i18n["ACCEPT_VIDEO_INVITE"],
+                            title: i18n.ACCEPT_VIDEO_INVITE,
 
                             handler: function () {
                                 clearTimeout(timeout);
@@ -103,7 +103,7 @@ define([
                             }
                         },
                         {
-                            title: i18n["REJECT_VIDEO_INVITE"],
+                            title: i18n.REJECT_VIDEO_INVITE,
 
                             handler: function () {
                                 clearTimeout(timeout);

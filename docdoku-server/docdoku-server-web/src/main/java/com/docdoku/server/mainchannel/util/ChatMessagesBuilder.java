@@ -53,7 +53,7 @@ public class ChatMessagesBuilder {
         JSONObject jsobj = new JSONObject();
         jsobj.put("type", ChannelMessagesType.WEBRTC_INVITE);
         jsobj.put("remoteUser", remoteUser);
-        jsobj.put("error", "unreachable");
+        jsobj.put("error", "UNREACHABLE");
         return jsobj.toString();
 
     }
@@ -116,7 +116,7 @@ public class ChatMessagesBuilder {
     public static String BuildJsonExMessage() {
         try {
             JSONObject jsobj = new JSONObject();
-            jsobj.put("error", "json exception");
+            jsobj.put("error", "JSON_EXCPETION");
             return jsobj.toString();
         } catch (JSONException ex) {
             return "json exception";
