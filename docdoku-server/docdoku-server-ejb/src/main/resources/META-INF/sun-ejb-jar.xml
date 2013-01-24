@@ -9,14 +9,6 @@
         <ejb>
             <ejb-name>DocumentManagerBean</ejb-name>
             <jndi-name>ejb/DocumentManagerBean</jndi-name>
-<!--            <resource-ref>
-                <res-ref-name>jms/docdokuConnFactory</res-ref-name>
-                <jndi-name>jms/docdokuConnFactory</jndi-name>
-                <default-resource-principal>
-                    <name>guest</name>
-                    <password>guest</password>
-                </default-resource-principal>
-            </resource-ref>-->
             <webservice-endpoint>
                 <port-component-name>DocumentManagerBean</port-component-name>
                 <endpoint-address-uri>services/document</endpoint-address-uri>
@@ -39,16 +31,20 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
+            <ejb-name>WorkflowManagerBean</ejb-name>
+            <jndi-name>ejb/WorkflowManagerBean</jndi-name>
+            <webservice-endpoint>
+                <port-component-name>WorkflowManagerBean</port-component-name>
+                <endpoint-address-uri>services/workflow</endpoint-address-uri>
+                <login-config>
+                    <auth-method>BASIC</auth-method>
+                    <realm>docdokuRealm</realm>
+                </login-config>
+            </webservice-endpoint>
+        </ejb>
+        <ejb>
             <ejb-name>UploadDownloadService</ejb-name>
             <jndi-name>ejb/UploadDownloadService</jndi-name>
-<!--            <resource-ref>
-                <res-ref-name>jms/docdokuConnFactory</res-ref-name>
-                <jndi-name>jms/docdokuConnFactory</jndi-name>
-                <default-resource-principal>
-                    <name>guest</name>
-                    <password>guest</password>
-                </default-resource-principal>
-            </resource-ref>-->
             <webservice-endpoint>
                 <port-component-name>UploadDownloadService</port-component-name>
                 <endpoint-address-uri>services/UploadDownload</endpoint-address-uri>
@@ -61,10 +57,6 @@
         <ejb>
             <ejb-name>UserManagerBean</ejb-name>
             <jndi-name>ejb/UserManagerBean</jndi-name>
-        </ejb>
-        <ejb>
-            <ejb-name>ProductManagerBean</ejb-name>
-            <jndi-name>ejb/ProductManagerBean</jndi-name>
         </ejb>
         <ejb>
             <ejb-name>MailerBean</ejb-name>

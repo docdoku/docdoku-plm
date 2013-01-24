@@ -23,6 +23,8 @@ import com.docdoku.client.data.Config;
 import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.services.IUploadDownloadWS;
+import com.docdoku.core.services.IWorkflowManagerWS;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class ScriptingTools {
 
     public final static String DEFAULT_DOCUMENT_WSDL_LOCATION = "http://localhost:8080/services/document?wsdl";
     public final static String DEFAULT_PRODUCT_WSDL_LOCATION = "http://localhost:8080/services/product?wsdl";
+    public final static String DEFAULT_WORKFLOW_WSDL_LOCATION = "http://localhost:8080/services/workflow?wsdl";
     public final static String DEFAULT_FILE_MANAGER_WSDL_LOCATION = "http://localhost:8080/services/UploadDownload?wsdl";
 
     static {
@@ -69,6 +72,15 @@ public class ScriptingTools {
         return port;
     }
 
+    public static IWorkflowManagerWS createWorkflowService(String url, String login, String password) throws MalformedURLException, Exception {
+        WorkflowService service = new WorkflowService(new URL(url), new javax.xml.namespace.QName("http://server.docdoku.com/", "WorkflowManagerBeanService"));
+        IWorkflowManagerWS port = service.getPort(IWorkflowManagerWS.class);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+
+        return port;
+    }
+
     public static IUploadDownloadWS createFileManagerService(String url, String login, String password) throws MalformedURLException {
         MTOMFeature feature = new MTOMFeature();
         UploadDownloadService service = new UploadDownloadService(new URL(url), new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
@@ -82,6 +94,10 @@ public class ScriptingTools {
 
     public static IProductManagerWS createProductService(String login, String password) throws MalformedURLException, Exception {
         return createProductService(DEFAULT_PRODUCT_WSDL_LOCATION, login, password);
+    }
+
+    public static IWorkflowManagerWS createWorkflowService(String login, String password) throws MalformedURLException, Exception {
+        return createWorkflowService(DEFAULT_WORKFLOW_WSDL_LOCATION, login, password);
     }
 
     public static IDocumentManagerWS createDocumentService(String login, String password) throws MalformedURLException, Exception {

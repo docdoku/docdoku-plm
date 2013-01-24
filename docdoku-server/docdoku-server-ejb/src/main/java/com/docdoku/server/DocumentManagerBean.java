@@ -365,24 +365,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public WorkflowModel[] getWorkflowModels(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new WorkflowModelDAO(new Locale(user.getLanguage()), em).findAllWorkflowModels(pWorkspaceId);
-    }
-
-    @RolesAllowed("users")
-    @Override
     public DocumentMasterTemplate[] getDocumentMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllDocMTemplates(pWorkspaceId);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public WorkflowModel getWorkflowModel(WorkflowModelKey pKey)
-            throws WorkspaceNotFoundException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
-        return new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(pKey);
     }
 
     @RolesAllowed("users")
@@ -391,21 +376,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         return new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).loadDocMTemplate(pKey);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public WorkflowModel createWorkflowModel(String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, CreationException {
-        User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
-
-        Locale userLocale = new Locale(user.getLanguage());
-        WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
-        WorkflowModel model = new WorkflowModel(user.getWorkspace(), pId, user, pFinalLifeCycleState, pActivityModels);
-        Tools.resetParentReferences(model);
-        Date now = new Date();
-        model.setCreationDate(now);
-        modelDAO.createWorkflowModel(model);
-        return model;
     }
 
     @RolesAllowed("users")
@@ -438,14 +408,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         template.setAttributeTemplates(attrs);
         return template;
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
-        new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
-        em.flush();
     }
 
     @RolesAllowed("users")
