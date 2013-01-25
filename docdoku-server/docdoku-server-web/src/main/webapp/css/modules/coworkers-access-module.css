@@ -1,3 +1,6 @@
+#coworkers_access_module_entries > li > a {
+    height: 18px;
+}
 #coworkers_access_module_entries > li > a > i{
     float:right;
     margin: 4px 2px 0 0;
@@ -7,10 +10,14 @@
   display: block;
     opacity:0.7;
 }
-#coworkers_access_module_entries > li > a:hover > i:hover{
+#coworkers_access_module_entries > li > a > i:hover{
     opacity:1;
 }
 #coworkers_access_module_entries > li > a > span > i{
     float:left;
     margin: 4px 0 0 5px;
+}
+#coworkers_access_module_entries > li > a > span > span{
+    float: left;
+    margin: 0 10px;
 }
