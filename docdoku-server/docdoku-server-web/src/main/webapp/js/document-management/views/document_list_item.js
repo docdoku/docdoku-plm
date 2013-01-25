@@ -39,6 +39,9 @@ define([
                 );
             }
 
+            data.isCheckoutByConnectedUser = this.model.isCheckoutByConnectedUser();
+            data.isCheckout = this.model.isCheckout();
+
 			return data;
 		},
 

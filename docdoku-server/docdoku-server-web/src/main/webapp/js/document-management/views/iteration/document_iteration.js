@@ -76,6 +76,8 @@ define([
             var editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
 
             var data = {
+                isCheckoutByConnectedUser: this.model.isCheckoutByConnectedUser(),
+                isCheckout: this.model.isCheckout(),
                 editMode: editMode,
                 master: this.model.toJSON(),
                 i18n: i18n

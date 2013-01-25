@@ -1,9 +1,13 @@
 define([
     "require",
+    "i18n!localization/nls/document-management-strings",
+    "common/date",
 	"views/checkbox_list_item",
 	"text!templates/workflow_list_item.html"
 ], function (
     require,
+    i18n,
+    Date,
 	CheckboxListItemView,
 	template
 ) {
@@ -14,7 +18,17 @@ define([
         initialize: function(){
             CheckboxListItemView.prototype.initialize.apply(this, arguments);
             this.events["click .reference"] = this.actionEdit;
+        },
 
+        modelToJSON: function () {
+            var data = this.model.toJSON();
+
+            data.creationDate = Date.formatTimestamp(
+                i18n._DATE_FORMAT,
+                data.creationDate
+            );
+
+            return data;
         },
 
         rendered: function(){

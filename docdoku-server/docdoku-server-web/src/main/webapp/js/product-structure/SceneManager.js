@@ -22,7 +22,7 @@ function SceneManager(options) {
     this.meshesBindedForMarkerCreation = [];
     this.clock = new THREE.Clock();
 
-    this.STATECONTROL = { FPC : 0, TBC : 0};
+    this.STATECONTROL = { FPC : 0, TBC : 1};
     this.stateControl = this.STATECONTROL.FPC;
 }
 
@@ -281,9 +281,19 @@ SceneManager.prototype = {
 
     initStats: function() {
         this.stats = new Stats();
-        this.stats.domElement.style.position = 'absolute';
-        this.stats.domElement.style.bottom = '0px';
         document.body.appendChild(this.stats.domElement);
+
+        this.$stats = $(this.stats.domElement);
+        this.$stats.attr('id','statsWin');
+        this.$stats.attr('class', 'statsWinMaximized');
+
+        this.$statsArrow = $("<i id=\"statsArrow\" class=\"icon-chevron-down\"></i>");
+        this.$stats.prepend(this.$statsArrow);
+
+        var that = this;
+        this.$statsArrow.bind('click', function() {
+            that.$stats.toggleClass('statsWinMinimized statsWinMaximized');
+        });
     },
 
     initRenderer: function() {
