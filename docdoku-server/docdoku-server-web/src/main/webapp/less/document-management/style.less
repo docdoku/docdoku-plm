@@ -39,14 +39,27 @@ margin-bottom: 10px;
   margin-bottom: 0px;
 }
 
-td.reference .icon-pencil{
-  float: right;
-  opacity: 0;
+td.reference {
+  i{
+    font-size: 14px;
+    margin-right: 4px;
+    text-align: center;
+    display: inline-block;
+    width: 14px;
+    opacity: 0.5;
+  }
 }
 
 td.reference:hover {
   font-weight: bold;
-  .icon-pencil{
+  i{
     opacity: 1;
   }
+}
+
+div.modal-header i{
+  margin-right: 6px;
+  line-height: 28px;
+  float: left;
+  font-size: 20px;
 }
