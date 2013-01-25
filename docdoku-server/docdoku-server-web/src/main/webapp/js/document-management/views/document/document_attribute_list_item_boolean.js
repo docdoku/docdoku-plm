@@ -18,7 +18,14 @@ define([
 		},
 		getValue: function (el) {
 			return el.is(':checked');
-		}
+		},
+        modelToJSON: function() {
+            return {
+                name: this.model.get('name'),
+                type: this.model.get('type'),
+                value: this.model.get('value') == "true"
+            };
+        }
 	});
 	return DocumentAttributeListItemBooleanView;
 });
