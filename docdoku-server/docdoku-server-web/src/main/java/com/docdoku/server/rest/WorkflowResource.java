@@ -77,9 +77,7 @@ public class WorkflowResource {
             WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
             
             for(int i=0; i<workflowModels.length; i++){
-                User workflowAuhtor = workflowModels[i].getAuthor();
-                UserDTO workflowAuthorDTO = mapper.map(workflowAuhtor,UserDTO.class);
-                dtos[i]=new WorkflowModelDTO(workflowModels[i].getId(), workflowAuthorDTO);
+                dtos[i] = mapper.map(workflowModels[i], WorkflowModelDTO.class);
             }
             
             return dtos;
