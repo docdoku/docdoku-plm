@@ -84,8 +84,12 @@
                                                     #{i18nTemplate['toplinks.product']}
                                                     <span class="caret"></span>
                                                 </a>
-                                                <ul class="dropdown-menu">                                                  
-                                                    <c:forEach var="item" items="${products}">                                                    
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#">#{i18nTemplate['toplinks.newProduct']}...</a></li>
+                                                    <c:if test="#{not empty products}">
+                                                        <li class="divider"></li>
+                                                    </c:if>
+                                                    <c:forEach var="item" items="${products}">
                                                         <li>
                                                             <a href="#{request.contextPath}/product-structure/${workspaceID}/${item.id}">
                                                                 ${item.id}
