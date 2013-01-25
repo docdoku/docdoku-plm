@@ -11,10 +11,10 @@ var Stats = function () {
 
     var container = document.createElement( 'div' );
     container.id = 'stats';
-    container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
-    container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer';
+    container.style.cssText = 'opacity:0.9;cursor:pointer';
 
     var fpsDiv = document.createElement( 'div' );
+    fpsDiv.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
     fpsDiv.id = 'fps';
     fpsDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#002';
     container.appendChild( fpsDiv );
@@ -39,6 +39,7 @@ var Stats = function () {
     }
 
     var msDiv = document.createElement( 'div' );
+    msDiv.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
     msDiv.id = 'ms';
     msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:none';
     container.appendChild( msDiv );
