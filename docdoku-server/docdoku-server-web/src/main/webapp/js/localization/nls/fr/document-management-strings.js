@@ -1,6 +1,7 @@
 define({
     "APPEND":						"Ajouter",
     "ATTACHED_FILES":               "Fichiers",
+    "DROP_FILE_HERE":               "ou déposez un fichier ici",
     "ATTRIBUTES":					"Attributs",
     "AUTHOR":						"Auteur",
     "BOOLEAN":						"Booléen",
