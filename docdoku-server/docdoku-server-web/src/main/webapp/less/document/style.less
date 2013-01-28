@@ -1,10 +1,16 @@
 @import "../bootstrap/bootstrap.less";
+
 @import "../bootstrap/responsive.less";
 @import "../bootstrap/navbar.less";
 @import "../bootstrap/navs.less";
 @import "../icons.less";
 @import "../bootstrap/reset.less";
 @import "../colors.less";
+@import "../document_edit.less";
+@import "../nav.less";
+@import "../attributes_edit.less";
+@import "../general.less";
+@import "../content.less";
 
 body{
   background-color: #CFD7E4;
@@ -13,27 +19,24 @@ body{
   margin-right: 400px;
 }
 
-h1{
-  margin-bottom: 20px;
-}
-
 h3{
-  text-decoration:underline;
+  //text-decoration:underline;
   margin-bottom: 20px;
+  color: lighten(@navbarBackground, 20%);
 }
 
-th{
+th.fichiers{
   border: 1px solid white;
   float: left;
 }
 
 
-td {
+td.fichiers {
   border: 1px solid white;
   float: left;
 }
 
-table{
+table.fichiers{
   background-color: white;
 }
 
@@ -82,4 +85,9 @@ table{
   position: absolute;
   left:650px;
   top:700px;
+}
+
+.rien p {
+  color: red;
+  text-align: center;
 }
