@@ -6,7 +6,8 @@ define([
 	"views/template_nav",
 	"views/checkedout_nav",
     "views/workflow_model_editor",
-    "models/workflow_model"
+    "models/workflow_model",
+    "../product-structure/views/product_creation-view"
 ],
 function (
 	singletonDecorator,
@@ -15,7 +16,8 @@ function (
 	WorkflowNavView,
 	TemplateNavView,
 	CheckedoutNavView,
-    WorkflowModelEditorView
+    WorkflowModelEditorView,
+    ProductCreationView
 ) {
 	var Router = Backbone.Router.extend({
 		routes: {
@@ -27,6 +29,7 @@ function (
 			"workflows":		"workflows",
             "workflow-model-editor/:workflowModelId":  "workflowModelEditor",
             "workflow-model-editor":  "workflowModelEditorNew",
+            "product-creation": "productCreation"
 			"checkedouts":		"checkedouts",
 			"tasks":			"tasks",
 			"":					"defaults"
@@ -73,6 +76,9 @@ function (
             this.workflowModelEditorView = new WorkflowModelEditorView();
 
             this.workflowModelEditorView.render();
+        },
+        productCreation: function() {
+            new ProductCreationView().render();
         },
 		templates: function() {
 			this.defaults();
