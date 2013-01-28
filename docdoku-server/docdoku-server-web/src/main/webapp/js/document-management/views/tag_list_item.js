@@ -20,6 +20,7 @@ define([
 				"click .actions .delete": "actionDelete",
 				"mouseleave .header": "hideActions"
 			});
+
 		},
 		hideActions: function () {
 			// Prevents the actions menu to stay opened all the time
@@ -30,6 +31,7 @@ define([
 			this.$el.find(".nav-list-entry").first().addClass("active");
 		},
 		showContent: function () {
+            console.log("showContent")
 			this.setActive();
 			this.addSubView(
 				new TagDocumentListView({
