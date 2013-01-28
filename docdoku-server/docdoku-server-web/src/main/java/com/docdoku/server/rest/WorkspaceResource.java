@@ -45,6 +45,9 @@ public class WorkspaceResource {
     private ProductResource products;
 
     @EJB
+    private PartsResource parts;
+
+    @EJB
     private TagResource tags;
 
     @EJB
@@ -74,6 +77,11 @@ public class WorkspaceResource {
     @Path("/products")
     public ProductResource products() {
         return products;
+    }
+
+    @Path("/parts")
+    public PartsResource parts() {
+        return parts;
     }
 
     @Path("/tags")
