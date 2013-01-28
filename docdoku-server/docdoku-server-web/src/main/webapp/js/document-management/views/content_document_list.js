@@ -1,8 +1,9 @@
 define([
     "i18n!localization/nls/document-management-strings",
     "views/content",
-    "views/document_list"
-], function(i18n, ContentView, DocumentListView) {
+    "views/document_list",
+    "views/document/documents_tags"
+], function(i18n, ContentView, DocumentListView, DocumentsTagsView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -11,6 +12,7 @@ define([
             this.events["click .actions .undocheckout"] = "actionUndocheckout";
             this.events["click .actions .checkin"] = "actionCheckin";
             this.events["click .actions .delete"] = "actionDelete";
+            this.events["click .actions .tags"] = "actionTags";
         },
 
         rendered: function() {
@@ -19,6 +21,7 @@ define([
             this.undoCheckoutButton = this.$(".undocheckout");
             this.checkinButton = this.$(".checkin");
             this.deleteButton = this.$(".actions .delete");
+            this.tagsButton = this.$(".actions .tags");
 
             this.listView = this.addSubView(
                 new DocumentListView({
@@ -53,11 +56,13 @@ define([
         onNoDocumentSelected: function() {
             this.deleteButton.hide();
             this.checkoutGroup.hide();
+            this.tagsButton.hide();
         },
 
         onOneDocumentSelected: function(document) {
             this.deleteButton.show();
             this.checkoutGroup.css('display', 'inline-block');
+            this.tagsButton.show();
 
             if (document.isCheckout()) {
                 if (document.isCheckoutByConnectedUser()) {
@@ -73,6 +78,7 @@ define([
 
         onSeveralDocumentsSelected: function() {
             this.deleteButton.show();
+            this.tagsButton.show();
             this.checkoutGroup.hide();
         },
 
@@ -110,7 +116,27 @@ define([
                 });
             }
             return false;
+        },
+
+        actionTags: function() {
+
+            var documentsChecked = [];
+
+
+            this.listView.eachChecked(function(view) {
+                documentsChecked.push(view.model);
+            });
+
+            var view = this.addSubView(
+                new DocumentsTagsView({
+                    collection: documentsChecked
+                })
+            ).show();
+
+            return false;
+
         }
+
 
     });
 

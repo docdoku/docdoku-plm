@@ -46,7 +46,13 @@ public class TagResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
-    
+
+    @EJB
+    private DocumentsResource documentsResource;
+
+    @EJB
+    private DocumentResource documentResource;
+
     private Mapper mapper;
 
     public TagResource() {
@@ -77,26 +83,12 @@ public class TagResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }          
     }
-    
-    @GET
+
     @Path("{tagId}/documents/")
-    @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getMasterDocumentsWithSpecifiedTagJson(@PathParam("workspaceId") String workspaceId,@PathParam("tagId") String tagId) {
-        try{
-        DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, tagId));
-        DocumentMasterDTO[] docMsDTO = new DocumentMasterDTO[docMs.length];
+    public DocumentsResource getDocumentsResource() {
+        return documentsResource;
+    }
 
-        for (int i = 0; i < docMs.length; i++) {
-            docMsDTO[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
-            docMsDTO[i] = Tools.createLightDocumentMasterDTO(docMsDTO[i]); 
-        }
-
-        return docMsDTO; 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }        
-    } 
-    
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")

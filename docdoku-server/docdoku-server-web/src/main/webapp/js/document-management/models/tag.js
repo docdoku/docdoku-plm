@@ -3,6 +3,7 @@ define(function () {
         initialize: function(){
             this.className = "Tag";
         }
+
     });
 	return Tag;
 });

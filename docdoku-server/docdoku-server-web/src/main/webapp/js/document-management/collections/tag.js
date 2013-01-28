@@ -6,6 +6,9 @@ define([
 ) {
 	var TagList = Backbone.Collection.extend({
 		model: Tag,
+
+        className : "TagList",
+
 		comparator: function (tagA, tagB) {
 			// sort tags by label
 			var labelA = tagA.get("label");
@@ -13,12 +16,29 @@ define([
 
 			if (labelA == labelB) return 0;
 			return (labelA < labelB) ? -1 : 1;
-		}
+		},
+
+
+        url:function(){
+            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags";
+            return baseUrl;
+        },
+
+        createTag : function(tag){
+
+            $.ajax({
+                context: this,
+                type: "POST",
+                url: this.url(),
+                data : JSON.stringify(tag),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    this.fetch();
+                }
+            });
+
+        }
 	});
-	TagList.prototype.__defineGetter__("url", function () {
-		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags";
-		return baseUrl;
-	});
-    TagList.className="TagList";
+
 	return TagList;
 });

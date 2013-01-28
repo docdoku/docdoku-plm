@@ -92,5 +92,10 @@ define({
     "INSTRUCTIONS":                 "Instructions",
     "RESPONSABLE":                  "Responsable",
     "WORKSPACES":					"Workspaces",
-    "VALIDATION_FAILED_FOR":        "Validation échouée pour "
+    "VALIDATION_FAILED_FOR":        "Validation échouée pour ",
+    "ADD_NEW_TAG":                  "Ajouter un nouveau libellé",
+    "NEW_TAG":                      "Crée un nouveau libellé",
+    "ADD_EXISTING_TAG":             "Ajouter un libellé existant",
+    "TAGS_TO_ADD":                  "Libellés à ajouter"
+
 });

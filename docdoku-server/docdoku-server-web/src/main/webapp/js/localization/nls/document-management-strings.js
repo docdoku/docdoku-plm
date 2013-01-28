@@ -93,7 +93,12 @@ define({
         "INSTRUCTIONS":                 "Instructions",
         "RESPONSABLE":                  "Responsible",
         "WORKSPACES":					"Workspaces",
-        "VALIDATION_FAILED_FOR":        "Validation failed for "
+        "VALIDATION_FAILED_FOR":        "Validation failed for ",
+        "ADD_NEW_TAG":                  "Add a new tag",
+        "NEW_TAG":                      "Creates a new tag",
+        "ADD_EXISTING_TAG":             "Add an existing tag",
+        "TAGS_TO_ADD":                  "Tags to add"
+
     },
     "fr": true,
     "es": true

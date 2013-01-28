@@ -42,6 +42,10 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return this.iterations;
         },
 
+        getTags:function(){
+            return this.tags;
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,
@@ -77,7 +81,38 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         isCheckout: function() {
             return !_.isNull(this.attributes.checkOutDate);
+        },
+
+        addTags:function(tags){
+
+            $.ajax({
+                context: this,
+                type: "POST",
+                url: this.url() + "/tags",
+                data : JSON.stringify(tags),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    this.fetch();
+                }
+            });
+
+        },
+
+        removeTag:function(tagLabel){
+
+            $.ajax({
+                context: this,
+                type: "DELETE",
+                url: this.url() + "/tags",
+                data : JSON.stringify({id:tagLabel, label:tagLabel}),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    this.fetch();
+                }
+            });
+
         }
+
 
     });
 

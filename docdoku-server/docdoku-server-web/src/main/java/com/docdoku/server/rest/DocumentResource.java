@@ -25,12 +25,13 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.Tag;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -42,9 +43,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -362,6 +361,58 @@ public class DocumentResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
+
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("/tags")
+    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, TagDTO[] tagDtos) {
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
+        try {
+
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+
+            Set<Tag> tags = docM.getTags();
+
+            for(TagDTO tagDTO : tagDtos){
+                tags.add(new Tag(new Workspace(workspaceId), tagDTO.getLabel()));
+            }
+
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+
+    }
+
+    @DELETE
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("/tags")
+    public Response removeDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, TagDTO tagDTO) {
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
+        try {
+
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            Tag tagToRemove = new Tag(new Workspace(workspaceId), tagDTO.getLabel());
+            docM.getTags().remove(tagToRemove);
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
     }
 
     @DELETE
