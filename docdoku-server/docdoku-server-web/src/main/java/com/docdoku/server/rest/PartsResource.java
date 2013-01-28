@@ -55,7 +55,7 @@ public class PartsResource {
     @Produces("application/json;charset=UTF-8")
     public String[] searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
-            List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), q);
+            List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%");
             String[] partNumbers = new String[partMasters.size()];
             for (int i = 0; i < partMasters.size(); i++) {
                 partNumbers[i] = partMasters.get(i).getNumber();
