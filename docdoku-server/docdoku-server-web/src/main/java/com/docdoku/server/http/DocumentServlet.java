@@ -20,15 +20,16 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.document.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.DocumentMaster;
+
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
@@ -37,7 +38,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
 
+import com.docdoku.core.meta.InstanceTextAttribute;
+
 import com.docdoku.core.*;
+import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 public class DocumentServlet extends HttpServlet {
     
@@ -65,16 +69,15 @@ public class DocumentServlet extends HttpServlet {
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
             pRequest.setAttribute("docm", docM);
 
+            List<DocumentIteration> di =  docM.getDocumentIterations();
 
-            //List<DocumentIteration> di =  docM.getDocumentIterations();
+            Set<InstanceAttribute> attr=new HashSet<InstanceAttribute>();
 
-            //String test=docM.getDocumentIterations().get(1).getInstanceAttributes().get(0).getName();
-            //String test="test";
+            for (int i=0 ; i<di.size() ; i++)
+                for (InstanceAttribute ia : di.get(i).getInstanceAttributes().values())
+                    attr.add(ia);
 
-            //DocumentIteration di = (DocumentIteration) docM.getDocumentIterations();
-
-
-           // pRequest.setAttribute("di", test);
+            pRequest.setAttribute("attr", attr);
 
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
 
