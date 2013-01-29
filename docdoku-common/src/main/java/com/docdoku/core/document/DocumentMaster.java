@@ -109,7 +109,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     })
     private Set<Tag> tags=new HashSet<Tag>();
     
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
 
     public DocumentMaster() {

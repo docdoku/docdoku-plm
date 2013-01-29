@@ -708,10 +708,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 newDoc.addFile(targetFile);
             }
 
-            Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
-            for (DocumentToDocumentLink link : beforeLastDocument.getLinkedDocuments()) {
-                DocumentToDocumentLink newLink = link.clone();
-                newLink.setFromDocument(newDoc);
+            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            for (DocumentLink link : beforeLastDocument.getLinkedDocuments()) {
+                DocumentLink newLink = link.clone();
                 links.add(newLink);
             }
             newDoc.setLinkedDocuments(links);
@@ -967,47 +966,46 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentMaster updateDocument(DocumentIterationKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentLinkDAO linkDAO = new DocumentLinkDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pKey.getWorkspaceId(), pKey.getDocumentMasterId(), pKey.getDocumentMasterVersion()));
         //check access rights on docM ?
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().getKey().equals(pKey)) {
             DocumentIteration doc = docM.getLastIteration();
-            
-            Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
-            for (DocumentIterationKey key : pLinkKeys) {
-                links.add(new DocumentToDocumentLink(doc, key));
-            }
-            Set<DocumentToDocumentLink> linksToRemove = new HashSet<DocumentToDocumentLink>(doc.getLinkedDocuments());
-            linksToRemove.removeAll(links);
 
-            DocumentToDocumentLinkDAO linkDAO = new DocumentToDocumentLinkDAO(em);
-            for (DocumentToDocumentLink linkToRemove : linksToRemove) {
-                linkDAO.removeLink(linkToRemove);
+            Set<DocumentIterationKey> linkKeys = new HashSet<DocumentIterationKey>(Arrays.asList(pLinkKeys));
+            Set<DocumentIterationKey> currentLinkKeys = new HashSet<DocumentIterationKey>();
+
+            Set<DocumentLink> currentLinks = new HashSet<DocumentLink>(doc.getLinkedDocuments());
+
+            for(DocumentLink link:currentLinks){
+                DocumentIterationKey linkKey = link.getTargetDocumentKey();
+                if(!linkKeys.contains(linkKey)){
+                    doc.getLinkedDocuments().remove(link);
+                }else
+                    currentLinkKeys.add(linkKey);
             }
 
-            // set doc for all attributes
+            for(DocumentIterationKey link:linkKeys){
+                if(!currentLinkKeys.contains(link)){
+                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class,link));
+                    linkDAO.createLink(newLink);
+                    doc.getLinkedDocuments().add(newLink);
+                }
+            }
+
             
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : pAttributes) {
-                //attr.setDocument(doc);
                 attrs.put(attr.getName(), attr);
             }
 
             Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(doc.getInstanceAttributes().values());
-            //attrsToRemove.removeAll(attrs.values());
 
             for(InstanceAttribute attr:currentAttrs){
                 if(!attrs.containsKey(attr.getName())){
                     doc.getInstanceAttributes().remove(attr.getName());
                 }
             }
-
-            
-            //InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
-            /*
-            for (InstanceAttribute attrToRemove : attrsToRemove) {
-                attrDAO.removeAttribute(attrToRemove);
-            }
-            */
 
             for(InstanceAttribute attr:attrs.values()){
                 if(!doc.getInstanceAttributes().containsKey(attr.getName())){
@@ -1016,18 +1014,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     doc.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
                 }
             }
-            
-            //Set<InstanceAttribute> attrsToCreate = new HashSet<InstanceAttribute>(attrs.values());
-            //attrsToCreate.removeAll(doc.getInstanceAttributes().values());
 
-            /*
-            for (InstanceAttribute attrToCreate : attrsToCreate) {
-                attrDAO.createAttribute(attrToCreate);
-            }
-            */
             doc.setRevisionNote(pRevisionNote);
-            doc.setLinkedDocuments(links);
-            //doc.setInstanceAttributes(attrs);
+            //doc.setLinkedDocuments(links);
             return docM;
 
         } else {
@@ -1074,10 +1063,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 dataManager.copyData(sourceFile, targetFile);
             }
 
-            Set<DocumentToDocumentLink> links = new HashSet<DocumentToDocumentLink>();
-            for (DocumentToDocumentLink link : lastDoc.getLinkedDocuments()) {
-                DocumentToDocumentLink newLink = link.clone();
-                newLink.setFromDocument(firstIte);
+            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            for (DocumentLink link : lastDoc.getLinkedDocuments()) {
+                DocumentLink newLink = link.clone();
                 links.add(newLink);
             }
             firstIte.setLinkedDocuments(links);

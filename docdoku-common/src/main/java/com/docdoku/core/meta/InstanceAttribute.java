@@ -97,6 +97,14 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
         return clone;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public abstract Object getValue();
 
     public abstract boolean setValue(Object pValue);

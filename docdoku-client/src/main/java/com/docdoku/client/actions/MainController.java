@@ -19,20 +19,13 @@
  */
 package com.docdoku.client.actions;
 
+import com.docdoku.core.document.*;
 import com.docdoku.core.services.*;
-import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.TagKey;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.ActivityModel;
@@ -713,7 +706,7 @@ public class MainController {
         }
     }
 
-    public DocumentIteration updateDoc(DocumentIteration pDocument, String pComment, InstanceAttribute[] pAttributes, DocumentToDocumentLink[] pLinks) throws Exception {
+    public DocumentIteration updateDoc(DocumentIteration pDocument, String pComment, InstanceAttribute[] pAttributes, DocumentLink[] pLinks) throws Exception {
         try {
             System.out.println("Updating document " + pDocument);
             DocumentMaster newDocM;
@@ -721,7 +714,7 @@ public class MainController {
 
             DocumentIterationKey[] linkKeys = new DocumentIterationKey[pLinks.length];
             for (int i = 0; i < pLinks.length; i++) {
-                linkKeys[i] = pLinks[i].getToDocumentKey();
+                linkKeys[i] = pLinks[i].getTargetDocumentKey();
             }
 
             newDocM = Tools.resetParentReferences(mDocumentService.updateDocument(docKey, pComment, pAttributes, linkKeys));

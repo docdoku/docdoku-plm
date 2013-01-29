@@ -10,7 +10,7 @@
     <class>com.docdoku.core.common.Workspace</class>
     <class>com.docdoku.core.document.DocumentIteration</class>
     <class>com.docdoku.core.document.DocumentMaster</class>
-    <class>com.docdoku.core.document.DocumentToDocumentLink</class>
+    <class>com.docdoku.core.document.DocumentLink</class>
     <class>com.docdoku.core.document.Folder</class>
     <class>com.docdoku.core.document.IterationChangeSubscription</class>
     <class>com.docdoku.core.document.StateChangeSubscription</class>

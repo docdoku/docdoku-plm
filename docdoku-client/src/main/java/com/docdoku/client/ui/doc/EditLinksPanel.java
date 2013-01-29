@@ -22,7 +22,7 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.DocumentLink;
 
 
 import javax.swing.*;
@@ -57,7 +57,7 @@ public class EditLinksPanel extends JPanel implements ActionListener {
         mAddButton = new JButton(I18N.BUNDLE.getString("AddLink_button"), addIcon);
         mRemoveButton = new JButton(I18N.BUNDLE.getString("RemoveLink_button"), removeIcon);
         mEditedDoc = pEditedDoc;
-        for(DocumentToDocumentLink link:mEditedDoc.getLinkedDocuments()) {
+        for(DocumentLink link:mEditedDoc.getLinkedDocuments()) {
             mLinksListModel.addElement(link);
         }
         mLinksScrollPane = new JScrollPane();

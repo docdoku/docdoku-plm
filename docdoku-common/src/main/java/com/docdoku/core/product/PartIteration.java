@@ -23,6 +23,7 @@ package com.docdoku.core.product;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import java.io.Serializable;
 import java.util.Date;
@@ -32,22 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -88,6 +74,23 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     })
     private List<Geometry> geometries = new LinkedList<Geometry>();
 
+    @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private BinaryResource nativeCADFile;
+
+    @OneToMany(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinTable(name="PARTITERATION_DOCUMENTLINK",
+    inverseJoinColumns={
+        @JoinColumn(name="DOCUMENTLINK_ID", referencedColumnName="ID")
+    },
+    joinColumns={
+        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+        @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
+    })
+    private Set<DocumentLink> linkedDocuments=new HashSet<DocumentLink>();
+
+
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name="PARTITERATION_BINRES", inverseJoinColumns = {
         @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
@@ -99,7 +102,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();    
-    
+
     private String iterationNote;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -221,7 +224,13 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         return attachedFiles;
     }
  
+    public Set<DocumentLink> getLinkedDocuments() {
+        return linkedDocuments;
+    }
     
+    public void setLinkedDocuments(Set<DocumentLink> pLinkedDocuments) {
+        linkedDocuments=pLinkedDocuments;
+    }
     
     public Date getCreationDate() {
         return creationDate;

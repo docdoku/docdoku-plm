@@ -72,6 +72,10 @@ public class ACL implements Serializable, Cloneable{
         
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
