@@ -13,9 +13,9 @@ define([
         events: {
             "click form button.cancel-upload-btn": "cancelButtonClicked",
             "change form input#upload-btn": "fileSelectHandler",
-            "dragover #filedroparea": "fileDragHover",
-            "dragleave #filedroparea": "fileDragHover",
-            "drop #filedroparea": "fileSelectHandler"
+            "dragover .droppable": "fileDragHover",
+            "dragleave .droppable": "fileDragHover",
+            "drop .droppable": "fileDropHandler"
 
         },
 
@@ -29,6 +29,12 @@ define([
             // Prevent browser behavior on file drop
             window.addEventListener("drop",function(e){
                 e.preventDefault();
+                return false;
+            },false);
+
+            window.addEventListener("ondragenter",function(e){
+                e.preventDefault();
+                return false;
             },false);
 
             this.filesToDelete = new Backbone.Collection();
@@ -37,26 +43,24 @@ define([
             this.listenTo(this.collection, 'add', this.addOneFile);
         },
 
-        preventDrop: function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-        },
-
         // cancel event and hover styling
         fileDragHover: function(e) {
             e.stopPropagation();
             e.preventDefault();
-            e.target.className = (e.type == "dragover" ? "hover" : "");
+            if(e.type == "dragover")
+                this.filedroparea.addClass("hover");
+            else{
+                this.filedroparea.removeClass("hover");
+            }
+        },
+
+        fileDropHandler: function(e) {
+            this.fileDragHover(e);
+            this.uploadNewFile(e.dataTransfer.files[0]);
         },
 
         fileSelectHandler: function(e) {
-            if(e.target.id == "filedroparea")
-                this.fileDragHover(e);
-
-            // fetch FileList object
-            var files = e.target.files || e.dataTransfer.files;
-            var file = files[0];
-            this.uploadNewFile(file);
+            this.uploadNewFile(e.target.files[0]);
         },
 
         addAllFiles: function() {
@@ -178,6 +182,7 @@ define([
         },
 
         bindDomElements: function() {
+            this.filedroparea = this.$("#filedroparea");
             this.filesUL = this.$("ul.file-list");
             this.uploadFileNameP = this.$("p#upload-file-shortname");
             this.progressBar = this.$("div.bar");

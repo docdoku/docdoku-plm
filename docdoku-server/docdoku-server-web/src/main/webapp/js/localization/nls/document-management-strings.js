@@ -2,6 +2,7 @@ define({
     root: {
         "APPEND":						"Add",
         "ATTACHED_FILES":               "Files",
+        "SELECT_FILE":                  "Choose a file",
         "ATTRIBUTES":					"Attributes",
         "AUTHOR":						"Author",
         "BOOLEAN":						"Boolean",
