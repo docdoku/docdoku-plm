@@ -76,7 +76,8 @@ public class DocumentResource {
             DocumentMasterDTO docMsDTO = mapper.map(docM, DocumentMasterDTO.class);
             docMsDTO.setPath(docM.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(docM.getLifeCycleState());
-
+            docMsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docM));
+            docMsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docM));
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -327,6 +328,8 @@ public class DocumentResource {
                 dtos[i].setPath(docM[i].getLocation().getCompletePath());
                 dtos[i].setLifeCycleState(docM[i].getLifeCycleState());
                 dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
+                dtos[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docM[i]));
+                dtos[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docM[i]));
             }
 
             return dtos;

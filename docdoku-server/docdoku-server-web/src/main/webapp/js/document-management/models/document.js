@@ -42,6 +42,14 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return this.iterations;
         },
 
+        isIterationChangedSubscribed:function(){
+            return this.get("iterationSubscription");
+        },
+
+        isStateChangedSubscribed:function(){
+            return this.get("stateSubscription");
+        },
+
         getTags:function(){
             return this.tags;
         },
@@ -77,6 +85,35 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                     this.fetch();
                 }
             });
+        },
+
+        toggleStateSubscribe:function(oldState){
+
+            var action = oldState ? "unsubscribe" : "subscribe" ;
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/notification/stateChange/"+action,
+                success: function() {
+                    this.fetch();
+                }
+            });
+        },
+
+        toggleIterationSubscribe:function(oldState){
+
+            var action = oldState ? "unsubscribe" : "subscribe" ;
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/notification/iterationChange/"+action,
+                success: function() {
+                    this.fetch();
+                }
+            });
+
         },
 
         isCheckout: function() {

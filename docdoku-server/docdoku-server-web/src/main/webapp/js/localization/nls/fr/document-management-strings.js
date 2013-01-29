@@ -96,8 +96,15 @@ define({
     "WORKSPACES":					"Workspaces",
     "VALIDATION_FAILED_FOR":        "Validation échouée pour ",
     "ADD_NEW_TAG":                  "Ajouter un nouveau libellé",
-    "NEW_TAG":                      "Crée un nouveau libellé",
+    "ADD_NEW_TAG_HELP":             "Crée un nouveau libellé",
     "ADD_EXISTING_TAG":             "Ajouter un libellé existant",
-    "TAGS_TO_ADD":                  "Libellés à ajouter"
+    "TAGS_TO_ADD":                  "Libellés à ajouter",
+    "NOTIFICATIONS":                "Notifications",
+    "SUBSCRIBE_STATE_CHANGE":       "S'abonner aux notifications de changement d'état",
+    "UNSUBSCRIBE_STATE_CHANGE":     "Se désabonner des notifications de changement d'état",
+    "SUBSCRIBE_ITERATION_CHANGE":   "S'abonner aux notifications de changement d'itération",
+    "UNSUBSCRIBE_ITERATION_CHANGE": "Se désabonner des notifications de changement d'itération",
+    "ITERATION_CHANGE":             "Changement d'iteration",
+    "STATE_CHANGE":                 "Changement d'état"
 
 });
