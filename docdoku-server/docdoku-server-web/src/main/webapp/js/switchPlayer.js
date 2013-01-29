@@ -1,4 +1,4 @@
-function switchMenu(obj, btn, context) {
+function switchMenu(obj, btn, context, path) {
     var el = document.getElementById(obj);
                 
     if ( el.style.display != 'none' ) {
@@ -14,4 +14,3 @@ function switchMenu(obj, btn, context) {
 function openFullScreen(strUrl, strWindowName) {
     window.open(strUrl, strWindowName, "");
 }
-
