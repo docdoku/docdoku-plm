@@ -2,10 +2,12 @@ define([
     "views/components/modal",
     "views/file_list",
     "views/document/document_attributes",
+    "models/tag",
+    "views/document_tag",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common/date"
-], function (ModalView, FileListView, DocumentAttributesView, template, i18n, date) {
+], function (ModalView, FileListView, DocumentAttributesView, Tag, TagView, template, i18n, date) {
 
     var IterationView = ModalView.extend({
 
@@ -20,6 +22,8 @@ define([
 
             this.events["click a#previous-iteration"] = "onPreviousIteration";
             this.events["click a#next-iteration"] = "onNextIteration";
+
+            this.tagsToRemove = [];
 
         },
 
@@ -148,6 +152,8 @@ define([
                 this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "right");
             }
 
+            this.tagsManagement(editMode);
+
             return this;
         },
 
@@ -173,6 +179,13 @@ define([
              */
             this.fileListView.deleteFilesToDelete();
 
+            /*
+            * Delete tags if needed
+            * */
+
+            this.deleteClickedTags();
+
+
             this.hide();
 
         },
@@ -189,6 +202,46 @@ define([
         getPrimaryButton: function() {
             var button = this.$("div.modal-footer button.btn-primary");
             return button;
+        },
+
+        tagsManagement: function (editMode) {
+
+            var $tagsZone = this.$(".master-tags-list");
+            var that = this;
+
+            _.each(this.model.attributes.tags, function (tagLabel) {
+
+                var tagViewParams = editMode ?
+                {
+                    model: new Tag({id: tagLabel, label: tagLabel}),
+                    iconClass: "icon-remove",
+                    clicked: function () {
+                        that.tagsToRemove.push(tagLabel);
+                        tagView.$el.remove();
+                    }} :
+                {
+                    model: new Tag({id: tagLabel, label: tagLabel}),
+                    iconClass: "",
+                    clicked: null
+                };
+
+                var tagView = new TagView(tagViewParams).render();
+
+                $tagsZone.append(tagView.el);
+
+            });
+
+        },
+
+        deleteClickedTags:function(){
+            var that = this ;
+            if(this.tagsToRemove.length){
+                that.model.removeTags(this.tagsToRemove, function(){
+                    if(_.contains(that.tagsToRemove,that.model.collection.parent.id)){
+                        that.model.collection.remove(that.model);
+                    }
+                });
+            }
         }
 
     });

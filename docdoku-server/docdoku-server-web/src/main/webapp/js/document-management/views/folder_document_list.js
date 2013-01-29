@@ -3,18 +3,21 @@ define([
 	"views/content_document_list",
 	"views/document/document_new",
 	"text!templates/content_document_list_checkout_button_group.html",
+	"text!templates/content_document_list_tags_button.html",
 	"text!templates/folder_document_list.html"
 ], function (
 	FolderDocumentList,
 	ContentDocumentListView,
 	DocumentNewView,
 	checkout_button_group,
+	tags_button,
 	template
 ) {
 	var FolderDocumentListView = ContentDocumentListView.extend({
 		template: Mustache.compile(template),
 		partials: {
-			checkout_button_group: checkout_button_group
+			checkout_button_group: checkout_button_group,
+            tags_button: tags_button
 		},
 		collection: function () {
 			return new FolderDocumentList();
@@ -26,6 +29,7 @@ define([
 				this.collection.parent = this.model;
 			}
 		},
+
 		actionNew: function () {
 			var view = this.addSubView(
 				new DocumentNewView({

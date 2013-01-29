@@ -20,6 +20,7 @@ define([
 				"click .actions .delete": "actionDelete",
 				"mouseleave .header": "hideActions"
 			});
+
 		},
 		hideActions: function () {
 			// Prevents the actions menu to stay opened all the time
