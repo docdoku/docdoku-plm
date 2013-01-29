@@ -64,7 +64,7 @@
                     <ul class="nav" id="header_left_menu">
                         <li><img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/></li>
                         <li><a class="brand" href="#" style="color: white">&nbsp;&nbsp;&nbsp;DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a></li>
-                        <li><a href="#"><b>${docm}</b></a></li>
+                        <li><a><b>${docm}</b></a></li>
                         <li><a href="#general" style="color: white" class="g"><fmt:message key="section1.title"/></a></li>
                         <li><a href="#iteration" style="color: white" class="i"><fmt:message key="section2.title"/></a></li>
                         <li><a href="#attribut" style="color: white" class="a"><fmt:message key="section2.attributs"/></a></li>
@@ -109,7 +109,7 @@
                     </c:forEach>
                 </c:if>
                 <c:if test="${docm.lastIteration.attachedFiles.size()==0}">
-                    <div class="rien"><p>Aucun fichier attaché</p></div>
+                    <div class="rien"><p><fmt:message key="section2.noFile"/></p></div>
                 </c:if>
             </div>
 
@@ -122,7 +122,7 @@
                         </c:forEach>
                     </c:if>
                     <c:if test="${docm.lastIteration.linkedDocuments.size()==0}">
-                        <div class="rien"><p>Il n'y a pas de lien</p></div>
+                        <div class="rien"><p><fmt:message key="section2.noLink"/></p></div>
                     </c:if>
                 </p>
             </div>
@@ -154,7 +154,11 @@
                                 <c:if test="${item.value.class=='class java.util.Date'}">
                                     <td><fmt:formatDate value="${item.value}" pattern="dd/MM/yyyy"/></td>
                                 </c:if>
-                                <c:if test="${item.value.class!='class java.lang.Boolean' && item.value.class!='class java.util.Date'}">
+                                <c:if test="${item.class=='class com.docdoku.core.meta.InstanceURLAttribute'}">
+                                    <td><a href="${item.value}">${item.value}</a></td>
+                                </c:if>
+
+                                <c:if test="${item.value.class!='class java.lang.Boolean' && item.value.class!='class java.util.Date' && item.class!='class com.docdoku.core.meta.InstanceURLAttribute'}">
                                     <td>${item.value}</td>
                                 </c:if>
                             </tr>
@@ -163,7 +167,7 @@
                     </table>
                 </c:if>
                 <c:if test="${attr.size()==0}">
-                    <div class="rien"><p>Il n'y a pas d'attribut</p></div>
+                    <div class="rien"><p><fmt:message key="section2.noAttribut"/></p></div>
                 </c:if>
                 </p>
             </div>
