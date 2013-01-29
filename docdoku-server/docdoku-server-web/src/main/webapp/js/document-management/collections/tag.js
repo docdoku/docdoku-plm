@@ -24,16 +24,20 @@ define([
             return baseUrl;
         },
 
-        createTag : function(tag){
+        createTags : function(tags, callbackSuccess, callbackError){
 
             $.ajax({
                 context: this,
                 type: "POST",
-                url: this.url(),
-                data : JSON.stringify(tag),
+                url: this.url()+"/multiple",
+                data : JSON.stringify(tags),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
                     this.fetch();
+                    callbackSuccess();
+                },
+                error:function(){
+                    callbackError();
                 }
             });
 

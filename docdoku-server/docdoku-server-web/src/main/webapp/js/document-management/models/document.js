@@ -92,22 +92,24 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 data : JSON.stringify(tags),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                    this.fetch();
+                   this.fetch();
                 }
             });
 
         },
 
-        removeTag:function(tagLabel){
+        removeTags:function(tags,callback){
 
             $.ajax({
                 context: this,
                 type: "DELETE",
+                async:false,
                 url: this.url() + "/tags",
-                data : JSON.stringify({id:tagLabel, label:tagLabel}),
+                data : JSON.stringify(tags),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                    this.fetch();
+                   this.fetch();
+                   callback();
                 }
             });
 

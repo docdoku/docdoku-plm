@@ -34,6 +34,9 @@ define([
 
             this._tagsToAddCollection.bind('add', this.onTagAdded, this);
             this._tagsToAddCollection.bind('remove', this.onTagRemoved, this);
+
+            this._tagsToCreate = [];
+
             _.bindAll(this);
 
         },
@@ -92,8 +95,9 @@ define([
         },
 
         onTagCreated:function(model){
-          //  this._existingTagsCollection.createTag(model);
-            // TODO : refresh nav tag list
+            this._tagsToCreate.push(model);
+            //this._existingTagsCollection.createTag(model);
+
         },
 
         addExistingTag:function(model){
@@ -124,9 +128,14 @@ define([
                 return view.model === model;
             })[0];
 
+            // remove the tag view
             if(viewToRemove){
                 $(viewToRemove.el).remove();
                 this._tagsToAddViews = _(this._tagsToAddViews).without(viewToRemove);
+            }
+            // remove from this._tagsToCreate
+            if(_.indexOf(model,this._tagsToCreate) > -1){
+                this._tagsToCreate = _(this._tagsToCreate).without(model);
             }
 
         },
@@ -135,13 +144,48 @@ define([
 
             var that = this ;
 
-            _.each(this.collection,function(document){
-               document.addTags(that._tagsToAddCollection);
+            this.createNewTagsAdded(function(){
+                that.addTagsToDocuments();
             });
 
             this.hide();
 
             return false;
+        },
+
+        createNewTagsAdded:function(callbackSuccess, callbackError){
+
+            if(this._tagsToCreate.length){
+
+                this._existingTagsCollection.createTags(
+                    this._tagsToCreate,
+                    function(){
+
+                        callbackSuccess();
+
+                        // Need to refresh the nav tag view
+                        Backbone.Events.trigger("refreshTagNavViewCollection");
+
+                    },function(){
+                        callbackError();
+                    }
+                );
+
+            }else{
+                callbackSuccess();
+            }
+
+        },
+
+
+        addTagsToDocuments : function(){
+
+            var that = this ;
+
+            _.each(this.collection.models,function(document){
+                document.addTags(that._tagsToAddCollection);
+            });
+
         }
 
     });

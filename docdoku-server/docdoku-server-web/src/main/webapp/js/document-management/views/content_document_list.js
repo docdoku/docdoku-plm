@@ -120,7 +120,7 @@ define([
 
         actionTags: function() {
 
-            var documentsChecked = [];
+            var documentsChecked = new Backbone.Collection;
 
 
             this.listView.eachChecked(function(view) {

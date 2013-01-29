@@ -31,7 +31,6 @@ define([
 			this.$el.find(".nav-list-entry").first().addClass("active");
 		},
 		showContent: function () {
-            console.log("showContent")
 			this.setActive();
 			this.addSubView(
 				new TagDocumentListView({

@@ -17,6 +17,13 @@ define([
 			BaseView.prototype.initialize.apply(this, arguments);
 			var toggleTarget = '[data-target="#items-' + this.cid + '"]';
 			this.events['click ' + toggleTarget] = "toggle";
+
+            var that = this ;
+
+            Backbone.Events.on("refreshTagNavViewCollection",function(){
+                that.tagsView.collection.fetch();
+            });
+
 			this.render();
 		},
 		rendered: function () {

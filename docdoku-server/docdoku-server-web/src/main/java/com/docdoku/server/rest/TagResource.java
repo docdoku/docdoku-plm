@@ -102,6 +102,24 @@ public class TagResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
+
+    @POST
+    @Path("/multiple")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public Response createTags(@PathParam("workspaceId") String workspaceId, TagDTO[] tagsDTO) {
+        try {
+
+            for(TagDTO tagDTO : tagsDTO){
+                documentService.createTag(workspaceId, tagDTO.getLabel());
+            }
+
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
     
     /**
      * DELETE method for deleting an instance of TagResource
@@ -119,5 +137,6 @@ public class TagResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-    }    
+    }
+
 }

@@ -396,7 +396,7 @@ public class DocumentResource {
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
     @Path("/tags")
-    public Response removeDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, TagDTO tagDTO) {
+    public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, String[] tagLabels) {
 
         int lastDash = docKey.lastIndexOf('-');
         String id = docKey.substring(0, lastDash);
@@ -405,8 +405,12 @@ public class DocumentResource {
         try {
 
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
-            Tag tagToRemove = new Tag(new Workspace(workspaceId), tagDTO.getLabel());
-            docM.getTags().remove(tagToRemove);
+
+            for(String tagLabel : tagLabels){
+                Tag tagToRemove = new Tag(new Workspace(workspaceId), tagLabel);
+                docM.getTags().remove(tagToRemove);
+            }
+
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {

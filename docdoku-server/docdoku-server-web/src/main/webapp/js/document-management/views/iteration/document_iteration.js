@@ -150,7 +150,7 @@ define([
                 this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "right");
             }
 
-            this.tagsManagement();
+            this.tagsManagement(editMode);
 
             return this;
         },
@@ -202,16 +202,28 @@ define([
             return button;
         },
 
-        tagsManagement:function(){
+        tagsManagement: function (editMode) {
 
             var $tagsZone = this.$(".master-tags-list");
-            var that = this ;
+            var that = this;
 
-            _.each(this.model.attributes.tags,function(tagLabel){
-                var tagView =  new TagView({model:new Tag({id:tagLabel,label:tagLabel}), iconClass:"icon-remove", clicked:function(){
-                    that.tagsToRemove.push(tagLabel);
-                    tagView.$el.remove();
-                }}).render();
+            _.each(this.model.attributes.tags, function (tagLabel) {
+
+                var tagViewParams = editMode ?
+                {
+                    model: new Tag({id: tagLabel, label: tagLabel}),
+                    iconClass: "icon-remove",
+                    clicked: function () {
+                        that.tagsToRemove.push(tagLabel);
+                        tagView.$el.remove();
+                    }} :
+                {
+                    model: new Tag({id: tagLabel, label: tagLabel}),
+                    iconClass: "",
+                    clicked: null
+                };
+
+                var tagView = new TagView(tagViewParams).render();
 
                 $tagsZone.append(tagView.el);
 
@@ -222,8 +234,10 @@ define([
         deleteClickedTags:function(){
             var that = this ;
             if(this.tagsToRemove.length){
-                _.each(this.tagsToRemove,function(tagLabel){
-                    that.model.removeTag(tagLabel);
+                that.model.removeTags(this.tagsToRemove, function(){
+                    if(_.contains(that.tagsToRemove,that.model.collection.parent.id)){
+                        that.model.collection.remove(that.model);
+                    }
                 });
             }
         }
