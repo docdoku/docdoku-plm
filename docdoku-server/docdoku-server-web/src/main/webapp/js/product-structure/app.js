@@ -1,6 +1,6 @@
 var sceneManager;
 
-define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view"], function (SearchView, PartsTreeView, BomView, PartMetadataView) {
+define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "common-objects/views/navbar_view"], function (SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView) {
 
     var AppView = Backbone.View.extend({
 
@@ -37,6 +37,8 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
         },
 
         initialize: function() {
+
+            new NavBarView();
 
             this.sceneModeButton = this.$("#scene_view_btn");
             this.bomModeButton = this.$("#bom_view_btn");
