@@ -15,11 +15,54 @@ div.attachedFiles{
       display: none;
     }
   }
+
   &.uploading{
 
-    input.upload-btn {
+    input#upload-btn {
       display: none;
     }
+
+    div#filedroparea {
+      display: none;
+    }
+  }
+
+  form#upload-form {
+    position: relative;
+    margin: 20px 0 0 0;
+  }
+
+  #filedroparea
+  {
+    position: relative;
+    font-weight: bold;
+    padding: 20px;
+    margin: 10px 0 0 0;
+    color: #555;
+    border: 2px dashed #555;
+    border-radius: 7px;
+    cursor: default;
+  }
+  #filedroparea.hover
+  {
+    color: #555;
+    border-color: #9acd32;
+    border-style: solid;
+    box-shadow: inset 0 1px 4px #888;
+  }
+
+  input#upload-btn {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 150px;
+    height: 28px;
+    line-height: normal;
+    opacity: 0;
+  }
+
+  button.droppable {
+    width: 150px;
   }
 
   ul#file-list{

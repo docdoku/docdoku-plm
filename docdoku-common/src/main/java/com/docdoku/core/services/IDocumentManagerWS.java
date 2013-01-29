@@ -131,4 +131,9 @@ public interface IDocumentManagerWS {
     DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey key, String documentType, String mask, InstanceAttributeTemplate[] attributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException;
 
     User whoAmI(String workspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+
+    boolean isUserStateChangeEventSubscribedForGivenDocument(String workspaceId, DocumentMaster docM) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException ;
+
+    boolean isUserIterationChangeEventSubscribedForGivenDocument(String workspaceId, DocumentMaster docM) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException ;
+
 }

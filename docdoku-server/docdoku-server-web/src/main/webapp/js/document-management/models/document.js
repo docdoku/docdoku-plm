@@ -42,6 +42,18 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return this.iterations;
         },
 
+        isIterationChangedSubscribed:function(){
+            return this.get("iterationSubscription");
+        },
+
+        isStateChangedSubscribed:function(){
+            return this.get("stateSubscription");
+        },
+
+        getTags:function(){
+            return this.tags;
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,
@@ -75,9 +87,71 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             });
         },
 
+        toggleStateSubscribe:function(oldState){
+
+            var action = oldState ? "unsubscribe" : "subscribe" ;
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/notification/stateChange/"+action,
+                success: function() {
+                    this.fetch();
+                }
+            });
+        },
+
+        toggleIterationSubscribe:function(oldState){
+
+            var action = oldState ? "unsubscribe" : "subscribe" ;
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/notification/iterationChange/"+action,
+                success: function() {
+                    this.fetch();
+                }
+            });
+
+        },
+
         isCheckout: function() {
             return !_.isNull(this.attributes.checkOutDate);
+        },
+
+        addTags:function(tags){
+
+            $.ajax({
+                context: this,
+                type: "POST",
+                url: this.url() + "/tags",
+                data : JSON.stringify(tags),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                   this.fetch();
+                }
+            });
+
+        },
+
+        removeTags:function(tags,callback){
+
+            $.ajax({
+                context: this,
+                type: "DELETE",
+                async:false,
+                url: this.url() + "/tags",
+                data : JSON.stringify(tags),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                   this.fetch();
+                   callback();
+                }
+            });
+
         }
+
 
     });
 

@@ -1,6 +1,8 @@
 define({
     "APPEND":						"Ajouter",
     "ATTACHED_FILES":               "Fichiers",
+    "SELECT_FILE":                  "Choisissez un fichier",
+    "DROP_FILE_HERE":               "ou déposez un fichier ici",
     "ATTRIBUTES":					"Attributs",
     "AUTHOR":						"Auteur",
     "BOOLEAN":						"Booléen",
@@ -92,5 +94,17 @@ define({
     "INSTRUCTIONS":                 "Instructions",
     "RESPONSABLE":                  "Responsable",
     "WORKSPACES":					"Workspaces",
-    "VALIDATION_FAILED_FOR":        "Validation échouée pour "
+    "VALIDATION_FAILED_FOR":        "Validation échouée pour ",
+    "ADD_NEW_TAG":                  "Ajouter un nouveau libellé",
+    "ADD_NEW_TAG_HELP":             "Crée un nouveau libellé",
+    "ADD_EXISTING_TAG":             "Ajouter un libellé existant",
+    "TAGS_TO_ADD":                  "Libellés à ajouter",
+    "NOTIFICATIONS":                "Notifications",
+    "SUBSCRIBE_STATE_CHANGE":       "S'abonner aux notifications de changement d'état",
+    "UNSUBSCRIBE_STATE_CHANGE":     "Se désabonner des notifications de changement d'état",
+    "SUBSCRIBE_ITERATION_CHANGE":   "S'abonner aux notifications de changement d'itération",
+    "UNSUBSCRIBE_ITERATION_CHANGE": "Se désabonner des notifications de changement d'itération",
+    "ITERATION_CHANGE":             "Changement d'iteration",
+    "STATE_CHANGE":                 "Changement d'état"
+
 });

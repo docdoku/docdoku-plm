@@ -12,16 +12,55 @@ define([
 
         events: {
             "click form button.cancel-upload-btn": "cancelButtonClicked",
-            "change form input.upload-btn": "newFileToUpload"
+            "change form input#upload-btn": "fileSelectHandler",
+            "dragover .droppable": "fileDragHover",
+            "dragleave .droppable": "fileDragHover",
+            "drop .droppable": "fileDropHandler"
+
         },
 
         initialize: function() {
             this.editMode = this.options.editMode;
 
+            // jQuery creates it's own event object, and it doesn't have a
+            // dataTransfer property yet. This adds dataTransfer to the event object.
+            $.event.props.push('dataTransfer');
+
+            // Prevent browser behavior on file drop
+            window.addEventListener("drop",function(e){
+                e.preventDefault();
+                return false;
+            },false);
+
+            window.addEventListener("ondragenter",function(e){
+                e.preventDefault();
+                return false;
+            },false);
+
             this.filesToDelete = new Backbone.Collection();
             this.newItems = new Backbone.Collection();
 
             this.listenTo(this.collection, 'add', this.addOneFile);
+        },
+
+        // cancel event and hover styling
+        fileDragHover: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            if(e.type == "dragover")
+                this.filedroparea.addClass("hover");
+            else{
+                this.filedroparea.removeClass("hover");
+            }
+        },
+
+        fileDropHandler: function(e) {
+            this.fileDragHover(e);
+            this.uploadNewFile(e.dataTransfer.files[0]);
+        },
+
+        fileSelectHandler: function(e) {
+            this.uploadNewFile(e.target.files[0]);
         },
 
         addAllFiles: function() {
@@ -44,17 +83,15 @@ define([
             });
         },
 
-        newFileToUpload: function() {
+        uploadNewFile: function(file) {
             var self = this;
+
+            this.uploadFileNameP.html(file.name);
 
             this.gotoUploadingState();
 
-            var shortName = this.uploadInput.val().split(/(\\|\/)/g).pop();
-
-            this.uploadFileNameP.html(shortName);
-
             var newFile = new AttachedFile({
-                shortName: shortName
+                shortName: file.name
             });
 
             this.xhr = new XMLHttpRequest();
@@ -68,15 +105,16 @@ define([
 
             this.xhr.addEventListener("load", function() {
                 self.finished();
-                newFile.isNew = function(){return false;};
+                newFile.isNew = function() {
+                    return false;
+                };
                 self.collection.add(newFile);
                 self.newItems.add(newFile);
             }, false);
 
-            var url = this.options.uploadBaseUrl + shortName;
+            var url = this.options.uploadBaseUrl + file.name;
             this.xhr.open("POST", url);
 
-            var file = this.uploadInput[0].files[0];
             var fd = new FormData();
             fd.append("upload", file);
 
@@ -97,7 +135,7 @@ define([
             while (this.filesToDelete.length != 0) {
                 var file = this.filesToDelete.pop();
                 file.destroy({
-                    error:function () {
+                    error: function() {
                         alert("file " + file + " could not be deleted");
                     }
                 });
@@ -106,7 +144,7 @@ define([
 
         deleteNewFiles: function() {
             //Abort file upload if there is one
-            if(!_.isUndefined(this.xhr))
+            if (!_.isUndefined(this.xhr))
                 this.xhr.abort();
 
             /*deleting unwanted files that have been added by upload*/
@@ -114,7 +152,7 @@ define([
             while (this.newItems.length != 0) {
                 var file = this.newItems.pop();
                 file.destroy({
-                    error:function () {
+                    error: function() {
                         alert("file " + file + " could not be deleted");
                     }
                 });
@@ -125,6 +163,7 @@ define([
             this.$el.removeClass("uploading");
             this.$el.addClass("idle");
             this.uploadInput.val("");
+            this.progressBar.width("0%");
         },
 
         gotoUploadingState: function() {
@@ -143,10 +182,11 @@ define([
         },
 
         bindDomElements: function() {
+            this.filedroparea = this.$("#filedroparea");
             this.filesUL = this.$("ul.file-list");
             this.uploadFileNameP = this.$("p#upload-file-shortname");
             this.progressBar = this.$("div.bar");
-            this.uploadInput = this.$("input.upload-btn");
+            this.uploadInput = this.$("input#upload-btn");
         }
     });
     return FileListView;

@@ -123,6 +123,20 @@ public class SubscriptionDAO {
         return docMKeys;
     }
 
+
+    public boolean isUserStateChangeEventSubscribedForGivenDocument(User pUser, DocumentMaster docM) {
+        return ! em.createNamedQuery("findStateChangeSubscriptionWithGivenUserAndGivenDocMaster").
+                setParameter("user", pUser).setParameter("docM", docM).getResultList().isEmpty();
+
+    }
+
+    public boolean isUserIterationChangeEventSubscribedForGivenDocument(User pUser, DocumentMaster docM) {
+        return ! em.createNamedQuery("findIterationChangeSubscriptionWithGivenUserAndGivenDocMaster").
+                setParameter("user", pUser).setParameter("docM", docM).getResultList().isEmpty();
+    }
+
+
+
     public User[] getIterationChangeEventSubscribers(DocumentMaster pDocM) {
         User[] users;
         Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentMaster = :docM");

@@ -2,6 +2,7 @@ define({
     root: {
         "APPEND":						"Add",
         "ATTACHED_FILES":               "Files",
+        "SELECT_FILE":                  "Choose a file",
         "ATTRIBUTES":					"Attributes",
         "AUTHOR":						"Author",
         "BOOLEAN":						"Boolean",
@@ -93,7 +94,19 @@ define({
         "INSTRUCTIONS":                 "Instructions",
         "RESPONSABLE":                  "Responsible",
         "WORKSPACES":					"Workspaces",
-        "VALIDATION_FAILED_FOR":        "Validation failed for "
+        "VALIDATION_FAILED_FOR":        "Validation failed for ",
+        "ADD_NEW_TAG":                  "Add a new tag",
+        "ADD_NEW_TAG_HELP":             "Creates a new tag",
+        "ADD_EXISTING_TAG":             "Add an existing tag",
+        "TAGS_TO_ADD":                  "Tags to add",
+        "NOTIFICATIONS":                "Notifications",
+        "SUBSCRIBE_STATE_CHANGE":       "Subscribe to document state change notifications",
+        "UNSUBSCRIBE_STATE_CHANGE":     "Unsubscribe from document state change notifications",
+        "SUBSCRIBE_ITERATION_CHANGE":   "Subscribe to iteration change notifications",
+        "UNSUBSCRIBE_ITERATION_CHANGE": "Unsubscribe from iteration change notifications",
+        "ITERATION_CHANGE":             "Iteration change",
+        "STATE_CHANGE":                 "State change"
+
     },
     "fr": true,
     "es": true

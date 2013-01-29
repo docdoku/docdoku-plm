@@ -23,6 +23,9 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.Tag;
+import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -41,7 +44,10 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -72,25 +78,52 @@ public class DocumentsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId) {
+    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId) {
 
+        if(tagId != null){
+            return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId,tagId);
+        }else {
+            return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
+        }
+
+    }
+
+    private DocumentMasterDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(String workspaceId, String folderId){
         try {
-
             String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
-            DocumentMaster[] docM = documentService.findDocumentMastersByFolder(decodedCompletePath);
-            DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
+            DocumentMaster[] docMs = documentService.findDocumentMastersByFolder(decodedCompletePath);
+            DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
 
-            for (int i = 0; i < docM.length; i++) {
-                dtos[i] = mapper.map(docM[i], DocumentMasterDTO.class);
-                dtos[i].setPath(docM[i].getLocation().getCompletePath());
-                dtos[i] = Tools.createLightDocumentMasterDTO(dtos[i]);
+            for (int i = 0; i < docMs.length; i++) {
+                docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
+                docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
             }
 
-            return dtos;
+            return docMsDTOs;
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
 
+    private DocumentMasterDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(String workspaceId, String tagId){
+        try{
+            DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, tagId));
+            DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
+
+            for (int i = 0; i < docMs.length; i++) {
+                docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+            }
+
+            return docMsDTOs;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
     @POST
@@ -160,6 +193,8 @@ public class DocumentsResource {
                 checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
                 checkedOutdocMsDTO[i].setPath(checkedOutdocMs[i].getLocation().getCompletePath());
                 checkedOutdocMsDTO[i] = Tools.createLightDocumentMasterDTO(checkedOutdocMsDTO[i]);
+                checkedOutdocMsDTO[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,checkedOutdocMs[i]));
+                checkedOutdocMsDTO[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,checkedOutdocMs[i]));
             }
 
             return checkedOutdocMsDTO;
