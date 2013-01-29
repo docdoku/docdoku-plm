@@ -19,38 +19,42 @@
 
     <script language="JavaScript">
         $(function () {
+            if(location.hash){
+                $("#header_left_menu a").css("backgroundColor", "transparent");
+                $(".well:visible").hide();
+                $(window.location.hash).show();
+                ongletSelectionne();
+            }
+
             $(window).bind('hashchange', function (e) {
                 $(".well:visible").hide();
                 $(window.location.hash).show();
                 $("#header_left_menu a").css("backgroundColor", "transparent");
+                ongletSelectionne();
+            });
 
+            function ongletSelectionne (){
                 switch($(window.location.hash).attr('id'))
                 {
                     case "general":
                         $(".g").css("backgroundColor", "#213251");
-                        $("#footer").hide();
                         break;
                     case "iteration":
                         $(".i").css("backgroundColor", "#213251");
-                        $("#footer").hide();
                         break;
                     case "attribut":
                         $(".a").css("backgroundColor", "#213251");
-                        $("#footer").hide();
                         break;
                     case "file":
                         $(".f").css("backgroundColor", "#213251");
-                        $("#footer").hide();
                         break;
                     case "link":
                         $(".l").css("backgroundColor", "#213251");
-                        $("#footer").hide();
                         break;
                     default:
                         $("#header_left_menu").css("backgroundColor", "transparent");
-                        $("#footer").show();
                 }
-            });
+            }
         });
     </script>
 </head>
@@ -63,9 +67,9 @@
                 <div class="nav-collapse">
                     <ul class="nav" id="header_left_menu">
                         <li><img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/></li>
-                        <li><a class="brand" href="#" style="color: white">&nbsp;&nbsp;&nbsp;DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a></li>
+                        <li><a class="brand" style="color: white">&nbsp;&nbsp;&nbsp;DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a></li>
                         <li><a><b>${docm}</b></a></li>
-                        <li><a href="#general" style="color: white" class="g"><fmt:message key="section1.title"/></a></li>
+                        <li><a href="#general" style="color: white ; background-color: #213251" class="g"><fmt:message key="section1.title"/></a></li>
                         <li><a href="#iteration" style="color: white" class="i"><fmt:message key="section2.title"/></a></li>
                         <li><a href="#attribut" style="color: white" class="a"><fmt:message key="section2.attributs"/></a></li>
                         <li><a href="#file" style="color: white" class="f"><fmt:message key="sidebar.title1"/></a></li>
@@ -76,13 +80,11 @@
         </div>
     </div>
 </div>
-
 <div id="page">
     <div id="content">
         <div id="sidebar">
             <div id="file" class="well">
                 <center><h3><fmt:message key="sidebar.title1"/></h3></center><br />
-
                 <c:if test="${docm.lastIteration.attachedFiles.size()!=0}">
                     <c:forEach var="item" varStatus="status" items="${docm.lastIteration.attachedFiles}">
                         <c:set scope="request" var="context" value="<%=request.getContextPath()%>"/>
@@ -101,7 +103,7 @@
                                 <%@include file="/WEB-INF/imagePlayer.jspf" %>
                             </c:when>
                             <c:otherwise>
-                                       <a href="<%=filePath%>">${item.name}</a>
+                                <a href="<%=filePath%>">${item.name}</a>
                             </c:otherwise>
                         </c:choose>
                         <br />
@@ -112,7 +114,6 @@
                     <div class="rien"><p><fmt:message key="section2.noFile"/></p></div>
                 </c:if>
             </div>
-
             <div id="link" class="well">
                 <center><h3><fmt:message key="sidebar.title2"/></h3></center><br />
                 <p>
@@ -126,7 +127,6 @@
                     </c:if>
                 </p>
             </div>
-
             <div id="attribut" class="well">
                 <center><h3><fmt:message key="section2.attributs"/></h3></center><br />
                 <p>
@@ -173,9 +173,8 @@
             </div>
         </div>
     </div>
-
     <div id="main">
-        <div id="general" class="well">
+        <div id="general" class="well" style="display: inline">
             <center><h3><fmt:message key="section1.title"/></h3></center><br />
             <table class="table table-striped table-condensed">
                 <tbody>
@@ -212,12 +211,12 @@
                     <td>${docm.tags}</td>
                 </tr>
                 <c:if test="${docm.description!=''}">
-                <tr>
-                    <th scope="row"><fmt:message key="section1.description"/>:</th><td></td>
-                </tr>
-                <tr>
-                    <td></td><td></td>
-                </tr>
+                    <tr>
+                        <th scope="row"><fmt:message key="section1.description"/>:</th><td></td>
+                    </tr>
+                    <tr>
+                        <td></td><td></td>
+                    </tr>
                 </c:if>
                 </tbody>
             </table>
@@ -226,7 +225,6 @@
             </c:if>
         </div>
     </div>
-
     <div id="iteration" class="well">
         <center><h3><fmt:message key="section2.title"/></h3></center><br />
         <table class="table table-striped table-condensed">
@@ -249,9 +247,6 @@
             </tr>
             </tbody>
         </table>
-    </div>
-    <div id="footer">
-        <p>Copyright 2006-2013 - <a href="http://www.docdoku.com">DocDoku</a></p>
     </div>
 </div>
 </body>
