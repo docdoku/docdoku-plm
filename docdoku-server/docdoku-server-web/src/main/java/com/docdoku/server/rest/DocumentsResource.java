@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Tag;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.ACL;
@@ -97,6 +98,8 @@ public class DocumentsResource {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
                 docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
             }
 
             return docMsDTOs;
@@ -113,6 +116,8 @@ public class DocumentsResource {
             for (int i = 0; i < docMs.length; i++) {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
             }
 
             return docMsDTOs;
@@ -188,6 +193,8 @@ public class DocumentsResource {
                 checkedOutdocMsDTO[i] = mapper.map(checkedOutdocMs[i], DocumentMasterDTO.class);
                 checkedOutdocMsDTO[i].setPath(checkedOutdocMs[i].getLocation().getCompletePath());
                 checkedOutdocMsDTO[i] = Tools.createLightDocumentMasterDTO(checkedOutdocMsDTO[i]);
+                checkedOutdocMsDTO[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,checkedOutdocMs[i]));
+                checkedOutdocMsDTO[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,checkedOutdocMs[i]));
             }
 
             return checkedOutdocMsDTO;

@@ -117,7 +117,7 @@ define([
             var $tag = $(tagView.el);
 
             $tagsToAdd.append($tag);
-
+indexOf
             this._tagsToAddViews.push(tagView);
 
         },
@@ -134,7 +134,7 @@ define([
                 this._tagsToAddViews = _(this._tagsToAddViews).without(viewToRemove);
             }
             // remove from this._tagsToCreate
-            if(_.indexOf(model,this._tagsToCreate) > -1){
+            if(_.contains(this._tagsToCreate, model)){
                 this._tagsToCreate = _(this._tagsToCreate).without(model);
             }
 

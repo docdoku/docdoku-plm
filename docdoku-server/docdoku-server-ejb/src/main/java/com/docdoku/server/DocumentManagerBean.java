@@ -289,6 +289,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return new SubscriptionDAO(em).getStateChangeEventSubscriptions(user);
     }
 
+
+    @RolesAllowed("users")
+    @Override
+    public boolean isUserStateChangeEventSubscribedForGivenDocument(String pWorkspaceId, DocumentMaster docM) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new SubscriptionDAO(em).isUserStateChangeEventSubscribedForGivenDocument(user, docM);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public boolean isUserIterationChangeEventSubscribedForGivenDocument(String pWorkspaceId, DocumentMaster docM) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return  new SubscriptionDAO(em).isUserIterationChangeEventSubscribedForGivenDocument(user, docM);
+    }
+
+
     @RolesAllowed("users")
     @Override
     public String generateId(String pWorkspaceId, String pDocMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, DocumentMasterTemplateNotFoundException {
