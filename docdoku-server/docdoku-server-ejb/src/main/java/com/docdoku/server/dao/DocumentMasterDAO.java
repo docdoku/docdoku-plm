@@ -19,18 +19,15 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.document.*;
 import com.docdoku.core.services.DocumentMasterNotFoundException;
 import com.docdoku.core.services.DocumentMasterAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.*;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.document.Tag;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.common.User;
 import java.util.*;
 import javax.persistence.EntityExistsException;
@@ -245,7 +242,11 @@ public class DocumentMasterDAO {
 
     public void removeDocM(DocumentMaster pDocM) {
         SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
+        DocumentDAO docDAO = new DocumentDAO(em);
         subscriptionDAO.removeAllSubscriptions(pDocM);
+        for(DocumentIteration doc:pDocM.getDocumentIterations())
+            docDAO.removeDoc(doc);
+
         em.remove(pDocM);
     }
 }

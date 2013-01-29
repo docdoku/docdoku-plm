@@ -67,7 +67,7 @@ define([
          * @returns string
          */
         getUploadBaseUrl: function () {
-            return "/files/" + this.getWorkspace() + "/documents/" + this.getDocKey().split("-").join("/") + "/"+this.getIteration()+"/";
+            return "/files/" + this.getWorkspace() + "/documents/" + this.get("documentMasterId") + "/" + this.get("documentMasterVersion") + "/"+ this.getIteration()+"/";
         }
 	});
 	return DocumentIteration;

@@ -47,22 +47,22 @@
     </mapping>
     
     <mapping>
-        <class-a>com.docdoku.core.document.DocumentToDocumentLink</class-a>
+        <class-a>com.docdoku.core.document.DocumentLink</class-a>
         <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
         <field>
-            <a>toDocumentIteration</a>
+            <a>targetDocumentIteration</a>
             <b>iteration</b>
         </field>
         <field>
-            <a>toDocumentDocumentMasterId</a>
+            <a>targetDocumentDocumentMasterId</a>
             <b>documentMasterId</b>
         </field>
         <field>
-            <a>toDocumentDocumentMasterVersion</a>
+            <a>targetDocumentDocumentMasterVersion</a>
             <b>documentMasterVersion</b>
         </field>
         <field>
-            <a>toDocumentWorkspaceId</a>
+            <a>targetDocumentWorkspaceId</a>
             <b>workspaceId</b>
         </field>
     </mapping>

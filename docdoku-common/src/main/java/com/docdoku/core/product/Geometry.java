@@ -28,6 +28,8 @@ import javax.persistence.Table;
 /**
  * Wraps a CAD file providing quality information.
  * Higher quality is more faces are defined.
+ * This CAD file is not the native one used by the authoring tool but the generated one
+ * used for the in-browser visualizer.
  * 
  * @author Florent Garin
  * @version 1.1, 20/07/12

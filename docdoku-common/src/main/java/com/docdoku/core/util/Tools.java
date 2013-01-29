@@ -19,12 +19,7 @@
  */
 package com.docdoku.core.util;
 
-import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.InstanceAttributeTemplate;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.document.DocumentToDocumentLink;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.*;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -48,7 +43,6 @@ public class Tools {
     public static DocumentMaster resetParentReferences(DocumentMaster pDocM) {
         for (DocumentIteration doc : pDocM.getDocumentIterations()) {
             doc.setDocumentMaster(pDocM);
-            resetParentReferences(doc);
         }
 
         if (pDocM.getWorkflow() != null) {
@@ -64,19 +58,6 @@ public class Tools {
         }
 
         return pDocMs;
-    }
-
-    private static DocumentIteration resetParentReferences(DocumentIteration pDoc) {
-        for (DocumentToDocumentLink link : pDoc.getLinkedDocuments()) {
-            link.setFromDocument(pDoc);
-        }
-
-        /*
-        for (InstanceAttribute attr : pDoc.getInstanceAttributes().values()) {
-        attr.setDocument(pDoc);
-        }
-         */
-        return pDoc;
     }
 
     private static Workflow resetParentReferences(Workflow pWf) {

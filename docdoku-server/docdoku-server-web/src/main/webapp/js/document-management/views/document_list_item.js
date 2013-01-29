@@ -20,6 +20,8 @@ define([
 		initialize: function () {
 			CheckboxListItemView.prototype.initialize.apply(this, arguments);
 			this.events["click .reference"] = this.actionEdit;
+			this.events["click .state-subscription"] = this.toggleStateSubscription;
+			this.events["click .iteration-subscription"] = this.toggleIterationSubscription;
 		},
 
 		modelToJSON: function () {
@@ -47,10 +49,25 @@ define([
 
         rendered: function() {
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
+
+            if(this.model.isStateChangedSubscribed()){
+                this.$(".state-subscription").addClass("icon-bell-alt").attr("title",i18n.UNSUBSCRIBE_STATE_CHANGE);
+            }else{
+                this.$(".state-subscription").addClass("icon-bell").attr("title",i18n.SUBSCRIBE_STATE_CHANGE);
+            }
+
+            if(this.model.isIterationChangedSubscribed()){
+                this.$(".iteration-subscription").addClass("icon-bell-alt").attr("title",i18n.UNSUBSCRIBE_ITERATION_CHANGE);
+            }else{
+                this.$(".iteration-subscription").addClass("icon-bell").attr("title",i18n.SUBSCRIBE_ITERATION_CHANGE);
+            }
+
             this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "left");
+
             if(this.model.isCheckout()) {
                 this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "left");
             }
+
         },
 
 		actionEdit: function (evt) {
@@ -60,6 +77,14 @@ define([
                     model: that.model
                 }).show();
             });
+        },
+
+        toggleStateSubscription:function(evt){
+            this.model.toggleStateSubscribe(this.model.isStateChangedSubscribed());
+        },
+
+        toggleIterationSubscription:function(evt){
+            this.model.toggleIterationSubscribe(this.model.isIterationChangedSubscribed());
         }
 
     });

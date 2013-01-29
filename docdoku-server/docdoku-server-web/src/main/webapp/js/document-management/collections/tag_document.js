@@ -4,12 +4,17 @@ define([
 	Document
 ) {
 	var TagDocumentList = Backbone.Collection.extend({
+
 		model: Document,
+
+        className:"TagDocumentList",
+
+        url: function() {
+            baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags"
+            return baseUrl + "/" + this.parent.get("label") + "/documents";
+        }
+
 	});
-	TagDocumentList.prototype.__defineGetter__("url", function () {
-		baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags"
-		return baseUrl + "/" + this.parent.get("label") + "/documents";
-	});
-    TagDocumentList.className="TagDocumentList";
+
 	return TagDocumentList;
 });

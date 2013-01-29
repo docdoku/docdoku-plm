@@ -21,8 +21,11 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentIteration;
-import javax.persistence.EntityManager;
+import com.docdoku.core.document.DocumentLink;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 
 public class DocumentDAO {
@@ -38,6 +41,13 @@ public class DocumentDAO {
     }
 
     public void removeDoc(DocumentIteration pDoc){
+        TypedQuery<DocumentIteration> docQuery = em.createNamedQuery("DocumentLink.findDocumentOwner", DocumentIteration.class);
+        TypedQuery<DocumentLink> linkQuery = em.createNamedQuery("DocumentIteration.findLinks", DocumentLink.class);
+        List<DocumentLink> result = linkQuery.setParameter("target", pDoc).getResultList();
+        for(DocumentLink link:result){
+            DocumentIteration doc = docQuery.setParameter("link",link).getSingleResult();
+            doc.getLinkedDocuments().remove(link);
+        }
         em.remove(pDoc);
     }
 }

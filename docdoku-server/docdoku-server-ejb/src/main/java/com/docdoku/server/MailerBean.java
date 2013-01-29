@@ -190,7 +190,8 @@ public class MailerBean implements IMailerLocal {
     private String getApprovalRequiredMessage(Task pTask,
             DocumentMaster pDocumentMaster, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
-        Object[] args = {voteURL, pDocumentMaster.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentMaster), pDocumentMaster, pTask.getInstructions()};
+        String instructions = pTask.getInstructions()==null?"-":pTask.getInstructions();
+        Object[] args = {voteURL, pDocumentMaster.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentMaster), pDocumentMaster, instructions};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Approval_text"), args);
     }

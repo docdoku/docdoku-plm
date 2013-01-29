@@ -25,7 +25,7 @@ import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.DocumentLink;
 
 import com.docdoku.core.meta.InstanceAttribute;
 import javax.swing.*;
@@ -112,10 +112,10 @@ public class EditDocDialog extends JDialog implements ActionListener {
         return mAttributesPanel.getAttributes();
     }
     
-    public DocumentToDocumentLink[] getLinks() {
-        DocumentToDocumentLink[] links = new DocumentToDocumentLink[mLinksPanel.getLinksListModel().getSize()];
+    public DocumentLink[] getLinks() {
+        DocumentLink[] links = new DocumentLink[mLinksPanel.getLinksListModel().getSize()];
         for(int i=0;i<mLinksPanel.getLinksListModel().getSize();i++){
-            links[i]=(DocumentToDocumentLink) mLinksPanel.getLinksListModel().get(i);
+            links[i]=(DocumentLink) mLinksPanel.getLinksListModel().get(i);
         }
         return links;
     }

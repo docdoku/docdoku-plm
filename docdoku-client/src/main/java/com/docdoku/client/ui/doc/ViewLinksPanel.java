@@ -20,7 +20,8 @@
 
 package com.docdoku.client.ui.doc;
 
-import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.client.ui.common.GUIConstants;
@@ -66,18 +67,19 @@ public class ViewLinksPanel extends JPanel {
         createListener();
     }
 
-    public ViewLinksPanel(Set<DocumentToDocumentLink> pLinks,ActionListener pDownloadAction, ActionListener pOpenAction) {
+    public ViewLinksPanel(Set<DocumentLink> pLinks,ActionListener pDownloadAction, ActionListener pOpenAction) {
         this(pDownloadAction,pOpenAction);
-        for(DocumentToDocumentLink link:pLinks) {
+        for(DocumentLink link:pLinks) {
             mLinksListModel.addElement(link);
         }
     }
 
     private DocumentMasterKey getSelectedLink() {
-        DocumentToDocumentLink link=(DocumentToDocumentLink) mLinksList.getSelectedValue();
-        String docMId=link.getToDocumentDocumentMasterId();
-        String docMVersion=link.getToDocumentDocumentMasterVersion();
-        String workspaceId=link.getToDocumentWorkspaceId();
+        DocumentLink link=(DocumentLink) mLinksList.getSelectedValue();
+        DocumentIterationKey targetKey = link.getTargetDocumentKey();
+        String docMId=targetKey.getDocumentMasterId();
+        String docMVersion=targetKey.getDocumentMasterVersion();
+        String workspaceId=targetKey.getWorkspaceId();
         return new DocumentMasterKey(workspaceId,docMId,docMVersion);
     }
 

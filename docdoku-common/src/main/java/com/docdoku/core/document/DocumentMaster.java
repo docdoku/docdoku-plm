@@ -41,6 +41,10 @@ import javax.persistence.*;
 @Table(name="DOCUMENTMASTER")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @javax.persistence.Entity
+@NamedQueries ({
+        @NamedQuery(name="findStateChangeSubscriptionWithGivenUserAndGivenDocMaster", query="SELECT s FROM StateChangeSubscription s WHERE s.subscriber = :user AND s.observedDocumentMaster = :docM"),
+        @NamedQuery(name="findIterationChangeSubscriptionWithGivenUserAndGivenDocMaster", query="SELECT s FROM IterationChangeSubscription s WHERE s.subscriber = :user AND s.observedDocumentMaster = :docM")
+})
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
     
     
@@ -109,7 +113,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     })
     private Set<Tag> tags=new HashSet<Tag>();
     
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
 
     public DocumentMaster() {

@@ -26,7 +26,7 @@ import com.docdoku.client.ui.doc.EditLinksPanel;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentToDocumentLink;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.document.DocumentMaster;
@@ -67,8 +67,7 @@ public class AddLinkActionListener implements ActionListener {
                         public void actionPerformed(ActionEvent pAE) {
                             SearchResultDialog source = (SearchResultDialog) pAE.getSource();
                             for (DocumentMaster docM : source.getSelectedDocMs()) {
-                                DocumentIteration fromDoc = sourcePanel.getEditedDoc();
-                                sourcePanel.getLinksListModel().addElement(new DocumentToDocumentLink(fromDoc, docM.getLastIteration(), null));
+                                sourcePanel.getLinksListModel().addElement(new DocumentLink(docM.getLastIteration()));
                             }
                         }
                     };
