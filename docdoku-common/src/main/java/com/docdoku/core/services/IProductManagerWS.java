@@ -439,6 +439,9 @@ public interface IProductManagerWS{
      * @param partNumber
      * The number of the part master to search for
      *
+     * @param maxResults
+     * Set the maximum number of results to retrieve
+     *
      * @return
      * The list of <a href="PartMaster.html">PartMaster</a>
      *
@@ -446,5 +449,5 @@ public interface IProductManagerWS{
      * @throws AccessRightException
      * @throws WorkspaceNotFoundException
      */
-    List<PartMaster> findPartMasters(String workspaceId, String partNumber) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+    List<PartMaster> findPartMasters(String workspaceId, String partNumber, int maxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 }

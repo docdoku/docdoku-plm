@@ -119,10 +119,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public List<PartMaster> findPartMasters(String pWorkspaceId, String pPartNumber) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public List<PartMaster> findPartMasters(String pWorkspaceId, String pPartNumber, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         PartMasterDAO partMDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
-        return partMDAO.findPartMasters(pWorkspaceId, pPartNumber);
+        return partMDAO.findPartMasters(pWorkspaceId, pPartNumber, pMaxResults);
     }
     
     @RolesAllowed("users")

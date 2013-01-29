@@ -90,10 +90,11 @@ public class PartMasterDAO {
         em.remove(pPartM);
     }
 
-    public List<PartMaster> findPartMasters(String workspaceId, String partNumber){
+    public List<PartMaster> findPartMasters(String workspaceId, String partNumber, int maxResults){
         return em.createNamedQuery("PartMaster.findByNumber", PartMaster.class)
             .setParameter("partNumber", partNumber)
             .setParameter("workspaceId", workspaceId)
+            .setMaxResults(maxResults)
             .getResultList();
     }
 }
