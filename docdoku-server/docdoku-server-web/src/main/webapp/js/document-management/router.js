@@ -5,8 +5,7 @@ define([
 	"views/workflow_nav",
 	"views/template_nav",
 	"views/checkedout_nav",
-    "views/workflow_model_editor",
-    "models/workflow_model"
+    "views/workflow_model_editor"
 ],
 function (
 	singletonDecorator,
