@@ -1,4 +1,4 @@
-define(["common-objects/views/product_creation_view"], function(ProductCreationView) {
+define(["modules/product-creation-module/views/product_creation_view"], function(ProductCreationView) {
 
     var NavBarView = Backbone.View.extend({
 

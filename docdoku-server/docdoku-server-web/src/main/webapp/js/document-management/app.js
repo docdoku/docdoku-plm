@@ -6,7 +6,7 @@ define([
 	"router",
 	"models/workspace",
 	"views/workspace",
-    "common-objects/views/navbar_view"
+    "modules/navbar-module/views/navbar_view"
 ], function (
 	Router,
 	Workspace,

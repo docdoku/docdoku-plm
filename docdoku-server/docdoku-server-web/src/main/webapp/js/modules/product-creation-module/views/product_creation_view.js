@@ -1,4 +1,4 @@
-define(["text!common-objects/templates/product_creation_view.html", "i18n!localization/nls/product-creation-strings"], function (template, i18n) {
+define(["text!modules/product-creation-module/templates/product_creation_view.html", "i18n!localization/nls/product-creation-strings"], function (template, i18n) {
 
     var ProductCreationView = Backbone.View.extend({
 
