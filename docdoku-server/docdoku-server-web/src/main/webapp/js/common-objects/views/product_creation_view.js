@@ -6,7 +6,7 @@ define(["text!common-objects/templates/product_creation_view.html", "i18n!locali
 
         events: {
             "hidden #product_creation_modal": "onHidden",
-            "click btn-primary" : "onCreateProduct"
+            "click .btn-primary" : "onCreateProduct"
         },
 
         template: Mustache.compile(template),
@@ -40,7 +40,8 @@ define(["text!common-objects/templates/product_creation_view.html", "i18n!locali
         },
 
         onCreateProduct: function() {
-
+            this.$modal.modal('hide');
+            return false;
         }
 
     });
