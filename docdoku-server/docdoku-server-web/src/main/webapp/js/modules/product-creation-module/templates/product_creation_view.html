@@ -1,15 +1,15 @@
-<div id="product_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="product_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">{{i18n.NEW_PRODUCT}}</h3>
+        <h3>{{i18n.NEW_PRODUCT}}</h3>
     </div>
     <div class="modal-body">
-        <form class="form-horizontal">
+        <form id="product_creation_form" class="form-horizontal">
 
             <div class="control-group">
                 <label class="control-label" for="inputProductId">Product Id</label>
                 <div class="controls">
-                    <input type="text" id="inputProductId" placeholder="Product Id" />
+                    <input type="text" id="inputProductId" placeholder="Product Id" required />
                 </div>
             </div>
 
@@ -23,14 +23,14 @@
             <div class="control-group">
                 <label class="control-label" for="inputPartNumber">Part Number</label>
                 <div class="controls">
-                    <input type="text" id="inputPartNumber" placeholder="Part Number" data-provide="typeahead" />
+                    <input type="text" id="inputPartNumber" placeholder="Part Number" data-provide="typeahead" required />
                 </div>
             </div>
 
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary">{{i18n.CREATE_PRODUCT}}</button>
+        <button class="btn btn-primary" form="product_creation_form">{{i18n.CREATE_PRODUCT}}</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
     </div>
 </div>

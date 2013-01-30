@@ -33,6 +33,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -86,7 +87,7 @@ public class ProductResource {
             ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
             for (int i = 0; i < cis.size(); i++) {
-                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription());
+                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), null);
             }
 
             return dtos;
@@ -232,4 +233,17 @@ public class ProductResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
+
+    @POST
+    @Produces("application/json;charset=UTF-8")
+    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) {
+        try {
+            ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
+            ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
+            return Response.created(URI.create(configurationItemDTOCreated.getId())).entity(configurationItemDTOCreated).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
 }

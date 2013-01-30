@@ -1,4 +1,4 @@
-define(["text!modules/product-creation-module/templates/product_creation_view.html", "i18n!localization/nls/product-creation-strings"], function (template, i18n) {
+define(["text!modules/product-creation-module/templates/product_creation_view.html", "i18n!localization/nls/product-creation-strings", "modules/product-creation-module/models/configuration_item"], function (template, i18n, ConfigurationItem) {
 
     var ProductCreationView = Backbone.View.extend({
 
@@ -6,7 +6,7 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
 
         events: {
             "hidden #product_creation_modal": "onHidden",
-            "click .btn-primary" : "onCreateProduct"
+            "submit #product_creation_form" : "onSubmitForm"
         },
 
         template: Mustache.compile(template),
@@ -21,8 +21,12 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
             return this;
         },
 
-        openPopup: function() {
+        openModal: function() {
             this.$modal.modal('show');
+        },
+
+        closeModal: function() {
+            this.$modal.modal('hide');
         },
 
         onHidden: function() {
@@ -39,9 +43,18 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
             });
         },
 
-        onCreateProduct: function() {
-            this.$modal.modal('hide');
-            return false;
+        onSubmitForm: function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var configurationItem = new ConfigurationItem({
+                id: this.$inputProductId.val(),
+                workspaceId: APP_CONFIG.workspaceId,
+                description: this.$inputDescription.val(),
+                designItemNumber: this.$inputPartNumber.val()
+            });
+            configurationItem.save({}, {wait: true});
+            this.trigger('product:created');
+            this.closeModal();
         }
 
     });
