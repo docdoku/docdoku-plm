@@ -117,7 +117,7 @@ define([
             var $tag = $(tagView.el);
 
             $tagsToAdd.append($tag);
-indexOf
+
             this._tagsToAddViews.push(tagView);
 
         },
