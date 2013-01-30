@@ -377,15 +377,19 @@ public class DocumentResource {
         String version = docKey.substring(lastDash + 1, docKey.length());
 
         try {
-
-            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
-
+            DocumentMasterKey docMPK=new DocumentMasterKey(workspaceId, id, version);
+            DocumentMaster docM = documentService.getDocumentMaster(docMPK);
             Set<Tag> tags = docM.getTags();
+            Set<String> tagLabels = new HashSet<String>();
 
-            for(TagDTO tagDTO : tagDtos){
-                tags.add(new Tag(new Workspace(workspaceId), tagDTO.getLabel()));
+            for(TagDTO tagDto:tagDtos)
+                tagLabels.add(tagDto.getLabel());
+
+            for(Tag tag : tags){
+                tagLabels.add(tag.getLabel());
             }
 
+            documentService.saveTags(docMPK,tagLabels.toArray(new String[tagLabels.size()]));
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
