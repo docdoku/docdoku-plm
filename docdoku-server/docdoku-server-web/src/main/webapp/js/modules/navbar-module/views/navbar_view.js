@@ -11,7 +11,12 @@ define(["modules/product-creation-module/views/product_creation_view"], function
         onProductCreation: function() {
             var productCreationView = new ProductCreationView();
             this.$el.after(productCreationView.render().el);
-            productCreationView.openPopup();
+            productCreationView.openModal();
+            this.listenTo(productCreationView, 'product:created', this.refreshProductsList);
+        },
+
+        refreshProductsList: function() {
+
         }
 
     });
