@@ -429,4 +429,25 @@ public interface IProductManagerWS{
      * @throws AccessRightException
      */
     Marker createMarker(int layerId, String title, String description, double x, double y, double z) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
+
+    /**
+     * Find part masters by their number
+     *
+     * @param workspaceId
+     * The workspace in which part masters will be searched
+     *
+     * @param partNumber
+     * The number of the part master to search for
+     *
+     * @param maxResults
+     * Set the maximum number of results to retrieve
+     *
+     * @return
+     * The list of <a href="PartMaster.html">PartMaster</a>
+     *
+     * @throws UserNotFoundException
+     * @throws AccessRightException
+     * @throws WorkspaceNotFoundException
+     */
+    List<PartMaster> findPartMasters(String workspaceId, String partNumber, int maxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 }

@@ -39,6 +39,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
@@ -59,6 +61,9 @@ import javax.persistence.TemporalType;
 @Table(name="PARTMASTER")
 @IdClass(PartMasterKey.class)
 @Entity
+@NamedQueries({
+    @NamedQuery(name="PartMaster.findByNumber", query="SELECT pm FROM PartMaster pm WHERE pm.number LIKE :partNumber AND pm.workspace.id = :workspaceId")
+})
 public class PartMaster implements Serializable {
 
     @Column(name="PARTNUMBER", length = 255)
