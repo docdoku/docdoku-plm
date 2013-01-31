@@ -1,0 +1,118 @@
+#content {
+  .box-flex(1);
+  .actions {
+    .well;
+    .border-radius(0);
+    .box-shadow(0 1px 3px darken(@actionBarBackground, 35%));
+    margin: 0 0 0 2px;
+    padding: 0 8px;
+    border: none;
+    > .btn {
+      height: 32px;
+      margin: 8px 8px 8px 8px;
+    }
+    .btn-group {
+      margin-left: -5px;
+      margin: 0px 8px 0 8px;
+    }
+    .btn-group .btn {
+      float: none;
+      margin-left: -5px;
+    }
+    .new-document .icon {
+      .plm-icon-action-document-new;
+    }
+    .new-template .icon {
+      .plm-icon-action-template-new;
+    }
+    .new-workflow .icon {
+      .plm-icon-action-workflow-new;
+    }
+    .delete {
+      display: none;
+      .icon {
+        .plm-icon-action-delete;
+      }
+    }
+    .checkout-group {
+      display: none;
+    }
+    .checkout .icon {
+      .plm-icon-action-checkout;
+    }
+    .undocheckout .icon {
+      .plm-icon-action-undocheckout;
+    }
+    .checkin .icon {
+      .plm-icon-action-checkin;
+    }
+    .tags {
+      display: none;
+    }
+    .tags .icon {
+      .plm-icon-action-tags;
+    }
+  }
+  input {
+    height: 22px;
+    margin: 8px;
+  }
+  table {
+    .border-radius(3px);
+    box-shadow: 0px 0px 5px #8C9FBE;
+    margin: 20px auto 0 auto;
+    width: 96%;
+    thead {
+      #gradient > .vertical(#8C9FBE, #4F75AB);
+      color: white;
+      text-shadow: #555 0px -1px 0px;
+      tr {
+        height: 40px;
+        font-size: 13px;
+        th {
+          vertical-align: middle;
+          padding: 0 .5em;
+        }
+        th:first-child {
+          .border-radius(3px 0 0 0);
+        }
+        th:last-child {
+          .border-radius(0 3px 0 0);
+        }
+      }
+    }
+    tbody {
+      color: #62697B;
+      font-size: 12px;
+      text-shadow: 0px 1px 0px white;
+      tr {
+        height: 35px;
+        td {
+          padding: 0 .5em;
+          vertical-align: middle;
+          &.reference {
+            cursor: pointer;
+          }
+        }
+        td:first-child {
+          horizontal-align: center;
+        }
+      }
+    }
+  }
+  .table-striped tbody tr:nth-child(odd) td {
+    background-color: #EFF2F7;
+  }
+}
+
+.modal.new-document {
+  .modal-header .icon {
+    .plm-icon-action-document-new;
+  }
+}
+
+.modal.new-template {
+  .modal-header .icon {
+    .plm-icon-action-template-new;
+  }
+}

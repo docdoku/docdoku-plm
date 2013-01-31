@@ -1,41 +1,27 @@
-@import "../bootstrap/bootstrap.less";
-@import "../bootstrap/responsive.less";
-@import "../colors.less";
-@import "../general.less";
-@import "../nav.less";
-@import "../content.less";
-@import "../attributes_edit.less";
-@import "../modal.less";
-@import "files.less";
-@import "../document_edit.less";
-@import "workflow-editor.less";
-@import "../icons.less";
+@import "../common/style.less";
+@import "attributes";
+@import "content.less";
+@import "documents";
+@import "files";
+@import "workflowModels";
 
-a:hover {
-  cursor:pointer;
-}
-
-form {
-  margin: 0;
-}
-
-#iteration-attributes{
-    margin-left: -15px;
+#iteration-attributes {
+  margin-left: -15px;
 }
 
 [id^="editable-list-add-item-view"] {
-margin-top: -10px;
-margin-bottom: 10px;
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 
-[id^="editable-list-add-item-view"] i{
-    font-size: 13px;
-    margin-top: 3px;
-    margin-left: 5px;
+[id^="editable-list-add-item-view"] i {
+  font-size: 13px;
+  margin-top: 3px;
+  margin-left: 5px;
 }
 
-.editable-list li{
-    margin: 4px 4px 10px 4px;
+.editable-list li {
+  margin: 4px 4px 10px 4px;
 }
 
 #switch-iteration {
@@ -43,28 +29,28 @@ margin-bottom: 10px;
   margin-bottom: 0px;
 }
 
-.master-tags-list li ,
+.master-tags-list li,
 .existing-tags-list li,
 .tags-to-add-list li {
-  padding:0 18px 0 0;
+  padding: 0 18px 0 0;
 }
 
 .master-tags-list li i,
 .existing-tags-list li i,
-.tags-to-add-list li i{
-  color:#666;
+.tags-to-add-list li i {
+  color: #666;
   visibility: hidden;
 }
 
 .master-tags-list li:hover i,
 .existing-tags-list li:hover i,
-.tags-to-add-list li:hover i{
+.tags-to-add-list li:hover i {
   visibility: visible;
 }
 
 td.reference {
   font-weight: bold;
-  i{
+  i {
     font-size: 14px;
     margin-right: 4px;
     text-align: center;
@@ -74,7 +60,7 @@ td.reference {
   }
 }
 
-td.doc-ref i{
+td.doc-ref i {
   opacity: 1;
 }
 
@@ -86,21 +72,30 @@ td.reference:hover {
 }
 
 td.document-master-subscriptions {
-  i{
+  i {
     color: orange;
-    cursor:pointer;
+    cursor: pointer;
   }
 }
 
-div.modal-header i{
+div.modal-header i {
   float: left;
   margin: 0 8px 0 0 !important;
   line-height: 28px;
   font-size: 20px;
 }
 
-div.modal-header span.icon{
+div.modal-header span.icon {
   float: left;
   margin: 0 8px 0 0 !important;
+}
+
+.modal {
+  &.new-document,
+  &.new-template {
+    .attributes {
+      .attributes-edit;
+    }
+  }
 }
 
