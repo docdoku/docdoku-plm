@@ -70,13 +70,6 @@ html{
     padding-left: 15px;
 }
 
-#nav_list_controls input{
-    margin-left: 6%;
-    width: 70%;
-    float: left;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
 
 #nav_list_expand i, #nav_list_collapse i{
     -webkit-transform: rotate(135deg);
@@ -213,9 +206,6 @@ html{
 * RIGHT PANEL
 */
 
-#content{
-    height: 100%;
-}
 
 #frameContainer {
   margin : 0;

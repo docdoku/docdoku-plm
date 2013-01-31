@@ -117,7 +117,7 @@ define([
 			this.router.navigate("folders" + path, {trigger: false});
 		},
 		setActive: function () {
-			$("#nav .active").removeClass("active");
+			$("#document-menu .active").removeClass("active");
 			this.$el.find(".header").first().addClass("active");
 		},
 		toggle: function () {

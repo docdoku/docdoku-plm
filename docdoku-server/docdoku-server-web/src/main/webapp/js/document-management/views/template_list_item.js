@@ -48,7 +48,7 @@ define([
 						model: that.model
 					})
 				);
-				$("#content").after(that.editView.el);
+				$("#document-content").after(that.editView.el);
 			});
 		}
 	});

@@ -4,7 +4,7 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
 
     var AppView = Backbone.View.extend({
 
-        el: $("#workspace"),
+        el: $("#content"),
 
         events: {
             "click #scene_view_btn": "sceneMode",

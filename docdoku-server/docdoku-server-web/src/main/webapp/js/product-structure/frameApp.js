@@ -4,7 +4,7 @@ define(["models/part_iteration"], function (PartIteration) {
 
     var FrameAppView = Backbone.View.extend({
 
-        el: $("#workspace"),
+        el: $("#product-content"),
 
         initialize: function() {
             var self = this;
