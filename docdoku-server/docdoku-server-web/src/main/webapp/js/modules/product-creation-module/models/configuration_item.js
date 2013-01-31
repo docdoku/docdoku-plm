@@ -9,6 +9,10 @@ define(function() {
         parse: function(response) {
             response._id = response.id;
             return response;
+        },
+
+        getIndexUrl: function() {
+            return "/product-structure/" + APP_CONFIG.workspaceId + "/" + this.attributes.id;
         }
 
     });

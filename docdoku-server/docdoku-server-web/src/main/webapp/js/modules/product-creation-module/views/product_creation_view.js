@@ -11,6 +11,10 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
 
         template: Mustache.compile(template),
 
+        initialize: function() {
+            _.bindAll(this);
+        },
+
         render: function() {
             this.$el.html(this.template({i18n: i18n}));
             this.$modal = this.$('#product_creation_modal');
@@ -46,15 +50,26 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
         onSubmitForm: function(e) {
             e.preventDefault();
             e.stopPropagation();
-            var configurationItem = new ConfigurationItem({
+            this.model = new ConfigurationItem({
                 id: this.$inputProductId.val(),
                 workspaceId: APP_CONFIG.workspaceId,
                 description: this.$inputDescription.val(),
                 designItemNumber: this.$inputPartNumber.val()
             });
-            configurationItem.save({}, {wait: true});
-            this.trigger('product:created');
+            this.model.save({}, {
+                wait: true,
+                success: this.onProductCreated,
+                error: this.onError
+            });
+        },
+
+        onProductCreated: function() {
+            this.trigger('product:created', this.model);
             this.closeModal();
+        },
+
+        onError: function() {
+            alert(i18n.CREATION_ERROR);
         }
 
     });

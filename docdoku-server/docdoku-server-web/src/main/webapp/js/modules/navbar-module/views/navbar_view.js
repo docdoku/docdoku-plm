@@ -8,15 +8,22 @@ define(["modules/product-creation-module/views/product_creation_view"], function
             "click #product-creation": "onProductCreation"
         },
 
-        onProductCreation: function() {
-            var productCreationView = new ProductCreationView();
-            this.$el.after(productCreationView.render().el);
-            productCreationView.openModal();
-            this.listenTo(productCreationView, 'product:created', this.refreshProductsList);
+        initialize: function() {
+            this.$listProducts = this.$('li#product_container > ul');
         },
 
-        refreshProductsList: function() {
+        onProductCreation: function() {
+            var productCreationView = new ProductCreationView();
+            this.listenTo(productCreationView, 'product:created', this.addProductInList);
+            this.$el.after(productCreationView.render().el);
+            productCreationView.openModal();
+        },
 
+        addProductInList: function(configurationItem) {
+            var self = this;
+            require(["text!modules/navbar-module/templates/navbar_product_item.html"], function(productItemTemplate) {
+                self.$listProducts.append(Mustache.render(productItemTemplate, configurationItem));
+            });
         }
 
     });
