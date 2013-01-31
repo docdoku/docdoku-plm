@@ -1,4 +1,6 @@
 @import "../common/style.less";
+@import "menu.less";
+@import "content.less";
 
 body {
   width: 100%;
@@ -39,13 +41,14 @@ a:hover {
 .navbar-fixed-top {
   position: relative;
 }
-
+/*
 #workspace {
   display: block;
   height: 95%;
   width: 100%;
   margin-top: 0px;
 }
+*/
 
 #frameWorkspace {
   display: block;
@@ -56,26 +59,6 @@ a:hover {
   overflow: hidden;
 }
 
-#leftPanel {
-  position: relative;
-  float: left;
-  background-color: whitesmoke;
-  height: 100%;
-  width: 250px;
-  border: none;
-  border-radius: 0px;
-  padding: 0px;
-  margin-bottom: 0px;
-  border: 1px solid #CFD7E4;
-  margin-top: -3px;
-}
-
-#mainPanel {
-  position: relative;
-  margin-left: 250px;
-  height: 100%;
-  width: auto;
-}
 
 #top_controls_container {
   width: 80%;
@@ -84,7 +67,7 @@ a:hover {
   position: relative;
 }
 
-#mainPanel button.active {
+#product-content button.active {
   color: white;
 }
 
@@ -141,28 +124,12 @@ a:hover {
   margin-top: -1%;
 }
 
-.nav-list {
-  padding-left: 15px;
-  padding-right: 0px;
-}
-
 .nav-list > li > a, .nav-list .nav-header {
   margin-right: 0px;
 }
 
 .nav-list li.resultPath > a label {
   background-color: yellow;
-}
-
-.header_btn-custom {
-  .buttonBackground(#7A99C1, #2C4361);
-  color: @white;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, .75);
-}
-
-.header_btn-custom:hover {
-  color: @white;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, .75);
 }
 
 .isNode {
@@ -175,13 +142,6 @@ a:hover {
   height: 100%;
   width: 100%;
   border: 1px #94ADCC dashed;
-}
-
-#product_nav_list_container {
-  margin-top: 10px;
-  height: 80%;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
 }
 
 #search_control_container input[type="search"] {

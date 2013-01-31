@@ -3,20 +3,19 @@
 @import "mixins.less";
 @import "icons.less";
 @import "modal.less";
-@import "nav.less";
 @import "header.less";
 @import "content.less";
+@import "button.less";
 @import "footer.less";
+@import "popover.less";
 
 html, body {
   height: 100%;
   width: 100%; // required for firefox
+  background-color: #e2e7ef;
 }
 
-body {
-  #gradient > .vertical(#EFF2F7,#CFD7E4);
-}
-
+/*
 #workspace {
   .box-flex(1);
   .box-orient(horizontal);
@@ -24,12 +23,14 @@ body {
   padding: 0;
   width: 100%;
 }
-
+*/
+/*
 @media (max-width: 980px) {
   #workspace {
     .box-orient(vertical);
   }
 }
+*/
 
 a:hover {
   cursor: pointer;

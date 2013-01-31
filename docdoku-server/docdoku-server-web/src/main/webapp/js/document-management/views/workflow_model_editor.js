@@ -16,7 +16,7 @@ define([
 ], function(require, i18n, WorkflowModel, template, Users, ActivityModel) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
-        el: "#content",
+        el: "#document-content",
 
         events: {
             "click .actions #cancel-workflow": "cancelAction",
