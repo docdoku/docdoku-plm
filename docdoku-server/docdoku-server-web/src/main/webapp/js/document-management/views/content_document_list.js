@@ -13,9 +13,11 @@ define([
             this.events["click .actions .checkin"] = "actionCheckin";
             this.events["click .actions .delete"] = "actionDelete";
             this.events["click .actions .tags"] = "actionTags";
+            this.events["submit .actions #document-search-form"] = "onSearch";
         },
 
         rendered: function() {
+
             this.checkoutGroup = this.$(".actions .checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");
@@ -29,10 +31,13 @@ define([
                     collection: this.collection
                 })
             );
+
             this.collection.fetch();
 
             this.listenTo(this.listView, "selectionChange", this.onStateChange);
             this.listenTo(this.collection, "change", this.onStateChange);
+
+            this.$(".tabs").tabs();
         },
 
         onStateChange: function() {
@@ -135,6 +140,17 @@ define([
 
             return false;
 
+        },
+
+        onSearch:function(e){
+
+            var inputValue = e.target.children[0].value ;
+
+            if(inputValue){
+                this.router.navigate("search/"+inputValue, {trigger: true});
+            }
+
+            return false;
         }
 
 

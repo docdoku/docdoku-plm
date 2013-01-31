@@ -105,7 +105,10 @@ define({
         "SUBSCRIBE_ITERATION_CHANGE":   "Subscribe to iteration change notifications",
         "UNSUBSCRIBE_ITERATION_CHANGE": "Unsubscribe from iteration change notifications",
         "ITERATION_CHANGE":             "Iteration change",
-        "STATE_CHANGE":                 "State change"
+        "STATE_CHANGE":                 "State change",
+        "SEARCH":                       "Search",
+        "ADVANCED_SEARCH":              "Advanced search",
+        "ADVANCED":                     "Advanced"
 
     },
     "fr": true,

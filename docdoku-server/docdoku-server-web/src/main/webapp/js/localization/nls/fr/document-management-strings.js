@@ -105,6 +105,9 @@ define({
     "SUBSCRIBE_ITERATION_CHANGE":   "S'abonner aux notifications de changement d'itération",
     "UNSUBSCRIBE_ITERATION_CHANGE": "Se désabonner des notifications de changement d'itération",
     "ITERATION_CHANGE":             "Changement d'iteration",
-    "STATE_CHANGE":                 "Changement d'état"
+    "STATE_CHANGE":                 "Changement d'état",
+    "SEARCH":                       "Rechercher",
+    "ADVANCED_SEARCH":              "Recherche avancée",
+    "ADVANCED":                     "Avancé"
 
 });

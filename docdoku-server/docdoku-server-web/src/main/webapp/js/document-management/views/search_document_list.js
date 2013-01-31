@@ -1,19 +1,19 @@
 define([
-	"collections/tag_document",
+	"collections/search_document",
 	"views/content_document_list",
     "text!templates/content_document_list_checkout_button_group.html",
     "text!templates/content_document_list_tags_button.html",
     "text!templates/search_document_form.html",
-    "text!templates/tag_document_list.html"
+    "text!templates/search_document_list.html"
 ], function (
-	TagDocumentList,
+    SearchDocumentList,
 	ContentDocumentListView,
     checkout_button_group,
     tags_button,
     search_form,
     template
 ) {
-	var TagDocumentListView = ContentDocumentListView.extend({
+	var SearchDocumentListView = ContentDocumentListView.extend({
 
         template: Mustache.compile(template),
 
@@ -24,9 +24,9 @@ define([
         },
 
 		collection: function () {
-            return new TagDocumentList();
-
+            return new SearchDocumentList().setQuery(this.options.query);
 		},
+
 		initialize: function () {
 			ContentDocumentListView.prototype.initialize.apply(this, arguments);
 			if (this.model) {
@@ -34,5 +34,5 @@ define([
 			}
 		}
     });
-	return TagDocumentListView;
+	return SearchDocumentListView;
 });
