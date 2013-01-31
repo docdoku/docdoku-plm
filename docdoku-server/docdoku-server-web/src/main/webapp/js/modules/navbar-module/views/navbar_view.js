@@ -1,4 +1,4 @@
-define(["modules/product-creation-module/views/product_creation_view"], function(ProductCreationView) {
+define(function() {
 
     var NavBarView = Backbone.View.extend({
 
@@ -13,10 +13,13 @@ define(["modules/product-creation-module/views/product_creation_view"], function
         },
 
         onProductCreation: function() {
-            var productCreationView = new ProductCreationView();
-            this.listenTo(productCreationView, 'product:created', this.addProductInList);
-            this.$el.after(productCreationView.render().el);
-            productCreationView.openModal();
+            var self = this;
+            require(['modules/product-creation-module/views/product_creation_view'], function(ProductCreationView) {
+                var productCreationView = new ProductCreationView();
+                self.listenTo(productCreationView, 'product:created', this.addProductInList);
+                self.$el.after(productCreationView.render().el);
+                productCreationView.openModal();
+            });
         },
 
         addProductInList: function(configurationItem) {
