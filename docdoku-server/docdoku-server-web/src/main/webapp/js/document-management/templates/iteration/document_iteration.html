@@ -138,10 +138,10 @@
         {{/iteration}}
 
         {{#editMode}}
+        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
         <button id="save-iteration" class="btn btn-primary" form="form-{{view.cid}}">
             {{i18n.SAVE}}
         </button>
-        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
         {{/editMode}}
         {{^editMode}}
         <button id="close-iteration" class="btn cancel close-iteration" form="form-{{view.cid}}">
