@@ -2,6 +2,7 @@ define([
 	"common/singleton_decorator",
 	"views/folder_nav",
 	"views/tag_nav",
+	"views/search_nav",
 	"views/workflow_nav",
 	"views/template_nav",
 	"views/checkedout_nav",
@@ -11,6 +12,7 @@ function (
 	singletonDecorator,
 	FolderNavView,
 	TagNavView,
+	SearchNavView,
 	WorkflowNavView,
 	TemplateNavView,
 	CheckedoutNavView,
@@ -28,6 +30,7 @@ function (
             "workflow-model-editor":  "workflowModelEditorNew",
 			"checkedouts":		"checkedouts",
 			"tasks":			"tasks",
+			"search/:query":	"search",
 			"":					"defaults"
 		},
 		folders: function() {
@@ -86,12 +89,17 @@ function (
 		tasks: function() {
 			this.defaults();
 		},
+        search: function(query) {
+            this.defaults();
+            SearchNavView.getInstance().showContent(query);
+        },
 		defaults: function() {
 			FolderNavView.getInstance();
 			TagNavView.getInstance();
 			WorkflowNavView.getInstance();
 			TemplateNavView.getInstance();
 			CheckedoutNavView.getInstance();
+            SearchNavView.getInstance();
 		}
 	});
 	Router = singletonDecorator(Router);

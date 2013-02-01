@@ -4,6 +4,7 @@ define([
 	"views/document/document_new",
 	"text!templates/content_document_list_checkout_button_group.html",
 	"text!templates/content_document_list_tags_button.html",
+	"text!templates/search_document_form.html",
 	"text!templates/folder_document_list.html"
 ], function (
 	FolderDocumentList,
@@ -11,13 +12,15 @@ define([
 	DocumentNewView,
 	checkout_button_group,
 	tags_button,
+    search_form,
 	template
 ) {
 	var FolderDocumentListView = ContentDocumentListView.extend({
 		template: Mustache.compile(template),
 		partials: {
 			checkout_button_group: checkout_button_group,
-            tags_button: tags_button
+            tags_button: tags_button,
+            search_form: search_form
 		},
 		collection: function () {
 			return new FolderDocumentList();

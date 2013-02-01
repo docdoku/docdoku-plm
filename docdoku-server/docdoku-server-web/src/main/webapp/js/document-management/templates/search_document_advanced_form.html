@@ -1,0 +1,89 @@
+<div id="document-advanced-search-form" class="hide">
+
+    <h3>{{i18n.ADVANCED_SEARCH}}</h3>
+
+    <div class="tabs">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#tab-search-main-{{view.cid}}" data-toggle="tab">{{i18n.GENERAL}}</a>
+            </li>
+            <li>
+                <a href="#tab-search-attributes-{{view.cid}}" data-toggle="tab">{{i18n.ATTRIBUTES}}</a>
+            </li>
+            <li>
+                <a href="#tab-search-advanced-{{view.cid}}" data-toggle="tab">{{i18n.ADVANCED}}</a>
+            </li>
+        </ul>
+
+        <form id="form-{{view.cid}}" class="form-horizontal tab-content">
+            <div class="tab-pane active" id="tab-search-main-{{view.cid}}">
+
+                <div class="control-group">
+                    <label class="control-label" for="#id-{{view.cid}}">Id</label>
+                    <div class="controls">
+                        <input type="text" id="#id-{{view.cid}}" class="input-medium">
+                        <p class="help-block">Id du document</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="#title-{{view.cid}}">Titre</label>
+                    <div class="controls">
+                        <input type="text" id="#title-{{view.cid}}" class="input-medium">
+                        <p class="help-block">Titre du document</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="#type-{{view.cid}}">Type</label>
+                    <div class="controls">
+                        <select id="#type-{{view.cid}}"></select>
+                        <p class="help-block">Type du document</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="#version-{{view.cid}}">Version</label>
+                    <div class="controls">
+                        <input type="text" id="#version-{{view.cid}}" class="input-medium">
+                        <p class="help-block">Version du document</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="#author-{{view.cid}}">Auteur</label>
+                    <div class="controls">
+                        <select id="#author-{{view.cid}}"></select>
+                        <p class="help-block">Auteur du document</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="tab-search-attributes-{{view.cid}}" class="tab-pane attributes">
+
+            </div>
+
+            <div id="tab-search-advanced-{{view.cid}}" class="tab-pane advanced">
+                <div class="control-group">
+                    <label class="control-label" for="#tags-{{view.cid}}">Tags</label>
+                    <div class="controls">
+                        <input type="text" id="#tags-{{view.cid}}" class="input-medium">
+                        <p class="help-block">Tags du document</p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="#content-{{view.cid}}">Content</label>
+                    <div class="controls">
+                        <input type="text" id="#content-{{view.cid}}" class="input-medium">
+                        <p class="help-block">Content du document</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <button class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
