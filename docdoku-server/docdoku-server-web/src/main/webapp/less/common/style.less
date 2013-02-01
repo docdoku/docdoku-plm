@@ -1,4 +1,6 @@
+// Imports only
 @import "../bootstrap/bootstrap.less";
+@import "general.less";
 @import "variables.less";
 @import "mixins.less";
 @import "icons.less";
@@ -8,50 +10,4 @@
 @import "button.less";
 @import "footer.less";
 @import "popover.less";
-
-html, body {
-  height: 100%;
-  width: 100%; // required for firefox
-  background-color: #e2e7ef;
-}
-
-/*
-#workspace {
-  .box-flex(1);
-  .box-orient(horizontal);
-  .display(box);
-  padding: 0;
-  width: 100%;
-}
-*/
-/*
-@media (max-width: 980px) {
-  #workspace {
-    .box-orient(vertical);
-  }
-}
-*/
-
-a:hover {
-  cursor: pointer;
-}
-
-:invalid {
-  color: @errorText;
-  background-color: @errorBackground;
-}
-
-.dropdown-menu a:hover {
-  background-color: #CFD7E4;
-}
-
-.container-fluid .nav a {
-  font-size: 13px;
-  font-weight: 300;
-}
-
-.container-fluid .nav a:hover {
-  font-size: 13px;
-  font-weight: 300;
-  text-decoration: none;
-}
+@import "table.less";

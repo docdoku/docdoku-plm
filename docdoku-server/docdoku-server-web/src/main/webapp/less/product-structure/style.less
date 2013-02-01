@@ -65,6 +65,7 @@ a:hover {
   height: 5%;
   padding-top: 20px;
   position: relative;
+  text-align: center;
 }
 
 #product-content button.active {
@@ -100,21 +101,7 @@ a:hover {
   width: 17%;
   height: 100%;
   margin-right: 10px;
-
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
-
-  display: -moz-box;
-  -moz-box-orient: vertical;
-  -moz-box-pack: center;
-  -moz-box-align: center;
-
-  display: box;
-  box-orient: vertical;
-  box-pack: center;
-  box-align: center;
+  text-align:center;
 }
 
 #scene_container {
@@ -142,7 +129,12 @@ a:hover {
   height: 100%;
   width: 100%;
   border: 1px #94ADCC dashed;
+  outline:none;
 }
+#container:focus, #container:active{
+  border: 1px #94ADCC solid;
+}
+
 
 #search_control_container input[type="search"] {
   -webkit-appearance: none;
@@ -159,7 +151,8 @@ a:hover {
 #part_metadata_container {
   position: absolute;
   bottom: 0;
-  width: 100%;
+  left: 0;
+  right: 0;
   border-top: 3px solid #768AA8;
   background-color: #96AAC6;
   height: 100px;
@@ -217,11 +210,25 @@ a:hover {
   margin-bottom: 10px;
 }
 
-.close {
+#part_metadata_close_button {
   border: none;
   background: none;
   margin-top: 0px;
+  padding: 5px;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 18px;
+  color: black;
+  text-shadow: 0 1px 0 white;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
 }
+#part_metadata_close_button:hover{
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+
 
 #bom_table_container {
   overflow-y: scroll;
@@ -229,34 +236,6 @@ a:hover {
   height: 78%;
   display: none;
   min-height: 300px;
-}
-
-#bom_table {
-  box-shadow: 0px 0px 5px #8C9FBE;
-  margin: 20px auto 0 auto;
-  width: 96%;
-  .border-radius(3px);
-}
-
-#bom_table thead {
-  #gradient > .vertical(#8C9FBE,#4F75AB);
-  background-color: #748EB6;
-  color: white;
-  text-shadow: #555 0px -1px 0px;
-}
-
-#bom_table tbody {
-  color: #62697B;
-  font-size: 12px;
-  text-shadow: 0px 1px 0px white;
-}
-
-.table-striped tbody tr td, .table-striped tbody tr th {
-  background-color: white;
-}
-
-.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-  background-color: #EFF2F7;
 }
 
 #exportSceneModal {

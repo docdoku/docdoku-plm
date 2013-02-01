@@ -18,14 +18,16 @@
             <h2>#{i18nWorkspacesMenu['main.title']}</h2>
             <h3>#{i18nWorkspacesMenu['section.title']}</h3>
             <h:form>
-                <fieldset>
+                <fieldset id="admin">
                     <h:link value="#{i18nWorkspacesMenu['section.create']}" outcome="/admin/workspace/workspaceCreationForm.xhtml"/>
                     <h:outputLabel value="#{i18nWorkspacesMenu['section.select']}:" for="selectedWorkspace"/>
                     <h:selectOneMenu label="#{i18nWorkspacesMenu['section.selectName']}" required="true" id="selectedWorkspace" value="#{adminStateBean.selectedWorkspace}">
                         <f:selectItems value="#{administeredWorkspaces}" var="w" itemLabel="#{w.value.id}" itemValue="#{w.value.id}" />
-                    </h:selectOneMenu> 
-                    <br/>
-                    <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> | <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/>
+                    </h:selectOneMenu>
+
+                    <div class="actions-btn">
+                        <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> | <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>

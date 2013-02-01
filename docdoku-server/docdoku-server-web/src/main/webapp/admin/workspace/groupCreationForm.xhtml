@@ -21,11 +21,13 @@
             <h3>#{i18nGroupCreationForm['section.title']}</h3>
 
             <h:form>
-                <fieldset>
+                <fieldset id="admin">
                     <h:outputLabel value="#{i18nGroupCreationForm['section.id']}*:" for="id"/>
                     <h:inputText required ="true" id="id" value="#{workspaceBean.groupToCreate}" size="20" maxlength="50"/>
                     <br/>
-                    <h:commandButton styleClass="btn" action="#{workspaceBean.createGroup()}" value="#{i18nGroupCreationForm['section.submit']}" alt="#{i18nUserAddingForm['section.submit']}"/>
+                    <div class="actions-btn">
+                        <h:commandButton styleClass="btn btn-primary" action="#{workspaceBean.createGroup()}" value="#{i18nGroupCreationForm['section.submit']}" alt="#{i18nUserAddingForm['section.submit']}"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>

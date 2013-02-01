@@ -16,7 +16,7 @@
 
             <h3>#{i18nWorkspaceEdition['section.title']}</h3>
             <h:form>
-                <fieldset>                
+                <fieldset id="admin">
                     <span id="id">#{i18nWorkspaceEdition['section.id']} #{adminStateBean.selectedWorkspace}</span><br/>
                     
                     <h:outputLabel value="#{i18nWorkspaceEdition['section.admin']}:" for="admin"/>
@@ -30,9 +30,10 @@
                     <br/>
                     <h:selectBooleanCheckbox value="#{workspaceBean.freezeFolders}" style="display: inline;" title="#{i18nWorkspaceEdition['section.freeze_folders']}" id="folderLocked"/>
                     <h:outputLabel style="display: inline;" value="#{i18nWorkspaceEdition['section.freeze_folders']}" for="folderLocked"/>
-                    <br/>
-                    <h:commandButton styleClass="btn" action="#{workspaceBean.updateWorkspace}" value="#{i18nWorkspaceEdition['section.save']}" alt="#{i18nWorkspaceEdition['section.save']}"/>
 
+                    <div class="actions-btn">
+                        <h:commandButton styleClass="btn btn-primary" action="#{workspaceBean.updateWorkspace}" value="#{i18nWorkspaceEdition['section.save']}" alt="#{i18nWorkspaceEdition['section.save']}"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>

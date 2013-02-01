@@ -10,14 +10,15 @@ body > form {
 
     .nav > li > a {
       color: rgba(255, 255, 255, 1);
-    }
 
-    .nav > li > a > i{
-      margin: 0 3px 0 0;
-    }
+      &:hover {
+        color: rgba(255, 255, 255, 0.80);
+      }
 
-    .nav > li > a:hover {
-      color: rgba(255, 255, 255, 0.80);
+      i {
+        margin: 0 3px 0 0;
+      }
+
     }
 
     #brand-logo {
@@ -27,5 +28,10 @@ body > form {
       width: 30px;
       margin: 5px;
     }
+
+    .dropdown-menu a:hover {
+      background-color: #CFD7E4;
+    }
+
   }
 }

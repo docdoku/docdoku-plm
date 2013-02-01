@@ -58,7 +58,7 @@ function (
                 this.workflowModelEditorView.unbindAllEvents();
 
             this.workflowModelEditorView = new WorkflowModelEditorView({
-                workflowModelId: workflowModelId
+                workflowModelId: decodeURI(workflowModelId)
             });
 
             this.workflowModelEditorView.render();
