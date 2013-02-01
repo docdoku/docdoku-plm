@@ -2,8 +2,6 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
 
     var ProductCreationView = Backbone.View.extend({
 
-        tagName: 'div',
-
         events: {
             "hidden #product_creation_modal": "onHidden",
             "submit #product_creation_form" : "onSubmitForm"

@@ -48,7 +48,7 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
 
             this.inBomMode = false;
 
-            this.bomView = new BomView();
+            this.bomView = new BomView().render();
 
             sceneManager = new SceneManager();
 
