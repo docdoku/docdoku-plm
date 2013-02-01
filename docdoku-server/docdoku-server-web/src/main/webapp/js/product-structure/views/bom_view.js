@@ -1,4 +1,4 @@
-define(["views/bom_item_view", "text!templates/bom.html"], function (BomItemView, template, i18n) {
+define(["views/bom_item_view", "text!templates/bom.html", "i18n!localization/nls/product-structure-strings"], function (BomItemView, template, i18n) {
 
     var BomView = Backbone.View.extend({
 
