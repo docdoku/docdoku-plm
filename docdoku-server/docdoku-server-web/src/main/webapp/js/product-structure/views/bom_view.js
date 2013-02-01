@@ -1,11 +1,15 @@
-define(["views/bom_item_view"], function (BomItemView) {
+define(["views/bom_item_view", "text!templates/bom.html"], function (BomItemView, template, i18n) {
 
     var BomView = Backbone.View.extend({
 
         el: $("#bom_table_container"),
 
-        initialize: function() {
+        template: Mustache.compile(template),
+
+        render: function() {
+            this.$el.html(this.template({i18n : i18n}));
             this.tbody = this.$('tbody');
+            return this;
         },
 
         update: function(component) {
