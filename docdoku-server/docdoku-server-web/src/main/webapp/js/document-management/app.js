@@ -18,7 +18,7 @@ define([
 	});
 
     new WorkspaceView({
-		el: "#workspace",
+		el: "#content",
 		model: this.workspace
 	}).render();
 

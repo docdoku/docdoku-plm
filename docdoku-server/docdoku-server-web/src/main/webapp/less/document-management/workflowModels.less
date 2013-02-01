@@ -1,0 +1,360 @@
+input#workflow-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+input#workflow-name:invalid {
+  background-color: #ffffff;
+}
+
+button#copy-workflow {
+  float: right;
+  font-size: 18px;
+}
+
+div#modal-copy-workflow {
+  i.icon-copy {
+    margin: 4px 6px 0px 0px;
+    font-size: 18px;
+    float: left;
+  }
+}
+
+div#workflow-editor {
+  padding: 15px 5px;
+
+  ::-webkit-input-placeholder, ::-moz-placeholder {
+    text-shadow: none;
+  }
+
+  div#start, div#end {
+    text-shadow: 0px 0px 2px white;
+    margin: 2px 8px;
+    border-radius: 4px;
+    border: 2px solid #999;
+    height: 68px;
+    background-color: #999;
+    font-size: 20px;
+    color: #5A5A5A;
+
+    i {
+      width: 18px;
+      display: block;
+      margin: 8px auto;
+    }
+
+    input {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      width: 58px;
+      margin: 0;
+      display: block;
+    }
+
+    input#final-state {
+      width: 175px;
+    }
+  }
+
+  button#add-activity {
+    display: block;
+    margin: 2px 8px;
+    width: 38px;
+    height: 72px;
+    border: 2px solid #999;
+    background-color: #999;
+    font-size: 20px;
+    color: #5A5A5A;
+  }
+
+  button {
+    box-shadow: none;
+    background: none;
+    border: none;
+  }
+
+  ul#activity-list {
+    display: box;
+    display: -moz-box;
+    display: -webkit-box;
+    margin: 0;
+    list-style: none;
+
+    li.activity-section-placeholder {
+      border: 1px dashed red;
+      width: 50px;
+      height: 50px;
+      display: block;
+    }
+
+    li.activity-section {
+      text-align: center;
+
+      div.activity {
+        display: inline-block;
+        margin: 0px 8px;
+
+        div.activity-topbar {
+          position: relative;
+          border: 2px solid #999;
+          margin: 0px 0px 8px 0px;
+          text-align: left;
+          background-color: #999;
+          border-radius: 4px;
+          cursor: move;
+
+          button.switch-activity {
+            float: left;
+            margin: 2px;
+            width: 32px;
+            height: 32px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: 0;
+          }
+
+          span.activity-type {
+            margin: 2px;
+            line-height: 34px;
+            color: white;
+          }
+
+          button.delete-activity {
+            top: 0px;
+            right: 0px;
+            position: absolute;
+            margin: 2px;
+            width: 32px;
+            height: 32px;
+            color: #5A5A5A;
+            font-size: 16px;
+          }
+
+          input.activity-state {
+            margin: 0px auto;
+            border-radius: 4px;
+            text-align: center;
+            padding: 4px 0px;
+            display: block;
+            width: 99%;
+            font-size: 18px;
+            font-weight: bold;
+          }
+        }
+
+        button.add-task {
+          box-shadow: 0px 0px 2px #3F5F99;
+          background-color: #659FD8;
+          display: block;
+          margin: 0px auto 0px auto;
+          padding: 10px 0px;
+          width: 38px;
+          height: 38px;
+          font-size: 20px;
+          color: #25598F;
+        }
+
+        ul.task-list {
+          padding: 0px;
+          margin: 0px;
+          list-style: none;
+
+          li.task-section {
+            padding: 0px 8px 8px 0px;
+
+            div.task {
+              text-align: left;
+              background-color: white;
+              box-shadow: 0px 0px 2px #3F5F99;
+              border-radius: 4px;
+
+              &.fold {
+                background-color: #659FD8;
+
+                div.task-topbar {
+                  background-color: transparent;
+
+                  button.minimize-task {
+                    display: none;
+                  }
+
+                  i.icon-reorder {
+                    padding: 10px 0px 8px 0px;
+                    width: 32px;
+                    cursor: move;
+                    float: left;
+                    color: #25598F;
+                    font-size: 17px;
+                    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                  }
+
+                  input.task-name {
+                    display: none;
+                  }
+
+                  p.task-name {
+                    min-height: 34px;
+                    font-weight: bold;
+                    line-height: 17px;
+                    overflow: hidden;
+                    display: inline-block;
+                    cursor: pointer;
+                    max-width: 80px;
+                    text-shadow: 0px 1px black;
+                    box-shadow: none;
+                    color: white;
+                    padding: 2px 6px 2px 0px;
+                    margin: 0px;
+                  }
+
+                  button.delete-task {
+                    display: none;
+                  }
+                }
+
+                div.task-content {
+                  display: none;
+                }
+              }
+
+              &.unfold {
+
+                i.icon-reorder {
+                  display: none;
+                }
+
+                button.minimize-task {
+                  height: 38px;
+                  width: 32px;
+                  float: left;
+                  color: #25598F;
+                  padding: 0;
+                  font-size: 15px;
+                  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                }
+
+                p.task-name {
+                  display: none;
+                }
+
+                input.task-name {
+                  height: 24px;
+                  width: 97px;
+                  font-weight: bold;
+                  margin: 2px 0px 2px 2px;
+                  border-color: rgba(0, 0, 0, 0.45);
+                  background-color: rgba(255, 255, 255, 0.9);
+                }
+
+                button.delete-task {
+                  padding: 0;
+                  float: right;
+                  width: 32px;
+                  height: 38px;
+                  color: #25598F;
+                  font-size: 15px;
+                }
+              }
+
+              div.task-topbar {
+                text-align: left;
+                background-color: #659FD8;
+                border-radius: 4px 4px 0px 0px;
+
+                input.task-name {
+                  height: 24px;
+                  width: 97px;
+                  font-weight: bold;
+                  margin: 2px 0px 2px 2px;
+                }
+              }
+
+              div.task-content {
+                >label {
+                  font-size: 12px;
+                  font-weight: bold;
+                  color: #659FD8;
+                  line-height: 25px;
+                  margin: 4px 4px 0px 4px;
+                }
+
+                >textarea {
+                  margin: 0px 0px 4px 4px;
+                  width: 159px;
+                }
+
+                >select {
+                  margin: 0px 4px 4px 4px;
+                  width: 169px;
+                }
+              }
+            }
+          }
+        }
+
+        &.SERIAL {
+          div.activity-topbar {
+
+            input, label {
+              &.tasksToComplete {
+                display: none;
+              }
+            }
+
+            button.switch-activity {
+              background-image: url("../../images/workflow/serial.png");
+            }
+          }
+
+          ul.task-list {
+            display: -webkit-inline-box;
+          }
+
+          button.add-task {
+            display: inline-block;
+            vertical-align: top;
+            margin-left: -4px;
+          }
+        }
+
+        &.PARALLEL {
+          div.activity-topbar {
+            width: 175px;
+
+            label.tasksToComplete {
+              color: white;
+              width: 65px;
+              display: inline-block;
+              margin: 4px 0px 2px 2px;
+              line-height: 13px;
+            }
+
+            input.tasksToComplete {
+              vertical-align: top;
+              height: 15px;
+              margin: 5px 0px 2px 0px;
+              width: 30px;
+            }
+
+            button.switch-activity {
+              -webkit-transform: rotate(90deg);
+              background-image: url("../../images/workflow/parallel.png");
+            }
+          }
+
+          ul.task-list {
+
+            li.task-section {
+              padding: 0px 0px 8px 0px;
+            }
+
+            p.task-name {
+              max-width: 139px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}

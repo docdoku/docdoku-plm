@@ -1,28 +1,7 @@
-body{
-    background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0.21, #CFD7E4), color-stop(0.61, #EFF2F7) );
-    height: 100%;
-}
-
-html{
-    height: 100%;
-}
-
-.container-fluid{
-    padding-right: 0px;
-    padding-left: 0px;
-    height: 100%;
-}
-
 .row-fluid{
     height: 99.7%;
     top: -2px;
     position: absolute;
-}
-
-.well{
-    border-radius: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
 }
 
 .row-fluid .span3{
@@ -70,13 +49,6 @@ html{
     padding-left: 15px;
 }
 
-#nav_list_controls input{
-    margin-left: 6%;
-    width: 70%;
-    float: left;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
 
 #nav_list_expand i, #nav_list_collapse i{
     -webkit-transform: rotate(135deg);
@@ -114,6 +86,7 @@ html{
 }
 
 
+/*
 [class^="icon-"] {
     background-image: none;
 }
@@ -133,6 +106,7 @@ html{
     height: 87%;
     margin-top: 10px;
 }
+*/
 
 #product_nav_list {
     width: 400px;
@@ -162,10 +136,13 @@ html{
     text-decoration: none;
 }
 
-#product_nav_list a .checkbox{
+#product_nav_list input[type=checkbox]{
+    padding-left:5px;
+    margin:-5px 0 0 0 ;
+}
+#product_nav_list .checkbox{
     padding-left:5px;
 }
-
 #product_nav_list label:hover {
     background-color: #CFD7E4;
 }
@@ -185,6 +162,8 @@ html{
 }
 
 #config_spec_container{
+    background:#7A99C1;
+    background-image: -moz-linear-gradient(top, #7A99C1, #2C4361);
     background-image: -webkit-linear-gradient(top, #7A99C1, #2C4361);
     bottom: -2px;
     position: absolute;
@@ -213,9 +192,6 @@ html{
 * RIGHT PANEL
 */
 
-#content{
-    height: 100%;
-}
 
 #frameContainer {
   margin : 0;
@@ -255,7 +231,7 @@ div#layer-wrapper {
 }
 
 div#layer-wrapper nav {
-    max-height: 204px;
+    max-height: 409px;
     overflow-y: auto;
     -webkit-overflow-scrolling:touch;
     border-bottom-right-radius: 8px;
@@ -263,6 +239,7 @@ div#layer-wrapper nav {
 }
 
 div#layer-wrapper ul {
+    text-align:left;
     color: #434C64;
     margin: 0;
     padding: 0;
@@ -277,6 +254,8 @@ div#layer-wrapper ul#layer-header {
     font-weight: bold;
     color: white;
     text-shadow: 0px 1px 0px black;
+    background: #3F5F99;
+    background-image: -moz-linear-gradient(top, #3F5F99, #213251);
     background-image: -webkit-linear-gradient(top, #3F5F99, #213251);
     font-size: 14px;
 }
@@ -333,7 +312,7 @@ div#layer-wrapper ul#layer-header i.end {
     opacity: 1;
 }
 
-.edit {
+li input.edit {
     position: relative;
     margin: 0 0 0 -4px;
     width: 100%;
@@ -348,6 +327,7 @@ div#layer-wrapper ul#layer-header i.end {
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
+    display: none;
 }
 
 div#layer-wrapper li.editingMarkers i.end {
@@ -359,7 +339,7 @@ li.editingName {
     padding: 0;
 }
 
-li.editingName .edit {
+li.editingName input.edit {
     display: block;
 }
 
@@ -376,9 +356,7 @@ div#layer-wrapper p {
     line-height: 30px;
 }
 
-li .edit {
-    display: none;
-}
+
 
 div#layer-wrapper .color {
     position: absolute;

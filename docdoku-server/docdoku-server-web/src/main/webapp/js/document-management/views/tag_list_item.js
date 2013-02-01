@@ -27,7 +27,7 @@ define([
 			this.$el.find(".header .btn-group").first().removeClass("open");
 		},
 		setActive: function () {
-			$("#nav .active").removeClass("active");
+			$("#document-menu .active").removeClass("active");
 			this.$el.find(".nav-list-entry").first().addClass("active");
 		},
 		showContent: function () {

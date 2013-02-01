@@ -40,8 +40,10 @@
     </h:head>
 
     <h:body>
-        <em:header formStyle="margin-bottom: 0px;"/>
-        <ui:insert name="content"/>
+        <em:header />
+        <div id="content">
+            <ui:insert name="content"/>
+        </div>
 
         <div id="chat_module"></div>
         <div id="webrtc_module"></div>

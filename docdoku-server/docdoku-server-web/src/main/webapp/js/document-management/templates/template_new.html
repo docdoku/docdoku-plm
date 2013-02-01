@@ -3,7 +3,7 @@
 		<a class="close" data-dismiss="modal">×</a>
 		<h3>
             {{model.id}}
-            {{^model.id}}<span class="icon"></span>{{i18n.NEW_TEMPLATE}}{{/model.id}}
+            {{^model.id}}<span class="icon plm-icon-action-template-new"></span>{{i18n.NEW_TEMPLATE}}{{/model.id}}
         </h3>
 	</div>
 	<div class="modal-body">
@@ -53,7 +53,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="tab-attributes-{{view.cid}}" class="tab-pane attributes"></div>
+				<div id="tab-attributes-{{view.cid}}" class="tab-pane attributes attributes-edit"></div>
                 <div id="tab-files-{{view.cid}}" class="tab-pane files"></div>
 			</form>
 		</div>

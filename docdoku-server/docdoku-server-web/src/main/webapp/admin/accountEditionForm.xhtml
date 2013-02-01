@@ -40,8 +40,9 @@
                         <f:attribute name="confirmPasswordInput" value="#{confirmPasswordInput}" />
                     </h:inputHidden>
                     <br/>
-                    <h:commandButton styleClass="btn" action="#{accountBean.updateAccount}" value="#{i18nAccountEdition['section.save']}" alt="#{i18nAccountEdition['section.save']}"/>
-
+                    <div class="actions-btn">
+                        <h:commandButton styleClass="btn btn-primary" action="#{accountBean.updateAccount}" value="#{i18nAccountEdition['section.save']}" alt="#{i18nAccountEdition['section.save']}"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>

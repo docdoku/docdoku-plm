@@ -14,7 +14,7 @@
 
             <h3>#{i18nWorkspaceCreation['section.title']}</h3>
             <h:form>
-                <fieldset>             
+                <fieldset id="admin">
                     <h:outputLabel value="#{i18nWorkspaceCreation['section.id']}*:" for="id"/>
                     <h:inputText label="#{i18nWorkspaceCreation['section.id']}" required="true" id="id" value="#{workspaceBean.workspaceId}" size="20" maxlength="50"/>
 
@@ -24,8 +24,9 @@
                     <br/>
                     <h:selectBooleanCheckbox value="#{workspaceBean.freezeFolders}" style="display: inline;" title="#{i18nWorkspaceCreation['section.freeze_folders']}" id="folderLocked"/>
                     <h:outputLabel style="display: inline;" value="#{i18nWorkspaceCreation['section.freeze_folders']}" for="folderLocked"/>
-                    <br/>
-                    <h:commandButton styleClass="btn" action="#{workspaceBean.createWorkspace}" value="#{i18nWorkspaceCreation['section.submit']}" alt="#{i18nWorkspaceCreation['section.submit']}"/>
+                    <div class="actions-btn">
+                        <h:commandButton styleClass="btn btn-primary" action="#{workspaceBean.createWorkspace}" value="#{i18nWorkspaceCreation['section.submit']}" alt="#{i18nWorkspaceCreation['section.submit']}"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>
