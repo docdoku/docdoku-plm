@@ -22,8 +22,9 @@ function SceneManager(options) {
     this.meshesBindedForMarkerCreation = [];
     this.clock = new THREE.Clock();
 
-    this.STATECONTROL = { FPC : 0, TBC : 1};
-    this.stateControl = this.STATECONTROL.FPC;
+    this.STATECONTROL = { PLC : 0, TBC : 1};
+    this.stateControl = this.STATECONTROL.PLC;
+    this.time = Date.now();
 }
 
 SceneManager.prototype = {
@@ -88,27 +89,31 @@ SceneManager.prototype = {
         if (!_.isUndefined(SCENE_INIT.camera)) {
             console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z)
             this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
-        } else
-            this.camera.position.set(0, 10, 10000);
-        this.scene.add(this.camera);
+        } //else
+            //this.camera.position.set(0, 10, 10000);
+        //this.scene.add(this.camera);
     },
 
     initControls: function() {
 
-        this.setFirstPersonControls();
+        //this.setFirstPersonControls();
+        this.setPointerLockControls();
 
         if (Modernizr.touch) {
             $('#side_controls_container').hide();
             $('#scene_container').width(90 + '%');
             $('#center_container').height(83 + '%');
         }
+
+        this.scene.add( this.controls.getObject() );
     },
 
     bindSwitchControlEvents: function() {
         var self = this;
         $('#flying_mode_view_btn').click(function(e) {
             self.updateNewCamera();
-            self.setFirstPersonControls();
+            //self.setFirstPersonControls();
+            self.setPointerLockControls();
             self.updateLayersManager();
         });
 
@@ -117,6 +122,105 @@ SceneManager.prototype = {
             self.setTrackBallControls();
             self.updateLayersManager();
         });
+    },
+
+    setPointerLockControls: function() {
+        if(this.controls != null) {
+            this.controls.destroyControl();
+            this.controls = null;
+        }
+
+        var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+        if ( havePointerLock ) {
+
+            //var element = document.body;
+            var element = this.container[0];
+
+            var self = this;
+
+            var pointerlockchange = function ( event ) {
+
+                if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+
+                    self.controls.enabled = true;
+
+                    //blocker.style.display = 'none';
+
+                } else {
+
+                    self.controls.enabled = false;
+
+                    /*blocker.style.display = '-webkit-box';
+                    blocker.style.display = '-moz-box';
+                    blocker.style.display = 'box';
+
+                    instructions.style.display = '';*/
+
+                }
+
+            }
+
+            var pointerlockerror = function ( event ) {
+
+                //instructions.style.display = '';
+
+            }
+
+            // Hook pointer lock state change events
+            document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+            document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+            document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+            document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+            document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+            document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+
+            element.addEventListener( 'dblclick', function ( event ) {
+
+                //instructions.style.display = 'none';
+
+                // Ask the browser to lock the pointer
+                element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+
+                if ( /Firefox/i.test( navigator.userAgent ) ) {
+
+                    var fullscreenchange = function ( event ) {
+
+                        if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
+
+                            document.removeEventListener( 'fullscreenchange', fullscreenchange );
+                            document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+
+                            element.requestPointerLock();
+                        }
+
+                    }
+
+                    document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+                    document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+
+                    element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+
+                    element.requestFullscreen();
+
+                } else {
+                    element.requestPointerLock();
+                }
+
+
+
+            }, false );
+
+        } else {
+
+            //instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+
+        }
+
+        this.controls = new THREE.PointerLockControlsCustom(this.camera, this.container[0]);
+
+        this.stateControl = this.STATECONTROL.PLC;
     },
 
     setFirstPersonControls: function() {
@@ -133,7 +237,7 @@ SceneManager.prototype = {
         this.controls.lookVertical = true;
         this.controls.lon = -90;
 
-        this.stateControl = this.STATECONTROL.FPC;
+        //this.stateControl = this.STATECONTROL.FPC;
     },
 
     setTrackBallControls: function() {
@@ -314,8 +418,9 @@ SceneManager.prototype = {
         this.render();
 
         switch (this.stateControl) {
-            case this.STATECONTROL.FPC:
-                this.controls.update(this.clock.getDelta());
+            case this.STATECONTROL.PLC:
+                this.controls.update(Date.now() - this.time);
+                this.time = Date.now();
                 break;
             case this.STATECONTROL.TBC:
                 this.controls.update();

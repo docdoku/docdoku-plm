@@ -35,6 +35,7 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
     this.zoomWheel = 0;
 
     if ( this.domElement !== document ) {
+        // allow focus
         this.domElement.setAttribute( 'tabindex', -1 );
     }
 
