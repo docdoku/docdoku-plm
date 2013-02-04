@@ -18,6 +18,7 @@ define(['text!templates/bom_item.html'], function(template) {
                 name: this.model.getName(),
                 iteration: this.model.getIteration()
             }));
+            this.$input = this.$("input");
             return this;
         },
 
@@ -30,6 +31,14 @@ define(['text!templates/bom_item.html'], function(template) {
                 $('body').append(componentModalView.render().el);
                 componentModalView.show();
             });
+        },
+
+        isChecked: function() {
+            return this.$input[0].checked;
+        },
+
+        setSelectionState: function(state) {
+            this.$input[0].checked = state;
         }
 
     });
