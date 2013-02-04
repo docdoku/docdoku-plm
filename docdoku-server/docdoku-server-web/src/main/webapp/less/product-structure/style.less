@@ -11,10 +11,6 @@
   overflow: hidden;
 }
 
-#top_controls_container {
-  text-align: center;
-}
-
 #product-content button.active {
   color: white;
 }
@@ -79,9 +75,9 @@
 }
 
 #part_metadata_container {
-  position: absolute;
+  position: fixed;
+  width: 85%;
   bottom: 0;
-  left: 0;
   right: 0;
   border-top: 3px solid #768AA8;
   background-color: #96AAC6;
@@ -173,4 +169,9 @@
 #exportSceneModal textarea {
   height: 30%;
   width: 97%;
+}
+
+#bom_table input {
+  height: 22px;
+  margin: 8px;
 }
