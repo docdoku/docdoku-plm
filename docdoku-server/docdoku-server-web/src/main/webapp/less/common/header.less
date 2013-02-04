@@ -2,10 +2,18 @@ body > form {
   margin: 0;
 
   #header {
-    position: static;
+
+    position: absolute;
+
+    #collapseButton{
+      position: absolute;
+      z-index: 101;
+      right: 5px;
+    }
 
     .navbar-inner {
       padding: 0 10px;
+      z-index: 100;
     }
 
     .nav > li > a {
