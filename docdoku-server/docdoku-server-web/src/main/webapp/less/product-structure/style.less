@@ -12,21 +12,11 @@
 }
 
 #top_controls_container {
-  width: 80%;
-  height: 5%;
-  padding-top: 20px;
-  position: relative;
   text-align: center;
 }
 
 #product-content button.active {
   color: white;
-}
-
-#export_scene_btn {
-  top: 20px;
-  right: -15px;
-  position: absolute;
 }
 
 #top_buttons {
@@ -42,8 +32,13 @@
 }
 
 #center_container {
-  width: 100%;
-  height: 81.5%;
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 20px;
 }
 
 #side_controls_container {
@@ -58,34 +53,22 @@
 #scene_container {
   width: 79%;
   height: 100%;
-  margin-left: 2%;
-  margin-top: -1%;
-}
-/*
-.nav-list > li > a, .nav-list .nav-header {
-  margin-right: 0px;
 }
 
-.nav-list li.resultPath > a label {
-  background-color: yellow;
-}
-*/
 .isNode {
   font-weight: 600;
 }
 
 #container {
-  .border-radius(5px);
-  margin-top: 20px;
   height: 100%;
   width: 100%;
   border: 1px #94ADCC dashed;
   outline:none;
 }
+
 #container:focus, #container:active{
   border: 1px #94ADCC solid;
 }
-
 
 #search_control_container input[type="search"] {
   -webkit-appearance: none;
@@ -176,13 +159,8 @@
   filter: alpha(opacity=40);
 }
 
-
 #bom_table_container {
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  height: 78%;
   display: none;
-  min-height: 300px;
 }
 
 #exportSceneModal {
