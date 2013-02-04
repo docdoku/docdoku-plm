@@ -108,6 +108,14 @@ define({
     "STATE_CHANGE":                 "Changement d'état",
     "SEARCH":                       "Rechercher",
     "ADVANCED_SEARCH":              "Recherche avancée",
-    "ADVANCED":                     "Avancé"
+    "ADVANCED":                     "Avancé",
+    "REFERENCE_HELP":               "ID du document",
+    "TITLE_HELP":                   "Titre du document",
+    "TYPE_HELP":                    "Type du document",
+    "VERSION_HELP":                 "Version du document",
+    "AUTHOR_HELP":                  "Auteur du document",
+    "TAGS_HELP":                    "Libéllés du document, séparés par une virgule",
+    "CONTENT":                      "Contenu",
+    "CONTENT_HELP":                 "Contenu du document"
 
 });

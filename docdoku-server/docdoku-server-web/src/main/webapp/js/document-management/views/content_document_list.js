@@ -13,7 +13,7 @@ define([
             this.events["click .actions .checkin"] = "actionCheckin";
             this.events["click .actions .delete"] = "actionDelete";
             this.events["click .actions .tags"] = "actionTags";
-            this.events["submit .actions #document-search-form"] = "onSearch";
+            this.events["submit .actions #document-search-form"] = "onQuickSearch";
         },
 
         rendered: function() {
@@ -142,12 +142,10 @@ define([
 
         },
 
-        onSearch:function(e){
+        onQuickSearch:function(e){
 
-            var inputValue = e.target.children[0].value ;
-
-            if(inputValue){
-                this.router.navigate("search/"+inputValue, {trigger: true});
+            if(e.target.children[0].value){
+                this.router.navigate("search/id="+e.target.children[0].value, {trigger: true});
             }
 
             return false;

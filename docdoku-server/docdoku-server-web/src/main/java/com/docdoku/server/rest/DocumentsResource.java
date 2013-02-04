@@ -30,6 +30,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
+import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -123,27 +124,13 @@ public class DocumentsResource {
         }
     }
 
-    private DocumentMasterDTO[] getDocumentsWithSearchQuery(String workspaceId, String query){
+    private DocumentMasterDTO[] getDocumentsWithSearchQuery(String workspaceId, String pQuery){
         try{
 
-            String pDocMId = query;
-            String pTitle = null;
-            String pVersion = null;
-            String pAuthor = null;
-            String pType = null;
-            Date pCreationDateFrom = null;
-            Date pCreationDateTo = null;
-            SearchQuery.AbstractAttributeQuery[] pAttributes = null;
-            String[] pTags = null;
-            String pContent = null;
-
-            System.out.println("#### SEARCH : "+query);
+            SearchQuery searchQuery = SearchQueryParser.parseQuery(workspaceId, pQuery);
 
             DocumentMaster[] docMs = com.docdoku.core.util.Tools.resetParentReferences(
-                documentService.searchDocumentMasters(
-                    new SearchQuery(workspaceId, pDocMId, pTitle, pVersion, pAuthor,
-                    pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent)
-                )
+                documentService.searchDocumentMasters(searchQuery)
             );
 
             //DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, query));
