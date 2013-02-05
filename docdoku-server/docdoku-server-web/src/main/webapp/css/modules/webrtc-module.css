@@ -37,17 +37,21 @@
     text-align: center;
 }
 #webrtc_module > #webrtc_module_header > h3#webrtc_module_controls {
+    font-size: 16px;
     position: absolute;
     color: white;
-    top: 4px;
+    top: 0;
     cursor: pointer;
     left: 15px;
 }
 #webrtc_module > #webrtc_module_header > h3#webrtc_module_controls > i{
     margin-right: 10px;
     float: right;
+    opacity: 0.6;
 }
-
+#webrtc_module > #webrtc_module_header > h3#webrtc_module_controls > i:hover{
+    opacity: 0.8;
+}
 #webrtc_module> #webrtc_module_body {
     text-align: center;
     height: 100%;

@@ -8,7 +8,7 @@ define(["i18n!localization/nls/chat-module-strings",
         template: _.template(
             "<div class='chat_session'>"
             +"<div class='chat_session_header'>"
-            +"<span class='chat_session_title'><i class='icon-envelope'></i>  <%= chatSession.remoteUser %> | <%= chatSession.context %></span>"
+            +"<span class='chat_session_title'><i class='icon-comments'></i>  <%= chatSession.remoteUser %> | <%= chatSession.context %></span>"
             +"<i class='icon-remove'></i>"
             +"<i class='icon-facetime-video'></i>"
             +"</div>"

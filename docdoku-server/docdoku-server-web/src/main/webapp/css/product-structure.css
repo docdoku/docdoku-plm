@@ -33,6 +33,7 @@
 }
 
 #nav_list_action_bar{
+    min-width: 190px;
     height: 35px;
     padding-top: 20px;
 }
@@ -140,9 +141,10 @@
     background:#7A99C1;
     background-image: -moz-linear-gradient(top, #7A99C1, #2C4361);
     background-image: -webkit-linear-gradient(top, #7A99C1, #2C4361);
-    bottom: -2px;
+    bottom: 0;
     position: absolute;
     width: 100%;
+    height: 65px;
 }
 
 #config_spec_container span{
@@ -150,6 +152,8 @@
     text-shadow: 0px 1px 1px black;
     font-weight: bold;
     margin-left: 15px;
+    margin-top: 7px;
+    float: left;
 }
 
 #context_selector_list{
@@ -158,9 +162,9 @@
     margin-left: 0px;
     padding-top: 0px;
     border: none;
-    margin-left: 10px;
-    margin-top: 10px;
-    width: 50%;
+    margin-left: 5%;
+    margin-top: 3px;
+    width: 90%;
 }
 
 /*

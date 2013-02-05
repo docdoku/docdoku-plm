@@ -107,8 +107,17 @@ define({
         "ITERATION_CHANGE":             "Iteration change",
         "STATE_CHANGE":                 "State change",
         "SEARCH":                       "Search",
+        "QUICK_SEARCH":                 "Quick search",
         "ADVANCED_SEARCH":              "Advanced search",
-        "ADVANCED":                     "Advanced"
+        "ADVANCED":                     "Advanced",
+        "REFERENCE_HELP":               "Document ID",
+        "TITLE_HELP":                   "Document title",
+        "TYPE_HELP":                    "Document type",
+        "VERSION_HELP":                 "Document version",
+        "AUTHOR_HELP":                  "Document author",
+        "TAGS_HELP":                    "Document tags, comma separated",
+        "CONTENT":                      "Content",
+        "CONTENT_HELP":                 "Document content"
 
     },
     "fr": true,
