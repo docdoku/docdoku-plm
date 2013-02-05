@@ -1,0 +1,53 @@
+.actions {
+  height: 48px;
+  .border-radius(0);
+  .box-shadow(0 0px 3px darken(@actionBarBackground, 35%));
+  margin: 0;
+  padding: 0 20px;
+  border: none;
+
+  > .btn {
+    height: 32px;
+    margin: 8px 8px 8px 8px;
+  }
+
+  .btn-group {
+    margin: 8px;
+  }
+  .btn-group .btn {
+    float: none;
+  }
+  .new-document .icon {
+    .plm-icon-action-document-new;
+  }
+  .new-template .icon {
+    .plm-icon-action-template-new;
+  }
+  .new-workflow .icon {
+    .plm-icon-action-workflow-new;
+  }
+  .delete {
+    display: none;
+    .icon {
+      .plm-icon-action-delete;
+    }
+  }
+  .checkout-group {
+    display: none;
+  }
+  .checkout .icon {
+    .plm-icon-action-checkout;
+  }
+  .undocheckout .icon {
+    .plm-icon-action-undocheckout;
+  }
+  .checkin .icon {
+    .plm-icon-action-checkin;
+  }
+  .tags {
+    display: none;
+  }
+  .tags .icon {
+    .plm-icon-action-tags;
+  }
+}

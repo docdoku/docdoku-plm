@@ -12,7 +12,7 @@ define(
 
             events : {
                 "click .icon-facetime-video" : "onVideoButtonClick",
-                "click .icon-leaf" : "onChatButtonClick",
+                "click .icon-comments" : "onChatButtonClick",
                 "click .icon-envelope" : "onMailButtonClick"
             },
 

@@ -22,10 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.Tag;
-import com.docdoku.core.document.TagKey;
+import com.docdoku.core.document.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -33,6 +30,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
+import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -44,10 +42,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -78,9 +73,12 @@ public class DocumentsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId) {
+    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query) {
 
-        if(tagId != null){
+        if(query != null){
+            return getDocumentsWithSearchQuery(workspaceId, query);
+        }
+        else if(tagId != null){
             return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId,tagId);
         }else {
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
@@ -111,6 +109,31 @@ public class DocumentsResource {
     private DocumentMasterDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(String workspaceId, String tagId){
         try{
             DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, tagId));
+            DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
+
+            for (int i = 0; i < docMs.length; i++) {
+                docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+            }
+
+            return docMsDTOs;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    private DocumentMasterDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery){
+        try{
+
+            SearchQuery searchQuery = SearchQueryParser.parseStringQuery(workspaceId, pStringQuery);
+
+            DocumentMaster[] docMs = com.docdoku.core.util.Tools.resetParentReferences(
+                documentService.searchDocumentMasters(searchQuery)
+            );
+
+            //DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, query));
             DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
 
             for (int i = 0; i < docMs.length; i++) {

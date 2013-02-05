@@ -1,37 +1,20 @@
-define(["views/bom_item_view"], function (BomItemView) {
+define(["views/bom_header_view", "views/bom_content_view"], function (BomHeaderView, BomContentView) {
 
     var BomView = Backbone.View.extend({
 
-        el: $("#bom_table_container"),
-
-        initialize: function() {
-            this.tbody = this.$('tbody');
+        render: function() {
+            this.bomContentView = new BomContentView().render();
+            this.bomHeaderView = new BomHeaderView().render();
+            this.listenTo(this.bomContentView, "itemSelectionChanged", this.bomHeaderView.onSelectionChange);
+            return this;
         },
 
-        update: function(component) {
-            this.tbody.empty();
-            if (component.isAssembly()) {
-                if (component.children.isEmpty()) {
-                    this.listenTo(component.children, 'reset', this.addAllBomItem);
-                    component.children.fetch();
-                } else {
-                    this.addAllBomItem(component.children);
-                }
-            } else {
-                this.addBomItem(component);
-            }
-        },
-
-        addAllBomItem: function(components) {
-            components.each(this.addBomItem, this);
-        },
-
-        addBomItem: function(componentItem) {
-            var bomItemView = new BomItemView({model: componentItem}).render();
-            this.tbody.append(bomItemView.el);
+        updateContent: function(component) {
+            this.bomContentView.update(component);
         }
 
     });
 
     return BomView;
+
 });

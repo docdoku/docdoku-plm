@@ -1,7 +1,7 @@
 <div class="modal new-document">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
-        <h3><span class="icon"></span>{{i18n.TAGS}}</h3>
+        <h3><span class="icon plm-icon-nav-tag"></span>{{i18n.TAGS}}</h3>
     </div>
     <div class="modal-body">
         <div id="alerts-{{view.cid}}"></div>
@@ -34,9 +34,9 @@
         </form>
     </div>
     <div class="modal-footer">
+        <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
         <button class="btn btn-primary" form="form-{{view.cid}}">
             {{i18n.SAVE}}
         </button>
-        <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
     </div>
 </div>

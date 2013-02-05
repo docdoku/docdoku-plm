@@ -33,10 +33,10 @@ define([
 				this.collection.parent = this.model;
 			}
 			this.events = _.extend(this.events, {
-				"click .header .actions .new-folder":	"actionNewFolder",
-				"click .header .actions .edit":			"actionEdit",
-				"click .header .actions .delete":		"actionDelete",
-				"mouseleave .header":					"hideActions"
+				"click .header .new-folder":	"actionNewFolder",
+				"click .header .edit":			"actionEdit",
+				"click .header .delete":		"actionDelete",
+				"mouseleave .header":			"hideActions"
 			});
 			this.events['click [data-target="#items-' + this.cid + '"]'] = "toggle";
 		},
@@ -57,8 +57,8 @@ define([
 			var isRoot = _.isUndefined(this.model);
 			if (isHome) this.$el.addClass("home");
 			if (isRoot || isHome) {
-				this.$el.find(".actions .delete").remove();
-				this.$el.find(".actions .edit").remove();
+				this.$(".delete").remove();
+				this.$(".edit").remove();
 			}
 
 			var FolderListView = require("views/folder_list"); // Circular dependency
@@ -117,7 +117,7 @@ define([
 			this.router.navigate("folders" + path, {trigger: false});
 		},
 		setActive: function () {
-			$("#nav .active").removeClass("active");
+			$("#document-menu .active").removeClass("active");
 			this.$el.find(".header").first().addClass("active");
 		},
 		toggle: function () {

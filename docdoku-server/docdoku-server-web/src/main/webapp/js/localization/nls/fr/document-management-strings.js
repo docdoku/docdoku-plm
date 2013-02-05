@@ -69,7 +69,7 @@ define({
     "TYPE":							"Type",
     "URL":							"URL",
     "_VALIDATION_PATTERN_DATE":		"\\d{4}-\\d{2}-\\d{2}",
-    "_VALIDATION_PATTERN_NUMBER":	"\\d+(\\.\\d+)?",
+    "_VALIDATION_PATTERN_NUMBER":	"^\\-?\\d+(\\.\\d+)?$",
     "_VALIDATION_PATTERN_TIME":		"\\d{2}:\\d{2}",
     "VALUE":						"Valeur",
     "VERSION":						"Version",
@@ -105,6 +105,18 @@ define({
     "SUBSCRIBE_ITERATION_CHANGE":   "S'abonner aux notifications de changement d'itération",
     "UNSUBSCRIBE_ITERATION_CHANGE": "Se désabonner des notifications de changement d'itération",
     "ITERATION_CHANGE":             "Changement d'iteration",
-    "STATE_CHANGE":                 "Changement d'état"
+    "STATE_CHANGE":                 "Changement d'état",
+    "SEARCH":                       "Rechercher",
+    "QUICK_SEARCH":                 "Recherche rapide",
+    "ADVANCED_SEARCH":              "Recherche avancée",
+    "ADVANCED":                     "Avancé",
+    "REFERENCE_HELP":               "ID du document",
+    "TITLE_HELP":                   "Titre du document",
+    "TYPE_HELP":                    "Type du document",
+    "VERSION_HELP":                 "Version du document",
+    "AUTHOR_HELP":                  "Auteur du document",
+    "TAGS_HELP":                    "Libéllés du document, séparés par une virgule",
+    "CONTENT":                      "Contenu",
+    "CONTENT_HELP":                 "Contenu du document"
 
 });

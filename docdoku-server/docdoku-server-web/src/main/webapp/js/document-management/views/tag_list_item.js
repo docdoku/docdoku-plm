@@ -16,19 +16,19 @@ define([
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events = _.extend(this.events, {
-				"click .actions .edit": "actionEdit",
-				"click .actions .delete": "actionDelete",
+				"click .edit": "actionEdit",
+				"click .delete": "actionDelete",
 				"mouseleave .header": "hideActions"
 			});
 
 		},
 		hideActions: function () {
 			// Prevents the actions menu to stay opened all the time
-			this.$el.find(".header .btn-group").first().removeClass("open");
+			this.$(".header .btn-group").first().removeClass("open");
 		},
 		setActive: function () {
-			$("#nav .active").removeClass("active");
-			this.$el.find(".nav-list-entry").first().addClass("active");
+			$("#document-menu .active").removeClass("active");
+			this.$(".nav-list-entry").first().addClass("active");
 		},
 		showContent: function () {
 			this.setActive();

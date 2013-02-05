@@ -1,0 +1,68 @@
+.attributes-edit {
+  .add {
+    margin-bottom: 8px;
+  }
+  .remove {
+    .close;
+    &:hover {
+      color: @red;
+      opacity: 1;
+    }
+  }
+  .list-item {
+    display: table;
+    > * {
+      display: table-cell;
+      vertical-align: middle;
+      > * {
+        width: auto;
+        margin: 4px;
+      }
+    }
+  }
+  .controls.boolean {
+    > input {
+      &:checked ~ .false {
+        display: none;
+      }
+      &:not(:checked) ~ .true {
+        display: none;
+      }
+    }
+  }
+}
+
+div.attribute-edit {
+  @leftWidth: 80px;
+  @inputWidth: 170px;
+  @booleanWidth: 80px;
+  display: inline-block;
+  select {
+    width: @leftWidth;
+  }
+
+  input {
+    width: @inputWidth;
+
+  }
+  input.boolean {
+    width: @booleanWidth;
+  }
+
+  div {
+    display: inline-block;
+  }
+  div.stroke {
+
+    color: red;
+
+    div.type {
+      width: @leftWidth;
+    }
+    div {
+      text-decoration: line-through;
+      width: @inputWidth;
+    }
+
+  }
+}

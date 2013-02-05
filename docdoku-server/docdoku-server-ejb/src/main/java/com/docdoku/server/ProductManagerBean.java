@@ -22,6 +22,10 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.ConfigSpec;
@@ -47,29 +51,11 @@ import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
-import com.docdoku.server.dao.BinaryResourceDAO;
-import com.docdoku.server.dao.ConfigurationItemDAO;
-import com.docdoku.server.dao.LayerDAO;
-import com.docdoku.server.dao.MarkerDAO;
-import com.docdoku.server.dao.PartIterationDAO;
-import com.docdoku.server.dao.PartMasterDAO;
-import com.docdoku.server.dao.PartRevisionDAO;
-import com.docdoku.server.dao.PartUsageLinkDAO;
-import com.docdoku.server.dao.WorkflowModelDAO;
-import com.docdoku.server.dao.WorkspaceDAO;
+import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -276,6 +262,90 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public PartRevision checkOutPart(PartRevisionKey pPartRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
+        PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
+        PartRevision partR = partRDAO.loadPartR(pPartRPK);
+        //Check access rights on partR
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pPartRPK.getPartMaster().getWorkspace());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        if (partR.isCheckedOut()) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException37");
+        }
+
+        PartIteration beforeLastPartIteration = partR.getLastIteration();
+
+        PartIteration newPartIteration = partR.createNextIteration(user);
+        //We persist the doc as a workaround for a bug which was introduced
+        //since glassfish 3 that set the DTYPE to null in the instance attribute table
+        em.persist(newPartIteration);
+        Date now = new Date();
+        newPartIteration.setCreationDate(now);
+        partR.setCheckOutUser(user);
+        partR.setCheckOutDate(now);
+
+        if (beforeLastPartIteration != null) {
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            for (BinaryResource sourceFile : beforeLastPartIteration.getAttachedFiles()) {
+                String fileName = sourceFile.getName();
+                long length = sourceFile.getContentLength();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/" + fileName;
+                BinaryResource targetFile = new BinaryResource(fullName, length);
+                binDAO.createBinaryResource(targetFile);
+                newPartIteration.addFile(targetFile);
+            }
+
+            List<PartUsageLink> components=new LinkedList<PartUsageLink>();
+            for (PartUsageLink usage : beforeLastPartIteration.getComponents()) {
+                PartUsageLink newUsage = usage.clone();
+                components.add(newUsage);
+            }
+            newPartIteration.setComponents(components);
+
+            for (Geometry sourceFile : beforeLastPartIteration.getGeometries()) {
+                String fileName = sourceFile.getName();
+                long length = sourceFile.getContentLength();
+                int quality = sourceFile.getQuality();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/" + fileName;
+                Geometry targetFile = new Geometry(quality, fullName, length);
+                binDAO.createBinaryResource(targetFile);
+                newPartIteration.addGeometry(targetFile);
+            }
+
+            BinaryResource nativeCADFile = beforeLastPartIteration.getNativeCADFile();
+            if (nativeCADFile!=null){
+                String fileName = nativeCADFile.getName();
+                long length = nativeCADFile.getContentLength();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/nativecad/" + fileName;
+                BinaryResource targetFile = new BinaryResource(fullName, length);
+                binDAO.createBinaryResource(targetFile);
+                newPartIteration.setNativeCADFile(targetFile);
+            }
+
+            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            for (DocumentLink link : beforeLastPartIteration.getLinkedDocuments()) {
+                DocumentLink newLink = link.clone();
+                links.add(newLink);
+            }
+            newPartIteration.setLinkedDocuments(links);
+
+            InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
+            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            for (InstanceAttribute attr : beforeLastPartIteration.getInstanceAttributes().values()) {
+                InstanceAttribute newAttr = attr.clone();
+                //newAttr.setDocument(newDoc);
+                //Workaround for the NULL DTYPE bug
+                attrDAO.createAttribute(newAttr);
+                attrs.put(newAttr.getName(), newAttr);
+            }
+            newPartIteration.setInstanceAttributes(attrs);
+        }
+
+        return partR;
+    }
+
+    @RolesAllowed("users")
+    @Override
     public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
@@ -283,9 +353,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         //Check access rights on docM
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pPartRPK.getPartMaster().getWorkspace());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin) {
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);

@@ -20,6 +20,14 @@ define(["models/part_iteration"], function (PartIteration) {
             mail: null
         },
 
+        isCheckout: function() {
+            return false;
+        },
+
+        isCheckoutByConnectedUser: function() {
+            return false;
+        },
+
         isAssembly: function() {
             return this.get('assembly');
         },

@@ -49,7 +49,7 @@ import javax.persistence.Table;
  */
 @Table(name="PARTSUBSTITUTELINK")
 @Entity
-public class PartSubstituteLink implements Serializable {
+public class PartSubstituteLink implements Serializable, Cloneable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -110,5 +110,25 @@ public class PartSubstituteLink implements Serializable {
 
     public void setCadInstances(List<CADInstance> cadInstances) {
         this.cadInstances = cadInstances;
+    }
+
+    @Override
+    public PartSubstituteLink clone() {
+        PartSubstituteLink clone = null;
+        try {
+            clone = (PartSubstituteLink) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+
+        //perform a deep copy
+        List<CADInstance> clonedCADInstances = new LinkedList<CADInstance>();
+        for (CADInstance cadInstance : cadInstances) {
+            CADInstance clonedCADInstance = cadInstance.clone();
+            clonedCADInstances.add(clonedCADInstance);
+        }
+        clone.cadInstances = clonedCADInstances;
+
+        return clone;
     }
 }

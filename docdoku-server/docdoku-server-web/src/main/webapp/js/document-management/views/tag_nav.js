@@ -59,7 +59,7 @@ define([
 		},
 		toggle: function () {
 			this.isOpen ? this.hide() : this.show();
-			$("#nav .active").removeClass("active");
+			$("#document-menu .active").removeClass("active");
 			this.$el.find(".header").first().addClass("active");
 			return false;
 		},

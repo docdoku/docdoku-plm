@@ -19,12 +19,12 @@
                 <h3>#{i18nManageUsersGroup['sidebar.title']}</h3>
                 <p>#{i18nManageUsersGroup['sidebar.text']}</p>         
             </div>
-
+            <h:link value="#{i18nManageUsersGroup['section.back']}" outcome="/admin/workspace/manageUsers.xhtml"/>
             <h2>#{i18nManageUsersGroup['main.title']}</h2>
             <h3>#{i18nManageUsersGroup['section.title1']} #{adminStateBean.selectedGroup} #{i18nManageUsersGroupGroup['section.title2']}</h3>               
               <h:form>
-                <fieldset>
-                    <h:dataTable id="usersTable" rendered="#{!empty adminStateBean.usersInGroup}" value="#{adminStateBean.usersInGroup}" var="user" cellpadding="10" cellspacing="10" border="0">
+                <fieldset id="admin">
+                    <h:dataTable id="usersTable" rendered="#{!empty adminStateBean.usersInGroup}" value="#{adminStateBean.usersInGroup}" var="user" cellpadding="10" cellspacing="10" border="0" class="table table-striped table-condensed">
                         <h:column>
                             <f:facet name="header">      
                             </f:facet>
@@ -43,10 +43,11 @@
                             <h:outputLink value="mailto:#{user.email}">#{user.email}</h:outputLink>                            
                         </h:column>      
                     </h:dataTable>
-                    <h:commandButton rendered="#{!empty adminStateBean.usersInGroup}" action="#{workspaceBean.removeUserFromGroup}" styleClass="btn" value="#{i18nManageUsersGroup['section.remove']}" alt="#{i18nManageUsersGroup['section.remove']}"/>                   
-                    <br/>
-                    <h:link value="#{i18nManageUsersGroup['section.back']}" outcome="/admin/workspace/manageUsers.xhtml"/> |
                     <h:link value="#{i18nManageUsersGroup['section.addUser']}" outcome="/admin/workspace/userAddingForm.xhtml"/>
+
+                    <div class="actions-btn">
+                        <h:commandButton rendered="#{!empty adminStateBean.usersInGroup}" action="#{workspaceBean.removeUserFromGroup}" styleClass="btn" value="#{i18nManageUsersGroup['section.remove']}" alt="#{i18nManageUsersGroup['section.remove']}"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>

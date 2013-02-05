@@ -38,7 +38,8 @@ define([
 
         actionEdit: function (evt) {
             var router = require("router").getInstance();
-            router.navigate("workflow-model-editor/"+this.model.id, {trigger: true});
+            var url = encodeURI("workflow-model-editor/"+this.model.id);
+            router.navigate(url, {trigger: true});
         }
 
 	});

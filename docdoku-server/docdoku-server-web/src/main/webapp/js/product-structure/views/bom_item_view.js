@@ -1,23 +1,44 @@
-define(function () {
+define(['text!templates/bom_item.html'], function(template) {
 
     var BomItemView = Backbone.View.extend({
 
         tagName: 'tr',
 
-        template: _.template("<td><%= number %></td>" +
-            "<td><%= name %></td>" +
-            "<td><%= version %></td>" +
-            "<td><%= iteration %></td>"+
-            "<td><%= amount %></td>"),
+        events: {
+            "click .component_number": "onComponentClicked"
+        },
+
+        template: Mustache.compile(template),
 
         render: function() {
             this.$el.html(this.template({
-                number: this.model.attributes.number,
+                number: this.model.getNumber(),
                 amount: this.model.getAmount(),
-                version: this.model.attributes.version,
-                iteration: this.model.attributes.iteration
+                version: this.model.getVersion(),
+                name: this.model.getName(),
+                iteration: this.model.getIteration()
             }));
+            this.$input = this.$("input");
             return this;
+        },
+
+        onComponentClicked: function() {
+            var self = this;
+            require(['views/component_modal_view'], function(ComponentModalView) {
+                var componentModalView = new ComponentModalView({
+                    model: self.model
+                });
+                $('body').append(componentModalView.render().el);
+                componentModalView.show();
+            });
+        },
+
+        isChecked: function() {
+            return this.$input[0].checked;
+        },
+
+        setSelectionState: function(state) {
+            this.$input[0].checked = state;
         }
 
     });

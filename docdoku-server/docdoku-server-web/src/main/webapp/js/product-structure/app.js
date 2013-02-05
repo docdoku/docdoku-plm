@@ -4,7 +4,7 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
 
     var AppView = Backbone.View.extend({
 
-        el: $("#workspace"),
+        el: $("#content"),
 
         events: {
             "click #scene_view_btn": "sceneMode",
@@ -12,7 +12,7 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
         },
 
         updateBom: function() {
-            this.bomView.update(this.partsTreeView.componentSelected);
+            this.bomView.updateContent(this.partsTreeView.componentSelected);
         },
 
         sceneMode: function() {
@@ -48,7 +48,8 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
 
             this.inBomMode = false;
 
-            this.bomView = new BomView();
+            //this.bomView = new BomContentView().render();
+            this.bomView = new BomView().render();
 
             sceneManager = new SceneManager();
 

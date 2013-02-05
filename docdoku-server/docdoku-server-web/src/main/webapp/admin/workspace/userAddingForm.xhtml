@@ -21,11 +21,12 @@
 
 
             <h:form>
-                <fieldset>
+                <fieldset id="admin">
                     <h:outputLabel value="#{i18nUserAddingForm['section.login']}*:" for="login"/>
                     <h:inputText required ="true" id="login" value="#{workspaceBean.loginToAdd}" size="20" maxlength="50"/>
-                    <br/>
-                    <h:commandButton styleClass="btn" action="#{workspaceBean.addUser}" value="#{i18nUserAddingForm['section.add']}" alt="#{i18nUserAddingForm['section.add']}"/>
+                    <div class="actions-btn">
+                        <h:commandButton styleClass="btn btn-primary" action="#{workspaceBean.addUser}" value="#{i18nUserAddingForm['section.add']}" alt="#{i18nUserAddingForm['section.add']}"/>
+                    </div>
                 </fieldset>
             </h:form>
         </ui:define>

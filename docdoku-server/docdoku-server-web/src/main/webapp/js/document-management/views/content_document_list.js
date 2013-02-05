@@ -2,8 +2,9 @@ define([
     "i18n!localization/nls/document-management-strings",
     "views/content",
     "views/document_list",
-    "views/document/documents_tags"
-], function(i18n, ContentView, DocumentListView, DocumentsTagsView) {
+    "views/document/documents_tags",
+    "views/advanced_search"
+], function(i18n, ContentView, DocumentListView, DocumentsTagsView, AdvancedSearchView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -13,9 +14,12 @@ define([
             this.events["click .actions .checkin"] = "actionCheckin";
             this.events["click .actions .delete"] = "actionDelete";
             this.events["click .actions .tags"] = "actionTags";
+            this.events["submit .actions #document-search-form"] = "onQuickSearch";
+            this.events["click .actions .advanced-search-button"] = "onAdvancedSearchButton";
         },
 
         rendered: function() {
+
             this.checkoutGroup = this.$(".actions .checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");
@@ -29,10 +33,13 @@ define([
                     collection: this.collection
                 })
             );
+
             this.collection.fetch();
 
             this.listenTo(this.listView, "selectionChange", this.onStateChange);
             this.listenTo(this.collection, "change", this.onStateChange);
+
+            this.$(".tabs").tabs();
         },
 
         onStateChange: function() {
@@ -135,6 +142,22 @@ define([
 
             return false;
 
+        },
+
+        onQuickSearch:function(e){
+
+            if(e.target.children[0].value){
+                this.router.navigate("search/id="+e.target.children[0].value, {trigger: true});
+            }
+
+            return false;
+        },
+
+        onAdvancedSearchButton:function(){
+            var advancedSearchView = new AdvancedSearchView();
+            $("body").append(advancedSearchView.render().el);
+            advancedSearchView.openModal();
+            advancedSearchView.setRouter(this.router);
         }
 
 

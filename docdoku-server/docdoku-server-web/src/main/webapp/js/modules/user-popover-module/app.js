@@ -23,7 +23,7 @@ define([
             + "<span class='user-status'></span>"
             + "<hr />"
             + "<span class='btn webRTC_invite_button'><i class='icon-facetime-video'></i> Video </span> "
-            + "<span class='btn new_chat_session_button'><i class='icon-leaf'></i> Chat </span> "
+            + "<span class='btn new_chat_session_button'><i class='icon-comments'></i> Chat </span> "
             + "<a class='btn mailto_button' href='' target='_blank'><i class='icon-envelope'></i> Mail </a>"
             + "</div>";
 
