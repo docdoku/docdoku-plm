@@ -69,7 +69,7 @@ define({
     "TYPE":							"Type",
     "URL":							"URL",
     "_VALIDATION_PATTERN_DATE":		"\\d{4}-\\d{2}-\\d{2}",
-    "_VALIDATION_PATTERN_NUMBER":	"\\d+(\\.\\d+)?",
+    "_VALIDATION_PATTERN_NUMBER":	"^\\-?\\d+(\\.\\d+)?$",
     "_VALIDATION_PATTERN_TIME":		"\\d{2}:\\d{2}",
     "VALUE":						"Valeur",
     "VERSION":						"Version",

@@ -81,7 +81,7 @@ public class DocumentMasterDAO {
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }else if(attr instanceof SearchQuery.NumberAttributeQuery){
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceNumberAttribute attr").append(i).append(" ");
-                    queryStr.append("WHERE attr").append(i).append(".numberValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("WHERE ABS(attr").append(i).append(".numberValue - :attrValue").append(i).append(" ) < 0.0001");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
                 }else if(attr instanceof SearchQuery.BooleanAttributeQuery){
