@@ -283,9 +283,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         //Check access rights on docM
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pPartRPK.getPartMaster().getWorkspace());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin) {
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
