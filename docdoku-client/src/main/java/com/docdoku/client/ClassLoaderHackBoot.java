@@ -33,7 +33,7 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 public class ClassLoaderHackBoot {
     

@@ -14,5 +14,6 @@
     <module>docdoku-common</module>
     <module>docdoku-client</module>
     <module>docdoku-server</module>
+      <module>docdoku-cli</module>
   </modules>
 </project>
