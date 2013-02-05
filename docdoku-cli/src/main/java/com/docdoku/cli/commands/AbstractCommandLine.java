@@ -23,6 +23,8 @@ package com.docdoku.cli.commands;
 
 import org.kohsuke.args4j.Option;
 
+import java.io.Console;
+
 public abstract class AbstractCommandLine implements CommandLine{
 
 
@@ -30,8 +32,29 @@ public abstract class AbstractCommandLine implements CommandLine{
     protected String password;
 
     @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="")
-    protected String login;
+    protected String user;
+
+    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="")
+    protected String user;
+
+    private void promptForUser(){
+        Console c = System.console();
+        user = c.readLine("Please enter user for 'docdokuplm.net': ");
+    }
+
+    private void promptForPassword(){
+        Console c = System.console();
+        user = c.readLine("Please enter password for '" + user +"@docdokuplm.net': ");
+    }
 
     @Override
-    public abstract void exec();
+    public void exec(){
+        if(user==null){
+            promptForUser();
+        }
+        if(password==null){
+            promptForPassword();
+        }
+        this.exec();
+    }
 }
