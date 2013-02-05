@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigSpec;
 import com.docdoku.core.product.ConfigurationItem;
@@ -168,6 +169,13 @@ public class ProductResource {
         PartIteration partI = null;
         if (partR != null) {
             partI = partR.getLastIteration();
+
+            User checkoutUser = pm.getLastRevision().getCheckOutUser();
+            if (checkoutUser != null) {
+                dto.setCheckOutUser(mapper.map(pm.getLastRevision().getCheckOutUser(), UserDTO.class));
+                dto.setCheckOutDate(pm.getLastRevision().getCheckOutDate());
+            }
+
         }
 
         if (partI != null) {
