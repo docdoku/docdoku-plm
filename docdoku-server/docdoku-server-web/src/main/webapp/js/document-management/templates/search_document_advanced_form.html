@@ -50,7 +50,7 @@
                         <label class="control-label" for="search-type">{{i18n.TYPE}}</label>
 
                         <div class="controls">
-                            <select id="search-type"></select>
+                            <select id="search-type"><option></option></select>
 
                             <p class="help-block">{{i18n.TYPE_HELP}}</p>
                         </div>
@@ -70,16 +70,25 @@
                         <label class="control-label" for="search-author">{{i18n.AUTHOR}}</label>
 
                         <div class="controls">
-                            <select id="search-author"></select>
+                            <select id="search-author"><option></option></select>
 
                             <p class="help-block">{{i18n.AUTHOR_HELP}}</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group creationDates">
+                        <label class="control-label" for="search-from">{{i18n.CREATION_DATE}}</label>
+                        <div class="controls">
+                            <input id="search-from" type="date"><br />
+                            <input id="search-to" type="date">
                         </div>
                     </div>
 
                 </div>
 
                 <div id="tab-search-attributes" class="tab-pane attributes">
-
+                    <a class="btn" id="search-add-attributes">{{i18n.APPEND}}</a>
+                    <div id="attributes-list" class="attributes-edit"></div>
                 </div>
 
                 <div id="tab-search-advanced" class="tab-pane advanced">

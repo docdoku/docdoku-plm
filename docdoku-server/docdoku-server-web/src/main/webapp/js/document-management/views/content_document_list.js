@@ -2,8 +2,9 @@ define([
     "i18n!localization/nls/document-management-strings",
     "views/content",
     "views/document_list",
-    "views/document/documents_tags"
-], function(i18n, ContentView, DocumentListView, DocumentsTagsView) {
+    "views/document/documents_tags",
+    "views/advanced_search"
+], function(i18n, ContentView, DocumentListView, DocumentsTagsView, AdvancedSearchView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -14,6 +15,7 @@ define([
             this.events["click .actions .delete"] = "actionDelete";
             this.events["click .actions .tags"] = "actionTags";
             this.events["submit .actions #document-search-form"] = "onQuickSearch";
+            this.events["click .actions .advanced-search-button"] = "onAdvancedSearchButton";
         },
 
         rendered: function() {
@@ -149,6 +151,13 @@ define([
             }
 
             return false;
+        },
+
+        onAdvancedSearchButton:function(){
+            var advancedSearchView = new AdvancedSearchView();
+            $("body").append(advancedSearchView.render().el);
+            advancedSearchView.openModal();
+            advancedSearchView.setRouter(this.router);
         }
 
 

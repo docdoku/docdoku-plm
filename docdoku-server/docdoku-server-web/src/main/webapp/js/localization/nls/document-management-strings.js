@@ -107,6 +107,7 @@ define({
         "ITERATION_CHANGE":             "Iteration change",
         "STATE_CHANGE":                 "State change",
         "SEARCH":                       "Search",
+        "QUICK_SEARCH":                 "Quick search",
         "ADVANCED_SEARCH":              "Advanced search",
         "ADVANCED":                     "Advanced",
         "REFERENCE_HELP":               "Document ID",

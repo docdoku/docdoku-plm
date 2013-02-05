@@ -20,7 +20,7 @@
     z-index: 200;
     bottom:0;
     right:0;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 #chat_module > .chat_session.chat_session_on_top{
     z-index: 201;
@@ -33,7 +33,7 @@
     padding:5px;
     color:white;
     cursor: move;
-    border-radius: 8px 8px 0 0;
+    border-radius: 6px 6px 0 0;
 }
 
 #chat_module > .chat_session > .chat_session_header > span.chat_session_title{
@@ -43,13 +43,13 @@
 }
 #chat_module > .chat_session > .chat_session_header > .icon-remove{
     position: absolute;
-    top: 3px;
+    top: 6px;
     right: 7px;
     cursor:pointer;
 }
 #chat_module > .chat_session > .chat_session_header > .icon-facetime-video{
     position: absolute;
-    top: 3px;
+    top: 6px;
     right: 27px;
     cursor:pointer;
 }
