@@ -56,7 +56,7 @@ import javax.persistence.Table;
     @NamedQuery(name="PartUsageLink.findByComponent",query="SELECT u FROM PartUsageLink u WHERE u.component.number LIKE :partNumber AND u.component.workspace.id = :workspaceId"),
     @NamedQuery(name="PartUsageLink.getPartOwner",query="SELECT p FROM PartIteration p WHERE :usage MEMBER OF p.components")
 })
-public class PartUsageLink implements Serializable {
+public class PartUsageLink implements Serializable, Cloneable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -159,5 +159,32 @@ public class PartUsageLink implements Serializable {
 
     public void setCadInstances(List<CADInstance> cadInstances) {
         this.cadInstances = cadInstances;
+    }
+
+    @Override
+    public PartUsageLink clone() {
+        PartUsageLink clone = null;
+        try {
+            clone = (PartUsageLink) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+
+        //perform a deep copy
+        List<PartSubstituteLink> clonedSubstitutes = new LinkedList<PartSubstituteLink>();
+        for (PartSubstituteLink substitute : substitutes) {
+            PartSubstituteLink clonedSubstitute = substitute.clone();
+            clonedSubstitutes.add(clonedSubstitute);
+        }
+        clone.substitutes = clonedSubstitutes;
+
+        List<CADInstance> clonedCADInstances = new LinkedList<CADInstance>();
+        for (CADInstance cadInstance : cadInstances) {
+            CADInstance clonedCADInstance = cadInstance.clone();
+            clonedCADInstances.add(clonedCADInstance);
+        }
+        clone.cadInstances = clonedCADInstances;
+
+        return clone;
     }
 }

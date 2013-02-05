@@ -206,7 +206,14 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         this.iterationNote = iterationNote;
     }
 
-    
+    public BinaryResource getNativeCADFile() {
+        return nativeCADFile;
+    }
+
+    public void setNativeCADFile(BinaryResource nativeCADFile) {
+        this.nativeCADFile = nativeCADFile;
+    }
+
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }

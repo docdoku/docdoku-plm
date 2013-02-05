@@ -177,7 +177,27 @@ public interface IProductManagerWS{
      * @throws CreationException
      */
     PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException;
-    
+
+    /**
+     * Checks out the supplied part revision to allow the operating user to modify it.
+     *
+     * @param partRPK
+     * The id of the part revision to check out
+     *
+     * @return
+     * The part revision which is now in the checkout state
+     *
+     * @throws UserNotFoundException
+     * @throws AccessRightException
+     * @throws WorkspaceNotFoundException
+     * @throws PartRevisionNotFoundException
+     * @throws NotAllowedException
+     * @throws FileAlreadyExistsException
+     * @throws CreationException
+     */
+    PartRevision checkOutPart(PartRevisionKey partRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException;
+
+
     /**
      * Undoes checkout the given part revision. As a consequence its current
      * working copy, represented by its latest
@@ -185,7 +205,7 @@ public interface IProductManagerWS{
      * Thus, some modifications may be lost.
      * 
      * @param partRPK
-     * The id of the part revision to undo checkout
+     * The id of the part revision to undo check out
      * 
      * @return
      * The part revision which is now in the checkin state

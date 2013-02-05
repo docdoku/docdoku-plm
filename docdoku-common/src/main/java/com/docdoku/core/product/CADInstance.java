@@ -41,7 +41,7 @@ import javax.persistence.Table;
  */
 @Table(name="CADINSTANCE")
 @Entity
-public class CADInstance implements Serializable{
+public class CADInstance implements Serializable, Cloneable {
 
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -162,6 +162,16 @@ public class CADInstance implements Serializable{
     public void setId(int id) {
         this.id = id;
     }
-    
+
+    @Override
+    public CADInstance clone() {
+        CADInstance clone = null;
+        try {
+            clone = (CADInstance) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        return clone;
+    }
 
 }
