@@ -1,6 +1,6 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "common/date",
+    "common-objects/utils/date",
     "views/components/modal",
     "views/template_new_attributes",
     "views/file_list",

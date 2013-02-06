@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +43,8 @@ public class ComponentDTO implements Serializable{
     private List<ComponentDTO> components;
     private int amount;
     private List<InstanceAttributeDTO> attributes;
+    private UserDTO checkOutUser;
+    private Date checkOutDate;
 
     public ComponentDTO() {}
 
@@ -152,4 +155,21 @@ public class ComponentDTO implements Serializable{
     public void setAmount(int amount) {
         this.amount = amount;
     }
+
+    public UserDTO getCheckOutUser() {
+        return checkOutUser;
+    }
+
+    public void setCheckOutUser(UserDTO checkOutUser) {
+        this.checkOutUser = checkOutUser;
+    }
+
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+
 }

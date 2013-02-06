@@ -3,7 +3,7 @@ define([
 	"views/document/document_attribute_list_item",
 	"text!templates/partials/document_attribute_list_item.html",
 	"text!templates/document/document_attribute_list_item_date.html",
-    "common/date"
+    "common-objects/utils/date"
 ], function (
 	i18n,
 	DocumentAttributeListItemView,

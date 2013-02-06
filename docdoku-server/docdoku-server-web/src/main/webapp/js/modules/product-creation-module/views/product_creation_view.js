@@ -67,7 +67,7 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
         },
 
         onError: function() {
-            alert(i18.CREATION_ERROR);
+            alert(i18n.CREATION_ERROR);
         }
 
     });
