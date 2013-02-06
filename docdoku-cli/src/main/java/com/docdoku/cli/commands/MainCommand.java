@@ -84,7 +84,10 @@ public class MainCommand {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+        }catch (Exception e) {
+            System.err.println(e.getMessage());
         }
+
     }
 
     private static void printUsage() {
