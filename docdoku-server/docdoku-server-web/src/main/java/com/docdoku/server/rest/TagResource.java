@@ -19,11 +19,9 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import com.docdoku.server.rest.dto.TagDTO;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;

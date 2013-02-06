@@ -22,7 +22,7 @@ define([
         },
 
         setActive: function () {
-            $("#nav .active").removeClass("active");
+            $("#document-menu .active").removeClass("active");
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 

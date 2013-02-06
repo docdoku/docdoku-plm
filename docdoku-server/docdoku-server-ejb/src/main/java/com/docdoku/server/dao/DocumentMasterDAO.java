@@ -249,4 +249,10 @@ public class DocumentMasterDAO {
 
         em.remove(pDocM);
     }
+
+    public List<DocumentMaster> findDocWithWorkflow(String pWorkspaceId) {
+        TypedQuery<DocumentMaster> query = em.createQuery("SELECT DISTINCT m FROM DocumentMaster m WHERE m.workspace.id = :workspaceId AND m.workflow IS NOT NULL", DocumentMaster.class);
+        query.setParameter("workspaceId",pWorkspaceId);
+        return query.getResultList();
+    }
 }

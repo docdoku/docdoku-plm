@@ -6,6 +6,7 @@ define([
 	"views/workflow_nav",
 	"views/template_nav",
 	"views/checkedout_nav",
+	"views/task_nav",
     "views/workflow_model_editor"
 ],
 function (
@@ -16,6 +17,7 @@ function (
 	WorkflowNavView,
 	TemplateNavView,
 	CheckedoutNavView,
+	TaskNavView,
     WorkflowModelEditorView
 ) {
 	var Router = Backbone.Router.extend({
@@ -88,6 +90,7 @@ function (
 		},
 		tasks: function() {
 			this.defaults();
+            TaskNavView.getInstance().showContent();
 		},
         search: function(query) {
             this.defaults();
@@ -100,6 +103,7 @@ function (
 			TemplateNavView.getInstance();
 			CheckedoutNavView.getInstance();
             SearchNavView.getInstance();
+            TaskNavView.getInstance();
 		}
 	});
 	Router = singletonDecorator(Router);

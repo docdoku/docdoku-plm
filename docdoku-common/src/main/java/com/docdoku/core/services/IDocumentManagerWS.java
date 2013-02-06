@@ -136,4 +136,7 @@ public interface IDocumentManagerWS {
 
     boolean isUserIterationChangeEventSubscribedForGivenDocument(String workspaceId, DocumentMaster docM) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException ;
 
+    DocumentMaster[] getDocumentMastersWithWorkflow(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+
+
 }
