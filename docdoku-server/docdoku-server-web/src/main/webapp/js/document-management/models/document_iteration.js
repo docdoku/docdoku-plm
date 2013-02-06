@@ -1,6 +1,6 @@
 define([
 	"i18n!localization/nls/document-management-strings",
-	"common/date",
+    "common-objects/utils/date",
     "collections/attribute_collection",
     "collections/attached_file_collection"
 ], function (

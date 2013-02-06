@@ -1,6 +1,6 @@
 define([
 	"i18n!localization/nls/document-management-strings",
-	"common/date",
+	"common-objects/utils/date",
 	"views/checkbox_list_item",
 	"views/template_edit",
 	"text!templates/template_list_item.html"

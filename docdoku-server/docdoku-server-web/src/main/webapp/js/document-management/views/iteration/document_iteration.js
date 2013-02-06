@@ -6,7 +6,7 @@ define([
     "views/document_tag",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
-    "common/date"
+    "common-objects/utils/date"
 ], function (ModalView, FileListView, DocumentAttributesView, Tag, TagView, template, i18n, date) {
 
     var IterationView = ModalView.extend({
