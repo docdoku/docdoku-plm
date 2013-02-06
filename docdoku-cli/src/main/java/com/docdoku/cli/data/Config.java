@@ -18,10 +18,18 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.data;
 
 
-public interface CommandLine {
+import java.net.URL;
 
-    public void exec() throws Exception;
+public class Config {
+
+
+    private Config() {
+    }
+
+
+
+
 }

@@ -21,12 +21,21 @@
 package com.docdoku.cli.commands;
 
 
+import com.docdoku.cli.data.Config;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public abstract class AbstractCommandLine implements CommandLine{
 
+
+    @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="Port number to use for connection; default is 80")
+    protected int port=80;
+
+    @Option(name="-h", aliases = "--host", metaVar = "<host>", usage="Host of the DocDokuPLM server to connect; default is docdokuplm.net")
+    protected String host="docdokuplm.net";
 
     @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="User for login")
     protected String password;
@@ -39,16 +48,17 @@ public abstract class AbstractCommandLine implements CommandLine{
 
     private void promptForUser(){
         Console c = System.console();
-        user = c.readLine("Please enter user for 'docdokuplm.net': ");
+        user = c.readLine("Please enter user for '" + host + "': ");
     }
 
     private void promptForPassword(){
         Console c = System.console();
-        password = new String(c.readPassword("Please enter password for '" + user +"@docdokuplm.net': "));
+        password = new String(c.readPassword("Please enter password for '" + user +"@" + host +"': "));
     }
 
     @Override
-    public void exec(){
+    public void exec() throws Exception {
+
         if(user==null){
             promptForUser();
         }
@@ -58,5 +68,8 @@ public abstract class AbstractCommandLine implements CommandLine{
         execImpl();
     }
 
-    public abstract void  execImpl();
+    public URL getServerURL() throws MalformedURLException {
+        return new URL("http",host,port,"");
+    }
+    public abstract void  execImpl() throws Exception;
 }
