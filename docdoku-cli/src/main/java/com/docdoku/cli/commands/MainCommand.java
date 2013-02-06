@@ -80,12 +80,11 @@ public class MainCommand {
         CmdLineParser parser = new CmdLineParser(cl);
         try {
             parser.parseArgument(args);
+            cl.exec();
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
         }
-        cl.exec();
-
     }
 
     private static void printUsage() {

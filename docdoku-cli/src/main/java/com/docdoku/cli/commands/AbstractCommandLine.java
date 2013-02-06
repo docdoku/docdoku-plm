@@ -28,14 +28,14 @@ import java.io.Console;
 public abstract class AbstractCommandLine implements CommandLine{
 
 
-    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="")
+    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="User for login")
     protected String password;
 
-    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="")
+    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="Password to log in")
     protected String user;
 
-    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="")
-    protected String user;
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="Workspace on which operations occur")
+    protected String workspace;
 
     private void promptForUser(){
         Console c = System.console();
@@ -44,7 +44,7 @@ public abstract class AbstractCommandLine implements CommandLine{
 
     private void promptForPassword(){
         Console c = System.console();
-        user = c.readLine("Please enter password for '" + user +"@docdokuplm.net': ");
+        password = new String(c.readPassword("Please enter password for '" + user +"@docdokuplm.net': "));
     }
 
     @Override
@@ -55,6 +55,8 @@ public abstract class AbstractCommandLine implements CommandLine{
         if(password==null){
             promptForPassword();
         }
-        this.exec();
+        execImpl();
     }
+
+    public abstract void  execImpl();
 }

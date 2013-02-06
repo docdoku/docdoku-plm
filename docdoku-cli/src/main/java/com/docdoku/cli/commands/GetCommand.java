@@ -44,7 +44,7 @@ public class GetCommand extends AbstractCommandLine{
     @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
     private File path = new File(System.getProperty("user.dir"));
 
-    public void exec() {
-        System.out.println("-r:" + revision + " -i:" + iteration + " partNumber:" + partNumber + " path:" + path);
+    public void execImpl() {
+        System.out.println("-r:" + revision + " -i:" + iteration + " partNumber:" + partNumber + " path:" + path + " workspace:"+workspace + " " + user + ":" + password);
     }
 }
