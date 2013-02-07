@@ -175,12 +175,40 @@ a:hover {
 }
 
 #container {
-    .border-radius(5px);
-    margin-top: 20px;
-    height: 100%;
-    width: 100%;
-    border: 1px #94ADCC dashed;
+  .border-radius(5px);
+  margin-top: 20px;
+  height: 100%;
+  width: 100%;
+  border: 1px #94ADCC dashed;
+  position: relative;
 }
+#blocker {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+}
+#instructions {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-orient: horizontal;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  box-pack: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  box-align: center;
+  color: #ffffff;
+  text-align: center;
+  cursor: pointer;
+}
+
 #product_nav_list_container{
     margin-top: 10px;
     height: 80%;
