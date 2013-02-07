@@ -305,9 +305,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     @Override
-    public DocumentMaster[] getDocumentMastersWithWorkflow(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster[] getDocumentMastersWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocWithWorkflow(pWorkspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocWithAssignedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
         return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 

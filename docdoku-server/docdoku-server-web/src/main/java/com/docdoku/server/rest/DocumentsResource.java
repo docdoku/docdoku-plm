@@ -137,39 +137,19 @@ public class DocumentsResource {
             SearchQuery searchQuery = new SearchQuery();
             searchQuery.setWorkspaceId(workspaceId);
 
-            // TODO : write named query which give the same result as the following loop
-            DocumentMaster[] docMs = documentService.getDocumentMastersWithWorkflow(workspaceId);
+            DocumentMaster[] docMs = documentService.getDocumentMastersWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
 
             ArrayList<DocumentMasterDTO> docMsDTOs = new ArrayList<DocumentMasterDTO>();
 
             for (int i = 0; i < docMs.length; i++) {
 
-                Activity currentActivity = docMs[i].getWorkflow().getCurrentActivity();
+                DocumentMasterDTO docDTO = mapper.map(docMs[i], DocumentMasterDTO.class);
 
-                if (currentActivity != null) {
+                docDTO = Tools.createLightDocumentMasterDTO(docDTO);
+                docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
+                docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
 
-                    boolean callerHasTaskInCurrentDocument = false;
-
-                    for (Task task : currentActivity.getTasks()) {
-                        if(assignedUserLogin.equals(task.getWorker().getLogin())){
-                            callerHasTaskInCurrentDocument = true;
-                            break;
-                        }
-                    }
-
-                    if (callerHasTaskInCurrentDocument) {
-
-                        DocumentMasterDTO docDTO = mapper.map(docMs[i], DocumentMasterDTO.class);
-
-                        docDTO = Tools.createLightDocumentMasterDTO(docDTO);
-                        docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
-                        docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
-
-                        docMsDTOs.add(docDTO);
-
-                    }
-
-                }
+                docMsDTOs.add(docDTO);
 
             }
 
