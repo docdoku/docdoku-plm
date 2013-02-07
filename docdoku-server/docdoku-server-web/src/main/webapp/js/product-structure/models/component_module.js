@@ -1,4 +1,4 @@
-define(["models/part_iteration"], function (PartIteration) {
+define(["models/part_iteration", "common-objects/utils/date"], function (PartIteration, date) {
 
     var ComponentModule = {};
 
@@ -17,15 +17,36 @@ define(["models/part_iteration"], function (PartIteration) {
             amount: 0,
             components: [],
             assembly: false,
-            mail: null
+            mail: null,
+            checkOutDate: null,
+            checkOutUser: null
         },
 
         isCheckout: function() {
-            return false;
+            return !_.isNull(this.attributes.checkOutDate);
+        },
+
+        getCheckoutUser: function() {
+            return this.get('checkOutUser');
+        },
+
+        getCheckoutDate: function() {
+            return this.get('checkOutDate');
+        },
+
+        getFormattedCheckoutDate: function() {
+            if (this.isCheckout()) {
+                return date.formatTimestamp(
+                    "dd-mm-yyyy HH:MM:ss",
+                    this.getCheckoutDate()
+                );
+            } else {
+                return false;
+            }
         },
 
         isCheckoutByConnectedUser: function() {
-            return false;
+            return this.isCheckout() ? this.getCheckoutUser().login == APP_CONFIG.login : false;
         },
 
         isAssembly: function() {
@@ -81,7 +102,7 @@ define(["models/part_iteration"], function (PartIteration) {
         },
 
         getIteration: function() {
-            return this.get('iteration');
+            return this.get('iteration') != 0 ?  this.get('iteration') : null;
         },
 
         isStandardPart: function() {
@@ -131,6 +152,43 @@ define(["models/part_iteration"], function (PartIteration) {
                     }
                 });
             });
+        },
+
+        getPartKeyUrl: function() {
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber() + "-" + this.getVersion();
+        },
+
+        checkout: function(callback) {
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.getPartKeyUrl() + "/checkout",
+                success: function() {
+                    callback();
+                }
+            });
+        },
+
+        undocheckout: function(callback) {
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.getPartKeyUrl() + "/undocheckout",
+                success: function() {
+                    callback();
+                }
+            });
+        },
+
+        checkin: function(callback) {
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.getPartKeyUrl() + "/checkin",
+                success: function() {
+                    callback();
+                }
+            });
         }
 
     });
@@ -149,11 +207,13 @@ define(["models/part_iteration"], function (PartIteration) {
 
         url: function() {
             if (this.isRoot) {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "?configSpec=latest&depth=0";
+                return this.urlBase + "?configSpec=latest&depth=0";
             } else {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "?configSpec=latest&partUsageLink=" + this.parentUsageLinkId + "&depth=1";
+                return this.urlBase + "?configSpec=latest&partUsageLink=" + this.parentUsageLinkId + "&depth=1";
             }
         },
+
+        urlBase: "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId,
 
         parse: function(response) {
             if (this.isRoot) {

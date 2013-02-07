@@ -52,13 +52,13 @@
             <div class="control-group">
                 <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
                 <div class="controls">
-                    <span class="help-inline"><a class="checkout-user-popover">{{component.checkOutUser.name}}</a></span>
+                    <span class="help-inline"><a class="checkout-user-popover">{{#component.getCheckoutUser}}{{name}}{{/component.getCheckoutUser}}</a></span>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">{{i18n.CHECKOUT_DATE}}</label>
                 <div class="controls">
-                    <span class="help-inline">{{component.checkOutDate}}</span>
+                    <span class="help-inline">{{component.getFormattedCheckoutDate}}</span>
                 </div>
             </div>
             <div class="control-group">
@@ -72,14 +72,14 @@
     </div>
 
     <div class="modal-footer">
-        {{#editMode}}
+        {{#component.isCheckoutByConnectedUser}}
         <button id="save-component" class="btn btn-primary" form="form">
             {{i18n.SAVE}}
         </button>
         <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
-        {{/editMode}}
-        {{^editMode}}
+        {{/component.isCheckoutByConnectedUser}}
+        {{^component.isCheckoutByConnectedUser}}
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
-        {{/editMode}}
+        {{/component.isCheckoutByConnectedUser}}
     </div>
 </div>
