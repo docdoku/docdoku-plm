@@ -1,6 +1,15 @@
 <td><input type="checkbox"/></td>
-<td class="component_number">{{number}}</td>
-<td>{{name}}</td>
-<td>{{version}}</td>
-<td>{{iteration}}</td>
-<td>{{amount}}</td>
+<td class="component_number">
+    {{#isCheckout}}
+        {{#isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/isCheckoutByConnectedUser}}
+        {{^isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/isCheckoutByConnectedUser}}
+    {{/isCheckout}}
+    {{^isCheckout}}
+        <i class="icon-eye-open"></i>
+    {{/isCheckout}}
+    {{getNumber}}
+</td>
+<td>{{getName}}</td>
+<td>{{getVersion}}</td>
+<td>{{#getIteration}}{{getIteration}}{{/getIteration}}{{^getIteration}}-{{/getIteration}}</td>
+<td>{{getAmount}}</td>

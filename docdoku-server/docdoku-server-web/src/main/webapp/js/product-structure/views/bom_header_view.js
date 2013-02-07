@@ -4,6 +4,24 @@ define(["text!templates/bom_header.html"], function(template) {
 
         el: $('#top_controls_container'),
 
+        events: {
+            "click .checkout": "actionCheckout",
+            "click .undocheckout": "actionUndocheckout",
+            "click .checkin": "actionCheckin"
+        },
+
+        actionCheckout: function() {
+            this.trigger('actionCheckout');
+        },
+
+        actionUndocheckout: function() {
+            this.trigger('actionUndocheckout');
+        },
+
+        actionCheckin: function() {
+            this.trigger('actionCheckin');
+        },
+
         initialize: function() {
             _.bindAll(this);
         },
