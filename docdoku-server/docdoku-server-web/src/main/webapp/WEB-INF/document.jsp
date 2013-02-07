@@ -111,7 +111,7 @@
                     </c:forEach>
                 </c:if>
                 <c:if test="${docm.lastIteration.attachedFiles.size()==0}">
-                    <div class="rien"><p><fmt:message key="section2.noFile"/></p></div>
+                    <div class="empty"><p><fmt:message key="section2.noFile"/></p></div>
                 </c:if>
             </div>
             <div id="link" class="well">
@@ -123,7 +123,7 @@
                         </c:forEach>
                     </c:if>
                     <c:if test="${docm.lastIteration.linkedDocuments.size()==0}">
-                        <div class="rien"><p><fmt:message key="section2.noLink"/></p></div>
+                        <div class="empty"><p><fmt:message key="section2.noLink"/></p></div>
                     </c:if>
                 </p>
             </div>
@@ -134,8 +134,8 @@
                     <table class="table table-striped table-condensed">
                         <thead>
                         <tr>
-                            <th>Nom</th>
-                            <th>Valeur</th>
+                            <th><fmt:message key="section2.name"/></th>
+                            <th><fmt:message key="section2.value"/></th>
                         </tr>
                         </thead>
                         <c:forEach var="item" items="${attr}">
@@ -167,7 +167,7 @@
                     </table>
                 </c:if>
                 <c:if test="${attr.size()==0}">
-                    <div class="rien"><p><fmt:message key="section2.noAttribut"/></p></div>
+                    <div class="empty"><p><fmt:message key="section2.noAttribut"/></p></div>
                 </c:if>
                 </p>
             </div>

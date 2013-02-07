@@ -26,10 +26,8 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
@@ -37,11 +35,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServlet;
-
-import com.docdoku.core.meta.InstanceTextAttribute;
-
-import com.docdoku.core.*;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 public class DocumentServlet extends HttpServlet {
     
@@ -69,15 +62,18 @@ public class DocumentServlet extends HttpServlet {
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
             pRequest.setAttribute("docm", docM);
 
-            List<DocumentIteration> di =  docM.getDocumentIterations();
+            /*DocumentIteration doc =  docM.getLastIteration();
+            pRequest.setAttribute("attr",  doc.getInstanceAttributes().values());*/
 
-            Set<InstanceAttribute> attr=new HashSet<InstanceAttribute>();
+            DocumentIteration di =  docM.getLastIteration();
 
-            for (int i=0 ; i<di.size() ; i++)
-                for (InstanceAttribute ia : di.get(i).getInstanceAttributes().values())
-                    attr.add(ia);
+            List<InstanceAttribute> attr=new ArrayList<>();
+
+            for (InstanceAttribute ia : di.getInstanceAttributes().values())
+                attr.add(ia);
 
             pRequest.setAttribute("attr", attr);
+            //pRequest.setAttribute("attr", di.getInstanceAttributes().values());
 
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
 

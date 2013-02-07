@@ -35,9 +35,9 @@
 </script>
 
 <script type="text/javascript">
-    <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. ->
+    <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. -->
     var swfVersionStr = "9.0.124";
-    <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. ->
+    <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
     var xiSwfUrlStr = "${expressInstallSwf}";
     var flashvars = {
         SwfFile : escape("${filePath}?type=swf"),

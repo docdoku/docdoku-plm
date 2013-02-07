@@ -1,4 +1,4 @@
-function switchMenu(obj, btn, context, path) {
+function switchMenu(obj, btn, context) {
     var el = document.getElementById(obj);
                 
     if ( el.style.display != 'none' ) {
