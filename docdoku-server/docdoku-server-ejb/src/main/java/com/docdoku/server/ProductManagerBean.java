@@ -22,10 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.ConfigSpec;
@@ -131,8 +128,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
         }
 
-        em.detach(rootUsageLink.getComponent());
-
         if (configSpec instanceof LatestConfigSpec) {
             if (depth == null) {
                 filterLatestConfigSpec(rootUsageLink.getComponent(), -1);
@@ -151,6 +146,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partI = partR.getLastIteration();
         }
 
+        em.detach(root);
         if (root.getPartRevisions().size() > 1) {
             root.getPartRevisions().retainAll(Collections.singleton(partR));
         }
@@ -248,6 +244,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             for (BinaryResource file : partIte.getAttachedFiles()) {
                 dataManager.delData(file);
+            }
+
+            BinaryResource nativeCAD = partIte.getNativeCADFile();
+            if (nativeCAD != null) {
+                dataManager.delData(nativeCAD);
             }
 
             PartIterationDAO partIDAO = new PartIterationDAO(em);
