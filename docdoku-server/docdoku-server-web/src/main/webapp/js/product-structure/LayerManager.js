@@ -20,7 +20,7 @@ define([
         this.container = container;
         this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
-        this.domEvent = new THREEx.DomEvent(camera, container);
+        this.domEvent = new THREEx.DomEvent(this.camera, container);
         this.markerScale = new THREE.Vector3(1,1,1);
     };
 
