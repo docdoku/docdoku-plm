@@ -1,4 +1,4 @@
-define(["models/part_iteration", "common-objects/utils/date"], function (PartIteration, date) {
+define(["models/part_iteration", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIteration, date, i18n) {
 
     var ComponentModule = {};
 
@@ -37,7 +37,7 @@ define(["models/part_iteration", "common-objects/utils/date"], function (PartIte
         getFormattedCheckoutDate: function() {
             if (this.isCheckout()) {
                 return date.formatTimestamp(
-                    "dd-mm-yyyy HH:MM:ss",
+                    i18n._DATE_FORMAT,
                     this.getCheckoutDate()
                 );
             } else {
