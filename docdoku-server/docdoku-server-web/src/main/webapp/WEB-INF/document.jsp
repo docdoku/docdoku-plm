@@ -12,7 +12,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/switchPlayer.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/swfobject/swfobject.js"></script>
 
-    <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/document/style.less"/>
+    <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/perma-link/style.less"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/less-1.3.3.min.js"></script>
 
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery-1.8.2.min.js"></script>
@@ -42,7 +42,7 @@
                     case "iteration":
                         $(".i").css("backgroundColor", "#213251");
                         break;
-                    case "attribut":
+                    case "attribute":
                         $(".a").css("backgroundColor", "#213251");
                         break;
                     case "file":
@@ -71,7 +71,7 @@
                         <li><a><b>${docm}</b></a></li>
                         <li><a href="#general" style="color: white ; background-color: #213251" class="g"><fmt:message key="section1.title"/></a></li>
                         <li><a href="#iteration" style="color: white" class="i"><fmt:message key="section2.title"/></a></li>
-                        <li><a href="#attribut" style="color: white" class="a"><fmt:message key="section2.attributs"/></a></li>
+                        <li><a href="#attribute" style="color: white" class="a"><fmt:message key="section2.attributes"/></a></li>
                         <li><a href="#file" style="color: white" class="f"><fmt:message key="sidebar.title1"/></a></li>
                         <li><a href="#link" style="color: white" class="l"><fmt:message key="sidebar.title2"/></a></li>
                     </ul>
@@ -127,8 +127,8 @@
                     </c:if>
                 </p>
             </div>
-            <div id="attribut" class="well">
-                <center><h3><fmt:message key="section2.attributs"/></h3></center><br />
+            <div id="attribute" class="well">
+                <center><h3><fmt:message key="section2.attributes"/></h3></center><br />
                 <p>
                 <c:if test="${attr.size()!=0}">
                     <table class="table table-striped table-condensed">
@@ -167,7 +167,7 @@
                     </table>
                 </c:if>
                 <c:if test="${attr.size()==0}">
-                    <div class="empty"><p><fmt:message key="section2.noAttribut"/></p></div>
+                    <div class="empty"><p><fmt:message key="section2.noAttribute"/></p></div>
                 </c:if>
                 </p>
             </div>

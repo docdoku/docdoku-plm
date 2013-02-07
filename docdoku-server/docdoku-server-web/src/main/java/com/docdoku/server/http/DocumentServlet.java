@@ -27,7 +27,6 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
@@ -62,18 +61,8 @@ public class DocumentServlet extends HttpServlet {
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
             pRequest.setAttribute("docm", docM);
 
-            /*DocumentIteration doc =  docM.getLastIteration();
-            pRequest.setAttribute("attr",  doc.getInstanceAttributes().values());*/
-
-            DocumentIteration di =  docM.getLastIteration();
-
-            List<InstanceAttribute> attr=new ArrayList<>();
-
-            for (InstanceAttribute ia : di.getInstanceAttributes().values())
-                attr.add(ia);
-
-            pRequest.setAttribute("attr", attr);
-            //pRequest.setAttribute("attr", di.getInstanceAttributes().values());
+            DocumentIteration doc =  docM.getLastIteration();
+            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
 
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
 
