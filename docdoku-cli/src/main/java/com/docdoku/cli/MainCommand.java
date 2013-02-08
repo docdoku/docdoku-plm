@@ -18,16 +18,12 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli;
 
+import com.docdoku.cli.commands.*;
 import com.docdoku.core.common.Version;
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 

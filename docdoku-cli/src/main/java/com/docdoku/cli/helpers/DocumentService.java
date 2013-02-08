@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.helpers;
 
 
 import javax.xml.namespace.QName;
@@ -33,33 +33,33 @@ import java.util.logging.Logger;
  *
  * @author Florent Garin
  */
-@WebServiceClient(name = "WorkflowService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/workflow?wsdl")
-public class WorkflowService extends Service
+@WebServiceClient(name = "DocumentService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/document?wsdl")
+public class DocumentService extends Service
 {
 
-    private final static URL WORKFLOWSERVICE_WSDL_LOCATION;
-    private final static QName WORKFLOWSERVICE_QNAME = new QName("http://server.docdoku.com/", "WorkflowManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(WorkflowService.class.getName());
+    private final static URL DOCUMENTSERVICE_WSDL_LOCATION;
+    private final static QName DOCUMENTSERVICE_QNAME = new QName("http://server.docdoku.com/", "DocumentManagerBeanService");
+    private final static Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = WorkflowService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/workflow?wsdl");
+            baseUrl = DocumentService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/document?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/workflow?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/document?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        WORKFLOWSERVICE_WSDL_LOCATION = url;
+        DOCUMENTSERVICE_WSDL_LOCATION = url;
     }
 
-    public WorkflowService(URL wsdlLocation, QName serviceName) {
+    public DocumentService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public WorkflowService() {
-        super(WORKFLOWSERVICE_WSDL_LOCATION, WORKFLOWSERVICE_QNAME);
+    public DocumentService() {
+        super(DOCUMENTSERVICE_WSDL_LOCATION, DOCUMENTSERVICE_QNAME);
     }
 
     
