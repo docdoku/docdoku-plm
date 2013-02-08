@@ -36,7 +36,7 @@ import javax.persistence.*;
 @javax.persistence.IdClass(com.docdoku.core.security.WorkspaceUserMembershipKey.class)
 @javax.persistence.Entity
 @NamedQueries({
-        @NamedQuery(name="findCommonWorkspacesForGivenUsers", query="select w FROM WorkspaceUserMembership w where exists (select w1 from WorkspaceUserMembership w1 where w1.member.login = :userLogin1) and exists (select w2 from WorkspaceUserMembership w2 where w2.member.login = :userLogin2)")
+        @NamedQuery(name="findCommonWorkspacesForGivenUsers", query="SELECT w FROM Workspace w WHERE EXISTS (SELECT u1.workspace FROM User u1, User u2 WHERE u1.workspace = u2.workspace AND u1.login = :userLogin1 AND u2.login = :userLogin2 AND u1.workspace IS NOT NULL)")
 })
 public class WorkspaceUserMembership implements Serializable {
 

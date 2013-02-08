@@ -35,7 +35,6 @@ define([
             });
 
             this.bindDomElements();
-            console.log(this.workflow);
             return this;
         },
 
