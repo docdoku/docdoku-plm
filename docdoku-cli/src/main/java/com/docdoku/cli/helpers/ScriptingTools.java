@@ -17,10 +17,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.cli;
+package com.docdoku.cli.helpers;
 
-
-import com.docdoku.cli.data.Config;
 import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.services.IUploadDownloadWS;

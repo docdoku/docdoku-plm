@@ -21,7 +21,6 @@
 package com.docdoku.cli.commands;
 
 
-import com.docdoku.cli.data.Config;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;

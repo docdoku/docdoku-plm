@@ -20,8 +20,8 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.data.Config;
+import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.ScriptingTools;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.services.IUploadDownloadWS;
 import org.kohsuke.args4j.Argument;
@@ -29,8 +29,6 @@ import org.kohsuke.args4j.Option;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class GetCommand extends AbstractCommandLine{
@@ -48,9 +46,11 @@ public class GetCommand extends AbstractCommandLine{
     @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
     private File path = new File(System.getProperty("user.dir"));
 
-    public void execImpl() throws MalformedURLException {
-        IUploadDownloadWS fm = ScriptingTools.createFileManagerService(getServerURL(),user, password);
-
+    public void execImpl() throws Exception {
+        //IUploadDownloadWS fm = ScriptingTools.createFileManagerService(getServerURL(),user, password);
+        FileHelper fh = new FileHelper("","",user,password);
+        //http://localhost:8080/files/demo/documents/q/A/1/IMAG0529.jpg
+        fh.uploadFile(new File("titi.ear"),"http://localhost:8080/files/demo/documents/q/A/1/IMAG0529.ear");
 
     }
 }

@@ -424,8 +424,7 @@ public class UserManagerBean implements IUserManagerLocal {
     /*
     * Don't expose this method on remote.
     * Method returns true if given users have a common workspace, false otherwise.
-    * */
-
+    */
     @Override
     public boolean hasCommonWorkspace(String userLogin1, String userLogin2) {
 
