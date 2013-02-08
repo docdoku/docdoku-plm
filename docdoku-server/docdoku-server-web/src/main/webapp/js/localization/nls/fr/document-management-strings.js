@@ -17,6 +17,7 @@ define({
     "CREATION_DATE":				"Date de création",
     "DATE":							"Date",
     "_DATE_FORMAT":					"dd-mm-yyyy HH:MM:ss",
+    "_DATE_SHORT_FORMAT":			"dd-mm-yyyy",
     "_DATE_PICKER_DATE_FORMAT":     "yyyy-mm-dd",
     "DELETE_FOLDER_?":				"Supprimer le dossier ?",
     "DELETE_SELECTION_?":			"Supprimer la sélection ?",
@@ -117,6 +118,8 @@ define({
     "AUTHOR_HELP":                  "Auteur du document",
     "TAGS_HELP":                    "Libéllés du document, séparés par une virgule",
     "CONTENT":                      "Contenu",
-    "CONTENT_HELP":                 "Contenu du document"
+    "CONTENT_HELP":                 "Contenu du document",
+    "COMMENT":                      "Commentaire",
+    "TASK_CLOSED_ON":               "Tâche fermée le"
 
 });

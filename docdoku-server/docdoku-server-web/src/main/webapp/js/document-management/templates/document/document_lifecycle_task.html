@@ -1,0 +1,9 @@
+<h5>{{task.title}}</h5>
+<p class="task-instructions">{{task.instructions}}</p>
+<a class="user-popover">{{task.worker.name}}</a>
+{{#task.closureDate}}
+<div class="task-comment">
+    <i class="icon-comment" title="{{i18n.COMMENT}}"></i>
+    <p>{{i18n.TASK_CLOSED_ON}} {{task.formattedClosureDate}}<br />{{i18n.COMMENT}} : {{task.closureComment}}</p>
+</div>
+{{/task.closureDate}}

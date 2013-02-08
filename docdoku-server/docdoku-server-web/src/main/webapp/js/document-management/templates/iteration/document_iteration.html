@@ -18,6 +18,7 @@
                 <li><a href="#tab-iteration-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-iteration-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-iteration-files" data-toggle="tab">{{i18n.ATTACHED_FILES}}</a></li>
+                <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
             </ul>
 
             <div id="form-{{view.cid}}" class="tab-content form-horizontal">
@@ -96,7 +97,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
                             <div class="controls">
-                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^editMode}}disabled="disabled"{{/editMode}}>
+                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^editMode}}disabled="disabled"{{/editMode}} />
                             </div>
                         </div>
                         <div class="control-group">
@@ -119,6 +120,9 @@
                 </div>
                 <div id="tab-iteration-files" class="tab-pane files">
                     <div id="iteration-files"></div>
+                </div>
+                <div id="tab-iteration-lifecycle" class="tab-pane ">
+                    <div id="iteration-lifecycle"></div>
                 </div>
             </div>
         </div>

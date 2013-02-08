@@ -16,7 +16,8 @@ define({
         "CREATE":						"Create",
         "CREATION_DATE":				"Creation date",
         "DATE":							"Date",
-        "_DATE_FORMAT":					"dd-mm-yyyy HH:MM:ss",
+        "_DATE_FORMAT":					"yyyy-mm-dd HH:MM:ss",
+        "_DATE_SHORT_FORMAT":		    "yyyy-mm-dd",
         "_DATE_PICKER_DATE_FORMAT":     "yyyy-mm-dd",
         "DELETE_FOLDER_?":				"Delete the folder?",
         "DELETE_SELECTION_?":			"Delete the selected element?",
@@ -117,7 +118,10 @@ define({
         "AUTHOR_HELP":                  "Document author",
         "TAGS_HELP":                    "Document tags, comma separated",
         "CONTENT":                      "Content",
-        "CONTENT_HELP":                 "Document content"
+        "CONTENT_HELP":                 "Document content",
+        "COMMENT":                      "Comment",
+        "TASK_CLOSED_ON":               "Task closed on"
+
 
     },
     "fr": true,
