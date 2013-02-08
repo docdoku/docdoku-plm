@@ -14,4 +14,3 @@ function switchMenu(obj, btn, context) {
 function openFullScreen(strUrl, strWindowName) {
     window.open(strUrl, strWindowName, "");
 }
-
