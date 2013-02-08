@@ -93,9 +93,9 @@ SceneManager.prototype = {
     },
 
     initCamera: function() {
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 50000);
+        this.camera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
         if (!_.isUndefined(SCENE_INIT.camera)) {
-            console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z)
+            console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z);
             this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
         } //else
             //this.camera.position.set(0, 10, 10000);
