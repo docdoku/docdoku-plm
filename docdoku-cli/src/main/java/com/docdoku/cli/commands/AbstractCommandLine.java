@@ -22,7 +22,6 @@ package com.docdoku.cli.commands;
 
 
 import org.kohsuke.args4j.Option;
-
 import java.io.Console;
 import java.net.MalformedURLException;
 import java.net.URL;
