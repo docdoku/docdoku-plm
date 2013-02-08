@@ -7,5 +7,11 @@ define({
     AUTHOR: "Auteur",
     AMOUNT: "Quantité",
     CHECKOUT_DATE: "Date de réservation",
-    CHECKOUT_BY: "Réservé par"
+    CHECKOUT_BY: "Réservé par",
+    _DATE_FORMAT: "dd-mm-yyyy HH:MM:ss",
+    CANCEL_CHECKOUT: "Annuler la réservation",
+    CHECKIN: "Libérer",
+    CHECKOUT: "Réserver",
+    NAME : "Nom",
+    EMBED_SCENE : "Exporter la scène"
 });

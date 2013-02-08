@@ -249,4 +249,9 @@ public class DocumentMasterDAO {
 
         em.remove(pDocM);
     }
+
+    public List<DocumentMaster> findDocWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
+        return em.createNamedQuery("findDocumentMastersWithAssignedTasksForGivenUser").
+                setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
+    }
 }

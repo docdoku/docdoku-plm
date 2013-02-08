@@ -1,15 +1,33 @@
-define(["text!templates/bom_header.html"], function(template) {
+define(["text!templates/bom_header.html", "i18n!localization/nls/product-structure-strings"], function(template, i18n) {
 
     var BomHeaderView = Backbone.View.extend({
 
         el: $('#top_controls_container'),
+
+        events: {
+            "click .checkout": "actionCheckout",
+            "click .undocheckout": "actionUndocheckout",
+            "click .checkin": "actionCheckin"
+        },
+
+        actionCheckout: function() {
+            this.trigger('actionCheckout');
+        },
+
+        actionUndocheckout: function() {
+            this.trigger('actionUndocheckout');
+        },
+
+        actionCheckin: function() {
+            this.trigger('actionCheckin');
+        },
 
         initialize: function() {
             _.bindAll(this);
         },
 
         render: function() {
-            this.$el.prepend(Mustache.render(template, {i18n : {}}));
+            this.$el.prepend(Mustache.render(template, {i18n : i18n}));
             this.checkoutGroup = this.$(".checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");

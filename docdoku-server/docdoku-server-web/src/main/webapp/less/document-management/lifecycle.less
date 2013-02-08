@@ -1,0 +1,102 @@
+#tab-iteration-lifecycle {
+
+  #lifecycle-activities-wrapper {
+
+    width: 100%;
+    height: 340px;
+    overflow: auto;
+
+    #lifecycle-activities {
+
+      display: inline-block;
+      white-space: nowrap;
+      padding: 0;
+      margin: 0;
+
+      .activity {
+
+        display: inline-block;
+        float: left;
+        margin: 0 18px 0 0;
+        padding: 0 18px;
+        background: white;
+
+        &.complete {
+          border: 1px dashed #5bb75b;
+        }
+
+        &.incomplete {
+
+        }
+
+        .tasks {
+
+          .task {
+
+            max-width: 200px;
+            float: left;
+            margin-right: 5px;
+            padding: 9px 19px;
+
+            &.not_started {
+              border: 1px dashed #aaaaaa;
+            }
+            &.in_progress {
+              border: 1px dashed #5bb75b;
+            }
+            &.approved {
+              border: 1px solid #5bb75b;
+            }
+            &.rejected {
+              border: 1px dashed #ee5f5b;
+            }
+
+            h5 {
+              margin: 0;
+            }
+
+            p {
+              word-wrap: break-word;
+              white-space: pre;
+            }
+
+            div.task-comment {
+
+              i{
+                cursor: pointer;
+              }
+
+              p{
+                display: none;
+              }
+
+              p.toggled{
+                display: block;
+              }
+
+            }
+
+          }
+
+        }
+
+        &.serial {
+          .tasks {
+            .task {
+              float: left;
+            }
+          }
+        }
+
+        &.parallel {
+          .tasks {
+            .task {
+            }
+          }
+        }
+
+      }
+
+    }
+  }
+}

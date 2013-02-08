@@ -304,6 +304,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return  new SubscriptionDAO(em).isUserIterationChangeEventSubscribedForGivenDocument(user, docM);
     }
 
+    @Override
+    public DocumentMaster[] getDocumentMastersWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocWithAssignedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
+    }
+
 
     @RolesAllowed("users")
     @Override

@@ -31,8 +31,19 @@
         td {
           padding: 0 .5em;
           vertical-align: middle;
-          &.reference {
+          &.reference, &.component_number {
             cursor: pointer;
+            font-weight: bold;
+            i {
+              font-size: 14px;
+              margin-right: 4px;
+              text-align: center;
+              display: inline-block;
+              width: 14px;
+            }
+          }
+          &.reference:hover, &.component_number:hover {
+            color: #333;
           }
         }
         td:first-child {

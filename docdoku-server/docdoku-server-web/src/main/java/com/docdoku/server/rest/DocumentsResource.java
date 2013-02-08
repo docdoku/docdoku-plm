@@ -28,6 +28,9 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
 import com.docdoku.server.rest.util.SearchQueryParser;
@@ -73,14 +76,18 @@ public class DocumentsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query) {
+    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin) {
 
         if(query != null){
             return getDocumentsWithSearchQuery(workspaceId, query);
         }
         else if(tagId != null){
             return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId,tagId);
-        }else {
+        }
+        else if(assignedUserLogin !=null){
+            return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin);
+        }
+        else {
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
         }
 
@@ -124,16 +131,44 @@ public class DocumentsResource {
         }
     }
 
+    private DocumentMasterDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin){
+        try{
+
+            SearchQuery searchQuery = new SearchQuery();
+            searchQuery.setWorkspaceId(workspaceId);
+
+            DocumentMaster[] docMs = documentService.getDocumentMastersWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+
+            ArrayList<DocumentMasterDTO> docMsDTOs = new ArrayList<DocumentMasterDTO>();
+
+            for (int i = 0; i < docMs.length; i++) {
+
+                DocumentMasterDTO docDTO = mapper.map(docMs[i], DocumentMasterDTO.class);
+
+                docDTO = Tools.createLightDocumentMasterDTO(docDTO);
+                docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
+                docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
+
+                docMsDTOs.add(docDTO);
+
+            }
+
+            return docMsDTOs.toArray(new DocumentMasterDTO[docMsDTOs.size()]);
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     private DocumentMasterDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery){
         try{
 
             SearchQuery searchQuery = SearchQueryParser.parseStringQuery(workspaceId, pStringQuery);
 
             DocumentMaster[] docMs = com.docdoku.core.util.Tools.resetParentReferences(
-                documentService.searchDocumentMasters(searchQuery)
+                    documentService.searchDocumentMasters(searchQuery)
             );
 
-            //DocumentMaster[] docMs = documentService.findDocumentMastersByTag(new TagKey(workspaceId, query));
             DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
 
             for (int i = 0; i < docMs.length; i++) {

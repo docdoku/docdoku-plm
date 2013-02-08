@@ -409,7 +409,3 @@ div#scene_container.markersCreationMode {
     margin-left: 2px;
     margin-top: 2px;
 }
-
-td.component_number {
-    cursor: pointer;
-}

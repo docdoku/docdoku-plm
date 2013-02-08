@@ -6,3 +6,7 @@ String.prototype.replaceUrl = function (target) {
         return this.replace(exp, "<a href='$1'>$1</a>");
     }
 };
+
+String.prototype.nl2br = function () {
+    return this.replace(/\n/g, "<br/>");
+};

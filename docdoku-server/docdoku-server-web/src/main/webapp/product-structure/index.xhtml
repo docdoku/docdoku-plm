@@ -26,8 +26,8 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js"></script>
 
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/FirstPersonControlsCustom.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/PointerLockControlsCustom.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/SceneManager.js"></script>
 
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js"></script>
@@ -170,7 +170,15 @@
                             <div id="layer-wrapper"><ul id="layer-header"></ul><nav><ul></ul></nav></div>
                         </div>
                         <div id="scene_container">
-                            <div id="container"></div>
+                            <div id="container">
+                                <div id="blocker">
+                                    <div id="instructions">
+                                        <span style="font-size:40px">Double cliquez pour lancer la visualisation</span>
+                                        <br />
+                                        (Z, Q, S, D = Move, SPACE = Up, CTRL = Down, MOUSE = Look around, ESC = Quit)
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -182,48 +190,5 @@
                 </div>
 
         </ui:define>
-
-        <ui:define name="modals">
-
-            <div class="modal hide fade" id="markerModal">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h3 id="markerTitle"></h3>
-                </div>
-                <div class="modal-body">
-                    <p><b>Description :</b> <span id="markerDesc"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <a href="#" class="btn" data-dismiss="modal">Close</a>
-                    <a href="#" class="btn btn-danger">Delete marker</a>
-                </div>
-            </div>
-
-            <div class="modal hide fade" id="creationMarkersModal">
-                <div class="modal-header">
-                    <input type="text" placeholder="Name" />
-                </div>
-                <div class="modal-body">
-                    <textarea type="text" placeholder="Description"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <a href="#" class="btn cancel">Cancel</a>
-                    <a href="#" class="btn btn-primary">Save marker</a>
-                </div>
-            </div>
-
-            <div class="modal hide fade" id="exportSceneModal">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h3 id="exportSceneTitle">Embed Scene</h3>
-                </div>
-                <div class="modal-body">
-                    <textarea type="text" placeholder=""></textarea>
-                </div>
-            </div>
-
-        </ui:define>
-
-
     </ui:composition>
 </html>

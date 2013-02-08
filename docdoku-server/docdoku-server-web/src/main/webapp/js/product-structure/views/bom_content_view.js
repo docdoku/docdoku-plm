@@ -35,7 +35,9 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
         },
 
         update: function(component) {
+            this.componentSelectedInTreeView = component;
             this.tbody.empty();
+            this.itemViews = [];
             if (component.isAssembly()) {
                 if (component.children.isEmpty()) {
                     this.listenTo(component.children, 'reset', this.addAllBomItem);
@@ -50,6 +52,7 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
 
         addAllBomItem: function(components) {
             components.each(this.addBomItem, this);
+            this.notifySelectionChanged();
         },
 
         addBomItem: function(componentItem) {
@@ -62,6 +65,46 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
             return _.filter(this.itemViews, function(itemView) {
                 return itemView.isChecked();
             });
+        },
+
+        actionCheckout: function() {
+            var self = this;
+            _.each(this.checkedViews(), function(view) {
+                view.model.checkout(self.refreshContent);
+            });
+            return false;
+        },
+
+        actionUndocheckout: function() {
+            var self = this;
+            _.each(this.checkedViews(), function(view) {
+                view.model.undocheckout(self.refreshContent);
+            });
+            return false;
+        },
+
+        actionCheckin: function() {
+            var self = this;
+            _.each(this.checkedViews(), function(view) {
+                view.model.checkin(self.refreshContent);
+            });
+            return false;
+        },
+
+        refreshContent: function() {
+            this.tbody.empty();
+            this.itemViews = [];
+            var self = this;
+            if (this.componentSelectedInTreeView.isAssembly()) {
+                //to refresh the bom content, we need to re fetch all the items
+                //we use silent to prevent adding/refreshing components in the tree view which listen for 'reset' event
+                this.componentSelectedInTreeView.children.fetch({
+                    success: function(collection) {
+                        self.addAllBomItem(collection);
+                    },
+                    silent: true
+                });
+            }
         }
 
     });

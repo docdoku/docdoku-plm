@@ -2,12 +2,13 @@ define([
     "views/components/modal",
     "views/file_list",
     "views/document/document_attributes",
+    "views/document/document_lifecycle",
     "models/tag",
     "views/document_tag",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common-objects/utils/date"
-], function (ModalView, FileListView, DocumentAttributesView, Tag, TagView, template, i18n, date) {
+], function (ModalView, FileListView, DocumentAttributesView, LifecycleDocumentView, Tag, TagView, template, i18n, date) {
 
     var IterationView = ModalView.extend({
 
@@ -144,6 +145,15 @@ define([
 
                 /* Add the fileListView to the tab */
                 this.$("#iteration-files").html(this.fileListView.el);
+            }
+
+            if(this.model.get("workflow")){
+                this.lifecycleView =  new LifecycleDocumentView({
+                    el:"#tab-iteration-lifecycle"
+                }).setWorkflow(this.model.get("workflow")).render();
+                this.$("#iteration-lifecycle").html(this.lifecycleView.el);
+            }else{
+                this.$("a[href=#tab-iteration-lifecycle]").hide();
             }
 
             this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "right");

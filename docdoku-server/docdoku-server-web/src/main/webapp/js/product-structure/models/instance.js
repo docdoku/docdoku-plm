@@ -26,7 +26,7 @@ Instance.prototype = {
     getRating: function(frustum) {
         var inFrustum = this.isInFrustum(frustum);
         //var inFrustum = true;
-        return inFrustum ? this.partIteration.radius / this.getDistance(sceneManager.camera.position) : 0;
+        return inFrustum ? this.partIteration.radius / this.getDistance(sceneManager.cameraPosition) : 0;
     },
 
     getDistance: function(position) {

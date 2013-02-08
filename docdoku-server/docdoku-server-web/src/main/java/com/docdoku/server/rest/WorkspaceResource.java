@@ -51,6 +51,9 @@ public class WorkspaceResource {
     private TagResource tags;
 
     @EJB
+    private TaskResource tasks;
+
+    @EJB
     private SearchResource searches;
 
     @EJB
@@ -95,6 +98,11 @@ public class WorkspaceResource {
     @Path("/search")
     public SearchResource search() {
         return searches;
+    }
+
+    @Path("/tasks")
+    public TaskResource task() {
+        return tasks;
     }
 
     @Path("/workflows")
