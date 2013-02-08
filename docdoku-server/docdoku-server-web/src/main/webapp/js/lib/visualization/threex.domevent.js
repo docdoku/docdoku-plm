@@ -76,11 +76,12 @@ THREEx.DomEvent	= function(camera, domElement)
 	this._projector	= new THREE.Projector();
 	this._selected	= null;
 	this._boundObjs	= [];
+    this._isPLC = false;
 
 	// Bind dom event for mouse and touch
 	var _this	= this;
 	this._$onClick		= function(){ _this._onClick.apply(_this, arguments);		};
-	this._$onDblClick	= function(){ _this._onDblClick.apply(_this, arguments);									};
+	this._$onDblClick	= function(){ _this._onDblClick.apply(_this, arguments);	};
 	this._$onMouseMove	= function(){ _this._onMouseMove.apply(_this, arguments);	};
 	this._$onMouseDown	= function(){ _this._onMouseDown.apply(_this, arguments);	};
 	this._$onMouseUp	= function(){ _this._onMouseUp.apply(_this, arguments);		};
@@ -315,7 +316,10 @@ THREEx.DomEvent.prototype._bound	= function(eventName, object3d)
 THREEx.DomEvent.prototype._onMove	= function(mouseX, mouseY, origDomEvent)
 {
 	var vector	= new THREE.Vector3( mouseX, mouseY, 1 );
-	this._projector.unprojectVector( vector, this._camera );
+    if(this._isPLC)
+        this._projector.unprojectVector( vector, this._camera.children[0].children[0] );
+    else
+        this._projector.unprojectVector( vector, this._camera );
 
 	var ray		= new THREE.Ray( this._camera.position, vector.subSelf( this._camera.position ).normalize() );
 	var intersects = ray.intersectObjects( this._boundObjs );
@@ -356,7 +360,10 @@ THREEx.DomEvent.prototype._onMove	= function(mouseX, mouseY, origDomEvent)
 THREEx.DomEvent.prototype._onEvent	= function(eventName, mouseX, mouseY, origDomEvent)
 {
 	var vector	= new THREE.Vector3( mouseX, mouseY, 1 );
-	this._projector.unprojectVector( vector, this._camera );
+    if(this._isPLC)
+        this._projector.unprojectVector( vector, this._camera.children[0].children[0] );
+    else
+        this._projector.unprojectVector( vector, this._camera );
 
 	vector.subSelf( this._camera.position ).normalize()
 	var ray		= new THREE.Ray( this._camera.position, vector );

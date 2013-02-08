@@ -26,6 +26,7 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js"></script>
 
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/FirstPersonControlsCustom.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/PointerLockControlsCustom.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/SceneManager.js"></script>
 
@@ -170,7 +171,15 @@
                             <div id="layer-wrapper"><ul id="layer-header"></ul><nav><ul></ul></nav></div>
                         </div>
                         <div id="scene_container">
-                            <div id="container"></div>
+                            <div id="container">
+                                <div id="blocker">
+                                    <div id="instructions">
+                                        <span style="font-size:40px">Double cliquez pour lancer la visualisation</span>
+                                        <br />
+                                        (Z, Q, S, D = Move, SPACE = Up, CTRL = Down, MOUSE = Look around, ESC = Quit)
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

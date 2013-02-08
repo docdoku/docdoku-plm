@@ -176,6 +176,7 @@ public class ProductResource {
                 dto.setCheckOutDate(pm.getLastRevision().getCheckOutDate());
             }
 
+            dto.setVersion(partR.getVersion());
         }
 
         if (partI != null) {
@@ -189,7 +190,6 @@ public class ProductResource {
                 }
             }
             dto.setAssembly(partI.isAssembly());
-            dto.setVersion(partI.getPartVersion());
             dto.setIteration(partI.getIteration());
         }
 

@@ -34,7 +34,10 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
     this.zoomWheel = 0;
 
+    _.bindAll(this);
+
     if ( this.domElement !== document ) {
+        // allow focus
         this.domElement.setAttribute( 'tabindex', -1 );
     }
 
@@ -71,8 +74,8 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
             this.freeze = false;
 
-            this.domElement.addEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
-            this.domElement.addEventListener( 'mouseup', bind( this, this.onMouseUp ), false );
+            this.domElement.addEventListener( 'mousemove', this.onMouseMove, false );
+            this.domElement.addEventListener( 'mouseup', this, this.onMouseUp, false );
         }
 
     };
@@ -85,8 +88,8 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         // Release second mouse button
         if ( this.activeLook && event.button == 2 ) {
             this.freeze = true;
-            this.domElement.removeEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
-            this.domElement.removeEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
+            this.domElement.removeEventListener( 'mousemove', this.onMouseMove, false );
+            this.domElement.removeEventListener( 'mousedown', this.onMouseDown, false );
         }
 
     };
@@ -225,25 +228,19 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
     this.destroyControl = function() {
         this.domElement.removeEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
-        this.domElement.removeEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
-        this.domElement.removeEventListener( 'keydown', bind( this, this.onKeyDown ), false );
-        this.domElement.removeEventListener( 'keyup', bind( this, this.onKeyUp ), false );
-        this.domElement.removeEventListener( 'DOMMouseScroll', bind(this, this.onMouseWheel), false );
-        this.domElement.removeEventListener( 'mousewheel', bind(this, this.onMouseWheel), false );
+        this.domElement.removeEventListener( 'mousedown', this.onMouseDown, false );
+        this.domElement.removeEventListener( 'keydown', this.onKeyDown, false );
+        this.domElement.removeEventListener( 'keyup', this.onKeyUp, false );
+        this.domElement.removeEventListener( 'DOMMouseScroll', this.onMouseWheel, false );
+        this.domElement.removeEventListener( 'mousewheel', this.onMouseWheel, false );
     };
 
     this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
-    this.domElement.addEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
-    this.domElement.addEventListener( 'keydown', bind( this, this.onKeyDown ), false );
-    this.domElement.addEventListener( 'keyup', bind( this, this.onKeyUp ), false );
-    this.domElement.addEventListener( 'DOMMouseScroll', bind(this, this.onMouseWheel), false );
-    this.domElement.addEventListener( 'mousewheel', bind(this, this.onMouseWheel), false );
-
-    function bind( scope, fn ) {
-        return function () {
-            fn.apply( scope, arguments );
-        };
-    };
+    this.domElement.addEventListener( 'mousedown', this.onMouseDown, false );
+    this.domElement.addEventListener( 'keydown', this.onKeyDown, false );
+    this.domElement.addEventListener( 'keyup', this.onKeyUp, false );
+    this.domElement.addEventListener( 'DOMMouseScroll', this.onMouseWheel, false );
+    this.domElement.addEventListener( 'mousewheel', this.onMouseWheel, false );
 
     this.handleResize();
 };

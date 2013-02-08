@@ -11,13 +11,7 @@ define(['text!templates/bom_item.html'], function(template) {
         template: Mustache.compile(template),
 
         render: function() {
-            this.$el.html(this.template({
-                number: this.model.getNumber(),
-                amount: this.model.getAmount(),
-                version: this.model.getVersion(),
-                name: this.model.getName(),
-                iteration: this.model.getIteration()
-            }));
+            this.$el.html(this.template(this.model));
             this.$input = this.$("input");
             return this;
         },

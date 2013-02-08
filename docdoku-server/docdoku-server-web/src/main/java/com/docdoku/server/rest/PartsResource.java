@@ -20,18 +20,18 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import javax.ws.rs.core.Response;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -41,14 +41,49 @@ public class PartsResource {
     @EJB
     private IProductManagerLocal productService;
 
-    private Mapper mapper;
-
     public PartsResource() {
     }
 
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    @PUT
+    @Path("{partKey}/checkin")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public Response checkIn(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            productService.checkInPart(revisionKey);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Path("{partKey}/checkout")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public Response checkOut(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            productService.checkOutPart(revisionKey);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Path("{partKey}/undocheckout")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public Response undoCheckOut(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            productService.undoCheckOutPart(revisionKey);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
     @GET
@@ -64,6 +99,16 @@ public class PartsResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
+
+    private String getPartNumber(String partKey) {
+        int lastDash = partKey.lastIndexOf('-');
+        return partKey.substring(0, lastDash);
+    }
+
+    private String getPartRevision(String partKey) {
+        int lastDash = partKey.lastIndexOf('-');
+        return partKey.substring(lastDash + 1, partKey.length());
     }
 
 }
