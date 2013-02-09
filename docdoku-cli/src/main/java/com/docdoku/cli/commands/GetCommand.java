@@ -21,15 +21,12 @@
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.ScriptingTools;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.services.IUploadDownloadWS;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
-import java.net.MalformedURLException;
-
 
 public class GetCommand extends AbstractCommandLine{
 
@@ -48,9 +45,6 @@ public class GetCommand extends AbstractCommandLine{
 
     public void execImpl() throws Exception {
         //IUploadDownloadWS fm = ScriptingTools.createFileManagerService(getServerURL(),user, password);
-        FileHelper fh = new FileHelper("","",user,password);
-        //http://localhost:8080/files/demo/documents/q/A/1/IMAG0529.jpg
-        fh.uploadFile(new File("titi.ear"),"http://localhost:8080/files/demo/documents/q/A/1/IMAG0529.ear");
-
+        //FileHelper fh = new FileHelper("","",user,password);
     }
 }
