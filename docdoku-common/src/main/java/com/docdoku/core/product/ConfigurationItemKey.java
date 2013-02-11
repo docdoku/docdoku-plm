@@ -44,9 +44,9 @@ public class ConfigurationItemKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspace.hashCode();
-	hash = 31 * hash + id.hashCode();
-	return hash;
+	    hash = 31 * hash + workspace.hashCode();
+	    hash = 31 * hash + id.hashCode();
+	    return hash;
     }
     
     @Override

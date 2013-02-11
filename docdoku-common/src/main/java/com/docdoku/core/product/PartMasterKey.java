@@ -78,9 +78,9 @@ public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, C
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspace.hashCode();
-	hash = 31 * hash + number.hashCode();
-	return hash;
+	    hash = 31 * hash + workspace.hashCode();
+	    hash = 31 * hash + number.hashCode();
+	    return hash;
     }
 
     public int compareTo(PartMasterKey pKey) {
