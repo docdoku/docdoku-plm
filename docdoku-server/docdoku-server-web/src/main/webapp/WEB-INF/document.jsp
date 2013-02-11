@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <fmt:setBundle basename="com.docdoku.server.localization.document_resource"/>
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
@@ -60,15 +61,15 @@
 </head>
 
 <body>
-<div class="navbar">
-    <div class="navbar-fixed-top">
+<form>
+    <div id="header" class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="container-fluid">
-                <div class="nav-collapse">
+            <div class="nav-collapse collapse">
+                <div class="container-fluid">
+                    <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
+                    <a class="brand" style="color: white">DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a>
                     <ul class="nav" id="header_left_menu">
-                        <li><img alt="docdoku_plm" src="/images/plm_logo2.png" class="brand-plm"/></li>
-                        <li><a class="brand" style="color: white">&nbsp;&nbsp;&nbsp;DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a></li>
-                        <li><a><b>${docm}</b></a></li>
+                        <li><a style="color: white"><b>${docm}</b></a></li>
                         <li><a href="#general" style="color: white ; background-color: #213251" class="g"><fmt:message key="section1.title"/></a></li>
                         <li><a href="#iteration" style="color: white" class="i"><fmt:message key="section2.title"/></a></li>
                         <li><a href="#attribute" style="color: white" class="a"><fmt:message key="section2.attributes"/></a></li>
@@ -79,7 +80,8 @@
             </div>
         </div>
     </div>
-</div>
+</form>
+
 <div id="page">
     <div id="content">
         <div id="sidebar">
