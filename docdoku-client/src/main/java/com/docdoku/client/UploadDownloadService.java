@@ -32,7 +32,7 @@ import javax.xml.ws.WebServiceClient;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 @WebServiceClient(name = "UploadDownloadService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/UploadDownload?wsdl")
 public class UploadDownloadService

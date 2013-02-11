@@ -18,7 +18,10 @@ define({
         _DATE_FORMAT: "mm-dd-yyyy HH:MM:ss",
         CANCEL_CHECKOUT: "Undo check out",
         CHECKIN: "Check in",
-        CHECKOUT: "Check out"
+        CHECKOUT: "Check out",
+        DELETE_MARKER: "Delete marker",
+        NAME : "Name",
+        EMBED_SCENE : "Embed Scene"
     },
     "fr": true,
     "es": true

@@ -176,6 +176,7 @@ public class WorkspaceBean {
 
         administeredWorkspaces.put(workspace.getId(), workspace);
         adminState.setSelectedWorkspace(workspace.getId());
+        adminState.setSelectedGroup(null);
         return "/admin/workspace/createWorkspace.xhtml";
     }
 

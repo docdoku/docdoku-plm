@@ -146,14 +146,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partI = partR.getLastIteration();
         }
 
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
-        }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
-        }
-
         if (partI != null) {
             if (depth != 0) {
                 depth--;
@@ -170,6 +162,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         for (PartAlternateLink alternateLink : root.getAlternates()) {
             filterLatestConfigSpec(alternateLink.getAlternate(), 0);
         }
+
+        em.detach(root);
+        if (root.getPartRevisions().size() > 1) {
+            root.getPartRevisions().retainAll(Collections.singleton(partR));
+        }
+        if (partR != null && partR.getNumberOfIterations() > 1) {
+            partR.getPartIterations().retainAll(Collections.singleton(partI));
+        }
+
         return root;
     }
 
@@ -464,14 +465,41 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException {
+    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        PartMasterDAO partMDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
+
         PartRevision partRev = partRDAO.loadPartR(pKey.getPartRevision());
         PartIteration partIte = partRev.getLastIteration();
         //check access rights on partM ?
         if (partRev.isCheckedOut() && partRev.getCheckOutUser().equals(user) && partIte.getKey().equals(pKey)) {
-            partIte.setComponents(pUsageLinks);
+            List<PartUsageLink> usageLinks = new LinkedList<PartUsageLink>();
+            for(PartUsageLink usageLink:pUsageLinks){
+                PartUsageLink ul= new PartUsageLink();
+                ul.setAmount(usageLink.getAmount());
+                ul.setCadInstances(usageLink.getCadInstances());
+                ul.setComment(usageLink.getComment());
+                ul.setReferenceDescription(usageLink.getReferenceDescription());
+                ul.setUnit(usageLink.getUnit());
+                PartMaster pm = usageLink.getComponent();
+                PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(),pm.getNumber()));
+                ul.setComponent(component);
+                List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
+                for(PartSubstituteLink substitute:usageLink.getSubstitutes()){
+                    PartSubstituteLink sub = new PartSubstituteLink();
+                    sub.setCadInstances(substitute.getCadInstances());
+                    sub.setComment(substitute.getComment());
+                    sub.setReferenceDescription(substitute.getReferenceDescription());
+                    PartMaster pmSub = substitute.getSubstitute();
+                    sub.setSubstitute(partMDAO.loadPartM(new PartMasterKey(pmSub.getWorkspaceId(),pmSub.getNumber())));
+                    substitutes.add(sub);
+                }
+                ul.setSubstitutes(substitutes);
+                usageLinks.add(ul);
+            }
+
+            partIte.setComponents(usageLinks);
             // set doc for all attributes
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : pAttributes) {

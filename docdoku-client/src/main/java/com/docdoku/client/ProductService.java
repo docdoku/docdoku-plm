@@ -32,7 +32,7 @@ import javax.xml.ws.WebServiceClient;
 
 /**
  *
- * @author Florent GARIN
+ * @author Florent Garin
  */
 @WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
 public class ProductService extends Service

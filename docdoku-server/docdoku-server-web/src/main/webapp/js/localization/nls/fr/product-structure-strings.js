@@ -11,5 +11,7 @@ define({
     _DATE_FORMAT: "dd-mm-yyyy HH:MM:ss",
     CANCEL_CHECKOUT: "Annuler la réservation",
     CHECKIN: "Libérer",
-    CHECKOUT: "Réserver"
+    CHECKOUT: "Réserver",
+    NAME : "Nom",
+    EMBED_SCENE : "Exporter la scène"
 });

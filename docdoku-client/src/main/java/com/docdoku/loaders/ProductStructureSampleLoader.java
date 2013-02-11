@@ -132,7 +132,7 @@ public class ProductStructureSampleLoader {
         }
     }
     
-    private static void createBikeSampleProduct() throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, PartRevisionNotFoundException, UserNotActiveException, FileAlreadyExistsException, IOException {
+    private static void createBikeSampleProduct() throws Exception {
 
         PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader");
         pm.createConfigurationItem(workspace, "Bike", "Bicycle Motocross", "BMX");

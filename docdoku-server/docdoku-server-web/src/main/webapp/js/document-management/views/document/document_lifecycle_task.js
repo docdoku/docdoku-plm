@@ -33,7 +33,6 @@ define([
 
             this.$el.html(Mustache.render(template, {i18n: i18n, task:this.task}));
             this.$el.addClass(this.task.status.toLowerCase());
-            console.log(this.task);
             this.$(".user-popover").userPopover(this.task.worker.login,this.task.title,"top");
             return this;
         },

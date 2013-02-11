@@ -1,11 +1,13 @@
 define([
     "collections/layer_collection",
     "models/layer",
-    "views/layers-list-view"
+    "views/layers-list-view",
+    "views/marker_info_modal_view"
 ], function (
     LayerCollection,
     Layer,
-    LayersListView
+    LayersListView,
+    MarkerInfoModalView
 ) {
 
     var STATE = { FULL : 0, TRANSPARENT : 1};
@@ -166,13 +168,9 @@ define([
         },
 
         showPopup: function(marker) {
-            $('#markerTitle').text(marker.getTitle());
-            $('#markerDesc').text(marker.getDescription());
-            $('#markerModal').modal('show');
-            $('#markerModal .btn-danger').off('click').on('click', function() {
-                marker.destroy();
-                $('#markerModal').modal('hide');
-            });
+            var mimv = new MarkerInfoModalView({model:marker});
+            $("body").append(mimv.render().el);
+            mimv.openModal();
         }
 
     }
