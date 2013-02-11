@@ -17,7 +17,7 @@
 
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nManageUsersGroup['sidebar.title']}</h3>
-                <p>#{i18nManageUsersGroup['sidebar.text']}</p>         
+                <p><h:outputFormat value="#{i18nManageUsersGroup['sidebar.text']}" escape="false"/></p>
             </div>
             <h:link value="#{i18nManageUsersGroup['section.back']}" outcome="/admin/workspace/manageUsers.xhtml"/>
             <h2>#{i18nManageUsersGroup['main.title']}</h2>

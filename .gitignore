@@ -24,3 +24,5 @@ docdoku-client/nbproject/private
 docdoku-server/docdoku-server-web/nbproject/private
 docdoku-server/docdoku-server-ejb/nbproject/private
 docdoku-server/nbproject/private
+
+docdoku-cli/target

@@ -4,6 +4,11 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html">
+
+    <f:metadata>
+        <f:viewParam name="group" value="#{adminStateBean.selectedGroup}"/>
+    </f:metadata>
+
     <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
         <ui:define name="title">
             <f:loadBundle var="i18nUserAddingForm" basename="com.docdoku.server.localization.admin.userAddingForm_resource"/>
