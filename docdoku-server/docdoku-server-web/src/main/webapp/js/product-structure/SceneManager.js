@@ -1,9 +1,11 @@
 define([
     "views/marker_create_modal_view",
-    "views/export_scene_modal_view"
+    "views/export_scene_modal_view",
+    "views/controls_infos_modal_view"
 ], function (
     MarkerCreateModalView,
-    ExportSceneModalView
+    ExportSceneModalView,
+    ControlsInfosModalView
 ) {
     var SceneManager = function (options) {
 
@@ -53,6 +55,7 @@ define([
             this.initLayerManager();
             this.animate();
             this.initIframeScene();
+            this.initShortcuts();
         },
 
         initExportScene: function() {
@@ -368,6 +371,25 @@ define([
             var that = this;
             this.$statsArrow.bind('click', function() {
                 that.$stats.toggleClass('statsWinMinimized statsWinMaximized');
+            });
+        },
+
+        initShortcuts: function() {
+            var self = this;
+            $('#shortcuts a').bind("click", function() {
+                var cimv;
+
+                switch (self.stateControl) {
+                    case self.STATECONTROL.PLC:
+                        cimv = new ControlsInfosModalView({isPLC:true, isTBC:false});
+                        break;
+                    case self.STATECONTROL.TBC:
+                        cimv = new ControlsInfosModalView({isPLC:false, isTBC:true});
+                        break;
+                }
+
+                $("body").append(cimv.render().el);
+                cimv.openModal();
             });
         },
 
