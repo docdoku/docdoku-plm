@@ -218,12 +218,12 @@ public class ProductResource {
                 cc.setMaxAge(60 * 60 * 12);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+                //TODO configSpecType should be used
                 ConfigSpec cs = new LatestConfigSpec();
                 PartUsageLink rootUsageLink;
                 List<Integer> usageLinkPaths = new ArrayList<Integer>();
                 if(path != null && !path.equals("null")){
                     String[] partUsageIdsString = path.split("-");
-                    
 
                     for (int i = 0; i < partUsageIdsString.length; i++) {
                         usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));

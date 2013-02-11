@@ -18,49 +18,48 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.client;
+package com.docdoku.cli.helpers;
 
 
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Logger;
 
 
 /**
  *
  * @author Florent Garin
  */
-@WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
-public class ProductService extends Service
+@WebServiceClient(name = "DocumentService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/document?wsdl")
+public class DocumentService extends Service
 {
 
-    private final static URL PRODUCTSERVICE_WSDL_LOCATION;
-    private final static QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(com.docdoku.client.ProductService.class.getName());
+    private final static URL DOCUMENTSERVICE_WSDL_LOCATION;
+    private final static QName DOCUMENTSERVICE_QNAME = new QName("http://server.docdoku.com/", "DocumentManagerBeanService");
+    private final static Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = com.docdoku.client.ProductService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/product?wsdl");
+            baseUrl = DocumentService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/document?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/product?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/document?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        PRODUCTSERVICE_WSDL_LOCATION = url;
+        DOCUMENTSERVICE_WSDL_LOCATION = url;
     }
 
-    public ProductService(URL wsdlLocation, QName serviceName) {
+    public DocumentService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public ProductService() {
-        super(PRODUCTSERVICE_WSDL_LOCATION, PRODUCTSERVICE_QNAME);
+    public DocumentService() {
+        super(DOCUMENTSERVICE_WSDL_LOCATION, DOCUMENTSERVICE_QNAME);
     }
 
     
