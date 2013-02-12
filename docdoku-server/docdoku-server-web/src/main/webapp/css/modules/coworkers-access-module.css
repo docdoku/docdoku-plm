@@ -7,7 +7,7 @@
     opacity:0.5;
 }
 #coworkers_access_module_entries > li > a:hover > i{
-  display: block;
+    display: block;
     opacity:0.7;
 }
 #coworkers_access_module_entries > li > a > i:hover{
@@ -16,6 +16,7 @@
 #coworkers_access_module_entries > li > a > span > i{
     float:left;
     margin: 4px 0 0 5px;
+    opacity: 0.5;
 }
 #coworkers_access_module_entries > li > a > span > span{
     float: left;

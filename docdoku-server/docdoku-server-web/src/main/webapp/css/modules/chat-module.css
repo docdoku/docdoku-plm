@@ -74,7 +74,19 @@
 #chat_module > .chat_session > ul.chat_session_messages > li.chat_message_error{
     color: #B94A48;
 }
-
+#chat_module > .chat_session > div.chat_webrtc_invite{
+    display: none;
+    padding:5px;
+    border-bottom: 1px solid #CCC;
+}
+#chat_module > .chat_session > div.chat_webrtc_invite > span{
+    float:left;
+    width:100%;
+    margin-bottom:6px;
+}
+#chat_module > .chat_session > div.chat_webrtc_invite > .btn{
+    margin-right:6px;
+}
 #chat_module > .chat_session > div.chat_session_reply{
     padding:5px;
 }
