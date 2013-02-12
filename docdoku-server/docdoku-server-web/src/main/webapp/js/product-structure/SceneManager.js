@@ -34,7 +34,7 @@ define([
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
 
         this.STATECONTROL = { PLC : 0, TBC : 1};
-        this.stateControl = this.STATECONTROL.PLC;
+        this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
     };
 
@@ -109,8 +109,19 @@ define([
 
         initControls: function() {
 
-            this.setPointerLockControls();
-            this.$blocker.show();
+            switch(this.stateControl) {
+                case this.STATECONTROL.PLC:
+                    this.$blocker.show();
+                    this.setPointerLockControls();
+                    $('#flying_mode_view_btn').addClass("active");
+                    break;
+                case this.STATECONTROL.TBC:
+                    this.$blocker.hide();
+                    this.setTrackBallControls();
+                    $('#tracking_mode_view_btn').addClass("active");
+                    break;
+            }
+
 
             if (Modernizr.touch) {
                 $('#side_controls_container').hide();
