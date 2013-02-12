@@ -20,11 +20,17 @@ define([
     // triggered on chat session requires focus
     Backbone.Events.on('ChatSessionFocusRequired', cmv.onChatSessionFocusRequired);
 
+    // triggered on local user action
+    Backbone.Events.on('NewWebRTCInvitation', cmv.onNewWebRTCInvitation);
+
+    Backbone.Events.on('RemoveWebRTCInvitation', cmv.onRemoveWebRTCInvitation);
+
     var chatListener = new ChannelListener({
 
         // what kind of messages are we listening to ?
         isApplicable: function (messageType) {
-            return messageType == ChannelMessagesType.CHAT_MESSAGE;
+            return messageType == ChannelMessagesType.CHAT_MESSAGE
+                || messageType== ChannelMessagesType.CHAT_MESSAGE_ACK;
         },
 
         // onMessage handler
