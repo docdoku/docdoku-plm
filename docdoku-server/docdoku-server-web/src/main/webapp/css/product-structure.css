@@ -409,3 +409,46 @@ div#scene_container.markersCreationMode {
     margin-left: 2px;
     margin-top: 2px;
 }
+
+#shortcuts {
+    margin-bottom: 5px;
+}
+
+#shortcuts a {
+    color: #999;
+    font-size: 12px;
+}
+
+dl.keyboard-ps-controls {
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+dl.keyboard-ps-controls dt {
+    display: inline-block;
+    margin: 0;
+    padding: 3px 6px;
+    min-width: 10px;
+    text-align: center;
+    font-family: Monaco, "Liberation Mono", Courier, monospace;
+    background: #555555;
+    color: #EEE;
+    border-radius: 2px;
+    text-shadow: 1px 1px 0 #000;
+}
+
+dl.keyboard-ps-controls dt em {
+    padding: 0 4px;
+    color: #999;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 11px;
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    text-shadow: none;
+}
+
+dl.keyboard-ps-controls dd {
+    display: inline;
+    margin: 0 0 0 5px;
+    color: #666;
+}
