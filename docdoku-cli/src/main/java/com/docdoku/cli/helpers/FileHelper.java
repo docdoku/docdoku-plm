@@ -23,6 +23,7 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
@@ -36,14 +37,10 @@ public class FileHelper {
     private final static int CHUNK_SIZE = 1024*8;
     private final static int BUFFER_CAPACITY = 1024*32;
 
-    private String workspace;
     private String login;
     private String password;
-    private String serverURL;
 
-    public FileHelper(String serverURL, String workspace, String login, String password) {
-        this.serverURL=serverURL;
-        this.workspace = workspace;
+    public FileHelper(String login, String password) {
         this.login = login;
         this.password = password;
     }
@@ -79,9 +76,12 @@ public class FileHelper {
             }
             out.flush();
         } finally {
-            out.close();
-            in.close();
-            conn.disconnect();
+            if(out!=null)
+                out.close();
+            if(in!=null)
+                in.close();
+            if(conn!=null)
+                conn.disconnect();
         }
     }
 
@@ -130,15 +130,13 @@ public class FileHelper {
 
             int code = conn.getResponseCode();
             manageHTTPCode(code);
-            out.close();
-        } catch (InterruptedIOException pEx) {
-            throw pEx;
-        } catch (IOException pEx) {
-            out.close();
-            throw pEx;
         } finally {
-            in.close();
-            conn.disconnect();
+            if(out!=null)
+                out.close();
+            if(in!=null)
+                in.close();
+            if(conn!=null)
+                conn.disconnect();
         }
     }
 
@@ -148,18 +146,6 @@ public class FileHelper {
                 throw new LoginException("Error trying to login.");
         }
     }
-    /*
-    private String getServletURL(PartIteration pPart, String pRemoteFileName) throws UnsupportedEncodingException {
-        return serverURL
-                + "files/"
-                + URLEncoder.encode(workspace, "UTF-8") + "/"
-                + "parts/"
-                + URLEncoder.encode(pPart.getPartNumber(), "UTF-8") + "/"
-                + pPart.getPartVersion() + "/"
-                + pPart.getIteration() + "/"
-                + URLEncoder.encode(pRemoteFileName, "UTF-8");
-    }
-    */
 
     private void performHeadHTTPMethod(String pURL) throws IOException {
         URL url = new URL(pURL);
@@ -173,4 +159,16 @@ public class FileHelper {
         conn.connect();
         int code = conn.getResponseCode();
     }
+
+    public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+        return serverURL
+                + "/files/"
+                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
+                + "parts/"
+                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
+                + pPart.getPartRevision().getVersion() + "/"
+                + pPart.getIteration() + "/"
+                + URLEncoder.encode(pRemoteFileName, "UTF-8");
+    }
+
 }

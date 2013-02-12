@@ -19,9 +19,11 @@
  */
 package com.docdoku.server.http;
 
+import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.services.IProductManagerLocal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -57,6 +59,10 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @EJB
     private IDocumentManagerLocal documentService;
+
+    @EJB
+    private IProductManagerLocal productService;
+
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
     @Resource
@@ -170,6 +176,7 @@ public class UploadDownloadServlet extends HttpServlet {
         String elementType = pathInfos[offset + 1];
 
         String fileName = null;
+        PartIterationKey partPK = null;
         DocumentIterationKey docPK = null;
         DocumentMasterTemplateKey templatePK = null;
         File vaultFile = null;
@@ -183,12 +190,18 @@ public class UploadDownloadServlet extends HttpServlet {
                 fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
                 vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
-
             } else if (elementType.equals("templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
                 vaultFile = documentService.saveFileInTemplate(templatePK, fileName, 0);
+            } else if (elementType.equals("parts")) {
+                String partMNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                String partMVersion = pathInfos[offset + 3];
+                int iteration = Integer.parseInt(pathInfos[offset + 4]);
+                fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                partPK = new PartIterationKey(workspaceId, partMNumber, partMVersion, iteration);
+                vaultFile = productService.saveFileInPartIteration(partPK, fileName, 0);
             }
             vaultFile.getParentFile().mkdirs();
             Collection<Part> uploadedParts = pRequest.getParts();
@@ -212,6 +225,8 @@ public class UploadDownloadServlet extends HttpServlet {
                 documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
             } else if (elementType.equals("templates")) {
                 documentService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
+            }else if (elementType.equals("parts")) {
+                productService.saveFileInPartIteration(partPK, fileName, vaultFile.length());
             }
             utx.commit();
         } catch (Exception pEx) {

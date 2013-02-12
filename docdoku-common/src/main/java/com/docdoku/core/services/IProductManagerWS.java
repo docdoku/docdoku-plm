@@ -452,7 +452,21 @@ public interface IProductManagerWS{
     Marker createMarker(int layerId, String title, String description, double x, double y, double z) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
 
     /**
-     * Find part masters by their number
+     * Returns a specific <a href="PartRevision.html">PartRevision</a>.
+     *
+     * @param partRPK
+     * The id of the part revision to get
+     *
+     * @return
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartRevisionNotFoundException
+     */
+    PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException;
+
+    /**
+     * Finds part masters by their part number using like style query.
      *
      * @param workspaceId
      * The workspace in which part masters will be searched

@@ -533,6 +533,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
+        PartRevision partR = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(pPartRPK);
+
+        if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+            em.detach(partR);
+            partR.removeLastIteration();
+        }
+        return partR;
+    }
+
+    @RolesAllowed("users")
+    @Override
     public List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         return new LayerDAO(new Locale(user.getLanguage()), em).findAllLayers(pKey);

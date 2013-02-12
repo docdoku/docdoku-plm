@@ -35,6 +35,11 @@ public class PartRevisionKey implements Serializable, Comparable<PartRevisionKey
 
     public PartRevisionKey() {
     }
+
+    public PartRevisionKey(String pWorkspaceId, String pNumber, String pVersion) {
+        partMaster= new PartMasterKey(pWorkspaceId, pNumber);
+        version = pVersion;
+    }
     
     public PartRevisionKey(PartMasterKey pPartMasterKey, String pVersion) {
         partMaster=pPartMasterKey;

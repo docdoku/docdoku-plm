@@ -20,16 +20,21 @@
 
 package com.docdoku.cli.commands;
 
-
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
-public class CheckOutCommand extends AbstractCommandLine{
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+
+public class PutCommand extends AbstractCommandLine{
+
 
     @Option(name="-r", required = true, aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...)")
     private Version revision;
@@ -37,8 +42,21 @@ public class CheckOutCommand extends AbstractCommandLine{
     @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to download")
     private String partNumber;
 
+    @Argument(metaVar = "<cadfile>", required = true, index=1, usage = "specify the native cad file of the part to import")
+    private File cadFile;
+
     public void execImpl() throws Exception {
+        FileHelper fh = new FileHelper(user,password);
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        productS.checkOutPart(new PartRevisionKey(new PartMasterKey(workspace, partNumber), revision.toString()));
+        String fileName = cadFile.getName();
+        PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
+        PartRevision partR= productS.getPartRevision(partRPK);
+        int lastIte = partR.getLastIteration().getIteration();
+        PartIterationKey partIPK = new PartIterationKey(partRPK, lastIte);
+        fh.uploadFile(cadFile,FileHelper.getPartURL(getServerURL(),partIPK, fileName));
     }
+
+
+
+
 }

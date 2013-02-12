@@ -34,7 +34,12 @@ public class PartIterationKey implements Serializable {
     
     public PartIterationKey() {
     }
-    
+
+    public PartIterationKey(String pWorkspaceId, String pNumber, String pVersion, int pIteration) {
+        partRevision= new PartRevisionKey(pWorkspaceId, pNumber, pVersion);
+        iteration=pIteration;
+    }
+
     public PartIterationKey(PartRevisionKey pPartRevisionKey, int pIteration) {
         partRevision=pPartRevisionKey;
         iteration=pIteration;

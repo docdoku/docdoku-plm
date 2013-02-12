@@ -20,9 +20,14 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.core.common.Version;
 
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -44,7 +49,11 @@ public class GetCommand extends AbstractCommandLine{
     private File path = new File(System.getProperty("user.dir"));
 
     public void execImpl() throws Exception {
-        //IUploadDownloadWS fm = ScriptingTools.createFileManagerService(getServerURL(),user, password);
-        //FileHelper fh = new FileHelper("","",user,password);
+
+        FileHelper fh = new FileHelper(user,password);
+        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+
+        PartIterationKey partIPK = new PartIterationKey(workspace,partNumber,revision.toString(), iteration);
+        //fh.downloadFile(cadFile,FileHelper.getPartURL(partIPK, fileName));
     }
 }
