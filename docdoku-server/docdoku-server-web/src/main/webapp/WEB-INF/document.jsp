@@ -61,27 +61,24 @@
 </head>
 
 <body>
-<form>
-    <div id="header" class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="nav-collapse collapse">
-                <div class="container-fluid">
-                    <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
-                    <a class="brand" style="color: white">DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a>
-                    <ul class="nav" id="header_left_menu">
-                        <li><a style="color: white"><b>${docm}</b></a></li>
-                        <li><a href="#general" style="color: white ; background-color: #213251" class="g"><fmt:message key="section1.title"/></a></li>
-                        <li><a href="#iteration" style="color: white" class="i"><fmt:message key="section2.title"/></a></li>
-                        <li><a href="#attribute" style="color: white" class="a"><fmt:message key="section2.attributes"/></a></li>
-                        <li><a href="#file" style="color: white" class="f"><fmt:message key="sidebar.title1"/></a></li>
-                        <li><a href="#link" style="color: white" class="l"><fmt:message key="sidebar.title2"/></a></li>
-                    </ul>
-                </div>
+<div id="header" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="nav-collapse collapse">
+            <div class="container-fluid">
+                <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
+                <a class="brand" style="color: white">DocDoku<strong>PLM</strong>&nbsp;&nbsp;&nbsp;</a>
+                <ul class="nav" id="header_left_menu">
+                    <li><a style="color: white"><b>${docm}</b></a></li>
+                    <li><a href="#general" style="color: white ; background-color: #213251" class="g"><fmt:message key="section1.title"/></a></li>
+                    <li><a href="#iteration" style="color: white" class="i"><fmt:message key="section2.title"/></a></li>
+                    <li><a href="#attribute" style="color: white" class="a"><fmt:message key="section2.attributes"/></a></li>
+                    <li><a href="#file" style="color: white" class="f"><fmt:message key="sidebar.title1"/></a></li>
+                    <li><a href="#link" style="color: white" class="l"><fmt:message key="sidebar.title2"/></a></li>
+                </ul>
             </div>
         </div>
     </div>
-</form>
-
+</div>
 <div id="page">
     <div id="content">
         <div id="sidebar">
