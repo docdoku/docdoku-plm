@@ -65,8 +65,7 @@ public class FileHelper {
             byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
             conn.connect();
-            int code = conn.getResponseCode();
-            manageHTTPCode(code);
+            manageHTTPCode(conn);
 
             in = new ConsoleProgressMonitorInputStream(conn.getContentLength(),new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY));
             byte[] data = new byte[CHUNK_SIZE];
@@ -128,8 +127,7 @@ public class FileHelper {
             out.write(footer);
             out.flush();
 
-            int code = conn.getResponseCode();
-            manageHTTPCode(code);
+            manageHTTPCode(conn);
         } finally {
             if(out!=null)
                 out.close();
@@ -140,10 +138,13 @@ public class FileHelper {
         }
     }
 
-    private void manageHTTPCode(int code) throws LoginException {
+    private void manageHTTPCode(HttpURLConnection conn) throws IOException, LoginException {
+        int code = conn.getResponseCode();
         switch (code){
             case 401: case 403:
                 throw new LoginException("Error trying to login.");
+            case 500:
+                throw new IOException(conn.getHeaderField("Reason-Phrase"));
         }
     }
 
@@ -167,7 +168,7 @@ public class FileHelper {
                 + "parts/"
                 + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
                 + pPart.getPartRevision().getVersion() + "/"
-                + pPart.getIteration() + "/"
+                + pPart.getIteration() + "/nativecad/"
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
     }
 

@@ -24,9 +24,7 @@ import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.core.common.Version;
 
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -52,8 +50,25 @@ public class GetCommand extends AbstractCommandLine{
 
         FileHelper fh = new FileHelper(user,password);
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        PartIterationKey partIPK;
+        PartRevision pr;
+        PartIteration pi;
+        if(revision==null){
+            PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+            pr = pm.getLastRevision();
+        }else{
+            pr = productS.getPartRevision(new PartRevisionKey(workspace,partNumber,revision.toString()));
+        }
+        if(iteration==0){
+            pi = pr.getLastIteration();
+        }else{
+            pi = pr.getIteration(iteration);
+        }
 
-        PartIterationKey partIPK = new PartIterationKey(workspace,partNumber,revision.toString(), iteration);
-        //fh.downloadFile(cadFile,FileHelper.getPartURL(partIPK, fileName));
+        String fileName =  pi.getNativeCADFile().getName();
+        partIPK = new PartIterationKey(workspace,partNumber,pr.getVersion(),pi.getIteration());
+
+        File localFile = new File(path,fileName);
+        fh.downloadFile(localFile,FileHelper.getPartURL(getServerURL(),partIPK, fileName));
     }
 }
