@@ -46,8 +46,7 @@ define([
             this.iteration = iteration;
             var activeTabIndex = this.getActiveTabIndex();
             this.render();
-            this.activateTab(activeTabIndex)
-
+            this.activateTab(activeTabIndex);
         },
 
         getActiveTabIndex: function() {
@@ -85,7 +84,8 @@ define([
                 isCheckout: this.model.isCheckout(),
                 editMode: editMode,
                 master: this.model.toJSON(),
-                i18n: i18n
+                i18n: i18n,
+                permalink : this.model.getPermalink()
             };
 
             data.master.creationDate = date.formatTimestamp(

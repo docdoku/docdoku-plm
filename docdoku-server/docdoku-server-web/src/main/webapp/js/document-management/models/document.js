@@ -10,6 +10,11 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return data;
         },
 
+        getReference : function(){
+            var id = this.get("id");
+            return id.substr(0,id.lastIndexOf("-"))
+        },
+
         getVersion: function() {
             return this.get("version");
         },
@@ -118,6 +123,18 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         isCheckout: function() {
             return !_.isNull(this.attributes.checkOutDate);
+        },
+
+        getPermalink : function(){
+            return encodeURI(
+                window.location.origin
+                + "/documents/"
+                + this.getWorkspace()
+                + "/"
+                + this.getReference()
+                + "/"
+                + this.getVersion()
+            );
         },
 
         addTags:function(tags){

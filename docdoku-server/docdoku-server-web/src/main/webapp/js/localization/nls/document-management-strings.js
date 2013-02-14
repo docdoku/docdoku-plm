@@ -120,7 +120,10 @@ define({
         "CONTENT":                      "Content",
         "CONTENT_HELP":                 "Document content",
         "COMMENT":                      "Comment",
-        "TASK_CLOSED_ON":               "Task closed on"
+        "TASK_CLOSED_ON":               "Task closed on",
+        "APPROVE_TASK":                 "Approve task",
+        "REJECT_TASK":                  "Reject task",
+        "CLOSURE_COMMENT":              "Closure comment"
 
 
     },

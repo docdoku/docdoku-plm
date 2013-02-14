@@ -52,27 +52,57 @@
 
             h5 {
               margin: 0;
+              i{
+                float:right;
+                cursor: pointer;
+                margin: 0 0 0 5px;
+                opacity: 0.5;
+              }
+              i:hover{
+                opacity: 1;
+              }
             }
 
             p {
               word-wrap: break-word;
-              white-space: pre;
+              white-space: pre-line;
             }
 
             div.task-comment {
 
-              i{
-                cursor: pointer;
-              }
+              margin-top: 10px;
+              display: none;
+              border-top: 1px solid #aaaaaa;
 
-              p{
-                display: none;
-              }
-
-              p.toggled{
+              &.toggled{
                 display: block;
               }
 
+              p{
+                margin:10px 0;
+              }
+
+            }
+
+            .closure-comment{
+
+              margin-top: 10px;
+              display: none;
+              border-top: 1px solid #aaaaaa;
+
+              &.toggled{
+                display: block;
+              }
+
+              h5{
+                margin:10px 0 ;
+              }
+
+              #closure-comment-form{
+                >div{
+                  margin:10px 0;
+                }
+              }
             }
 
           }

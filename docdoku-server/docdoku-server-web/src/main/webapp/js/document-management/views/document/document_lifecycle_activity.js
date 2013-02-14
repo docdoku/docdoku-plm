@@ -23,6 +23,8 @@ define([
 
         render: function() {
 
+            var that = this ;
+
             this.$el.html(Mustache.render(template, {i18n: i18n, activity:this.activity}));
 
             var completeClass = this.activity.complete ? "complete" : "incomplete";
@@ -31,7 +33,12 @@ define([
 
             var $tasks = this.$(".tasks");
 
-            _.each(this.activity.tasks,function(task){
+            _.each(this.activity.tasks,function(task, index){
+
+                task.parentWorkflowId = that.activity.parentWorkflowId;
+                task.parentActivityStep = that.activity.step;
+                task.index = index;
+
                 $tasks.append(
                     new LifecycleTaskView().setTask(task).render().$el
                 );

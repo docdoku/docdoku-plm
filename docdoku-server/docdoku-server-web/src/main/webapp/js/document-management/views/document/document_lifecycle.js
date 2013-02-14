@@ -10,11 +10,9 @@ define([
         tagName: 'div',
 
         events: {
-
         },
 
         initialize: function() {
-
         },
 
         setWorkflow:function(workflow){
@@ -24,11 +22,13 @@ define([
 
         render: function() {
 
+            var that = this ;
             this.$el.html(Mustache.render(template, {i18n: i18n, workflow:this.workflow}));
 
             var $lifecycleActivities = this.$("#lifecycle-activities");
 
             _.each(this.workflow.activities,function(activity){
+                activity.parentWorkflowId = that.workflow.id;
                 $lifecycleActivities.append(
                     new LifecycleActivityView().setActivity(activity).render().$el
                 );
