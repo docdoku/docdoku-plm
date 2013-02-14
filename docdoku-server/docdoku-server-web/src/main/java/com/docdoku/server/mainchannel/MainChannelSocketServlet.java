@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License  
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
+
 package com.docdoku.server.mainchannel;
 
 import com.docdoku.core.services.IUserManagerLocal;

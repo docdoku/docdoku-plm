@@ -9,12 +9,14 @@ define([
         editMode: true,
 
         events: {
-            "change input.file-check" : "fileCheckChanged"
+            "change input.file-check" : "fileCheckChanged",
+            "dragstart a.fileName" : "dragStart"
         },
 
         initialize: function() {
             this.editMode = this.options.editMode;
             this.model.url = this.options.deleteBaseUrl+"/files/"+this.model.get("shortName");
+            this.fileUrl = this.options.uploadBaseUrl+this.model.get("shortName");
         },
 
         fileCheckChanged: function() {
@@ -27,10 +29,14 @@ define([
             }
         },
 
+        dragStart: function(evt){
+            evt.dataTransfer.setData("DownloadURL", "application/octet-stream:"+this.model.get("shortName")+":"+window.location.origin+"/"+this.fileUrl);
+        },
+
         render: function() {
             this.$el.html(Mustache.render(template,
                 {
-                    url: this.options.uploadBaseUrl+this.model.get("shortName"),
+                    url: this.fileUrl,
                     shortName: this.model.get("shortName"),
                     editMode: this.editMode
                 }

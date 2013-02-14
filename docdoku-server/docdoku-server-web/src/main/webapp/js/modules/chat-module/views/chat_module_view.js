@@ -84,6 +84,19 @@ define(["modules/chat-module/views/chat_session_view"],function(ChatMessageSessi
                 csv.removeFromTop();
             });
             view.setOnTop();
+        },
+
+        onNewWebRTCInvitation:function(webRTCInvitation){
+            var csv = this.getChatSessionView(webRTCInvitation.message);
+            csv.onWebRTCInvitation(webRTCInvitation);
+        },
+
+        onRemoveWebRTCInvitation:function(webRTCInvitation){
+            var csv = this.getChatSessionView(webRTCInvitation.message);
+            if(csv != null && csv.webRTCInvitation != null){
+                clearTimeout(csv.webRTCInvitation.invitationTimeout);
+                csv.hideWebRTCInvitation();
+            }
         }
 
     });

@@ -120,6 +120,9 @@ define({
     "CONTENT":                      "Contenu",
     "CONTENT_HELP":                 "Contenu du document",
     "COMMENT":                      "Commentaire",
-    "TASK_CLOSED_ON":               "Tâche fermée le"
+    "TASK_CLOSED_ON":               "Tâche fermée le",
+    "APPROVE_TASK":                 "Approuver la tâche",
+    "REJECT_TASK":                  "Rejeter la tâche",
+    "CLOSURE_COMMENT":              "Commentaire"
 
 });

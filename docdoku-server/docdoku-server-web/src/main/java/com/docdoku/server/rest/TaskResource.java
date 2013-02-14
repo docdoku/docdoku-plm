@@ -20,15 +20,22 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.workflow.ActivityKey;
+import com.docdoku.core.workflow.TaskKey;
+import com.docdoku.server.rest.dto.TaskDTO;
+
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Morgan Guimard
  */
+
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -37,12 +44,40 @@ public class TaskResource {
     @EJB
     private DocumentsResource documentsResource;
 
+    @EJB
+    private IDocumentManagerLocal documentService;
+
     public TaskResource() {
     }
 
     @Path("{assignedUserLogin}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
+    }
+
+    @POST
+    @Consumes("text/plain")
+    @Path("process")
+    public Response processTask(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, String comment){
+
+        try {
+
+            if (action.equals("approve")) {
+                documentService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment);
+            } else if (action.equals("reject")) {
+                documentService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment);
+            }else{
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+
+
+            return Response.ok().build();
+
+        } catch (Exception ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
     }
 
 }

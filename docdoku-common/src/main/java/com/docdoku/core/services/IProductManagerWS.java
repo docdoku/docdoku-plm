@@ -236,7 +236,35 @@ public interface IProductManagerWS{
      * @throws NotAllowedException
      */
     PartRevision checkInPart(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException;
-    
+
+    /**
+     * Creates the <a href="BinaryResource.html">BinaryResource</a> file,
+     * which is the native CAD file associated with the part iteration passed as parameter.
+     * The part must be in the checkout state and the calling user must have
+     * write access rights to the part.
+     *
+     * @param partIPK
+     * The id of the part iteration on which the file will be attached
+     *
+     * @param name
+     * The name of the binary resource to create
+     *
+     * @param size
+     * Number of bytes of the physical file
+     *
+     * @return
+     * The physical file, a java.io.File instance, that now needs to be created
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws NotAllowedException
+     * @throws PartRevisionNotFoundException
+     * @throws FileAlreadyExistsException
+     * @throws CreationException
+     */
+    java.io.File saveNativeCADInPartIteration(PartIterationKey partIPK, String name, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+
     /**
      * Creates a <a href="Geometry.html">Geometry</a> file,
      * a specialized kind of binary resource which contains CAD data, and
@@ -452,7 +480,35 @@ public interface IProductManagerWS{
     Marker createMarker(int layerId, String title, String description, double x, double y, double z) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
 
     /**
-     * Find part masters by their number
+     * Returns a specific <a href="PartMaster.html">PartMaster</a>.
+     *
+     * @param partMPK
+     * The id of the part master to get
+     *
+     * @return
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartMasterNotFoundException
+     */
+    PartMaster getPartMaster(PartMasterKey partMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException;
+
+    /**
+     * Returns a specific <a href="PartRevision.html">PartRevision</a>.
+     *
+     * @param partRPK
+     * The id of the part revision to get
+     *
+     * @return
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartRevisionNotFoundException
+     */
+    PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException;
+
+    /**
+     * Finds part masters by their part number using like style query.
      *
      * @param workspaceId
      * The workspace in which part masters will be searched

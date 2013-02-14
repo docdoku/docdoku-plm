@@ -62,20 +62,25 @@ define([
 
         removeOneTask: function(){
             this.updateMaxTasksToComplete();
+
+            var cntTasks = this.model.get("taskModels").length;
+
+            if(this.inputTasksToComplete.val() > cntTasks){
+                this.inputTasksToComplete.val(cntTasks);
+                this.tasksToCompleteChanged();
+            }
         },
 
         updateMaxTasksToComplete: function(){
-            var cntTasks = this.model.get("taskModels").length
-
             this.inputTasksToComplete.attr({
-                MAX: cntTasks
+                MAX: this.model.get("taskModels").length
             });
-
-            if(this.inputTasksToComplete.val() > cntTasks)
-                this.inputTasksToComplete.val(cntTasks);
         },
 
         addTaskAction: function(){
+            this.inputTasksToComplete.val(parseInt(this.inputTasksToComplete.val())+1);
+            this.tasksToCompleteChanged();
+
             this.model.attributes.taskModels.add(new TaskModel());
             return false;
         },

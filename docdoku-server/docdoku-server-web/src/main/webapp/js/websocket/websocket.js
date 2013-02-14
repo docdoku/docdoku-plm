@@ -5,20 +5,58 @@ var ChannelStatus = {
 
 var ChannelMessagesType = {
 
-    USER_STATUS : "USER_STATUS",
     WEBRTC_INVITE: "WEBRTC_INVITE",
-    WEBRTC_INVITE_TIMEOUT: "WEBRTC_INVITE_TIMEOUT",
     WEBRTC_ACCEPT: "WEBRTC_ACCEPT",
     WEBRTC_REJECT: "WEBRTC_REJECT",
     WEBRTC_HANGUP: "WEBRTC_HANGUP",
-
+    WEBRTC_ROOM_JOIN_EVENT: "WEBRTC_ROOM_JOIN_EVENT",
+    WEBRTC_ROOM_REJECT_EVENT: "WEBRTC_ROOM_REJECT_EVENT",
     WEBRTC_OFFER: "offer",
     WEBRTC_ANSWER: "answer",
     WEBRTC_CANDIDATE: "candidate",
     WEBRTC_BYE: "bye",
 
-    CHAT_MESSAGE: "CHAT_MESSAGE"
+    CHAT_MESSAGE: "CHAT_MESSAGE",
+    CHAT_MESSAGE_ACK: "CHAT_MESSAGE_ACK",
+
+    USER_STATUS : "USER_STATUS"
+
 };
+
+var WEBRTC_CONFIG = {
+    MS_TIMEOUT : 30000,
+    PLAY_SOUND : true
+};
+
+var notificationSound = new buzz.sound("../sounds/notification.ogg");
+var incomingCallSound = new buzz.sound("../sounds/incoming-call.ogg");
+
+Backbone.Events.on("NotificationSound",function(){
+    notificationSound.play();
+});
+
+Backbone.Events.on("IncomingCallSound",function(){
+    if(WEBRTC_CONFIG.PLAY_SOUND){
+        incomingCallSound.play();
+    }
+});
+
+var CALL_STATE = {
+    NO_CALL:    "NO_CALL",
+    INCOMING:   "INCOMING",
+    OUTGOING:   "OUTGOING",
+    NEGOTIATING:"NEGOTIATING",
+    RUNNING:    "RUNNING",
+    ENDED:      "ENDED"
+};
+
+var REJECT_CALL_REASON = {
+    REJECTED:"REJECTED",
+    BUSY:"BUSY",
+    TIMEOUT:"TIMEOUT",
+    OFFLINE:"OFFLINE"
+};
+
 
 /*
  * Channel
@@ -27,6 +65,7 @@ var ChannelMessagesType = {
  **/
 
 function Channel(url,messageToSendOnOpen){
+    this.status = ChannelStatus.CLOSED;
     this.url = url;
     this.listeners = [];
     this.messageToSendOnOpen = messageToSendOnOpen;
@@ -76,7 +115,9 @@ Channel.prototype = {
     },    
     
     onopen:function(event){
-        
+
+        this.status = ChannelStatus.OPENED;
+
         if(this.messageToSendOnOpen){            
             this.send(this.messageToSendOnOpen);
         }
@@ -104,6 +145,11 @@ Channel.prototype = {
     
     onclose:function(event){
 
+        this.status = ChannelStatus.CLOSED;
+
+        console.log("Websocket closed");
+        console.log(event);
+
         _.each(this.listeners,function(listener){            
             listener.handlers.onStatusChanged(ChannelStatus.CLOSED);            
         });
@@ -111,26 +157,18 @@ Channel.prototype = {
     },
     
     onerror:function(event){
-
-        
+        console.log("Websocket error");
+        console.log(event);
     },
     
     addChannelListener:function(listener){
-        
         this.listeners.push(listener);
-        
     },
-    
-    removeAllChannelListeners : function(){
-        
-        _.each(this.listeners,function(listener){            
-            listener.handlers.onChannelOver();            
-        }); 
-        
-        this.listeners = [];
-        
+
+    isReady : function(){
+        return  this.status == ChannelStatus.OPENED;
     }
-    
+
 };
 
 /*

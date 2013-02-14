@@ -21,11 +21,24 @@
 package com.docdoku.cli.commands;
 
 
-public class UndoCheckOutCommand implements CommandLine{
+import com.docdoku.cli.ScriptingTools;
+import com.docdoku.core.common.Version;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.services.IProductManagerWS;
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 
+public class UndoCheckOutCommand extends AbstractCommandLine{
 
+    @Option(name="-r", required = true, aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...)")
+    private Version revision;
 
-    public void exec() {
-        System.out.println("UndoCheckOutCommand");
+    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to download")
+    private String partNumber;
+
+    public void execImpl() throws Exception {
+        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        productS.undoCheckOutPart(new PartRevisionKey(new PartMasterKey(workspace, partNumber), revision.toString()));
     }
 }

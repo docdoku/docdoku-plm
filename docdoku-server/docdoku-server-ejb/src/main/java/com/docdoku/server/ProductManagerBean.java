@@ -424,6 +424,42 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public File saveNativeCADInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+        if (!NamingConvention.correct(pName)) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+        }
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        PartRevisionDAO partRDAO = new PartRevisionDAO(em);
+        PartRevision partR = partRDAO.loadPartR(pPartIPK.getPartRevision());
+        PartIteration partI = partR.getIteration(pPartIPK.getIteration());
+        if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user) && partR.getLastIteration().equals(partI)) {
+            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/nativecad/" + pName;
+            BinaryResource file = partI.getNativeCADFile();
+            if (file == null) {
+                file = new BinaryResource(fullName, pSize);
+                binDAO.createBinaryResource(file);
+                partI.setNativeCADFile(file);
+            } else if (file.getFullName().equals(fullName)){
+                file.setContentLength(pSize);
+            }else {
+                dataManager.delData(file);
+                partI.setNativeCADFile(null);
+                binDAO.removeBinaryResource(file);
+                file = new BinaryResource(fullName, pSize);
+                binDAO.createBinaryResource(file);
+                partI.setNativeCADFile(file);
+            }
+            return dataManager.getVaultFile(file);
+        } else {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
+        }
+
+    }
+
+    @RolesAllowed("users")
+    @Override
     public File saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
         if (!NamingConvention.correct(pName)) {
@@ -529,6 +565,34 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException25");
         }
 
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
+        PartRevision partR = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(pPartRPK);
+
+        if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+            em.detach(partR);
+            partR.removeLastIteration();
+        }
+        return partR;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pPartMPK.getWorkspace());
+        PartMaster partM = new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(pPartMPK);
+
+        for(PartRevision partR:partM.getPartRevisions()){
+            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+                em.detach(partR);
+                partR.removeLastIteration();
+            }
+        }
+        return partM;
     }
 
     @RolesAllowed("users")

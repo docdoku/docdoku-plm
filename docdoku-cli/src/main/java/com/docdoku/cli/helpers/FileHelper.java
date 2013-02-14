@@ -23,6 +23,7 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
@@ -36,14 +37,10 @@ public class FileHelper {
     private final static int CHUNK_SIZE = 1024*8;
     private final static int BUFFER_CAPACITY = 1024*32;
 
-    private String workspace;
     private String login;
     private String password;
-    private String serverURL;
 
-    public FileHelper(String serverURL, String workspace, String login, String password) {
-        this.serverURL=serverURL;
-        this.workspace = workspace;
+    public FileHelper(String login, String password) {
         this.login = login;
         this.password = password;
     }
@@ -68,8 +65,7 @@ public class FileHelper {
             byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
             conn.connect();
-            int code = conn.getResponseCode();
-            manageHTTPCode(code);
+            manageHTTPCode(conn);
 
             in = new ConsoleProgressMonitorInputStream(conn.getContentLength(),new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY));
             byte[] data = new byte[CHUNK_SIZE];
@@ -79,9 +75,12 @@ public class FileHelper {
             }
             out.flush();
         } finally {
-            out.close();
-            in.close();
-            conn.disconnect();
+            if(out!=null)
+                out.close();
+            if(in!=null)
+                in.close();
+            if(conn!=null)
+                conn.disconnect();
         }
     }
 
@@ -128,38 +127,26 @@ public class FileHelper {
             out.write(footer);
             out.flush();
 
-            int code = conn.getResponseCode();
-            manageHTTPCode(code);
-            out.close();
-        } catch (InterruptedIOException pEx) {
-            throw pEx;
-        } catch (IOException pEx) {
-            out.close();
-            throw pEx;
+            manageHTTPCode(conn);
         } finally {
-            in.close();
-            conn.disconnect();
+            if(out!=null)
+                out.close();
+            if(in!=null)
+                in.close();
+            if(conn!=null)
+                conn.disconnect();
         }
     }
 
-    private void manageHTTPCode(int code) throws LoginException {
+    private void manageHTTPCode(HttpURLConnection conn) throws IOException, LoginException {
+        int code = conn.getResponseCode();
         switch (code){
             case 401: case 403:
                 throw new LoginException("Error trying to login.");
+            case 500:
+                throw new IOException(conn.getHeaderField("Reason-Phrase"));
         }
     }
-    /*
-    private String getServletURL(PartIteration pPart, String pRemoteFileName) throws UnsupportedEncodingException {
-        return serverURL
-                + "files/"
-                + URLEncoder.encode(workspace, "UTF-8") + "/"
-                + "parts/"
-                + URLEncoder.encode(pPart.getPartNumber(), "UTF-8") + "/"
-                + pPart.getPartVersion() + "/"
-                + pPart.getIteration() + "/"
-                + URLEncoder.encode(pRemoteFileName, "UTF-8");
-    }
-    */
 
     private void performHeadHTTPMethod(String pURL) throws IOException {
         URL url = new URL(pURL);
@@ -173,4 +160,16 @@ public class FileHelper {
         conn.connect();
         int code = conn.getResponseCode();
     }
+
+    public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+        return serverURL
+                + "/files/"
+                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
+                + "parts/"
+                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
+                + pPart.getPartRevision().getVersion() + "/"
+                + pPart.getIteration() + "/nativecad/"
+                + URLEncoder.encode(pRemoteFileName, "UTF-8");
+    }
+
 }
