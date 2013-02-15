@@ -125,6 +125,7 @@ define({
         "REJECT_TASK":                  "Reject task",
         "CLOSURE_COMMENT":              "Closure comment",
         "DELETE_LINKED_DOCUMENT":       "Delete link",
+        "EDIT_LINKED_DOCUMENTS":        "Edit links",
         "SEARCH_DOCUMENT":              "Search document"
 
     },

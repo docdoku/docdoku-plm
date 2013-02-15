@@ -9,7 +9,17 @@ define([
         tagName: 'div',
         className: 'linked-documents-view',
 
+        events: {
+            "click #toggle-links-edit-mode": "toggleLinksEditMode"
+        },
+
+        LinksEditMode: {
+            IDLE: 0,
+            EDITION: 1
+        },
+
         initialize: function() {
+            this.linksEditMode = this.LinksEditMode.IDLE;
             this.searchResults = [];
         },
 
@@ -36,6 +46,7 @@ define([
 
         bindDomElements: function() {
             this.documentReferenceInput = this.$("#document-reference-typeahead");
+            this.toggleLinksEditModeButton = this.$("#toggle-links-edit-mode");
             this.linksUL = this.$("#linked-docs-" + this.cid);
         },
 
@@ -91,6 +102,27 @@ define([
                     self.addLinkView(linkedDocument);
                 }
             });
+        },
+
+        gotoEditionState: function(){
+            this.linksEditMode = this.LinksEditMode.EDITION;
+            this.linksUL.addClass("edition");
+        },
+
+        gotoIdleState: function(){
+            this.linksEditMode = this.LinksEditMode.IDLE;
+            this.linksUL.removeClass("edition");
+        },
+
+        toggleLinksEditMode: function() {
+            switch(this.linksEditMode){
+                case this.LinksEditMode.IDLE:
+                    this.gotoEditionState();
+                    break;
+                case this.LinksEditMode.EDITION:
+                    this.gotoIdleState();
+                    break;
+            }
         }
 
     });
