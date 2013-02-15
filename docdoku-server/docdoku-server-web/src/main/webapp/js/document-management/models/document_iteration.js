@@ -75,6 +75,18 @@ define([
             return this.get("linkedDocuments");
         },
 
+        getDocumentMasterPermalink : function(){
+            return encodeURI(
+                window.location.origin
+                    + "/documents/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getDocumentMasterId()
+                    + "/"
+                    + this.getDocumentMasterVersion()
+            );
+        },
+
         /**
          * file Upload uses the old servlet, not the JAXRS Api         *
          * return /files/{workspace}/documents/{docId}/{version}/{iteration}/

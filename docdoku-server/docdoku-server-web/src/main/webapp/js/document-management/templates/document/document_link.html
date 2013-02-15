@@ -1,4 +1,4 @@
-<span class="reference">{{linkedDocument.documentMasterId}}-{{linkedDocument.documentMasterVersion}}</span>
+<a target="_blank" href="{{linkedDocument.getDocumentMasterPermalink}}" class="reference">{{linkedDocument.getDocumentMasterId}}-{{linkedDocument.getDocumentMasterVersion}}</a>
 {{#editMode}}
 <button class="btn delete-linked-document" title="{{i18n.DELETE_LINKED_DOCUMENT}}"><i class="icon-remove"></i></button>
 {{/editMode}}
