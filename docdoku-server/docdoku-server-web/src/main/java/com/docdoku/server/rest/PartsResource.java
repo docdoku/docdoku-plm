@@ -23,7 +23,8 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.*;
+import com.docdoku.server.rest.dto.ComponentDTO;
 
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
@@ -111,4 +112,22 @@ public class PartsResource {
         return partKey.substring(lastDash + 1, partKey.length());
     }
 
+    @PUT
+    @Produces("application/json;charset=UTF-8")
+    public ComponentDTO createNewPart(@PathParam("workspaceId") String workspaceId, ComponentDTO componentDTO){
+
+        try {
+            PartMaster partMaster = productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription());
+
+            ComponentDTO dto = new ComponentDTO();
+
+            dto.setNumber(partMaster.getNumber());
+
+            return componentDTO;
+
+        } catch (Exception ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
 }

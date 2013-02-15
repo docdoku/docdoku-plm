@@ -16,18 +16,57 @@
             <div class="control-group">
                 <label class="control-label" for="inputDescription">Description</label>
                 <div class="controls">
-                    <textarea id="inputDescription" placeholder="Description" rows="5"></textarea>
+                    <textarea id="inputDescription" placeholder="Description" rows="3"></textarea>
                 </div>
             </div>
 
-            <div class="control-group">
+            <div class="control-group" id="inputPartNumberWrapper">
                 <label class="control-label" for="inputPartNumber">Part Number</label>
                 <div class="controls">
                     <input type="text" id="inputPartNumber" placeholder="Part Number" data-provide="typeahead" required />
                 </div>
             </div>
 
+            <div class="control-group">
+                <div class="controls">
+                    <a id="show_part_creation_fields">Create a new part</a>
+                    <a id="hide_part_creation_fields">Cancel part creation</a>
+                </div>
+            </div>
+
+            <div id="part_creation_fields">
+
+                <div class="control-group">
+                    <label class="control-label" for="inputNewPartNumber">Part Number</label>
+                    <div class="controls">
+                        <input type="text" id="inputNewPartNumber" placeholder="Part Number" />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="inputNewPartName">Part Name</label>
+                    <div class="controls">
+                        <input type="text" id="inputNewPartName" placeholder="Part Name" />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="inputNewPartDescription">Part Description</label>
+                    <div class="controls">
+                        <textarea id="inputNewPartDescription" placeholder="Description" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="inputNewPartStandard">Standard part</label>
+                    <div class="controls">
+                        <input type="checkbox" id="inputNewPartStandard" />
+                    </div>
+                </div>
+            </div>
+
         </form>
+
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
