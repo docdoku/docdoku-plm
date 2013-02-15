@@ -97,6 +97,7 @@ define([
                     var linkedDocument = self.searchResults.find(function(docLastIter) {
                         return docLastIter.getDocKey() == docLastIterDocKey;
                     });
+                    linkedDocument.collection.remove(linkedDocument);
                     self.collection.add(linkedDocument);
 
                     self.addLinkView(linkedDocument);
