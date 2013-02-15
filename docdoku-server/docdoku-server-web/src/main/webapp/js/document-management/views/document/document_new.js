@@ -70,7 +70,6 @@ define([
 
         success: function(model, response) {
             var that = this;
-            model.getLastIteration().id = model.getReference();
             model.getLastIteration().save({
                 instanceAttributes: this.attributesView.collection.toJSON()
             }, {

@@ -16,6 +16,8 @@ define([
         },
 
 		initialize: function () {
+            this.id = this.getReference();
+
             this.className = "DocumentIteration";
 
             var attributes = new AttributeCollection(this.get("instanceAttributes"));

@@ -182,7 +182,6 @@ define([
         primaryAction: function() {
 
             /*saving iteration*/
-            this.iteration.id = this.iteration.getReference();
             this.iteration.save({
                 revisionNote: this.$('#inputRevisionNote').val(),
                 instanceAttributes: this.customAttributesView.collection.toJSON(),
