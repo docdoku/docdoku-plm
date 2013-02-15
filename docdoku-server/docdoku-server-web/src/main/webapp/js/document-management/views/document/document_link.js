@@ -8,7 +8,7 @@ define([
     var DocumentLinkView = Backbone.View.extend({
 
         tagName: "li",
-        className: "linked-document",
+        className: "linked-document well",
 
         events: {
             "click .delete-linked-document" : "deleteButtonClicked"
