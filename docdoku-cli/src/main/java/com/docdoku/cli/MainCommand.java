@@ -44,6 +44,10 @@ public class MainCommand {
                         execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));
                         break;
 
+                    case "put":
+                        execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
+                        break;
+
                     case "checkout": case "co":
                         execCommand(new CheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
                         break;
@@ -96,6 +100,7 @@ public class MainCommand {
         System.err.println("   checkout (co)");
         System.err.println("   get");
         System.err.println("   help (?, h)");
+        System.err.println("   put");
         System.err.println("   status (stat, st)");
         System.err.println("   undocheckout (uco)");
         System.err.println();

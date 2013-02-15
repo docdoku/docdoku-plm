@@ -26,7 +26,8 @@ import com.sun.grizzly.websockets.*;
 public class MainChannelWebSocket extends DefaultWebSocket {
     
     private String userLogin;
-    
+    private String token;
+
     public MainChannelWebSocket(ProtocolHandler handler, WebSocketListener... listeners) {
         super(handler, listeners);
     }
@@ -38,7 +39,13 @@ public class MainChannelWebSocket extends DefaultWebSocket {
     public void setUserLogin(String userLogin) {
         this.userLogin = userLogin;
     }
-    
-    
-    
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 }

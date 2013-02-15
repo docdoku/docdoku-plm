@@ -121,9 +121,11 @@ define({
         "CONTENT_HELP":                 "Document content",
         "COMMENT":                      "Comment",
         "TASK_CLOSED_ON":               "Task closed on",
+        "APPROVE_TASK":                 "Approve task",
+        "REJECT_TASK":                  "Reject task",
+        "CLOSURE_COMMENT":              "Closure comment",
         "DELETE_LINKED_DOCUMENT":       "Delete link",
         "SEARCH_DOCUMENT":              "Search document"
-
 
     },
     "fr": true,

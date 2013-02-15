@@ -44,7 +44,7 @@ define(
             },
 
             onVideoButtonClick:function(e){
-                Backbone.Events.trigger('NewWebRTCSession', { remoteUser : this.model.login , context: APP_CONFIG.workspaceId });
+                Backbone.Events.trigger('NewOutgoingCall', { remoteUser : this.model.login , context: APP_CONFIG.workspaceId });
             },
 
             onChatButtonClick:function(e){

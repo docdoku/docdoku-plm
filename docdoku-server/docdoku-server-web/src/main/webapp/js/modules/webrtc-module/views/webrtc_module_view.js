@@ -31,6 +31,9 @@ define(
             initiator: 0,
             started: false,
 
+            // state of current call
+            callState : null,
+
             mediaConstraints: {
                 'mandatory': {
                     'OfferToReceiveAudio': true,
@@ -60,6 +63,11 @@ define(
 
             },
 
+            setState:function(callState){
+                this.callState = callState;
+                return this ;
+            },
+
             onError: function (message) {
                 this.setStatus(i18n.ERROR+" : "+i18n[message.error]);
             },
@@ -74,14 +82,10 @@ define(
 
             onFullScreenButtonClick: function (ev) {
                 this.videoContainer.webkitRequestFullScreen();
+                this.$el.removeClass("webrtc_minimized").addClass("webrtc_shown");
             },
 
             onHangupButtonClick: function (ev) {
-
-                if (this.started) {
-                    mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey, remoteUser : APP_CONFIG.login});
-                }
-
                 this.stop();
                 this.exit();
             },
@@ -99,7 +103,6 @@ define(
                 this.initiator = 0;
 
                 if (this.pc) {
-                    this.setStatus(i18n.CLOSING_PEER_CON);
                     this.pc.close();
                     this.pc = null;
                 }
@@ -116,6 +119,12 @@ define(
 
                 this.localVideo.style.opacity = 0;
                 this.remoteVideo.style.opacity = 0;
+
+                // say bye if state != no call, then reset the call state to NO_CALL
+                if(this.callState != CALL_STATE.NO_CALL){
+                    mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey, remoteUser : APP_CONFIG.login});
+                    this.setState(CALL_STATE.NO_CALL);
+                }
 
             },
 
@@ -152,25 +161,41 @@ define(
 
             },
 
-            onNewWebRTCSession: function (sessionArgs) {
-
-                // local user initiate the call
+            onNewOutgoingCall: function (sessionArgs) {
 
                 // store rtc session vars
                 this.setRemoteUser(sessionArgs.remoteUser);
                 this.setContext(sessionArgs.context);
                 this.setRoomKey(APP_CONFIG.login + "-" + this.remoteUser);
-
                 this.setTitle(this.remoteUser + " | " + this.context);
-                this.setStatus(i18n.WAITING_USER_MEDIA);
+
                 this.$el.show();
                 this.$el.removeClass("webrtc_minimized").addClass("webrtc_shown");
 
+                if(!mainChannel.isReady()) {
+                    this.setStatus(i18n.ERROR+" : "+i18n.CHANNEL_NOT_READY_ERROR);
+                    this.stop();
+                    return;
+                }
+
+                if(this.callState != CALL_STATE.NO_CALL){
+                    // cannot initiate a new call in not a NO CALL state
+                    return ;
+                }
+
+                // local user initiate the call
+                this.setState(CALL_STATE.OUTGOING);
+                this.setStatus(i18n.WAITING_USER_MEDIA);
                 this.initMedia();
             },
 
-
             onCallAcceptedByLocalUser: function (message) {
+
+                if(this.callState != CALL_STATE.INCOMING){
+                    return ;
+                }
+
+                this.setState(CALL_STATE.NEGOTIATING);
 
                 // remote user initiate the call
                 this.initiator = 1;
@@ -189,42 +214,54 @@ define(
 
                 this.setTitle(this.remoteUser + " | " + this.context);
                 this.setStatus(i18n.WAITING_USER_MEDIA);
-                this.$el.show();
-                this.$el.addClass("webrtc_shown");
-
+                this.$el.addClass("webrtc_shown").show();
                 this.initMedia();
 
             },
 
-            onCallRejectedByLocalUser: function (message) {
+            onCallTimeoutByLocalUser:function(message) {
                 // tell the remote user we reject the call.
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.WEBRTC_REJECT,
                     roomKey: message.roomKey,
-                    remoteUser: message.remoteUser
+                    remoteUser: message.remoteUser,
+                    reason:REJECT_CALL_REASON.TIMEOUT
                 });
+                this.stop();
             },
 
-            onLocalTimeout: function (message) {
-                // tell the remote user we didn't answer in time
+            onCallRejectedByLocalUser: function (message) {
+
+                if(this.callState != CALL_STATE.INCOMING){
+                    return;
+                }
+
+                // tell the remote user we reject the call (reason : reject)
                 mainChannel.sendJSON({
-                    type: ChannelMessagesType.WEBRTC_INVITE_TIMEOUT,
+                    type: ChannelMessagesType.WEBRTC_REJECT,
                     roomKey: message.roomKey,
-                    remoteUser: message.remoteUser
+                    remoteUser: message.remoteUser,
+                    reason:REJECT_CALL_REASON.REJECTED
                 });
-            },
 
-            onRemoteTimeout: function (message) {
-                this.setStatus(i18n.REMOTE_TIMEOUT);
                 this.stop();
             },
 
             onCallAcceptedByRemoteUser: function (message) {
+                this.setState(CALL_STATE.NEGOTIATING);
                 this.setStatus(i18n.REMOTE_ACCEPT);
             },
 
-            onCallRejectedByRemoteUser: function () {
-                this.setStatus(i18n.REMOTE_REJECT);
+            onCallRejectedByRemoteUser: function (message) {
+
+                switch(message.reason){
+                    case REJECT_CALL_REASON.BUSY : this.setStatus(i18n.REMOTE_BUSY); break;
+                    case REJECT_CALL_REASON.TIMEOUT : this.setStatus(i18n.REMOTE_TIMEOUT); break;
+                    case REJECT_CALL_REASON.REJECTED : this.setStatus(i18n.REMOTE_REJECT); break;
+                    case REJECT_CALL_REASON.OFFLINE : this.setStatus(i18n.REMOTE_OFFLINE); break;
+                    default : this.setStatus(i18n.REMOTE_REJECT); break ;
+                }
+
                 this.stop();
             },
 
@@ -234,15 +271,11 @@ define(
             },
 
             initMedia: function () {
-
-                var constraints = {"mandatory": {}, "optional": []};
-
                 try {
-                    getUserMedia({'audio': true, 'video': constraints}, this.onUserMediaSuccess, this.onUserMediaError);
+                    getUserMedia({'audio': true, 'video': {"mandatory": {}, "optional": []}}, this.onUserMediaSuccess, this.onUserMediaError);
                 } catch (e) {
                     this.setStatus(i18n.USER_MEDIA_FAILED);
                 }
-
             },
 
             onUserMediaSuccess: function (stream) {
@@ -271,11 +304,9 @@ define(
             },
 
             onUserMediaError: function (error) {
-                mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey});
+                this.setStatus(i18n.ERROR+" : "+i18n.DEVICE_ERROR);
                 this.stop();
-                this.exit();
             },
-
 
             maybeStart: function () {
 
@@ -310,13 +341,9 @@ define(
 
             createPeerConnection: function () {
 
-                var pc_config = {"iceServers": [
-                    {"url": "stun:stun.l.google.com:19302"}
-                ]};
-
                 try {
                     // Create an RTCPeerConnection via the adapter
-                    this.pc = new RTCPeerConnection(pc_config);
+                    this.pc = new RTCPeerConnection({"iceServers":[{"url": "stun:stun.l.google.com:19302"}]});
                     this.pc.onicecandidate = this.onIceCandidate;
                 } catch (e) {
                     // Failed to create PeerConnection
@@ -353,9 +380,7 @@ define(
                     }));
 
                 } else if (msg.type === ChannelMessagesType.WEBRTC_BYE) {
-
                     this.onRemoteHangup();
-
                 }
 
             },
@@ -378,6 +403,7 @@ define(
 
             onSessionOpened: function (message) {
                 this.setStatus(i18n.SESSION_OPENED);
+                this.setState(CALL_STATE.RUNNING);
             },
 
             onRemoteStreamAdded: function (event) {
@@ -404,6 +430,7 @@ define(
                 if (this.videoTracks.length === 0 || this.remoteVideo.currentTime > 0) {
                     this.remoteVideo.style.opacity = 1;
                     this.setStatus(i18n.CONNECTED);
+                    this.setState(CALL_STATE.RUNNING);
                 } else {
                     setTimeout(function () {
                         self.waitForRemoteVideo();

@@ -8,10 +8,12 @@ define({
     "REMOTE_HANGUP":                    "L'utilisateur distant a raccroché",
     "CLOSING_PEER_CON":                 "Fermeture de la connexion ...",
     "CALL_TO_TITLE":                    "Appel en cours",
-    "WAITING_USER_MEDIA":               "En attente de l'entrée vidéo",
+    "WAITING_USER_MEDIA":               "En attente de l'entrée vidéo ... Veuillez accepter la demande de votre navigateur.",
     "REMOTE_TIMEOUT":                   "L'utilisateur distant n'a pas répondu à temps. Appel terminé ...",
+    "REMOTE_BUSY":                      "L'utilisateur distant est occupé. Appel terminé ...",
     "REMOTE_ACCEPT":                    "L'utilisateur distant a accepté l'appel. En attente de connexion ...",
     "REMOTE_REJECT":                    "L'utilisateur distant a rejeté l'appel. Appel terminé ...",
+    "REMOTE_OFFLINE":                   "L'utilisateur distant est hors-ligne. Appel terminé ...",
     "USER_MEDIA_FAILED":                "Imposible d'accéder à votre entrée vidéo. Votre navigateur supporte-il le WebRTC ?",
     "VIDEO_INVITATION_SENT":            "L'invitation a été envoyée à l'utilisateur distant, en attente de l'acceptation ...",
     "CONNECTING":                       "Connexion ...",
@@ -21,5 +23,7 @@ define({
     "REMOTE_STEAM_ADDED":               "Flux vidéo de l'utilisateur distant ajouté",
     "REMOTE_STEAM_REMOVED":             "Flux vidéo de l'utilisateur distant enlevé",
     "WAITING_REMOTE_VIDEO":             "En attente de la vidéo de l'utilisateur distant.",
-    "CONNECTED":                        "Connecté"
+    "CONNECTED":                        "Connecté",
+    "DEVICE_ERROR":                     "Imposible de se connecter à votre matériel audio/vidéo. Veillez à activer le WebRTC pour votre navigateur, et de vérifier les exceptions.",
+    "CHANNEL_NOT_READY_ERROR":          "Impossible de se connecter au serveur d'appel, vérifiez que votre navigateur supporte les websocket, ou que votre FAI ne les bloque pas"
 });

@@ -121,6 +121,9 @@ define({
     "CONTENT_HELP":                 "Contenu du document",
     "COMMENT":                      "Commentaire",
     "TASK_CLOSED_ON":               "Tâche fermée le",
+    "APPROVE_TASK":                 "Approuver la tâche",
+    "REJECT_TASK":                  "Rejeter la tâche",
+    "CLOSURE_COMMENT":              "Commentaire",
     "DELETE_LINKED_DOCUMENT":       "Supprimer le lien",
     "SEARCH_DOCUMENT":              "Rechercher un document"
 

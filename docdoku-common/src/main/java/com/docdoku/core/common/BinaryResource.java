@@ -85,22 +85,38 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         contentLength = pContentLength;
     }
 
+    public boolean isNativeCADFile(){
+        String[] parts = fullName.split("/");
+        return (parts.length==7 && "nativecad".equals(parts[5]));
+    }
+
     public BinaryResource getPrevious(){
         if(getOwnerType().equals("templates"))
             return null;
         
         int lastS = fullName.lastIndexOf('/');
         String name = fullName.substring(lastS+1);
-        String truncatedName=fullName.substring(0,lastS);
-        int beforeLastS = truncatedName.lastIndexOf('/');
-        int iteration=Integer.parseInt(truncatedName.substring(beforeLastS+1));
-        iteration--;
-        if(iteration>0){
-            String previousFullName=truncatedName.substring(0,beforeLastS)+"/"+iteration+"/"+name;
-            return new BinaryResource(previousFullName,contentLength);
 
-        }else
-            return null;
+        if(isNativeCADFile()){
+            String[] parts = fullName.split("/");
+            int iteration=Integer.parseInt(parts[4]);
+            iteration--;
+            if(iteration>0){
+                String previousFullName=parts[0] + "/parts/" + parts[2] + "/" +parts[3]  + "/" + iteration + "/nativecad/" +name;
+                return new BinaryResource(previousFullName,contentLength);
+            }else
+                return null;
+        }else{
+            String truncatedName=fullName.substring(0,lastS);
+            int beforeLastS = truncatedName.lastIndexOf('/');
+            int iteration=Integer.parseInt(truncatedName.substring(beforeLastS+1));
+            iteration--;
+            if(iteration>0){
+                String previousFullName=truncatedName.substring(0,beforeLastS)+"/"+iteration+"/"+name;
+                return new BinaryResource(previousFullName,contentLength);
+            }else
+                return null;
+        }
     }
     
     public String getFullName() {

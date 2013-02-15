@@ -13,6 +13,9 @@ define(["i18n!localization/nls/chat-module-strings",
             +"<i class='icon-facetime-video'></i>"
             +"</div>"
             +"<ul class='chat_session_messages'></ul>"
+            +"<div class='chat_webrtc_invite'>"
+                +"<span><b></b><%= chatSession.remoteUser %></b> "+i18n.VIDEO_INVITE_TEXT+"</span>"
+                +"<a class='btn btn btn-success accept-webrtc'> <i class='icon-facetime-video'></i> "+i18n.VIDEO_INVITE_ACCEPT+"</a><a class='btn btn-danger reject-webrtc'> <i class='icon-remove'></i> "+i18n.VIDEO_INVITE_REJECT+"</a></div>"
             +"<div class='chat_session_reply'>"
                 +"<form class='chat_session_reply_form'>"
                     +"<input type='text' name='chat_message_session_input'/> "
@@ -28,7 +31,9 @@ define(["i18n!localization/nls/chat-module-strings",
             "click .icon-facetime-video" : "onVideoButtonClick",
             "click .chat_session_title":"onGlobalClick",
             "click .chat_session_messages":"onGlobalClick",
-            "click input[name=chat_message_session_input]":"onGlobalClick"
+            "click input[name=chat_message_session_input]":"onGlobalClick",
+            "click a.accept-webrtc" : "onWebRTCAccept",
+            "click a.reject-webrtc" : "onWebRTCReject"
         },
 
         initialize : function() {
@@ -85,6 +90,11 @@ define(["i18n!localization/nls/chat-module-strings",
                 this.onError(message);
             }else{
                 this.collection.push(message);
+
+                if(message.sender != APP_CONFIG.login){
+                    Backbone.Events.trigger("NotificationSound");
+                }
+
             }
             return this;
         },
@@ -126,10 +136,19 @@ define(["i18n!localization/nls/chat-module-strings",
             // override jquery style, better behavior
             this.$el.css("position","absolute");
 
+            this.$WebRTCInvitation = this.$(".chat_webrtc_invite");
+
             return this;
         },
 
         onSubmitForm:function(event){
+
+            if(!mainChannel.isReady()) {
+                this.$("ul.chat_session_messages").append("<li class='chat_message_error'>"+i18n.ERROR+" : "+i18n.CHANNEL_NOT_READY_ERROR+"</li>");
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            }
 
             var textInput = event.target.children[0];
 
@@ -148,7 +167,7 @@ define(["i18n!localization/nls/chat-module-strings",
             mainChannel.sendJSON(message);
 
             // trigger message render on local
-            Backbone.Events.trigger('NewChatMessage', message);
+            //Backbone.Events.trigger('NewChatMessage', message);
 
             textInput.value = "";
 
@@ -181,7 +200,7 @@ define(["i18n!localization/nls/chat-module-strings",
         },
 
         onVideoButtonClick:function(){
-            Backbone.Events.trigger('NewWebRTCSession', {remoteUser:this.remoteUser,context:this.context});
+            Backbone.Events.trigger('NewOutgoingCall', {remoteUser:this.remoteUser,context:this.context});
         },
 
         setOnTop:function(){
@@ -195,6 +214,31 @@ define(["i18n!localization/nls/chat-module-strings",
             this.$el.removeClass("chat_session_on_top");
             this.isOnTop = false;
             return this;
+        },
+
+        onWebRTCInvitation:function(webRTCInvitation){
+            this.webRTCInvitation = webRTCInvitation;
+            this.$WebRTCInvitation.show();
+        },
+
+        onWebRTCAccept:function(){
+            if(this.webRTCInvitation){
+                this.webRTCInvitation.accept();
+                this.webRTCInvitation = null;
+                this.hideWebRTCInvitation();
+            }
+        },
+
+        onWebRTCReject:function(){
+            if(this.webRTCInvitation){
+                this.webRTCInvitation.reject();
+                this.webRTCInvitation = null;
+                this.hideWebRTCInvitation();
+            }
+        },
+
+        hideWebRTCInvitation:function(){
+            this.$WebRTCInvitation.hide();
         }
 
     });

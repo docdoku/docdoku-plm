@@ -27,7 +27,6 @@ define([
             + "<a class='btn mailto_button' href='' target='_blank'><i class='icon-envelope'></i> Mail </a>"
             + "</div>";
 
-        //
         var users = new Users();
 
         $.fn.userPopover = function (userLogin, context, placement) {
@@ -76,7 +75,7 @@ define([
 
                                 // handle webrtc button click event
                                 $tip.find(".webRTC_invite_button").one("click", function (ev) {
-                                    Backbone.Events.trigger('NewWebRTCSession', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context });
+                                    Backbone.Events.trigger('NewOutgoingCall', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context });
                                     $(that).popover('hide');
                                 });
 

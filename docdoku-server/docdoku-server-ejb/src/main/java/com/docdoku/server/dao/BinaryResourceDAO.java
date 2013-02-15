@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.product.Geometry;
 import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.services.FileAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
@@ -28,11 +29,7 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.product.PartIteration;
 import java.util.*;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 
 public class BinaryResourceDAO {
 
@@ -83,27 +80,34 @@ public class BinaryResourceDAO {
     }
 
     public PartIteration getPartOwner(BinaryResource pBinaryResource) {
-        Query query = em.createQuery("SELECT p FROM PartIteration p WHERE :binaryResource MEMBER OF p.geometries");
+        TypedQuery<PartIteration> query;
+        if(pBinaryResource instanceof Geometry){
+            query = em.createQuery("SELECT p FROM PartIteration p WHERE :binaryResource MEMBER OF p.geometries", PartIteration.class);
+        }else if(pBinaryResource.isNativeCADFile()){
+            query = em.createQuery("SELECT p FROM PartIteration p WHERE p.nativeCADFile = :binaryResource", PartIteration.class);
+        }else{
+            query = em.createQuery("SELECT p FROM PartIteration p WHERE :binaryResource MEMBER OF p.attachedFiles", PartIteration.class);
+        }
         try {
-            return (PartIteration) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+            return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {
             return null;
         }
     }
     
     public DocumentIteration getDocumentOwner(BinaryResource pBinaryResource) {
-        Query query = em.createQuery("SELECT d FROM DocumentIteration d WHERE :binaryResource MEMBER OF d.attachedFiles");
+        TypedQuery<DocumentIteration> query = em.createQuery("SELECT d FROM DocumentIteration d WHERE :binaryResource MEMBER OF d.attachedFiles", DocumentIteration.class);
         try {
-            return (DocumentIteration) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+            return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {
             return null;
         }
     }
 
     public DocumentMasterTemplate getTemplateOwner(BinaryResource pBinaryResource) {
-        Query query = em.createQuery("SELECT t FROM DocumentMasterTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles");
+        TypedQuery<DocumentMasterTemplate> query = em.createQuery("SELECT t FROM DocumentMasterTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles", DocumentMasterTemplate.class);
         try {
-            return (DocumentMasterTemplate) query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+            return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {
             return null;
         }

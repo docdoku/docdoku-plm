@@ -69,10 +69,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
     private IProductManagerLocal productService;
     
     @RolesAllowed("users")
-    public
     @XmlMimeType("application/octet-stream")
     @Override
-    DataHandler downloadFromDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DataHandler downloadFromDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         String fullName = workspaceId + "/documents/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
         File dataFile = documentService.getDataFile(fullName);
 
@@ -80,10 +79,19 @@ public class UploadDownloadService implements IUploadDownloadWS {
     }
 
     @RolesAllowed("users")
-    public
     @XmlMimeType("application/octet-stream")
     @Override
-    DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadNativeFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+        String fullName = workspaceId + "/parts/" + partMNumber + "/" + partRVersion + "/" + iteration + "/nativecad/" + fileName;
+        File dataFile = productService.getDataFile(fullName);
+
+        return new DataHandler(new FileDataSource(dataFile));
+    }
+
+    @RolesAllowed("users")
+    @XmlMimeType("application/octet-stream")
+    @Override
+    public DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
         String fullName = workspaceId + "/parts/" + partMNumber + "/" + partRVersion + "/" + iteration + "/" + fileName;
         File dataFile = productService.getDataFile(fullName);
 
@@ -91,10 +99,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
     }
     
     @RolesAllowed("users")
-    public
     @XmlMimeType("application/octet-stream")
     @Override
-    DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         String fullName = workspaceId + "/templates/" + templateID + "/" + fileName;
         File dataFile = documentService.getDataFile(fullName);
 
@@ -139,6 +146,25 @@ public class UploadDownloadService implements IUploadDownloadWS {
         data.writeTo(outStream);
         outStream.close();
         productService.saveGeometryInPartIteration(partIPK, fileName, quality, vaultFile.length());
+    }
+
+
+    @RolesAllowed("users")
+    @Override
+    public void uploadNativeCADToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
+            @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
+        PartIterationKey partIPK = null;
+        File vaultFile = null;
+
+        partIPK = new PartIterationKey(workspaceId, partMNumber, partRVersion, iteration);
+        vaultFile = productService.saveNativeCADInPartIteration(partIPK, fileName, 0);
+
+        vaultFile.getParentFile().mkdirs();
+        vaultFile.createNewFile();
+        OutputStream outStream = new BufferedOutputStream(new FileOutputStream(vaultFile));
+        data.writeTo(outStream);
+        outStream.close();
+        productService.saveNativeCADInPartIteration(partIPK, fileName, vaultFile.length());
     }
 
     @RolesAllowed("users")
