@@ -21,6 +21,7 @@ define(["views/search_view", "views/parts_tree_view", "views/bom_view", "views/p
             this.sceneModeButton.addClass("active");
             this.bomContainer.hide();
             this.centerSceneContainer.show();
+            this.bomView.bomHeaderView.hideCheckGroup();
         },
 
         bomMode: function() {

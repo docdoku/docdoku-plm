@@ -51,8 +51,12 @@ define(["text!templates/bom_header.html", "i18n!localization/nls/product-structu
 
         },
 
-        onNoComponentSelected: function() {
+        hideCheckGroup:function(){
             this.checkoutGroup.hide();
+        },
+
+        onNoComponentSelected: function() {
+            this.hideCheckGroup();
         },
 
         onOneComponentSelected: function(component) {
