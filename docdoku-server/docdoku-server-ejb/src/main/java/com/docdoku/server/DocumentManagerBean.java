@@ -311,6 +311,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
+    @Override
+    public DocumentMaster[] getDocumentMastersWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocMsWithReferenceLike(pWorkspaceId, reference, maxResults);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
+    }
+
 
     @RolesAllowed("users")
     @Override

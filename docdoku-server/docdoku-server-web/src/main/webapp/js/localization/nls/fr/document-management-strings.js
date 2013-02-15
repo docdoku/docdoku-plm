@@ -120,6 +120,8 @@ define({
     "CONTENT":                      "Contenu",
     "CONTENT_HELP":                 "Contenu du document",
     "COMMENT":                      "Commentaire",
-    "TASK_CLOSED_ON":               "Tâche fermée le"
+    "TASK_CLOSED_ON":               "Tâche fermée le",
+    "DELETE_LINKED_DOCUMENT":       "Supprimer le lien",
+    "SEARCH_DOCUMENT":              "Rechercher un document"
 
 });

@@ -23,11 +23,6 @@ import com.docdoku.core.document.*;
 import com.docdoku.core.services.DocumentMasterNotFoundException;
 import com.docdoku.core.services.DocumentMasterAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
-import com.docdoku.core.*;
-import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.common.User;
 import java.util.*;
 import javax.persistence.EntityExistsException;
@@ -253,5 +248,10 @@ public class DocumentMasterDAO {
     public List<DocumentMaster> findDocWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
         return em.createNamedQuery("findDocumentMastersWithAssignedTasksForGivenUser").
                 setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
+    }
+
+    public List<DocumentMaster> findDocMsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
+        return em.createNamedQuery("findDocumentMastersWithReference").
+                setParameter("workspaceId", pWorkspaceId).setParameter("id", "%"+reference+"%").setMaxResults(maxResults).getResultList();
     }
 }

@@ -16,7 +16,6 @@ define([
             "dragover .droppable": "fileDragHover",
             "dragleave .droppable": "fileDragHover",
             "drop .droppable": "fileDropHandler"
-
         },
 
         initialize: function() {

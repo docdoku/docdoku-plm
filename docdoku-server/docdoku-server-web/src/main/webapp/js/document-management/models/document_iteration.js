@@ -11,7 +11,9 @@ define([
 ) {
 	var DocumentIteration = Backbone.Model.extend({
 
-		idAttribute: "iteration",
+        url: function() {
+            return this.collection.url()+"/"+this.getIteration();
+        },
 
 		initialize: function () {
             this.className = "DocumentIteration";
@@ -57,8 +59,20 @@ define([
             return this.get("iteration");
         },
 
+        getDocumentMasterId : function(){
+            return  this.get("documentMasterId");
+        },
+
+        getDocumentMasterVersion : function(){
+            return  this.get("documentMasterVersion");
+        },
+
         getDocKey : function(){
-            return  this.get("documentMasterId")+"-"+this.get("documentMasterVersion");
+            return  this.getDocumentMasterId()+"-"+this.getDocumentMasterVersion();
+        },
+
+        getLinkedDocuments : function(){
+            return this.get("linkedDocuments");
         },
 
         /**

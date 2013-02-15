@@ -34,10 +34,7 @@ import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.WorkflowModelKey;
 import javax.jws.WebService;
 
 /**
@@ -138,5 +135,6 @@ public interface IDocumentManagerWS {
 
     DocumentMaster[] getDocumentMastersWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
+    DocumentMaster[] getDocumentMastersWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
 }
