@@ -154,7 +154,7 @@
                                 <td><fmt:formatDate value="${item.value}" pattern="dd/MM/yyyy"/></td>
                             </c:if>
                             <c:if test="${item.class=='class com.docdoku.core.meta.InstanceURLAttribute'}">
-                                <td><a href="${item.value}">${item.value}</a></td>
+                                <td><a target="blank" href="${item.value}">${item.value}</a></td>
                             </c:if>
 
                             <c:if test="${item.value.class!='class java.lang.Boolean' && item.value.class!='class java.util.Date' && item.class!='class com.docdoku.core.meta.InstanceURLAttribute'}">
