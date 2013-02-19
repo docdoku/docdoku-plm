@@ -90,6 +90,7 @@ define([
             this.gotoUploadingState();
 
             var newFile = new AttachedFile({
+                fullName: this.options.baseName + "/" + file.name,
                 shortName: file.name
             });
 

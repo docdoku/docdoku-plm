@@ -139,6 +139,7 @@ define([
                 });
 
                 this.fileListView = new FileListView({
+                    baseName: this.iteration.getWorkspace() + "/documents/" + this.iteration.getDocumentMasterId() + "/" + this.iteration.getDocumentMasterVersion() + "/" + this.iteration.getIteration(),
                     deleteBaseUrl: this.iteration.url(),
                     uploadBaseUrl: this.iteration.getUploadBaseUrl(),
                     collection:this.iteration.getAttachedFiles(),
