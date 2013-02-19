@@ -85,6 +85,11 @@ public class GetCommand extends AbstractCommandLine{
             FileHelper fh = new FileHelper(user,password);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
+
+        if(recursive){
+            //productS.
+        }
+
     }
 
 
