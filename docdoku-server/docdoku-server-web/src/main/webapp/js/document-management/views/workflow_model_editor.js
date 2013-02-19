@@ -12,8 +12,9 @@ define([
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
     "common-objects/collections/users",
-    "models/activity_model"
-], function(require, i18n, WorkflowModel, template, Users, ActivityModel) {
+    "models/activity_model",
+    "views/workflow_model_copy"
+], function(require, i18n, WorkflowModel, template, Users, ActivityModel, WorkflowModelCopyView) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
         el: "#document-content",
@@ -22,8 +23,6 @@ define([
             "click .actions #cancel-workflow": "cancelAction",
             "click .actions #save-workflow": "saveAction",
             "click .actions #copy-workflow": "copyAction",
-            "click #save-copy-workflow-btn": "saveCopyAction",
-            "click #cancel-copy-workflow-btn": "cancelCopyAction",
             "click button#add-activity": "addActivityAction"
         },
 
@@ -113,37 +112,14 @@ define([
         },
 
         copyAction: function() {
-            this.modalCopyWorkflow.modal("show");
+
+            var workflowModelCopyView = new WorkflowModelCopyView({
+                model: this.model
+            }).render();
+
+            $("body").append(workflowModelCopyView.el);
+
             return false;
-        },
-
-        saveCopyAction: function() {
-            var self = this;
-            var reference = this.inputWorkflowCopyName.val();
-
-            if (reference != null && reference != "") {
-                delete this.model.id;
-                this.model.save(
-                    {
-                        reference: reference,
-                        finalLifeCycleState: self.inputFinalState.val()
-                    },
-                    {
-                        success: function() {
-                            self.modalCopyWorkflow.modal("hide");
-                            self.gotoWorkflows();
-                        },
-                        error: function(model, xhr) {
-                            console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
-                            self.inputWorkflowCopyName.focus();
-                        }
-                    }
-                );
-            }
-        },
-
-        cancelCopyAction: function() {
-            this.modalCopyWorkflow.modal("hide");
         },
 
         render: function() {
@@ -159,9 +135,6 @@ define([
 
         bindDomElements: function() {
             var self = this;
-
-            this.modalCopyWorkflow = this.$("div#modal-copy-workflow");
-            this.inputWorkflowCopyName = this.$("input#workflow-copy-name");
 
             this.inputWorkflowName = this.$("input#workflow-name");
 

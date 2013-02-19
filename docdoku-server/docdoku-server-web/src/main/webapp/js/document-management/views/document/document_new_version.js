@@ -1,10 +1,8 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "views/components/modal",
     "text!templates/document/document_new_version.html"
 ], function (
     i18n,
-    ModalView,
     template
     ) {
     var DocumentsNewVersionView = Backbone.View.extend({
