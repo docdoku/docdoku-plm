@@ -22,6 +22,8 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 
 import com.docdoku.core.product.*;
@@ -29,28 +31,35 @@ import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import java.io.Console;
 import java.io.File;
 
 public class GetCommand extends AbstractCommandLine{
 
 
-    @Option(name="-r", aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
+    @Option(name="-v", aliases = "--version", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
     private Version revision;
 
     @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")
     private int iteration;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to download")
+    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to fetch")
     private String partNumber;
 
     @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
     private File path = new File(System.getProperty("user.dir"));
 
+    @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
+    private boolean force;
+
+    @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
+    private boolean recursive;
+
+
     public void execImpl() throws Exception {
 
-        FileHelper fh = new FileHelper(user,password);
+
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartIterationKey partIPK;
         PartRevision pr;
         PartIteration pi;
         if(revision==null){
@@ -62,13 +71,21 @@ public class GetCommand extends AbstractCommandLine{
         if(iteration==0){
             pi = pr.getLastIteration();
         }else{
-            pi = pr.getIteration(iteration);
+            if(iteration > pr.getNumberOfIterations()){
+                throw new IllegalArgumentException("Iteration " + iteration + " doesn't exist");
+            }else{
+                pi = pr.getIteration(iteration);
+            }
         }
 
-        String fileName =  pi.getNativeCADFile().getName();
-        partIPK = new PartIterationKey(workspace,partNumber,pr.getVersion(),pi.getIteration());
-
-        File localFile = new File(path,fileName);
-        fh.downloadFile(localFile,FileHelper.getPartURL(getServerURL(),partIPK, fileName));
+        BinaryResource bin = pi.getNativeCADFile();
+        if(bin==null){
+            throw new IllegalArgumentException("No file for this part");
+        }else{
+            FileHelper fh = new FileHelper(user,password);
+            fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
+        }
     }
+
+
 }
