@@ -1,6 +1,6 @@
 define([
-	"common/singleton_decorator",
-	"views/base",
+	"common-objects/common/singleton_decorator",
+	"common-objects/views/base",
 	"views/template_content_list",
 	"text!templates/template_nav.html"
 ], function (

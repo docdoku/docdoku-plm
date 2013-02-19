@@ -1,5 +1,5 @@
 define([
-	"views/base",
+	"common-objects/views/base",
 	"text!templates/workspace.html"
 ], function (
 	BaseView,

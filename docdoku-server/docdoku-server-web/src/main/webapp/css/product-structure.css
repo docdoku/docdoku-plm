@@ -116,6 +116,21 @@
     text-decoration: none;
 }
 
+#product_nav_list li#product_root_assembly {
+    background: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-bottom: 1px dotted #ccc;
+    opacity: 0.8;
+}
+#product_nav_list li#product_root_assembly:hover{
+    opacity: 1;
+}
+#product_nav_list li#product_root_assembly i {
+    margin-top: 3px;
+    float: left;
+}
+
 #product_nav_list input[type=checkbox]{
     padding-left:5px;
     margin:-5px 0 0 0 ;

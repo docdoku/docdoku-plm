@@ -131,7 +131,8 @@ public class MainChannelApplication extends WebSocketApplication {
                         }
                     }
                 } catch (JSONException ex){
-                    // jsobj.getString("remoteUser") didn't get data.
+                    // remoteUser is empty
+                    remoteUser = "";
                 }
 
                 String type = jsObj.getString("type");
@@ -205,15 +206,10 @@ public class MainChannelApplication extends WebSocketApplication {
                     // store the webSocket in the user socket hashMap
                     if (channels.get(callerLogin) == null) {
                         // user does not have a channels map yet. Let's create his channels map.
-                        HashMap<String, MainChannelWebSocket> userSocketsHashMap = new HashMap<String, MainChannelWebSocket>();
-                        // Store the socket in the channels map
-                        userSocketsHashMap.put(ws.getToken(), ws);
-                        // Set the new channels map as user's one.
-                        channels.put(callerLogin, userSocketsHashMap);
-                    } else {
-                        // User already has a channels map, let's add the new socket in his channels map.
-                        channels.get(callerLogin).put(ws.getToken(), ws);
+                        channels.put(callerLogin,new HashMap<String, MainChannelWebSocket>());
                     }
+                    // store the socket in the user channels hashmap
+                    channels.get(callerLogin).put(ws.getToken(),ws);
 
                     // send him a welcome message
                     MainChannelDispatcher.send(ws, ChannelMessagesBuilder.BuildWelcomeMessage(ws.getUserLogin()));

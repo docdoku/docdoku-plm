@@ -2,8 +2,6 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
     var Document = Backbone.Model.extend({
 
-
-
         parse: function(data) {
             this.iterations = new DocumentIterationList(data.documentIterations);
             this.iterations.setDocument(this);
@@ -14,7 +12,7 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         getReference: function() {
             var id = this.get("id");
-            return id.substr(0, id.lastIndexOf("-"))
+            return id.substr(0,id.lastIndexOf("-"));
         },
 
         getVersion: function() {

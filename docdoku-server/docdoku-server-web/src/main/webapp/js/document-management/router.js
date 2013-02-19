@@ -1,5 +1,5 @@
 define([
-	"common/singleton_decorator",
+	"common-objects/common/singleton_decorator",
 	"views/folder_nav",
 	"views/tag_nav",
 	"views/search_nav",

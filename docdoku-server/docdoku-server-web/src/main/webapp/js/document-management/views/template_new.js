@@ -1,6 +1,6 @@
 define([
-	"views/components/modal",
-	"views/template_new_attributes",
+	"common-objects/views/components/modal",
+	"common-objects/views/attributes/template_new_attributes",
 	"text!templates/template_new.html"
 ], function (
 	ModalView,

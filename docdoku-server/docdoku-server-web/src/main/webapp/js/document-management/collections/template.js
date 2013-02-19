@@ -1,6 +1,6 @@
 define([
 	"models/template",
-	"common/singleton_decorator"
+	"common-objects/common/singleton_decorator"
 ], function (
 	Template,
 	singletonDecorator

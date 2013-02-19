@@ -1,5 +1,5 @@
 <td><input type="checkbox"/></td>
-<td class="component_number">
+<td class="part_number">
     {{#isCheckout}}
         {{#isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/isCheckoutByConnectedUser}}
         {{^isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/isCheckoutByConnectedUser}}
@@ -9,7 +9,17 @@
     {{/isCheckout}}
     {{getNumber}}
 </td>
-<td>{{getName}}</td>
 <td>{{getVersion}}</td>
-<td>{{#getIteration}}{{getIteration}}{{/getIteration}}{{^getIteration}}-{{/getIteration}}</td>
-<td>{{getAmount}}</td>
+<td>{{#getLastIteration}}
+    {{id}}
+    {{/getLastIteration}}
+    {{^getLastIteration}}
+    -
+    {{/getLastIteration}}</td>
+<td>{{isStandardPart}}</td>
+<td>{{getName}}</td>
+<td><a class="author-popover">{{getAuthorName}}</a></td>
+
+<td>{{getFormattedCreationDate}}</td>
+<td>{{getFormattedCheckoutDate}}</td>
+<td><a class="checkout-user-popover">{{getCheckOutUserName}}</a></td>

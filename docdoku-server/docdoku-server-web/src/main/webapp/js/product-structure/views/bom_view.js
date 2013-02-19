@@ -14,6 +14,10 @@ define(["views/bom_header_view", "views/bom_content_view"], function (BomHeaderV
 
         updateContent: function(component) {
             this.bomContentView.update(component);
+        },
+
+        showRoot:function(component){
+            this.bomContentView.showRoot(component);
         }
 
     });

@@ -25,15 +25,17 @@ import java.util.HashMap;
 
 public class MainChannelDispatcher {
 
+    private  MainChannelDispatcher(){
+    }
+
+    /* Send a message to multiple channels */
     public static void sendToAllUserChannels(String userLogin, String message){
 
-        if(userLogin != null && userLogin != "" ){
+        if(userLogin != null && !userLogin.equals("") ){
 
-            HashMap<String, MainChannelWebSocket> userSockets = MainChannelApplication.getUserChannels(userLogin);
+            if(MainChannelApplication.getUserChannels(userLogin) != null) {
 
-            if(userSockets != null) {
-
-                Collection<MainChannelWebSocket> sockets = userSockets.values();
+                Collection<MainChannelWebSocket> sockets = MainChannelApplication.getUserChannels(userLogin).values();
 
                 for(MainChannelWebSocket socket:sockets){
                     send(socket, message);
@@ -45,6 +47,7 @@ public class MainChannelDispatcher {
 
     }
 
+    /* Send a message to single channel */
     public static boolean send(MainChannelWebSocket socket, String message){
 
         if (socket != null) {

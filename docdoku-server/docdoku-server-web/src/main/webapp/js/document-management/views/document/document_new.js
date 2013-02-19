@@ -1,6 +1,6 @@
 define([
-	"views/components/modal",
-	"views/document/document_attributes",
+	"common-objects/views/components/modal",
+	"common-objects/views/attributes/attributes",
 	"views/document/document_template_list",
 	"views/document/document_workflow_list",
 	"text!templates/document/document_new.html"
