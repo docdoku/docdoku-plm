@@ -81,7 +81,7 @@ public class PartsResource {
     @Path("{partKey}/iterations/{partIteration}")
     @Produces("application/json;charset=UTF-8")
     @Consumes("application/json;charset=UTF-8")
-    public Response updatePart(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partKey") String pPartKey, @PathParam("partIteration") int partIteration, PartIterationDTO data) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partKey") String pPartKey, @PathParam("partIteration") int partIteration, PartIterationDTO data) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
         try {
             PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(pWorkspaceId, getPartNumber(pPartKey)), getPartRevision(pPartKey));
             PartRevision partRevision = productService.getPartRevision(revisionKey);
@@ -94,15 +94,15 @@ public class PartsResource {
                 attributes = createInstanceAttribute(instanceAttributes);
             }
 
-            List<PartUsageLink> usageLinks = new ArrayList<PartUsageLink>();
+            PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-            PartRevision partRevisionCreated = productService.updatePartIteration(pKey, data.getIterationNote(), null, usageLinks, attributes);
+            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, null, attributes);
 
-            PartDTO partDTO = mapper.map(partRevisionCreated, PartDTO.class);
-            partDTO.setNumber(partRevisionCreated.getPartNumber());
-            partDTO.setPartKey(partRevisionCreated.getPartNumber() + "-" + partRevisionCreated.getVersion());
-            partDTO.setName(partRevisionCreated.getPartMaster().getName());
-            partDTO.setStandardPart(partRevisionCreated.getPartMaster().isStandardPart());
+            PartDTO partDTO = mapper.map(partRevisionUpdated, PartDTO.class);
+            partDTO.setNumber(partRevisionUpdated.getPartNumber());
+            partDTO.setPartKey(partRevisionUpdated.getPartNumber() + "-" + partRevisionUpdated.getVersion());
+            partDTO.setName(partRevisionUpdated.getPartMaster().getName());
+            partDTO.setStandardPart(partRevisionUpdated.getPartMaster().isStandardPart());
 
             return Response.ok(partDTO).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {

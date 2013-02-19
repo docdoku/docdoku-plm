@@ -70,6 +70,8 @@ define(
             var cadFile = this.iteration.get("nativeCADFile").first();
             if(cadFile){
                 this.iteration.set("nativeCADFile", cadFile.get("fullName"));
+            }else{
+                this.iteration.set("nativeCADFile","");
             }
 
             this.iteration.save({
