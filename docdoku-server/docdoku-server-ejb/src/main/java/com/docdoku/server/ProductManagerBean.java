@@ -499,6 +499,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ConfigurationItemDAO(new Locale(user.getLanguage()), em).findAllConfigurationItems(pWorkspaceId);
     }
 
+    /*
+    * give pUsageLinks null for no modification, give an empty list for removing them
+    * give pAttributes null for no modification, give an empty list for removing them
+    * */
     @RolesAllowed("users")
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
@@ -510,55 +514,61 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration partIte = partRev.getLastIteration();
         //check access rights on partM ?
         if (partRev.isCheckedOut() && partRev.getCheckOutUser().equals(user) && partIte.getKey().equals(pKey)) {
-            List<PartUsageLink> usageLinks = new LinkedList<PartUsageLink>();
-            for(PartUsageLink usageLink:pUsageLinks){
-                PartUsageLink ul= new PartUsageLink();
-                ul.setAmount(usageLink.getAmount());
-                ul.setCadInstances(usageLink.getCadInstances());
-                ul.setComment(usageLink.getComment());
-                ul.setReferenceDescription(usageLink.getReferenceDescription());
-                ul.setUnit(usageLink.getUnit());
-                PartMaster pm = usageLink.getComponent();
-                PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(),pm.getNumber()));
-                ul.setComponent(component);
-                List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
-                for(PartSubstituteLink substitute:usageLink.getSubstitutes()){
-                    PartSubstituteLink sub = new PartSubstituteLink();
-                    sub.setCadInstances(substitute.getCadInstances());
-                    sub.setComment(substitute.getComment());
-                    sub.setReferenceDescription(substitute.getReferenceDescription());
-                    PartMaster pmSub = substitute.getSubstitute();
-                    sub.setSubstitute(partMDAO.loadPartM(new PartMasterKey(pmSub.getWorkspaceId(),pmSub.getNumber())));
-                    substitutes.add(sub);
+            if(pUsageLinks!=null){
+                List<PartUsageLink> usageLinks = new LinkedList<PartUsageLink>();
+                for(PartUsageLink usageLink:pUsageLinks){
+                    PartUsageLink ul= new PartUsageLink();
+                    ul.setAmount(usageLink.getAmount());
+                    ul.setCadInstances(usageLink.getCadInstances());
+                    ul.setComment(usageLink.getComment());
+                    ul.setReferenceDescription(usageLink.getReferenceDescription());
+                    ul.setUnit(usageLink.getUnit());
+                    PartMaster pm = usageLink.getComponent();
+                    PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(),pm.getNumber()));
+                    ul.setComponent(component);
+                    List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
+                    for(PartSubstituteLink substitute:usageLink.getSubstitutes()){
+                        PartSubstituteLink sub = new PartSubstituteLink();
+                        sub.setCadInstances(substitute.getCadInstances());
+                        sub.setComment(substitute.getComment());
+                        sub.setReferenceDescription(substitute.getReferenceDescription());
+                        PartMaster pmSub = substitute.getSubstitute();
+                        sub.setSubstitute(partMDAO.loadPartM(new PartMasterKey(pmSub.getWorkspaceId(),pmSub.getNumber())));
+                        substitutes.add(sub);
+                    }
+                    ul.setSubstitutes(substitutes);
+                    usageLinks.add(ul);
                 }
-                ul.setSubstitutes(substitutes);
-                usageLinks.add(ul);
-            }
 
-            partIte.setComponents(usageLinks);
-            // set doc for all attributes
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
-            for (InstanceAttribute attr : pAttributes) {
-                attrs.put(attr.getName(), attr);
+                partIte.setComponents(usageLinks);
             }
-
-            Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(partIte.getInstanceAttributes().values());
-            for (InstanceAttribute attr : currentAttrs) {
-                if (!attrs.containsKey(attr.getName())) {
-                    partIte.getInstanceAttributes().remove(attr.getName());
+            if(pAttributes!=null){
+                // set doc for all attributes
+                Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+                for (InstanceAttribute attr : pAttributes) {
+                    attrs.put(attr.getName(), attr);
                 }
-            }
 
-            for (InstanceAttribute attr : attrs.values()) {
-                if (!partIte.getInstanceAttributes().containsKey(attr.getName())) {
-                    partIte.getInstanceAttributes().put(attr.getName(), attr);
-                } else {
-                    partIte.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
+                Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(partIte.getInstanceAttributes().values());
+                for (InstanceAttribute attr : currentAttrs) {
+                    if (!attrs.containsKey(attr.getName())) {
+                        partIte.getInstanceAttributes().remove(attr.getName());
+                    }
+                }
+
+                for (InstanceAttribute attr : attrs.values()) {
+                    if (!partIte.getInstanceAttributes().containsKey(attr.getName())) {
+                        partIte.getInstanceAttributes().put(attr.getName(), attr);
+                    } else {
+                        partIte.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
+                    }
                 }
             }
 
             partIte.setIterationNote(pIterationNote);
+
             partIte.setSource(source);
+
             return partRev;
 
         } else {

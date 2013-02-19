@@ -29,19 +29,19 @@ import java.net.URL;
 public abstract class AbstractCommandLine implements CommandLine{
 
 
-    @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="Port number to use for connection; default is 80")
+    @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="port number to use for connection; default is 80")
     protected int port=80;
 
-    @Option(name="-h", aliases = "--host", metaVar = "<host>", usage="Host of the DocDokuPLM server to connect; default is docdokuplm.net")
+    @Option(name="-h", aliases = "--host", metaVar = "<host>", usage="host of the DocDokuPLM server to connect; default is docdokuplm.net")
     protected String host="docdokuplm.net";
 
-    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="User for login")
+    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="user for login")
     protected String password;
 
-    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="Password to log in")
+    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="password to log in")
     protected String user;
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="Workspace on which operations occur")
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
     private void promptForUser(){

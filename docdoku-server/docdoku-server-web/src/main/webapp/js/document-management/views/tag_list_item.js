@@ -1,6 +1,6 @@
 define([
 	"i18n!localization/nls/document-management-strings",
-	"views/components/list_item",
+	"common-objects/views/components/list_item",
 	"views/tag_document_list",
 	"text!templates/tag_list_item.html"
 ], function (

@@ -1,0 +1,6 @@
+{{#editMode}}
+<label for="document-reference-typeahead" class="document-reference-typeahead-label">{{i18n.SEARCH_DOCUMENT}} :</label>
+<input type="text" id="document-reference-typeahead" placeholder="{{i18n.REFERENCE}}" data-provide="typeahead"/>
+<button id="toggle-links-edit-mode" class="btn" data-toggle="button">{{i18n.EDIT_LINKED_DOCUMENTS}}</button>
+{{/editMode}}
+<ul id="linked-docs-{{view.cid}}" class="linked-docs"></ul>

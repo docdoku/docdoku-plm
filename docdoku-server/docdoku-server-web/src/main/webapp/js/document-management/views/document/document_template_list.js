@@ -1,6 +1,6 @@
 define([
 	"collections/template",
-	"views/base",
+	"common-objects/views/base",
 	"text!templates/document/document_template_select.html"
 ], function (
 	TemplateList,

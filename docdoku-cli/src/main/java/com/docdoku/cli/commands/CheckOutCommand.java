@@ -22,23 +22,47 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import java.io.File;
+
 public class CheckOutCommand extends AbstractCommandLine{
 
-    @Option(name="-r", required = true, aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...)")
+    @Option(name="-v", required = true, aliases = "--version", usage="specify revision of the part to check out ('A', 'B'...)")
     private Version revision;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to download")
+    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to check out")
     private String partNumber;
+
+    @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
+    private File path = new File(System.getProperty("user.dir"));
+
+    @Option(name="-d", aliases = "--download", usage="download the native cad file of the part if any")
+    private boolean download;
+
+    @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
+    private boolean force;
+
+    @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
+    private boolean recursive;
 
     public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        productS.checkOutPart(new PartRevisionKey(new PartMasterKey(workspace, partNumber), revision.toString()));
+        PartRevision pr = productS.checkOutPart(new PartRevisionKey(workspace, partNumber, revision.toString()));
+        PartIteration pi = pr.getLastIteration();
+        System.out.println("Checking out part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+
+        BinaryResource bin = pi.getNativeCADFile();
+        if(bin!=null && download){
+            FileHelper fh = new FileHelper(user,password);
+            fh.downloadNativeCADFile(getServerURL(),path, workspace, partNumber, pr, pi, force);
+        }
     }
 }

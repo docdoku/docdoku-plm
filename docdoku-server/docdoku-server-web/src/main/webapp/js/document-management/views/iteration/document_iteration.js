@@ -1,14 +1,16 @@
 define([
-    "views/components/modal",
-    "views/file_list",
-    "views/document/document_attributes",
+    "common-objects/views/components/modal",
+    "common-objects/views/file/file_list",
+    "common-objects/views/attributes/attributes",
     "views/document/document_lifecycle",
+    "views/document/document_links",
     "models/tag",
     "views/document_tag",
+    "collections/document_iteration",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common-objects/utils/date"
-], function (ModalView, FileListView, DocumentAttributesView, LifecycleDocumentView, Tag, TagView, template, i18n, date) {
+], function (ModalView, FileListView, DocumentAttributesView, LifecycleDocumentView, DocumentLinksView, Tag, TagView, DocumentIterationCollection, template, i18n, date) {
 
     var IterationView = ModalView.extend({
 
@@ -119,6 +121,7 @@ define([
 
             this.tabs = this.$('.nav-tabs li');
 
+
             this.customAttributesView =
                 this.addSubView(
                     new DocumentAttributesView({
@@ -137,6 +140,7 @@ define([
                 });
 
                 this.fileListView = new FileListView({
+                    baseName: this.iteration.getWorkspace() + "/documents/" + this.iteration.getDocumentMasterId() + "/" + this.iteration.getDocumentMasterVersion() + "/" + this.iteration.getIteration(),
                     deleteBaseUrl: this.iteration.url(),
                     uploadBaseUrl: this.iteration.getUploadBaseUrl(),
                     collection:this.iteration.getAttachedFiles(),
@@ -145,6 +149,16 @@ define([
 
                 /* Add the fileListView to the tab */
                 this.$("#iteration-files").html(this.fileListView.el);
+
+
+                this.documentLinksView = new DocumentLinksView({
+                    editMode: editMode,
+                    documentIteration: this.iteration,
+                    collection: new DocumentIterationCollection(this.iteration.getLinkedDocuments())
+                }).render();
+
+                /* Add the documentLinksView to the tab */
+                this.$("#iteration-links").html(this.documentLinksView.el);
             }
 
             if(this.model.get("workflow")){
@@ -172,7 +186,8 @@ define([
             /*saving iteration*/
             this.iteration.save({
                 revisionNote: this.$('#inputRevisionNote').val(),
-                instanceAttributes: this.customAttributesView.collection.toJSON()
+                instanceAttributes: this.customAttributesView.collection.toJSON(),
+                linkedDocuments: this.documentLinksView.collection.toJSON()
             });
 
             /*There is a parsing problem at saving time*/

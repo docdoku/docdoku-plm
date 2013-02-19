@@ -3,13 +3,15 @@ define([
 	"views/content_document_list",
     "text!templates/content_document_list_checkout_button_group.html",
     "text!templates/content_document_list_tags_button.html",
+    "text!templates/content_document_list_new_version_button.html",
     "text!templates/search_document_form.html",
-    "text!templates/tag_document_list.html"
+    "text!templates/task_document_list.html"
 ], function (
 	TaskDocumentList,
 	ContentDocumentListView,
     checkout_button_group,
     tags_button,
+    new_version_button,
     search_form,
     template
 ) {
@@ -20,6 +22,7 @@ define([
         partials: {
             checkout_button_group: checkout_button_group,
             tags_button:tags_button,
+            new_version_button: new_version_button,
             search_form:search_form
         },
 

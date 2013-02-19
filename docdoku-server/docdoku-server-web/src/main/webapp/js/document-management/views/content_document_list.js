@@ -3,8 +3,9 @@ define([
     "views/content",
     "views/document_list",
     "views/document/documents_tags",
+    "views/document/document_new_version",
     "views/advanced_search"
-], function(i18n, ContentView, DocumentListView, DocumentsTagsView, AdvancedSearchView) {
+], function(i18n, ContentView, DocumentListView, DocumentsTagsView, DocumentNewVersionView, AdvancedSearchView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -14,6 +15,7 @@ define([
             this.events["click .actions .checkin"] = "actionCheckin";
             this.events["click .actions .delete"] = "actionDelete";
             this.events["click .actions .tags"] = "actionTags";
+            this.events["click .actions .new-version"] = "actionNewVersion";
             this.events["submit .actions #document-search-form"] = "onQuickSearch";
             this.events["click .actions .advanced-search-button"] = "onAdvancedSearchButton";
         },
@@ -26,6 +28,7 @@ define([
             this.checkinButton = this.$(".checkin");
             this.deleteButton = this.$(".actions .delete");
             this.tagsButton = this.$(".actions .tags");
+            this.newVersionButton = this.$(".actions .new-version");
 
             this.listView = this.addSubView(
                 new DocumentListView({
@@ -64,20 +67,24 @@ define([
             this.deleteButton.hide();
             this.checkoutGroup.hide();
             this.tagsButton.hide();
+            this.newVersionButton.hide();
         },
 
         onOneDocumentSelected: function(document) {
             this.deleteButton.show();
             this.checkoutGroup.css('display', 'inline-block');
             this.tagsButton.show();
+            this.newVersionButton.show();
 
             if (document.isCheckout()) {
+                this.newVersionButton.prop('disabled', true);
                 if (document.isCheckoutByConnectedUser()) {
                     this.updateActionsButton(false, true);
                 } else {
                     this.updateActionsButton(false, false);
                 }
             } else {
+                this.newVersionButton.prop('disabled', false);
                 this.updateActionsButton(true, false);
             }
 
@@ -86,6 +93,7 @@ define([
         onSeveralDocumentsSelected: function() {
             this.deleteButton.show();
             this.tagsButton.show();
+            this.newVersionButton.hide();
             this.checkoutGroup.hide();
         },
 
@@ -134,11 +142,31 @@ define([
                 documentsChecked.push(view.model);
             });
 
-            var view = this.addSubView(
+            this.addSubView(
                 new DocumentsTagsView({
                     collection: documentsChecked
                 })
             ).show();
+
+            return false;
+
+        },
+
+        actionNewVersion: function() {
+
+            var documentChecked;
+
+            this.listView.eachChecked(function(view) {
+                documentChecked = view.model
+            });
+
+            var newVersionView = new DocumentNewVersionView({
+                model: documentChecked
+            }).render();
+
+            $("body").append(
+                newVersionView.$el
+            );
 
             return false;
 

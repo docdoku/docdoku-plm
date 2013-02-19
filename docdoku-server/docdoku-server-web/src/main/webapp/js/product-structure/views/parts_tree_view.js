@@ -7,19 +7,31 @@ define(["models/component_module", "views/component_views"], function (Component
         events: {
             "change input": "checkChildrenInputs",
             "change li": "checkParentsInputs",
-            "component_selected a": "onComponentSelected"
+            "component_selected a": "onComponentSelected",
+            "click #product_root_assembly":"onProductRootNode"
         },
 
         setSelectedComponent: function(component) {
             this.componentSelected = component;
         },
 
+        onProductRootNode:function(){
+            this.setSelectedComponent(this.rootComponent)
+            this.trigger("component_selected", true);
+        },
+
         render: function() {
+
+            var self = this ;
+
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });
+
+            this.rootComponent = undefined;
 
             this.listenTo(rootCollection, 'reset', function(collection) {
                 //the default selected component is the root
-                this.setSelectedComponent(collection.first());
+                self.rootComponent = collection.first();
+                this.setSelectedComponent(self.rootComponent);
             });
 
             new ComponentViews.Components({

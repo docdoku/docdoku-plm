@@ -1,0 +1,35 @@
+div.linked-documents-view {
+  label.document-reference-typeahead-label {
+    font-weight: bold;
+  }
+
+  button#toggle-links-edit-mode{
+    float: right;
+  }
+
+  ul.linked-docs {
+    margin: 12px 0;
+    list-style: none;
+
+    li.linked-document {
+      padding: 6px 4px 2px 4px;
+      margin: 0 12px 12px 0;
+      display: inline-block;
+
+      button.delete-linked-document {
+        display: none;
+        color: #BD362F;
+        margin-top: -3px;
+        padding: 0px 3px;
+      }
+    }
+  }
+
+  ul.linked-docs.edition {
+    li.linked-document{
+      button.delete-linked-document {
+        display: inline-block;
+      }
+    }
+  }
+}

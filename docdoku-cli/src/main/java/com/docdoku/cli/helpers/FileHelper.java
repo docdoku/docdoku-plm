@@ -21,9 +21,12 @@
 package com.docdoku.cli.helpers;
 
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
@@ -31,6 +34,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class FileHelper {
 
@@ -45,35 +51,41 @@ public class FileHelper {
         this.password = password;
     }
 
-    public void downloadFile(File pLocalFile, String pURL) throws IOException, LoginException {
-        System.out.println("Retrieving file from DocDokuPLM server: " + pLocalFile.getName());
+    public String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
         ConsoleProgressMonitorInputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
         try {
             //Hack for NTLM proxy
             //perform a head method to negociate the NTLM proxy authentication
-            performHeadHTTPMethod(pURL);
+            URL url = new URL(pURL);
+            System.out.println("Downloading file: " + pLocalFile.getName() + " from " + url.getHost());
+            performHeadHTTPMethod(url);
 
             out = new BufferedOutputStream(new FileOutputStream(pLocalFile), BUFFER_CAPACITY);
-            URL url = new URL(pURL);
+
             conn = (HttpURLConnection) url.openConnection();
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestMethod("GET");
-            byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
+            byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
             conn.connect();
             manageHTTPCode(conn);
 
-            in = new ConsoleProgressMonitorInputStream(conn.getContentLength(),new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY));
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            in = new ConsoleProgressMonitorInputStream(conn.getContentLength(),new DigestInputStream(new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY),md));
             byte[] data = new byte[CHUNK_SIZE];
             int length;
+
             while ((length = in.read(data)) != -1) {
                 out.write(data, 0, length);
             }
             out.flush();
+
+            byte[] digest = md.digest();
+            return Base64.encodeBase64String(digest);
         } finally {
             if(out!=null)
                 out.close();
@@ -84,23 +96,24 @@ public class FileHelper {
         }
     }
 
-    public void uploadFile(File pLocalFile, String pURL) throws IOException, LoginException {
-        System.out.println("Saving file to DocDokuPLM server: " + pLocalFile.getName());
+    public String uploadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
         InputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
         try {
             //Hack for NTLM proxy
             //perform a head method to negociate the NTLM proxy authentication
-            performHeadHTTPMethod(pURL);
-
             URL url = new URL(pURL);
+            System.out.println("Uploading file: " + pLocalFile.getName() + " to " + url.getHost());
+            performHeadHTTPMethod(url);
+
+
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
             conn.setRequestProperty("Connection", "Keep-Alive");
-            byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
+            byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
             conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
 
             String lineEnd = "\r\n";
@@ -119,7 +132,8 @@ public class FileHelper {
 
             byte[] data = new byte[CHUNK_SIZE];
             int length;
-            in = new ConsoleProgressMonitorInputStream(pLocalFile.length(), new BufferedInputStream(new FileInputStream(pLocalFile), BUFFER_CAPACITY));
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            in = new ConsoleProgressMonitorInputStream(pLocalFile.length(), new DigestInputStream(new BufferedInputStream(new FileInputStream(pLocalFile), BUFFER_CAPACITY),md));
             while ((length = in.read(data)) != -1) {
                 out.write(data, 0, length);
             }
@@ -128,6 +142,9 @@ public class FileHelper {
             out.flush();
 
             manageHTTPCode(conn);
+
+            byte[] digest = md.digest();
+            return Base64.encodeBase64String(digest);
         } finally {
             if(out!=null)
                 out.close();
@@ -142,19 +159,18 @@ public class FileHelper {
         int code = conn.getResponseCode();
         switch (code){
             case 401: case 403:
-                throw new LoginException("Error trying to login.");
+                throw new LoginException("Error trying to login");
             case 500:
                 throw new IOException(conn.getHeaderField("Reason-Phrase"));
         }
     }
 
-    private void performHeadHTTPMethod(String pURL) throws IOException {
-        URL url = new URL(pURL);
+    private void performHeadHTTPMethod(URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setUseCaches(false);
         conn.setAllowUserInteraction(true);
         conn.setRequestProperty("Connection", "Keep-Alive");
-        byte[] encoded = org.apache.commons.codec.binary.Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
+        byte[] encoded = Base64.encodeBase64((login + ":" + password).getBytes("ISO-8859-1"));
         conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
         conn.setRequestMethod("HEAD");
         conn.connect();
@@ -172,4 +188,48 @@ public class FileHelper {
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
     }
 
+    public static boolean confirmOverwrite(String fileName){
+        Console c = System.console();
+        String response = c.readLine("The file '" + fileName + "' has been modified locally, do you want to overwrite it [y/N]?");
+        return "y".equalsIgnoreCase(response);
+    }
+
+    public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
+        String workspace = partIPK.getWorkspaceId();
+        String fileName = cadFile.getName();
+        System.out.println("Saving part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
+        String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
+
+        File path = cadFile.getParentFile();
+        String filePath=cadFile.getAbsolutePath();
+
+        MetaDirectoryManager meta = new MetaDirectoryManager(path);
+        meta.setDigest(filePath,digest);
+        meta.setLastModifiedDate(filePath, cadFile.lastModified());
+    }
+
+    public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevision pr, PartIteration pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
+        BinaryResource bin = pi.getNativeCADFile();
+        String fileName =  bin.getName();
+        PartIterationKey partIPK = new PartIterationKey(workspace,partNumber,pr.getVersion(),pi.getIteration());
+        boolean writable = (pr.isCheckedOut()) && (pr.getCheckOutUser().getLogin().equals(login)) && (pr.getLastIteration().getIteration()==pi.getIteration());
+        File localFile = new File(path,fileName);
+
+        MetaDirectoryManager meta = new MetaDirectoryManager(path);
+        String filePath=localFile.getAbsolutePath();
+
+        if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
+            boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
+            if(!confirm)
+                return;
+        }
+        localFile.delete();
+        System.out.println("Fetching part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
+        String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
+        localFile.setWritable(writable);
+
+        meta.setDigest(filePath,digest);
+        meta.setLastModifiedDate(filePath, localFile.lastModified());
+
+    }
 }

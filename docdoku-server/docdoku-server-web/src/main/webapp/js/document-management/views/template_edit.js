@@ -1,9 +1,9 @@
 define([
     "i18n!localization/nls/document-management-strings",
     "common-objects/utils/date",
-    "views/components/modal",
-    "views/template_new_attributes",
-    "views/file_list",
+    "common-objects/views/components/modal",
+    "common-objects/views/attributes/template_new_attributes",
+    "common-objects/views/file/file_list",
     "text!templates/template_new.html"
 ], function(i18n, date, ModalView, TemplateNewAttributesView, FileListView, template) {
     var TemplateEditView = ModalView.extend({

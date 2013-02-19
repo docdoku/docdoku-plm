@@ -22,24 +22,60 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import java.io.File;
+
 public class CheckInCommand extends AbstractCommandLine{
 
 
-    @Option(name="-r", required = true, aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...)")
+    @Option(name="-v", required = true, aliases = "--version", usage="specify revision of the part to check in ('A', 'B'...)")
     private Version revision;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to download")
+    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to check in")
     private String partNumber;
+
+    @Argument(metaVar = "[<path>]", index=1, usage = "specify where to look at the native cad files; if path is omitted, the working directory is used")
+    private File path = new File(System.getProperty("user.dir"));
+
+    @Option(name="-up", aliases = "--upload", usage="upload the native cad file of the part if any")
+    private boolean upload;
+
+    @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
+    private boolean recursive;
 
     public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        productS.checkInPart(new PartRevisionKey(new PartMasterKey(workspace,partNumber),revision.toString()));
+        PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
+
+        if(upload){
+            PartRevision pr = productS.getPartRevision(partRPK);
+            PartIteration pi = pr.getLastIteration();
+
+            BinaryResource bin = pi.getNativeCADFile();
+            if(bin!=null){
+                String fileName =  bin.getName();
+                File localFile = new File(path,fileName);
+                if(localFile.exists()){
+                    PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
+                    FileHelper fh = new FileHelper(user,password);
+                    fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
+                    localFile.setWritable(false);
+                }
+            }
+        }
+
+        PartRevision pr = productS.checkInPart(partRPK);
+        PartIteration pi = pr.getLastIteration();
+        System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+
+
     }
 }

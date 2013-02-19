@@ -10,9 +10,9 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return data;
         },
 
-        getReference : function(){
+        getReference: function() {
             var id = this.get("id");
-            return id.substr(0,id.lastIndexOf("-"))
+            return id.substr(0,id.lastIndexOf("-"));
         },
 
         getVersion: function() {
@@ -47,15 +47,15 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return this.iterations;
         },
 
-        isIterationChangedSubscribed:function(){
+        isIterationChangedSubscribed: function() {
             return this.get("iterationSubscription");
         },
 
-        isStateChangedSubscribed:function(){
+        isStateChangedSubscribed: function() {
             return this.get("stateSubscription");
         },
 
-        getTags:function(){
+        getTags: function() {
             return this.tags;
         },
 
@@ -92,28 +92,28 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             });
         },
 
-        toggleStateSubscribe:function(oldState){
+        toggleStateSubscribe: function(oldState) {
 
-            var action = oldState ? "unsubscribe" : "subscribe" ;
+            var action = oldState ? "unsubscribe" : "subscribe";
 
             $.ajax({
                 context: this,
                 type: "PUT",
-                url: this.url() + "/notification/stateChange/"+action,
+                url: this.url() + "/notification/stateChange/" + action,
                 success: function() {
                     this.fetch();
                 }
             });
         },
 
-        toggleIterationSubscribe:function(oldState){
+        toggleIterationSubscribe: function(oldState) {
 
-            var action = oldState ? "unsubscribe" : "subscribe" ;
+            var action = oldState ? "unsubscribe" : "subscribe";
 
             $.ajax({
                 context: this,
                 type: "PUT",
-                url: this.url() + "/notification/iterationChange/"+action,
+                url: this.url() + "/notification/iterationChange/" + action,
                 success: function() {
                     this.fetch();
                 }
@@ -125,48 +125,68 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             return !_.isNull(this.attributes.checkOutDate);
         },
 
-        getPermalink : function(){
+        getPermalink: function() {
             return encodeURI(
                 window.location.origin
-                + "/documents/"
-                + this.getWorkspace()
-                + "/"
-                + this.getReference()
-                + "/"
-                + this.getVersion()
+                    + "/documents/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getReference()
+                    + "/"
+                    + this.getVersion()
             );
         },
 
-        addTags:function(tags){
+        addTags: function(tags) {
 
             $.ajax({
                 context: this,
                 type: "POST",
                 url: this.url() + "/tags",
-                data : JSON.stringify(tags),
+                data: JSON.stringify(tags),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                   this.fetch();
+                    this.fetch();
                 }
             });
 
         },
 
-        removeTags:function(tags,callback){
+        removeTags: function(tags, callback) {
 
             $.ajax({
                 context: this,
                 type: "DELETE",
-                async:false,
                 url: this.url() + "/tags",
-                data : JSON.stringify(tags),
+                data: JSON.stringify(tags),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                   this.fetch();
-                   callback();
+                    this.fetch();
+                    callback();
                 }
             });
 
+        },
+
+        createNewVersion: function(title, description) {
+
+            var workflow = this.get("workflow");
+            var data = {
+                title: title,
+                description: description,
+                workflowModelId: workflow ? workflow.id : null
+            };
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/newVersion",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    this.fetch();
+                }
+            });
         }
 
 

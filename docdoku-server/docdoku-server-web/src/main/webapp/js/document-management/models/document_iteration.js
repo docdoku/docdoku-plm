@@ -1,7 +1,7 @@
 define([
 	"i18n!localization/nls/document-management-strings",
     "common-objects/utils/date",
-    "collections/attribute_collection",
+    "common-objects/collections/attribute_collection",
     "collections/attached_file_collection"
 ], function (
 	i18n,
@@ -11,9 +11,13 @@ define([
 ) {
 	var DocumentIteration = Backbone.Model.extend({
 
-		idAttribute: "iteration",
+        url: function() {
+            return this.collection.url()+"/"+this.getIteration();
+        },
 
 		initialize: function () {
+            this.id = this.getReference();
+
             this.className = "DocumentIteration";
 
             var attributes = new AttributeCollection(this.get("instanceAttributes"));
@@ -57,8 +61,32 @@ define([
             return this.get("iteration");
         },
 
+        getDocumentMasterId : function(){
+            return  this.get("documentMasterId");
+        },
+
+        getDocumentMasterVersion : function(){
+            return  this.get("documentMasterVersion");
+        },
+
         getDocKey : function(){
-            return  this.get("documentMasterId")+"-"+this.get("documentMasterVersion");
+            return  this.getDocumentMasterId()+"-"+this.getDocumentMasterVersion();
+        },
+
+        getLinkedDocuments : function(){
+            return this.get("linkedDocuments");
+        },
+
+        getDocumentMasterPermalink : function(){
+            return encodeURI(
+                window.location.origin
+                    + "/documents/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getDocumentMasterId()
+                    + "/"
+                    + this.getDocumentMasterVersion()
+            );
         },
 
         /**

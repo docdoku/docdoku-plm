@@ -2,7 +2,7 @@ define(    [
         "text!templates/search_document_advanced_form.html",
         "i18n!localization/nls/document-management-strings",
         "common-objects/collections/users",
-        "views/document/document_attribute_list",
+        "common-objects/views/attributes/attribute_list",
         "collections/template"
     ],
 

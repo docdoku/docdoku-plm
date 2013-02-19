@@ -2,7 +2,7 @@ define([
 	"require",
 	"i18n!localization/nls/document-management-strings",
 	"collections/folder",
-	"views/components/list_item",
+	"common-objects/views/components/list_item",
 	"views/folder_list",
 	"views/folder_document_list",
 	"views/folder_new",

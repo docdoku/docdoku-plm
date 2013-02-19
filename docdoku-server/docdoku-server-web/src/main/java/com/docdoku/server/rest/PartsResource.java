@@ -19,13 +19,21 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.meta.*;
+import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.*;
+import com.docdoku.server.rest.dto.ComponentDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.PartDTO;
+import com.docdoku.server.rest.dto.PartIterationDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -42,6 +50,64 @@ public class PartsResource {
     private IProductManagerLocal productService;
 
     public PartsResource() {
+    }
+
+    private Mapper mapper;
+
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
+
+    @GET
+    @Path("{partKey}")
+    @Produces("application/json;charset=UTF-8")
+    public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partKey") String pPartKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(pWorkspaceId, getPartNumber(pPartKey)), getPartRevision(pPartKey));
+            PartRevision partRevision = productService.getPartRevision(revisionKey);
+            PartDTO partDTO = mapper.map(partRevision, PartDTO.class);
+            partDTO.setNumber(partRevision.getPartNumber());
+            partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partDTO.setName(partRevision.getPartMaster().getName());
+            partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+            return Response.ok(partDTO).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Path("{partKey}/iterations/{partIteration}")
+    @Produces("application/json;charset=UTF-8")
+    @Consumes("application/json;charset=UTF-8")
+    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partKey") String pPartKey, @PathParam("partIteration") int partIteration, PartIterationDTO data) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(pWorkspaceId, getPartNumber(pPartKey)), getPartRevision(pPartKey));
+            PartRevision partRevision = productService.getPartRevision(revisionKey);
+
+            PartIterationKey pKey = new PartIterationKey(pWorkspaceId,partRevision.getPartNumber(), partRevision.getVersion(), partIteration);
+
+            List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
+            List<InstanceAttribute> attributes = null;
+            if (instanceAttributes != null) {
+                attributes = createInstanceAttribute(instanceAttributes);
+            }
+
+            PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
+
+            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, null, attributes);
+
+            PartDTO partDTO = mapper.map(partRevisionUpdated, PartDTO.class);
+            partDTO.setNumber(partRevisionUpdated.getPartNumber());
+            partDTO.setPartKey(partRevisionUpdated.getPartNumber() + "-" + partRevisionUpdated.getVersion());
+            partDTO.setName(partRevisionUpdated.getPartMaster().getName());
+            partDTO.setStandardPart(partRevisionUpdated.getPartMaster().isStandardPart());
+
+            return Response.ok(partDTO).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
     @PUT
@@ -109,6 +175,95 @@ public class PartsResource {
     private String getPartRevision(String partKey) {
         int lastDash = partKey.lastIndexOf('-');
         return partKey.substring(lastDash + 1, partKey.length());
+    }
+
+    @PUT
+    @Produces("application/json;charset=UTF-8")
+    public ComponentDTO createNewPart(@PathParam("workspaceId") String workspaceId, ComponentDTO componentDTO){
+
+        try {
+            PartMaster partMaster = productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription());
+
+            ComponentDTO dto = new ComponentDTO();
+
+            dto.setNumber(partMaster.getNumber());
+
+            return componentDTO;
+
+        } catch (Exception ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @DELETE
+    @Consumes("application/json;charset=UTF-8")
+    @Path("/iterations/{partIteration}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
+
+        return Response.ok().build();
+        // TODO : implement this
+        /*
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+
+            String fileFullName = workspaceId + "/parts/" + id + "/" + version + "/" + partIteration + "/nativecad/" + fileName;
+
+            // unimplemented
+            productService.removeCADfileFromPart(...);
+            return Response.ok().build();
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }*/
+    }
+
+
+
+    private List<InstanceAttribute> createInstanceAttribute(List<InstanceAttributeDTO> dtos) {
+        if (dtos == null) {
+            return null;
+        }
+        List<InstanceAttribute> data = new ArrayList<InstanceAttribute>();
+        int i = 0;
+        for (InstanceAttributeDTO dto : dtos) {
+            data.add(createObject(dto));
+        }
+
+        return data;
+    }
+
+    private InstanceAttribute createObject(InstanceAttributeDTO dto) {
+        if (dto.getType().equals(InstanceAttributeDTO.Type.BOOLEAN)) {
+            InstanceBooleanAttribute attr = new InstanceBooleanAttribute();
+            attr.setName(dto.getName());
+            attr.setBooleanValue(Boolean.parseBoolean(dto.getValue()));
+            return attr;
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.TEXT)) {
+            InstanceTextAttribute attr = new InstanceTextAttribute();
+            attr.setName(dto.getName());
+            attr.setTextValue((String) dto.getValue());
+            return attr;
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
+            InstanceNumberAttribute attr = new InstanceNumberAttribute();
+            attr.setName(dto.getName());
+            attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            return attr;
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
+            InstanceDateAttribute attr = new InstanceDateAttribute();
+            attr.setName(dto.getName());
+            attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            return attr;
+        } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
+            InstanceURLAttribute attr = new InstanceURLAttribute();
+            attr.setName(dto.getName());
+            attr.setUrlValue(dto.getValue());
+            return attr;
+        } else {
+            throw new IllegalArgumentException("Instance attribute not supported");
+        }
     }
 
 }

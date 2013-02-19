@@ -22,6 +22,7 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
@@ -36,27 +37,24 @@ import java.net.URLEncoder;
 public class PutCommand extends AbstractCommandLine{
 
 
-    @Option(name="-r", required = true, aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...)")
+    @Option(name="-v", required = true, aliases = "--version", usage="specify revision of the part to save ('A', 'B'...)")
     private Version revision;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to download")
+    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to save")
     private String partNumber;
 
     @Argument(metaVar = "<cadfile>", required = true, index=1, usage = "specify the native cad file of the part to import")
     private File cadFile;
 
     public void execImpl() throws Exception {
-        FileHelper fh = new FileHelper(user,password);
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        String fileName = cadFile.getName();
         PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
-        PartRevision partR= productS.getPartRevision(partRPK);
-        int lastIte = partR.getLastIteration().getIteration();
-        PartIterationKey partIPK = new PartIterationKey(partRPK, lastIte);
-        fh.uploadFile(cadFile,FileHelper.getPartURL(getServerURL(),partIPK, fileName));
+
+        PartRevision pr = productS.getPartRevision(partRPK);
+        PartIteration pi = pr.getLastIteration();
+        PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
+
+        FileHelper fh = new FileHelper(user,password);
+        fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
-
-
-
-
 }

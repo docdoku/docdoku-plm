@@ -99,6 +99,38 @@ public class ProductResource {
     }
 
     @GET
+    @Path("{ciId}/bom")
+    @Produces("application/json;charset=UTF-8")
+    public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink) {
+
+        try {
+
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+            ConfigSpec cs = new LatestConfigSpec();
+
+            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, 1);
+
+            List<PartUsageLink> components = rootUsageLink.getComponent().getLastRevision().getLastIteration().getComponents();
+
+            PartDTO[] partsDTO = new PartDTO[components.size()];
+
+            for (int i = 0; i < components.size(); i++) {
+                PartRevision lastRevision = components.get(i).getComponent().getLastRevision();
+                partsDTO[i] = mapper.map(lastRevision, PartDTO.class);
+                partsDTO[i].setNumber(lastRevision.getPartNumber());
+                partsDTO[i].setPartKey(lastRevision.getPartNumber() + "-" + lastRevision.getVersion());
+                partsDTO[i].setName(lastRevision.getPartMaster().getName());
+                partsDTO[i].setStandardPart(lastRevision.getPartMaster().isStandardPart());
+            }
+
+            return partsDTO;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
     @Path("{ciId}")
     @Produces("application/json;charset=UTF-8")
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {

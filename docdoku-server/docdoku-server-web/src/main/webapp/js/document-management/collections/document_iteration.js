@@ -15,6 +15,10 @@ define([
 		    return this.document.url() + "/iterations";
 		},
 
+        comparator: function(documentIteration) {
+            return documentIteration.getDocKey();
+        },
+
         next: function(iteration) {
             var index = this.indexOf(iteration);
             return this.at(index + 1);

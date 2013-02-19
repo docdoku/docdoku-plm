@@ -28,9 +28,6 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
 import com.docdoku.server.rest.util.SearchQueryParser;
@@ -262,60 +259,30 @@ public class DocumentsResource {
         }
     }
 
+    @GET
+    @Path("docs_last_iter")
+    @Produces("application/json;charset=UTF-8")
+    public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q) {
+        try {
 
-//    @GET
-//    @Path()
-//    @Produces("application/json;charset=UTF-8")
-//    public DocumentMasterDTO[] getIterationChangeEventSubscriptions(@PathParam("workspaceId") String workspaceId) {
-//
-//        try {
-//
-//            DocumentMasterKey[] docMKey = documentService.getIterationChangeEventSubscriptions(workspaceId);
-//            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
-//
-//            for (int i = 0; i < docMKey.length; i++) {
-//                DocumentMasterDTO dto = new DocumentMasterDTO();
-//                dto.setWorkspaceID(docMKey[i].getWorkspaceId());
-//                dto.setId(docMKey[i].getId());
-//                dto.setReference(docMKey[i].getId());
-//                dto.setVersion(docMKey[i].getVersion());
-//                data[i] = dto;
-//            }
-//
-//            return data;
-//
-//        } catch (com.docdoku.core.services.ApplicationException ex) {
-//            throw new RESTException(ex.toString(), ex.getMessage());
-//        }
-//
-//    }
-//
-//    @GET
-//    @Path()
-//    @Produces("application/json;charset=UTF-8")
-//    public DocumentMasterDTO[] getStateChangeEventSubscriptions(@PathParam("workspaceId") String workspaceId) {
-//
-//        try {
-//
-//            DocumentMasterKey[] docMKey = documentService.getStateChangeEventSubscriptions(workspaceId);
-//            DocumentMasterDTO[] data = new DocumentMasterDTO[docMKey.length];
-//
-//            for (int i = 0; i < docMKey.length; i++) {
-//                DocumentMasterDTO dto = new DocumentMasterDTO();
-//                dto.setWorkspaceID(docMKey[i].getWorkspaceId());
-//                dto.setId(docMKey[i].getId());
-//                dto.setReference(docMKey[i].getId());
-//                dto.setVersion(docMKey[i].getVersion());
-//                data[i] = dto;
-//            }
-//
-//            return data;
-//
-//        } catch (com.docdoku.core.services.ApplicationException ex) {
-//            throw new RESTException(ex.toString(), ex.getMessage());
-//        }
-//
-//    }
-//
+            int maxResults = 8;
+
+            DocumentMaster[] docMs = com.docdoku.core.util.Tools.resetParentReferences(
+                    documentService.getDocumentMastersWithReference(workspaceId, q, maxResults)
+            );
+
+            List<DocumentIterationDTO> docsLastIter = new ArrayList<DocumentIterationDTO>();
+            for (int i = 0; i < docMs.length; i++) {
+                DocumentIteration docLastIter = docMs[i].getLastIteration();
+                if(docLastIter != null)
+                    docsLastIter.add(new DocumentIterationDTO(docLastIter.getWorkspaceId(), docLastIter.getDocumentMasterId(), docLastIter.getDocumentMasterVersion(), docLastIter.getIteration()));
+            }
+
+            return docsLastIter.toArray(new DocumentIterationDTO[docsLastIter.size()]);
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 
 }

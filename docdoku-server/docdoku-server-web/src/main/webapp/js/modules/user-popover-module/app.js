@@ -75,7 +75,7 @@ define([
 
                                 // handle webrtc button click event
                                 $tip.find(".webRTC_invite_button").one("click", function (ev) {
-                                    Backbone.Events.trigger('NewOutgoingCall', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context });
+                                    Backbone.Events.trigger('NewOutgoingCall', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context});
                                     $(that).popover('hide');
                                 });
 

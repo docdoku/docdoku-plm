@@ -1,4 +1,4 @@
-define(["models/part_iteration", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIteration, date, i18n) {
+define(["models/part_iteration_visualization", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIterationVisualization, date, i18n) {
 
     var ComponentModule = {};
 
@@ -122,7 +122,7 @@ define(["models/part_iteration", "common-objects/utils/date", "i18n!localization
 
                         //if we deal with this partIteration for the fist time, we need to create it
                         if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
-                            sceneManager.addPartIteration(new PartIteration(instanceRaw));
+                            sceneManager.addPartIteration(new PartIterationVisualization(instanceRaw));
                         }
 
                         var partIteration = sceneManager.getPartIteration(instanceRaw.partIterationId);
@@ -154,41 +154,18 @@ define(["models/part_iteration", "common-objects/utils/date", "i18n!localization
             });
         },
 
-        getPartKeyUrl: function() {
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber() + "-" + this.getVersion();
+        getUrlForBom: function() {
+
+            if(this.isAssembly()) {
+                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/bom?configSpec=latest&partUsageLink=" + this.getPartUsageLinkId();
+            } else {
+                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber()+ "-" + this.getVersion();
+            }
+
         },
 
-        checkout: function(callback) {
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.getPartKeyUrl() + "/checkout",
-                success: function() {
-                    callback();
-                }
-            });
-        },
-
-        undocheckout: function(callback) {
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.getPartKeyUrl() + "/undocheckout",
-                success: function() {
-                    callback();
-                }
-            });
-        },
-
-        checkin: function(callback) {
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.getPartKeyUrl() + "/checkin",
-                success: function() {
-                    callback();
-                }
-            });
+        getRootUrlForBom: function() {
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber()+ "-" + this.getVersion();
         }
 
     });

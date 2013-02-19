@@ -1,75 +1,93 @@
-define(function() {
+define([
+    "common-objects/utils/date",
+    "common-objects/collections/attribute_collection",
+    "common-objects/collections/file/attached_file_collection"
+], function (
+    date,
+    AttributeCollection,
+    AttachedFileCollection
+    ) {
 
-    var PartIteration = function(partIterationParams) {
-        this.partIterationId = partIterationParams.partIterationId;
-        this.files = partIterationParams.files;
-        this.attributes = partIterationParams.attributes;
-        this.initialize();
-    }
+    var PartIteration = Backbone.Model.extend({
 
-    PartIteration.prototype = {
+        idAttribute: "iteration",
 
-        hasGeometry: function() {
-            return this.files.length > 0;
-        },
+        initialize: function () {
 
-        initialize: function() {
+            this.className = "PartIteration";
 
-            this.idle = true;
+            var attributes = new AttributeCollection(this.get("instanceAttributes"));
+            this.set("instanceAttributes", attributes);
 
-            if (this.hasGeometry()) {
+            var nativeCADFullName = this.get("nativeCADFile");
 
-                this.levels = [];
-
-                var radiusAttribute = _.find(this.attributes, function(attribute) {
-                    return attribute.name == 'radius';
-                });
-
-                if (radiusAttribute) {
-                    this.radius = radiusAttribute.value;
-                }
-
-                var levelGeometry1 = (isIpad) ? 0.9 : 0.6;
-                var levelGeometry2 = (isIpad) ? 0.6 : 0.3;
-
-                var self = this;
-
-                _.each(this.files, function(file) {
-                    var filename = '/files/' + file.fullName;
-                    switch (file.quality) {
-                        case 0:
-                            self.addLevelGeometry(filename, levelGeometry1, false);
-                            break;
-                        case 1:
-                            self.addLevelGeometry(filename, levelGeometry2, true);
-                            break;
-                    }
-                });
-
+            if(nativeCADFullName){
+                var nativeCad = {
+                    fullName : nativeCADFullName,
+                    shortName : _.last(nativeCADFullName.split("/")),
+                    created : true
+                };
+                var attachedFiles = new AttachedFileCollection(nativeCad);
+            }else{
+                var attachedFiles = new AttachedFileCollection();
             }
+
+            this.set("nativeCADFile",  attachedFiles);
 
         },
 
-        addLevelGeometry: function(filename, visibleFromRating, computeVertexNormals) {
-            for (var i = 0; i<this.levels.length ; i++) {
-                if (visibleFromRating < this.levels[i].visibleFromRating) {
-                    break;
-                }
-            }
-            this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating, computeVertexNormals));
+        defaults :{
+            instanceAttributes : []
         },
 
-        getLevelGeometry: function(rating) {
-            for (var i = this.levels.length-1; i>=0 ; i--) {
-                if (rating > this.levels[i].visibleFromRating) {
-                    return this.levels[i];
-                }
-            }
-            //no level found for this rating
-            return null;
+        getAttributes : function(){
+            return this.get("instanceAttributes");
+        },
+
+        getWorkspace : function(){
+            return this.get("workspaceId");
+        },
+
+        getReference : function(){
+            return this.getPartKey() + "-" + this.getIteration();
+        },
+
+        getIteration : function(){
+            return this.get("iteration");
+        },
+
+        getPartKey : function(){
+            return  this.get("number")+"-"+this.get("version");
+        },
+
+        getAttachedFiles:function(){
+            return this.get("nativeCADFile");
+        },
+
+        getBaseName:function(){
+            return "/files/" + this.getWorkspace() + "/parts/" + this.get("number")+ "/" + this.get("version") + "/"+ this.get("iteration")
+        },
+
+        getNumber:function(){
+            return this.collection.part.getNumber();
+        },
+
+        getVersion:function(){
+            return this.collection.part.getVersion();
+        },
+
+
+
+        /**
+         * file Upload uses the old servlet, not the JAXRS Api         *
+         * return /files/{workspace}/parts/{docId}/{version}/{iteration}/
+         * @returns string
+         */
+        getUploadBaseUrl: function () {
+            return "/files/" + this.getWorkspace() + "/parts/" + this.getNumber()+ "/" + this.getVersion() + "/"+ this.get("iteration") + "/nativecad/" ;
         }
 
-    }
+    });
 
    return PartIteration;
 

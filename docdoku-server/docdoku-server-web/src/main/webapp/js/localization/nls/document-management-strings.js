@@ -123,8 +123,12 @@ define({
         "TASK_CLOSED_ON":               "Task closed on",
         "APPROVE_TASK":                 "Approve task",
         "REJECT_TASK":                  "Reject task",
-        "CLOSURE_COMMENT":              "Closure comment"
-
+        "CLOSURE_COMMENT":              "Closure comment",
+        "DELETE_LINKED_DOCUMENT":       "Delete link",
+        "EDIT_LINKED_DOCUMENTS":        "Edit links",
+        "SEARCH_DOCUMENT":              "Search document",
+        "CREATE_NEW_VERSION":           "Create new version",
+        "NEW_VERSION_OF":               "New version of"
 
     },
     "fr": true,
