@@ -1,9 +1,11 @@
 define([
     "common-objects/utils/date",
-    "common-objects/collections/attribute_collection"
+    "common-objects/collections/attribute_collection",
+    "common-objects/collections/file/attached_file_collection"
 ], function (
     date,
-    AttributeCollection
+    AttributeCollection,
+    AttachedFileCollection
     ) {
 
     var PartIteration = Backbone.Model.extend({
@@ -15,9 +17,23 @@ define([
             this.className = "PartIteration";
 
             var attributes = new AttributeCollection(this.get("instanceAttributes"));
-
-            //'attributes' is a special name for Backbone
             this.set("instanceAttributes", attributes);
+
+            var nativeCADFullName = this.get("nativeCADFile");
+
+            if(nativeCADFullName){
+                var nativeCad = {
+                    fullName : nativeCADFullName,
+                    shortName : _.last(nativeCADFullName.split("/")),
+                    created : true
+                };
+                var attachedFiles = new AttachedFileCollection(nativeCad);
+            }else{
+                var attachedFiles = new AttachedFileCollection();
+            }
+
+            this.set("nativeCADFile",  attachedFiles);
+
         },
 
         defaults :{
@@ -42,6 +58,33 @@ define([
 
         getPartKey : function(){
             return  this.get("number")+"-"+this.get("version");
+        },
+
+        getAttachedFiles:function(){
+            return this.get("nativeCADFile");
+        },
+
+        getBaseName:function(){
+            return "/files/" + this.getWorkspace() + "/parts/" + this.get("number")+ "/" + this.get("version") + "/"+ this.get("iteration")
+        },
+
+        getNumber:function(){
+            return this.collection.part.getNumber();
+        },
+
+        getVersion:function(){
+            return this.collection.part.getVersion();
+        },
+
+
+
+        /**
+         * file Upload uses the old servlet, not the JAXRS Api         *
+         * return /files/{workspace}/parts/{docId}/{version}/{iteration}/
+         * @returns string
+         */
+        getUploadBaseUrl: function () {
+            return "/files/" + this.getWorkspace() + "/parts/" + this.getNumber()+ "/" + this.getVersion() + "/"+ this.get("iteration") + "/nativecad/" ;
         }
 
     });

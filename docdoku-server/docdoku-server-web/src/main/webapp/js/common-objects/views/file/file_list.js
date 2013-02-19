@@ -1,7 +1,7 @@
 define([
     "i18n!localization/nls/document-management-strings",
     "text!common-objects/templates/file/file_list.html",
-    "models/attached_file"
+    "common-objects/models/file/attached_file"
 ], function(i18n, template, AttachedFile) {
     var FileListView = Backbone.View.extend({
 
