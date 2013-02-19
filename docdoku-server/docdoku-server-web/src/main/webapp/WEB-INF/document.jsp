@@ -117,53 +117,53 @@
                 <center><h3><fmt:message key="sidebar.title2"/></h3></center><br />
                 <p>
                     <c:if test="${docm.lastIteration.linkedDocuments.size()!=0}">
-                        <c:forEach var="item" items="${docm.lastIteration.linkedDocuments}">
-                            <li><a href="<%=request.getContextPath()%>/documents/${item.toDocumentWorkspaceId}/${item.toDocumentDocumentMasterId}/${item.toDocumentDocumentMasterVersion}">${item.toDocumentDocumentMasterId}-${item.toDocumentDocumentMasterVersion}-${item.toDocumentIteration}</a></li><br />
-                        </c:forEach>
-                    </c:if>
-                    <c:if test="${docm.lastIteration.linkedDocuments.size()==0}">
-                        <div class="empty"><p><fmt:message key="section2.noLink"/></p></div>
-                    </c:if>
+                    <c:forEach var="item" items="${docm.lastIteration.linkedDocuments}">
+                <li><a href="<%=request.getContextPath()%>/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li><br />
+                </c:forEach>
+                </c:if>
+                <c:if test="${docm.lastIteration.linkedDocuments.size()==0}">
+                    <div class="empty"><p><fmt:message key="section2.noLink"/></p></div>
+                </c:if>
                 </p>
             </div>
             <div id="attribute" class="well">
                 <center><h3><fmt:message key="section2.attributes"/></h3></center><br />
                 <p>
-                <c:if test="${attr.size()!=0}">
-                    <table class="table table-striped table-condensed">
-                        <thead>
+                    <c:if test="${attr.size()!=0}">
+                <table class="table table-striped table-condensed">
+                    <thead>
+                    <tr>
+                        <th><fmt:message key="section2.name"/></th>
+                        <th><fmt:message key="section2.value"/></th>
+                    </tr>
+                    </thead>
+                    <c:forEach var="item" items="${attr}">
+                        <tbody class="items">
                         <tr>
-                            <th><fmt:message key="section2.name"/></th>
-                            <th><fmt:message key="section2.value"/></th>
+                            <td>${item.name}</td>
+
+                            <c:if test="${item.value.class=='class java.lang.Boolean'}">
+                                <c:if test="${item.value=='true'}">
+                                    <td><input type="checkbox" checked="checked" disabled="disabled"></td>
+                                </c:if>
+                                <c:if test="${item.value=='false'}">
+                                    <td><input type="checkbox" disabled="disabled"></td>
+                                </c:if>
+                            </c:if>
+                            <c:if test="${item.value.class=='class java.util.Date'}">
+                                <td><fmt:formatDate value="${item.value}" pattern="dd/MM/yyyy"/></td>
+                            </c:if>
+                            <c:if test="${item.class=='class com.docdoku.core.meta.InstanceURLAttribute'}">
+                                <td><a href="${item.value}">${item.value}</a></td>
+                            </c:if>
+
+                            <c:if test="${item.value.class!='class java.lang.Boolean' && item.value.class!='class java.util.Date' && item.class!='class com.docdoku.core.meta.InstanceURLAttribute'}">
+                                <td>${item.value}</td>
+                            </c:if>
                         </tr>
-                        </thead>
-                        <c:forEach var="item" items="${attr}">
-                            <tbody class="items">
-                            <tr>
-                                <td>${item.name}</td>
-
-                                <c:if test="${item.value.class=='class java.lang.Boolean'}">
-                                    <c:if test="${item.value=='true'}">
-                                        <td><input type="checkbox" checked="checked" disabled="disabled"></td>
-                                    </c:if>
-                                    <c:if test="${item.value=='false'}">
-                                        <td><input type="checkbox" disabled="disabled"></td>
-                                    </c:if>
-                                </c:if>
-                                <c:if test="${item.value.class=='class java.util.Date'}">
-                                    <td><fmt:formatDate value="${item.value}" pattern="dd/MM/yyyy"/></td>
-                                </c:if>
-                                <c:if test="${item.class=='class com.docdoku.core.meta.InstanceURLAttribute'}">
-                                    <td><a href="${item.value}">${item.value}</a></td>
-                                </c:if>
-
-                                <c:if test="${item.value.class!='class java.lang.Boolean' && item.value.class!='class java.util.Date' && item.class!='class com.docdoku.core.meta.InstanceURLAttribute'}">
-                                    <td>${item.value}</td>
-                                </c:if>
-                            </tr>
-                            </tbody>
-                        </c:forEach>
-                    </table>
+                        </tbody>
+                    </c:forEach>
+                </table>
                 </c:if>
                 <c:if test="${attr.size()==0}">
                     <div class="empty"><p><fmt:message key="section2.noAttribute"/></p></div>
