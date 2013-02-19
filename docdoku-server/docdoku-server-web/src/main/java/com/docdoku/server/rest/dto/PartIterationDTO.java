@@ -11,8 +11,6 @@ public class PartIterationDTO implements Serializable {
     private String workspaceId;
     private int iteration;
     private String nativeCADFile;
-    //linked documents
-    //private List<String> attachedFiles;
     private String iterationNote;
     private UserDTO author;
     private Date creationDate;

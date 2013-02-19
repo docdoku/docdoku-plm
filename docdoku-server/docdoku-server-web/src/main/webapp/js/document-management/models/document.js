@@ -174,7 +174,7 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             var data = {
                 title: title,
                 description: description,
-                workflowModelId: workflow ? workflow.get("id") : null
+                workflowModelId: workflow ? workflow.id : null
             };
 
             $.ajax({
