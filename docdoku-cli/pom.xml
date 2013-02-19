@@ -41,32 +41,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.kohsuke.args4j</groupId>
-                <artifactId>args4j-maven-plugin</artifactId>
-                <version>2.0.16</version>
-                  <executions>
-                    <execution>
-                      <phase>package</phase>
-                      <goals>
-                        <goal>usage</goal>
-                      </goals>
-                      <configuration>
-                        <mode>HTML</mode>
-                        <title>${project.artifactId} ${project.version}</title>
-                        <sourceFiles>
-                          <sourceFile>com/docdoku/cli/commands/AbstractCommandLine.java</sourceFile>
-                          <sourceFile>com/docdoku/cli/commands/CheckInCommand.java</sourceFile>
-                          <sourceFile>com/docdoku/cli/commands/CheckOutCommand.java</sourceFile>
-                          <sourceFile>com/docdoku/cli/commands/CommandLine.java</sourceFile>
-                          <sourceFile>com/docdoku/cli/commands/GetCommand.java</sourceFile>
-                          <sourceFile>com/docdoku/cli/commands/PutCommand.java</sourceFile>
-                          <sourceFile>com/docdoku/cli/commands/UndoCheckOutCommand.java</sourceFile>
-                        </sourceFiles>
-                      </configuration>
-                  </execution>
-                </executions>
-              </plugin>
+
         </plugins>
         <finalName>docdoku-cli</finalName>
     </build>
@@ -100,6 +75,40 @@
         </dependency>
     </dependencies>
 
-
+    <profiles>
+        <profile>
+            <id>args4j</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.kohsuke.args4j</groupId>
+                        <artifactId>args4j-maven-plugin</artifactId>
+                        <version>2.0.16</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>usage</goal>
+                                </goals>
+                                <configuration>
+                                    <mode>HTML</mode>
+                                    <title>${project.artifactId} ${project.version}</title>
+                                    <sourceFiles>
+                                        <sourceFile>com/docdoku/cli/commands/AbstractCommandLine.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/CheckInCommand.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/CheckOutCommand.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/CommandLine.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/GetCommand.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/PutCommand.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/UndoCheckOutCommand.java</sourceFile>
+                                    </sourceFiles>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
