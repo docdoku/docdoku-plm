@@ -6,6 +6,7 @@ define({
     CLOSE: "Fermer",
     AUTHOR: "Auteur",
     AMOUNT: "Quantité",
+    CREATION_DATE: "Date de création",
     CHECKOUT_DATE: "Date de réservation",
     CHECKOUT_BY: "Réservé par",
     _DATE_FORMAT: "dd-mm-yyyy HH:MM:ss",
@@ -34,5 +35,10 @@ define({
     SPACE: "espace",
     ROTATE_SCENE: "Pivoter la scène",
     SCROLL_UP: "défilement haut",
-    SCROLL_DOWN: "défilement bas"
+    SCROLL_DOWN: "défilement bas",
+    "GENERAL": "Général",
+    "ATTRIBUTES": "Attributs",
+    "CAD_FILE": "Fichier CAD",
+    "APPEND":"Ajouter",
+    STANDARD_PART:"Standard part"
 });

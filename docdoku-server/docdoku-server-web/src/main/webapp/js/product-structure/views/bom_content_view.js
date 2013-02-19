@@ -1,4 +1,4 @@
-define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localization/nls/product-structure-strings"], function (BomItemView, template, i18n) {
+define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localization/nls/product-structure-strings","collections/part_collection"], function (BomItemView, template, i18n, PartList) {
     var BomContentView = Backbone.View.extend({
 
         el: $("#bom_table_container"),
@@ -35,28 +35,30 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
         },
 
         update: function(component) {
-            this.componentSelectedInTreeView = component;
-            this.tbody.empty();
             this.itemViews = [];
-            if (component.isAssembly()) {
-                if (component.children.isEmpty()) {
-                    this.listenTo(component.children, 'reset', this.addAllBomItem);
-                    component.children.fetch();
-                } else {
-                    this.addAllBomItem(component.children);
-                }
-            } else {
-                this.addBomItem(component);
-            }
+            this.partsCollection = new PartList();
+            this.partsCollection.setFilterUrl(component.getUrlForBom());
+            this.listenTo(this.partsCollection, "reset", this.addAllBomItem);
+            this.partsCollection.fetch();
         },
 
-        addAllBomItem: function(components) {
-            components.each(this.addBomItem, this);
+        showRoot:function(rootComponent){
+            this.itemViews = [];
+            this.partsCollection = new PartList();
+            this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
+            this.listenTo(this.partsCollection, "reset", this.addAllBomItem);
+            this.partsCollection.fetch();
+        },
+
+        addAllBomItem: function(parts) {
+            this.tbody.empty();
+            parts.each(this.addBomItem, this);
             this.notifySelectionChanged();
         },
 
-        addBomItem: function(componentItem) {
-            var bomItemView = new BomItemView({model: componentItem}).render();
+        addBomItem: function(part) {
+            var bomItemView = new BomItemView({model: part}).render();
+            this.listenTo(bomItemView.model, "change", this.notifySelectionChanged);
             this.itemViews.push(bomItemView);
             this.tbody.append(bomItemView.el);
         },
@@ -68,43 +70,24 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
         },
 
         actionCheckout: function() {
-            var self = this;
             _.each(this.checkedViews(), function(view) {
-                view.model.checkout(self.refreshContent);
+                view.model.checkout();
             });
             return false;
         },
 
         actionUndocheckout: function() {
-            var self = this;
             _.each(this.checkedViews(), function(view) {
-                view.model.undocheckout(self.refreshContent);
+                view.model.undocheckout();
             });
             return false;
         },
 
         actionCheckin: function() {
-            var self = this;
             _.each(this.checkedViews(), function(view) {
-                view.model.checkin(self.refreshContent);
+                view.model.checkin();
             });
             return false;
-        },
-
-        refreshContent: function() {
-            this.tbody.empty();
-            this.itemViews = [];
-            var self = this;
-            if (this.componentSelectedInTreeView.isAssembly()) {
-                //to refresh the bom content, we need to re fetch all the items
-                //we use silent to prevent adding/refreshing components in the tree view which listen for 'reset' event
-                this.componentSelectedInTreeView.children.fetch({
-                    success: function(collection) {
-                        self.addAllBomItem(collection);
-                    },
-                    silent: true
-                });
-            }
         }
 
     });

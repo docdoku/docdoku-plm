@@ -1,5 +1,5 @@
 define([
-	"views/components/modal",
+	"common-objects/views/components/modal",
 	"text!templates/folder_edit.html"
 ], function (
 	ModalView,

@@ -1,7 +1,7 @@
 define([
     "models/tag",
     "collections/tag",
-	"views/components/modal",
+	"common-objects/views/components/modal",
 	"views/document_tag",
 	"text!templates/document/documents_tags.html"
 ], function (

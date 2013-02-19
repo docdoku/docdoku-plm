@@ -3,16 +3,6 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://dozer.sourceforge.net
           http://dozer.sourceforge.net/schema/beanmapping.xsd">
-          
-<!--          <mapping>
-              <class-a>com.docdoku.core.document.DocumentIteration</class-a>
-              <class-b>java.lang.string</class-b>
-              <field custom-converter="com.docdoku.server.rest.util.BinaryResourceToStringDozerConverter">
-                  <a>attachedFiles</a>
-                  <b>attachedFiles</b>
-              </field>
-          </mapping>
-          -->
 
     <configuration>
         <custom-converters> <!-- these are always bi-directional -->
@@ -66,4 +56,16 @@
             <b>workspaceId</b>
         </field>
     </mapping>
+
+    <mapping>
+        <class-a>com.docdoku.core.product.PartIteration</class-a>
+        <class-b>com.docdoku.server.rest.dto.PartIterationDTO</class-b>
+        <field custom-converter="com.docdoku.server.rest.util.MapToListDozerConverter">
+            <a>instanceAttributes</a>
+            <b>instanceAttributes</b>
+            <a-hint>java.util.HashMap</a-hint>
+            <b-hint>java.util.ArrayList</b-hint>
+        </field>
+    </mapping>
+
 </mappings>

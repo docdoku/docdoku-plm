@@ -7,58 +7,58 @@
         <form id="product_creation_form" class="form-horizontal">
 
             <div class="control-group">
-                <label class="control-label" for="inputProductId">Product Id</label>
+                <label class="control-label" for="inputProductId">{{i18n.PRODUCT_ID}}</label>
                 <div class="controls">
-                    <input type="text" id="inputProductId" placeholder="Product Id" required />
+                    <input type="text" id="inputProductId" placeholder="{{i18n.PRODUCT_ID}}" required />
                 </div>
             </div>
 
             <div class="control-group">
-                <label class="control-label" for="inputDescription">Description</label>
+                <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
                 <div class="controls">
-                    <textarea id="inputDescription" placeholder="Description" rows="3"></textarea>
+                    <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
                 </div>
             </div>
 
             <div class="control-group" id="inputPartNumberWrapper">
-                <label class="control-label" for="inputPartNumber">Part Number</label>
+                <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
                 <div class="controls">
-                    <input type="text" id="inputPartNumber" placeholder="Part Number" data-provide="typeahead" required />
+                    <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" data-provide="typeahead" required />
                 </div>
             </div>
 
             <div class="control-group">
                 <div class="controls">
-                    <a id="show_part_creation_fields">Create a new part</a>
-                    <a id="hide_part_creation_fields">Cancel part creation</a>
+                    <a id="show_part_creation_fields">{{i18n.CREATE_NEW_PART}}</a>
+                    <a id="hide_part_creation_fields">{{i18n.CANCEL_PART_CREATION}}</a>
                 </div>
             </div>
 
             <div id="part_creation_fields">
 
                 <div class="control-group">
-                    <label class="control-label" for="inputNewPartNumber">Part Number</label>
+                    <label class="control-label" for="inputNewPartNumber">{{i18n.PART_NUMBER}}</label>
                     <div class="controls">
-                        <input type="text" id="inputNewPartNumber" placeholder="Part Number" />
+                        <input type="text" id="inputNewPartNumber" placeholder="{{i18n.PART_NUMBER}}" />
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="inputNewPartName">Part Name</label>
+                    <label class="control-label" for="inputNewPartName">{{i18n.PART_NAME}}</label>
                     <div class="controls">
-                        <input type="text" id="inputNewPartName" placeholder="Part Name" />
+                        <input type="text" id="inputNewPartName" placeholder="{{i18n.PART_NAME}}" />
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="inputNewPartDescription">Part Description</label>
+                    <label class="control-label" for="inputNewPartDescription">{{i18n.DESCRIPTION}}</label>
                     <div class="controls">
-                        <textarea id="inputNewPartDescription" placeholder="Description" rows="3"></textarea>
+                        <textarea id="inputNewPartDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="inputNewPartStandard">Standard part</label>
+                    <label class="control-label" for="inputNewPartStandard">{{i18n.STANDARD_PART}}</label>
                     <div class="controls">
                         <input type="checkbox" id="inputNewPartStandard" />
                     </div>

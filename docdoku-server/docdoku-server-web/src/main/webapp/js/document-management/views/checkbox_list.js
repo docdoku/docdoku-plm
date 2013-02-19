@@ -1,5 +1,5 @@
 define([
-	"views/components/list"
+	"common-objects/views/components/list"
 ], function (
 	ListView
 ) {

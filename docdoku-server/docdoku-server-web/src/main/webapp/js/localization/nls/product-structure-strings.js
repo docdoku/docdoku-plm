@@ -13,6 +13,7 @@ define({
         AUTHOR: "Author",
         AMOUNT: "Amount",
         CHECKOUT_BY: "Checked out by",
+        CREATION_DATE: "Creation date",
         CHECKOUT_DATE: "Checkout date",
         DESCRIPTION: "Description",
         _DATE_FORMAT: "mm-dd-yyyy HH:MM:ss",
@@ -42,7 +43,12 @@ define({
         SPACE: "space",
         ROTATE_SCENE: "Rotate the scene",
         SCROLL_UP: "scroll up",
-        SCROLL_DOWN: "scroll down"
+        SCROLL_DOWN: "scroll down",
+        "GENERAL": "General",
+        "ATTRIBUTES": "Attributes",
+        "CAD_FILE": "CAD File",
+        "APPEND":"add",
+        STANDARD_PART:"Standard part"
     },
     "fr": true,
     "es": true
