@@ -29,7 +29,7 @@ define([
 		rendered: function () {
 			this.tagsView = this.addSubView(
 				new TagListView({
-					el: "#items-" + this.cid,
+					el: "#items-" + this.cid
 				})
 			);
 			this.tagsView.bind("shown", this.onTagsViewShown);
@@ -58,11 +58,15 @@ define([
 			this.$el.removeClass("open");
 		},
 		toggle: function () {
-			this.isOpen ? this.hide() : this.show();
+			if(this.isOpen){
+                this.hide()
+            }else {
+                this.show();
+            }
 			$("#document-menu .active").removeClass("active");
 			this.$el.find(".header").first().addClass("active");
 			return false;
-		},
+		}
 	});
 	TagNavView = singletonDecorator(TagNavView);
 	return TagNavView;

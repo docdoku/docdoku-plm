@@ -25,7 +25,7 @@ define([
 			this.addSubView(
 				new TemplateContentListView()
 			).render();
-		},
+		}
 	});
 	TemplateNavView = singletonDecorator(TemplateNavView);
 	return TemplateNavView;

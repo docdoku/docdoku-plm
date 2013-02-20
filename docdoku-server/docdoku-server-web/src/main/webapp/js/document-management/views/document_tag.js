@@ -2,7 +2,7 @@ define(
     [
         "text!templates/document/document_tag.html"
     ],
-    function(template){ 
+    function(template){
 
         var DocumentTagView = Backbone.View.extend({
 
@@ -18,22 +18,17 @@ define(
             },
 
             render:function(){
-
                 this.$el.html(Mustache.render(template,{tag:this.model, iconClass:this.options.iconClass}));
                 return this ;
             },
 
             clicked : function(){
-
                 if(this.options.clicked){
                     this.options.clicked();
                 }
             }
 
-
-
         });
-
 
     return DocumentTagView;
 });

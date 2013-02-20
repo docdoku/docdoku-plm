@@ -25,7 +25,7 @@ define([
 				var view = _.find(
 					_.values(this.subViews),
 					function (view) {
-						return this.tag == view.model.id
+						return this.tag == view.model.id;
 					},
 					this
 				);
