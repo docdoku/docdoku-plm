@@ -1,3 +1,4 @@
+/*global sceneManager*/
 define([
     "views/layer-item-view",
     "views/layer-header-view"

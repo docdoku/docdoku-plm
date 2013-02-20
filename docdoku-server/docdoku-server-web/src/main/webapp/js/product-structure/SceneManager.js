@@ -1,3 +1,4 @@
+/*global sceneManager*/
 define([
     "views/marker_create_modal_view",
     "views/export_scene_modal_view",

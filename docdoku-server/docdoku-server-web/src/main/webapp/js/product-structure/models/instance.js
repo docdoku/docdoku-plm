@@ -1,3 +1,4 @@
+/*global sceneManager*/
 window.Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
 
     this.id = id;

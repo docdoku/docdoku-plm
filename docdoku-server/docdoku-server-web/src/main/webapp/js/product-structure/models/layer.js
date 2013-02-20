@@ -1,3 +1,4 @@
+/*global sceneManager*/
 define([
     "models/marker",
     "collections/marker_collection",
