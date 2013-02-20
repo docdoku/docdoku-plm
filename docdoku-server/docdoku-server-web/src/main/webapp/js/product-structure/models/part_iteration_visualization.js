@@ -1,3 +1,4 @@
+/*global isIpad*/
 define(function() {
 
     var PartIterationVisualization = function(partIterationParams) {
