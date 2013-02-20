@@ -58,7 +58,7 @@ define(["text!modules/product-creation-module/templates/product_creation_view.ht
                 source: function(query, process) {
                     $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts?q=' + query, function(data) {
                         process(data);
-                    })
+                    });
                 }
             });
         },

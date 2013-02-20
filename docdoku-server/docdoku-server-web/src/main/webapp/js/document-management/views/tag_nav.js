@@ -59,7 +59,7 @@ define([
 		},
 		toggle: function () {
 			if(this.isOpen){
-                this.hide()
+                this.hide();
             }else {
                 this.show();
             }

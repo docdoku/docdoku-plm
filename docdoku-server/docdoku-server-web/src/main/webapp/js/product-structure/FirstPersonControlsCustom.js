@@ -187,14 +187,26 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         if(this.movement) {
             var actualMoveSpeed = delta * this.movementSpeed;
 
-            if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( - actualMoveSpeed );
-            if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+            if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ){
+                this.object.translateZ( - actualMoveSpeed );
+            }
+            if ( this.moveBackward ){
+                this.object.translateZ( actualMoveSpeed );
+            }
 
-            if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
-            if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+            if ( this.moveLeft ){
+                this.object.translateX( - actualMoveSpeed );
+            }
+            if ( this.moveRight ){
+                this.object.translateX( actualMoveSpeed );
+            }
 
-            if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
-            if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+            if ( this.moveUp ){
+                this.object.translateY( actualMoveSpeed );
+            }
+            if ( this.moveDown ){
+                this.object.translateY( - actualMoveSpeed );
+            }
         }
 
         // Camera rotation movement

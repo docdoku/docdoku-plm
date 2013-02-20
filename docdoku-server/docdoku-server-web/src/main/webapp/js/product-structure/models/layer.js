@@ -36,7 +36,11 @@ define([
 
         setEditingMarkers: function(editingMarkers) {
             this.set('editingMarkers', editingMarkers);
-            editingMarkers ? sceneManager.startMarkerCreationMode(this) : sceneManager.stopMarkerCreationMode(this);
+            if(editingMarkers){
+                sceneManager.startMarkerCreationMode(this);
+            }else{
+                sceneManager.stopMarkerCreationMode(this);
+            }
         },
 
         toggleShow: function() {
@@ -46,13 +50,17 @@ define([
 
         setShown: function(shown) {
             this.set('shown', shown);
-            shown ? this._addAllMarkersToScene() : this._removeAllMarkersFromScene();
+            if(shown){
+                this._addAllMarkersToScene();
+            }else{
+                this._removeAllMarkersFromScene();
+            }
         },
 
         initialize: function() {
             if (!this.has('color')) {
                 //http://paulirish.com/2009/random-hex-color-code-snippets/
-                this.set('color', ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6))
+                this.set('color', ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6));
             }
             this.material = new THREE.MeshLambertMaterial({
                 color:  parseInt('0x' + this.get('color'), 16),

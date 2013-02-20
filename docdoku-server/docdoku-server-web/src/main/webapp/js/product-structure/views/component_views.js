@@ -1,6 +1,6 @@
 define(function() {
 
-    var ComponentViews = {}
+    var ComponentViews = {};
 
     ComponentViews.Components = Backbone.View.extend({
 
@@ -65,10 +65,12 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
-            if (event.target.checked)
+            if (event.target.checked){
                 this.model.putOnScene();
-            else
+            }
+            else{
                 this.model.removeFromScene();
+            }
         },
 
         render: function() {
@@ -120,10 +122,12 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
-            if (event.target.checked)
+            if (event.target.checked){
                 this.model.putOnScene();
-            else
+            }
+            else{
                 this.model.removeFromScene();
+            }
         },
 
         render: function() {
@@ -170,7 +174,11 @@ define(function() {
 
             var childrenNode = this.$(">ul");
 
-            this.isExpanded ? childrenNode.show() : childrenNode.hide();
+            if(this.isExpanded){
+                childrenNode.show();
+            }else{
+                childrenNode.hide();
+            }
         },
 
         hasChildrenNodes: function() {

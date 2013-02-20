@@ -17,7 +17,7 @@ define(["!i18n!localization/nls/product-structure-strings"], function (i18n) {
 
         render: function() {
             this.$el.html(this.template);
-            this.$el.toggleClass('shown', this.allShown)
+            this.$el.toggleClass('shown', this.allShown);
             return this;
         },
 
@@ -28,7 +28,7 @@ define(["!i18n!localization/nls/product-structure-strings"], function (i18n) {
         },
 
         addLayer: function() {
-            this.$el.trigger('layers:addLayer')
+            this.$el.trigger('layers:addLayer');
         }
 
     });

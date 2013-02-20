@@ -19,7 +19,7 @@ window.Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
     this.mesh = null;
     this.idle = true;
 
-}
+};
 
 Instance.prototype = {
 
@@ -48,7 +48,9 @@ Instance.prototype = {
         for ( var i = 0; i < 6; i ++ ) {
 
             distance = planes[ i ].x * me[12] + planes[ i ].y * me[13] + planes[ i ].z * me[14] + planes[ i ].w;
-            if ( distance <= - radius ) return false;
+            if ( distance <= - radius ){
+                return false;
+            }
 
         }
 

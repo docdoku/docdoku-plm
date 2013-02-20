@@ -5,7 +5,7 @@ define(function() {
         this.files = partIterationParams.files;
         this.attributes = partIterationParams.attributes;
         this.initialize();
-    }
+    };
 
     PartIterationVisualization.prototype = {
 
@@ -69,7 +69,7 @@ define(function() {
             return null;
         }
 
-    }
+    };
 
    return PartIterationVisualization;
 

@@ -38,4 +38,4 @@ LevelGeometry.prototype = {
         }
     }
 
-}
+};

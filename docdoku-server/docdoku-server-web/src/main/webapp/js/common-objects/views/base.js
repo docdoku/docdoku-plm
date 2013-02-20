@@ -89,7 +89,7 @@ define([
 					events: this.modelEvents,
 					action: "bind"
 				});
-			};
+			}
 		},
 		bindCollection: function () {
 			if (this.collection) {

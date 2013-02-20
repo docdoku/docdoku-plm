@@ -27,12 +27,10 @@ define([
                     shortName : _.last(nativeCADFullName.split("/")),
                     created : true
                 };
-                var attachedFiles = new AttachedFileCollection(nativeCad);
+                this.set("nativeCADFile", new AttachedFileCollection(nativeCad));
             }else{
-                var attachedFiles = new AttachedFileCollection();
+                this.set("nativeCADFile", new AttachedFileCollection());
             }
-
-            this.set("nativeCADFile",  attachedFiles);
 
         },
 
@@ -65,7 +63,7 @@ define([
         },
 
         getBaseName:function(){
-            return "/files/" + this.getWorkspace() + "/parts/" + this.get("number")+ "/" + this.get("version") + "/"+ this.get("iteration")
+            return "/files/" + this.getWorkspace() + "/parts/" + this.get("number")+ "/" + this.get("version") + "/"+ this.get("iteration");
         },
 
         getNumber:function(){

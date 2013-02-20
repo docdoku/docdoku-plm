@@ -7,9 +7,9 @@ define([
     ExportSceneModalView,
     ControlsInfosModalView
 ) {
-    var SceneManager = function (options) {
+    var SceneManager = function (pOptions) {
 
-        var options = options || {};
+        var options = pOptions || {};
 
         var defaultsOptions = {
             typeLoader: 'binary',
@@ -164,7 +164,7 @@ define([
                     } else {
                         self.controls.enabled = false;
                     }
-                }
+                };
 
                 // Hook pointer lock state change events
                 document.addEventListener( 'pointerlockchange', pointerlockchange, false );
@@ -294,7 +294,7 @@ define([
             }
 
             this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
-                return instance.mesh != null
+                return instance.mesh != null;
             }), 'mesh');
 
 
@@ -302,7 +302,7 @@ define([
                 var mcmv = new MarkerCreateModalView({model:layer, intersectPoint:intersectPoint});
                 $("body").append(mcmv.render().el);
                 mcmv.openModal();
-            }
+            };
 
             var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
 
@@ -508,7 +508,7 @@ define([
         initIframeScene: function() {
             if (!_.isUndefined(SCENE_INIT.pathForIframe)) {
                 var self = this;
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe
+                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe;
                 $.getJSON(instancesUrl, function(instances) {
                     _.each(instances, function(instanceRaw) {
 
@@ -543,7 +543,7 @@ define([
         bind: function ( scope, fn ) {
             return function () {
                 fn.apply( scope, arguments );
-            }
+            };
         }
     }
 

@@ -40,7 +40,9 @@ THREE.PointerLockControlsCustom = function ( camera , domElement ) {
 
     var onMouseMove = function ( event ) {
 
-        if ( scope.enabled === false ) return;
+        if ( scope.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
 
@@ -58,7 +60,7 @@ THREE.PointerLockControlsCustom = function ( camera , domElement ) {
 
     var onMouseWheel = function (event) {
         event.preventDefault();
-    }
+    };
 
     var onKeyDown = function ( event ) {
 
@@ -144,7 +146,9 @@ THREE.PointerLockControlsCustom = function ( camera , domElement ) {
 
     this.update = function ( delta ) {
 
-        if ( scope.enabled === false ) return;
+        if ( scope.enabled === false ){
+            return;
+        }
 
         delta *= 0.1;
 
@@ -155,13 +159,23 @@ THREE.PointerLockControlsCustom = function ( camera , domElement ) {
         if ( moveForward ) {
             velocity.z -= moveSpeed * delta;
         }
-        if ( moveBackward ) velocity.z += moveSpeed * delta;
+        if ( moveBackward ){
+            velocity.z += moveSpeed * delta;
+        }
 
-        if ( moveUp ) velocity.y += moveSpeed * delta;
-        if ( moveDown ) velocity.y -= moveSpeed * delta;
+        if ( moveUp ){
+            velocity.y += moveSpeed * delta;
+        }
+        if ( moveDown ){
+            velocity.y -= moveSpeed * delta;
+        }
 
-        if ( moveLeft ) velocity.x -= moveSpeed * delta;
-        if ( moveRight ) velocity.x += moveSpeed * delta;
+        if ( moveLeft ){
+            velocity.x -= moveSpeed * delta;
+        }
+        if ( moveRight ){
+            velocity.x += moveSpeed * delta;
+        }
 
         yawObject.translateX( velocity.x );
         yawObject.translateY( velocity.y );
