@@ -1,4 +1,4 @@
-/*global isIpad*/
+/*global isIpad,LevelGeometry*/
 define(function() {
 
     var PartIterationVisualization = function(partIterationParams) {
