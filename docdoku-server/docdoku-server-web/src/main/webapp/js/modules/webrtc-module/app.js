@@ -1,3 +1,4 @@
+/*global CALL_STATE,REJECT_CALL_REASON,ChannelMessagesType,mainChannel*/
 define([
     "i18n!localization/nls/webrtc-module-strings",
     "modules/webrtc-module/views/webrtc_module_view"

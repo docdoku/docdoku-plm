@@ -1,3 +1,4 @@
+/*global CALL_STATE,REJECT_CALL_REASON,ChannelMessagesType,mainChannel,preferOpus,setDefaultCodec,removeCN*/
 define(
     [
         "i18n!localization/nls/webrtc-module-strings",
@@ -8,7 +9,7 @@ define(
     ],
     function (i18n,attachMediaStream, RTCPeerConnection, getUserMedia, template) {
 
-        WebRTCModuleView = Backbone.View.extend({
+       var WebRTCModuleView = Backbone.View.extend({
 
             el: "#webrtc_module",
 
@@ -315,8 +316,9 @@ define(
                     this.createPeerConnection();
                     this.pc.addStream(this.localStream);
                     this.started = true;
-                    if (this.initiator)
+                    if (this.initiator){
                         this.doCall();
+                    }
                 }
 
             },
@@ -362,8 +364,9 @@ define(
                 if (msg.type === ChannelMessagesType.WEBRTC_OFFER) {
 
                     // Callee creates PeerConnection
-                    if (!this.initiator && !this.started)
+                    if (!this.initiator && !this.started){
                         this.maybeStart();
+                    }
 
                     this.pc.setRemoteDescription(new RTCSessionDescription(msg));
                     this.doAnswer();
@@ -484,7 +487,7 @@ define(
         // Set the selected codec to the first in m line.
         function setDefaultCodec(mLine, payload) {
             var elements = mLine.split(' ');
-            var newLine = new Array();
+            var newLine = [];
             var index = 0;
             for (var i = 0; i < elements.length; i++) {
                 if (index === 3){ // Format of media starts from the fourth.
