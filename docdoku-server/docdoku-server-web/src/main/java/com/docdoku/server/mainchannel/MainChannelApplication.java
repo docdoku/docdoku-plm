@@ -217,9 +217,9 @@ public class MainChannelApplication extends WebSocketApplication {
                 }
                 // else : account without login doesn't make sense. Nothing to do. Maybe close the socket ?
 
-            } else {
+            } //else {
                 // user is not authenticated on server, nothing to do. Maybe close the socket ?
-            }
+            //}
         }
     }
 
