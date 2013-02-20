@@ -10,8 +10,9 @@ define([
         },
 
         initialize: function() {
-            if(!_.isUndefined(this.attributes.worker))
+            if(!_.isUndefined(this.attributes.worker)){
                 this.attributes.worker = new User(this.attributes.worker);
+            }
         },
 
         toJSON: function() {

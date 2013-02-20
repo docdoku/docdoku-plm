@@ -27,7 +27,7 @@ define([
                     "fullName":fullName,
                     shortName : _.last(fullName.split("/")),
                     created : true
-                }
+                };
             });
             var attachedFiles = new AttachedFileCollection(filesMapping);
 

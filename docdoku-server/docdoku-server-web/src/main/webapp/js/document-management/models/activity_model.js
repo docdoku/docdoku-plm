@@ -12,10 +12,11 @@ define([
         },
 
         initialize: function() {
-            if(_.isUndefined(this.get("taskModels").models))
+            if(_.isUndefined(this.get("taskModels").models)){
                 this.set({
                     taskModels: new TaskModels(this.get("taskModels"))
                 });
+            }
         },
 
         toJSON: function() {

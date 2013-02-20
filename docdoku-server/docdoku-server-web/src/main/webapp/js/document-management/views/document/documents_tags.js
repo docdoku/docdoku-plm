@@ -77,11 +77,15 @@ define([
                 var modelAlreadyExists = false ;
 
                 _.each(this._tagsToAddCollection.models,function(model){
-                    modelAlreadyExists |= (model.id == newModel.id);
+                    if(model.id == newModel.id){
+                        modelAlreadyExists = true;
+                    }
                 });
 
                 _.each(this._existingTagsCollection.models,function(model){
-                    modelAlreadyExists |= (model.id == newModel.id);
+                    if(model.id == newModel.id){
+                        modelAlreadyExists = true;
+                    }
                 });
 
                 if(!modelAlreadyExists){
@@ -96,8 +100,6 @@ define([
 
         onTagCreated:function(model){
             this._tagsToCreate.push(model);
-            //this._existingTagsCollection.createTag(model);
-
         },
 
         addExistingTag:function(model){

@@ -6,7 +6,7 @@ define([
 	var CheckboxListItemView = ListItemView.extend({
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
-			this.checkToggle = "#check-toggle-" + this.cid
+			this.checkToggle = "#check-toggle-" + this.cid;
 			this.events["click " + this.checkToggle] = "toggle";
 			this.isChecked = false;
 		},
@@ -32,7 +32,7 @@ define([
 		},
 		uncheck: function () {
 			this.setCheckState(false);
-		},
+		}
 	});
 	return CheckboxListItemView;
 });

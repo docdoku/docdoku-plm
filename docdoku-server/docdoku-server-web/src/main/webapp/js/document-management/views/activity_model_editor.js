@@ -78,7 +78,7 @@ define([
         },
 
         addTaskAction: function(){
-            this.inputTasksToComplete.val(parseInt(this.inputTasksToComplete.val())+1);
+            this.inputTasksToComplete.val(parseInt(this.inputTasksToComplete.val())+1,10);
             this.tasksToCompleteChanged();
 
             this.model.attributes.taskModels.add(new TaskModel());

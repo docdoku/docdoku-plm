@@ -49,7 +49,7 @@ define([
 						name: attributes[i].name,
 						value: ""
 					});
-				};
+				}
 				if (template.get("idGenerated")) {
 					this.generate_id(template);
 				}
