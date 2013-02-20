@@ -32,17 +32,20 @@ define([
 
             this.state = this.States.FOLD;
 
-            if(_.isUndefined(this.model.get("worker")))
+            if(_.isUndefined(this.model.get("worker"))){
                 this.model.set({
                     worker: this.options.users.at(0)
                 });
+            }
 
             var users = [];
             _.each(this.options.users.models, function(user){
-                if(self.model.get("worker") && self.model.get("worker").get("name") == user.get("name"))
+                if(self.model.get("worker") && self.model.get("worker").get("name") == user.get("name")){
                     users.push({name: user.get("name"), selected: true});
-                else
+                }
+                else{
                     users.push({name: user.get("name"), selected: false});
+                }
             });
 
             this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, users: users, i18n: i18n});
@@ -58,10 +61,12 @@ define([
           this.model.set({
               title: this.inputTitle.val()
           });
-          if(this.inputTitle.val().length == 0)
+          if(this.inputTitle.val().length == 0){
             this.pTitle.html(i18n.TASK_NAME_PLACEHOLDER);
-          else
+          }
+          else{
             this.pTitle.html(this.inputTitle.val());
+          }
         },
 
         instructionsChanged: function(){

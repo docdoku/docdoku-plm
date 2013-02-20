@@ -10,7 +10,7 @@ define(function () {
 				constructor.apply(constructor._instance, arguments);
 			}
 			return constructor._instance;
-		}
+		};
 		return constructor;
 	};
 	return singletonDecorator;

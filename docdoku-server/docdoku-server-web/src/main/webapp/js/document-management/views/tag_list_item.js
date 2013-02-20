@@ -16,7 +16,6 @@ define([
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events = _.extend(this.events, {
-				"click .edit": "actionEdit",
 				"click .delete": "actionDelete",
 				"mouseleave .header": "hideActions"
 			});
@@ -38,22 +37,13 @@ define([
 				})
 			).render();
 		},
-		actionEdit: function () {
-			this.hideActions();
-			var view = this.addSubView(
-				new TagEditView({
-					model: this.model
-				})
-			).render();
-			return false;
-		},
 		actionDelete: function () {
 			this.hideActions();
 			if (confirm(i18n["DELETE_TAG_?"])) {
 				this.model.destroy();
 			}
 			return false;
-		},
+		}
 	});
 	return TagListItemView;
 });

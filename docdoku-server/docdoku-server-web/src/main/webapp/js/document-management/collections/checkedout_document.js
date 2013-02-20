@@ -7,7 +7,7 @@ define([
 		model: Document
 	});
 	CheckedoutDocumentList.prototype.__defineGetter__("url", function () {
-		baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
+		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
 		return  baseUrl + "/checkedout";
 	});
     CheckedoutDocumentList.className="CheckedoutDocumentList";

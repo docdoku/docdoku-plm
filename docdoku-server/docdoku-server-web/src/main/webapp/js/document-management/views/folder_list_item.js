@@ -45,7 +45,7 @@ define([
 			this.$el.find(".header .btn-group").first().removeClass("open");
 		},
 		modelToJSON: function () {
-			data = this.model.toJSON();
+			var data = this.model.toJSON();
 			if (data.id) {
 				data.path = data.id.replace(/^[^:]*:?/, "");
 				this.modelPath = data.path;
@@ -55,7 +55,9 @@ define([
 		rendered: function () {
 			var isHome = this.model ? this.model.get("home") : false;
 			var isRoot = _.isUndefined(this.model);
-			if (isHome) this.$el.addClass("home");
+			if (isHome){
+                this.$el.addClass("home");
+            }
 			if (isRoot || isHome) {
 				this.$(".delete").remove();
 				this.$(".edit").remove();
@@ -120,8 +122,15 @@ define([
 			$("#document-menu .active").removeClass("active");
 			this.$el.find(".header").first().addClass("active");
 		},
+        isOpened:function(){
+            return this.isOpen;
+        },
 		toggle: function () {
-			this.isOpen ? this.hide() : this.show();
+            if(this.isOpened()){
+                this.hide();
+            }else{
+                this.show();
+            }
 			return false;
 		},
 		traverse: function () {

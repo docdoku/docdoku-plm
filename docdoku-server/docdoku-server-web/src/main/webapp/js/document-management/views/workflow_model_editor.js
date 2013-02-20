@@ -105,8 +105,9 @@ define([
                         }
                     }
                 );
-            } else
+            } else {
                 this.inputWorkflowName.focus();
+            }
 
             return false;
         },

@@ -46,8 +46,9 @@ define([
         fileDragHover: function(e) {
             e.stopPropagation();
             e.preventDefault();
-            if(e.type == "dragover")
+            if(e.type == "dragover"){
                 this.filedroparea.addClass("hover");
+            }
             else{
                 this.filedroparea.removeClass("hover");
             }
@@ -144,8 +145,9 @@ define([
 
         deleteNewFiles: function() {
             //Abort file upload if there is one
-            if (!_.isUndefined(this.xhr))
+            if (!_.isUndefined(this.xhr)){
                 this.xhr.abort();
+            }
 
             /*deleting unwanted files that have been added by upload*/
             /*we need to reverse read because model.destroy() remove elements from collection*/

@@ -45,7 +45,9 @@ define([
 			this.unbindCollection();
 			this.unbindModel();
 			this.unbind();
-			if (this.parentView) delete this.parentView.subViews[this.cid];
+			if (this.parentView){
+                delete this.parentView.subViews[this.cid];
+            }
 			if (_.isFunction(this.destroyed)) {
 				this.destroyed();
 			}
@@ -73,11 +75,11 @@ define([
 			var target = options.target;
 			var events = options.events;
 			var action = options.action;
-			for (evt in events) {
+			for (var evt in events) {
 				var key = events[evt];
 				if (key in this && this[key]) {
 					target[action](evt, this[key]);
-				};
+				}
 			}
 		},
 		bindModel: function () {
@@ -96,7 +98,7 @@ define([
 					events: this.collectionEvents,
 					action: "bind"
 				});
-			};
+			}
 		},
 		unbindModel: function () {
 			if (this.model) {
@@ -105,7 +107,7 @@ define([
 					events: this.modelEvents,
 					action: "unbind"
 				});
-			};
+			}
 		},
 		unbindCollection: function () {
 			if (this.collection) {
@@ -114,7 +116,7 @@ define([
 					events: this.collectionEvents,
 					action: "unbind"
 				});
-			};
+			}
 		},
 		render: function () {
 			this.deleteSubViews();
@@ -133,8 +135,12 @@ define([
 			var data = {};
 			data.i18n = i18n;
 			data.view = this.viewToJSON();
-			if (this.model) data.model = this.modelToJSON();
-			if (this.collection) data.collection = this.collectionToJSON();
+			if (this.model){
+                data.model = this.modelToJSON();
+            }
+			if (this.collection){
+                data.collection = this.collectionToJSON();
+            }
 			return data;
 		},
 		viewToJSON: function () {
@@ -157,7 +163,7 @@ define([
 			// AlertView not used to resolve circular dependency
 			var titles = {
 				"error": i18n.ERROR
-			}
+			};
 			options.title = options.title ? options.title : titles[options.type];
 			var html = Mustache.render(alert_template, {
 					model: {
@@ -165,7 +171,7 @@ define([
 						title: options.title,
 						message: options.message
 					}
-			})
+			});
 			$("#alerts-" + this.cid).html(html);
 		}
 	});

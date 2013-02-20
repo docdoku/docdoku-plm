@@ -77,8 +77,9 @@ define([
                                     function(linkedDocument) {
                                         return linkedDocument.getDocKey() == documentIteration.getDocKey();
                                     });
-                                if(!_.isUndefined(linkedDoc))
+                                if(!_.isUndefined(linkedDoc)){
                                     docsToRemove.push(documentIteration);
+                                }
                             }
                         );
                         self.searchResults.remove(docsToRemove);
@@ -86,7 +87,7 @@ define([
                         process(self.searchResults.map(function(docLastIter) {
                             return docLastIter.getDocKey();
                         }));
-                    })
+                    });
                 },
 
                 sorter: function(docsLastIterDocKey) {

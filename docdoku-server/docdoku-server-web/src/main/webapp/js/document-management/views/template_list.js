@@ -13,7 +13,7 @@ define([
 			return new TemplateListItemView({
 				model: model
 			});
-		},
+		}
 	});
 	return TemplateListView;
 });

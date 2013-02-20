@@ -12,7 +12,7 @@ define([
                     "fullName":fullName,
                     shortName : _.last(fullName.split("/")),
                     created : true
-                }
+                };
             });
             response.attachedFiles = new AttachedFileCollection(filesMapping);
             return response;
