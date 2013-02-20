@@ -12,6 +12,10 @@ define([
             } else {
                 return baseUrl + "/documents";
             }
+        },
+
+        comparator: function(document) {
+            return document.get("id");
         }
 
     });

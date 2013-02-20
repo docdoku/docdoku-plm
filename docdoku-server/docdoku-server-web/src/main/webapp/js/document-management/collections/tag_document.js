@@ -12,6 +12,10 @@ define([
         url: function() {
             baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags"
             return baseUrl + "/" + this.parent.get("label") + "/documents";
+        },
+
+        comparator: function(document) {
+            return document.get("id");
         }
 
 	});
