@@ -1,5 +1,5 @@
 define([
-    "collections/attached_file_collection"
+    "common-objects/collections/file/attached_file_collection"
 ], function (AttachedFileCollection) {
 	var Template = Backbone.Model.extend({
         initialize:function(){
