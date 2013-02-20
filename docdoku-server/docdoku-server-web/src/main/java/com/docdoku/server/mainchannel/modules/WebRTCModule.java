@@ -130,15 +130,15 @@ public class WebRTCModule {
 
                 if (otherSocket != null) {
                     MainChannelDispatcher.send(otherSocket, data);
-                } else {
+                } //else {
                     // tell the user the room is empty ?
-                }
-            } else {
+                //}
+            } //else {
                 // tell the user he's not in the room ?
-            }
-        } else {
+            //}
+        } //else {
             // tell the user the room doesn't exists ?
-        }
+        //}
 
     }
 
