@@ -68,7 +68,8 @@ public class GetCommand extends AbstractCommandLine{
 
 
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        getPart(partNumber, revision.toString(), iteration);
+        String strRevision = revision==null?null:revision.toString();
+        getPart(partNumber, strRevision, iteration);
 
     }
 
