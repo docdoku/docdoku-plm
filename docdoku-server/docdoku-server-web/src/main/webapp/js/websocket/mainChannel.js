@@ -1,4 +1,4 @@
-/*global ChannelListener,ChannelMessagesType*/
+/*global Channel,ChannelListener,ChannelMessagesType*/
 var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket", "MainChannelApplicationNewClient" + ":" + APP_CONFIG.sessionId);
 
 function onUserStatusRequest(remoteUser){
