@@ -592,6 +592,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public List<PartUsageLink> getComponents(PartIterationKey pPartIPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, NotAllowedException {
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+        PartIteration partI = new PartIterationDAO(new Locale(user.getLanguage()), em).loadPartI(pPartIPK);
+        PartRevision partR = partI.getPartRevision();
+
+        if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user)) && partR.getLastIteration().equals(partI)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
+        }
+        List<PartUsageLink> usageLinks = partI.getComponents();
+        return usageLinks;
+    }
+
+    @RolesAllowed("users")
+    @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartMPK.getWorkspace());
         PartMaster partM = new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(pPartMPK);

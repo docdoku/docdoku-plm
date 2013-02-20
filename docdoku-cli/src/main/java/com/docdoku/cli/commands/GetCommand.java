@@ -27,12 +27,17 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 
 import com.docdoku.core.product.*;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.*;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import javax.security.auth.login.LoginException;
 import java.io.Console;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class GetCommand extends AbstractCommandLine{
 
@@ -56,41 +61,57 @@ public class GetCommand extends AbstractCommandLine{
     private boolean recursive;
 
 
+    private IProductManagerWS productS;
+
+
     public void execImpl() throws Exception {
 
 
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        getPart(partNumber, revision.toString(), iteration);
+
+    }
+
+
+    private void getPart(String pPartNumber, String pRevision, int pIteration) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
         PartRevision pr;
         PartIteration pi;
-        if(revision==null){
-            PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+        if(pRevision==null){
+            PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
             pr = pm.getLastRevision();
         }else{
-            pr = productS.getPartRevision(new PartRevisionKey(workspace,partNumber,revision.toString()));
+            pr = productS.getPartRevision(new PartRevisionKey(workspace,pPartNumber,pRevision));
         }
-        if(iteration==0){
+        if(pIteration==0){
             pi = pr.getLastIteration();
         }else{
-            if(iteration > pr.getNumberOfIterations()){
-                throw new IllegalArgumentException("Iteration " + iteration + " doesn't exist");
+            if(pIteration > pr.getNumberOfIterations()){
+                throw new IllegalArgumentException("Iteration " + pIteration + " doesn't exist");
             }else{
-                pi = pr.getIteration(iteration);
+                pi = pr.getIteration(pIteration);
             }
         }
 
         BinaryResource bin = pi.getNativeCADFile();
-        if(bin==null){
-            throw new IllegalArgumentException("No file for this part");
-        }else{
+
+        if(bin!=null){
             FileHelper fh = new FileHelper(user,password);
-            fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
+            fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
+        }else{
+            System.out.println("No file for part: "  + pPartNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
         }
 
         if(recursive){
-            //productS.
+            PartIterationKey partIPK = new PartIterationKey(workspace,pPartNumber,pr.getVersion(),pi.getIteration());
+            List<PartUsageLink> usageLinks = productS.getComponents(partIPK);
+            //TODO we chose to select latest revision and iteration but should be possible to change that
+            //(by specifying a config spec ?)
+            for(PartUsageLink link:usageLinks){
+                PartMaster subPM = link.getComponent();
+                getPart(subPM.getNumber(),null,0);
+            }
         }
 
     }
-
 
 }
