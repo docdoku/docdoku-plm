@@ -21,6 +21,8 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.services.PartIterationNotFoundException;
 import java.util.Locale;
 import javax.persistence.EntityManager;
 
@@ -41,8 +43,16 @@ public class PartIterationDAO {
         mLocale = Locale.getDefault();
     }
 
-    
-    
+
+
+    public PartIteration loadPartI(PartIterationKey pKey) throws PartIterationNotFoundException {
+        PartIteration partI = em.find(PartIteration.class, pKey);
+        if (partI == null) {
+            throw new PartIterationNotFoundException(mLocale, pKey);
+        } else {
+            return partI;
+        }
+    }
     
     
     public void updateIteration(PartIteration pPartI){

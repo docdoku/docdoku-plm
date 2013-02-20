@@ -527,4 +527,21 @@ public interface IProductManagerWS{
      * @throws WorkspaceNotFoundException
      */
     List<PartMaster> findPartMasters(String workspaceId, String partNumber, int maxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+
+    /**
+     * Fetches the components of the supplied part assembly
+     *
+     * @param partIPK
+     * The id of the part iteration of which the components have to be retrieved
+     *
+     * @return
+     * The list of <a href="PartUsageLink.html">PartUsageLink</a>
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartIterationNotFoundException
+     * @throws NotAllowedException
+     */
+    List<PartUsageLink> getComponents(PartIterationKey partIPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, NotAllowedException;
 }
