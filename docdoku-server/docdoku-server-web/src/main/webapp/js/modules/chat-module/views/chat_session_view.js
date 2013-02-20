@@ -1,4 +1,4 @@
-/*global mainChannel*/
+/*global mainChannel,ChannelMessagesType*/
 define(["i18n!localization/nls/chat-module-strings",
         "modules/chat-module/collections/chat_message_collection",
         "modules/chat-module/views/chat_message_view"],
