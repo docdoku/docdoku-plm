@@ -5,7 +5,7 @@ define(
     ],
     function(Users,CoWorkersItemView){
 
-    CoWorkersAccessModuleView = Backbone.View.extend({
+    var CoWorkersAccessModuleView = Backbone.View.extend({
 
         el: "#coworkers_access_module",
 

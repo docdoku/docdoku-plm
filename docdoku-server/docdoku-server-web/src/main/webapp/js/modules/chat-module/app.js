@@ -1,3 +1,4 @@
+/*global ChannelListener,ChannelMessagesType,mainChannel*/
 define([
     "modules/chat-module/models/chat_message_model",
     "modules/chat-module/views/chat_module_view"

@@ -1,6 +1,6 @@
 define(function(){
 
-    ChatMessageView = Backbone.View.extend({
+    var ChatMessageView = Backbone.View.extend({
 
         tagName: 'li',
 

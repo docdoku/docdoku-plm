@@ -6,7 +6,7 @@ define(
 
     function(template, i18n){
 
-        CoWorkersItemView = Backbone.View.extend({
+        var CoWorkersItemView = Backbone.View.extend({
 
             tagName : 'li',
 

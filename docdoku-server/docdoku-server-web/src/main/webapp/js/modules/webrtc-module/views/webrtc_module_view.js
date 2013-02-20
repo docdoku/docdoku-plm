@@ -286,8 +286,9 @@ define(
                 this.localVideo.style.opacity = 1;
 
                 // Caller creates PeerConnection.
-                if (this.initiator)
+                if (this.initiator){
                     this.maybeStart();
+                }
                 else {
 
                     if (!this.started) {

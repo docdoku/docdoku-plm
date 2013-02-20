@@ -1,3 +1,4 @@
+/*global mainChannel,ChannelListener,ChannelMessagesType*/
 var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket", "MainChannelApplicationNewClient" + ":" + APP_CONFIG.sessionId);
 
 Backbone.Events.on('UserStatusRequest', onUserStatusRequest);
