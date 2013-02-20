@@ -219,7 +219,9 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
             this.lon += this.mouseX * actualLookSpeed;
 
-            if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed;
+            if( this.lookVertical ){
+                this.lat -= this.mouseY * actualLookSpeed;
+            }
 
             this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
             this.phi = ( 90 - this.lat ) * Math.PI / 180;
