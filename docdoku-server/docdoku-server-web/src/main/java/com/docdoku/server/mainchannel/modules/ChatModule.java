@@ -11,18 +11,20 @@ import java.util.HashMap;
 
 public class ChatModule {
 
+    private ChatModule(){
+    }
 
-    public static void onChatMessage(MainChannelWebSocket ws, JSONObject jsobj) throws JSONException {
+    public static void onChatMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
 
         String remoteUser = jsobj.getString("remoteUser");
         String message = jsobj.getString("message");
         String context = jsobj.getString("context");
 
         if(!MainChannelApplication.hasChannels(remoteUser)){
-            MainChannelDispatcher.send(ws, buildChatMessageNotSentMessage(remoteUser, context));
+            MainChannelDispatcher.send(socket, buildChatMessageNotSentMessage(remoteUser, context));
         }else{
-            MainChannelDispatcher.sendToAllUserChannels(ws.getUserLogin(),buildChatMessageACK(ws.getUserLogin(),remoteUser, context, message));
-            MainChannelDispatcher.sendToAllUserChannels(remoteUser,buildChatMessage(ws.getUserLogin(), context, message));
+            MainChannelDispatcher.sendToAllUserChannels(socket.getUserLogin(),buildChatMessageACK(socket.getUserLogin(),remoteUser, context, message));
+            MainChannelDispatcher.sendToAllUserChannels(remoteUser,buildChatMessage(socket.getUserLogin(), context, message));
         }
 
     }
@@ -38,11 +40,11 @@ public class ChatModule {
         return jsobj.toString();
     }
 
-    private static String buildChatMessageACK(String me, String remoteUser, String context, String message) throws JSONException {
+    private static String buildChatMessageACK(String caller, String remoteUser, String context, String message) throws JSONException {
         JSONObject jsobj = new JSONObject();
         jsobj.put("type", ChannelMessagesType.CHAT_MESSAGE_ACK);
         jsobj.put("remoteUser", remoteUser);
-        jsobj.put("sender",me);
+        jsobj.put("sender",caller);
         jsobj.put("message", message);
         jsobj.put("context",context);
         return jsobj.toString();

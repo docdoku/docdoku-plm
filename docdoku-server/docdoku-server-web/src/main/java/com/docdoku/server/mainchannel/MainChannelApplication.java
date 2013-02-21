@@ -44,7 +44,7 @@ import javax.servlet.http.HttpSession;
 public class MainChannelApplication extends WebSocketApplication {
 
     // Users WebSockets HashMap : <UserLogin, <Token, Socket>>
-    private static final ConcurrentMap<String, HashMap<String, MainChannelWebSocket>> channels = new ConcurrentHashMap<String, HashMap<String, MainChannelWebSocket>>();
+    private static final ConcurrentMap<String, HashMap<String, MainChannelWebSocket>> CHANNELS = new ConcurrentHashMap<String, HashMap<String, MainChannelWebSocket>>();
 
     private IUserManagerLocal userManager;
 
@@ -53,13 +53,17 @@ public class MainChannelApplication extends WebSocketApplication {
     }
 
     public static boolean hasChannels(String userLogin) {
-        if (channels.get(userLogin) == null) return false;
-        if (channels.get(userLogin).values() == null) return false;
-        return !channels.get(userLogin).values().isEmpty();
+        if (CHANNELS.get(userLogin) == null){
+            return false;
+        }
+        if (CHANNELS.get(userLogin).values() == null){
+            return false;
+        }
+        return !CHANNELS.get(userLogin).values().isEmpty();
     }
 
     public static HashMap<String, MainChannelWebSocket> getUserChannels(String userLogin) {
-        return channels.get(userLogin);
+        return CHANNELS.get(userLogin);
     }
 
     @Override
@@ -77,39 +81,37 @@ public class MainChannelApplication extends WebSocketApplication {
     }
 
     @Override
-    public void onClose(WebSocket socket, DataFrame frame) {
+    public void onClose(WebSocket pSocket, DataFrame frame) {
 
-        MainChannelWebSocket ws = (MainChannelWebSocket) socket;
+        MainChannelWebSocket socket = (MainChannelWebSocket) pSocket;
 
-        String token = ws.getToken();
+        String token = socket.getToken();
 
         if (token != null) {
 
             // find whom the socket belongs
-            String callerLogin = ws.getUserLogin();
+            String callerLogin = socket.getUserLogin();
 
             // remove the user from all rooms he might be
             Room.removeUserFromAllRoom(callerLogin);
 
             // remove the socket from the user hash map
-            channels.get(callerLogin).remove(token);
+            CHANNELS.get(callerLogin).remove(token);
 
         }
 
     }
 
     @Override
-    public void onMessage(WebSocket socket, String message) {
+    public void onMessage(WebSocket pSocket, String message) {
 
-        MainChannelWebSocket ws = (MainChannelWebSocket) socket;
+        MainChannelWebSocket socket = (MainChannelWebSocket) pSocket;
 
-        if (ws.getToken() == null && message.startsWith("MainChannelApplicationNewClient:")) {
+        if (socket.getToken() == null && message.startsWith("MainChannelApplicationNewClient:")) {
            // Peer declaration message must match "MainChannelApplicationNewClient:${sessionId}"
-           onPeerDeclarationMessage(message, ws);
+           onPeerDeclarationMessage(message, socket);
 
         } else {
-
-            // System.out.println("#### " + ws.getUserLogin() + "->S : " + message);
 
             try {
 
@@ -120,8 +122,8 @@ public class MainChannelApplication extends WebSocketApplication {
                 try{
                     remoteUser = jsObj.getString("remoteUser");
                     if(remoteUser != null){
-                        if(ws.getUserLogin() != remoteUser){
-                            if (!callerIsAllowToReachCallee(ws.getUserLogin(), remoteUser)) {
+                        if(socket.getUserLogin() != remoteUser){
+                            if (!callerIsAllowToReachCallee(socket.getUserLogin(), remoteUser)) {
                                 // caller is not allowed to reach user.
                                 return ;
                             }
@@ -140,30 +142,30 @@ public class MainChannelApplication extends WebSocketApplication {
                 switch (type) {
 
                     case ChannelMessagesType.USER_STATUS:
-                        UserStatusModule.onUserStatusRequestMessage(ws, jsObj);
+                        UserStatusModule.onUserStatusRequestMessage(socket, jsObj);
                         break;
 
                     case ChannelMessagesType.WEBRTC_INVITE:
-                        WebRTCModule.onWebRTCInviteMessage(ws, jsObj);
+                        WebRTCModule.onWebRTCInviteMessage(socket, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_ACCEPT:
-                        WebRTCModule.onWebRTCAcceptMessage(ws, jsObj);
+                        WebRTCModule.onWebRTCAcceptMessage(socket, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_REJECT:
-                        WebRTCModule.onWebRTCRejectMessage(ws, jsObj);
+                        WebRTCModule.onWebRTCRejectMessage(socket, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_HANGUP:
-                        WebRTCModule.onWebRTCHangupMessage(ws, jsObj);
+                        WebRTCModule.onWebRTCHangupMessage(socket, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_ANSWER:
                     case ChannelMessagesType.WEBRTC_OFFER:
                     case ChannelMessagesType.WEBRTC_CANDIDATE:
                     case ChannelMessagesType.WEBRTC_BYE:
-                        WebRTCModule.onWebRTCSignalingMessage(ws, jsObj, message);
+                        WebRTCModule.onWebRTCSignalingMessage(socket, jsObj, message);
                         break;
 
                     case ChannelMessagesType.CHAT_MESSAGE:
-                        ChatModule.onChatMessage(ws, jsObj);
+                        ChatModule.onChatMessage(socket, jsObj);
                         break;
 
                     default:
@@ -171,14 +173,14 @@ public class MainChannelApplication extends WebSocketApplication {
                 }
 
             } catch (JSONException ex) {
-                MainChannelDispatcher.send(ws, ChannelMessagesBuilder.BuildJsonExMessage());
+                MainChannelDispatcher.send(socket, ChannelMessagesBuilder.BuildJsonExMessage());
             }
 
         }
 
     }
 
-    private void onPeerDeclarationMessage(String data, MainChannelWebSocket ws) {
+    private void onPeerDeclarationMessage(String data, MainChannelWebSocket socket) {
 
         String[] dataSplit = data.split(":");
 
@@ -200,19 +202,19 @@ public class MainChannelApplication extends WebSocketApplication {
                 if (callerLogin != null) {
 
                     // hook data on the socket
-                    ws.setToken(UUID.randomUUID().toString());
-                    ws.setUserLogin(callerLogin);
+                    socket.setToken(UUID.randomUUID().toString());
+                    socket.setUserLogin(callerLogin);
 
                     // store the webSocket in the user socket hashMap
-                    if (channels.get(callerLogin) == null) {
+                    if (CHANNELS.get(callerLogin) == null) {
                         // user does not have a channels map yet. Let's create his channels map.
-                        channels.put(callerLogin,new HashMap<String, MainChannelWebSocket>());
+                        CHANNELS.put(callerLogin,new HashMap<String, MainChannelWebSocket>());
                     }
                     // store the socket in the user channels hashmap
-                    channels.get(callerLogin).put(ws.getToken(),ws);
+                    CHANNELS.get(callerLogin).put(socket.getToken(),socket);
 
                     // send him a welcome message
-                    MainChannelDispatcher.send(ws, ChannelMessagesBuilder.BuildWelcomeMessage(ws.getUserLogin()));
+                    MainChannelDispatcher.send(socket, ChannelMessagesBuilder.BuildWelcomeMessage(socket.getUserLogin()));
 
                 }
                 // else : account without login doesn't make sense. Nothing to do. Maybe close the socket ?

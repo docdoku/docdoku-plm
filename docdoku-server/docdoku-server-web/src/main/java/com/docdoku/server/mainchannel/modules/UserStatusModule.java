@@ -11,15 +11,18 @@ import java.util.HashMap;
 
 public class UserStatusModule {
 
-    public static void onUserStatusRequestMessage(MainChannelWebSocket ws, JSONObject jsobj) throws JSONException {
+    private UserStatusModule(){
+    }
+
+    public static void onUserStatusRequestMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
 
         String remoteUser = jsobj.getString("remoteUser");
         // check if remoteUser has at least a socket
 
         if(!MainChannelApplication.hasChannels(remoteUser)){
-            MainChannelDispatcher.send(ws, buildStatusMessage(remoteUser, "OFFLINE"));
+            MainChannelDispatcher.send(socket, buildStatusMessage(remoteUser, "OFFLINE"));
         }else{
-            MainChannelDispatcher.send(ws, buildStatusMessage(remoteUser, "ONLINE"));
+            MainChannelDispatcher.send(socket, buildStatusMessage(remoteUser, "ONLINE"));
         }
 
     }

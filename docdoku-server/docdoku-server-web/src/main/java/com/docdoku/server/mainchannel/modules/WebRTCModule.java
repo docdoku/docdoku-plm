@@ -11,9 +11,12 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class WebRTCModule {
 
-    public static void onWebRTCInviteMessage(MainChannelWebSocket ws, JSONObject jsobj) throws JSONException {
+    private WebRTCModule(){
+    }
 
-        String callerLogin = ws.getUserLogin();
+    public static void onWebRTCInviteMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
+
+        String callerLogin = socket.getUserLogin();
 
         String remoteUser = jsobj.getString("remoteUser");
         String context = jsobj.getString("context");
@@ -21,29 +24,31 @@ public class WebRTCModule {
         String roomKey = callerLogin + "-" + remoteUser;
 
         if(! MainChannelApplication.hasChannels(remoteUser)){
-            MainChannelDispatcher.send(ws, buildUserOfflineMessage(remoteUser,roomKey));
+            MainChannelDispatcher.send(socket, buildUserOfflineMessage(remoteUser,roomKey));
             return ;
         }
 
         Room room = Room.getByKeyName(roomKey);
 
-        if (room == null) room = new Room(roomKey);
+        if (room == null){
+            room = new Room(roomKey);
+        }
         //else :  multiple invitations, caller is spamming or something goes wrong.
 
         // the room is ready to receive user sockets.
 
         // add the caller socket in the room
-        room.addUserSocket(ws);
+        room.addUserSocket(socket);
 
         // send room join event to caller socket (single channel)
-        MainChannelDispatcher.send(ws, buildRoomJoinEventMessage(ws.getUserLogin(), room));
+        MainChannelDispatcher.send(socket, buildRoomJoinEventMessage(socket.getUserLogin(), room));
 
         // send invitation to the remote user sockets (all channels)
         MainChannelDispatcher.sendToAllUserChannels(remoteUser, buildWebRTCInvitationMessage(callerLogin, context, roomKey));
 
     }
 
-    public static void onWebRTCAcceptMessage(MainChannelWebSocket ws, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCAcceptMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
 
         String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
@@ -52,23 +57,23 @@ public class WebRTCModule {
 
         if (room != null && room.hasUser(remoteUser)) {
 
-            room.addUserSocket(ws);
+            room.addUserSocket(socket);
 
             // send room join event to caller (all channels to remove invitations if any)
-            MainChannelDispatcher.sendToAllUserChannels(ws.getUserLogin(),buildRoomJoinEventMessage(ws.getUserLogin(), room));
+            MainChannelDispatcher.sendToAllUserChannels(socket.getUserLogin(),buildRoomJoinEventMessage(socket.getUserLogin(), room));
 
             // send room join event to the other user in room
-            MainChannelWebSocket otherSocket = room.getOtherUserSocket(ws);
+            MainChannelWebSocket otherSocket = room.getOtherUserSocket(socket);
 
             if(otherSocket != null){
-                MainChannelDispatcher.send(otherSocket, buildWebRTCAcceptMessage(ws.getUserLogin(),room.key()));
+                MainChannelDispatcher.send(otherSocket, buildWebRTCAcceptMessage(socket.getUserLogin(),room.key()));
             }
 
         }
 
     }
 
-    public static void onWebRTCRejectMessage(MainChannelWebSocket ws, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCRejectMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
 
         String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
@@ -79,30 +84,29 @@ public class WebRTCModule {
         if (room != null) {
 
             // send "room reject event" to caller, to remove invitations in other tabs if any
-            MainChannelDispatcher.sendToAllUserChannels(ws.getUserLogin(), buildRoomRejectEventMessage(ws.getUserLogin(), room));
+            MainChannelDispatcher.sendToAllUserChannels(socket.getUserLogin(), buildRoomRejectEventMessage(socket.getUserLogin(), room));
 
             MainChannelWebSocket otherSocket = room.getUserSocket(remoteUser);
             if(otherSocket != null){
-                MainChannelDispatcher.send(otherSocket, buildWebRTCRejectMessage(ws.getUserLogin(), room.key(), reason));
+                MainChannelDispatcher.send(otherSocket, buildWebRTCRejectMessage(socket.getUserLogin(), room.key(), reason));
             }
 
         }
 
     }
 
-    public static void onWebRTCHangupMessage(MainChannelWebSocket ws, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCHangupMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
 
-        String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
 
         Room room = Room.getByKeyName(roomKey);
 
         if (room != null) {
 
-            MainChannelWebSocket otherSocket = room.getOtherUserSocket(ws);
-            room.removeUserSocket(ws);
+            MainChannelWebSocket otherSocket = room.getOtherUserSocket(socket);
+            room.removeUserSocket(socket);
 
-            MainChannelDispatcher.send(otherSocket, buildWebRTCHangupMessage(ws.getUserLogin(), room.key()));
+            MainChannelDispatcher.send(otherSocket, buildWebRTCHangupMessage(socket.getUserLogin(), room.key()));
 
         }
 
@@ -110,22 +114,21 @@ public class WebRTCModule {
 
     // webRTC P2P signaling messages
     // These messages are forwarded to the remote peer(s) in the room
-    public static void onWebRTCSignalingMessage(MainChannelWebSocket ws, JSONObject jsobj, String data) throws JSONException {
+    public static void onWebRTCSignalingMessage(MainChannelWebSocket socket, JSONObject jsobj, String data) throws JSONException {
 
         String roomKey = jsobj.getString("roomKey");
         Room room = Room.getByKeyName(roomKey);
 
         if (room != null) {
 
-            if (room.hasUser(ws.getUserLogin())) {
+            if (room.hasUser(socket.getUserLogin())) {
 
                 // forward the message to the other peer
-                MainChannelWebSocket otherSocket = room.getOtherUserSocket(ws);
+                MainChannelWebSocket otherSocket = room.getOtherUserSocket(socket);
 
                 // on bye message, remove the user from the room
                 if(jsobj.getString("type").equals(ChannelMessagesType.WEBRTC_BYE)){
-                    System.out.println("#### "+ws.getUserLogin()+" said bye !");
-                    room.removeUserSocket(ws);
+                    room.removeUserSocket(socket);
                 }
 
                 if (otherSocket != null) {
