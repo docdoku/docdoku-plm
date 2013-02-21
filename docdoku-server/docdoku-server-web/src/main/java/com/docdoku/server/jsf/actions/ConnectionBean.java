@@ -73,6 +73,13 @@ public class ConnectionBean {
         request.login(login, password);
 
         Account account = userManager.getAccount(login);
+
+        // case insensitive fix
+        if(!login.equals(account.getLogin())){
+            request.logout();
+            throw new AccountNotFoundException("Account not found");
+        }
+
         session.setAttribute("account", account);
 
         Map<String, Workspace> administeredWorkspaces = new HashMap<String, Workspace>();
