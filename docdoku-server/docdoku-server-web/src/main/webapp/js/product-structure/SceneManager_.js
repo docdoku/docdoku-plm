@@ -1,4 +1,3 @@
-/*global sceneManager*/
 define([
     "views/marker_create_modal_view",
     "views/export_scene_modal_view",
@@ -10,9 +9,9 @@ define([
     ControlsInfosModalView,
     ProgressBarView
 ) {
-    var SceneManager = function (pOptions) {
+    var SceneManager = function (options) {
 
-        var options = pOptions || {};
+        var options = options || {};
 
         var defaultsOptions = {
             typeLoader: 'binary',
@@ -22,7 +21,8 @@ define([
         _.defaults(options, defaultsOptions);
         _.extend(this, options);
 
-        this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
+        this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader(true) : new THREE.JSONLoader(true);
+
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
         this.updateOffset = 0;
@@ -63,28 +63,35 @@ define([
         },
 
         listenXHR: function() {
-
-            // override xhr open prototype
-
-            var pbv = new ProgressBarView().render();
-
+            var pbv = new ProgressBarView();
             var xhrCount = 0;
+            var nextDiv = $("#config_spec_container");
+            nextDiv.before(pbv.render().el);
 
-            var _xhrOpen = XMLHttpRequest.prototype.open;
+            var proxied = XMLHttpRequest.prototype.open;
 
             XMLHttpRequest.prototype.open = function() {
 
                 if(arguments[1].startsWith("/files/")) {
+                    var totalAdded = false;
+                    var totalLoaded = 0;
+                    var xhrLength = 0;
 
-                    var totalAdded = false,
-                        totalLoaded = 0 ,
-                        xhrLength = 0;
+                    var xhrId = Math.floor((Math.random()*100)+1);
+
+                    var log = function(str){
+                        console.log("["+xhrId+"] : " + str);
+                    };
 
                     this.addEventListener("loadstart", function(pe) {
+                        log("New xhr");
                         xhrCount++;
+
                     }, false);
 
                     this.addEventListener("progress", function(pe){
+
+                        log("in progress : "+pe.loaded + " / "+pe.total);
 
                         if(xhrLength == 0) {
                             xhrLength = pe.total;
@@ -101,20 +108,24 @@ define([
                     }, false);
 
                     this.addEventListener("loadend", function(){
+
+                        log("Load end");
                         xhrCount--;
                         setTimeout(function() {
                             pbv.removeXHRData(xhrLength);
                         }, 100);
+
                     }, false);
                 }
 
-                return _xhrOpen.apply(this, arguments);
+                return proxied.apply(this, arguments);
             };
         },
 
         initExportScene: function() {
 
             var self = this;
+
 
             $("#export_scene_btn").click(function() {
 
@@ -217,7 +228,7 @@ define([
                     } else {
                         self.controls.enabled = false;
                     }
-                };
+                }
 
                 // Hook pointer lock state change events
                 document.addEventListener( 'pointerlockchange', pointerlockchange, false );
@@ -347,7 +358,7 @@ define([
             }
 
             this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
-                return instance.mesh != null;
+                return instance.mesh != null
             }), 'mesh');
 
 
@@ -355,7 +366,7 @@ define([
                 var mcmv = new MarkerCreateModalView({model:layer, intersectPoint:intersectPoint});
                 $("body").append(mcmv.render().el);
                 mcmv.openModal();
-            };
+            }
 
             var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
 
@@ -411,12 +422,11 @@ define([
         },
 
         initAxes: function() {
-            var axes = new THREE.AxisHelper();
+            var axes = new THREE.AxisHelper(100);
             axes.position.set(-1000, 0, 0);
-            axes.scale.x = axes.scale.y = axes.scale.z = 2;
             this.scene.add(axes);
 
-            var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 50);
+            var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 100);
             arrow.position.set(200, 0, 400);
             this.scene.add(arrow);
         },
@@ -500,7 +510,7 @@ define([
 
             var frustum = new THREE.Frustum();
             var projScreenMatrix = new THREE.Matrix4();
-            projScreenMatrix.multiply(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
+            projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
             frustum.setFromMatrix(projScreenMatrix);
 
             var updateIndex = Math.min((this.updateOffset + this.updateCycleLength), this.instances.length);
@@ -561,7 +571,7 @@ define([
         initIframeScene: function() {
             if (!_.isUndefined(SCENE_INIT.pathForIframe)) {
                 var self = this;
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe;
+                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe
                 $.getJSON(instancesUrl, function(instances) {
                     _.each(instances, function(instanceRaw) {
 
@@ -596,9 +606,9 @@ define([
         bind: function ( scope, fn ) {
             return function () {
                 fn.apply( scope, arguments );
-            };
+            }
         }
-    };
+    }
 
     return SceneManager;
 });
