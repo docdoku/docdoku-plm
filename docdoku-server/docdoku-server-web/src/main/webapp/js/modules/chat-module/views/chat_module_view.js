@@ -1,6 +1,6 @@
 define(["modules/chat-module/views/chat_session_view"],function(ChatMessageSessionView){
 
-    ChatModuleView = Backbone.View.extend({
+    var ChatModuleView = Backbone.View.extend({
 
         el: "#chat_module",
 

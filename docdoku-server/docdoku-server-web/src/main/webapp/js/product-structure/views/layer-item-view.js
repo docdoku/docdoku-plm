@@ -23,7 +23,7 @@ define(function() {
         render: function() {
             this.$el.html(Mustache.render(this.template, this.model));
             this.$el.toggleClass('shown', this.model.get('shown'));
-            var editingName = this.model.get('editingName')
+            var editingName = this.model.get('editingName');
             this.$el.toggleClass('editingName', editingName);
             this.input = this.$('.edit');
             if (editingName) {

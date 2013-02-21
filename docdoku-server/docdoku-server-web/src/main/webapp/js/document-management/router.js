@@ -25,7 +25,7 @@ function (
 			"folders":			"folders",
 			"folders/*path":	"folder",
 			"tags":				"tags",
-			"tags/:id": 		"tag",
+			"tags/:id":         "tag",
 			"templates":		"templates",
 			"workflows":		"workflows",
             "workflow-model-editor/:workflowModelId":  "workflowModelEditor",
@@ -59,8 +59,9 @@ function (
         workflowModelEditor: function(workflowModelId) {
             this.defaults();
 
-            if(!_.isUndefined(this.workflowModelEditorView))
+            if(!_.isUndefined(this.workflowModelEditorView)){
                 this.workflowModelEditorView.unbindAllEvents();
+            }
 
             this.workflowModelEditorView = new WorkflowModelEditorView({
                 workflowModelId: decodeURI(workflowModelId)
@@ -71,8 +72,9 @@ function (
         workflowModelEditorNew: function() {
             this.defaults();
 
-            if(!_.isUndefined(this.workflowModelEditorView))
+            if(!_.isUndefined(this.workflowModelEditorView)){
                 this.workflowModelEditorView.unbindAllEvents();
+            }
 
             this.workflowModelEditorView = new WorkflowModelEditorView();
 

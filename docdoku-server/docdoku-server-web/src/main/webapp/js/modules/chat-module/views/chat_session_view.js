@@ -1,9 +1,10 @@
+/*global mainChannel,ChannelMessagesType*/
 define(["i18n!localization/nls/chat-module-strings",
         "modules/chat-module/collections/chat_message_collection",
         "modules/chat-module/views/chat_message_view"],
     function(i18n,ChatMessageCollection,ChatMessageView){
 
-    ChatMessageSessionView = Backbone.View.extend({
+    var ChatMessageSessionView = Backbone.View.extend({
 
         template: _.template(
             "<div class='chat_session'>"
@@ -152,7 +153,9 @@ define(["i18n!localization/nls/chat-module-strings",
 
             var textInput = event.target.children[0];
 
-            if(!textInput.value.length) return false;
+            if(!textInput.value.length){
+                return false;
+            }
 
             // build the message
             var message = {

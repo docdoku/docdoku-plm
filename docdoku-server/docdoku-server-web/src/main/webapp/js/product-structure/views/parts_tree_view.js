@@ -16,7 +16,7 @@ define(["models/component_module", "views/component_views"], function (Component
         },
 
         onProductRootNode:function(){
-            this.setSelectedComponent(this.rootComponent)
+            this.setSelectedComponent(this.rootComponent);
             this.trigger("component_selected", true);
         },
 

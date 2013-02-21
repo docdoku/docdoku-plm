@@ -23,7 +23,7 @@ package com.docdoku.server.mainchannel;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class MainChannelDispatcher {
+public final class MainChannelDispatcher {
 
     private  MainChannelDispatcher(){
     }

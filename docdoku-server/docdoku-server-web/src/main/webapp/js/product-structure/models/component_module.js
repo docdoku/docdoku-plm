@@ -1,3 +1,4 @@
+/*global sceneManager*/
 define(["models/part_iteration_visualization", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIterationVisualization, date, i18n) {
 
     var ComponentModule = {};
@@ -200,7 +201,7 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
                 var self = this;
                 return _.map(response.components, function(component) {
                     var path = self.path == null ? component.partUsageLinkId : self.path + '-' + component.partUsageLinkId;
-                    return _.extend(component, {path: path})
+                    return _.extend(component, {path: path});
                 });
             }
         }

@@ -1,8 +1,0 @@
-ul#notification_collection{
-    padding:5px;
-}
-
-ul#notification_collection > li {
-    border-bottom: 1px dotted #ccc;
-    padding-bottom: 5px;
-}

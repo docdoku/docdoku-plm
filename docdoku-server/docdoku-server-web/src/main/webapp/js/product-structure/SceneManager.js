@@ -1,15 +1,18 @@
+/*global sceneManager*/
 define([
     "views/marker_create_modal_view",
     "views/export_scene_modal_view",
-    "views/controls_infos_modal_view"
+    "views/controls_infos_modal_view",
+    "views/progress_bar_view"
 ], function (
     MarkerCreateModalView,
     ExportSceneModalView,
-    ControlsInfosModalView
+    ControlsInfosModalView,
+    ProgressBarView
 ) {
-    var SceneManager = function (options) {
+    var SceneManager = function (pOptions) {
 
-        var options = options || {};
+        var options = pOptions || {};
 
         var defaultsOptions = {
             typeLoader: 'binary',
@@ -42,6 +45,7 @@ define([
 
         init: function() {
             _.bindAll(this);
+            this.listenXHR();
             this.initExportScene();
             this.initScene();
             this.initCamera();
@@ -58,10 +62,59 @@ define([
             this.initShortcuts();
         },
 
+        listenXHR: function() {
+
+            // override xhr open prototype
+
+            var pbv = new ProgressBarView().render();
+
+            var xhrCount = 0;
+
+            var _xhrOpen = XMLHttpRequest.prototype.open;
+
+            XMLHttpRequest.prototype.open = function() {
+
+                if(arguments[1].startsWith("/files/")) {
+
+                    var totalAdded = false,
+                        totalLoaded = 0 ,
+                        xhrLength = 0;
+
+                    this.addEventListener("loadstart", function(pe) {
+                        xhrCount++;
+                    }, false);
+
+                    this.addEventListener("progress", function(pe){
+
+                        if(xhrLength == 0) {
+                            xhrLength = pe.total;
+                        }
+
+                        if(totalAdded == false) {
+                            pbv.addTotal(xhrLength);
+                            totalAdded = true;
+                        }
+
+                        pbv.addLoaded(pe.loaded - totalLoaded);
+                        totalLoaded = pe.loaded;
+
+                    }, false);
+
+                    this.addEventListener("loadend", function(){
+                        xhrCount--;
+                        setTimeout(function() {
+                            pbv.removeXHRData(xhrLength);
+                        }, 100);
+                    }, false);
+                }
+
+                return _xhrOpen.apply(this, arguments);
+            };
+        },
+
         initExportScene: function() {
 
             var self = this;
-
 
             $("#export_scene_btn").click(function() {
 
@@ -164,7 +217,7 @@ define([
                     } else {
                         self.controls.enabled = false;
                     }
-                }
+                };
 
                 // Hook pointer lock state change events
                 document.addEventListener( 'pointerlockchange', pointerlockchange, false );
@@ -294,7 +347,7 @@ define([
             }
 
             this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
-                return instance.mesh != null
+                return instance.mesh != null;
             }), 'mesh');
 
 
@@ -302,7 +355,7 @@ define([
                 var mcmv = new MarkerCreateModalView({model:layer, intersectPoint:intersectPoint});
                 $("body").append(mcmv.render().el);
                 mcmv.openModal();
-            }
+            };
 
             var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
 
@@ -508,7 +561,7 @@ define([
         initIframeScene: function() {
             if (!_.isUndefined(SCENE_INIT.pathForIframe)) {
                 var self = this;
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe
+                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe;
                 $.getJSON(instancesUrl, function(instances) {
                     _.each(instances, function(instanceRaw) {
 
@@ -543,9 +596,9 @@ define([
         bind: function ( scope, fn ) {
             return function () {
                 fn.apply( scope, arguments );
-            }
+            };
         }
-    }
+    };
 
     return SceneManager;
 });

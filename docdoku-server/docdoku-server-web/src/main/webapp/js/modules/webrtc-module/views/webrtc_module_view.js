@@ -1,3 +1,4 @@
+/*global CALL_STATE,REJECT_CALL_REASON,ChannelMessagesType,mainChannel,preferOpus,setDefaultCodec,removeCN*/
 define(
     [
         "i18n!localization/nls/webrtc-module-strings",
@@ -8,7 +9,7 @@ define(
     ],
     function (i18n,attachMediaStream, RTCPeerConnection, getUserMedia, template) {
 
-        WebRTCModuleView = Backbone.View.extend({
+       var WebRTCModuleView = Backbone.View.extend({
 
             el: "#webrtc_module",
 
@@ -285,8 +286,9 @@ define(
                 this.localVideo.style.opacity = 1;
 
                 // Caller creates PeerConnection.
-                if (this.initiator)
+                if (this.initiator){
                     this.maybeStart();
+                }
                 else {
 
                     if (!this.started) {
@@ -315,8 +317,9 @@ define(
                     this.createPeerConnection();
                     this.pc.addStream(this.localStream);
                     this.started = true;
-                    if (this.initiator)
+                    if (this.initiator){
                         this.doCall();
+                    }
                 }
 
             },
@@ -362,8 +365,9 @@ define(
                 if (msg.type === ChannelMessagesType.WEBRTC_OFFER) {
 
                     // Callee creates PeerConnection
-                    if (!this.initiator && !this.started)
+                    if (!this.initiator && !this.started){
                         this.maybeStart();
+                    }
 
                     this.pc.setRemoteDescription(new RTCSessionDescription(msg));
                     this.doAnswer();
@@ -422,9 +426,9 @@ define(
                 var self = this;
                 try {
                     // Try the new representation of tracks in a stream in M26.
-                    this.videoTracks = this.remoteStream.getVideoTracks()
+                    this.videoTracks = this.remoteStream.getVideoTracks();
                 } catch (e) {
-                    this.videoTracks = this.remoteStream.videoTracks
+                    this.videoTracks = this.remoteStream.videoTracks;
                 }
 
                 if (this.videoTracks.length === 0 || this.remoteVideo.currentTime > 0) {
@@ -440,27 +444,34 @@ define(
 
         });
 
+        function extractSdp(sdpLine, pattern) {
+            var result = sdpLine.match(pattern);
+            return (result && result.length == 2) ? result[1] : null;
+        }
 
         // Set Opus as the default audio codec if it's present.
         function preferOpus(sdp) {
             var sdpLines = sdp.split('\r\n');
 
+            var mLineIndex = null;
             // Search for m line.
             for (var i = 0; i < sdpLines.length; i++) {
                 if (sdpLines[i].search('m=audio') !== -1) {
-                    var mLineIndex = i;
+                    mLineIndex = i;
                     break;
                 }
             }
-            if (mLineIndex === null)
+            if (mLineIndex === null){
                 return sdp;
+            }
 
             // If Opus is available, set it as the default in m line.
-            for (var i = 0; i < sdpLines.length; i++) {
-                if (sdpLines[i].search('opus/48000') !== -1) {
-                    var opusPayload = extractSdp(sdpLines[i], /:(\d+) opus\/48000/i);
-                    if (opusPayload)
+            for (var j = 0; j < sdpLines.length; j++) {
+                if (sdpLines[j].search('opus/48000') !== -1) {
+                    var opusPayload = extractSdp(sdpLines[j], /:(\d+) opus\/48000/i);
+                    if (opusPayload){
                         sdpLines[mLineIndex] = setDefaultCodec(sdpLines[mLineIndex], opusPayload);
+                    }
                     break;
                 }
             }
@@ -472,21 +483,20 @@ define(
             return sdp;
         }
 
-        function extractSdp(sdpLine, pattern) {
-            var result = sdpLine.match(pattern);
-            return (result && result.length == 2) ? result[1] : null;
-        }
+
 
         // Set the selected codec to the first in m line.
         function setDefaultCodec(mLine, payload) {
             var elements = mLine.split(' ');
-            var newLine = new Array();
+            var newLine = [];
             var index = 0;
             for (var i = 0; i < elements.length; i++) {
-                if (index === 3) // Format of media starts from the fourth.
+                if (index === 3){ // Format of media starts from the fourth.
                     newLine[index++] = payload; // Put target payload to the first.
-                if (elements[i] !== payload)
+                }
+                if (elements[i] !== payload){
                     newLine[index++] = elements[i];
+                }
             }
             return newLine.join(' ');
         }

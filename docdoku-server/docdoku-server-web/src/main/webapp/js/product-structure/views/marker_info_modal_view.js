@@ -27,7 +27,9 @@ define(    [
             },
 
             destroyMarker: function() {
-                if(this.model) this.model.destroy();
+                if(this.model){
+                    this.model.destroy();
+                }
                 this.closeModal();
             },
 

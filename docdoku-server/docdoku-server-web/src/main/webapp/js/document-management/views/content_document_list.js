@@ -135,7 +135,7 @@ define([
 
         actionTags: function() {
 
-            var documentsChecked = new Backbone.Collection;
+            var documentsChecked = new Backbone.Collection();
 
 
             this.listView.eachChecked(function(view) {
@@ -157,7 +157,7 @@ define([
             var documentChecked;
 
             this.listView.eachChecked(function(view) {
-                documentChecked = view.model
+                documentChecked = view.model;
             });
 
             var newVersionView = new DocumentNewVersionView({

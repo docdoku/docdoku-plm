@@ -29,7 +29,7 @@ define([
 			this.selectionChanged();
 		},
 		selectionChanged: function () {
-			var showOrHide = this.listView.checkedViews().length > 0
+			var showOrHide = this.listView.checkedViews().length > 0;
 			var action = showOrHide ? "show" : "hide";
 			this.$el.find(".actions .delete")[action]();
 		},

@@ -28,7 +28,7 @@ define({
     "DOCUMENT_S_DESCRIPTION":		"Description du document",
     "DOCUMENT_S_REFERENCE":			"Référence du document",
     "DOCUMENT_S_TITLE":				"Titre du document",
-    "EDIT":							"Éditer",
+    "EDIT":							"Editer",
     "ERROR":						"Erreur",
     "FALSE":						"Faux",
     "FILES":						"Fichiers",

@@ -8,8 +8,8 @@ define(function () {
 			console.error("app:formatDate(" + timestamp + ")", error);
 			return timestamp;
 		}
-	}
+	};
 	return {
 		formatTimestamp: formatTimestamp
-	}
+	};
 });

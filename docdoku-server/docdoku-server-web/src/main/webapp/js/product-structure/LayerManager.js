@@ -98,12 +98,13 @@ define([
         },
 
         createLayer: function(name) {
+            var layer;
             if (name) {
-                var layer = new Layer({
+                layer = new Layer({
                     name : name
                 });
             } else {
-                var layer = new Layer();
+                layer = new Layer();
             }
             this.layersCollection.create(layer);
             return layer;
@@ -124,7 +125,7 @@ define([
             for (var cid in this.meshs) {
                 var currentMesh = this.meshs[cid];
                 currentMesh.scale = this.markerScale;
-            };
+            }
         },
 
         changeMarkerState: function() {
@@ -173,7 +174,7 @@ define([
             mimv.openModal();
         }
 
-    }
+    };
 
     return LayerManager;
 

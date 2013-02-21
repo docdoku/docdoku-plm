@@ -25,7 +25,7 @@ define([
 			this.addSubView(
 				new CheckedoutContentListView()
 			).render();
-		},
+		}
 	});
 	CheckedoutNavView = singletonDecorator(CheckedoutNavView);
 	return CheckedoutNavView;

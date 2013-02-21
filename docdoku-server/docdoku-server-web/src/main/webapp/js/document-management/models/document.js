@@ -168,13 +168,12 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         },
 
-        createNewVersion: function(title, description) {
+        createNewVersion: function(title, description, workflow) {
 
-            var workflow = this.get("workflow");
             var data = {
                 title: title,
                 description: description,
-                workflowModelId: workflow ? workflow.id : null
+                workflowModelId: workflow ? workflow.get("id") : null
             };
 
             $.ajax({
@@ -184,7 +183,7 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                    this.fetch();
+                    this.collection.fetch();
                 }
             });
         }

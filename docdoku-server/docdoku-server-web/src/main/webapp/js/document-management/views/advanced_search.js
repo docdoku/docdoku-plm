@@ -126,14 +126,30 @@ define(    [
 
             var queryString = "id="+id;
 
-            if(title) queryString += "&title="+title;
-            if(type) queryString += "&type="+type;
-            if(version) queryString += "&version="+version;
-            if(author) queryString += "&author="+author;
-            if(tags) queryString += "&tags="+tags;
-            if(content) queryString += "&content="+content;
-            if(from) queryString += "&from="+new Date(from).getTime().toString();
-            if(to) queryString += "&to="+new Date(to).getTime().toString();
+            if(title){
+                queryString += "&title="+title;
+            }
+            if(type){
+                queryString += "&type="+type;
+            }
+            if(version){
+                queryString += "&version="+version;
+            }
+            if(author){
+                queryString += "&author="+author;
+            }
+            if(tags){
+                queryString += "&tags="+tags;
+            }
+            if(content){
+                queryString += "&content="+content;
+            }
+            if(from){
+                queryString += "&from="+new Date(from).getTime().toString();
+            }
+            if(to){
+                queryString += "&to="+new Date(to).getTime().toString();
+            }
 
             if(this.attributes.length){
                 queryString += "&attributes=";

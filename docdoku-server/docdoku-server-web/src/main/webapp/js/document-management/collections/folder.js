@@ -20,17 +20,23 @@ define([
 		},
 		comparator: function (folderA, folderB) {
 			// sort folders by name
-			nameA = folderA.get("name");
-			nameB = folderB.get("name");
+			var nameA = folderA.get("name");
+			var nameB = folderB.get("name");
 
-			if (folderB.get("home")) return 1;
-			if (folderA.get("home")) return -1;
-			if (nameA == nameB) return 0;
+			if (folderB.get("home")){
+                return 1;
+            }
+			if (folderA.get("home")){
+                return -1;
+            }
+			if (nameA == nameB){
+                return 0;
+            }
 			return (nameA < nameB) ? -1 : 1;
 		}
 	});
 	FolderList.prototype.__defineGetter__("url", function () {
-		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/folders"
+		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/folders";
 		if (this.parent) {
 			return baseUrl + "/" + this.parent.get("id") + "/folders";
 		} else {

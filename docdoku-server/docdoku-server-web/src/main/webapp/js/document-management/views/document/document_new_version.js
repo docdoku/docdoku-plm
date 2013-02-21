@@ -1,9 +1,11 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "text!templates/document/document_new_version.html"
+    "text!templates/document/document_new_version.html",
+    "views/document/document_workflow_list"
 ], function (
     i18n,
-    template
+    template,
+    DocumentWorkflowListView
     ) {
     var DocumentsNewVersionView = Backbone.View.extend({
 
@@ -30,16 +32,21 @@ define([
 
             this.bindDomElements();
 
+            this.workflowsView = new DocumentWorkflowListView();
+            this.newVersionWorkflowDiv.html(this.workflowsView.el);
+            this.workflowsView.collection.fetch();
+
             return this;
         },
 
         bindDomElements: function() {
+            this.newVersionWorkflowDiv = this.$("#new-version-workflow");
             this.inputNewVersionTitle = this.$("#new-version-title");
             this.textAreaNewVersionDescription = this.$("#new-version-description");
         },
 
         createNewVersionAction: function() {
-            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val());
+            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected());
             this.closeModalAction();
         },
 

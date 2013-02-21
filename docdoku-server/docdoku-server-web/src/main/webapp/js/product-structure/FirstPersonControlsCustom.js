@@ -187,14 +187,26 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
         if(this.movement) {
             var actualMoveSpeed = delta * this.movementSpeed;
 
-            if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( - actualMoveSpeed );
-            if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+            if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ){
+                this.object.translateZ( - actualMoveSpeed );
+            }
+            if ( this.moveBackward ){
+                this.object.translateZ( actualMoveSpeed );
+            }
 
-            if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
-            if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+            if ( this.moveLeft ){
+                this.object.translateX( - actualMoveSpeed );
+            }
+            if ( this.moveRight ){
+                this.object.translateX( actualMoveSpeed );
+            }
 
-            if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
-            if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+            if ( this.moveUp ){
+                this.object.translateY( actualMoveSpeed );
+            }
+            if ( this.moveDown ){
+                this.object.translateY( - actualMoveSpeed );
+            }
         }
 
         // Camera rotation movement
@@ -207,7 +219,9 @@ THREE.FirstPersonControlsCustom = function ( object, domElement ) {
 
             this.lon += this.mouseX * actualLookSpeed;
 
-            if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed;
+            if( this.lookVertical ){
+                this.lat -= this.mouseY * actualLookSpeed;
+            }
 
             this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
             this.phi = ( 90 - this.lat ) * Math.PI / 180;

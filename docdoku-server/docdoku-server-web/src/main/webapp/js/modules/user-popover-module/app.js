@@ -7,7 +7,7 @@ define([
 
         // prevent popovers to keep on top
         $(document).click(function(event) {
-            var $popovers = $(".popover")
+            var $popovers = $(".popover");
             if($(event.target).parents().index($popovers) == -1) {
                 $popovers.remove();
             }
@@ -16,7 +16,7 @@ define([
         var statusHtml = {
             OFFLINE : "<i class='icon-user'></i> "+i18n.OFFLINE,
             ONLINE  : "<i class='icon-user'></i> "+i18n.ONLINE
-        }
+        };
 
         // popover content template
         var tipContent = "<div>"
@@ -32,7 +32,9 @@ define([
         $.fn.userPopover = function (userLogin, context, placement) {
 
             // don't show the popover if user clicks on his name
-            if (userLogin == APP_CONFIG.login) return $(this);
+            if (userLogin == APP_CONFIG.login){
+                return $(this);
+            }
 
             var shown = false;
 
@@ -93,9 +95,6 @@ define([
                             }
 
                         }});
-                    }
-                    else {
-                        hideTip();
                     }
                     e.stopPropagation();
                     e.preventDefault();

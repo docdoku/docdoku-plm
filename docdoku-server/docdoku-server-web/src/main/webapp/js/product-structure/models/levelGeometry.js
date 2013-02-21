@@ -1,3 +1,4 @@
+/*global sceneManager*/
 function LevelGeometry(filename, visibleFromRating, computeVertexNormals) {
     this.filename = filename;
     this.visibleFromRating = visibleFromRating;
@@ -38,4 +39,4 @@ LevelGeometry.prototype = {
         }
     }
 
-}
+};

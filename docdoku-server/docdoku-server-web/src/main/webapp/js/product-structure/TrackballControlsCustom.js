@@ -318,7 +318,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function keydown( event ) {
 
-        if ( ! _this.enabled ) return;
+        if ( ! _this.enabled ){
+            return;
+        }
 
         if ( _state !== STATE.NONE ) {
 
@@ -348,7 +350,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function keyup( event ) {
 
-        if ( ! _this.enabled ) return;
+        if ( ! _this.enabled ){
+            return;
+        }
 
         if ( _state !== STATE.NONE ) {
 
@@ -360,7 +364,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function mousedown( event ) {
 
-        if ( ! _this.enabled ) return;
+        if ( ! _this.enabled ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
@@ -391,7 +397,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function mousemove( event ) {
 
-        if ( ! _this.enabled ) return;
+        if ( ! _this.enabled ){
+            return;
+        }
 
         if ( _keyPressed ) {
 
@@ -425,7 +433,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function mouseup( event ) {
 
-        if ( ! _this.enabled ) return;
+        if ( ! _this.enabled ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
@@ -496,7 +506,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function touchend( event ) {
 
-        if ( ! _this.enabled ) return;
+        if ( ! _this.enabled ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();

@@ -32,14 +32,14 @@ define([
 
         onPreviousIteration: function() {
             if (this.iterations.hasPreviousIteration(this.iteration)) {
-                this.switchIteration(this.iterations.previous(this.iteration))
+                this.switchIteration(this.iterations.previous(this.iteration));
             }
             return false;
         },
 
         onNextIteration: function() {
             if (this.iterations.hasNextIteration(this.iteration)) {
-                this.switchIteration(this.iterations.next(this.iteration))
+                this.switchIteration(this.iterations.next(this.iteration));
             }
             return false;
         },
@@ -236,6 +236,8 @@ define([
 
             _.each(this.model.attributes.tags, function (tagLabel) {
 
+                var tagView;
+
                 var tagViewParams = editMode ?
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
@@ -250,7 +252,7 @@ define([
                     clicked: null
                 };
 
-                var tagView = new TagView(tagViewParams).render();
+                tagView = new TagView(tagViewParams).render();
 
                 $tagsZone.append(tagView.el);
 

@@ -6,7 +6,7 @@ define([
 	template
 ) {
 	var WorkspaceView = BaseView.extend({
-		template: Mustache.compile(template),
+		template: Mustache.compile(template)
 	});
 	return WorkspaceView;
 });

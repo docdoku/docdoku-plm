@@ -1,6 +1,6 @@
 define(function(){
 
-    ChatMessage = Backbone.Model.extend({
+    var ChatMessage = Backbone.Model.extend({
 
         initialize: function() {
         }

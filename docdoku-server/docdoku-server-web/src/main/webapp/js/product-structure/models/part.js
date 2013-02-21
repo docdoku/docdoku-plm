@@ -69,9 +69,6 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get('creationDate');
         },
 
-        isCheckout:function(){
-            return !_.isNull(this.get("checkOutDate"));
-        },
 
         isCheckoutByConnectedUser: function() {
             return this.isCheckout() ? this.getCheckOutUserLogin() == APP_CONFIG.login : false;
@@ -150,8 +147,8 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             });
         },
 
-        isCheckout: function() {
-            return !_.isNull(this.attributes.checkOutDate);
+        isCheckout:function(){
+            return !_.isNull(this.get("checkOutDate"));
         },
 
         url:function(){

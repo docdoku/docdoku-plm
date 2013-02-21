@@ -1,6 +1,8 @@
-define(function(){
+define(
+    ["modules/chat-module/models/chat_message_model"],
+    function(ChatMessage){
 
-    ChatMessageCollection = Backbone.Collection.extend({
+    var ChatMessageCollection = Backbone.Collection.extend({
 
         model: ChatMessage,
 
