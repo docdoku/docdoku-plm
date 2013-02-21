@@ -546,7 +546,7 @@ define([
                 fn.apply( scope, arguments );
             };
         }
-    }
+    };
 
     return SceneManager;
 });
