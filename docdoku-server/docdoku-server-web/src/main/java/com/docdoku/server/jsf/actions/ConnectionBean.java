@@ -25,11 +25,7 @@ import com.docdoku.core.services.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
@@ -73,6 +69,13 @@ public class ConnectionBean {
         request.login(login, password);
 
         Account account = userManager.getAccount(login);
+
+        //case insensitive fix
+        if(!login.equals(account.getLogin())){
+            request.logout();
+            throw new AccountNotFoundException(new Locale(account.getLanguage()),login);
+        }
+
         session.setAttribute("account", account);
 
         Map<String, Workspace> administeredWorkspaces = new HashMap<String, Workspace>();
