@@ -200,6 +200,13 @@
                 <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>resources/default</targetPath>
+                            <directory>src/main/webapp/resources/default</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>
