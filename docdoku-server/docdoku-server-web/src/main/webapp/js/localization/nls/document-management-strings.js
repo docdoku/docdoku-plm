@@ -126,7 +126,7 @@ define({
         "CLOSURE_COMMENT":              "Closure comment",
         "DELETE_LINKED_DOCUMENT":       "Delete link",
         "EDIT_LINKED_DOCUMENTS":        "Edit links",
-        "SEARCH_DOCUMENT":              "Search document",
+        "ADD_DOCUMENT":                 "Add document",
         "CREATE_NEW_VERSION":           "Create new version",
         "NEW_VERSION_OF":               "New version of"
 

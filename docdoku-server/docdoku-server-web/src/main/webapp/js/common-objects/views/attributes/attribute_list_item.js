@@ -23,7 +23,12 @@ define([
 
 		rendered: function() {
 			var type = this.model.get("type");
-			this.$el.find("select.type:first").val(type);
+            if(this.editMode)
+			    this.$el.find("select.type").val(type);
+            else
+                this.$el.find("div.type").html(type.toLowerCase());
+
+            this.$el.addClass("well");
 		},
 
 		removeAction: function() {

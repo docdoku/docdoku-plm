@@ -12,7 +12,7 @@ define([
 	var TagListItemView = ListItemView.extend({
 		template: Mustache.compile(template),
 		tagName: "li",
-		className: "tag",
+		className: "tag well",
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events = _.extend(this.events, {
