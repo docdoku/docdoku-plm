@@ -13,7 +13,7 @@ define([
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events["change .type"] = "typeChanged";
 			this.events["change .name"] = "updateName";
-			this.events["click .remove"] = "removeAction";
+			this.events["click .icon-remove"] = "removeAction";
 		},
 		rendered: function () {
 			var type = this.model.get("attributeType");

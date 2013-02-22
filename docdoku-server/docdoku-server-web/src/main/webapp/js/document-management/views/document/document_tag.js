@@ -7,10 +7,10 @@ define(
         var DocumentTagView = Backbone.View.extend({
 
             tagName : "li",
-            className:"pull-left",
+            className:"pull-left well",
 
              events : {
-               "click i":"clicked"
+               "click":"clicked"
              },
 
             initialize : function(){
@@ -18,7 +18,7 @@ define(
             },
 
             render:function(){
-                this.$el.html(Mustache.render(template,{tag:this.model, iconClass:this.options.iconClass}));
+                this.$el.html(Mustache.render(template,{tag:this.model, isAdded:this.options.isAdded}));
                 return this ;
             },
 

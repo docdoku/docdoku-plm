@@ -2,7 +2,7 @@ define([
     "models/tag",
     "collections/tag",
 	"common-objects/views/components/modal",
-	"views/document_tag",
+	"views/document/document_tag",
 	"text!templates/document/documents_tags.html"
 ], function (
     Tag,
@@ -50,7 +50,7 @@ define([
 
             this._existingTagsCollection.each(function(model){
 
-                var tagView =  new TagView({model:model, iconClass:"icon-plus", clicked:function(){
+                var tagView =  new TagView({model:model, isAdded:false, clicked:function(){
                     that.addExistingTag(model);
                 }}).render();
 
@@ -112,7 +112,7 @@ define([
 
             var $tagsToAdd = this.$(".tags-to-add-list");
 
-            var tagView =  new TagView({model:model, iconClass:"icon-remove", clicked:function(){
+            var tagView =  new TagView({model:model, isAdded:true, clicked:function(){
                 that._tagsToAddCollection.remove(model);
             }}).render();
 
