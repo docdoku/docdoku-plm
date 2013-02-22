@@ -36,18 +36,24 @@
 .tags-to-add-list li {
   padding: 0 18px 0 0;
 }
-
+.master-tags-list li a,
+.existing-tags-list li a,
+.tags-to-add-list li a {
+  cursor:default;
+  text-decoration: none;
+}
 .master-tags-list li i,
 .existing-tags-list li i,
 .tags-to-add-list li i {
   color: #666;
-  visibility: hidden;
+  opacity: 0.8;
+  cursor:pointer;
 }
 
-.master-tags-list li:hover i,
-.existing-tags-list li:hover i,
-.tags-to-add-list li:hover i {
-  visibility: visible;
+.master-tags-list li i:hover,
+.existing-tags-list li i:hover,
+.tags-to-add-list li i:hover {
+  opacity: 1;
 }
 
 td.document-master-subscriptions {

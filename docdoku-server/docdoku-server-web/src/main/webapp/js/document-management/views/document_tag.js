@@ -10,7 +10,7 @@ define(
             className:"pull-left",
 
              events : {
-               "click a":"clicked"
+               "click i":"clicked"
              },
 
             initialize : function(){
