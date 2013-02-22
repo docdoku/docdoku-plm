@@ -1,173 +1,169 @@
 #manageMarker {
-  height: 40px;
-  width: 100px;
-  margin: 0px auto;
+    height: 40px;
+    width: 100px;
+    margin: 0px auto;
 }
 
 #layer-wrapper {
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.75);
-  border-radius: 8px;
-  width: 100%;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.75);
+    border-radius: 8px;
+    width: 100%;
 
-  ul {
-    text-align:left;
-    color: #434C64;
-    margin: 0;
-    padding: 0;
-    background-color: white;
-    -webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-  }
+    ul {
+        text-align: left;
+        color: #434C64;
+        margin: 0;
+        padding: 0;
+        background-color: white;
+        -webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
+    }
 
-  nav {
-    max-height: 409px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling:touch;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    nav {
+        max-height: 409px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+
+        li {
+            color: #999;
+
+            &:last-child {
+                border-bottom: none;
+
+                .color {
+                    border-bottom-left-radius: 8px;
+                }
+
+            }
+
+            &.shown {
+                color: #434C64;
+
+                i.start {
+                    opacity: 1;
+                }
+
+            }
+
+        }
+
+    }
+
+    ul#layer-header {
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0px 1px 0px black;
+        background: #3F5F99;
+        background-image: -moz-linear-gradient(top, #3F5F99, #213251);
+        background-image: -webkit-linear-gradient(top, #3F5F99, #213251);
+        font-size: 14px;
+
+        i {
+            color: white;
+
+            &.end {
+                opacity: 1;
+            }
+
+        }
+
+    }
 
     li {
-      color: #999;
 
-      &:last-child {
-        border-bottom: none;
+        margin: 0px;
+        position: relative;
+        height: 30px;
+        line-height: 30px;
+        padding: 5px 40px 5px 50px;
+        border-bottom: 1px solid #ccc;
+        list-style-type: none;
 
-        .color {
-          border-bottom-left-radius: 8px;
+        &.editingName {
+            border-bottom: none;
+            padding: 0;
+
+            input.edit {
+                display: block;
+            }
+
+            p {
+                display: none;
+            }
+
         }
 
-      }
-
-      &.shown {
-        color: #434C64;
-
-        i.start {
-          opacity: 1;
+        &.editingMarkers {
+            i.end {
+                opacity: 1;
+            }
         }
 
-      }
+        &.shown {
+            i.start {
+                opacity: 1;
+            }
+        }
 
+        i {
+            cursor: pointer;
+            opacity: 0.20;
+            position: absolute;
+            font-size: 25px;
+            color: black;
 
+            &.start {
+                left: 7px;
+                top: 7px;
+            }
+
+            &.end {
+                right: 5px;
+                top: 7px;
+            }
+
+        }
 
     }
 
-  }
-
-  ul#layer-header {
-    border-top-right-radius: 8px;
-    border-top-left-radius: 8px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0px 1px 0px black;
-    background: #3F5F99;
-    background-image: -moz-linear-gradient(top, #3F5F99, #213251);
-    background-image: -webkit-linear-gradient(top, #3F5F99, #213251);
-    font-size: 14px;
-
-    i {
-      color: white;
-
-      &.end {
-        opacity: 1;
-      }
-
-    }
-
-  }
-
-  li {
-
-    margin: 0px;
-    position: relative;
-    height: 30px;
-    line-height: 30px;
-    padding: 5px 40px 5px 50px;
-    border-bottom: 1px solid #ccc;
-    list-style-type: none;
-
-    &.editingName {
-      border-bottom: none;
-      padding: 0;
-
-      input.edit {
-        display: block;
-      }
-
-      p {
+    input.edit {
+        position: relative;
+        margin: 0 0 0 -4px;
+        width: 100%;
+        height: 30px;
+        font-family: inherit;
+        border: 0;
+        outline: none;
+        color: inherit;
+        border: 1px solid #999;
+        box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
         display: none;
-      }
-
     }
 
-    &.editingMarkers{
-      i.end {
-        opacity: 1;
-      }
+    p {
+        margin: 0px;
+        padding: 0px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height: 30px;
     }
 
-    &.shown {
-      i.start{
-        opacity: 1;
-      }
+    .color {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        display: block;
+        width: 5px;
+        height: 100%;
     }
-
-    i {
-      cursor: pointer;
-      opacity: 0.20;
-      position: absolute;
-      font-size: 25px;
-      color: black;
-
-      &.start {
-        left: 7px;
-        top: 7px;
-      }
-
-      &.end{
-        right: 5px;
-        top: 7px;
-      }
-
-    }
-
-  }
-
-
-
-  input.edit {
-    position: relative;
-    margin: 0 0 0 -4px;
-    width: 100%;
-    height: 30px;
-    font-family: inherit;
-    border: 0;
-    outline: none;
-    color: inherit;
-    border: 1px solid #999;
-    box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-    display: none;
-  }
-
-  p {
-    margin: 0px;
-    padding: 0px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    line-height: 30px;
-  }
-
-  .color {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    display: block;
-    width: 5px;
-    height: 100%;
-  }
 
 }
