@@ -1,8 +1,7 @@
 {{#editMode}}
 <div class="controls">
-	<a class="remove">×</a>
+    <a class="icon-remove"></a>
 </div>
-{{/editMode}}
 <div class="controls">
 	<select class="type" {{^editMode}}disabled="disabled"{{/editMode}}>
 		<option value="TEXT">{{i18n.TEXT}}</option>
@@ -12,6 +11,11 @@
 		<option value="URL">{{i18n.URL}}</option>
 	</select>
 </div>
+{{/editMode}}
+{{^editMode}}
+<div class="controls type">
+</div>
+{{/editMode}}
 <div class="controls">
 	<input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required {{^editMode}}disabled="disabled"{{/editMode}} />
 </div>

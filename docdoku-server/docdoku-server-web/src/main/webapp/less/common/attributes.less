@@ -1,22 +1,31 @@
 .attributes-edit {
   .add {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
-  .remove {
-    .close;
+  .icon-remove {
+    float: right;
+    font-size: 15px;
+    line-height: 18px;
+    color: black;
+    text-shadow: 0 1px 0 white;
+    opacity: 0.2;
+
     &:hover {
+      text-decoration: none;
       color: @red;
       opacity: 1;
     }
   }
   .list-item {
-    display: table;
+    padding: 6px;
+    margin-bottom: 6px;
+
     > * {
-      display: table-cell;
+      display: inline-block;
       vertical-align: middle;
+      margin: 0 3px;
       > * {
         width: auto;
-        margin: 4px;
       }
     }
   }
@@ -28,6 +37,29 @@
       &:not(:checked) ~ .true {
         display: none;
       }
+    }
+    input[type="checkbox"].input-xlarge.value {
+      height: 18px;
+    }
+  }
+
+  .attribute-link  {
+    word-break: break-all;
+  }
+
+  div.type {
+    width: 80px;
+    text-transform: capitalize;
+  }
+
+  input[disabled] {
+    padding: 4px 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+
+    &.name{
+      font-weight: bold;
     }
   }
 }

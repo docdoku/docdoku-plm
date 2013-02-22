@@ -486,6 +486,8 @@ public interface IProductManagerWS{
      * The id of the part master to get
      *
      * @return
+     * The part master
+     *
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -500,6 +502,8 @@ public interface IProductManagerWS{
      * The id of the part revision to get
      *
      * @return
+     * The part revision
+     *
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException

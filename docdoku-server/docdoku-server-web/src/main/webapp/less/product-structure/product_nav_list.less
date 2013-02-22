@@ -1,75 +1,75 @@
 #product_nav_list {
 
-  width: 400px;
-  padding-left: 5px;
+    width: 400px;
+    padding-left: 5px;
 
-  li#product_root_assembly {
-    background: none;
-    font-weight: bold;
-    cursor: pointer;
-    border-bottom: 1px dotted #ccc;
-    opacity: 0.8;
-
-    &:hover {
-      opacity: 1;
-    }
-    i {
-      margin-top: 3px;
-      float: left;
-    }
-  }
-
-  ul {
-    background-color: transparent;
-    margin-top: 0;
-
-    li {
-      margin-left: 0px;
-      width: 100%;
-
-      &.active {
-        background-image: -webkit-linear-gradient(left, transparent 2%, #CFD7E4 3%);
-      }
-
-      a {
-        display: inline-block;
+    li#product_root_assembly {
+        background: none;
+        font-weight: bold;
         cursor: pointer;
+        border-bottom: 1px dotted #ccc;
+        opacity: 0.8;
 
         &:hover {
-          text-decoration: none;
+            opacity: 1;
         }
-
-        label {
-          margin: 0;
-
-          &:hover {
-            background-color: #CFD7E4;
-          }
-
+        i {
+            margin-top: 3px;
+            float: left;
         }
-
-      }
-
-      input[type=checkbox] {
-        padding-left: 5px;
-        margin: -5px 0 0 0;
-      }
-
-      .checkbox {
-        padding-left: 5px;
-      }
-
-      &.nav-header {
-        margin-top: 0px;
-        >label {
-          color: #999;
-          font-weight: bold;
-          font-size: 11px;
-        }
-      }
-
     }
 
-  }
+    ul {
+        background-color: transparent;
+        margin-top: 0;
+
+        li {
+            margin-left: 0px;
+            width: 100%;
+
+            &.active {
+                background-image: -webkit-linear-gradient(left, transparent 2%, #CFD7E4 3%);
+            }
+
+            a {
+                display: inline-block;
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: none;
+                }
+
+                label {
+                    margin: 0;
+
+                    &:hover {
+                        background-color: #CFD7E4;
+                    }
+
+                }
+
+            }
+
+            input[type=checkbox] {
+                padding-left: 5px;
+                margin: -5px 0 0 0;
+            }
+
+            .checkbox {
+                padding-left: 5px;
+            }
+
+            &.nav-header {
+                margin-top: 0px;
+                >label {
+                    color: #999;
+                    font-weight: bold;
+                    font-size: 11px;
+                }
+            }
+
+        }
+
+    }
 
 }

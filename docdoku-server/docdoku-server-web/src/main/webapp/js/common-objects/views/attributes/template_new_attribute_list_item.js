@@ -8,15 +8,17 @@ define([
 	var TemplateNewAttributeListItemView = ListItemView.extend({
 		template: Mustache.compile(template),
 		tagName: "div",
+
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events["change .type"] = "typeChanged";
 			this.events["change .name"] = "updateName";
-			this.events["click .remove"] = "removeAction";
+			this.events["click .icon-remove"] = "removeAction";
 		},
 		rendered: function () {
 			var type = this.model.get("attributeType");
 			this.$el.find("select.type:first").val(type);
+            this.$el.addClass("well");
 		},
 		removeAction: function () {
 			this.model.destroy();

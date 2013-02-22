@@ -16,19 +16,21 @@ div.linked-documents-view {
       margin: 0 12px 12px 0;
       display: inline-block;
 
-      button.delete-linked-document {
-        display: none;
-        color: #BD362F;
-        margin-top: -3px;
-        padding: 0px 3px;
-      }
-    }
-  }
+      .delete-linked-document {
+        font-size: 15px;
+        color: black;
+        text-shadow: 0 1px 0 white;
+        opacity: 0.2;
 
-  ul.linked-docs.edition {
-    li.linked-document{
-      button.delete-linked-document {
-        display: inline-block;
+        &:hover {
+          text-decoration: none;
+          color: @red;
+          opacity: 1;
+        }
+      }
+
+      .reference {
+        margin: 0 3px;
       }
     }
   }

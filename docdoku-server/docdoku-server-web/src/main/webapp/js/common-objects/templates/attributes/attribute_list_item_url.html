@@ -1,4 +1,9 @@
 {{> attribute_list_item}}
 <div class="controls">
-	<input type="url" class="input-xlarge value" placeholder="{{i18n.VALUE}}" value="{{model.value}}" required {{^editMode}}disabled="disabled"{{/editMode}} />
+    {{#editMode}}
+	    <input type="url" class="input-xlarge value" placeholder="{{i18n.VALUE}}" value="{{model.value}}" required />
+    {{/editMode}}
+    {{^editMode}}
+        <a class="attribute-link" target="blank" href="{{model.value}}">{{model.value}}</a>
+    {{/editMode}}
 </div>
