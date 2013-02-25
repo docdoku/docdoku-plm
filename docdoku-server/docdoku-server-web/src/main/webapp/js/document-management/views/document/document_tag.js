@@ -9,11 +9,13 @@ define(
             tagName : "li",
             className:"pull-left well",
 
-             events : {
-               "click":"clicked"
-             },
-
             initialize : function(){
+
+                if(this.options.isAdded)
+                    this.events = { "click a": "clicked" };
+                else
+                    this.events = { "click": "clicked" };
+
                 return this ;
             },
 
