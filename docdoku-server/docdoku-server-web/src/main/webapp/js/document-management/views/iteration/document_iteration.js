@@ -5,7 +5,7 @@ define([
     "views/document/document_lifecycle",
     "views/document/document_links",
     "models/tag",
-    "views/document_tag",
+    "views/document/document_tag",
     "collections/document_iteration",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
@@ -241,14 +241,14 @@ define([
                 var tagViewParams = editMode ?
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
-                    iconClass: "icon-remove",
+                    isAdded: true,
                     clicked: function () {
                         that.tagsToRemove.push(tagLabel);
                         tagView.$el.remove();
                     }} :
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
-                    iconClass: "",
+                    isAdded: false,
                     clicked: null
                 };
 
@@ -264,8 +264,10 @@ define([
             var that = this ;
             if(this.tagsToRemove.length){
                 that.model.removeTags(this.tagsToRemove, function(){
-                    if(_.contains(that.tagsToRemove,that.model.collection.parent.id)){
-                        that.model.collection.remove(that.model);
+                    if(that.model.collection.parent) {
+                        if(_.contains(that.tagsToRemove, that.model.collection.parent.id)){
+                            that.model.collection.remove(that.model);
+                        }
                     }
                 });
             }
