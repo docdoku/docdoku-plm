@@ -51,7 +51,8 @@ define({
         STANDARD_PART:"Standard part",
         SUB_PARTS:"Parts",
         CREATE_NEW_PART:"Create a new part",
-        OR_ADD_PART:"Or add an existing part"
+        OR_ADD_PART:"Or add an existing part",
+        NO_WEBGL:"No WebGL available or activated"
     },
     "fr": true,
     "es": true

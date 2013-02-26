@@ -43,5 +43,6 @@ define({
     STANDARD_PART:"Standard part",
     SUB_PARTS:"Parts",
     CREATE_NEW_PART:"Créer un nouvel article",
-    OR_ADD_PART:"Ou ajouter un article existant"
+    OR_ADD_PART:"Ou ajouter un article existant",
+    NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé."
 });

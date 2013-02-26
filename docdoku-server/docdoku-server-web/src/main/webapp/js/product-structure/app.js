@@ -1,6 +1,6 @@
 var sceneManager;
 
-define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager) {
+define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager","i18n!localization/nls/product-structure-strings"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager,i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -64,10 +64,13 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             }).render();
 
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
-
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
 
-            sceneManager.init();
+            try{
+                sceneManager.init();
+            }catch(ex){
+                this.$("#center_container").html("<span class='alert'>"+i18n.NO_WEBGL+"</span>");
+            }
 
             $("#product-menu").resizable({
                 containment: "#content",
