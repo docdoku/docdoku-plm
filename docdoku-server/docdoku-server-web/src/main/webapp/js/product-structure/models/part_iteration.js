@@ -74,6 +74,9 @@ define([
             return this.collection.part.getVersion();
         },
 
+        getComponents:function(){
+            return this.get("components");
+        },
 
 
         /**

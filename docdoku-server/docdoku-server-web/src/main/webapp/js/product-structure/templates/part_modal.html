@@ -2,7 +2,7 @@
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3><span class="icon"></span>{{part.getNumber}}</h3>
+        <h3><span class="icon"></span>{{part.getPartKey}}</h3>
     </div>
     <div class="modal-body">
 
@@ -12,6 +12,7 @@
                 <li><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-part-files" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
+                <li><a href="#tab-part-sub-parts" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
             </ul>
 
             <div class="tab-content form-horizontal">
@@ -80,6 +81,9 @@
                     <div id="iteration-files"></div>
                 </div>
 
+                <div id="tab-part-sub-parts" class="tab-pane files">
+                    <div id="iteration-components"></div>
+                </div>
             </div>
 
 

@@ -44,11 +44,14 @@ define({
         ROTATE_SCENE: "Rotate the scene",
         SCROLL_UP: "scroll up",
         SCROLL_DOWN: "scroll down",
-        "GENERAL": "General",
-        "ATTRIBUTES": "Attributes",
-        "CAD_FILE": "CAD File",
-        "APPEND":"add",
-        STANDARD_PART:"Standard part"
+        GENERAL: "General",
+        ATTRIBUTES: "Attributes",
+        CAD_FILE: "CAD File",
+        APPEND:"add",
+        STANDARD_PART:"Standard part",
+        SUB_PARTS:"Parts",
+        CREATE_NEW_PART:"Create a new part",
+        OR_ADD_PART:"Or add an existing part"
     },
     "fr": true,
     "es": true

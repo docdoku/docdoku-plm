@@ -548,4 +548,6 @@ public interface IProductManagerWS{
      * @throws NotAllowedException
      */
     List<PartUsageLink> getComponents(PartIterationKey partIPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, NotAllowedException;
+
+    boolean partMasterExists(PartMasterKey partMasterKey)throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }
