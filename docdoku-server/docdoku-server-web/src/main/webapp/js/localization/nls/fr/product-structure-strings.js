@@ -4,6 +4,8 @@ define({
     SAVE: "Enregistrer",
     CANCEL: "Annuler",
     CLOSE: "Fermer",
+    PART_NUMBER: "Numéro",
+    PART_NAME: "Nom",
     AUTHOR: "Auteur",
     AMOUNT: "Quantité",
     CREATION_DATE: "Date de création",
@@ -41,7 +43,7 @@ define({
     CAD_FILE: "Fichier CAD",
     APPEND:"Ajouter",
     STANDARD_PART:"Standard part",
-    SUB_PARTS:"Parts",
+    SUB_PARTS:"Assemblage",
     CREATE_NEW_PART:"Créer un nouvel article",
     OR_ADD_PART:"Ou ajouter un article existant",
     NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé."
