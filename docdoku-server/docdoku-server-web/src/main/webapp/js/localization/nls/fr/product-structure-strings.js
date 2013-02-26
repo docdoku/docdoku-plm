@@ -36,12 +36,12 @@ define({
     ROTATE_SCENE: "Pivoter la scène",
     SCROLL_UP: "défilement haut",
     SCROLL_DOWN: "défilement bas",
-    "GENERAL": "Général",
-    "ATTRIBUTES": "Attributs",
-    "CAD_FILE": "Fichier CAD",
-    "APPEND":"Ajouter",
+    GENERAL: "Général",
+    ATTRIBUTES: "Attributs",
+    CAD_FILE: "Fichier CAD",
+    APPEND:"Ajouter",
     STANDARD_PART:"Standard part",
     SUB_PARTS:"Parts",
     CREATE_NEW_PART:"Créer un nouvel article",
-    OR_ADD_PART:"Or ajouter un existant"
+    OR_ADD_PART:"Ou ajouter un article existant"
 });
