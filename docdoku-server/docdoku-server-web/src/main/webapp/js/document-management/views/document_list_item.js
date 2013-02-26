@@ -19,9 +19,16 @@ define([
 
 		initialize: function () {
 			CheckboxListItemView.prototype.initialize.apply(this, arguments);
+
+            // jQuery creates it's own event object, and it doesn't have a
+            // dataTransfer property yet. This adds dataTransfer to the event object.
+            $.event.props.push('dataTransfer');
+
 			this.events["click .reference"] = this.actionEdit;
 			this.events["click .state-subscription"] = this.toggleStateSubscription;
 			this.events["click .iteration-subscription"] = this.toggleIterationSubscription;
+            this.events["dragstart a.dochandle"] = this.dragStart;
+            this.events["dragend a.dochandle"] = this.dragEnd;
 		},
 
 		modelToJSON: function () {
@@ -48,6 +55,8 @@ define([
 		},
 
         rendered: function() {
+            var that = this;
+
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
 
             if(this.model.isStateChangedSubscribed()){
@@ -68,6 +77,24 @@ define([
                 this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "left");
             }
 
+        },
+
+        dragStart: function(e) {
+            var that = this;
+            Backbone.Events.on("document-moved", function(){
+                Backbone.Events.off("document-moved");
+                that.model.collection.remove(that.model);
+            });
+            var data = JSON.stringify(this.model);
+            e.dataTransfer.setData("document:text/plain", data);
+            e.dataTransfer.dropEffect = "none";
+            e.dataTransfer.effectAllowed = "copyMove";
+            return e;
+        },
+
+        dragEnd: function(e) {
+            if(e.dataTransfer.dropEffect == "none")
+                Backbone.Events.off("document-moved");
         },
 
 		actionEdit: function (evt) {

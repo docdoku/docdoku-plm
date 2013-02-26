@@ -167,7 +167,7 @@ public class DocumentResource {
             String docId = docKey.substring(0, lastDash);
             String docVersion = docKey.substring(lastDash + 1, docKey.length());
             String parentFolderPath = docCreationDTO.getPath();
-            String newCompletePath = Tools.stripTrailingSlash(workspaceId + "/" + parentFolderPath);
+            String newCompletePath = Tools.stripTrailingSlash(parentFolderPath);
 
             DocumentMasterKey docMsKey = new DocumentMasterKey(workspaceId, docId, docVersion);
             DocumentMaster movedDocumentMaster = documentService.moveDocumentMaster(newCompletePath, docMsKey);

@@ -2,6 +2,10 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
     var Document = Backbone.Model.extend({
 
+        urlRoot: function() {
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
+        },
+
         parse: function(data) {
             this.iterations = new DocumentIterationList(data.documentIterations);
             this.iterations.setDocument(this);
@@ -57,6 +61,10 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         getTags: function() {
             return this.tags;
+        },
+
+        getPath: function() {
+            return this.get("path");
         },
 
         checkout: function() {
@@ -184,6 +192,25 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 contentType: "application/json; charset=utf-8",
                 success: function() {
                     this.collection.fetch();
+                }
+            });
+        },
+
+        moveInto: function(path, callback) {
+
+            var data = {
+                path: path
+            };
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/move",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    if(callback)
+                        callback();
                 }
             });
         }

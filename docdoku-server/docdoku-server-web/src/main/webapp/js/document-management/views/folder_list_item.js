@@ -1,6 +1,7 @@
 define([
 	"require",
 	"i18n!localization/nls/document-management-strings",
+    "models/document",
 	"collections/folder",
 	"common-objects/views/components/list_item",
 	"views/folder_list",
@@ -11,6 +12,7 @@ define([
 ], function (
 	require,
 	i18n,
+    Document,
 	FolderList,
 	ListItemView,
 	FolderListView,
@@ -28,6 +30,10 @@ define([
 		},
 		initialize: function () {
 			ListItemView.prototype.initialize.apply(this, arguments);
+            // jQuery creates it's own event object, and it doesn't have a
+            // dataTransfer property yet. This adds dataTransfer to the event object.
+            $.event.props.push('dataTransfer');
+
 			this.isOpen = false;
 			if (this.model) {
 				this.collection.parent = this.model;
@@ -36,7 +42,11 @@ define([
 				"click .header .new-folder":	"actionNewFolder",
 				"click .header .edit":			"actionEdit",
 				"click .header .delete":		"actionDelete",
-				"mouseleave .header":			"hideActions"
+				"mouseleave .header":			"hideActions",
+                "dragenter >.nav-list-entry":   "onDragEnter",
+                "dragover >.nav-list-entry":    "checkDrag",
+                "dragleave >.nav-list-entry":   "onDragLeave",
+                "drop >.nav-list-entry":        "onDrop"
 			});
 			this.events['click [data-target="#items-' + this.cid + '"]'] = "toggle";
 		},
@@ -72,6 +82,8 @@ define([
 			).render();
 			this.bind("shown", this.shown);
 			this.bind("hidden", this.hidden);
+
+            this.folderDiv = this.$(">.nav-list-entry");
 		},
 		show: function (routePath) {
 			this.routePath = routePath;
@@ -122,6 +134,9 @@ define([
 			$("#document-menu .active").removeClass("active");
 			this.$el.find(".header").first().addClass("active");
 		},
+        isActive: function () {
+            return this.$el.find(".header").first().hasClass("active");
+        },
         isOpened:function(){
             return this.isOpen;
         },
@@ -169,7 +184,53 @@ define([
 				this.model.destroy();
 			}
 			return false;
-		}
+		},
+
+        onDragEnter: function(e) {
+            var that = this;
+
+            if(!this.isOpen){
+                setTimeout(function(){
+                    if(that.folderDiv.hasClass("move-doc-into")){
+                        that.isOpen = true;
+                        that.foldersView.show();
+                    }
+                },500);
+            }
+        },
+
+        checkDrag: function(e) {
+            if(!_.isUndefined(e.dataTransfer.getData("document:text/plain"))){
+                e.dataTransfer.dropEffect = "copy";
+                this.folderDiv.addClass("move-doc-into");
+                if(this.isActive())
+                    return true;
+
+                return false;
+            }
+
+            return true;
+        },
+
+        onDragLeave: function(e) {
+            e.dataTransfer.dropEffect = "none";
+            this.folderDiv.removeClass("move-doc-into");
+        },
+
+        onDrop: function(e) {
+            var that = this;
+            var document = new Document(JSON.parse(e.dataTransfer.getData("document:text/plain")));
+
+            var path = document.getWorkspace();
+            if(this.model)
+                path = this.model.getPath()+"/"+this.model.getName();
+
+            document.moveInto(path, function(){
+                Backbone.Events.trigger("document-moved");
+                that.folderDiv.removeClass("move-doc-into");
+                that.folderDiv.effect("highlight", {color: "#8fbc8f"}, 500);
+            });
+        }
 	});
 	return FolderListItemView;
 });
