@@ -1,5 +1,6 @@
 define(function() {
 
+    var expandedViews = [];
     var ComponentViews = {};
 
     ComponentViews.Components = Backbone.View.extend({
@@ -8,6 +9,8 @@ define(function() {
 
         initialize: function() {
             this.options.parentView.append(this.el);
+            this.componentViews = [];
+            this.expandedViews = [];
             if (this.collection.isEmpty()) {
                 this.listenTo(this.collection, 'reset', this.addAllComponentsView)
                     .listenTo(this.collection, 'add', this.addComponentView);
@@ -36,6 +39,18 @@ define(function() {
 
             this.$el.append(componentView.render().el);
 
+            // expand the assembly if it was expanded before redraw
+            if(component.isAssembly() && _.contains(expandedViews,component.attributes.number)){
+                componentView.onToggleExpand();
+            }
+
+            this.componentViews.push(componentView);
+        },
+
+        fetchAll:function(){
+            var that = this ;
+            this.$el.empty();
+            this.collection.fetch();
         }
 
     });
@@ -44,11 +59,12 @@ define(function() {
 
         tagName:'li',
 
-        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox'><%= number %> (<%= amount %>)</label></a>"),
+        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
 
         events: {
             "click a": "onComponentSelected",
-            "change input:first": "onChangeCheckbox"
+            "change input:first": "onChangeCheckbox",
+            "click .icon-file:first": "onEditPart"
         },
 
         initialize: function() {
@@ -89,6 +105,19 @@ define(function() {
         onComponentSelected: function(e) {
             e.stopPropagation();
             this.$("a").trigger("component_selected", [this.model]);
+        },
+
+        onEditPart:function(){
+            var self = this;
+            require(['models/part','views/part_modal_view'], function(Part,PartModalView) {
+                var model = new Part({partKey:self.model.getNumber() + "-" + self.model.getVersion()});
+                model.fetch().success(function(){
+                    new PartModalView({
+                        model: model
+                    }).show();
+                });
+
+            });
         }
 
     });
@@ -99,10 +128,11 @@ define(function() {
 
         className: 'expandable',
 
-        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a>"),
+        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
 
         events: {
             "click a:first": "onComponentSelected",
+            "click .icon-file:first": "onEditPart",
             "change input:first": "onChangeCheckbox",
             "click .hitarea:first": "onToggleExpand"
         },
@@ -144,6 +174,11 @@ define(function() {
 
             this.onAllResultPathAdded();
 
+
+            if(_.contains(this.expandedViews,this.model.attributes.number)){
+                this.onToggleExpand();
+            }
+
             return this;
         },
 
@@ -176,8 +211,10 @@ define(function() {
 
             if(this.isExpanded){
                 childrenNode.show();
+                expandedViews.push(this.model.attributes.number);
             }else{
                 childrenNode.hide();
+                expandedViews = _(expandedViews).without(this.model.attributes.number);
             }
         },
 
@@ -193,6 +230,19 @@ define(function() {
 
         isChecked: function() {
             return this.input.prop('checked');
+        },
+
+        onEditPart:function(){
+            var self = this;
+            require(['models/part','views/part_modal_view'], function(Part,PartModalView) {
+                var model = new Part({partKey:self.model.getNumber() + "-" + self.model.getVersion()});
+                model.fetch().success(function(){
+                    new PartModalView({
+                        model: model
+                    }).show();
+                });
+
+            });
         }
 
     });

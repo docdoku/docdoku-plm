@@ -31,10 +31,10 @@ define(["models/component_module", "views/component_views"], function (Component
             this.listenTo(rootCollection, 'reset', function(collection) {
                 //the default selected component is the root
                 self.rootComponent = collection.first();
-                this.setSelectedComponent(self.rootComponent);
+                self.setSelectedComponent(self.rootComponent);
             });
 
-            new ComponentViews.Components({
+            this.componentViews = new ComponentViews.Components({
                 collection: rootCollection,
                 resultPathCollection: this.options.resultPathCollection,
                 parentView: this.$el,
@@ -76,6 +76,14 @@ define(["models/component_module", "views/component_views"], function (Component
             e.stopPropagation();
             this.setSelectedComponent(componentModel);
             this.trigger("component_selected");
+        },
+
+        refreshAll:function(){
+            this.componentViews.fetchAll();
+        },
+
+        onRefreshComponent:function(partKey){
+            this.componentViews.refreshComponent(partKey);
         }
 
     });

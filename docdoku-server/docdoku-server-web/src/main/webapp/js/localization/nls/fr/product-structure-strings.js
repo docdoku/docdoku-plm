@@ -40,5 +40,8 @@ define({
     "ATTRIBUTES": "Attributs",
     "CAD_FILE": "Fichier CAD",
     "APPEND":"Ajouter",
-    STANDARD_PART:"Standard part"
+    STANDARD_PART:"Standard part",
+    SUB_PARTS:"Parts",
+    CREATE_NEW_PART:"Créer un nouvel article",
+    OR_ADD_PART:"Or ajouter un existant"
 });

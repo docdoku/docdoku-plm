@@ -56,6 +56,13 @@
             <version>1.13</version>
         </dependency>
 
+        <!-- Jython -->
+
+        <dependency>
+            <groupId>jython</groupId>
+            <artifactId>jython</artifactId>
+            <version>2.1</version>
+        </dependency>
 
         <!-- WebSocket -->
         
@@ -64,24 +71,7 @@
             <artifactId>grizzly-websockets</artifactId>
             <version>1.9.51</version>
         </dependency>
-        
-        <!--
-        <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-websockets</artifactId>
-            <version>2.2.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-framework</artifactId>
-            <version>2.2.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-http</artifactId>
-            <version>2.2.9</version>
-        </dependency>
-        -->
+
         <!-- docdoku core -->
         <dependency>
             <groupId>com.docdoku</groupId>
