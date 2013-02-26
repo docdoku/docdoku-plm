@@ -1,5 +1,7 @@
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.product.PartUsageLink;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -15,6 +17,7 @@ public class PartIterationDTO implements Serializable {
     private UserDTO author;
     private Date creationDate;
     private List<InstanceAttributeDTO> instanceAttributes;
+    private List<PartUsageLinkDTO> components;
 
     public PartIterationDTO() {
     }
@@ -73,5 +76,13 @@ public class PartIterationDTO implements Serializable {
 
     public void setInstanceAttributes(List<InstanceAttributeDTO> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
+    }
+
+    public List<PartUsageLinkDTO> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<PartUsageLinkDTO> components) {
+        this.components = components;
     }
 }

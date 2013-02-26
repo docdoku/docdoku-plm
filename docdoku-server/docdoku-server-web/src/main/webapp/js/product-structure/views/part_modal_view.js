@@ -4,9 +4,10 @@ define(
     "common-objects/views/file/file_list",
     'text!templates/part_modal.html',
     'i18n!localization/nls/product-structure-strings',
-    "common-objects/views/attributes/attributes"
+    "common-objects/views/attributes/attributes",
+    "views/parts_management_view"
     ],
-    function(ModalView, FileListView, template, i18n, PartAttributesView ) {
+    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView ) {
 
     var PartModalView = ModalView.extend({
 
@@ -15,10 +16,6 @@ define(
         initialize:function(){
             this.iteration = this.model.getLastIteration();
             ModalView.prototype.initialize.apply(this, arguments);
-            /*
-             this.events["click a#next-iteration"] = "onNextIteration";
-             this.events["click a#previous-iteration"] = "onPreviousIteration";
-             */
             this.events["submit #form-part"] = "onSubmitForm";
         },
 
@@ -32,9 +29,16 @@ define(
 
             this.$authorLink = this.$('.author-popover');
             this.$checkoutUserLink = this.$('.checkout-user-popover');
+
+            this.$inputNewPartNumber = this.$('#inputNewPartNumber');
+            this.$inputNewPartName = this.$('#inputNewPartName');
+            this.$inputNewPartDescription = this.$('#inputNewPartDescription');
+            this.$inputNewPartStandard = this.$('#inputNewPartStandard');
+
             this.bindUserPopover();
             this.initAttributesView();
             this.initCadFileUploadView();
+            this.initPartsManagementView();
             return this;
         },
 
@@ -66,6 +70,7 @@ define(
 
         onSubmitForm:function(e){
 
+            var that = this;
             // cannot pass a collection of cad file to server.
             var cadFile = this.iteration.get("nativeCADFile").first();
             if(cadFile){
@@ -75,8 +80,12 @@ define(
             }
 
             this.iteration.save({
-                instanceAttributes: this.partAttributesView.collection.toJSON()
-            });
+                instanceAttributes: this.partAttributesView.collection.toJSON(),
+                components : this.partsManagementView.collection.toJSON()
+            }, {success:function(){
+                Backbone.Events.trigger("refresh_tree");
+                //Backbone.Events.trigger("refresh_component", that.model.getPartKey());
+            }});
 
             this.fileListView.deleteFilesToDelete();
 
@@ -84,6 +93,7 @@ define(
 
             e.preventDefault();
             e.stopPropagation();
+
             return false ;
         },
 
@@ -99,7 +109,16 @@ define(
 
             this.$("#iteration-files").html(this.fileListView.el);
 
+        },
+
+        initPartsManagementView:function(){
+            this.partsManagementView = new PartsManagementView({
+                el:"#iteration-components",
+                collection: new Backbone.Collection(this.iteration.getComponents()),
+                editMode:this.editMode
+            }).render();
         }
+
 
     });
 

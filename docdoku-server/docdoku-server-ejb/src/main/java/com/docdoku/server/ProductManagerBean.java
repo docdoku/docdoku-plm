@@ -606,6 +606,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public boolean partMasterExists(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
+        try {
+            new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(partMasterKey);
+            return true;
+        } catch (PartMasterNotFoundException e) {
+            return false;
+        }
+    }
+
+    @RolesAllowed("users")
+    @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartMPK.getWorkspace());
         PartMaster partM = new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(pPartMPK);

@@ -115,7 +115,7 @@ public class PartMaster implements Serializable {
         author = pAuthor;
     }
 
-    private PartMaster(Workspace pWorkspace, String pNumber) {
+    public PartMaster(Workspace pWorkspace, String pNumber) {
         number = pNumber;
         setWorkspace(pWorkspace);
     }

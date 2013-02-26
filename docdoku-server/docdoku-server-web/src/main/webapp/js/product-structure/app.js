@@ -65,7 +65,23 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
 
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
 
+            Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
+
             sceneManager.init();
+
+            $("#product-menu").resizable({
+                containment: "#content",
+                handles: 'e',
+                autoHide: true,
+                stop: function(e, ui) {
+                    var parent = ui.element.parent();
+                    ui.element.css({
+                        width: ui.element.width()/parent.width()*100+"%",
+                        height: ui.element.height()/parent.height()*100+"%"
+                    });
+                }
+            });
+
         },
 
         onComponentSelected: function(showRoot) {
@@ -74,6 +90,17 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             }
             this.showPartMetadata();
             sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
+        },
+
+        onRefreshTree:function(){
+            if (this.isInBomMode()) {
+                this.updateBom();
+            }
+            this.partsTreeView.refreshAll();
+        },
+
+        onRefreshComponent:function(partKey){
+          this.partsTreeView.onRefreshComponent(partKey);
         },
 
         //TODO better panel for part metadata

@@ -23,10 +23,7 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
-import com.docdoku.server.rest.dto.ComponentDTO;
-import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.PartDTO;
-import com.docdoku.server.rest.dto.PartIterationDTO;
+import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -48,6 +45,9 @@ public class PartsResource {
 
     @EJB
     private IProductManagerLocal productService;
+
+    @EJB
+    private IUserManagerLocal userManager;
 
     public PartsResource() {
     }
@@ -71,6 +71,26 @@ public class PartsResource {
             partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
             partDTO.setName(partRevision.getPartMaster().getName());
             partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+
+            List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+
+            for(PartIteration partIteration : partRevision.getPartIterations()){
+
+                List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+
+                PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
+
+                for(PartUsageLink partUsageLink : partIteration.getComponents()){
+                    PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
+                    usageLinksDTO.add(partUsageLinkDTO);
+                }
+
+                partIterationDTO.setComponents(usageLinksDTO);
+                partIterationDTOs.add(partIterationDTO);
+            }
+
+            partDTO.setPartIterations(partIterationDTOs);
+
             return Response.ok(partDTO).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -94,9 +114,15 @@ public class PartsResource {
                 attributes = createInstanceAttribute(instanceAttributes);
             }
 
+            List<PartUsageLinkDTO> components = data.getComponents();
+            List<PartUsageLink> newComponents = null;
+            if(components != null){
+                newComponents = createComponents(pWorkspaceId, components);
+            }
+
             PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, null, attributes);
+            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes);
 
             PartDTO partDTO = mapper.map(partRevisionUpdated, PartDTO.class);
             partDTO.setNumber(partRevisionUpdated.getPartNumber());
@@ -109,6 +135,7 @@ public class PartsResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
+
 
     @PUT
     @Path("{partKey}/checkin")
@@ -265,5 +292,48 @@ public class PartsResource {
             throw new IllegalArgumentException("Instance attribute not supported");
         }
     }
+
+
+    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException {
+
+        List<PartUsageLink> components = new ArrayList<PartUsageLink>();
+        for(PartUsageLinkDTO partUsageLinkDTO : pComponents){
+
+            PartMaster component = findOrCreatePartMaster(workspaceId, partUsageLinkDTO.getComponent());
+
+            if(component != null){
+                PartUsageLink partUsageLink = new PartUsageLink();
+
+                List<CADInstance> cadInstances = new ArrayList<CADInstance>();
+                for(double i = 0 ; i < partUsageLinkDTO.getAmount() ; i ++){
+                    cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0, CADInstance.Positioning.ABSOLUTE));
+                }
+
+                partUsageLink.setComponent(component);
+                partUsageLink.setAmount(partUsageLinkDTO.getAmount());
+                partUsageLink.setCadInstances(cadInstances);
+                components.add(partUsageLink);
+            }
+
+        }
+
+        return components;
+
+
+    }
+
+    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException {
+        String componentNumber = componentDTO.getNumber();
+        PartMasterKey partMasterKey = new PartMasterKey(workspaceId,componentNumber);
+        if(productService.partMasterExists(partMasterKey)){
+
+            return new PartMaster(userManager.getWorkspace(workspaceId),componentNumber);
+        }else{
+           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription());
+        }
+
+    }
+
+
 
 }
