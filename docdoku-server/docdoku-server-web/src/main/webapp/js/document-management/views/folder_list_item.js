@@ -194,6 +194,7 @@ define([
                     if(that.folderDiv.hasClass("move-doc-into")){
                         that.isOpen = true;
                         that.foldersView.show();
+                        that.$el.addClass("open");
                     }
                 },500);
             }
