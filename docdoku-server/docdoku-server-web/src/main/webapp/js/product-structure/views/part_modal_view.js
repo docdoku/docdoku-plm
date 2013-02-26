@@ -114,7 +114,8 @@ define(
         initPartsManagementView:function(){
             this.partsManagementView = new PartsManagementView({
                 el:"#iteration-components",
-                collection: new Backbone.Collection(this.iteration.getComponents())
+                collection: new Backbone.Collection(this.iteration.getComponents()),
+                editMode:this.editMode
             }).render();
         }
 

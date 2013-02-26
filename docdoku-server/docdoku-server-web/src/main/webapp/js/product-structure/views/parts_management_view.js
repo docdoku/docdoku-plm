@@ -45,7 +45,7 @@ define (
             render: function() {
 
                 var that = this ;
-                this.$el.html(this.template({i18n:i18n}));
+                this.$el.html(this.template({i18n:i18n, editMode:this.options.editMode}));
 
                 this.componentViews = [];
 
@@ -53,14 +53,16 @@ define (
                     that.addView(model);
                 });
 
-                this.bindTypeahead();
+                if(this.options.editMode){
+                    this.bindTypeahead();
+                }
 
                 return this;
             },
 
             addView : function(model){
                 var that = this ;
-                var componentView = new ComponentView({model:model, removeHandler:function(){ that.collection.remove(model); }}).render();
+                var componentView = new ComponentView({model:model, editMode:this.options.editMode, removeHandler:function(){ that.collection.remove(model); }}).render();
                 this.componentViews.push(componentView);
                 this.$el.append(componentView.$el);
             },

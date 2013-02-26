@@ -18,12 +18,12 @@ define(  [
         },
 
         render: function() {
-            this.$el.html(this.template({model: this.model.attributes, i18n:i18n}));
+            this.$el.html(this.template({model: this.model.attributes, i18n:i18n, editMode:this.options.editMode}));
             return this;
         },
 
         onRemove : function(){
-            if(this.options.removeHandler){
+            if(this.options.removeHandler && this.options.editMode){
                 this.options.removeHandler();
             }
         },
