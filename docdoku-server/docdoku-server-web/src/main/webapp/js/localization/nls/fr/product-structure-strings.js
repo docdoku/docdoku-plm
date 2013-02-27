@@ -46,5 +46,7 @@ define({
     SUB_PARTS:"Assemblage",
     CREATE_NEW_PART:"Créer un nouvel article",
     OR_ADD_PART:"Ou ajouter un article existant",
-    NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé."
+    NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé.",
+    TRUE:"Oui",
+    FALSE:"Nom"
 });

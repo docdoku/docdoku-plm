@@ -32,6 +32,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.inBomMode = true;
             this.sceneModeButton.removeClass("active");
             this.bomModeButton.addClass("active");
+            this.partMetadataContainer.removeClass("active");
             this.centerSceneContainer.hide();
             this.bomContainer.show();
             this.updateBom();
@@ -50,6 +51,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.bomContainer = this.$("#bom_table_container");
             this.centerSceneContainer = this.$("#center_container");
             this.partMetadataContainer = this.$("#part_metadata_container");
+            this.partMetadataView = null;
 
             this.inBomMode = false;
 
@@ -85,6 +87,8 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
                 }
             });
 
+
+
         },
 
         onComponentSelected: function(showRoot) {
@@ -108,9 +112,15 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
 
         //TODO better panel for part metadata
         showPartMetadata:function() {
-            this.partMetadataContainer.empty();
-            new PartMetadataView({model: this.partsTreeView.componentSelected}).render();
-            this.partMetadataContainer.show();
+            if(!this.isInBomMode()){
+                if( this.partMetadataView == null){
+                    this.partMetadataView = new PartMetadataView({model: this.partsTreeView.componentSelected});
+                }else{
+                    this.partMetadataView.setModel(this.partsTreeView.componentSelected);
+                }
+                this.partMetadataView.render();
+                this.partMetadataContainer.addClass("active");
+            }
         }
 
     });

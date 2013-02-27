@@ -59,7 +59,7 @@ define(function() {
 
         tagName:'li',
 
-        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
+        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
 
         events: {
             "click a": "onComponentSelected",
@@ -128,7 +128,7 @@ define(function() {
 
         className: 'expandable',
 
-        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a href='#'><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
+        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
 
         events: {
             "click a:first": "onComponentSelected",

@@ -53,8 +53,8 @@ define([
             this.bindSwitchControlEvents();
             this.initLights();
             this.initAxes();
-            this.initStats();
             this.initRenderer();
+            this.initStats();
             this.loadWindowResize();
             this.initLayerManager();
             this.animate();

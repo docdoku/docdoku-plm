@@ -114,6 +114,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
           return this.get("standardPart") ? 1:0;
         },
 
+        isStandardPartReadable:function(){
+            return this.get("standardPart") ? i18n.TRUE:i18n.FALSE;
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,
