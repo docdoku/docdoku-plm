@@ -1,12 +1,10 @@
 /*global sceneManager*/
 define([
     "views/marker_create_modal_view",
-    "views/export_scene_modal_view",
     "views/controls_infos_modal_view",
     "views/progress_bar_view"
 ], function (
     MarkerCreateModalView,
-    ExportSceneModalView,
     ControlsInfosModalView,
     ProgressBarView
 ) {
@@ -116,26 +114,7 @@ define([
 
             var self = this;
 
-            $("#export_scene_btn").click(function() {
 
-                // Def url
-                var splitUrl = window.location.href.split("/");
-                var urlRoot = splitUrl[0] + "//" + splitUrl[2];
-
-                var paths = self.rootCollection;
-
-                var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
-                    + '?cameraX=' + self.camera.position.x
-                    + '&cameraY=' + self.camera.position.y
-                    + '&cameraZ=' + self.camera.position.z
-                    + '&pathToLoad=' + self.pathForIframeLink;
-
-                // Open modal
-                var esmv = new ExportSceneModalView({iframeSrc:iframeSrc});
-                $("body").append(esmv.render().el);
-                esmv.openModal();
-
-            });
         },
 
         initScene: function() {

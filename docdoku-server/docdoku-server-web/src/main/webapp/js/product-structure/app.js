@@ -1,6 +1,6 @@
 var sceneManager;
 
-define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager","i18n!localization/nls/product-structure-strings"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager,i18n) {
+define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager","views/export_scene_modal_view","i18n!localization/nls/product-structure-strings"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager, ExportSceneModalView,i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -8,7 +8,8 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
 
         events: {
             "click #scene_view_btn": "sceneMode",
-            "click #bom_view_btn": "bomMode"
+            "click #bom_view_btn": "bomMode",
+            "click #export_scene_btn": "exportScene"
         },
 
         updateBom: function(showRoot) {
@@ -26,6 +27,9 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.bomContainer.hide();
             this.centerSceneContainer.show();
             this.bomView.bomHeaderView.hideCheckGroup();
+            if(this.partsTreeView.componentSelected){
+                this.exportSceneButton.show();
+            }
         },
 
         bomMode: function() {
@@ -34,6 +38,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.bomModeButton.addClass("active");
             this.partMetadataContainer.removeClass("active");
             this.centerSceneContainer.hide();
+            this.exportSceneButton.hide();
             this.bomContainer.show();
             this.updateBom();
         },
@@ -48,6 +53,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
 
             this.sceneModeButton = this.$("#scene_view_btn");
             this.bomModeButton = this.$("#bom_view_btn");
+            this.exportSceneButton = this.$("#export_scene_btn");
             this.bomContainer = this.$("#bom_table_container");
             this.centerSceneContainer = this.$("#center_container");
             this.partMetadataContainer = this.$("#part_metadata_container");
@@ -94,9 +100,38 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
         onComponentSelected: function(showRoot) {
             if (this.isInBomMode()) {
                 this.updateBom(showRoot);
+            }else{
+                this.exportSceneButton.show();
             }
             this.showPartMetadata();
             sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
+
+        },
+
+        exportScene:function(){
+
+            // Def url
+            var splitUrl = window.location.href.split("/");
+            var urlRoot = splitUrl[0] + "//" + splitUrl[2];
+
+            var paths = self.rootCollection;
+
+            var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
+                + '?cameraX=' + sceneManager.camera.position.x
+                + '&cameraY=' + sceneManager.camera.position.y
+                + '&cameraZ=' + sceneManager.camera.position.z;
+
+            if(this.partsTreeView.componentSelected.getPath()){
+                iframeSrc += '&pathToLoad=' + this.partsTreeView.componentSelected.getPath();
+            }
+
+            // Open modal
+            var esmv = new ExportSceneModalView({iframeSrc:iframeSrc});
+            $("body").append(esmv.render().el);
+            esmv.openModal();
+
+
+
         },
 
         onRefreshTree:function(){
