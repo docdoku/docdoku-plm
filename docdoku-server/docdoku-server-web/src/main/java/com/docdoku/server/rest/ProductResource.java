@@ -65,10 +65,10 @@ public class ProductResource {
     @EJB
     private IProductManagerLocal productService;
 
-    private Mapper mapper;
-
     @EJB
     private LayerResource layerResource;
+
+    private Mapper mapper;
 
     public ProductResource() {
     }

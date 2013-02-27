@@ -8,7 +8,7 @@ define(["models/component_module", "views/component_views"], function (Component
             "change input": "checkChildrenInputs",
             "change li": "checkParentsInputs",
             "component_selected a": "onComponentSelected",
-            "click #product_root_assembly":"onProductRootNode"
+            "click #product_title":"onProductRootNode"
         },
 
         setSelectedComponent: function(component) {
@@ -72,8 +72,10 @@ define(["models/component_module", "views/component_views"], function (Component
             }
         },
 
-        onComponentSelected: function(e, componentModel) {
+        onComponentSelected: function(e, componentModel, li) {
             e.stopPropagation();
+            this.$("li.active").removeClass("active");
+            li.addClass("active");
             this.setSelectedComponent(componentModel);
             this.trigger("component_selected");
         },

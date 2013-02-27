@@ -87,8 +87,7 @@ function (
 		},
 		checkedouts: function() {
 			this.defaults();
-			var view = CheckedoutNavView.getInstance();
-			view.showContent();
+			CheckedoutNavView.getInstance().showContent();
 		},
 		tasks: function() {
 			this.defaults();

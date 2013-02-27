@@ -1,0 +1,37 @@
+<div id="metadata_full">
+    <h1><i class="icon-cog"></i>{{getNumber}}</h1>
+    <button type="button" class="toggle">x</button>
+    <div class="row">
+        <div class="span3">
+            <div class="span4">
+                <span class="part_metadata_key">Name :</span>
+                <span class="part_metadata_value">{{getName}}</span>
+            </div>
+            <div class="span4">
+                <span class="part_metadata_key">Version :</span>
+                <span class="part_metadata_value">{{getVersion}}</span>
+            </div>
+            <div class="span4">
+                <span class="part_metadata_key">Iteration :</span>
+                <span class="part_metadata_value">{{getIteration}}</span>
+            </div>
+        </div>
+        <div class="span3">
+            <div class="span4">
+                <span class="part_metadata_key">Description :</span>
+                <span class="part_metadata_value">{{getDescription}}</span>
+            </div>
+            <div class="span4">
+                <span class="part_metadata_key">Author :</span>
+
+                            <span class="part_metadata_value">
+                                <a href="#" class="author-popover">{{getAuthor}}</a>
+                            </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="metadata_min">
+    <span class='toggle meta-infos'><b>{{getNumber}}</b> - {{getVersion}} - {{getIteration}} </span>
+    <i class="icon-user" title="{{getAuthor}}"></i>
+</div>

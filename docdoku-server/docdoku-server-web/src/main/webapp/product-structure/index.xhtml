@@ -74,39 +74,6 @@
 
             });                
         </script>
-        <script type="text/x-underscore-template" id="part_metadata_template">
-            <h1><i class="icon-cog"></i>{{getNumber}}</h1>
-            <button type="button" id="part_metadata_close_button">×</button>
-            <div class="row">
-                <div class="span3">
-                    <div class="span4">
-                        <span class="part_metadata_key">Name :</span>
-                        <span class="part_metadata_value">{{getName}}</span>
-                    </div>
-                    <div class="span4">
-                        <span class="part_metadata_key">Version :</span>
-                        <span class="part_metadata_value">{{getVersion}}</span>
-                    </div>
-                    <div class="span4">
-                        <span class="part_metadata_key">Iteration :</span>
-                        <span class="part_metadata_value">{{getIteration}}</span>
-                    </div>
-                </div>
-                <div class="span3">
-                    <div class="span4">
-                        <span class="part_metadata_key">Description :</span>
-                        <span class="part_metadata_value">{{getDescription}}</span>
-                    </div>
-                    <div class="span4">
-                        <span class="part_metadata_key">Author :</span>
-
-                        <span class="part_metadata_value">
-                            <a href="#" class="author-popover">{{getAuthor}}</a>    
-                        </span>  
-                    </div>
-                </div>
-            </div>
-        </script>
         </ui:define>
         
         <ui:define name="content">
@@ -119,10 +86,10 @@
 
                         <div id="nav_list_controls">
                             <div id="search_control_container">
-                                <input type="search"/>
-                                <a class="btn btn-custom" id="nav_list_search_button" href="#">
-                                    <i class="icon-search"></i>
-                                </a>
+                                <form id="nav_list_search">
+                                    <input type="text" name="search"/>
+                                    <button class="btn btn-custom icon-search " id="nav_list_search_button" value=""></button>
+                                </form>
                             </div>
 
                         </div>
@@ -130,7 +97,7 @@
 
                     <div id="product_nav_list_container">
                         <nav class="nav nav-list treeview" id="product_nav_list">
-                            <li id='product_root_assembly'><i class="icon-briefcase"></i> ${productID}</li>
+                            <div id='product_title'><i class="icon-briefcase"></i> ${productID}</div>
                         </nav>
                     </div>
 
@@ -187,8 +154,7 @@
 
                     <div id="bom_table_container"></div>
 
-                    <div id="part_metadata_container">
-                    </div>
+                    <div id="part_metadata_container" class="minimized"></div>
 
                 </div>
 

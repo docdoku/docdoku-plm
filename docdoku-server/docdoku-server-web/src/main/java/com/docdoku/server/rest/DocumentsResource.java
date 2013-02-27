@@ -73,8 +73,11 @@ public class DocumentsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin) {
+    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser) {
 
+        if(checkoutUser != null){
+            return getDocumentsCheckedOutByUser(workspaceId);
+        }
         if(query != null){
             return getDocumentsWithSearchQuery(workspaceId, query);
         }
@@ -86,6 +89,27 @@ public class DocumentsResource {
         }
         else {
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
+        }
+
+    }
+
+    private DocumentMasterDTO[] getDocumentsCheckedOutByUser(String workspaceId) {
+
+        try {
+            DocumentMaster[] docMs = documentService.getCheckedOutDocumentMasters(workspaceId);
+            DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
+
+            for (int i = 0; i < docMs.length; i++) {
+                docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
+                docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+            }
+
+            return docMsDTOs;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
     }
