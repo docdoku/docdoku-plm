@@ -44,14 +44,17 @@ public class CheckOutCommand extends AbstractCommandLine{
     @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-d", aliases = "--download", usage="download the native cad file of the part if any")
-    private boolean download;
+    @Option(name="-n", aliases = "--no-download", usage="do not download the native cad file of the part if any")
+    private boolean noDownload;
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
     private boolean force;
 
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
+
+
+
 
     public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
@@ -60,9 +63,14 @@ public class CheckOutCommand extends AbstractCommandLine{
         System.out.println("Checking out part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
 
         BinaryResource bin = pi.getNativeCADFile();
-        if(bin!=null && download){
+        if(bin!=null && !noDownload){
             FileHelper fh = new FileHelper(user,password);
             fh.downloadNativeCADFile(getServerURL(),path, workspace, partNumber, pr, pi, force);
         }
+    }
+
+    @Override
+    public String getDescription() {
+        return "Perform a check out operation and thus reserve the part for modification.";
     }
 }

@@ -61,9 +61,10 @@ public class MainCommand {
                         break;
 
                     case "help": case "?" : case "h":
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
-
+                        if(args.length>1){
+                            execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                            break;
+                        }
                     default:
                         printUsage();
                 }

@@ -57,4 +57,9 @@ public class PutCommand extends AbstractCommandLine{
         FileHelper fh = new FileHelper(user,password);
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
+
+    @Override
+    public String getDescription() {
+        return "Save the current local copy of the cad file to the server. The part will remain checked out.";
+    }
 }

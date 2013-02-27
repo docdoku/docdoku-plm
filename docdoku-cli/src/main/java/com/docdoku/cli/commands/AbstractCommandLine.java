@@ -66,6 +66,7 @@ public abstract class AbstractCommandLine implements CommandLine{
         execImpl();
     }
 
+
     public URL getServerURL() throws MalformedURLException {
         return new URL("http",host,port,"");
     }

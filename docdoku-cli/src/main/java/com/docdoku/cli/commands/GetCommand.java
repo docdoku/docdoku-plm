@@ -115,4 +115,8 @@ public class GetCommand extends AbstractCommandLine{
 
     }
 
+    @Override
+    public String getDescription() {
+        return "Retrieve the cad file of the given part as well as its sub-components if the command is performed recursively.";
+    }
 }

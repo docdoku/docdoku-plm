@@ -65,4 +65,9 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
     }
+
+    @Override
+    public String getDescription() {
+        return "Cancel the check out operation made previously. All current modifications will be lost.";
+    }
 }
