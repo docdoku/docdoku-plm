@@ -44,7 +44,6 @@ define([
         init: function() {
             _.bindAll(this);
             this.listenXHR();
-            this.initExportScene();
             this.initScene();
             this.initCamera();
             this.initControls();
@@ -108,13 +107,6 @@ define([
 
                 return _xhrOpen.apply(this, arguments);
             };
-        },
-
-        initExportScene: function() {
-
-            var self = this;
-
-
         },
 
         initScene: function() {
