@@ -1,4 +1,4 @@
-<h1> Welcome to the DocDoku PLM project</h1><img src = "http://plm.docdoku.com/wp-content/themes/docdokuplm/images/logo-DocDokuPLM.png" />
+<h1> Welcome to the DocDoku PLM project</h1><img src = "http://www.docdokuplm.com/wp-content/themes/docdokuplm/images/logo-DocDokuPLM.png" />
 
 ## What is DocDoku PLM?
 
@@ -24,7 +24,7 @@ You have a full description of the [Installation Guide](https://github.com/docdo
 
 ## Coding 
 
-You may fork the code on GitHub. Though you can use it with Maven in any IDE, the code is also configured for working with Netbeans without Maven.
+You may fork or just clone the code on [GitHub](https://github.com/docdoku/docdoku-plm) and then compile and package it with Maven.
 
 ## License
 
