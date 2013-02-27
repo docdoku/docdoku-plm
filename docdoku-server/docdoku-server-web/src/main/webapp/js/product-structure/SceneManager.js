@@ -20,6 +20,9 @@ define([
         _.defaults(options, defaultsOptions);
         _.extend(this, options);
 
+        this.isLoaded = false;
+        this.isPaused = false;
+
         this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
@@ -57,6 +60,7 @@ define([
             this.animate();
             this.initIframeScene();
             this.initShortcuts();
+            this.isLoaded = true;
         },
 
         listenXHR: function() {
@@ -392,6 +396,14 @@ define([
             this.scene.add(arrow);
         },
 
+        showStats:function(){
+            this.$stats.show();
+        },
+
+        hideStats:function(){
+            this.$stats.hide();
+        },
+
         initStats: function() {
             this.stats = new Stats();
             document.body.appendChild(this.stats.domElement);
@@ -438,26 +450,39 @@ define([
             var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.$container);
         },
 
+        pause:function(){
+            this.isPaused = true;
+        },
+
+        resume:function(){
+            this.isPaused = false;
+            this.animate();
+        },
+
         animate: function() {
             var self = this;
-            window.requestAnimationFrame(function() {
-                self.animate();
-            });
 
-            switch (this.stateControl) {
-                case this.STATECONTROL.PLC:
-                    this.cameraPosition = this.controls.getPosition();
-                    this.controls.update(Date.now() - this.time);
-                    this.time = Date.now();
-                    break;
-                case this.STATECONTROL.TBC:
-                    this.cameraPosition = this.camera.position;
-                    this.controls.update();
-                    break;
+            if(!this.isPaused){
+
+                window.requestAnimationFrame(function() {
+                    self.animate();
+                });
+
+                switch (this.stateControl) {
+                    case this.STATECONTROL.PLC:
+                        this.cameraPosition = this.controls.getPosition();
+                        this.controls.update(Date.now() - this.time);
+                        this.time = Date.now();
+                        break;
+                    case this.STATECONTROL.TBC:
+                        this.cameraPosition = this.camera.position;
+                        this.controls.update();
+                        break;
+                }
+
             }
 
             this.render();
-
             this.stats.update();
         },
 

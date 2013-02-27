@@ -27,9 +27,16 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.bomContainer.hide();
             this.centerSceneContainer.show();
             this.bomView.bomHeaderView.hideCheckGroup();
+
             if(this.partsTreeView.componentSelected){
                 this.exportSceneButton.show();
             }
+
+            if(sceneManager.isLoaded){
+                sceneManager.resume();
+                sceneManager.showStats();
+            }
+
         },
 
         bomMode: function() {
@@ -41,6 +48,11 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.exportSceneButton.hide();
             this.bomContainer.show();
             this.updateBom();
+
+            if(sceneManager.isLoaded){
+                sceneManager.pause();
+                sceneManager.hideStats();
+            }
         },
 
         isInBomMode: function() {
@@ -93,8 +105,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
                 }
             });
 
-
-
         },
 
         onComponentSelected: function(showRoot) {
@@ -129,8 +139,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             var esmv = new ExportSceneModalView({iframeSrc:iframeSrc});
             $("body").append(esmv.render().el);
             esmv.openModal();
-
-
 
         },
 
