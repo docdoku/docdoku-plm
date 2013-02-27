@@ -45,8 +45,8 @@ public class CheckInCommand extends AbstractCommandLine{
     @Argument(metaVar = "[<path>]", index=1, usage = "specify where to look at the native cad files; if path is omitted, the working directory is used")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-up", aliases = "--upload", usage="upload the native cad file of the part if any")
-    private boolean upload;
+    @Option(name="-n", aliases = "--no-upload", usage="do not upload the native cad file of the part if any")
+    private boolean noUpload;
 
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
@@ -55,7 +55,7 @@ public class CheckInCommand extends AbstractCommandLine{
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
 
-        if(upload){
+        if(!noUpload){
             PartRevision pr = productS.getPartRevision(partRPK);
             PartIteration pi = pr.getLastIteration();
 
@@ -77,5 +77,10 @@ public class CheckInCommand extends AbstractCommandLine{
         System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
 
 
+    }
+
+    @Override
+    public String getDescription() {
+        return "Perform a check in operation in order to validate the working copy of the part and hence make it visible to the whole team.";
     }
 }

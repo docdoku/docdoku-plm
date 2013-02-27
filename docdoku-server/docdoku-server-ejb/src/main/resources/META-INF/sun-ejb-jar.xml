@@ -71,6 +71,15 @@
             <jndi-name>ejb/IndexerBean</jndi-name>
         </ejb>
         <ejb>
+            <ejb-name>ConverterBean</ejb-name>
+            <jndi-name>ejb/ConverterBean</jndi-name>
+            <bean-pool>
+                <steady-pool-size>1</steady-pool-size>
+                <resize-quantity>1</resize-quantity>
+                <max-pool-size>1</max-pool-size>
+            </bean-pool>
+        </ejb>
+        <ejb>
             <ejb-name>IndexSearcherBean</ejb-name>
             <jndi-name>ejb/IndexSearcherBean</jndi-name>
         </ejb>

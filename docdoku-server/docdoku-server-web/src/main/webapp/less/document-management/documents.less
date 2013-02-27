@@ -1,3 +1,28 @@
+#document-content {
+
+  td {
+
+    a.dochandle {
+      font-size: 14px;
+      color: #aaa;
+      text-shadow: 0 1px 0 white;
+
+      &:hover {
+        color: #555;
+        cursor: move;
+        text-decoration: none;
+      }
+    }
+  }
+
+  tr.ui-draggable-dragging {
+    td{
+      background-color: white !important;
+    }
+    box-shadow: 0 3px 10px #333;
+  }
+}
+
 .document-modal {
 
   .modal-body {

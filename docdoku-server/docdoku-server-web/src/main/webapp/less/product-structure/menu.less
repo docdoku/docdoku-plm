@@ -14,85 +14,54 @@
   margin: 0;
   z-index: 1;
 
-  #product-menu-inner{
-
+  #product-menu-inner {
     height: 100%;
     position: relative;
 
-    #nav_list_action_bar{
+    #nav_list_action_bar {
       min-width: 190px;
       height: 35px;
       padding-top: 20px;
 
-      i{
+      i {
         background-image: none;
         font-size: 15px;
       }
 
-    }
+      #nav_list_controls {
+        padding-right: 15px;
+        padding-left: 15px;
 
-    #nav_list_controls{
-      padding-right: 15px;
-      padding-left: 15px;
+        #nav_list_search {
+          margin: 0;
 
-      input{
-        margin-left: 6%;
-        width: 60%;
-        float: left;
-        border-top-right-radius: 0px;
-        border-bottom-right-radius: 0px;
-        -webkit-appearance: none;
+          input {
+            margin-left: 6%;
+            width: 60%;
+            float: left;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            -webkit-appearance: none;
+          }
+
+          #nav_list_search_button {
+            float: left;
+            border-bottom-left-radius: 0px;
+            border-top-left-radius: 0px;
+          }
+
+        }
+
       }
-
-      #nav_list_search_button{
-        float: left;
-        border-bottom-left-radius: 0px;
-        border-top-left-radius: 0px;
-      }
-
     }
-
     #product_nav_list_container {
       bottom: 65px;
-      top:55px;
+      top: 55px;
       position: absolute;
       width: 100%;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
-
-    .nav-list{
-      .icon-cogs{
-        font-size: 15px;
-      }
-      .icon-cog{
-        font-size: 10px;
-      }
-
-      li{
-
-        a{
-          label{
-            color: #434C64;
-            font-size: 12px;
-            text-shadow: 0px 1px 0px white;
-          }
-          i{
-            background-image: none;
-          }
-        }
-
-        &.active{
-          a{
-            text-shadow: 0px 1px 0px white;
-            background-color: transparent;
-            color: #434C64;
-          }
-        }
-      }
-
-    }
-
 
   }
 
@@ -100,12 +69,11 @@
     font-weight: 600;
   }
 
-
   .ui-resizable-handle {
     position: absolute;
     bottom: 65px;
     right: 0;
-    top:0;
+    top: 0;
     z-index: 1000;
     width: 6px;
     background: transparent;

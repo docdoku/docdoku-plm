@@ -45,9 +45,9 @@ public class FileIO {
     private final static int BUFFER_CAPACITY = 1024 * 16;
 
 
-    private final static List<String> DOC_EXTENSIONS = Arrays.asList(new String[]{"odt", "html", "sxw", "swf", "sxc", "doc", "xls", "rtf", "txt", "ppt", "odp", "wpd", "tsv", "sxi", "csv", "pdf"});   
-    private final static List<String> AV_EXTENSIONS = Arrays.asList(new String[]{"mp3", "mpg", "flv", "mp4", "aac", "mov"});
-    private final static List<String> IMAGE_EXTENSIONS = Arrays.asList(new String[]{"jpg", "png", "gif", "psd", "jpeg", "psp", "tif"});
+    private final static List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
+    private final static List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
+    private final static List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
 
     private FileIO() {
     }

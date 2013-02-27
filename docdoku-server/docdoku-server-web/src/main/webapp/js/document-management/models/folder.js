@@ -5,6 +5,14 @@ define(function () {
             this.className = "Folder";
         },
 
+        getPath: function() {
+            return this.get("path");
+        },
+
+        getName: function() {
+            return this.get("name");
+        },
+
 		defaults: {
 			home: false
 		},

@@ -51,6 +51,9 @@ public class WorkspaceResource {
     private TagResource tags;
 
     @EJB
+    private CheckedOutResource checkedOuts;
+
+    @EJB
     private TaskResource tasks;
 
     @EJB
@@ -93,6 +96,11 @@ public class WorkspaceResource {
     @Path("/tags")
     public TagResource tags() {
         return tags;
+    }
+
+    @Path("/checkedouts")
+    public CheckedOutResource checkedOuts() {
+        return checkedOuts;
     }
 
     @Path("/search")

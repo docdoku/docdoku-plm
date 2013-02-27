@@ -83,7 +83,7 @@ public class StatusCommand extends AbstractCommandLine{
         String date = fillWithEmptySpace(df.format(pi.getCreationDate()), dateColSize);
         String author = fillWithEmptySpace(pi.getAuthor()+"", authorColSize);
         String note = pi.getIterationNote()==null?"":pi.getIterationNote();
-        System.out.println(iteration + "|" + date + "|" + author + "|" + note);
+        System.out.println(iteration + " |" + date + " |" + author + " | " + note);
     }
 
     private String fillWithEmptySpace(String txt, int totalChar){
@@ -95,4 +95,8 @@ public class StatusCommand extends AbstractCommandLine{
     }
 
 
+    @Override
+    public String getDescription() {
+        return "Print the status of the selected part.";
+    }
 }

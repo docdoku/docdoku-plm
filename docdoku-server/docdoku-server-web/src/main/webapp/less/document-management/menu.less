@@ -23,12 +23,17 @@
   }
 
   .nav-list-entry {
-    min-width: 90px;
     position: relative;
     padding: 0 40px 0 6px;
-    max-width: 125px;
     height: 26px;
-    display: inline-block;
+    display: block;
+
+    &.move-doc-into {
+      border: 1px dashed #8fbc8f;
+      height: 25px;
+      margin-top: -1px;
+      padding-left: 5px;
+    }
 
     .icon {
       float: left;

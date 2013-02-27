@@ -45,7 +45,7 @@ import org.apache.lucene.store.FSDirectory;
 
 /**
  *
- * @author flo
+ * @author Florent Garin
  */
 @Stateless(name = "IndexSearcherBean")
 public class IndexSearcherBean {

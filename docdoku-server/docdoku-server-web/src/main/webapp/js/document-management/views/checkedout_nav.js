@@ -1,7 +1,7 @@
 define([
 	"common-objects/common/singleton_decorator",
 	"common-objects/views/base",
-	"views/checkedout_content_list",
+	"views/checked_out_document_list",
 	"text!templates/checkedout_nav.html"
 ], function (
 	singletonDecorator,
@@ -9,9 +9,9 @@ define([
 	CheckedoutContentListView,
 	template
 ) {
-	var CheckedoutNavView = BaseView.extend({
+	var CheckedOutNavView = BaseView.extend({
 		template: Mustache.compile(template),
-		el: "#checkedout_nav",
+		el: "#checked-out-nav",
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.render();
@@ -27,6 +27,6 @@ define([
 			).render();
 		}
 	});
-	CheckedoutNavView = singletonDecorator(CheckedoutNavView);
-	return CheckedoutNavView;
+    CheckedOutNavView = singletonDecorator(CheckedOutNavView);
+	return CheckedOutNavView;
 });

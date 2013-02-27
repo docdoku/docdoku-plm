@@ -23,5 +23,7 @@ package com.docdoku.cli.commands;
 
 public interface CommandLine {
 
-    public void exec() throws Exception;
+    void exec() throws Exception;
+    String getDescription();
+
 }

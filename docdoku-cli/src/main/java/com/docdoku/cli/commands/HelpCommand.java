@@ -21,11 +21,54 @@
 package com.docdoku.cli.commands;
 
 
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineParser;
+
 public class HelpCommand implements CommandLine{
 
-
+    @Argument(metaVar = "<command>", required = true, index=0, usage = "the command to display the help information")
+    private String command;
 
     public void exec() {
-        System.out.println("HelpCommand");
+        CommandLine cl;
+        switch(command){
+            case "status": case "stat": case "st":
+                cl=new StatusCommand();
+                break;
+
+            case "get":
+                cl=new GetCommand();
+                break;
+
+            case "put":
+                cl=new PutCommand();
+                break;
+
+            case "checkout": case "co":
+                cl=new CheckOutCommand();
+                break;
+
+            case "undocheckout": case "uco":
+                cl=new UndoCheckOutCommand();
+                break;
+
+            case "checkin": case "ci":
+                cl=new CheckInCommand();
+                break;
+
+            case "help": case "?" : case "h":
+            default:
+                cl=new HelpCommand();
+        }
+
+        CmdLineParser parser = new CmdLineParser(cl);
+        System.out.println(cl.getDescription());
+        System.out.println();
+        parser.printUsage(System.out);
+    }
+
+    @Override
+    public String getDescription() {
+        return "Describe the usage of this program or its subcommands.";
     }
 }

@@ -1,28 +1,34 @@
-define (function() {
+define (["text!templates/part_meta_data.html"],function(template) {
     var PartMetadataView = Backbone.View.extend({
 
         el:$("#part_metadata_container"),
 
+        template: Mustache.compile(template),
+
         events: {
-            "click button#part_metadata_close_button": "closePartMetadata"
+            "click .toggle": "togglePartMetadata"
         },
 
         initialize: function() {
+            this.listenTo(this.model, 'change' , this.render);
+        },
+
+        setModel:function(model){
+            this.model = model;
         },
 
         render: function() {
 
-            var part_metadata_html = Mustache.render(
-                $('#part_metadata_template').html(), this.model);
+            this.$el.html(Mustache.render(template, this.model));
 
-            this.$el.append(part_metadata_html);
             this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"top");
+            this.$(".icon-user").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"top");
 
             return this;
         },
 
-        closePartMetadata: function() {
-            this.$el.hide();
+        togglePartMetadata: function() {
+            this.$el.toggleClass('minimized');
         }
         
     });

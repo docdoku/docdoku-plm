@@ -4,12 +4,12 @@ define([
     ResultPathCollection
     ) {
 
-    var LayersListView = Backbone.View.extend({
+    var SearchView = Backbone.View.extend({
 
         el: 'div#search_control_container',
 
         events: {
-            "click a#nav_list_search_button" : "search"
+            "submit form#nav_list_search" : "search"
         },
 
         initialize: function() {
@@ -17,8 +17,9 @@ define([
             this.collection = new ResultPathCollection();
         },
 
-        search: function(){
-            var searchString = this.searchInput.val().trim();
+        search: function(e){
+
+            var searchString = e.target.children[0].value.trim();
 
             if(searchString.length > 0) {
                 this.collection.searchString = searchString;
@@ -26,10 +27,12 @@ define([
             } else {
                 this.collection.reset();
             }
+
+            return false;
         }
 
     });
 
-    return LayersListView;
+    return SearchView;
 
 });

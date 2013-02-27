@@ -44,7 +44,7 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
     @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-d", aliases = "--download", usage="download the native cad file of the part if any")
+    @Option(name="-d", aliases = "--download", usage="download the previous native cad file of the part if any to revert the local copy")
     private boolean download;
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
@@ -64,5 +64,10 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
             FileHelper fh = new FileHelper(user,password);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
+    }
+
+    @Override
+    public String getDescription() {
+        return "Cancel the check out operation made previously. All current modifications will be lost.";
     }
 }

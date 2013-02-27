@@ -49,9 +49,12 @@ define({
         CAD_FILE: "CAD File",
         APPEND:"add",
         STANDARD_PART:"Standard part",
-        SUB_PARTS:"Parts",
+        SUB_PARTS:"Assembly",
         CREATE_NEW_PART:"Create a new part",
-        OR_ADD_PART:"Or add an existing part"
+        OR_ADD_PART:"Or add an existing part",
+        NO_WEBGL:"No WebGL available or activated",
+        TRUE:"True",
+        FALSE:"False"
     },
     "fr": true,
     "es": true

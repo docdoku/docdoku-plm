@@ -8,12 +8,15 @@ define([
 	template
 ) {
 	var DocumentListView = CheckboxListView.extend({
+
 		template: Mustache.compile(template),
+
 		itemViewFactory: function (model) {
 			return new DocumentListItemView({
 				model: model
 			});
 		}
+
 	});
 	return DocumentListView;
 });

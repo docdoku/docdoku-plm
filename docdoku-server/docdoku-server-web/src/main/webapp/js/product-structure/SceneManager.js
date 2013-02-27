@@ -1,12 +1,10 @@
 /*global sceneManager*/
 define([
     "views/marker_create_modal_view",
-    "views/export_scene_modal_view",
     "views/controls_infos_modal_view",
     "views/progress_bar_view"
 ], function (
     MarkerCreateModalView,
-    ExportSceneModalView,
     ControlsInfosModalView,
     ProgressBarView
 ) {
@@ -21,6 +19,9 @@ define([
 
         _.defaults(options, defaultsOptions);
         _.extend(this, options);
+
+        this.isLoaded = false;
+        this.isPaused = false;
 
         this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
@@ -46,20 +47,20 @@ define([
         init: function() {
             _.bindAll(this);
             this.listenXHR();
-            this.initExportScene();
             this.initScene();
             this.initCamera();
             this.initControls();
             this.bindSwitchControlEvents();
             this.initLights();
             this.initAxes();
-            this.initStats();
             this.initRenderer();
+            this.initStats();
             this.loadWindowResize();
             this.initLayerManager();
             this.animate();
             this.initIframeScene();
             this.initShortcuts();
+            this.isLoaded = true;
         },
 
         listenXHR: function() {
@@ -110,32 +111,6 @@ define([
 
                 return _xhrOpen.apply(this, arguments);
             };
-        },
-
-        initExportScene: function() {
-
-            var self = this;
-
-            $("#export_scene_btn").click(function() {
-
-                // Def url
-                var splitUrl = window.location.href.split("/");
-                var urlRoot = splitUrl[0] + "//" + splitUrl[2];
-
-                var paths = self.rootCollection;
-
-                var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
-                    + '?cameraX=' + self.camera.position.x
-                    + '&cameraY=' + self.camera.position.y
-                    + '&cameraZ=' + self.camera.position.z
-                    + '&pathToLoad=' + self.pathForIframeLink;
-
-                // Open modal
-                var esmv = new ExportSceneModalView({iframeSrc:iframeSrc});
-                $("body").append(esmv.render().el);
-                esmv.openModal();
-
-            });
         },
 
         initScene: function() {
@@ -421,6 +396,14 @@ define([
             this.scene.add(arrow);
         },
 
+        showStats:function(){
+            this.$stats.show();
+        },
+
+        hideStats:function(){
+            this.$stats.hide();
+        },
+
         initStats: function() {
             this.stats = new Stats();
             document.body.appendChild(this.stats.domElement);
@@ -467,26 +450,39 @@ define([
             var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.$container);
         },
 
+        pause:function(){
+            this.isPaused = true;
+        },
+
+        resume:function(){
+            this.isPaused = false;
+            this.animate();
+        },
+
         animate: function() {
             var self = this;
-            window.requestAnimationFrame(function() {
-                self.animate();
-            });
 
-            switch (this.stateControl) {
-                case this.STATECONTROL.PLC:
-                    this.cameraPosition = this.controls.getPosition();
-                    this.controls.update(Date.now() - this.time);
-                    this.time = Date.now();
-                    break;
-                case this.STATECONTROL.TBC:
-                    this.cameraPosition = this.camera.position;
-                    this.controls.update();
-                    break;
+            if(!this.isPaused){
+
+                window.requestAnimationFrame(function() {
+                    self.animate();
+                });
+
+                switch (this.stateControl) {
+                    case this.STATECONTROL.PLC:
+                        this.cameraPosition = this.controls.getPosition();
+                        this.controls.update(Date.now() - this.time);
+                        this.time = Date.now();
+                        break;
+                    case this.STATECONTROL.TBC:
+                        this.cameraPosition = this.camera.position;
+                        this.controls.update();
+                        break;
+                }
+
             }
 
             this.render();
-
             this.stats.update();
         },
 
