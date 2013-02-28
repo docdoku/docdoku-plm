@@ -1,21 +1,23 @@
-#coworkers_access_module_entries > li > a {
-    height: 18px;
-}
 #coworkers_access_module_entries > li > a > i{
     float:right;
-    margin: 4px 2px 0 0;
+    margin: 0;
+    padding: 11px 4px;
     opacity:0.5;
 }
 #coworkers_access_module_entries > li > a:hover > i{
     display: block;
     opacity:0.7;
+    text-shadow: 0 1px 0 white;
 }
 #coworkers_access_module_entries > li > a > i:hover{
     opacity:1;
+    color: white;
+    text-shadow: 0 -1px 0 #aaa;
 }
 #coworkers_access_module_entries > li > a > span > i{
     float:left;
-    margin: 4px 0 0 5px;
+    margin: 0;
+    padding: 11px 4px;
 }
 #coworkers_access_module_entries > li > a > span > span{
     float: left;
