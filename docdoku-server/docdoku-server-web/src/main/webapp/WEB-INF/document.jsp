@@ -138,7 +138,7 @@
                     </tr>
                     </thead>
                     <c:forEach var="item" items="${attr}">
-                        <tbody class="items">
+                    <tbody>
                         <tr>
                             <td>${item.name}</td>
 
@@ -161,7 +161,7 @@
                                 <td>${item.value}</td>
                             </c:if>
                         </tr>
-                        </tbody>
+                    </tbody>
                     </c:forEach>
                 </table>
                 </c:if>
@@ -173,7 +173,7 @@
         </div>
     </div>
     <div id="main">
-        <div id="general" class="well" style="display: inline">
+        <div id="general" class="well" style="display: block">
             <center><h3><fmt:message key="section1.title"/></h3></center><br />
             <table class="table table-striped table-condensed">
                 <tbody>
@@ -220,13 +220,13 @@
                 </tbody>
             </table>
             <c:if test="${docm.description!=''}">
-                <textarea name="" rows="5" cols="135" readonly="readonly" style="width: 492px">${docm.description}</textarea>
+                <textarea name="" rows="5" cols="135" readonly="readonly" style="width: 100%">${docm.description}</textarea>
             </c:if>
         </div>
     </div>
     <div id="iteration" class="well">
         <center><h3><fmt:message key="section2.title"/></h3></center><br />
-        <table class="table table-striped table-condensed">
+        <table>
             <tbody>
             <tr>
                 <th scope="row"><fmt:message key="section2.iteration"/>:</th>
