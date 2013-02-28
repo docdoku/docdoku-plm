@@ -33,9 +33,9 @@ define(
                 Backbone.Events.on('UserStatusRequestDone', function(message){
                     if(message.remoteUser == that.model.login && message.status != null){
                         if(message.status == "OFFLINE"){
-                            that.$(".icon-user").css("opacity",0.5).attr("title",i18n.OFFLINE);
+                            that.$(".icon-user").addClass("user-offline").removeClass("user-online").attr("title",i18n.OFFLINE);
                         }else if(message.status == "ONLINE"){
-                            that.$(".icon-user").css("opacity",1).attr("title",i18n.ONLINE);
+                            that.$(".icon-user").toggleClass("user-online").removeClass("user-offline").attr("title",i18n.ONLINE);
                         }
                     }
                 });

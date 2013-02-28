@@ -9,7 +9,8 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
         events: {
             "click #scene_view_btn": "sceneMode",
             "click #bom_view_btn": "bomMode",
-            "click #export_scene_btn": "exportScene"
+            "click #export_scene_btn": "exportScene",
+            "click #fullscreen_scene_btn": "fullScreenScene"
         },
 
         updateBom: function(showRoot) {
@@ -26,6 +27,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.sceneModeButton.addClass("active");
             this.bomContainer.hide();
             this.centerSceneContainer.show();
+            this.fullScreenSceneButton.show();
             this.bomView.bomHeaderView.hideCheckGroup();
 
             if(this.partsTreeView.componentSelected){
@@ -46,6 +48,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.partMetadataContainer.removeClass("active");
             this.centerSceneContainer.hide();
             this.exportSceneButton.hide();
+            this.fullScreenSceneButton.hide();
             this.bomContainer.show();
             this.updateBom();
 
@@ -66,6 +69,7 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.sceneModeButton = this.$("#scene_view_btn");
             this.bomModeButton = this.$("#bom_view_btn");
             this.exportSceneButton = this.$("#export_scene_btn");
+            this.fullScreenSceneButton = this.$("#fullscreen_scene_btn");
             this.bomContainer = this.$("#bom_table_container");
             this.centerSceneContainer = this.$("#center_container");
             this.partMetadataContainer = this.$("#part_metadata_container");
@@ -140,6 +144,10 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             $("body").append(esmv.render().el);
             esmv.openModal();
 
+        },
+
+        fullScreenScene:function(){
+            sceneManager.requestFullScreen();
         },
 
         onRefreshTree:function(){

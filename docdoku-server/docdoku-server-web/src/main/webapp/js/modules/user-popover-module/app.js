@@ -5,17 +5,9 @@ define([
 
     function (i18n,Users) {
 
-        // prevent popovers to keep on top
-        $(document).click(function(event) {
-            var $popovers = $(".popover");
-            if($(event.target).parents().index($popovers) == -1) {
-                $popovers.remove();
-            }
-        });
-
         var statusHtml = {
-            OFFLINE : "<i class='icon-user'></i> "+i18n.OFFLINE,
-            ONLINE  : "<i class='icon-user'></i> "+i18n.ONLINE
+            OFFLINE : "<i class='icon-user user-offline'></i> "+i18n.OFFLINE,
+            ONLINE  : "<i class='icon-user user-online'></i> "+i18n.ONLINE
         };
 
         // popover content template
@@ -33,7 +25,7 @@ define([
 
             // don't show the popover if user clicks on his name
             if (userLogin == APP_CONFIG.login){
-                return $(this);
+                return $(this).addClass("is-connected-user");
             }
 
             var shown = false;
@@ -42,13 +34,15 @@ define([
                 title: "",
                 html: true,
                 content: tipContent,
-                trigger: "manual",
+                trigger:"manual",
                 placement: placement
             }).click(function (e) {
 
                     var that = this;
 
                     if (!shown) {
+
+                        shown = true;
 
                         // Fetch and display user data
                         users.fetch({"async": true, "success": function () {
@@ -57,10 +51,13 @@ define([
                             var user = users.where({"login": userLogin})[0];
 
                             if (user){
+
                                 $(that).popover('show');
 
                                 // get the popover tip element
                                 var $tip = $(that).data('popover').$tip;
+
+                                $tip.addClass("reach-user-popover");
 
                                 // Listen for the status request done
                                 Backbone.Events.on('UserStatusRequestDone', function(message){
@@ -79,22 +76,28 @@ define([
                                 $tip.find(".webRTC_invite_button").one("click", function (ev) {
                                     Backbone.Events.trigger('NewOutgoingCall', { remoteUser : user.get("login") , context: APP_CONFIG.workspaceId + " : " + context});
                                     $(that).popover('hide');
+                                    shown = false;
                                 });
 
                                 // handle chat button click event
                                 $tip.find(".new_chat_session_button").one("click", function (ev) {
                                     Backbone.Events.trigger('NewChatSession', {remoteUser: user.get("login"), context: APP_CONFIG.workspaceId + " : " + context});
                                     $(that).popover('hide');
+                                    shown = false;
                                 });
 
                                 // handle mail button click event
                                 var mailToString =  encodeURI("mailto:"+user.get("email") + "?subject="+APP_CONFIG.workspaceId + " : " + context);
                                 $tip.find(".mailto_button").attr("href",mailToString).one("click", function (ev) {
                                     $(that).popover('hide');
+                                    shown = false;
                                 });
                             }
 
                         }});
+                    }else{
+                        $(that).popover('hide');
+                        shown = false;
                     }
                     e.stopPropagation();
                     e.preventDefault();
