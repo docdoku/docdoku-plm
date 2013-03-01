@@ -3,14 +3,14 @@ define([
     "common-objects/views/file/file_list",
     "common-objects/views/attributes/attributes",
     "views/document/document_lifecycle",
-    "views/document/document_links",
+    "common-objects/views/linked_document/linked_documents",
     "models/tag",
     "views/document/document_tag",
-    "collections/document_iteration",
+    "common-objects/collections/linked_document_collection",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common-objects/utils/date"
-], function (ModalView, FileListView, DocumentAttributesView, LifecycleDocumentView, DocumentLinksView, Tag, TagView, DocumentIterationCollection, template, i18n, date) {
+], function (ModalView, FileListView, DocumentAttributesView, LifecycleDocumentView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, i18n, date) {
 
     var IterationView = ModalView.extend({
 
@@ -151,14 +151,14 @@ define([
                 this.$("#iteration-files").html(this.fileListView.el);
 
 
-                this.documentLinksView = new DocumentLinksView({
+                this.linkedDocumentsView = new LinkedDocumentsView({
                     editMode: editMode,
                     documentIteration: this.iteration,
-                    collection: new DocumentIterationCollection(this.iteration.getLinkedDocuments())
+                    collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
                 }).render();
 
                 /* Add the documentLinksView to the tab */
-                this.$("#iteration-links").html(this.documentLinksView.el);
+                this.$("#iteration-links").html(this.linkedDocumentsView.el);
             }
 
             if(this.model.get("workflow")){
@@ -187,7 +187,7 @@ define([
             this.iteration.save({
                 revisionNote: this.$('#inputRevisionNote').val(),
                 instanceAttributes: this.customAttributesView.collection.toJSON(),
-                linkedDocuments: this.documentLinksView.collection.toJSON()
+                linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             });
 
             /*There is a parsing problem at saving time*/
