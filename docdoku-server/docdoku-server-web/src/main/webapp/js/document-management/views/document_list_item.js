@@ -29,6 +29,8 @@ define([
 			this.events["click .iteration-subscription"] = this.toggleIterationSubscription;
             this.events["dragstart a.dochandle"] = this.dragStart;
             this.events["dragend a.dochandle"] = this.dragEnd;
+            this.events["dragstart td.doc-ref"] = this.dragStart;
+            this.events["dragend td.doc-ref"] = this.dragEnd;
 		},
 
 		modelToJSON: function () {
@@ -81,6 +83,8 @@ define([
 
         dragStart: function(e) {
             var that = this;
+            this.$el.addClass("moving");
+
             Backbone.Events.on("document-moved", function(){
                 Backbone.Events.off("document-moved");
                 that.model.collection.remove(that.model);
@@ -93,8 +97,10 @@ define([
         },
 
         dragEnd: function(e) {
-            if(e.dataTransfer.dropEffect == "none")
+            if(e.dataTransfer.dropEffect == "none"){
                 Backbone.Events.off("document-moved");
+                this.$el.removeClass("moving");
+            }
         },
 
 		actionEdit: function (evt) {
