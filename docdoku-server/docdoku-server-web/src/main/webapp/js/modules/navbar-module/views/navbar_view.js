@@ -5,20 +5,23 @@ define(function() {
         el: $("div.navbar"),
 
         events: {
-            "click #product-creation": "onProductCreation"
+            "click .product-management": "onProductManagement"
         },
 
         initialize: function() {
             this.$listProducts = this.$('li#product_container > ul');
         },
 
-        onProductCreation: function() {
+        onProductManagement: function() {
             var self = this;
-            require(['modules/product-creation-module/views/product_creation_view'], function(ProductCreationView) {
-                var productCreationView = new ProductCreationView();
-                self.listenTo(productCreationView, 'product:created', self.addProductInList);
-                self.$el.after(productCreationView.render().el);
-                productCreationView.openModal();
+            require(['modules/product-creation-module/views/product_management_view'], function(ProductManagementView) {
+                var productManagementView = new ProductManagementView();
+
+                self.listenTo(productManagementView, 'product:created', self.addProductInList);
+                self.listenTo(productManagementView, 'product:removed', self.removeProductFromList);
+
+                self.$el.after(productManagementView.render().el);
+                productManagementView.openModal();
             });
         },
 
@@ -27,6 +30,10 @@ define(function() {
             require(["text!modules/navbar-module/templates/navbar_product_item.html"], function(productItemTemplate) {
                 self.$listProducts.append(Mustache.render(productItemTemplate, configurationItem));
             });
+        },
+
+        removeProductFromList:function(configurationItem){
+            this.$listProducts.find("[data-id="+configurationItem.getId()+"]").remove();
         }
 
     });

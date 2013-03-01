@@ -1,4 +1,6 @@
-define(function() {
+define(
+    ["text!templates/layer_item.html"],
+    function(template) {
 
     var LayerItemView = Backbone.View.extend({
 
@@ -9,7 +11,8 @@ define(function() {
             "dblclick"        : "startEditingName",
             "blur .edit"      : "stopEditingName",
             "keypress .edit"  : "stopEditingNameOnEnter",
-            "click i.end"     : "toggleEditingMarkers"
+            "click i.end"     : "toggleEditingMarkers",
+            "click i.icon-remove"  : "removeLayer"
         },
 
         initialize: function() {
@@ -18,10 +21,11 @@ define(function() {
                 .listenTo(this.model.getMarkers(), 'add remove reset', this.render);
         },
 
-        template: "<i class=\"icon-eye-open start\"></i><span class=\"color\" style=\"background-color:{{getHexaColor}}\">&nbsp;</span><p>{{ attributes.name }} ({{ countMarkers }})</p><i class=\"icon-pushpin end\"></i><input class=\"edit\" type=\"text\" value=\"{{ attributes.name }}\">",
+        template:Mustache.compile(template),
 
         render: function() {
-            this.$el.html(Mustache.render(this.template, this.model));
+
+            this.$el.html(this.template(this.model));
             this.$el.toggleClass('shown', this.model.get('shown'));
             var editingName = this.model.get('editingName');
             this.$el.toggleClass('editingName', editingName);
@@ -61,6 +65,9 @@ define(function() {
             if (e.keyCode == 13) {
                 this.input[0].blur();
             }
+        },
+        removeLayer:function(){
+            this.model.destroy();
         }
 
     });

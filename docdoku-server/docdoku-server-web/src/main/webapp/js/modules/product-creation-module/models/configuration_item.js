@@ -11,8 +11,16 @@ define(function() {
             return response;
         },
 
+        getId:function(){
+            return this.get("id");
+        },
+
         getIndexUrl: function() {
-            return "/product-structure/" + APP_CONFIG.workspaceId + "/" + this.attributes.id;
+            return "/product-structure/" + APP_CONFIG.workspaceId + "/" + this.getId();
+        },
+
+        getFrameUrl: function() {
+            return "/visualization/" + APP_CONFIG.workspaceId + "/" + this.getId()+"?cameraX=0&cameraY=10&cameraZ=1000&pathToLoad=null";
         }
 
     });

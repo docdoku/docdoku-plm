@@ -236,6 +236,7 @@ public class PartsResource {
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
 
         return Response.ok().build();
+
         // TODO : implement this
         /*
         try {

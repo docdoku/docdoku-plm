@@ -26,20 +26,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 /**
  * A Layer is a collection of <a href="Marker.html">Marker</a>s that can be
@@ -52,7 +39,10 @@ import javax.persistence.TemporalType;
  */
 @Table(name="LAYER")
 @Entity
-@NamedQuery(name="Layer.findLayersByConfigurationItem",query="SELECT DISTINCT l FROM Layer l WHERE l.configurationItem.id = :configurationItemId AND l.configurationItem.workspace.id = :workspaceId")
+@NamedQueries({
+    @NamedQuery(name="Layer.findLayersByConfigurationItem",query="SELECT DISTINCT l FROM Layer l WHERE l.configurationItem.id = :configurationItemId AND l.configurationItem.workspace.id = :workspaceId"),
+    @NamedQuery(name="Layer.removeLayersFromConfigurationItem",query="DELETE FROM Layer l WHERE l.configurationItem.id = :configurationItemId AND l.configurationItem.workspace.id = :workspaceId")
+})
 public class Layer implements Serializable{
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)

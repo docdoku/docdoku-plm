@@ -642,6 +642,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
+    @Override
+    public void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        new ConfigurationItemDAO(new Locale(user.getLanguage()),em).removeConfigurationItem(configurationItemKey);
+    }
+
+    @Override
+    public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layerId);
+    }
+
     @RolesAllowed("users")
     @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {

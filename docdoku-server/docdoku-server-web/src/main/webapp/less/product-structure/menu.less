@@ -19,9 +19,7 @@
     position: relative;
 
     #nav_list_action_bar {
-      min-width: 190px;
-      height: 35px;
-      padding-top: 20px;
+      padding: 16px 0 0 0;
 
       i {
         background-image: none;
@@ -29,23 +27,27 @@
       }
 
       #nav_list_controls {
-        padding-right: 15px;
-        padding-left: 15px;
 
         #nav_list_search {
           margin: 0;
+          position: relative;
 
           input {
-            margin-left: 6%;
-            width: 60%;
-            float: left;
+            width:auto;
+            position: absolute;
+            top:0;
+            left:6%;
+            right:6%;
+
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
             -webkit-appearance: none;
           }
 
           #nav_list_search_button {
-            float: left;
+            position: absolute;
+            top:0;
+            right:6%;
             border-bottom-left-radius: 0px;
             border-top-left-radius: 0px;
           }

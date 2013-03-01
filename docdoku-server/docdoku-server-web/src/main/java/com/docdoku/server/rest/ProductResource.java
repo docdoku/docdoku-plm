@@ -151,6 +151,19 @@ public class ProductResource {
         }
     }
 
+    @DELETE
+    @Path("{ciId}")
+    @Produces("application/json;charset=UTF-8")
+    public Response deleteProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
+        try {
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+            productService.deleteConfigurationItem(ciKey);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     @GET
     @Path("{ciId}/paths")
     @Produces("application/json;charset=UTF-8")

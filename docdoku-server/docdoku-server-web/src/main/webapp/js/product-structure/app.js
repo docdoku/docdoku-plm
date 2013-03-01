@@ -137,6 +137,8 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
 
             if(this.partsTreeView.componentSelected.getPath()){
                 iframeSrc += '&pathToLoad=' + this.partsTreeView.componentSelected.getPath();
+            }else{
+                iframeSrc+= "&pathToLoad=null";
             }
 
             // Open modal
