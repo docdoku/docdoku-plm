@@ -33,7 +33,7 @@ define(function() {
         },
 
         removeProductFromList:function(configurationItem){
-            this.$listProducts.find("[data-id="+configurationItem.getId()+"]").remove();
+            this.$listProducts.find("[data-id='"+configurationItem.getId()+"']").remove();
         }
 
     });
