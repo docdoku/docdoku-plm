@@ -78,6 +78,10 @@ define([
             return this.get("components");
         },
 
+        getLinkedDocuments : function(){
+            return this.get("linkedDocuments");
+        },
+
 
         /**
          * file Upload uses the old servlet, not the JAXRS Api         *

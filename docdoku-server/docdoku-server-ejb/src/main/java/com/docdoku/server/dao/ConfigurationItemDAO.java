@@ -20,11 +20,12 @@
 package com.docdoku.server.dao;
 
 
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
 import com.docdoku.core.services.ConfigurationItemNotFoundException;
 import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.LayerNotFoundException;
+
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityExistsException;
@@ -52,10 +53,36 @@ public class ConfigurationItemDAO {
         em.merge(pCI);
     }
 
-    public ConfigurationItem removeConfigurationItem(ConfigurationItemKey pKey) throws ConfigurationItemNotFoundException {
+    public ConfigurationItem removeConfigurationItem(ConfigurationItemKey pKey) throws ConfigurationItemNotFoundException, LayerNotFoundException {
         ConfigurationItem ci = loadConfigurationItem(pKey);
+
+        removeLayersFromConfigurationItem(pKey);
+        removeEffectivitiesFromConfigurationItem(pKey);
+        removeEffectivityConfigSpecFromConfigurationItem(pKey);
+
         em.remove(ci);
         return ci;
+    }
+
+    public void removeLayersFromConfigurationItem(ConfigurationItemKey pKey){
+        TypedQuery<Layer> query = em.createNamedQuery("Layer.removeLayersFromConfigurationItem", Layer.class);
+        query.setParameter("workspaceId", pKey.getWorkspace());
+        query.setParameter("configurationItemId", pKey.getId());
+        query.executeUpdate();
+    }
+
+    public void removeEffectivitiesFromConfigurationItem(ConfigurationItemKey pKey){
+        TypedQuery<Effectivity> query = em.createNamedQuery("Effectivity.removeEffectivitiesFromConfigurationItem", Effectivity.class);
+        query.setParameter("workspaceId", pKey.getWorkspace());
+        query.setParameter("configurationItemId", pKey.getId());
+        query.executeUpdate();
+    }
+
+    public void removeEffectivityConfigSpecFromConfigurationItem(ConfigurationItemKey pKey){
+        TypedQuery<EffectivityConfigSpec> query = em.createNamedQuery("EffectivityConfigSpec.removeEffectivityConfigSpecFromConfigurationItem", EffectivityConfigSpec.class);
+        query.setParameter("workspaceId", pKey.getWorkspace());
+        query.setParameter("configurationItemId", pKey.getId());
+        query.executeUpdate();
     }
 
     public List<ConfigurationItem> findAllConfigurationItems(String pWorkspaceId) {

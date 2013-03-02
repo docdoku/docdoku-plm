@@ -22,6 +22,8 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.CADInstance;
@@ -51,6 +53,7 @@ import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
+
 import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;
@@ -94,7 +97,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public List<PartUsageLink[]> findPartUsages(ConfigurationItemKey pKey, PartMasterKey pPartMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
+    public List<PartUsageLink[]> findPartUsages(ConfigurationItemKey pKey, PartMasterKey pPartMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLinkDAO linkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
         List<PartUsageLink[]> usagePaths = linkDAO.findPartUsagePaths(pPartMKey);
@@ -109,7 +112,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartMasterDAO partMDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
         return partMDAO.findPartMasters(pWorkspaceId, pPartNumber, pMaxResults);
     }
-    
+
     @RolesAllowed("users")
     @Override
     public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
@@ -123,7 +126,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink.setId(-1);
             rootUsageLink.setAmount(1d);
             List<CADInstance> cads = new ArrayList<CADInstance>();
-            cads.add(new CADInstance(0d,0d,0d,0d,0d,0d,CADInstance.Positioning.ABSOLUTE));
+            cads.add(new CADInstance(0d, 0d, 0d, 0d, 0d, 0d, CADInstance.Positioning.ABSOLUTE));
             rootUsageLink.setCadInstances(cads);
             rootUsageLink.setComponent(ci.getDesignItem());
         } else {
@@ -299,7 +302,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 newPartIteration.addFile(targetFile);
             }
 
-            List<PartUsageLink> components=new LinkedList<PartUsageLink>();
+            List<PartUsageLink> components = new LinkedList<PartUsageLink>();
             for (PartUsageLink usage : beforeLastPartIteration.getComponents()) {
                 PartUsageLink newUsage = usage.clone();
                 components.add(newUsage);
@@ -317,7 +320,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             BinaryResource nativeCADFile = beforeLastPartIteration.getNativeCADFile();
-            if (nativeCADFile!=null){
+            if (nativeCADFile != null) {
                 String fileName = nativeCADFile.getName();
                 long length = nativeCADFile.getContentLength();
                 String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/nativecad/" + fileName;
@@ -443,9 +446,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 file = new BinaryResource(fullName, pSize);
                 binDAO.createBinaryResource(file);
                 partI.setNativeCADFile(file);
-            } else if (file.getFullName().equals(fullName)){
+            } else if (file.getFullName().equals(fullName)) {
                 file.setContentLength(pSize);
-            }else {
+            } else {
                 dataManager.delData(file);
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(file);
@@ -507,35 +510,58 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     * */
     @RolesAllowed("users")
     @Override
-    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
+    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         PartMasterDAO partMDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
+        DocumentLinkDAO linkDAO = new DocumentLinkDAO(new Locale(user.getLanguage()), em);
 
         PartRevision partRev = partRDAO.loadPartR(pKey.getPartRevision());
         PartIteration partIte = partRev.getLastIteration();
         //check access rights on partM ?
         if (partRev.isCheckedOut() && partRev.getCheckOutUser().equals(user) && partIte.getKey().equals(pKey)) {
-            if(pUsageLinks!=null){
+            if (pLinkKeys != null) {
+                Set<DocumentIterationKey> linkKeys = new HashSet<DocumentIterationKey>(Arrays.asList(pLinkKeys));
+                Set<DocumentIterationKey> currentLinkKeys = new HashSet<DocumentIterationKey>();
+
+                Set<DocumentLink> currentLinks = new HashSet<DocumentLink>(partIte.getLinkedDocuments());
+
+                for (DocumentLink link : currentLinks) {
+                    DocumentIterationKey linkKey = link.getTargetDocumentKey();
+                    if (!linkKeys.contains(linkKey)) {
+                        partIte.getLinkedDocuments().remove(link);
+                    } else
+                        currentLinkKeys.add(linkKey);
+                }
+
+                for (DocumentIterationKey link : linkKeys) {
+                    if (!currentLinkKeys.contains(link)) {
+                        DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                        linkDAO.createLink(newLink);
+                        partIte.getLinkedDocuments().add(newLink);
+                    }
+                }
+            }
+            if (pUsageLinks != null) {
                 List<PartUsageLink> usageLinks = new LinkedList<PartUsageLink>();
-                for(PartUsageLink usageLink:pUsageLinks){
-                    PartUsageLink ul= new PartUsageLink();
+                for (PartUsageLink usageLink : pUsageLinks) {
+                    PartUsageLink ul = new PartUsageLink();
                     ul.setAmount(usageLink.getAmount());
                     ul.setCadInstances(usageLink.getCadInstances());
                     ul.setComment(usageLink.getComment());
                     ul.setReferenceDescription(usageLink.getReferenceDescription());
                     ul.setUnit(usageLink.getUnit());
                     PartMaster pm = usageLink.getComponent();
-                    PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(),pm.getNumber()));
+                    PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(), pm.getNumber()));
                     ul.setComponent(component);
                     List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
-                    for(PartSubstituteLink substitute:usageLink.getSubstitutes()){
+                    for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
                         PartSubstituteLink sub = new PartSubstituteLink();
                         sub.setCadInstances(substitute.getCadInstances());
                         sub.setComment(substitute.getComment());
                         sub.setReferenceDescription(substitute.getReferenceDescription());
                         PartMaster pmSub = substitute.getSubstitute();
-                        sub.setSubstitute(partMDAO.loadPartM(new PartMasterKey(pmSub.getWorkspaceId(),pmSub.getNumber())));
+                        sub.setSubstitute(partMDAO.loadPartM(new PartMasterKey(pmSub.getWorkspaceId(), pmSub.getNumber())));
                         substitutes.add(sub);
                     }
                     ul.setSubstitutes(substitutes);
@@ -544,7 +570,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                 partIte.setComponents(usageLinks);
             }
-            if(pAttributes!=null){
+            if (pAttributes != null) {
                 // set doc for all attributes
                 Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
                 for (InstanceAttribute attr : pAttributes) {
@@ -618,13 +644,25 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
+    @Override
+    public void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        new ConfigurationItemDAO(new Locale(user.getLanguage()),em).removeConfigurationItem(configurationItemKey);
+    }
+
+    @Override
+    public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layerId);
+    }
+
     @RolesAllowed("users")
     @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartMPK.getWorkspace());
         PartMaster partM = new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(pPartMPK);
 
-        for(PartRevision partR:partM.getPartRevisions()){
+        for (PartRevision partR : partM.getPartRevisions()) {
             if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
                 em.detach(partR);
                 partR.removeLastIteration();

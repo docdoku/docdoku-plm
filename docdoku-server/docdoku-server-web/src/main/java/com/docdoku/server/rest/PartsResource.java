@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -120,9 +121,15 @@ public class PartsResource {
                 newComponents = createComponents(pWorkspaceId, components);
             }
 
+            List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
+            DocumentIterationKey[] links = null;
+            if (linkedDocs != null) {
+                links = createDocumentIterationKey(linkedDocs);
+            }
+
             PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes);
+            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links);
 
             PartDTO partDTO = mapper.map(partRevisionUpdated, PartDTO.class);
             partDTO.setNumber(partRevisionUpdated.getPartNumber());
@@ -229,6 +236,7 @@ public class PartsResource {
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
 
         return Response.ok().build();
+
         // TODO : implement this
         /*
         try {
@@ -334,6 +342,18 @@ public class PartsResource {
 
     }
 
+    private DocumentIterationKey[] createDocumentIterationKey(List<DocumentIterationDTO> dtos) {
+        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+        int i = 0;
+        for (DocumentIterationDTO dto : dtos) {
+            data[i++] = createObject(dto);
+        }
 
+        return data;
+    }
+
+    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
+        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
+    }
 
 }

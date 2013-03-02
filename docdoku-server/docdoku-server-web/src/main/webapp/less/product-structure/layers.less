@@ -27,7 +27,15 @@
         border-bottom-left-radius: 8px;
 
         li {
+          border-bottom: 1px solid #ccc;
             color: #999;
+
+          &:hover{
+            background: #eee;
+            .icon-remove{
+              opacity: 0.6;
+            }
+          }
 
             &:last-child {
                 border-bottom: none;
@@ -55,15 +63,14 @@
         border-top-right-radius: 8px;
         border-top-left-radius: 8px;
         font-weight: bold;
-        color: white;
+        color: #F5F5F5;
         text-shadow: 0px 1px 0px black;
         background: #3F5F99;
-        background-image: -moz-linear-gradient(top, #3F5F99, #213251);
-        background-image: -webkit-linear-gradient(top, #3F5F99, #213251);
+        #gradient > .vertical(#7a99c1, #2c4361);
         font-size: 14px;
 
         i {
-            color: white;
+            color: #F5F5F5;
 
             &.end {
                 opacity: 1;
@@ -80,12 +87,9 @@
         height: 30px;
         line-height: 30px;
         padding: 5px 40px 5px 50px;
-        border-bottom: 1px solid #ccc;
         list-style-type: none;
 
         &.editingName {
-
-            border-bottom: none;
 
             input.edit {
                 display: block;
@@ -111,20 +115,26 @@
 
         i {
             cursor: pointer;
-            opacity: 0.20;
+            opacity: 0.5;
             position: absolute;
-            font-size: 25px;
-            color: black;
+            font-size: 20px;
 
             &.start {
-                left: 7px;
-                top: 7px;
+                left: 10px;
+                top: 10px;
             }
 
             &.end {
                 right: 5px;
-                top: 7px;
+                top: 10px;
             }
+
+          &.icon-remove{
+            right:25px;
+            top:8px;
+            opacity: 0;
+            font-weight: normal;
+          }
 
         }
 
@@ -149,6 +159,7 @@
     }
 
     p {
+      cursor:pointer;
         margin: 0px;
         padding: 0px;
         white-space: nowrap;

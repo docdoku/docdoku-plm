@@ -1,75 +1,70 @@
-<div id="product_creation_modal" class="modal hide fade no-overflow" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>{{i18n.NEW_PRODUCT}}</h3>
+<form id="product_creation_form" class="form-horizontal">
+
+    <div class="control-group">
+        <label class="control-label" for="inputProductId">{{i18n.PRODUCT_ID}}</label>
+        <div class="controls">
+            <input type="text" id="inputProductId" placeholder="{{i18n.PRODUCT_ID}}" required />
+        </div>
     </div>
-    <div class="modal-body">
-        <form id="product_creation_form" class="form-horizontal">
 
-            <div class="control-group">
-                <label class="control-label" for="inputProductId">{{i18n.PRODUCT_ID}}</label>
-                <div class="controls">
-                    <input type="text" id="inputProductId" placeholder="{{i18n.PRODUCT_ID}}" required />
-                </div>
+    <div class="control-group">
+        <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
+        <div class="controls">
+            <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="control-group" id="inputPartNumberWrapper">
+        <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
+        <div class="controls">
+            <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" data-provide="typeahead" required />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <a id="show_part_creation_fields">{{i18n.CREATE_NEW_PART}}</a>
+            <a id="hide_part_creation_fields">{{i18n.CANCEL_PART_CREATION}}</a>
+        </div>
+    </div>
+
+    <div id="part_creation_fields">
+
+        <div class="control-group">
+            <label class="control-label" for="inputNewPartNumber">{{i18n.PART_NUMBER}}</label>
+            <div class="controls">
+                <input type="text" id="inputNewPartNumber" placeholder="{{i18n.PART_NUMBER}}" />
             </div>
+        </div>
 
-            <div class="control-group">
-                <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
-                <div class="controls">
-                    <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
-                </div>
+        <div class="control-group">
+            <label class="control-label" for="inputNewPartName">{{i18n.PART_NAME}}</label>
+            <div class="controls">
+                <input type="text" id="inputNewPartName" placeholder="{{i18n.PART_NAME}}" />
             </div>
+        </div>
 
-            <div class="control-group" id="inputPartNumberWrapper">
-                <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
-                <div class="controls">
-                    <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" data-provide="typeahead" required />
-                </div>
+        <div class="control-group">
+            <label class="control-label" for="inputNewPartDescription">{{i18n.DESCRIPTION}}</label>
+            <div class="controls">
+                <textarea id="inputNewPartDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
             </div>
+        </div>
 
-            <div class="control-group">
-                <div class="controls">
-                    <a id="show_part_creation_fields">{{i18n.CREATE_NEW_PART}}</a>
-                    <a id="hide_part_creation_fields">{{i18n.CANCEL_PART_CREATION}}</a>
-                </div>
+        <div class="control-group">
+            <label class="control-label" for="inputNewPartStandard">{{i18n.STANDARD_PART}}</label>
+            <div class="controls">
+                <input type="checkbox" id="inputNewPartStandard" />
             </div>
-
-            <div id="part_creation_fields">
-
-                <div class="control-group">
-                    <label class="control-label" for="inputNewPartNumber">{{i18n.PART_NUMBER}}</label>
-                    <div class="controls">
-                        <input type="text" id="inputNewPartNumber" placeholder="{{i18n.PART_NUMBER}}" />
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="inputNewPartName">{{i18n.PART_NAME}}</label>
-                    <div class="controls">
-                        <input type="text" id="inputNewPartName" placeholder="{{i18n.PART_NAME}}" />
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="inputNewPartDescription">{{i18n.DESCRIPTION}}</label>
-                    <div class="controls">
-                        <textarea id="inputNewPartDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label" for="inputNewPartStandard">{{i18n.STANDARD_PART}}</label>
-                    <div class="controls">
-                        <input type="checkbox" id="inputNewPartStandard" />
-                    </div>
-                </div>
-            </div>
-
-        </form>
+        </div>
 
     </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
-        <button class="btn btn-primary" form="product_creation_form">{{i18n.CREATE_PRODUCT}}</button>
+
+    <div class="control-group">
+        <div class="controls">
+
+        <button class="btn btn-primary" form="product_creation_form">Create Product</button>
+        </div>
     </div>
-</div>
+
+</form>

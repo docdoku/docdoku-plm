@@ -1,10 +1,10 @@
 define([
-    "collections/document_iteration",
-    "views/document/document_link",
-    "text!templates/document/document_links.html",
+    "common-objects/collections/linked_document_collection",
+    "common-objects/views/linked_document/linked_document",
+    "text!common-objects/templates/linked_document/linked_documents.html",
     "i18n!localization/nls/document-management-strings"
-], function(DocumentIterationCollection, DocumentLinkView, template, i18n) {
-    var DocumentLinksView = Backbone.View.extend({
+], function(LinkedDocumentCollection, LinkedDocumentView, template, i18n) {
+    var LinkedDocumentsView = Backbone.View.extend({
 
         tagName: 'div',
         className: 'linked-documents-view',
@@ -41,7 +41,7 @@ define([
 
         addLinkView: function(linkedDocument) {
             var self = this;
-            var linkView = new DocumentLinkView({
+            var linkView = new LinkedDocumentView({
                 editMode: this.options.editMode,
                 model: linkedDocument
             }).render();
@@ -56,7 +56,7 @@ define([
                 source: function(query, process) {
                     $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/documents/docs_last_iter?q=' + query, function(data) {
 
-                        self.searchResults = new DocumentIterationCollection(data);
+                        self.searchResults = new LinkedDocumentCollection(data);
 
                         // Remove documents that are already linked
                         var docsToRemove = [];
@@ -96,5 +96,5 @@ define([
         }
 
     });
-    return DocumentLinksView;
+    return LinkedDocumentsView;
 });

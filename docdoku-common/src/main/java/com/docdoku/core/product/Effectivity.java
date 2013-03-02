@@ -20,16 +20,7 @@
 package com.docdoku.core.product;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
@@ -48,6 +39,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 @XmlSeeAlso({DateBasedEffectivity.class, SerialNumberBasedEffectivity.class, LotBasedEffectivity.class})
 @Inheritance()
 @Entity
+@NamedQuery(name="Effectivity.removeEffectivitiesFromConfigurationItem",query="DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId")
+
 public abstract class Effectivity implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

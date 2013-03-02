@@ -459,6 +459,10 @@ define([
             this.animate();
         },
 
+        requestFullScreen:function(){
+            this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        },
+
         animate: function() {
             var self = this;
 

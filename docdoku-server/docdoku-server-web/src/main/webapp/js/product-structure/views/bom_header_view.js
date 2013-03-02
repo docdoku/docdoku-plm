@@ -27,7 +27,7 @@ define(["text!templates/bom_header.html", "i18n!localization/nls/product-structu
         },
 
         render: function() {
-            this.$el.prepend(Mustache.render(template, {i18n : i18n}));
+            this.$el.append(Mustache.render(template, {i18n : i18n}));
             this.checkoutGroup = this.$(".checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");

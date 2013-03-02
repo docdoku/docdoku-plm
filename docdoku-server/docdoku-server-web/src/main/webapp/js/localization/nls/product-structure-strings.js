@@ -54,7 +54,8 @@ define({
         OR_ADD_PART:"Or add an existing part",
         NO_WEBGL:"No WebGL available or activated",
         TRUE:"True",
-        FALSE:"False"
+        FALSE:"False",
+        "LINKS":"Links"
     },
     "fr": true,
     "es": true
