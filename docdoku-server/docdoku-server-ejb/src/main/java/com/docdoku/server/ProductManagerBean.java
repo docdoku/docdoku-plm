@@ -85,6 +85,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private final static Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
     private DataManager dataManager;
 
+
+
     @PostConstruct
     private void init() {
         dataManager = new DataManagerImpl(new File(vaultPath));

@@ -35,10 +35,10 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Option(name="-h", aliases = "--host", metaVar = "<host>", usage="host of the DocDokuPLM server to connect; default is docdokuplm.net")
     protected String host="docdokuplm.net";
 
-    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="user for login")
+    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="password to log in")
     protected String password;
 
-    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="password to log in")
+    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="user for login")
     protected String user;
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
