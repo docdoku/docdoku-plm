@@ -1,8 +1,10 @@
 define([
+    "i18n!localization/nls/document-management-strings",
 	"common-objects/views/components/modal",
 	"common-objects/views/attributes/template_new_attributes",
 	"text!templates/template_new.html"
 ], function (
+    i18n,
 	ModalView,
 	TemplateNewAttributesView,
 	template
@@ -18,6 +20,13 @@ define([
 					el: "#tab-attributes-" + this.cid
 				})
 			).render();
+
+            this.$("a#mask-help").popover({
+                title: i18n.MASK,
+                placement: "left",
+                html: true,
+                content: i18n.MASK_HELP
+            });
 		},
 		primaryAction: function () {
 			var reference = $("#form-" + this.cid + " .reference").val();

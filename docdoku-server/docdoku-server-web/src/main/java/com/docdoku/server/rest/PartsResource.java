@@ -232,27 +232,20 @@ public class PartsResource {
 
     @DELETE
     @Consumes("application/json;charset=UTF-8")
-    @Path("/iterations/{partIteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
-
-        return Response.ok().build();
-
-        // TODO : implement this
-        /*
+    @Path("{partKey}/iterations/{partIteration}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
         try {
-            int lastDash = docKey.lastIndexOf('-');
-            String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash + 1, docKey.length());
+            int lastDash = partKey.lastIndexOf('-');
+            String number = partKey.substring(0, lastDash);
+            String version = partKey.substring(lastDash + 1, partKey.length());
 
-            String fileFullName = workspaceId + "/parts/" + id + "/" + version + "/" + partIteration + "/nativecad/" + fileName;
-
-            // unimplemented
-            productService.removeCADfileFromPart(...);
+            PartIterationKey partIKey = new PartIterationKey(workspaceId, number, version, partIteration);
+            productService.removeCADFileFromPartIteration(partIKey);
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
-        }*/
+        }
     }
 
 

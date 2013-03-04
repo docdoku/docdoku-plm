@@ -659,6 +659,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layerId);
     }
 
+    @Override
+    public void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());
+
+        PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()),em).loadPartI(partIKey);
+        BinaryResource br = partIteration.getNativeCADFile();
+        if(br != null){
+            dataManager.delData(br);
+            partIteration.setNativeCADFile(null);
+            // TODO : delete converted files
+        }
+
+    }
+
     @RolesAllowed("users")
     @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {

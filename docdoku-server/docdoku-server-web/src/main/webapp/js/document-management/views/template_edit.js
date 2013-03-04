@@ -39,6 +39,13 @@ define([
             /* Add the fileListView to the tab */
             $("#tab-files-"+this.cid).append(this.fileListView.el);
 
+            this.$("a#mask-help").popover({
+                title: i18n.MASK,
+                placement: "left",
+                html: true,
+                content: i18n.MASK_HELP
+            });
+
         },
 
         primaryAction: function() {

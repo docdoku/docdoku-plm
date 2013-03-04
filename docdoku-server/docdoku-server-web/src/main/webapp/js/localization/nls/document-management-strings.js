@@ -128,7 +128,8 @@ define({
         "EDIT_LINKED_DOCUMENTS":        "Edit links",
         "ADD_DOCUMENT":                 "Add document",
         "CREATE_NEW_VERSION":           "Create new version",
-        "NEW_VERSION_OF":               "New version of"
+        "NEW_VERSION_OF":               "New version of",
+        "MASK_HELP":                    "Define the mask format for the IDs of documents that will instanciate this template.</br></br>Additionally to any regular characters, you can use '#' symbol for any valid number and '*' for any character.</br></br>For instance 'FAX-***-##' will accept 'FAX-AZE-12' as a valid ID."
 
     },
     "fr": true,
