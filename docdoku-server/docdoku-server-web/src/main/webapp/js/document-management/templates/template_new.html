@@ -34,22 +34,22 @@
 					<div class="control-group">
 						<label class="control-label" for="form-{{view.cid}}-type">{{i18n.TYPE}}</label>
 						<div class="controls">
-							<input type="text" class="input-xlarge type" id="form-{{view.cid}}-type" value="{{model.documentType}}">
+							<input type="text" class="input-xlarge type" id="form-{{view.cid}}-type" value="{{model.documentType}}"/>
 							<p class="help-block"></p>
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label" for="form-{{view.cid}}-mask">{{i18n.MASK}}</label>
 						<div class="controls">
-							<input type="text" class="input-xlarge mask" id="form-{{view.cid}}-mask" value="{{model.mask}}">
-							<p class="help-block"></p>
+							<input type="text" class="input-xlarge mask" id="form-{{view.cid}}-mask" value="{{model.mask}}"/>
+                            <a href="#" id="mask-help" class="btn"><i class="icon-lightbulb"></i></a>
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label" for="form-{{view.cid}}-id-generated">{{i18n.ID_GENERATION}}</label>
 						<div class="controls">
-							<input type="checkbox" class="input-xlarge id-generated" id="form-{{view.cid}}-id-generated" {{#model.idGenerated}}checked{{/model.idGenerated}}>
-							<p class="help-block"></p>
+							<input type="checkbox" class="input-xlarge id-generated" id="form-{{view.cid}}-id-generated" {{#model.idGenerated}}checked{{/model.idGenerated}}/>
+                            <p class="help-block"></p>
 						</div>
 					</div>
 				</div>
