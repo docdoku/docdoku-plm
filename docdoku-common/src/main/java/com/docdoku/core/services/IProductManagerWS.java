@@ -349,8 +349,8 @@ public interface IProductManagerWS{
      * @param attributes
      * Custom attributes that may be added to the part
      *
-     * @param pLinkKeys
-     * LinkKeys to documentIterations
+     * @param linkKeys
+     * Links to documents
      * 
      * @return
      * The <a href="PartRevision.html">PartRevision</a> of the updated
@@ -363,7 +363,7 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      * @throws PartMasterNotFoundException
      */
-    PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] pLinkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException;
+    PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] linkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException;
     
     /**
      * Returns the java.io.File object that references the physical file of the

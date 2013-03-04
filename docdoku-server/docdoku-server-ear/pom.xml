@@ -28,6 +28,7 @@
                 <configuration>
                     <version>6</version>
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
+
                     <generateApplicationXml>false</generateApplicationXml>
                 </configuration>
             </plugin>
@@ -48,8 +49,4 @@
             <type>war</type>
         </dependency>
     </dependencies>
-    <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>

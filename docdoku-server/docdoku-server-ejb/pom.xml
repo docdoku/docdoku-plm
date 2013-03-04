@@ -22,11 +22,18 @@
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
+        <!-- declare dependency as pom and jar for transitive libs inclusion-->
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-converter-obj</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-converter-obj</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
@@ -99,8 +106,4 @@
         </plugins>
         <finalName>docdoku-server-ejb</finalName>
     </build>
-    <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>

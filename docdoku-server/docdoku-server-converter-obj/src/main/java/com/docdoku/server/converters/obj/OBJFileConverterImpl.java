@@ -22,17 +22,35 @@ package com.docdoku.server.converters.obj;
 
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.converters.CADConverter;
+import org.python.util.PythonInterpreter;
 
 import java.io.File;
+import java.io.InputStream;
 
 
 @OBJFileConverter
 public class OBJFileConverterImpl implements CADConverter{
 
+    private final static String PYTHON_SCRIPT="/com/docdoku/server/converters/obj/convert_obj_three.py";
 
     @Override
     public void convert(PartIteration partToConvert, File cadFile) {
         System.out.println("convert file from obj:" + cadFile);
+        try
+        {
+            File script = new File(OBJFileConverterImpl.class.getResource(PYTHON_SCRIPT).getPath());
+            String[] args = {"python",script.getAbsolutePath(),"-t binary", "-i " +cadFile.getAbsolutePath(),"-o /Users/flo/tmp/test.bin"};
+            //System.setProperty("python.home","/System/Library/Frameworks/Python.framework/Versions/2.7/");
+            //PythonInterpreter.initialize(System.getProperties(), System.getProperties(), args);
+            //PythonInterpreter interp = new PythonInterpreter();
+            //interp.execfile(script);
+            Runtime rt = Runtime.getRuntime();
+            rt.exec(args);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 

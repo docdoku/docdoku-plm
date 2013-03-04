@@ -147,7 +147,7 @@ public class ProductStructureSampleLoader {
         link.setCadInstances(cads);
         subParts.add(link);
 
-        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "BMX"), "A"), 1), "created by loader", PartIteration.Source.MAKE, subParts, null);
+        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "BMX"), "A"), 1), "created by loader", PartIteration.Source.MAKE, subParts, null, null);
 
 
         PartRevision componentR = componentM.getLastRevision();
@@ -156,7 +156,7 @@ public class ProductStructureSampleLoader {
         List<InstanceAttribute> attrs = new ArrayList<InstanceAttribute>();
         InstanceNumberAttribute instanceAttribute = new InstanceNumberAttribute("radius", 9000000000f);
         attrs.add(instanceAttribute);
-        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "BPM12VTX"), "A"), 1), "created by loader", PartIteration.Source.MAKE, null, attrs);
+        pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "BPM12VTX"), "A"), 1), "created by loader", PartIteration.Source.MAKE, null, attrs, null);
 
 
         URL jsonURL = ProductStructureSampleLoader.class.getResource("/com/docdoku/loaders/bike.js");
