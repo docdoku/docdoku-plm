@@ -78,14 +78,6 @@ public class PSServlet extends HttpServlet {
         }
         else {
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
-            List<ConfigurationItem> products = null;
-            try {
-                products = productService.getConfigurationItems(workspaceID);
-            } catch (Exception ex) {
-                //Dropdown menu will not be able to be displayed
-                //TODO log it
-            }
-            pRequest.setAttribute("products", products);
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);
             pRequest.setAttribute("login", login);
