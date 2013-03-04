@@ -124,9 +124,9 @@ Instance.prototype = {
 
     loadMeshFromLevelGeometry: function(levelGeometry, callback) {
         var self = this;
-        levelGeometry.getGeometry(function(geometry) {
+        levelGeometry.getGeometry(function(geometry, materials) {
             geometry.dynamic = false;
-            var mesh = new THREE.Mesh(geometry, sceneManager.material);
+            var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
             mesh.matrixAutoUpdate = false;
