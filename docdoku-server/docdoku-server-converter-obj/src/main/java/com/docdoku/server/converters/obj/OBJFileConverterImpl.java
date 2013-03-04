@@ -21,31 +21,66 @@
 package com.docdoku.server.converters.obj;
 
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
-import org.python.util.PythonInterpreter;
+import com.google.common.io.Files;
 
+import javax.ejb.EJB;
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 
 @OBJFileConverter
 public class OBJFileConverterImpl implements CADConverter{
 
     private final static String PYTHON_SCRIPT="/com/docdoku/server/converters/obj/convert_obj_three.py";
+    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/obj/conf.properties";
+    private final static Properties CONF = new Properties();
+
+    @EJB
+    private IProductManagerLocal productService;
+
+    static{
+        try {
+            CONF.load(OBJFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void convert(PartIteration partToConvert, File cadFile) {
-        System.out.println("convert file from obj:" + cadFile);
         try
         {
+            String pythonInterpreter = CONF.getProperty("pythonInterpreter");
             File script = new File(OBJFileConverterImpl.class.getResource(PYTHON_SCRIPT).getPath());
-            String[] args = {"python",script.getAbsolutePath(),"-t binary", "-i " +cadFile.getAbsolutePath(),"-o /Users/flo/tmp/test.bin"};
-            //System.setProperty("python.home","/System/Library/Frameworks/Python.framework/Versions/2.7/");
-            //PythonInterpreter.initialize(System.getProperties(), System.getProperties(), args);
-            //PythonInterpreter interp = new PythonInterpreter();
-            //interp.execfile(script);
-            Runtime rt = Runtime.getRuntime();
-            rt.exec(args);
+            String woExName=FileIO.getFileNameWithoutExtension(cadFile);
+            File tempDir = Files.createTempDir();
+            File tmpJSFile=new File(tempDir, woExName+".js");
+            File tmpBINFile = new File(tmpJSFile.getParentFile(), FileIO.getFileNameWithoutExtension(tmpJSFile) + ".bin");
+            String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", cadFile.getAbsolutePath(),"-o",tmpJSFile.getAbsolutePath()};
+            ProcessBuilder pb = new ProcessBuilder(args);
+            Process proc = pb.start();
+            //Process proc = Runtime.getRuntime().exec(args);
+            proc.waitFor();
+            int exitCode = proc.exitValue();
+            if(exitCode==0){
+
+
+                PartIterationKey partIPK = partToConvert.getKey();
+                File jsFile = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
+                tmpJSFile.renameTo(jsFile);
+
+                File binFile = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
+                tmpBINFile.renameTo(binFile);
+
+            }
+
         }
         catch (Exception e)
         {

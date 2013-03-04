@@ -252,7 +252,7 @@ public class ProductResource {
         try {
             //Because some AS (like Glassfish) forbids the use of CacheControl
             //when authenticated we use the LastModified header to fake
-            //a similar behavior (12 hours of cache)
+            //a similar behavior (30 minutes of cache)
             Calendar cal = new GregorianCalendar();
             cal.add(Calendar.HOUR, -12);
             Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
@@ -261,8 +261,8 @@ public class ProductResource {
             } else {
 
                 CacheControl cc = new CacheControl();
-                //this request is resources consuming so we cache the response for 12 hours
-                cc.setMaxAge(60 * 60 * 12);
+                //this request is resources consuming so we cache the response for 30 minutes
+                cc.setMaxAge(60 * 30);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
                 //TODO configSpecType should be used
