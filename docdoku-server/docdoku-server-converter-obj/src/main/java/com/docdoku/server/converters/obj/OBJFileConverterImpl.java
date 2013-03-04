@@ -62,7 +62,7 @@ public class OBJFileConverterImpl implements CADConverter{
             String woExName=FileIO.getFileNameWithoutExtension(cadFile);
             File tempDir = Files.createTempDir();
             File tmpJSFile=new File(tempDir, woExName+".js");
-            File tmpBINFile = new File(tmpJSFile.getParentFile(), FileIO.getFileNameWithoutExtension(tmpJSFile) + ".bin");
+            File tmpBINFile = new File(tmpJSFile.getParentFile(), woExName + ".bin");
             String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", cadFile.getAbsolutePath(),"-o",tmpJSFile.getAbsolutePath()};
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();
@@ -70,15 +70,15 @@ public class OBJFileConverterImpl implements CADConverter{
             proc.waitFor();
             int exitCode = proc.exitValue();
             if(exitCode==0){
-
-
                 PartIterationKey partIPK = partToConvert.getKey();
                 File jsFile = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
                 tmpJSFile.renameTo(jsFile);
 
                 File binFile = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
                 tmpBINFile.renameTo(binFile);
-
+            }else{
+                tmpJSFile.delete();
+                tmpBINFile.delete();
             }
 
         }
