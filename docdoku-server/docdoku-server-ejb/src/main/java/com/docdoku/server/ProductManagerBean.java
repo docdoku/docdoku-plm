@@ -585,9 +585,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
 
                 for (InstanceAttribute attr : attrs.values()) {
-                    if (!partIte.getInstanceAttributes().containsKey(attr.getName())) {
+                    if(!partIte.getInstanceAttributes().containsKey(attr.getName())){
                         partIte.getInstanceAttributes().put(attr.getName(), attr);
-                    } else {
+                    }else if(partIte.getInstanceAttributes().get(attr.getName()).getClass() != attr.getClass()){
+                        partIte.getInstanceAttributes().remove(attr.getName());
+                        partIte.getInstanceAttributes().put(attr.getName(), attr);
+                    }else{
                         partIte.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
                     }
                 }
