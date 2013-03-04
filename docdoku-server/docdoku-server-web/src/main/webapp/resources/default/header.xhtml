@@ -56,19 +56,21 @@
                                     <li class="dropdown" id="workspace_container">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="icon-home"></i>
-                                            #{i18nTemplate['toplinks.workspace']}: <b>${workspaceID}</b>
+                                            #{i18nTemplate['toplinks.workspace']}
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <c:forEach var="item" items="${administeredWorkspaces}">
-                                                <c:if test="${workspaceID!=item.value.id}">
-                                                    <li>
-                                                        <a href="#{request.contextPath}/document-management/${item.value.id}">
-                                                            ${item.value.id}
-                                                        </a>
-                                                    </li>
-                                                </c:if>
+                                             <li>
+                                                <a href="#{request.contextPath}/document-management/${item.value.id}">
+                                                    <c:if test="${workspaceID==item.value.id}">
+                                                        <i class="icon-ok"></i>
+                                                    </c:if>
+                                                    ${item.value.id}
+                                                </a>
+                                            </li>
                                             </c:forEach>
+
                                             <c:forEach var="item" items="${regularWorkspaces}">
                                                 <c:if test="${workspaceID!=item.id}">
                                                     <li>
@@ -83,24 +85,19 @@
                                     <!-- my products dropdown menu-->
 
                                     <li class="dropdown" id="product_container">
+
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="icon-briefcase"></i>
                                             #{i18nTemplate['toplinks.product']}
                                             <span class="caret"></span>
                                         </a>
+
                                         <ul class="dropdown-menu">
-                                            <li><a id="product-creation"><i class="icon-plus"></i>
-                                                #{i18nTemplate['toplinks.newProduct']}</a></li>
-                                            <c:if test="#{not empty products}">
-                                                <li class="divider"></li>
-                                            </c:if>
-                                            <c:forEach var="item" items="${products}">
-                                                <li>
-                                                    <a href="#{request.contextPath}/product-structure/${workspaceID}/${item.id}">
-                                                        ${item.id}
-                                                    </a>
-                                                </li>
-                                            </c:forEach>
+
+                                            <li><a class="product-management">
+                                                <i class="icon-briefcase"></i> #{i18nTemplate['toplinks.manageProducts']}</a>
+                                            </li>
+
                                         </ul>
                                     </li>
 
@@ -125,7 +122,7 @@
                                             <!--#{i18nTemplate['toplinks.coworkers']}-->
                                             <span class="caret"></span>
                                         </a>
-                                        <ul class="dropdown-menu" id="coworkers_access_module_entries"></ul>
+                                        <ul class="dropdown-menu large-entries" id="coworkers_access_module_entries"></ul>
                                     </li>
 
                                     <li class="dropdown" id="account_name_node">

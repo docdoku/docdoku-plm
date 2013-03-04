@@ -6,12 +6,9 @@
         <artifactId>docdoku-server</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.docdoku</groupId>
     <artifactId>docdoku-server-ear</artifactId>
     <packaging>ear</packaging>
-    <version>1.0-SNAPSHOT</version>
     <name>docdoku-server-ear JavaEE6 Assembly</name>
-    <url>http://www.docdokuplm.com</url>
     <build>
         <plugins>
             <plugin>
@@ -31,6 +28,7 @@
                 <configuration>
                     <version>6</version>
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
+
                     <generateApplicationXml>false</generateApplicationXml>
                 </configuration>
             </plugin>
@@ -51,8 +49,4 @@
             <type>war</type>
         </dependency>
     </dependencies>
-    <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>

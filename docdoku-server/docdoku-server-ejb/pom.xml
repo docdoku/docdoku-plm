@@ -6,12 +6,9 @@
         <artifactId>docdoku-server</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.docdoku</groupId>
     <artifactId>docdoku-server-ejb</artifactId>
     <packaging>ejb</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>docdoku-server-ejb Java EE 6 EJB</name>
-    <url>http://www.docdokuplm.com</url>
+    <name>docdoku-server-ejb Java EE 6 Core</name>
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -22,6 +19,25 @@
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <!-- declare dependency as pom and jar for transitive libs inclusion-->
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-converter-obj</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-converter-obj</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-ext</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
@@ -66,11 +82,28 @@
                     <ejbVersion>3.1</ejbVersion>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.docdoku:docdoku-server-ext</include>
+                                    <include>com.docdoku:docdoku-server-converter-obj</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <finalName>docdoku-server-ejb</finalName>
     </build>
-    <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>

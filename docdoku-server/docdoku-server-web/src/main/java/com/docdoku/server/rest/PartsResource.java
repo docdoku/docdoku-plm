@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -120,9 +121,15 @@ public class PartsResource {
                 newComponents = createComponents(pWorkspaceId, components);
             }
 
+            List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
+            DocumentIterationKey[] links = null;
+            if (linkedDocs != null) {
+                links = createDocumentIterationKey(linkedDocs);
+            }
+
             PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes);
+            PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links);
 
             PartDTO partDTO = mapper.map(partRevisionUpdated, PartDTO.class);
             partDTO.setNumber(partRevisionUpdated.getPartNumber());
@@ -225,26 +232,20 @@ public class PartsResource {
 
     @DELETE
     @Consumes("application/json;charset=UTF-8")
-    @Path("/iterations/{partIteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
-
-        return Response.ok().build();
-        // TODO : implement this
-        /*
+    @Path("{partKey}/iterations/{partIteration}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName) {
         try {
-            int lastDash = docKey.lastIndexOf('-');
-            String id = docKey.substring(0, lastDash);
-            String version = docKey.substring(lastDash + 1, docKey.length());
+            int lastDash = partKey.lastIndexOf('-');
+            String number = partKey.substring(0, lastDash);
+            String version = partKey.substring(lastDash + 1, partKey.length());
 
-            String fileFullName = workspaceId + "/parts/" + id + "/" + version + "/" + partIteration + "/nativecad/" + fileName;
-
-            // unimplemented
-            productService.removeCADfileFromPart(...);
+            PartIterationKey partIKey = new PartIterationKey(workspaceId, number, version, partIteration);
+            productService.removeCADFileFromPartIteration(partIKey);
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
-        }*/
+        }
     }
 
 
@@ -334,6 +335,18 @@ public class PartsResource {
 
     }
 
+    private DocumentIterationKey[] createDocumentIterationKey(List<DocumentIterationDTO> dtos) {
+        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+        int i = 0;
+        for (DocumentIterationDTO dto : dtos) {
+            data[i++] = createObject(dto);
+        }
 
+        return data;
+    }
+
+    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
+        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
+    }
 
 }

@@ -19,24 +19,13 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.FileAlreadyExistsException;
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.DocumentMasterNotFoundException;
-import com.docdoku.core.services.DocumentMasterTemplateNotFoundException;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.PartRevisionNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.*;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IProductManagerLocal;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,6 +56,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
 
     @EJB
     private IProductManagerLocal productService;
+
+    @EJB
+    private IConverterManagerLocal converterService;
     
     @RolesAllowed("users")
     @XmlMimeType("application/octet-stream")
@@ -152,7 +144,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @Override
     public void uploadNativeCADToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
+            @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException, PartIterationNotFoundException {
         PartIterationKey partIPK = null;
         File vaultFile = null;
 
@@ -165,6 +157,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         data.writeTo(outStream);
         outStream.close();
         productService.saveNativeCADInPartIteration(partIPK, fileName, vaultFile.length());
+        converterService.convertCADFileToJSON(partIPK, vaultFile);
     }
 
     @RolesAllowed("users")

@@ -20,6 +20,7 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
@@ -62,6 +63,9 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @EJB
     private IProductManagerLocal productService;
+
+    @EJB
+    private IConverterManagerLocal converterService;
 
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
@@ -245,6 +249,7 @@ public class UploadDownloadServlet extends HttpServlet {
             }else if (elementType.equals("parts")) {
                 if(pathInfos.length==offset + 7){
                     productService.saveNativeCADInPartIteration(partPK, fileName, vaultFile.length());
+                    converterService.convertCADFileToJSON(partPK, vaultFile);
                 }else{
                     productService.saveFileInPartIteration(partPK, fileName, vaultFile.length());
                 }

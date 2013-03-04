@@ -34,7 +34,9 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -151,6 +153,19 @@ public class ProductResource {
         }
     }
 
+    @DELETE
+    @Path("{ciId}")
+    @Produces("application/json;charset=UTF-8")
+    public Response deleteProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
+        try {
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+            productService.deleteConfigurationItem(ciKey);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     @GET
     @Path("{ciId}/paths")
     @Produces("application/json;charset=UTF-8")
@@ -237,7 +252,7 @@ public class ProductResource {
         try {
             //Because some AS (like Glassfish) forbids the use of CacheControl
             //when authenticated we use the LastModified header to fake
-            //a similar behavior (12 hours of cache)
+            //a similar behavior (30 minutes of cache)
             Calendar cal = new GregorianCalendar();
             cal.add(Calendar.HOUR, -12);
             Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
@@ -246,8 +261,8 @@ public class ProductResource {
             } else {
 
                 CacheControl cc = new CacheControl();
-                //this request is resources consuming so we cache the response for 12 hours
-                cc.setMaxAge(60 * 60 * 12);
+                //this request is resources consuming so we cache the response for 30 minutes
+                cc.setMaxAge(60 * 30);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
                 //TODO configSpecType should be used
@@ -276,11 +291,11 @@ public class ProductResource {
 
     @POST
     @Produces("application/json;charset=UTF-8")
-    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) {
+    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
         try {
             ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
             ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
-            return Response.created(URI.create(configurationItemDTOCreated.getId())).entity(configurationItemDTOCreated).build();
+            return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

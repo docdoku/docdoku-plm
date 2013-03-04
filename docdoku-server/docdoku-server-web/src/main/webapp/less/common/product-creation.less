@@ -1,10 +1,47 @@
-#product_creation_modal{
 
-  #hide_part_creation_fields{
-    display:none;
-  }
-  #part_creation_fields{
-    display: none;
+#product_management_modal{
+
+  ul#all-products-list{
+    list-style: none;
+    margin:0;
+    li.well{
+      line-height: 20px;
+      padding:9px;
+      margin-bottom:4px;
+
+      a.remove {
+        margin: 0 10px 0 5px;
+        float: left;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 18px;
+        color: #000000;
+        text-shadow: 0 1px 0 #ffffff;
+        opacity: 0.2;
+
+        &:hover {
+          text-decoration: none;
+          color: @red;
+          opacity: 1;
+        }
+      }
+
+      a.frame-url{
+        float:right;
+      }
+
+    }
   }
 
+
+  #product_creation_form{
+
+    #hide_part_creation_fields{
+      display:none;
+    }
+    #part_creation_fields{
+      display: none;
+    }
+
+  }
 }

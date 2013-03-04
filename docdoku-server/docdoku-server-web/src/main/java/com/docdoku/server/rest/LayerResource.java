@@ -106,17 +106,17 @@ public class LayerResource {
         }
     }
 
-    /*
-    @Path("{layerId}/markers")
-    public MarkerResource processMarkers(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId) {
+    @DELETE
+    @Path("{layerId}")
+    @Produces("application/json;charset=UTF-8")
+    public Response deleteLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         try {
-            Layer layer = productService.getLayer(layerId);
-            return new MarkerResource(layer);
+            productService.deleteLayer(workspaceId,layerId);
+            return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-    */
 
     @GET
     @Path("{layerId}/markers")

@@ -21,32 +21,27 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.services.IConverterManagerLocal;
+import com.docdoku.core.services.PartIterationNotFoundException;
+import com.docdoku.core.util.FileIO;
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.LockObtainFailedException;
-import org.apache.lucene.util.Version;
-import org.apache.poi.hslf.extractor.PowerPointExtractor;
-import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
 
 /**
  * CAD File converter
@@ -54,22 +49,44 @@ import java.util.zip.ZipInputStream;
  * @author Florent.Garin
  */
 @Stateless(name="ConverterBean")
-public class ConverterBean {
+public class ConverterBean implements IConverterManagerLocal {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Resource(name = "vaultPath")
     private String vaultPath;
 
     private DataManager dataManager;
 
+    @Inject
+    @Any
+    private Instance<CADConverter> converters;
+
+
     @PostConstruct
     private void init() {
         dataManager = new DataManagerImpl(new File(vaultPath));
     }
-    
-    @Asynchronous
-    public void convertCADFileToJSON(PartIteration partI) {
-        BinaryResource binCAD = partI.getNativeCADFile();
 
+    @Override
+    @Asynchronous
+    public void convertCADFileToJSON(PartIterationKey pPartIPK, File cadFile) throws PartIterationNotFoundException {
+        String ext = FileIO.getExtension(cadFile);
+
+        CADConverter selectedConverter=null;
+        for(CADConverter converter:converters){
+            if(converter.canConvertToJSON(ext)){
+                selectedConverter=converter;
+                break;
+            }
+        }
+        if(selectedConverter!=null){
+            PartIterationDAO partIDAO = new PartIterationDAO(em);
+            PartIteration partI = partIDAO.loadPartI(pPartIPK);
+
+            selectedConverter.convert(partI, cadFile);
+        }
     }
 
 

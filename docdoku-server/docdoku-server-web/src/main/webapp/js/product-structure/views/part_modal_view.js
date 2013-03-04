@@ -5,9 +5,11 @@ define(
     'text!templates/part_modal.html',
     'i18n!localization/nls/product-structure-strings',
     "common-objects/views/attributes/attributes",
-    "views/parts_management_view"
+    "views/parts_management_view",
+    "common-objects/views/linked_document/linked_documents",
+    "common-objects/collections/linked_document_collection"
     ],
-    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView ) {
+    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection ) {
 
     var PartModalView = ModalView.extend({
 
@@ -39,6 +41,8 @@ define(
             this.initAttributesView();
             this.initCadFileUploadView();
             this.initPartsManagementView();
+            this.initLinkedDocumentsView();
+
             return this;
         },
 
@@ -81,7 +85,8 @@ define(
 
             this.iteration.save({
                 instanceAttributes: this.partAttributesView.collection.toJSON(),
-                components : this.partsManagementView.collection.toJSON()
+                components : this.partsManagementView.collection.toJSON(),
+                linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success:function(){
                 Backbone.Events.trigger("refresh_tree");
                 //Backbone.Events.trigger("refresh_component", that.model.getPartKey());
@@ -117,8 +122,18 @@ define(
                 collection: new Backbone.Collection(this.iteration.getComponents()),
                 editMode:this.editMode
             }).render();
-        }
+        },
 
+        initLinkedDocumentsView: function() {
+            this.linkedDocumentsView = new LinkedDocumentsView({
+                editMode: true,
+                documentIteration: this.iteration,
+                collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
+            }).render();
+
+            /* Add the documentLinksView to the tab */
+            this.$("#iteration-links").html(this.linkedDocumentsView.el);
+        }
 
     });
 

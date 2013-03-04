@@ -41,7 +41,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Stateless
@@ -208,7 +210,7 @@ public class DocumentsResource {
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO, @PathParam("folderId") String folderId) {
+    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO, @PathParam("folderId") String folderId) throws UnsupportedEncodingException {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
@@ -247,7 +249,7 @@ public class DocumentsResource {
             docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());
 
-            return Response.created(URI.create(pDocMID + "-" + createdDocMs.getVersion())).entity(docMsDTO).build();
+            return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocMs.getVersion(),"UTF-8"))).entity(docMsDTO).build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

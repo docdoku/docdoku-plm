@@ -1,11 +1,11 @@
 #content {
   table {
     .border-radius(3px);
-    box-shadow: 0px 1px 5px #8C9FBE;
+    box-shadow: 0px 1px 5px #9b9b9b;
     margin: 20px auto;
     width: 96%;
     thead {
-      #gradient > .vertical(#8C9FBE, #4F75AB);
+      #gradient > .vertical(#7a99c1, #2c4361);
       color: white;
       text-shadow: #555 0px -1px 0px;
       tr {
@@ -51,12 +51,20 @@
         }
       }
     }
-
-    &.table-striped tbody tr:nth-child(odd) td {
-      background-color: #EFF2F7;
+    &.table-striped tbody tr td{
+      background: transparent;
     }
-    &.table-striped tbody tr:nth-child(even) td {
-      background-color: white;
+    &.table-striped tbody tr:nth-child(odd) {
+      background: #f5f5f5;
+      &:hover{
+        background: #eee;
+      }
+    }
+    &.table-striped tbody tr:nth-child(even){
+      background: white;
+      &:hover{
+        background: #eee;
+      }
     }
 
   }

@@ -27,15 +27,19 @@ LevelGeometry.prototype = {
         if (this.geometry == null) {
             var self = this;
             var texturePath = this.filename.substring(0,this.filename.lastIndexOf('/'));
-            sceneManager.loader.load(this.filename, function(geometry) {
+            sceneManager.loader.load(this.filename, function(geometry, materials) {
                 if (self.computeVertexNormals) {
                     geometry.computeVertexNormals();
                 }
+                _.each(materials, function(material) {
+                    material.transparent = true;
+                });
                 self.geometry = geometry;
-                callback(self.geometry);
+                self.materials = materials;
+                callback(self.geometry, self.materials);
             }, texturePath);
         } else {
-            callback(this.geometry);
+            callback(this.geometry, this.materials);
         }
     }
 

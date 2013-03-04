@@ -18,6 +18,9 @@ define(['text!templates/bom_item.html', "models/part"], function(template, Part)
             this.$el.html(this.template(this.model));
             this.$input = this.$("input");
             this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getName(), "left");
+            if(this.model.isCheckout()){
+                this.$(".checkout-user-popover").userPopover(this.model.getCheckOutUserLogin(), this.model.getNumber(),"left");
+            }
             return this;
         },
 

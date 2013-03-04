@@ -1040,6 +1040,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             for(InstanceAttribute attr:attrs.values()){
                 if(!doc.getInstanceAttributes().containsKey(attr.getName())){
                     doc.getInstanceAttributes().put(attr.getName(), attr);
+                }else if(doc.getInstanceAttributes().get(attr.getName()).getClass() != attr.getClass()){
+                    doc.getInstanceAttributes().remove(attr.getName());
+                    doc.getInstanceAttributes().put(attr.getName(), attr);
                 }else{
                     doc.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
                 }

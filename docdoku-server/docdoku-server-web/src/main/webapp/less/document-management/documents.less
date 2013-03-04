@@ -1,7 +1,6 @@
 #document-content {
 
   td {
-
     a.dochandle {
       font-size: 14px;
       color: #aaa;
@@ -13,13 +12,24 @@
         text-decoration: none;
       }
     }
+
+    &.doc-ref > a {
+      color: #62697B;
+      &:hover {
+        text-decoration: none;
+        color: #333;
+      }
+    }
   }
 
-  tr.ui-draggable-dragging {
-    td{
-      background-color: white !important;
+  tr.moving {
+    a.dochandle {
+      color: #555;
     }
-    box-shadow: 0 3px 10px #333;
+
+    td.doc-ref > a {
+      color: #333;
+    }
   }
 }
 

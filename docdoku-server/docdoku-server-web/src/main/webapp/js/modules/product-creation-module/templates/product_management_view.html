@@ -1,0 +1,35 @@
+<div id="product_management_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.MANAGE_PRODUCT}}</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-all-products" data-toggle="tab">{{i18n.ALL_PRODUCTS}}</a></li>
+                <li><a href="#tab-new-product" data-toggle="tab">{{i18n.NEW_PRODUCT}}</a></li>
+            </ul>
+
+            <div class="tab-content form-horizontal">
+
+                <div id="tab-all-products" class="tab-pane active">
+                    <ul id="all-products-list"></ul>
+                </div>
+
+
+                <div id="tab-new-product" class="tab-pane">
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+    </div>
+</div>

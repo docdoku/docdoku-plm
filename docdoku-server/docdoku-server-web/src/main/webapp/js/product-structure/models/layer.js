@@ -60,8 +60,15 @@ define([
 
         initialize: function() {
             if (!this.has('color')) {
-                //http://paulirish.com/2009/random-hex-color-code-snippets/
-                this.set('color', ('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6));
+
+              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16)
+                            + Math.ceil((Math.random()*(0xF))).toString(16)
+                            + Math.ceil((Math.random()*(0xF))).toString(16)
+                            + Math.ceil((Math.random()*(0xF))).toString(16)
+                            + Math.ceil((Math.random()*(0xF))).toString(16)
+                            + Math.ceil((Math.random()*(0xF))).toString(16);
+
+                this.set('color', randomColor);
             }
             this.material = new THREE.MeshLambertMaterial({
                 color:  parseInt('0x' + this.get('color'), 16),

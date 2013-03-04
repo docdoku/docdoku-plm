@@ -18,7 +18,7 @@
             <div class="well" id="login_form_container">
                 <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
                 <h:form id="login_form">
-                    <h:inputHidden value="#{connectionBean.originURL}"/>
+                    <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
                     <p>
                         <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
                         <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
@@ -38,6 +38,12 @@
                     </p>
                 </h:form>
             </div>
+            <script type="text/javascript">
+                if(window.location.hash){
+                    var redirectInput = document.getElementById("login_form:originURL");
+                    redirectInput.value=redirectInput.value + window.location.hash;
+                }
+            </script>
         </ui:define>
 
     </ui:composition>

@@ -92,7 +92,7 @@ public class ConnectionBean {
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
         if(originURL!=null && originURL.length()>1)
-            ec.redirect(URLDecoder.decode(originURL,"UTF-8"));
+            ec.redirect(originURL);
         else
             ec.redirect(request.getContextPath() + "/document-management/");
     }

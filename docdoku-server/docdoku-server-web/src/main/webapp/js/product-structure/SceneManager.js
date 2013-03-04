@@ -75,7 +75,7 @@ define([
 
             XMLHttpRequest.prototype.open = function() {
 
-                if(arguments[1].startsWith("/files/")) {
+                if(arguments[1].indexOf("/files/") === 0) {
 
                     var totalAdded = false,
                         totalLoaded = 0 ,
@@ -386,12 +386,11 @@ define([
         },
 
         initAxes: function() {
-            var axes = new THREE.AxisHelper();
+            var axes = new THREE.AxisHelper(100);
             axes.position.set(-1000, 0, 0);
-            axes.scale.x = axes.scale.y = axes.scale.z = 2;
             this.scene.add(axes);
 
-            var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 50);
+            var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 100);
             arrow.position.set(200, 0, 400);
             this.scene.add(arrow);
         },
@@ -459,6 +458,10 @@ define([
             this.animate();
         },
 
+        requestFullScreen:function(){
+            this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        },
+
         animate: function() {
             var self = this;
 
@@ -496,7 +499,7 @@ define([
 
             var frustum = new THREE.Frustum();
             var projScreenMatrix = new THREE.Matrix4();
-            projScreenMatrix.multiply(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
+            projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
             frustum.setFromMatrix(projScreenMatrix);
 
             var updateIndex = Math.min((this.updateOffset + this.updateCycleLength), this.instances.length);

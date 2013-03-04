@@ -6,15 +6,13 @@
     <artifactId>docdoku-plm</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>com.docdoku</groupId>
   <artifactId>docdoku-server</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>docdoku-server</name>
-  <url>http://www.docdokuplm.com</url>
   <modules>
-    <module>docdoku-server-ear</module>
-    <module>docdoku-server-web</module>
+    <module>docdoku-server-ext</module>
+    <module>docdoku-server-converter-obj</module>
     <module>docdoku-server-ejb</module>
+    <module>docdoku-server-web</module>
+    <module>docdoku-server-ear</module>
   </modules>
 </project>

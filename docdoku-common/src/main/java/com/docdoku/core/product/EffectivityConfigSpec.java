@@ -19,12 +19,7 @@
  */
 package com.docdoku.core.product;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
@@ -42,6 +37,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 @Table(name="EFFECTIVITYCONFIGSPEC")
 @XmlSeeAlso({DateBasedEffectivityConfigSpec.class, SerialNumberBasedEffectivityConfigSpec.class, LotBasedEffectivityConfigSpec.class})
 @Entity
+@NamedQuery(name="EffectivityConfigSpec.removeEffectivityConfigSpecFromConfigurationItem",query="DELETE FROM EffectivityConfigSpec ec WHERE ec.configurationItem.id = :configurationItemId AND ec.configurationItem.workspace.id = :workspaceId")
+
 public abstract class EffectivityConfigSpec extends ConfigSpec {
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER)

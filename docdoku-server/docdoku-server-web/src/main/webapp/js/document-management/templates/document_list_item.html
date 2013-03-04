@@ -1,6 +1,7 @@
 <td><a href="#" class="dochandle icon-reorder"></a></td>
 <td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
 <td class="reference doc-ref">
+    <a href="#">
     {{#model.isCheckout}}
         {{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}
         {{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}
@@ -9,6 +10,7 @@
         <i class="icon-eye-open"></i>
     {{/model.isCheckout}}
     {{model.id}}
+    </a>
 </td>
 <td>{{model.version}}</td>
 <td>{{#model.lastIteration}}

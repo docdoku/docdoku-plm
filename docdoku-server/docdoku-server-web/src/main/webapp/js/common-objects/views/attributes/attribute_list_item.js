@@ -18,7 +18,7 @@ define([
 			this.events[ "change .type"] = "typeChanged";
 			this.events[ "change .name"] = "updateName";
 			this.events[ "change .value"] = "updateValue";
-			this.events[ "click .remove"] = "removeAction";
+			this.events[ "click .icon-remove"] = "removeAction";
 		},
 
 		rendered: function() {

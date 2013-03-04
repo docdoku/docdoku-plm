@@ -1,11 +1,11 @@
 define([
-    "text!templates/document/document_link.html",
+    "text!common-objects/templates/linked_document/linked_document.html",
     "i18n!localization/nls/document-management-strings"
 ], function (
     template,
     i18n
     ) {
-    var DocumentLinkView = Backbone.View.extend({
+    var LinkedDocumentView = Backbone.View.extend({
 
         tagName: "li",
         className: "linked-document well",
@@ -39,6 +39,6 @@ define([
         }
 
     });
-    return DocumentLinkView;
+    return LinkedDocumentView;
 });
 
