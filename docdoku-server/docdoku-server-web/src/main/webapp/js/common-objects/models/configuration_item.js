@@ -16,11 +16,11 @@ define(function() {
         },
 
         getIndexUrl: function() {
-            return "/product-structure/" + APP_CONFIG.workspaceId + "/" + this.getId();
+            return "/product-structure/" + APP_CONFIG.workspaceId + "/" + encodeURIComponent(this.getId());
         },
 
         getFrameUrl: function() {
-            return "/visualization/" + APP_CONFIG.workspaceId + "/" + this.getId()+"?cameraX=0&cameraY=10&cameraZ=1000&pathToLoad=null";
+            return  "/visualization/" + APP_CONFIG.workspaceId + "/" + encodeURIComponent(this.getId())+"?cameraX=0&cameraY=10&cameraZ=1000&pathToLoad=null";
         }
 
     });

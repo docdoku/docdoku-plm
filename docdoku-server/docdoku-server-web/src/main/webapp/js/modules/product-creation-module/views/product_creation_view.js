@@ -1,7 +1,7 @@
 define(
     ["text!modules/product-creation-module/templates/product_creation_view.html",
         "i18n!localization/nls/product-creation-strings",
-        "modules/product-creation-module/models/configuration_item"],
+        "common-objects/models/configuration_item"],
     function (template, i18n, ConfigurationItem) {
 
     var ProductCreationView = Backbone.View.extend({

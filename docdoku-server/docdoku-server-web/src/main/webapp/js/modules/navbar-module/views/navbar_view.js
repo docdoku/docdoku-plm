@@ -1,4 +1,6 @@
-define(function() {
+define(["common-objects/collections/configuration_items",
+    "text!modules/navbar-module/templates/navbar_product_item.html"],
+    function(ConfigurationItemCollection, productItemTemplate) {
 
     var NavBarView = Backbone.View.extend({
 
@@ -9,7 +11,17 @@ define(function() {
         },
 
         initialize: function() {
+            this.productsCollection = new ConfigurationItemCollection();
             this.$listProducts = this.$('li#product_container > ul');
+            this.listenTo(this.productsCollection,'reset',this.onProductsCollectionReset);
+            this.productsCollection.fetch();
+        },
+
+        onProductsCollectionReset:function(){
+            var that = this;
+            this.productsCollection.each(function(model){
+               that.addProductInList(model);
+            });
         },
 
         onProductManagement: function() {
@@ -26,10 +38,7 @@ define(function() {
         },
 
         addProductInList: function(configurationItem) {
-            var self = this;
-            require(["text!modules/navbar-module/templates/navbar_product_item.html"], function(productItemTemplate) {
-                self.$listProducts.append(Mustache.render(productItemTemplate, configurationItem));
-            });
+            this.$listProducts.append(Mustache.render(productItemTemplate, configurationItem));
         },
 
         removeProductFromList:function(configurationItem){

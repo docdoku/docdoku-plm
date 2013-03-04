@@ -85,11 +85,13 @@
                                     <!-- my products dropdown menu-->
 
                                     <li class="dropdown" id="product_container">
+
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                             <i class="icon-briefcase"></i>
                                             #{i18nTemplate['toplinks.product']}
                                             <span class="caret"></span>
                                         </a>
+
                                         <ul class="dropdown-menu">
 
                                             <li><a class="product-management">
@@ -98,15 +100,6 @@
 
                                             <c:if test="#{not empty products}">
                                                 <li class="divider"></li>
-                                            </c:if>
-                                            <c:forEach var="item" items="${products}" begin="0" end="10">
-                                                <li>
-                                                    <a data-id="${item.id}" href="#{request.contextPath}/product-structure/${workspaceID}/${item.id}">${item.id}</a>
-                                                </li>
-                                            </c:forEach>
-
-                                            <c:if test="#{products.size() > 10}">
-                                                <li><a class="product-management"> ... #{i18nTemplate['toplinks.otherProducts']}</a></li>
                                             </c:if>
 
                                         </ul>

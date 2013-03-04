@@ -1,7 +1,7 @@
 define(
     ["text!modules/product-creation-module/templates/product_management_view.html",
         "i18n!localization/nls/product-creation-strings",
-        "modules/product-creation-module/collections/configuration_items",
+        "common-objects/collections/configuration_items",
         "modules/product-creation-module/views/configuration_item",
         "modules/product-creation-module/views/product_creation_view"
     ], function (template, i18n, ConfigurationItemCollection, ConfigurationItemView, ProductCreationView) {
