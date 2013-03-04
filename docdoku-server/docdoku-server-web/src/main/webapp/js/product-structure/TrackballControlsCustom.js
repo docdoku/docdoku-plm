@@ -4,7 +4,7 @@
 
 THREE.TrackballControlsCustom = function ( object, domElement ) {
 
-    THREE.EventTarget.call( this );
+    THREE.EventDispatcher.call( this );
 
     var _this = this,
         STATE = { NONE : -1, PAN : 0, ZOOM : 1, ROTATE : 2},
@@ -111,11 +111,11 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
         }
 
-        _eye.copy( _this.object.position ).subSelf( _this.target );
+        _eye.copy( _this.object.position ).sub( _this.target );
 
         var projection = _this.object.up.clone().setLength( mouseOnBall.y );
-        projection.addSelf( _this.object.up.clone().crossSelf( _eye ).setLength( mouseOnBall.x ) );
-        projection.addSelf( _eye.setLength( mouseOnBall.z ) );
+        projection.add( _this.object.up.clone().cross( _eye ).setLength( mouseOnBall.x ) );
+        projection.add( _eye.setLength( mouseOnBall.z ) );
 
         return projection;
 
@@ -127,17 +127,17 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
         if ( angle ) {
 
-            var axis = ( new THREE.Vector3() ).cross( _rotateStart, _rotateEnd ).normalize(),
+            var axis = ( new THREE.Vector3() ).crossVectors( _rotateStart, _rotateEnd ).normalize(),
                 quaternion = new THREE.Quaternion();
 
             angle *= _this.rotateSpeed;
 
             quaternion.setFromAxisAngle( axis, -angle );
 
-            quaternion.multiplyVector3( _eye );
-            quaternion.multiplyVector3( _this.object.up );
+            _eye.applyQuaternion( quaternion );
+            _this.object.up.applyQuaternion( quaternion );
 
-            quaternion.multiplyVector3( _rotateEnd );
+            _rotateEnd.applyQuaternion( quaternion );
 
             if ( _this.staticMoving ) {
 
@@ -146,7 +146,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
             } else {
 
                 quaternion.setFromAxisAngle( axis, angle * ( _this.dynamicDampingFactor - 1.0 ) );
-                quaternion.multiplyVector3( _rotateStart );
+                _rotateStart.applyQuaternion( quaternion );
 
             }
 
@@ -191,7 +191,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
     };
 
     this.panCamera = function () {
-        var mouseChange = _panEnd.clone().subSelf( _panStart );
+        var mouseChange = _panEnd.clone().sub( _panStart );
         this.panCameraOperation(mouseChange);
     };
 
@@ -221,11 +221,11 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
             mouseChange.multiplyScalar( _eye.length() * _this.panSpeed );
 
-            var pan = _eye.clone().crossSelf( _this.object.up ).setLength( mouseChange.x );
-            pan.addSelf( _this.object.up.clone().setLength( mouseChange.y ) );
+            var pan = _eye.clone().cross( _this.object.up ).setLength( mouseChange.x );
+            pan.add( _this.object.up.clone().setLength( mouseChange.y ) );
 
-            _this.object.position.addSelf( pan );
-            _this.target.addSelf( pan );
+            _this.object.position.add( pan );
+            _this.target.add( pan );
 
             if ( _this.staticMoving ) {
 
@@ -233,7 +233,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
             } else {
 
-                _panStart.addSelf( mouseChange.sub( _panEnd, _panStart ).multiplyScalar( _this.dynamicDampingFactor ) );
+                _panStart.add( mouseChange.sub( _panEnd, _panStart ).multiplyScalar( _this.dynamicDampingFactor ) );
 
             }
 
@@ -262,7 +262,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     this.update = function () {
 
-        _eye.copy( _this.object.position ).subSelf( _this.target );
+        _eye.copy( _this.object.position ).sub( _this.target );
 
         if ( !_this.noRotate ) {
 
@@ -282,7 +282,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
         }
 
-        _this.object.position.add( _this.target, _eye );
+        _this.object.position.addVectors( _this.target, _eye );
 
         _this.checkDistances();
 
@@ -299,7 +299,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
     };
 
     this.manualUpdate = function () {
-        _this.object.position.add( _this.target, _eye );
+        _this.object.position.addVectors( _this.target, _eye );
 
         _this.checkDistances();
 

@@ -7,7 +7,7 @@ VisualizationUtils.zAxisNormalized = new THREE.Vector3(0,0,1).normalize();
 VisualizationUtils.rotateAroundOneWorldAxis = function(object, axis, radians) {
     var rotWorldMatrix = new THREE.Matrix4();
     rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
-    rotWorldMatrix.multiplySelf(object.matrix);
+    rotWorldMatrix.multiply(object.matrix);
     object.matrix = rotWorldMatrix;
     object.rotation.getRotationFromMatrix(object.matrix, object.scale);
 }
@@ -23,7 +23,7 @@ VisualizationUtils.rotateAroundWorldAxis= function(object, rx, ry, rz) {
     var rotWorldMatrixZ = new THREE.Matrix4();
     rotWorldMatrixZ.makeRotationAxis(VisualizationUtils.zAxisNormalized, rz);
 
-    object.matrix = rotWorldMatrixZ.multiplySelf(rotWorldMatrixY).multiplySelf(rotWorldMatrixX);
+    object.matrix = rotWorldMatrixZ.multiply(rotWorldMatrixY).multiply(rotWorldMatrixX);
     object.rotation.setEulerFromRotationMatrix(object.matrix, "XYZ");
 
 }
