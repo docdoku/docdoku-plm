@@ -128,8 +128,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             var splitUrl = window.location.href.split("/");
             var urlRoot = splitUrl[0] + "//" + splitUrl[2];
 
-            var paths = self.rootCollection;
-
             var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
                 + '?cameraX=' + sceneManager.camera.position.x
                 + '&cameraY=' + sceneManager.camera.position.y

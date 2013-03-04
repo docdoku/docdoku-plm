@@ -223,7 +223,7 @@ define([
                 document.addEventListener( 'fullscreenchange', this.fullscreenchange, false );
                 document.addEventListener( 'mozfullscreenchange', this.fullscreenchange, false );
 
-                this.$container[0].requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+                this.$container[0].requestFullscreen = this.$container[0].requestFullscreen || this.$container[0].mozRequestFullscreen || this.$container[0].mozRequestFullScreen || this.$container[0].webkitRequestFullscreen;
 
                 this.$container[0].requestFullscreen();
 
@@ -237,8 +237,8 @@ define([
 
             if ( document.fullscreenElement === this.$container[0] || document.mozFullscreenElement === this.$container[0] || document.mozFullScreenElement === this.$container[0] ) {
 
-                document.removeEventListener( 'fullscreenchange', fullscreenchange );
-                document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+                document.removeEventListener( 'fullscreenchange', this.fullscreenchange );
+                document.removeEventListener( 'mozfullscreenchange', this.fullscreenchange );
 
                 this.$container[0].requestPointerLock();
             }
