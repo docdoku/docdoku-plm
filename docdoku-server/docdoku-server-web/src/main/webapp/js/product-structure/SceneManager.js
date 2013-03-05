@@ -50,7 +50,6 @@ define([
             this.listenXHR();
             this.initCamera();
             this.initControls();
-            this.bindSwitchControlEvents();
             this.initLights();
             this.initAxes();
             this.initRenderer();
@@ -151,30 +150,6 @@ define([
                     break;
             }
 
-
-            if (Modernizr.touch) {
-                $('#side_controls_container').hide();
-                $('#scene_container').width(90 + '%');
-                $('#center_container').height(83 + '%');
-            }
-        },
-
-        bindSwitchControlEvents: function() {
-            var self = this;
-            $('#flying_mode_view_btn').click(function(e) {
-                self.$blocker.show();
-                self.updateNewCamera();
-                //self.setFirstPersonControls();
-                self.setPointerLockControls();
-                self.updateLayersManager();
-            });
-
-            $('#tracking_mode_view_btn').click(function(e) {
-                self.$blocker.hide();
-                self.updateNewCamera();
-                self.setTrackBallControls();
-                self.updateLayersManager();
-            });
         },
 
         setPointerLockControls: function() {

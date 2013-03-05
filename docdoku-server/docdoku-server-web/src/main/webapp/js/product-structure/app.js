@@ -1,6 +1,20 @@
 var sceneManager;
 
-define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager","views/export_scene_modal_view","i18n!localization/nls/product-structure-strings","views/shortcuts_view"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager, ExportSceneModalView,i18n,ShortcutsView) {
+define(
+    [
+        "router",
+        "modules/navbar-module/views/navbar_view",
+        "views/search_view",
+        "views/parts_tree_view",
+        "views/bom_view",
+        "views/part_metadata_view",
+        "views/export_scene_modal_view",
+        "views/shortcuts_view",
+        "views/control_choice_view",
+        "SceneManager",
+        "i18n!localization/nls/product-structure-strings",
+
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ShortcutsView, ControlChoiceView, SceneManager, i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -11,6 +25,72 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             "click #bom_view_btn": "bomMode",
             "click #export_scene_btn": "exportScene",
             "click #fullscreen_scene_btn": "fullScreenScene"
+        },
+
+        initialize: function() {
+
+            this.inBomMode = false;
+
+            this.bindDomElements();
+            this.menuResizable();
+            new NavBarView();
+
+            this.searchView = new SearchView().render();
+
+            this.partsTreeView = new PartsTreeView({
+                resultPathCollection: this.searchView.collection
+            }).render();
+
+            this.shortcutsview = new ShortcutsView().render();
+            this.controlChoiceView = new ControlChoiceView().render();
+
+            this.bomView = new BomView().render();
+
+            this.sideControlsContainer.prepend(this.controlChoiceView.$el);
+            this.sideControlsContainer.prepend(this.shortcutsview.$el);
+
+            try{
+                sceneManager = new SceneManager();
+                sceneManager.init();
+            }catch(ex){
+                this.onNoWebGLSupport();
+            }
+
+            this.listenEvents();
+
+            this.partMetadataView = null;
+        },
+
+        menuResizable:function(){
+            this.$productMenu.resizable({
+                containment: this.$el,
+                handles: 'e',
+                autoHide: true,
+                stop: function(e, ui) {
+                    var parent = ui.element.parent();
+                    ui.element.css({
+                        width: ui.element.width()/parent.width()*100+"%",
+                        height: ui.element.height()/parent.height()*100+"%"
+                    });
+                }
+            });
+        },
+
+        listenEvents:function(){
+            this.partsTreeView.on("component_selected", this.onComponentSelected, this);
+            Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
+        },
+
+        bindDomElements:function(){
+            this.$productMenu = this.$("#product-menu");
+            this.sceneModeButton = this.$("#scene_view_btn");
+            this.bomModeButton = this.$("#bom_view_btn");
+            this.exportSceneButton = this.$("#export_scene_btn");
+            this.fullScreenSceneButton = this.$("#fullscreen_scene_btn");
+            this.bomContainer = this.$("#bom_table_container");
+            this.centerSceneContainer = this.$("#center_container");
+            this.sideControlsContainer = this.$("#side_controls_container");
+            this.partMetadataContainer = this.$("#part_metadata_container");
         },
 
         updateBom: function(showRoot) {
@@ -62,43 +142,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             return this.inBomMode;
         },
 
-        initialize: function() {
-
-            new NavBarView();
-
-            this.sceneModeButton = this.$("#scene_view_btn");
-            this.bomModeButton = this.$("#bom_view_btn");
-            this.exportSceneButton = this.$("#export_scene_btn");
-            this.fullScreenSceneButton = this.$("#fullscreen_scene_btn");
-            this.bomContainer = this.$("#bom_table_container");
-            this.centerSceneContainer = this.$("#center_container");
-            this.sideControlsContainer = this.$("#side_controls_container");
-            this.partMetadataContainer = this.$("#part_metadata_container");
-            this.partMetadataView = null;
-            this.inBomMode = false;
-
-            this.bomView = new BomView().render();
-            this.searchView = new SearchView().render();
-
-            this.shortcutsView = new ShortcutsView().render();
-            this.sideControlsContainer.prepend(this.shortcutsView.$el);
-
-            this.partsTreeView = new PartsTreeView({
-                resultPathCollection: this.searchView.collection
-            }).render();
-
-            this.partsTreeView.on("component_selected", this.onComponentSelected, this);
-            Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
-
-            try{
-                sceneManager = new SceneManager();
-                sceneManager.init();
-            }catch(ex){
-                this.onNoWebGLSupport();
-            }
-
-        },
-
         onComponentSelected: function(showRoot) {
             if (this.isInBomMode()) {
                 this.updateBom(showRoot);
@@ -107,11 +150,9 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             }
             this.showPartMetadata();
             sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
-
         },
 
         exportScene:function(){
-
             // Def url
             var splitUrl = window.location.href.split("/");
             var urlRoot = splitUrl[0] + "//" + splitUrl[2];
@@ -131,7 +172,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             var esmv = new ExportSceneModalView({iframeSrc:iframeSrc});
             $("body").append(esmv.render().el);
             esmv.openModal();
-
         },
 
         fullScreenScene:function(){
@@ -149,7 +189,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
           this.partsTreeView.onRefreshComponent(partKey);
         },
 
-        //TODO better panel for part metadata
         showPartMetadata:function() {
             if(!this.isInBomMode()){
                 if( this.partMetadataView == null){

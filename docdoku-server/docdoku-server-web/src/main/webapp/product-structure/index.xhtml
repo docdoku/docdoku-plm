@@ -72,19 +72,6 @@
                     "modules/coworkers-access-module/app"
                 ]);
 
-                $("#product-menu").resizable({
-                    containment: "#content",
-                    handles: 'e',
-                    autoHide: true,
-                    stop: function(e, ui) {
-                        var parent = ui.element.parent();
-                        ui.element.css({
-                            width: ui.element.width()/parent.width()*100+"%",
-                            height: ui.element.height()/parent.height()*100+"%"
-                        });
-                    }
-                });
-
             });
         </script>
     </ui:define>
@@ -127,18 +114,8 @@
             </div>
 
             <div id="center_container">
-                <div id="side_controls_container">
 
-                    <div class="btn-group" data-toggle="buttons-radio" id="view_buttons">
-                        <button class="btn btn-custom" id="flying_mode_view_btn"><i class="icon-fighter-jet"></i>
-                        </button>
-                        <button class="btn btn-custom" id="tracking_mode_view_btn"><i class="icon-magnet"></i></button>
-                    </div>
-                    <div class="btn-group" id="manageMarker">
-                        <button class="btn btn-custom" id="markerZoomLess"><i class="icon-minus"></i></button>
-                        <button class="btn btn-custom" id="markerState"><i class="icon-circle"></i></button>
-                        <button class="btn btn-custom" id="markerZoomMore"><i class="icon-plus"></i></button>
-                    </div>
+                <div id="side_controls_container">
                     <div id="layer-wrapper">
                         <ul id="layer-header"></ul>
                         <nav>
@@ -146,9 +123,11 @@
                         </nav>
                     </div>
                 </div>
+
                 <div id="scene_container">
                     <div id="container"></div>
                 </div>
+
             </div>
 
             <div id="bom_table_container"></div>
