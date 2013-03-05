@@ -2,7 +2,7 @@ define(["text!templates/bom_header.html", "i18n!localization/nls/product-structu
 
     var BomHeaderView = Backbone.View.extend({
 
-        el: $('#top_controls_container'),
+        el: '#top_controls_container',
 
         events: {
             "click .checkout": "actionCheckout",

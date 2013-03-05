@@ -8,7 +8,7 @@ define([
 
     var SearchView = Backbone.View.extend({
 
-        el: $('div#nav_list_action_bar'),
+        el: '#nav_list_action_bar',
 
         template:Mustache.compile(template),
 

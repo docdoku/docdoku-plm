@@ -2,7 +2,7 @@ define(["models/component_module", "views/component_views"], function (Component
 
     var PartsTreeView = Backbone.View.extend({
 
-        el:$('#product_nav_list'),
+        el:'#product_nav_list',
 
         events: {
             "change input": "checkChildrenInputs",

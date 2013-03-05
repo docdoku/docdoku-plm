@@ -12,9 +12,10 @@ define(
         "views/shortcuts_view",
         "views/control_choice_view",
         "SceneManager",
+        "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
 
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ShortcutsView, ControlChoiceView, SceneManager, i18n) {
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ShortcutsView, ControlChoiceView, SceneManager, template, i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -27,7 +28,15 @@ define(
             "click #fullscreen_scene_btn": "fullScreenScene"
         },
 
+        template:Mustache.compile(template),
+
         initialize: function() {
+
+        },
+
+        render:function(){
+
+            this.$el.html(this.template({productId:APP_CONFIG.productId, i18n:i18n}));
 
             this.inBomMode = false;
 

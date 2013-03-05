@@ -55,7 +55,11 @@ define({
         NO_WEBGL:"No WebGL available or activated",
         TRUE:"True",
         FALSE:"False",
-        "LINKS":"Links"
+        LINKS:"Links",
+        EXPORT:"Export",
+        FULL_SCREEN:"Full screen",
+        CONFIG_SPEC:"Config spec",
+        LATEST:"Latest"
     },
     "fr": true,
     "es": true

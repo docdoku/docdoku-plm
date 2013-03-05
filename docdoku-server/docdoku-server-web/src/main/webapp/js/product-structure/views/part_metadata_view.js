@@ -1,7 +1,7 @@
 define (["text!templates/part_meta_data.html"],function(template) {
     var PartMetadataView = Backbone.View.extend({
 
-        el:$("#part_metadata_container"),
+        el:"#part_metadata_container",
 
         template: Mustache.compile(template),
 

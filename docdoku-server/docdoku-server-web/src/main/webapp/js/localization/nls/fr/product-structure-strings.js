@@ -49,5 +49,9 @@ define({
     NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé.",
     TRUE:"Oui",
     FALSE:"Nom",
-    "LINKS":"Liens"
+    LINKS:"Liens",
+    EXPORT:"Exporter",
+    FULL_SCREEN:"Plein écran",
+    CONFIG_SPEC:"Config spec",
+    LATEST:"Dernière"
 });
