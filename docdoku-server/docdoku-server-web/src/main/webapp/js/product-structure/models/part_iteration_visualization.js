@@ -68,6 +68,10 @@ define(function() {
             }
             //no level found for this rating
             return null;
+        },
+
+        getBestLevelGeometry: function() {
+            return this.levels[this.levels.length-1];
         }
 
     };
