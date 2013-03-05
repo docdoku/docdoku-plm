@@ -119,7 +119,6 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             }
             this.showPartMetadata();
             sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
-
         },
 
         exportScene:function(){

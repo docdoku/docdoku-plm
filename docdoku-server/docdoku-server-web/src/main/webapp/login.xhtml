@@ -15,34 +15,251 @@
             #{i18nLogin['title']}
         </ui:define>
         <ui:define name="content">
-            <div class="well" id="login_form_container">
-                <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
-                <h:form id="login_form">
-                    <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
-                    <p>
-                        <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
-                        <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
-                    </p>
+            <div id="general_presentation">
+                <div id="informations"></div>
+                <div class="well" id="login_form_container">
+                        <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
+                        <h:form id="login_form">
+                            <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
+                            <p>
+                                <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
+                                <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
+                            </p>
 
-                    <p>
-                        <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
-                        <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
-                    </p>
+                            <p>
+                                <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
+                                <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
+                            </p>
 
-                    <p id="login_button_container">
-                        <h:commandButton styleClass="btn btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
-                    </p>
+                            <p id="login_button_container">
+                                <h:commandButton styleClass="btn btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
+                            </p>
 
-                    <p>
-                        <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
-                    </p>
-                </h:form>
+                            <p>
+                                <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
+                            </p>
+                        </h:form>
+                </div>
+            </div>
+            <hr id="home_hr"></hr>
+            <div id="detail_presentation">
+                <div class="well">
+                    <h2>Manage your document assets</h2>
+
+                    <h3>Document Management</h3>
+                    <ul>
+                        <li>Version control (checkin, checkout, revision, iteration)</li>
+                        <li>Custom attributes</li>
+                        <li>Tags support</li>
+                        <li>Document templates</li>
+                        <li>Automatic ID generation</li>
+                        <li>Links between documents</li>
+                        <li>Full text search</li>
+                    </ul>
+                    <div>And attach processes, track changes,and visualize Office documents inside the browser.</div>
+                </div>
+                <div class="well">
+                    <h2>Manage your products</h2>
+
+                    <h3>Product Structure</h3>
+                    <ul>
+                        <li>Browse the product definition</li>
+                        <li>Search, filter the breakdown structure</li>
+                    </ul>
+                    <h3>Product Configuration</h3>
+                    <ul>
+                        <li>Add effectivities to part revisions</li>
+                        <li>Effectivities could be based on date, lot or serial number</li>
+                        <li>Define alternate and substitute parts</li>
+                    </ul>
+                    <h3>Bill of Materials</h3>
+                    <ul>
+                        <li>List the raw materials upon a specific configuration context</li>
+                    </ul>
+                    <div>Track structure and parts changes and manage workflow.</div>
+                </div>
+                <div class="well">
+                    <h2>Track and organize changes</h2>
+
+                    <h3>Process Management</h3>
+                    <ul>
+                        <li>Define workflows, no coding required (WYSIWYG editor)</li>
+                        <li>Assign tasks to users</li>
+                        <li>Users can add comments</li>
+                        <li>Accept or reject tasks</li>
+                        <li>Start and follow the work progress</li>
+                    </ul>
+                    <h3>Change Management</h3>
+                    <ul>
+                        <li>Be notified on changes</li>
+                        <li>Track modifications on every object</li>
+                    </ul>
+                    <div>Process and change management can apply to documents, products, parts…</div>
+                </div>
+                <div class="well">
+                    <h2>Use your browser</h2>
+
+                    <h3>Data Visualization</h3>
+                    <ul>
+                        <li>Display data in any browser</li>
+                        <li>No client software or plugin required</li>
+                        <li>Displayable formats:
+                            <ul>
+                                <li>MS Word</li>
+                                <li>MS PowerPoint</li>
+                                <li>OpenOffice Impress</li>
+                                <li>OpenOffice Writer</li>
+                                <li>PDF</li>
+                                <li>Video and audio data</li>
+                                <li>CAD models (DWG, Step, OBJ, Catia…)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div>Additional formats may be supported.</div>
+                </div>
+                <div class="well">
+                    <h2>Social knowledge management</h2>
+
+                    <h3>Realtime communication</h3>
+                    <ul>
+                        <li>Chat</li>
+                        <li>Audio conferencing</li>
+                        <li>Video conferencing</li>
+                    </ul>
+                    <h3>Social capitalization</h3>
+                    <ul>
+                        <li>Register your conversations</li>
+                        <li>Attach them to any object (part, product, document...)</li>
+                    </ul>
+                    <div>Capture chat and visioconference conversations as well as documents and product models.</div>
+                </div>
             </div>
             <script type="text/javascript">
                 if(window.location.hash){
                     var redirectInput = document.getElementById("login_form:originURL");
                     redirectInput.value=redirectInput.value + window.location.hash;
                 }
+            </script>
+            <script src="js/lib/visualization/Three.js"></script>
+            <script src="js/lib/visualization/Detector.js"></script>
+            <script src="js/lib/visualization/Stats.js"></script>
+            <script src="js/lib/visualization/THREEx.KeyboardState.js"></script>
+            <script src="js/lib/visualization/THREEx.FullScreen.js"></script>
+
+            <script>
+                /* 	Three.js  */
+
+                // MAIN
+                if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+                // standard global variables
+                var container, scene, camera, renderer, controls, stats;
+                var keyboard = new THREEx.KeyboardState();
+                var clock = new THREE.Clock();
+
+                // custom global variables
+                var android;
+
+                init();
+                animate();
+
+                // FUNCTIONS
+                function init()
+                {
+                    // SCENE
+                    scene = new THREE.Scene();
+                    // CAMERA
+                    var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+                    var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+                    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+                    scene.add(camera);
+                    camera.position.set(0,150,400);
+                    camera.lookAt(scene.position);
+                    // RENDERER
+                    renderer = new THREE.WebGLRenderer( {antialias:true} );
+                    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+                    container = document.createElement( 'div' );
+                    document.getElementById("informations").appendChild( container );
+                    container.appendChild( renderer.domElement );
+                    // EVENTS
+                    THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+                    // CONTROLS
+                    controls = new THREE.TrackballControls( camera );
+                    // STATS
+                    /*stats = new Stats();
+                    stats.domElement.style.position = 'absolute';
+                    stats.domElement.style.top = '0px';
+                    stats.domElement.style.zIndex = 100;
+                    container.appendChild( stats.domElement );*/
+                    // LIGHT
+                    var light = new THREE.PointLight(0xffffff);
+                    light.position.set(-100,200,100);
+                    scene.add(light);
+                    // FLOOR
+                    var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
+                    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+                    floorTexture.repeat.set( 10, 10 );
+                    var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture } );
+                    var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
+                    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                    floor.position.y = -0.5;
+                    floor.doubleSided = true;
+                    scene.add(floor);
+                    // SKYBOX/FOG
+                    var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+                    var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff } );
+                    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+                    skyBox.flipSided = true; // render faces from inside of the cube, instead of from outside (default).
+                    // scene.add(skyBox);
+                    scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+
+                    ////////////
+                    // CUSTOM //
+                    ////////////
+
+                    // Note: if imported model appears too dark,
+                    //   add an ambient light in this file
+                    //   and increase values in model's exported .js file
+                    //    to e.g. "colorAmbient" : [0.75, 0.75, 0.75]
+                    var jsonLoader = new THREE.JSONLoader();
+                    jsonLoader.load( "images/android.js", addModelToScene );
+                    // addModelToScene function is called back after model has loaded
+
+                    var ambientLight = new THREE.AmbientLight(0x111111);
+                    scene.add(ambientLight);
+
+                }
+
+                function addModelToScene( geometry )
+                {
+                    var material = new THREE.MeshFaceMaterial();
+                    android = new THREE.Mesh( geometry, material );
+                    android.scale.set(10,10,10);
+                    scene.add( android );
+                }
+
+                function animate()
+                {
+                    requestAnimationFrame( animate );
+                    render();
+                    update();
+                }
+
+                function update()
+                {
+                    if ( keyboard.pressed("z") )
+                    {
+                        // do something
+                    }
+
+                    controls.update();
+                    //stats.update();
+                }
+
+                function render()
+                {
+                    renderer.render( scene, camera );
+                }
+
             </script>
         </ui:define>
 

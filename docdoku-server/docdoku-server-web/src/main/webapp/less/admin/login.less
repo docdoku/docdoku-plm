@@ -1,45 +1,109 @@
-#login_form_container {
-  margin: 60px auto 0px auto;
-  background-color: white;
-  width: 300px;
-  border-radius: 5px;
-  .box-shadow(0px 1px 4px rgba(0, 0, 0, 0.5));
+#general_presentation {
+  max-width: 848px;
+  margin: 0 auto;
+
+  #informations {
+    margin: 10px 45px 10px 10px;
+    float: left;
+    canvas {
+      width: 449px;
+      height: 280px;
+    }
+  }
+
+  #login_form_container {
+    margin: 10px 10px 30px 10px;
+    float: left;
+    height: auto;
+    background-color: white;
+    .box-shadow(0px 1px 4px rgba(0, 0, 0, 0.5));
+
+    h3 {
+      text-align: center;
+      font-size: 20px;
+      color: #434C64;
+
+      i {
+        margin-right: 10px;
+        margin-top: -2px;
+      }
+    }
+
+    #login_form {
+      margin-top: 15px;
+      margin-bottom: 0px;
+
+      &:login_button {
+        width: 80px;
+        margin-right: 20px;
+      }
+
+      label {
+        color: #5B6B80;
+      }
+
+      input[type="text"], input[type="password"] {
+        width: 250px;
+      }
+
+      p {
+        margin-left: 20px;
+      }
+    }
+
+    #login_button_container {
+      float: right;
+      margin-bottom: 15px;
+    }
+  }
 }
 
-#login_form_container h3 {
-  text-align: center;
-  font-size: 20px;
-  color: #434C64;
+#home_hr {
+  clear: both;
 }
 
-#login_form_container h3 i {
-  margin-right: 10px;
-  margin-top: -2px;
-}
+#detail_presentation {
+  margin: 0px auto;
+  max-width: 1274px;
+  min-width: 420px;
 
-#login_form_container #login_form label {
-  color: #5B6B80;
-}
+  .well {
+    float: left;
+    margin: 10px;
+    position: relative;
+    border-width: 3px;
+    height: 260px;
+    width: 360px;
+    box-shadow: 0px -1px 4px rgba(255, 255, 255, 0.5);
+    border-color: #ffffff;
 
-#login_form {
-  margin-top: 15px;
-  margin-bottom: 0px;
-}
+    h2 {
+      padding-bottom: 5px;
+      line-height: 18px;
+      color: #0088cc;
+      font-size: 18px;
+      margin-top: 0px;
+      text-shadow: 0 1px 0 white;
+    }
 
-#login_form input[type="text"], #login_form input[type="password"] {
-  width: 250px;
-}
+    h3 {
+      line-height: 14px;
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #666;
+    }
 
-#login_form p {
-  margin-left: 20px;
-}
+    ul {
+      margin-bottom: 0;
+      text-shadow: 0 1px 0 white;
+    }
 
-#login_button_container { //text-align: right;
-  float: right;
-  margin-bottom: 15px;
-}
+    > div {
+      position: absolute;
+      bottom: 10px;
+      font-weight: bold;
+    }
+  }
 
-#login_form:login_button {
-  width: 80px;
-  margin-right: 20px;
 }
