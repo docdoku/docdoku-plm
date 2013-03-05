@@ -1,10 +1,12 @@
 /*global sceneManager*/
 define([
     "views/layer-item-view",
-    "views/layer-header-view"
+    "views/layer-header-view",
+    "i18n!localization/nls/product-structure-strings"
 ], function (
     LayerItemView,
-    LayerHeaderView
+    LayerHeaderView,
+    i18n
 ) {
 
     var LayersListView = Backbone.View.extend({
@@ -19,6 +21,7 @@ define([
         initialize: function() {
             this.listContainer = this.$("nav > ul");
             this.listenTo(this.collection, 'add', this.addOne)
+                .listenTo(this.collection, 'remove', this.onRemove)
                 .listenTo(this.collection, 'reset', this.addAll);
             this.collection.fetch();
         },
@@ -28,6 +31,13 @@ define([
                 this.listContainer.empty();
             }
             this.collection.each(this.addOne, this);
+        },
+
+        onRemove:function(){
+            if (this.collection.length <= 0) {
+                this.listContainer.empty();
+                this.addEmptyView();
+            }
         },
 
         addOne: function(layer) {
@@ -48,7 +58,7 @@ define([
             return this;
         },
 
-        template_empty_view: "<li>No layers</li>",
+        template_empty_view: "<li>"+i18n.NO_LAYERS+"</li>",
 
         addEmptyView: function() {
             this.listContainer.append(this.template_empty_view);

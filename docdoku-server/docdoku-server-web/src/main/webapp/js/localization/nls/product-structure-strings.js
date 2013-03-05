@@ -2,6 +2,7 @@ define({
     root: {
         LAYERS: "Layers",
         NEW_LAYER: "new layer",
+        NO_LAYERS: "No layers",
         SAVE: "Save",
         CANCEL: "Cancel",
         CLOSE: "Fermer",

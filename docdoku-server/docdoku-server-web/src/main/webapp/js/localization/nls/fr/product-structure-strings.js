@@ -1,6 +1,7 @@
 define({
     LAYERS: "Calques",
     NEW_LAYER: "nouveau calque",
+    NO_LAYERS: "Aucun calque",
     SAVE: "Enregistrer",
     CANCEL: "Annuler",
     CLOSE: "Fermer",
