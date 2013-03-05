@@ -1,6 +1,6 @@
 var sceneManager;
 
-define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager","views/export_scene_modal_view","i18n!localization/nls/product-structure-strings"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager, ExportSceneModalView,i18n) {
+define(["router","views/search_view", "views/parts_tree_view", "views/bom_view", "views/part_metadata_view", "modules/navbar-module/views/navbar_view","SceneManager","views/export_scene_modal_view","i18n!localization/nls/product-structure-strings","views/shortcuts_view"], function (Router,SearchView, PartsTreeView, BomView, PartMetadataView, NavBarView, SceneManager, ExportSceneModalView,i18n,ShortcutsView) {
 
     var AppView = Backbone.View.extend({
 
@@ -72,42 +72,30 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
             this.fullScreenSceneButton = this.$("#fullscreen_scene_btn");
             this.bomContainer = this.$("#bom_table_container");
             this.centerSceneContainer = this.$("#center_container");
+            this.sideControlsContainer = this.$("#side_controls_container");
             this.partMetadataContainer = this.$("#part_metadata_container");
             this.partMetadataView = null;
-
             this.inBomMode = false;
 
             this.bomView = new BomView().render();
+            this.searchView = new SearchView().render();
 
-            sceneManager = new SceneManager();
-
-            var searchView = new SearchView();
+            this.shortcutsView = new ShortcutsView().render();
+            this.sideControlsContainer.prepend(this.shortcutsView.$el);
 
             this.partsTreeView = new PartsTreeView({
-                resultPathCollection: searchView.collection
+                resultPathCollection: this.searchView.collection
             }).render();
 
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
 
             try{
+                sceneManager = new SceneManager();
                 sceneManager.init();
             }catch(ex){
-                this.$("#center_container").html("<span class='alert'>"+i18n.NO_WEBGL+"</span>");
+                this.onNoWebGLSupport();
             }
-
-            $("#product-menu").resizable({
-                containment: "#content",
-                handles: 'e',
-                autoHide: true,
-                stop: function(e, ui) {
-                    var parent = ui.element.parent();
-                    ui.element.css({
-                        width: ui.element.width()/parent.width()*100+"%",
-                        height: ui.element.height()/parent.height()*100+"%"
-                    });
-                }
-            });
 
         },
 
@@ -172,6 +160,10 @@ define(["router","views/search_view", "views/parts_tree_view", "views/bom_view",
                 this.partMetadataView.render();
                 this.partMetadataContainer.addClass("active");
             }
+        },
+
+        onNoWebGLSupport:function(){
+            this.centerSceneContainer.html("<span class='alert'>"+i18n.NO_WEBGL+"</span>");
         }
 
     });

@@ -1,12 +1,12 @@
 /*global sceneManager*/
 define([
     "views/marker_create_modal_view",
-    "views/controls_infos_modal_view",
-    "views/progress_bar_view"
+    "views/progress_bar_view",
+    "views/blocker_view"
 ], function (
     MarkerCreateModalView,
-    ControlsInfosModalView,
-    ProgressBarView
+    ProgressBarView,
+    BlockerView
 ) {
     var SceneManager = function (pOptions) {
 
@@ -46,8 +46,8 @@ define([
 
         init: function() {
             _.bindAll(this);
-            this.listenXHR();
             this.initScene();
+            this.listenXHR();
             this.initCamera();
             this.initControls();
             this.bindSwitchControlEvents();
@@ -59,7 +59,6 @@ define([
             this.initLayerManager();
             this.animate();
             this.initIframeScene();
-            this.initShortcuts();
             this.isLoaded = true;
         },
 
@@ -115,13 +114,15 @@ define([
 
         initScene: function() {
             this.$container = $('div#container');
-            this.$blocker = $('div#blocker');
+            this.$blocker = new BlockerView().render().$el;
+            this.$container.append(this.$blocker);
             this.$instructions = $('div#instructions');
 
             // Init frame
             if (this.$container.length === 0) {
                 this.$container = $('div#frameContainer');
             }
+
             this.scene = new THREE.Scene();
         },
 
@@ -417,25 +418,6 @@ define([
             var that = this;
             this.$statsArrow.bind('click', function() {
                 that.$stats.toggleClass('statsWinMinimized statsWinMaximized');
-            });
-        },
-
-        initShortcuts: function() {
-            var self = this;
-            $('#shortcuts a').bind("click", function() {
-                var cimv;
-
-                switch (self.stateControl) {
-                    case self.STATECONTROL.PLC:
-                        cimv = new ControlsInfosModalView({isPLC:true, isTBC:false});
-                        break;
-                    case self.STATECONTROL.TBC:
-                        cimv = new ControlsInfosModalView({isPLC:false, isTBC:true});
-                        break;
-                }
-
-                $("body").append(cimv.render().el);
-                cimv.openModal();
             });
         },
 
