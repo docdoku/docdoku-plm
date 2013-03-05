@@ -671,6 +671,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             // TODO : delete converted files
         }
 
+        List<Geometry> geometries = partIteration.getGeometries();
+        for(Geometry geometry : geometries){
+            dataManager.delData(geometry);
+        }
+        partIteration.setGeometries(new ArrayList<Geometry>());
+
+        Set<BinaryResource> attachedFiles = partIteration.getAttachedFiles();
+        for(BinaryResource attachedFile : attachedFiles){
+            dataManager.delData(attachedFile);
+        }
+        partIteration.setAttachedFiles(new HashSet<BinaryResource>());
+
     }
 
     @RolesAllowed("users")
