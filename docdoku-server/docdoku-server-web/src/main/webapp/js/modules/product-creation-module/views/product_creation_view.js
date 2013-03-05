@@ -113,7 +113,6 @@ define(
             this.createNewPart  = true ;
             this.$inputPartNumber.removeProp("required");
             this.$inputNewPartNumber.attr("required","required");
-            this.$inputNewPartName.attr("required","required");
         },
 
         hidePartCreationFields:function(){
@@ -124,7 +123,6 @@ define(
             this.createNewPart  = false;
             this.$inputPartNumber.attr("required","required");
             this.$inputNewPartNumber.removeProp("required");
-            this.$inputNewPartName.removeProp("required");
         },
 
         onError: function() {
