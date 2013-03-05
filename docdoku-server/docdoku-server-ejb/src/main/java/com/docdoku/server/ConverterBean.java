@@ -41,6 +41,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.io.*;
+import java.util.concurrent.Future;
 
 
 /**
@@ -71,9 +72,9 @@ public class ConverterBean implements IConverterManagerLocal {
 
     @Override
     @Asynchronous
-    public void convertCADFileToJSON(PartIterationKey pPartIPK, File cadFile) throws PartIterationNotFoundException {
+    public Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, File cadFile) throws Exception {
         String ext = FileIO.getExtension(cadFile);
-
+        File convertedFile = null;
         CADConverter selectedConverter=null;
         for(CADConverter converter:converters){
             if(converter.canConvertToJSON(ext)){
@@ -85,8 +86,9 @@ public class ConverterBean implements IConverterManagerLocal {
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             PartIteration partI = partIDAO.loadPartI(pPartIPK);
 
-            selectedConverter.convert(partI, cadFile);
+            convertedFile = selectedConverter.convert(partI, cadFile);
         }
+        return new AsyncResult<File>(convertedFile);
     }
 
 

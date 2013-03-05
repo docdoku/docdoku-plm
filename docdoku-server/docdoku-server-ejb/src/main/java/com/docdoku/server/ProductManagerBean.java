@@ -452,6 +452,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 dataManager.delData(file);
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(file);
+                //Delete converted files if any
+                List<Geometry> geometries = new ArrayList<>(partI.getGeometries());
+                for(Geometry geometry : geometries){
+                    dataManager.delData(geometry);
+                    partI.removeGeometry(geometry);
+                }
+                Set<BinaryResource> attachedFiles = new HashSet<>(partI.getAttachedFiles());
+                for(BinaryResource attachedFile : attachedFiles){
+                    dataManager.delData(attachedFile);
+                    partI.removeFile(attachedFile);
+                }
+
                 file = new BinaryResource(fullName, pSize);
                 binDAO.createBinaryResource(file);
                 partI.setNativeCADFile(file);
@@ -668,21 +680,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if(br != null){
             dataManager.delData(br);
             partIteration.setNativeCADFile(null);
-            // TODO : delete converted files
         }
 
-        List<Geometry> geometries = partIteration.getGeometries();
+        List<Geometry> geometries = new ArrayList<>(partIteration.getGeometries());
         for(Geometry geometry : geometries){
             dataManager.delData(geometry);
+            partIteration.removeGeometry(geometry);
         }
-        partIteration.setGeometries(new ArrayList<Geometry>());
 
-        Set<BinaryResource> attachedFiles = partIteration.getAttachedFiles();
+        Set<BinaryResource> attachedFiles = new HashSet<>(partIteration.getAttachedFiles());
         for(BinaryResource attachedFile : attachedFiles){
             dataManager.delData(attachedFile);
+            partIteration.removeFile(attachedFile);
         }
-        partIteration.setAttachedFiles(new HashSet<BinaryResource>());
-
     }
 
     @RolesAllowed("users")

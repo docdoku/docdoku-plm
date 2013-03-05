@@ -27,6 +27,7 @@ import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
 
 import java.io.File;
+import java.util.concurrent.Future;
 
 
 /**
@@ -34,6 +35,6 @@ import java.io.File;
  * @author Florent Garin
  */
 public interface IConverterManagerLocal {
-		
-    void convertCADFileToJSON(PartIterationKey pPartIPK, File cadFile) throws PartIterationNotFoundException;
+
+    Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, File cadFile) throws Exception;
 }

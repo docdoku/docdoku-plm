@@ -144,7 +144,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @Override
     public void uploadNativeCADToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException, PartIterationNotFoundException {
+            @XmlMimeType("application/octet-stream") DataHandler data) throws Exception {
         PartIterationKey partIPK = null;
         File vaultFile = null;
 
