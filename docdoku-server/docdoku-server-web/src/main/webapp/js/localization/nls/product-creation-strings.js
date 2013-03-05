@@ -17,7 +17,8 @@ define({
         ALL_PRODUCTS:"All products",
         EDIT_PRODUCT:"Edit product",
         DELETE_PRODUCT_CONFIRM:"Are you sure to want to delete this product ?",
-        DELETE_PRODUCT_ERROR:"Error on product deletion"
+        DELETE_PRODUCT_ERROR:"Error on product deletion",
+        VISUALIZE_PRODUCT:"Visualize product"
     },
     "fr": true
 });

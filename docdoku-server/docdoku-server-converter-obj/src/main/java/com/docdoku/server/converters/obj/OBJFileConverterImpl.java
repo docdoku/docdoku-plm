@@ -24,7 +24,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
@@ -54,16 +54,16 @@ public class OBJFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public void convert(PartIteration partToConvert, File cadFile) {
-        try
-        {
+    public File convert(PartIteration partToConvert, File cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException {
+        String woExName=FileIO.getFileNameWithoutExtension(cadFile);
+        File tempDir = Files.createTempDir();
+        File tmpJSFile=new File(tempDir, woExName+".js");
+        File tmpBINFile = new File(tmpJSFile.getParentFile(), woExName + ".bin");
+        File jsFile=null;
+        try {
             String pythonInterpreter = CONF.getProperty("pythonInterpreter");
             File script = new File(OBJFileConverterImpl.class.getResource(PYTHON_SCRIPT).getPath());
-            String woExName=FileIO.getFileNameWithoutExtension(cadFile);
-            File tempDir = Files.createTempDir();
-            File tmpJSFile=new File(tempDir, woExName+".js");
-            File tmpBINFile = new File(tmpJSFile.getParentFile(), woExName + ".bin");
-            String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", cadFile.getAbsolutePath(),"-o",tmpJSFile.getAbsolutePath()};
+            String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-a", "center", "-i", cadFile.getAbsolutePath(),"-o",tmpJSFile.getAbsolutePath()};
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();
             //Process proc = Runtime.getRuntime().exec(args);
@@ -71,20 +71,20 @@ public class OBJFileConverterImpl implements CADConverter{
             int exitCode = proc.exitValue();
             if(exitCode==0){
                 PartIterationKey partIPK = partToConvert.getKey();
-                File jsFile = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
-                tmpJSFile.renameTo(jsFile);
-
                 File binFile = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
-                tmpBINFile.renameTo(binFile);
-            }else{
-                tmpJSFile.delete();
-                tmpBINFile.delete();
-            }
+                Files.copy(tmpBINFile,binFile);
 
+                jsFile = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
+                Files.copy(tmpJSFile,jsFile);
+            }
+            return jsFile;
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        finally {
+            if(tmpJSFile!=null)
+                tmpJSFile.delete();
+
+            if(tmpBINFile!=null)
+                tmpBINFile.delete();
         }
     }
 

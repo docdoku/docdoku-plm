@@ -1,5 +1,5 @@
 /*global sceneManager*/
-window.Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
+var Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
 
     this.id = id;
 
@@ -19,6 +19,7 @@ window.Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
     this.partIteration = partIteration;
     this.mesh = null;
     this.idle = true;
+    this.loaded = false;
 
 };
 
@@ -68,25 +69,42 @@ Instance.prototype = {
             this.idle = false;
             this.partIteration.idle = false;
 
-            var rating = this.getRating(frustum);
-            //get the level corresponding of this rating
-            var levelGeometry = this.partIteration.getLevelGeometry(rating);
+            if(_.isUndefined(this.partIteration.radius)) {
+                // load best quality only once
+                if(!this.loaded) {
+                    var bestLevelGeometry = this.partIteration.getBestLevelGeometry();
 
-            //if we need to switch geometry
-            if (this.needSwitch(levelGeometry)) {
-
-                var self = this;
-
-                this.switchTo(levelGeometry, function() {
-                    self.idle = true;
-                    self.partIteration.idle = true;
-                });
+                    var self = this;
+                    this.switchTo(bestLevelGeometry, function() {
+                        self.idle = true;
+                        self.partIteration.idle = true;
+                        self.loaded = true;
+                    });
+                } else {
+                    this.idle = true;
+                    this.partIteration.idle = true;
+                }
 
             } else {
-                this.idle = true;
-                this.partIteration.idle = true;
-            }
+                var rating = this.getRating(frustum);
+                //get the level corresponding of this rating
+                var levelGeometry = this.partIteration.getLevelGeometry(rating);
 
+                //if we need to switch geometry
+                if (this.needSwitch(levelGeometry)) {
+
+                    var self = this;
+
+                    this.switchTo(levelGeometry, function() {
+                        self.idle = true;
+                        self.partIteration.idle = true;
+                    });
+
+                } else {
+                    this.idle = true;
+                    this.partIteration.idle = true;
+                }
+            }
         }
 
     },

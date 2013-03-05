@@ -23,11 +23,12 @@ package com.docdoku.server.converters;
 import com.docdoku.core.product.PartIteration;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public interface CADConverter {
 
-    void convert(PartIteration partToConvert, File cadFile);
+    File convert(PartIteration partToConvert, File cadFile) throws Exception;
     boolean canConvertToJSON(String cadFileExtension);
 
 }
