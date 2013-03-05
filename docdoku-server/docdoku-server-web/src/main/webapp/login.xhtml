@@ -144,7 +144,6 @@
             <script src="js/lib/visualization/Detector.js"></script>
             <script src="js/lib/visualization/Stats.js"></script>
             <script src="js/lib/visualization/THREEx.KeyboardState.js"></script>
-            <script src="js/lib/visualization/THREEx.FullScreen.js"></script>
 
             <script>
                 /* 	Three.js  */
@@ -180,8 +179,6 @@
                     container = document.createElement( 'div' );
                     document.getElementById("informations").appendChild( container );
                     container.appendChild( renderer.domElement );
-                    // EVENTS
-                    THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
                     // CONTROLS
                     controls = new THREE.TrackballControls( camera );
                     // STATS
