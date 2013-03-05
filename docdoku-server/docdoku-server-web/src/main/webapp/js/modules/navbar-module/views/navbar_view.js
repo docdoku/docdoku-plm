@@ -19,9 +19,11 @@ define(["common-objects/collections/configuration_items",
 
         onProductsCollectionReset:function(){
             var that = this;
+            var maxConfigurationItems = 10 ;
             if(! _.isEmpty(this.productsCollection.models)){
                 this.$listProducts.append("<li class='divider'></li>");
-                this.productsCollection.each(function(model){
+                var firstModels = this.productsCollection.models.slice(0, maxConfigurationItems);
+                _(firstModels).each(function(model){
                    that.addProductInList(model);
                 });
             }
