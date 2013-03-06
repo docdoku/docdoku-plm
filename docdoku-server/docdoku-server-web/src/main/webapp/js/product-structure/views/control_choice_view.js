@@ -7,7 +7,7 @@ define(["text!templates/control_choice.html"],function(template){
 
         events:{
             "click button#flying_mode_view_btn": "flyingView",
-            "click button#tracking_mode_view_btn": "trackingView",
+            "click button#tracking_mode_view_btn": "trackingView"
         },
 
         initialize:function(){
