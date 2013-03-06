@@ -126,9 +126,7 @@ define(
         },
 
         onError: function(model, error) {
-            //console.log(error)
             alert(i18n.CREATION_ERROR + " : " + error.responseText);
-            //alert(i18n.CREATION_ERROR);
         }
 
     });
