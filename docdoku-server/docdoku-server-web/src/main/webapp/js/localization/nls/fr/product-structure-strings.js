@@ -55,5 +55,10 @@ define({
     FULL_SCREEN:"Plein écran",
     CONFIG_SPEC:"Config spec",
     LATEST:"Dernière",
-    SEARCH_PARTS:"Recherche d'articles"
+    SEARCH_PARTS:"Recherche d'articles",
+    FLYING_MODE:"Mode libre",
+    TRACKBALL_MODE:"Mode trackball",
+    MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
+    MARKERS_OPACITY:"Changer l'opacité des marqueurs",
+    MARKERS_SIZE_MAX:"Augmenter la taille des marqueurs"
 });

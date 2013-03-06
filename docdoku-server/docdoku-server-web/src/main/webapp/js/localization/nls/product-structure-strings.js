@@ -61,7 +61,12 @@ define({
         FULL_SCREEN:"Full screen",
         CONFIG_SPEC:"Config spec",
         LATEST:"Latest",
-        SEARCH_PARTS:"Search parts"
+        SEARCH_PARTS:"Search parts",
+        FLYING_MODE:"Fly mode",
+        TRACKBALL_MODE:"Trackball mode",
+        MARKERS_SIZE_MIN:"Reduce markers size",
+        MARKERS_OPACITY:"Change markers opacity",
+        MARKERS_SIZE_MAX:"Increase markers size"
     },
     "fr": true,
     "es": true
