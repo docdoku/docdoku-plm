@@ -54,5 +54,6 @@ define({
     EXPORT:"Exporter",
     FULL_SCREEN:"Plein écran",
     CONFIG_SPEC:"Config spec",
-    LATEST:"Dernière"
+    LATEST:"Dernière",
+    SEARCH_PARTS:"Recherche d'articles"
 });

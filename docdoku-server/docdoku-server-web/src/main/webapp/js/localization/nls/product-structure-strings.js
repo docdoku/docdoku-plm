@@ -60,7 +60,8 @@ define({
         EXPORT:"Export",
         FULL_SCREEN:"Full screen",
         CONFIG_SPEC:"Config spec",
-        LATEST:"Latest"
+        LATEST:"Latest",
+        SEARCH_PARTS:"Search parts"
     },
     "fr": true,
     "es": true
