@@ -41,7 +41,6 @@
                         </h:form>
                 </div>
             </div>
-            <hr id="home_hr"></hr>
             <div id="detail_presentation">
                 <div class="well">
                     <h2>Manage your document assets</h2>
@@ -142,21 +141,22 @@
             </script>
             <script src="js/lib/visualization/Three.js"></script>
             <script src="js/lib/visualization/Detector.js"></script>
-            <script src="js/lib/visualization/Stats.js"></script>
             <script src="js/lib/visualization/THREEx.KeyboardState.js"></script>
 
             <script>
+
                 /* 	Three.js  */
 
+                var info_panel = document.getElementById("informations");
                 // MAIN
-                if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+                if ( ! Detector.webgl ) info_panel.innerHTML = Detector.getWebGLErrorMessage().innerHTML;
                 // standard global variables
                 var container, scene, camera, renderer, controls, stats;
                 var keyboard = new THREEx.KeyboardState();
                 var clock = new THREE.Clock();
 
                 // custom global variables
-                var android;
+                var model;
 
                 init();
                 animate();
@@ -166,60 +166,38 @@
                 {
                     // SCENE
                     scene = new THREE.Scene();
+
                     // CAMERA
                     var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
                     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
                     camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
                     scene.add(camera);
-                    camera.position.set(0,150,400);
+                    camera.position.set(0,250,200);
                     camera.lookAt(scene.position);
+
                     // RENDERER
                     renderer = new THREE.WebGLRenderer( {antialias:true} );
                     renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
                     container = document.createElement( 'div' );
-                    document.getElementById("informations").appendChild( container );
+                    info_panel.appendChild( container );
                     container.appendChild( renderer.domElement );
+
                     // CONTROLS
-                    controls = new THREE.TrackballControls( camera );
-                    // STATS
-                    /*stats = new Stats();
-                    stats.domElement.style.position = 'absolute';
-                    stats.domElement.style.top = '0px';
-                    stats.domElement.style.zIndex = 100;
-                    container.appendChild( stats.domElement );*/
+                    controls = new THREE.TrackballControls( camera, info_panel );
+
                     // LIGHT
                     var light = new THREE.PointLight(0xffffff);
                     light.position.set(-100,200,100);
                     scene.add(light);
-                    // FLOOR
-                    var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
-                    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-                    floorTexture.repeat.set( 10, 10 );
-                    var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture } );
-                    var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
-                    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-                    floor.position.y = -0.5;
-                    floor.doubleSided = true;
-                    scene.add(floor);
+                    var light2 = new THREE.PointLight(0xffffff);
+                    light2.position.set(100,-200,-100);
+                    scene.add(light2);
+
                     // SKYBOX/FOG
-                    var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
-                    var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff } );
-                    var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-                    skyBox.flipSided = true; // render faces from inside of the cube, instead of from outside (default).
-                    // scene.add(skyBox);
                     scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
-                    ////////////
-                    // CUSTOM //
-                    ////////////
-
-                    // Note: if imported model appears too dark,
-                    //   add an ambient light in this file
-                    //   and increase values in model's exported .js file
-                    //    to e.g. "colorAmbient" : [0.75, 0.75, 0.75]
-                    var jsonLoader = new THREE.JSONLoader();
-                    jsonLoader.load( "images/android.js", addModelToScene );
-                    // addModelToScene function is called back after model has loaded
+                    var binaryLoader = new THREE.BinaryLoader();
+                    binaryLoader.load("images/pba.js", addModelToScene)
 
                     var ambientLight = new THREE.AmbientLight(0x111111);
                     scene.add(ambientLight);
@@ -229,9 +207,11 @@
                 function addModelToScene( geometry )
                 {
                     var material = new THREE.MeshFaceMaterial();
-                    android = new THREE.Mesh( geometry, material );
-                    android.scale.set(10,10,10);
-                    scene.add( android );
+                    model = new THREE.Mesh( geometry, material );
+                    model.scale.set(1,1,1);
+                    model.position.set(0, 0, 0);
+                    model.rotation.set(0.45, 0, 1.55);
+                    scene.add( model );
                 }
 
                 function animate()
@@ -243,13 +223,10 @@
 
                 function update()
                 {
-                    if ( keyboard.pressed("z") )
-                    {
-                        // do something
-                    }
+                    if(model)
+                        model.rotation.set(0.45, model.rotation.y+0.005, model.rotation.z+0.005);
 
                     controls.update();
-                    //stats.update();
                 }
 
                 function render()
