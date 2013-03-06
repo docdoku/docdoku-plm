@@ -181,17 +181,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException {
+    public ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         if (!NamingConvention.correct(pId)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
         }
-        ConfigurationItem ci = new ConfigurationItem(user.getWorkspace(), pId, pDescription);
-        ci.setDesignItem(em.getReference(PartMaster.class, new PartMasterKey(pWorkspaceId, pDesignItemNumber)));
 
-        new ConfigurationItemDAO(new Locale(user.getLanguage()), em).createConfigurationItem(ci);
-        return ci;
+        ConfigurationItem ci = new ConfigurationItem(user.getWorkspace(), pId, pDescription);
+
+        try {
+            PartMaster designedPartMaster = new PartMasterDAO(new Locale(user.getLanguage()), em).loadPartM(new PartMasterKey(pWorkspaceId, pDesignItemNumber));
+            ci.setDesignItem(designedPartMaster);
+            new ConfigurationItemDAO(new Locale(user.getLanguage()), em).createConfigurationItem(ci);
+            return ci;
+        } catch (PartMasterNotFoundException e) {
+            throw new PartMasterNotFoundException(new Locale(user.getLanguage()),pDesignItemNumber);
+        }
+
     }
 
     @RolesAllowed("users")
