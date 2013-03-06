@@ -11,10 +11,12 @@ define(
 
             initialize : function(){
 
-                if(this.options.isAdded)
+                if(this.options.isAdded){
                     this.events = { "click a": "clicked" };
-                else
+                }
+                else{
                     this.events = { "click": "clicked" };
+                }
 
                 return this ;
             },

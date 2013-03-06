@@ -13,8 +13,7 @@ define(
         "views/control_choice_view",
         "SceneManager",
         "text!templates/content.html",
-        "i18n!localization/nls/product-structure-strings",
-
+        "i18n!localization/nls/product-structure-strings"
     ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ShortcutsView, ControlChoiceView, SceneManager, template, i18n) {
 
     var AppView = Backbone.View.extend({
