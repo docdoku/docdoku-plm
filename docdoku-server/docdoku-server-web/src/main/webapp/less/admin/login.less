@@ -1,26 +1,28 @@
 #general_presentation {
   max-width: 848px;
-  margin: 0 auto;
+  text-align: center;
+  padding: 0;
+  margin: 0 auto 30px auto;
+  background-color: darken(#f5f5f5, 5%);
+  .box-shadow(0px 1px 4px rgba(0, 0, 0, 0.5));
 
-  #informations {
-    width: 449px;
-    height: 280px;
-    margin: 10px 45px 10px 10px;
-    float: left;
+  #demo-scene {
+    display: inline-block;
+    margin: 0;
+    height: 281px;
 
-    #gradient > .radial(lighten(#f5f5f5, 5%), darken(#f5f5f5, 5%));
     canvas {
-      width: 449px;
-      height: 280px;
+      height: 276px;
     }
   }
 
   #login_form_container {
-    margin: 10px 10px 30px 10px;
-    float: left;
-    height: auto;
+    display: inline-block;
+    border-radius: 0 4px 4px 0;
+    float: right;
+    padding: 20px 44px;
+    margin: 0;
     background-color: white;
-    .box-shadow(0px 1px 4px rgba(0, 0, 0, 0.5));
 
     h3 {
       text-align: center;
@@ -36,6 +38,7 @@
     #login_form {
       margin-top: 15px;
       margin-bottom: 0px;
+      text-align: left;
 
       &:login_button {
         width: 80px;
@@ -49,10 +52,6 @@
       input[type="text"], input[type="password"] {
         width: 250px;
       }
-
-      p {
-        margin-left: 20px;
-      }
     }
 
     #login_button_container {
@@ -62,14 +61,33 @@
   }
 }
 
-#home_hr {
-  clear: both;
+@media (max-width: 720px) {
+  #general_presentation {
+    #login_form_container {
+      float: none;
+      border-radius: 4px;
+      padding-right: 0;
+      padding-left: 0;
+      width: 100%;
+
+      #login_form {
+        text-align: center;
+      }
+
+      #login_button_container {
+        float: none;
+      }
+    }
+
+    #demo-scene {
+      width: 100%;
+    }
+  }
 }
 
 #detail_presentation {
   margin: 0px auto;
-  max-width: 1274px;
-  min-width: 420px;
+  max-width: 1194px;
 
   .well {
     float: left;
@@ -112,12 +130,12 @@
 
 @media (max-width: 1243px) {
   #detail_presentation {
-    max-width: 800px;
+    max-width: 796px;
   }
 }
 
 @media (max-width: 829px) {
   #detail_presentation {
-    max-width: 400px;
+    max-width: 398px;
   }
 }

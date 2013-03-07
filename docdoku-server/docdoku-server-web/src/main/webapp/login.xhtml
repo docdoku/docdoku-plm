@@ -15,9 +15,8 @@
             #{i18nLogin['title']}
         </ui:define>
         <ui:define name="content">
-            <div id="general_presentation">
-                <div id="informations"></div>
-                <div class="well" id="login_form_container">
+            <div class="well" id="general_presentation">
+                <div id="login_form_container">
                         <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
                         <h:form id="login_form">
                             <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
@@ -40,6 +39,7 @@
                             </p>
                         </h:form>
                 </div>
+                <div id="demo-scene"></div>
             </div>
             <div id="detail_presentation">
                 <div class="well">
@@ -147,7 +147,7 @@
 
                 /* 	Three.js  */
 
-                var info_panel = document.getElementById("informations");
+                var info_panel = document.getElementById("demo-scene");
                 // MAIN
                 if ( ! Detector.webgl ) info_panel.innerHTML = Detector.getWebGLErrorMessage().innerHTML;
                 // standard global variables
@@ -168,7 +168,7 @@
                     scene = new THREE.Scene();
 
                     // CAMERA
-                    var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+                    var SCREEN_WIDTH = 318, SCREEN_HEIGHT = 276;
                     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
                     camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
                     scene.add(camera);
