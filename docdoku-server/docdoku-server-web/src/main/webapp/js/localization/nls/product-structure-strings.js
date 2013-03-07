@@ -1,7 +1,7 @@
 define({
     root: {
         LAYERS: "Layers",
-        NEW_LAYER: "new layer",
+        NEW_LAYER: "New layer",
         NO_LAYERS: "No layers",
         SAVE: "Save",
         CANCEL: "Cancel",
@@ -48,7 +48,7 @@ define({
         GENERAL: "General",
         ATTRIBUTES: "Attributes",
         CAD_FILE: "CAD File",
-        APPEND:"add",
+        APPEND:"Add",
         STANDARD_PART:"Standard part",
         SUB_PARTS:"Assembly",
         CREATE_NEW_PART:"Create a new part",
@@ -66,7 +66,14 @@ define({
         TRACKBALL_MODE:"Trackball mode",
         MARKERS_SIZE_MIN:"Reduce markers size",
         MARKERS_OPACITY:"Change markers opacity",
-        MARKERS_SIZE_MAX:"Increase markers size"
+        MARKERS_SIZE_MAX:"Increase markers size",
+        VIEW_MODE:"View mode",
+        MARKERS:"Markers",
+        COMPONENT_SELECTED:"Selected part",
+        TOGGLE_ALL_LAYERS:"Toogle all layers",
+        APPEND_LAYER:"Create a new layer",
+        SCENE_VIEW:"Scene view",
+        BOM_VIEW:"Bom View"
     },
     "fr": true,
     "es": true

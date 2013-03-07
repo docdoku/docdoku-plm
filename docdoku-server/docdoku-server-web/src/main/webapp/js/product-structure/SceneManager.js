@@ -381,7 +381,7 @@ define([
 
         initStats: function() {
             this.stats = new Stats();
-            document.body.appendChild(this.stats.domElement);
+            $("#scene_container").append(this.stats.domElement);
 
             this.$stats = $(this.stats.domElement);
             this.$stats.attr('id','statsWin');

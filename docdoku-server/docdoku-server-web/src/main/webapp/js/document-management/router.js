@@ -33,7 +33,7 @@ function (
 			"checkedouts":		"checkedouts",
 			"tasks":			"tasks",
 			"search/:query":	"search",
-			"":					"defaults"
+			"":					"folders"
 		},
 		folders: function() {
 			this.defaults();

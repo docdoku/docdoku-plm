@@ -1,6 +1,6 @@
 define({
     LAYERS: "Calques",
-    NEW_LAYER: "nouveau calque",
+    NEW_LAYER: "Nouveau calque",
     NO_LAYERS: "Aucun calque",
     SAVE: "Enregistrer",
     CANCEL: "Annuler",
@@ -60,5 +60,12 @@ define({
     TRACKBALL_MODE:"Mode trackball",
     MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
     MARKERS_OPACITY:"Changer l'opacité des marqueurs",
-    MARKERS_SIZE_MAX:"Augmenter la taille des marqueurs"
+    MARKERS_SIZE_MAX:"Augmenter la taille des marqueurs",
+    VIEW_MODE:"Mode de vue",
+    MARKERS:"Marqueurs",
+    COMPONENT_SELECTED:"Article sélectionné",
+    TOGGLE_ALL_LAYERS:"Basculer la visibilité des calques",
+    APPEND_LAYER:"Créer un nouveau calque",
+    SCENE_VIEW:"Scène",
+    BOM_VIEW:"Liste des matériaux"
 });

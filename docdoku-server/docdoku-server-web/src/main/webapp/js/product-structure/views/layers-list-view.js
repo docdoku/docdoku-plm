@@ -50,8 +50,7 @@ define([
         },
 
         render: function() {
-            var headerContainer = this.$("ul#layer-header");
-            headerContainer.html(new LayerHeaderView().render().el);
+            this.$el.prepend(new LayerHeaderView().render().el);
             if (this.collection.isEmpty()) {
                 this.addEmptyView();
             }

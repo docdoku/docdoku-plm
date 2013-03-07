@@ -9,12 +9,13 @@ define(
         "views/bom_view",
         "views/part_metadata_view",
         "views/export_scene_modal_view",
-        "views/shortcuts_view",
         "views/control_choice_view",
+        "views/control_markers_view",
+        "views/layers_list_view",
         "SceneManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ShortcutsView, ControlChoiceView, SceneManager, template, i18n) {
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlChoiceView, ControlMarkersView, LayersListView, SceneManager, template, i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -49,13 +50,15 @@ define(
                 resultPathCollection: this.searchView.collection
             }).render();
 
-            this.shortcutsview = new ShortcutsView().render();
             this.controlChoiceView = new ControlChoiceView().render();
+            this.controlMarkersView = new ControlMarkersView().render();
+            this.layersListView = new LayersListView().render();
 
             this.bomView = new BomView().render();
 
-            this.sideControlsContainer.prepend(this.controlChoiceView.$el);
-            this.sideControlsContainer.prepend(this.shortcutsview.$el);
+            this.sideControlsContainer.append(this.controlChoiceView.$el);
+            this.sideControlsContainer.append(this.controlMarkersView.$el);
+            this.sideControlsContainer.append(this.layersListView.$el);
 
             try{
                 sceneManager = new SceneManager();
@@ -78,7 +81,7 @@ define(
                     var parent = ui.element.parent();
                     ui.element.css({
                         width: ui.element.width()/parent.width()*100+"%",
-                        height: ui.element.height()/parent.height()*100+"%"
+                        height: "100%"
                     });
                 }
             });
@@ -198,13 +201,14 @@ define(
         },
 
         showPartMetadata:function() {
+
             if(!this.isInBomMode()){
                 if( this.partMetadataView == null){
                     this.partMetadataView = new PartMetadataView({model: this.partsTreeView.componentSelected});
                 }else{
                     this.partMetadataView.setModel(this.partsTreeView.componentSelected);
                 }
-                this.partMetadataView.render();
+                this.sideControlsContainer.append(this.partMetadataView.render().$el);
                 this.partMetadataContainer.addClass("active");
             }
         },

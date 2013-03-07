@@ -6,6 +6,7 @@ define([
 	template
 ) {
 	var WorkspaceView = BaseView.extend({
+
 		template: Mustache.compile(template),
 
         menuResizable:function(){

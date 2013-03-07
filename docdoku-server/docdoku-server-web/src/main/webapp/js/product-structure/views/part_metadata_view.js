@@ -1,13 +1,17 @@
-define (["text!templates/part_meta_data.html"],function(template) {
+define (["text!templates/part_meta_data.html","i18n!localization/nls/product-structure-strings"],function(template,i18n) {
     var PartMetadataView = Backbone.View.extend({
 
-        el:"#part_metadata_container",
+        tagName:'div',
+
+        id:"part_metadata_container",
 
         template: Mustache.compile(template),
 
-        events: {
-            "click .toggle": "togglePartMetadata"
+        events:{
+            "click .author-join":"authorClicked"
         },
+
+        className:"side_control_group",
 
         initialize: function() {
             this.listenTo(this.model, 'change' , this.render);
@@ -18,17 +22,12 @@ define (["text!templates/part_meta_data.html"],function(template) {
         },
 
         render: function() {
-
-            this.$el.html(Mustache.render(template, this.model));
-
-            this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"top");
-            this.$(".icon-user").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"top");
-
+            this.$el.html(this.template({model:this.model, i18n:i18n}));
             return this;
         },
 
-        togglePartMetadata: function() {
-            this.$el.toggleClass('minimized');
+        authorClicked:function(){
+            Backbone.Events.trigger("NewChatSession",{remoteUser:this.model.getAuthorLogin(),context:this.model.getNumber()});
         }
         
     });
