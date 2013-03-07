@@ -32,19 +32,20 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
+import java.io.IOException;
 
 public class UndoCheckOutCommand extends AbstractCommandLine{
 
-    @Option(name="-v", required = true, aliases = "--version", usage="specify revision of the part to undo check out ('A', 'B'...)")
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to undo check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to undo check out")
+    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to undo check out; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
+    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to undo check out or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-d", aliases = "--download", usage="download the previous native cad file of the part if any to revert the local copy")
+    @Option(name="-d", aliases = "--download", usage="download the previous cad file of the part if any to revert the local copy")
     private boolean download;
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
@@ -54,6 +55,10 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
     private boolean recursive;
 
     public void execImpl() throws Exception {
+        if(partNumber==null || revision==null){
+            loadMetadata();
+        }
+
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevision pr = productS.undoCheckOutPart(new PartRevisionKey(workspace, partNumber, revision.toString()));
         PartIteration pi = pr.getLastIteration();
@@ -64,6 +69,23 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
             FileHelper fh = new FileHelper(user,password);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
+    }
+
+    private void loadMetadata() throws IOException {
+        if(path.isDirectory()){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and the supplied path is not a file");
+        }
+        MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
+        String filePath = path.getAbsolutePath();
+        partNumber = meta.getPartNumber(filePath);
+        String strRevision = meta.getRevision(filePath);
+        if(partNumber==null || strRevision==null){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+        }
+        revision = new Version(strRevision);
+        //once partNumber and revision have been inferred, set path to folder where files are stored
+        //in order to implement perform the rest of the treatment
+        path=path.getParentFile();
     }
 
     @Override
