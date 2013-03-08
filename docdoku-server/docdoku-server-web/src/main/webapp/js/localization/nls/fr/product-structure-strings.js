@@ -43,7 +43,7 @@ define({
     ATTRIBUTES: "Attributs",
     CAD_FILE: "Fichier CAD",
     APPEND:"Ajouter",
-    STANDARD_PART:"Article tandard",
+    STANDARD_PART:"Article standard",
     SUB_PARTS:"Assemblage",
     CREATE_NEW_PART:"Créer un nouvel article",
     OR_ADD_PART:"Ou ajouter un article existant",
