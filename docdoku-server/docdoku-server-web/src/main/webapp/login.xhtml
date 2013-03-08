@@ -58,23 +58,20 @@
                     <h2>Manage your products</h2>
                     <h3>You can</h3>
                     <ul>
-                        <li>Create and manage <em>products structures</em></li>
-                        <li>Manage <em>WBS</em> and <em>bills of materials</em></li>
+                        <li>Create and manage <em>product structures</em></li>
+                        <li>Generate <em>bill of materials</em></li>
                         <li>Visualize <em>3D models</em> of your products</li>
-                        <li>Define <em>alternate</em> and <em>substitute parts</em></li>
-                        <li>List materials upon a <em>specific configuration</em></li>
                     </ul>
-                    <p>Track structure and parts changes, manage workflow...</p>
+                    <p>Track structure and parts change, manage workflow...</p>
                 </div>
                 <div class="well">
                     <h2>Track and organize changes</h2>
                     <h3>You can</h3>
                     <ul>
-                        <li>Define <em>workflows process</em></li>
+                        <li>Define <em>workflow processes</em></li>
                         <li>Manage <em>users</em> and <em>tasks</em></li>
                         <li>Follow the <em>work progress</em></li>
                         <li>Be <em>notified on changes</em></li>
-                        <li>Track modifications on <em>every object</em></li>
                     </ul>
                     <p>Process and change management can apply to documents, products, parts...</p>
                 </div>
@@ -85,8 +82,7 @@
                         <li>Do <em>realtime comunication</em></li>
                         <li>Chat, audio and <em>video conference</em></li>
                         <li>Create <em>workspaces</em> and <em>user groups</em></li>
-                        <li>Synchronize <em>users works</em></li>
-                        <li>Share <em>products visualizations</em></li>
+                        <li>Share <em>product visualizations</em></li>
                     </ul>
                     <p>Capture chat and visioconference conversations as well as documents and product models.</p>
                 </div>
@@ -100,99 +96,8 @@
             <script src="js/lib/visualization/Three.js"></script>
             <script src="js/lib/visualization/Detector.js"></script>
             <script src="js/lib/visualization/THREEx.KeyboardState.js"></script>
+            <script src="js/admin/login/demoScene.js"></script>
 
-            <script>
-
-                /* 	Three.js  */
-
-                var info_panel = document.getElementById("demo-scene");
-                // MAIN
-                if ( ! Detector.webgl ) info_panel.innerHTML = Detector.getWebGLErrorMessage().innerHTML;
-                // standard global variables
-                var container, scene, camera, renderer, controls, stats;
-                var keyboard = new THREEx.KeyboardState();
-                var clock = new THREE.Clock();
-
-                // custom global variables
-                var model;
-
-                init();
-                animate();
-
-                // FUNCTIONS
-                function init()
-                {
-                    // SCENE
-                    scene = new THREE.Scene();
-
-                    // CAMERA
-                    var SCREEN_WIDTH = 318, SCREEN_HEIGHT = 276;
-                    var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
-                    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-                    scene.add(camera);
-                    camera.position.set(0,250,200);
-                    camera.lookAt(scene.position);
-
-                    // RENDERER
-                    renderer = new THREE.WebGLRenderer( {antialias:true} );
-                    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-                    container = document.createElement( 'div' );
-                    info_panel.appendChild( container );
-                    container.appendChild( renderer.domElement );
-
-                    // CONTROLS
-                    controls = new THREE.TrackballControls( camera, info_panel );
-
-                    // LIGHT
-                    var light = new THREE.PointLight(0xffffff);
-                    light.position.set(-100,200,100);
-                    scene.add(light);
-                    var light2 = new THREE.PointLight(0xffffff);
-                    light2.position.set(100,-200,-100);
-                    scene.add(light2);
-
-                    // SKYBOX/FOG
-                    scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
-
-                    var binaryLoader = new THREE.BinaryLoader();
-                    binaryLoader.load("images/pba.js", addModelToScene)
-
-                    var ambientLight = new THREE.AmbientLight(0x111111);
-                    scene.add(ambientLight);
-
-                }
-
-                function addModelToScene( geometry )
-                {
-                    var material = new THREE.MeshFaceMaterial();
-                    model = new THREE.Mesh( geometry, material );
-                    model.scale.set(1,1,1);
-                    model.position.set(0, 0, 0);
-                    model.rotation.set(0.45, 0, 1.55);
-                    scene.add( model );
-                }
-
-                function animate()
-                {
-                    requestAnimationFrame( animate );
-                    render();
-                    update();
-                }
-
-                function update()
-                {
-                    if(model)
-                        model.rotation.set(0.45, model.rotation.y+0.005, model.rotation.z+0.005);
-
-                    controls.update();
-                }
-
-                function render()
-                {
-                    renderer.render( scene, camera );
-                }
-
-            </script>
         </ui:define>
 
     </ui:composition>
