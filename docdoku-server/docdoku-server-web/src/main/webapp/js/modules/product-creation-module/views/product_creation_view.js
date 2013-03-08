@@ -125,8 +125,8 @@ define(
             this.$inputNewPartNumber.removeProp("required");
         },
 
-        onError: function() {
-            alert(i18n.CREATION_ERROR);
+        onError: function(model, error) {
+            alert(i18n.CREATION_ERROR + " : " + error.responseText);
         }
 
     });

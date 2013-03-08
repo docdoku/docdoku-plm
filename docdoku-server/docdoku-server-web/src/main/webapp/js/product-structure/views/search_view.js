@@ -1,14 +1,16 @@
 define([
     "text!templates/nav_list_action_bar.html",
-    "collections/result_path_collection"
+    "collections/result_path_collection",
+    "i18n!localization/nls/product-structure-strings"
 ], function (
     template,
-    ResultPathCollection
+    ResultPathCollection,
+    i18n
     ) {
 
     var SearchView = Backbone.View.extend({
 
-        el: $('div#nav_list_action_bar'),
+        el: '#nav_list_action_bar',
 
         template:Mustache.compile(template),
 
@@ -21,7 +23,7 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template());
+            this.$el.html(this.template({i18n:i18n}));
             return this;
         },
 

@@ -89,8 +89,8 @@ define(
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success:function(){
                 Backbone.Events.trigger("refresh_tree");
-                //Backbone.Events.trigger("refresh_component", that.model.getPartKey());
             }});
+
 
             this.fileListView.deleteFilesToDelete();
 

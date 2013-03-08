@@ -1,6 +1,7 @@
 define({
     LAYERS: "Calques",
-    NEW_LAYER: "nouveau calque",
+    NEW_LAYER: "Nouveau calque",
+    NO_LAYERS: "Aucun calque",
     SAVE: "Enregistrer",
     CANCEL: "Annuler",
     CLOSE: "Fermer",
@@ -49,5 +50,22 @@ define({
     NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé.",
     TRUE:"Oui",
     FALSE:"Nom",
-    "LINKS":"Liens"
+    LINKS:"Liens",
+    EXPORT:"Exporter",
+    FULL_SCREEN:"Plein écran",
+    CONFIG_SPEC:"Config spec",
+    LATEST:"Dernière",
+    SEARCH_PARTS:"Recherche d'articles",
+    FLYING_MODE:"Mode libre",
+    TRACKBALL_MODE:"Mode trackball",
+    MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
+    MARKERS_OPACITY:"Changer l'opacité des marqueurs",
+    MARKERS_SIZE_MAX:"Augmenter la taille des marqueurs",
+    VIEW_MODE:"Mode de vue",
+    MARKERS:"Marqueurs",
+    COMPONENT_SELECTED:"Article sélectionné",
+    TOGGLE_ALL_LAYERS:"Basculer la visibilité des calques",
+    APPEND_LAYER:"Créer un nouveau calque",
+    SCENE_VIEW:"Scène",
+    BOM_VIEW:"Liste des matériaux"
 });

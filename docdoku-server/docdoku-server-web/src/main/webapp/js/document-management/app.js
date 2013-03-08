@@ -20,7 +20,7 @@ define([
     new WorkspaceView({
 		el: "#content",
 		model: this.workspace
-	}).render();
+	}).render().menuResizable();
 
     new NavBarView();
 

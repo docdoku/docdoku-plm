@@ -1,22 +1,24 @@
-define(["!i18n!localization/nls/product-structure-strings"], function (i18n) {
+define(["text!templates/layer_controls.html","!i18n!localization/nls/product-structure-strings"], function (template,i18n) {
 
     var LayerHeaderView = Backbone.View.extend({
 
-        tagName: 'li',
+        tagName: 'div',
+
+        className:'btn-group',
 
         events: {
-            "click i.start" : "toggleAllShow",
-            "click i.end"   : "addLayer"
+            "click button.toggleAllShow" : "toggleAllShow",
+            "click button.addLayer"   : "addLayer"
         },
 
         initialize: function() {
             this.allShown = true;
         },
 
-        template: '<i class="icon-eye-open start"></i>'+ i18n.LAYERS + '<i class="icon-plus end"></i>',
+        template: Mustache.compile(template),
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(this.template({i18n:i18n}));
             this.$el.toggleClass('shown', this.allShown);
             return this;
         },

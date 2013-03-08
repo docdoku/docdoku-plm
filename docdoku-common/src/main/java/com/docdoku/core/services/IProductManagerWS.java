@@ -129,7 +129,7 @@ public interface IProductManagerWS{
      * @throws ConfigurationItemAlreadyExistsException
      * @throws CreationException
      */
-    ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException;
+    ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, PartMasterNotFoundException;
     
     /**
      * Creates a new <a href="PartMaster.html">PartMaster</a>. Be aware that
