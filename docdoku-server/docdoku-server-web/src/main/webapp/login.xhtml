@@ -15,28 +15,81 @@
             #{i18nLogin['title']}
         </ui:define>
         <ui:define name="content">
-            <div class="well" id="login_form_container">
-                <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
-                <h:form id="login_form">
-                    <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
-                    <p>
-                        <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
-                        <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
-                    </p>
+            <div class="well" id="general_presentation">
+                <div id="login_form_container">
+                        <h3><i class="icon-lock"></i>#{i18nLogin['login.title']}</h3>
+                        <h:form id="login_form">
+                            <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
+                            <p>
+                                <h:outputLabel value="#{i18nLogin['login.user']}" for="login"/>
+                                <h:inputText id="login" value="#{connectionBean.login}" size="20" maxlength="50"/>
+                            </p>
 
-                    <p>
-                        <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
-                        <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
-                    </p>
+                            <p>
+                                <h:outputLabel value="#{i18nLogin['login.password']}" for="password"/>
+                                <h:inputSecret id="password" value="#{connectionBean.password}" size="20" maxlength="50"/>
+                            </p>
 
-                    <p id="login_button_container">
-                        <h:commandButton styleClass="btn btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
-                    </p>
+                            <p id="login_button_container">
+                                <h:commandButton styleClass="btn btn-custom" id="login_button" action="#{connectionBean.logIn}" value="#{i18nLogin['login.title']}" alt="#{i18nLogin['login.title']}"/>
+                            </p>
 
-                    <p>
-                        <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
-                    </p>
-                </h:form>
+                            <p>
+                                <h:link value="#{i18nLogin['login.recovery']}" outcome="/recoveryRequestForm.xhtml"/>
+                            </p>
+                        </h:form>
+                </div>
+                <div id="demo-scene"></div>
+            </div>
+
+            <div id="detail_presentation">
+                <div id="slogan">
+                    "Manage the entire lifecycle of your products from ideas to market."
+                </div>
+                <div class="well">
+                    <h2>Manage your documents</h2>
+                    <h3>You can</h3>
+                    <ul>
+                        <li>Manage changes with <em>version control</em></li>
+                        <li>Add <em>tags</em> and <em>custom attributes</em></li>
+                        <li>Create document <em>templates</em></li>
+                        <li>Create <em>links</em> between documents</li>
+                        <li><em>Organize</em>, <em>browse</em>, <em>search</em> documents</li>
+                    </ul>
+                    <p>Attach processes, track changes, visualize Office documents inside the browser...</p>
+                </div>
+                <div class="well">
+                    <h2>Manage your products</h2>
+                    <h3>You can</h3>
+                    <ul>
+                        <li>Create and manage <em>product structures</em></li>
+                        <li>Generate <em>bill of materials</em></li>
+                        <li>Visualize <em>3D models</em> of your products</li>
+                    </ul>
+                    <p>Track structure and parts change, manage workflow...</p>
+                </div>
+                <div class="well">
+                    <h2>Track and organize changes</h2>
+                    <h3>You can</h3>
+                    <ul>
+                        <li>Define <em>workflow processes</em></li>
+                        <li>Manage <em>users</em> and <em>tasks</em></li>
+                        <li>Follow the <em>work progress</em></li>
+                        <li>Be <em>notified on changes</em></li>
+                    </ul>
+                    <p>Process and change management can apply to documents, products, parts...</p>
+                </div>
+                <div class="well">
+                    <h2>Social knowledge management</h2>
+                    <h3>You can</h3>
+                    <ul>
+                        <li>Do <em>realtime comunication</em></li>
+                        <li>Chat, audio and <em>video conference</em></li>
+                        <li>Create <em>workspaces</em> and <em>user groups</em></li>
+                        <li>Share <em>product visualizations</em></li>
+                    </ul>
+                    <p>Capture chat and visioconference conversations as well as documents and product models.</p>
+                </div>
             </div>
             <script type="text/javascript">
                 if(window.location.hash){
@@ -44,6 +97,11 @@
                     redirectInput.value=redirectInput.value + window.location.hash;
                 }
             </script>
+            <script src="js/lib/visualization/Three.js"></script>
+            <script src="js/lib/visualization/Detector.js"></script>
+            <script src="js/lib/visualization/THREEx.KeyboardState.js"></script>
+            <script src="js/admin/login/demoScene.js"></script>
+
         </ui:define>
 
     </ui:composition>

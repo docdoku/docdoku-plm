@@ -3,6 +3,7 @@ define({
         "APPEND":						"Add",
         "ATTACHED_FILES":               "Files",
         "SELECT_FILE":                  "Choose a file",
+        "DROP_FILE_HERE":               "or drop file here",
         "ATTRIBUTES":					"Attributes",
         "AUTHOR":						"Author",
         "BOOLEAN":						"Boolean",
