@@ -3,6 +3,9 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
     var Document = Backbone.Model.extend({
 
         urlRoot: function() {
+            if(this.isNew()){
+                return this.collection.url();
+            }
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
         },
 
