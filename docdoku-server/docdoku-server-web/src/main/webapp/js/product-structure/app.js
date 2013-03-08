@@ -9,13 +9,14 @@ define(
         "views/bom_view",
         "views/part_metadata_view",
         "views/export_scene_modal_view",
-        "views/control_choice_view",
+        "views/control_modes_view",
         "views/control_markers_view",
-        "views/layers_list_view",
+        "views/control_layers_view",
+        "views/control_materials_view",
         "SceneManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlChoiceView, ControlMarkersView, LayersListView, SceneManager, template, i18n) {
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlMaterialsView, SceneManager, template, i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -39,6 +40,7 @@ define(
             this.$el.html(this.template({productId:APP_CONFIG.productId, i18n:i18n}));
 
             this.inBomMode = false;
+            this.partMetadataView = undefined;
 
             this.bindDomElements();
             this.menuResizable();
@@ -50,15 +52,12 @@ define(
                 resultPathCollection: this.searchView.collection
             }).render();
 
-            this.controlChoiceView = new ControlChoiceView().render();
-            this.controlMarkersView = new ControlMarkersView().render();
-            this.layersListView = new LayersListView().render();
-
             this.bomView = new BomView().render();
 
-            this.sideControlsContainer.append(this.controlChoiceView.$el);
-            this.sideControlsContainer.append(this.controlMarkersView.$el);
-            this.sideControlsContainer.append(this.layersListView.$el);
+            this.$ControlsContainer.append(new ControlModesView().render().$el);
+            this.$ControlsContainer.append(new ControlMarkersView().render().$el);
+            this.$ControlsContainer.append(new ControlLayersView().render().$el);
+            //this.$ControlsContainer.append(new ControlMaterialsView().render().$el);
 
             try{
                 sceneManager = new SceneManager();
@@ -69,7 +68,6 @@ define(
 
             this.listenEvents();
 
-            this.partMetadataView = null;
         },
 
         menuResizable:function(){
@@ -100,7 +98,7 @@ define(
             this.fullScreenSceneButton = this.$("#fullscreen_scene_btn");
             this.bomContainer = this.$("#bom_table_container");
             this.centerSceneContainer = this.$("#center_container");
-            this.sideControlsContainer = this.$("#side_controls_container");
+            this.$ControlsContainer = this.$("#side_controls_container");
             this.partMetadataContainer = this.$("#part_metadata_container");
         },
 
@@ -201,15 +199,13 @@ define(
         },
 
         showPartMetadata:function() {
-
             if(!this.isInBomMode()){
-                if( this.partMetadataView == null){
-                    this.partMetadataView = new PartMetadataView({model: this.partsTreeView.componentSelected});
+                if(this.partMetadataView == undefined){
+                    this.partMetadataView = new PartMetadataView({model:this.partsTreeView.componentSelected}).render();
+                    this.$ControlsContainer.append(this.partMetadataView.$el);
                 }else{
-                    this.partMetadataView.setModel(this.partsTreeView.componentSelected);
+                    this.partMetadataView.setModel(this.partsTreeView.componentSelected).render();
                 }
-                this.sideControlsContainer.append(this.partMetadataView.render().$el);
-                this.partMetadataContainer.addClass("active");
             }
         },
 

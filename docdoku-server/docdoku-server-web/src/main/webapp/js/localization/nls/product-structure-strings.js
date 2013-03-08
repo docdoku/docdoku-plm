@@ -73,7 +73,10 @@ define({
         TOGGLE_ALL_LAYERS:"Toogle all layers",
         APPEND_LAYER:"Create a new layer",
         SCENE_VIEW:"Scene view",
-        BOM_VIEW:"Bom View"
+        BOM_VIEW:"Bom View",
+        MATERIALS:"Materials",
+        MATERIALS_OFF:"Materials off",
+        MATERIALS_ON:"Materials on"
     },
     "fr": true,
     "es": true
