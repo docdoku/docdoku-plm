@@ -26,26 +26,12 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.CADInstance;
-import com.docdoku.core.product.ConfigSpec;
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.Geometry;
-import com.docdoku.core.product.LatestConfigSpec;
-import com.docdoku.core.product.Layer;
-import com.docdoku.core.product.Marker;
-import com.docdoku.core.product.PartAlternateLink;
-import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.product.PartSubstituteLink;
-import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.NamingConvention;
+import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -55,6 +41,7 @@ import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -64,6 +51,7 @@ import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.annotation.security.DeclareRoles;
 import javax.ejb.EJB;
@@ -782,6 +770,163 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
+
+    //
+    // ############################## PARTS
+    // TODO : crud for part templates
+
+
+    @RolesAllowed("users")
+    @Override
+    public PartMasterTemplate[] getPartMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllPartMTemplates(pWorkspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartMasterTemplate getPartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
+        return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
+    }
+
+
+    @RolesAllowed("users")
+    @Override
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
+        User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
+        if (!NamingConvention.correct(pId)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
+        }
+        PartMasterTemplate template = new PartMasterTemplate(user.getWorkspace(), pId, user, pPartType, pMask);
+        Date now = new Date();
+        template.setCreationDate(now);
+        template.setIdGenerated(idGenerated);
+
+        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
+        for (InstanceAttributeTemplate attr : pAttributeTemplates) {
+            attrs.add(attr);
+        }
+        template.setAttributeTemplates(attrs);
+
+        new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).createPartMTemplate(template);
+        return template;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+
+        PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
+        PartMasterTemplate template = templateDAO.loadPartMTemplate(pKey);
+        Date now = new Date();
+        template.setCreationDate(now);
+        template.setAuthor(user);
+        template.setPartType(pPartType);
+        template.setMask(pMask);
+        template.setIdGenerated(idGenerated);
+
+        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
+        for (InstanceAttributeTemplate attr : pAttributeTemplates) {
+            attrs.add(attr);
+        }
+
+        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<InstanceAttributeTemplate>(template.getAttributeTemplates());
+        attrsToRemove.removeAll(attrs);
+
+        InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
+        for (InstanceAttributeTemplate attrToRemove : attrsToRemove) {
+            attrDAO.removeAttribute(attrToRemove);
+        }
+
+        template.setAttributeTemplates(attrs);
+        return template;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
+        PartMasterTemplate template = templateDAO.removePartMTemplate(pKey);
+        for (BinaryResource file : template.getAttachedFiles()) {
+            dataManager.delData(file);
+        }
+    }
+
+
+    @RolesAllowed("users")
+    @Override
+    public File saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(pPartMTemplateKey.getWorkspaceId());
+        //TODO checkWorkspaceWriteAccess ?
+        if (!NamingConvention.correct(pName)) {
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+        }
+
+        PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(em);
+        PartMasterTemplate template = templateDAO.loadPartMTemplate(pPartMTemplateKey);
+        BinaryResource file = null;
+        String fullName = template.getWorkspaceId() + "/part-templates/" + template.getId() + "/" + pName;
+
+        for (BinaryResource bin : template.getAttachedFiles()) {
+            if (bin.getFullName().equals(fullName)) {
+                file = bin;
+                break;
+            }
+        }
+
+        if (file == null) {
+            file = new BinaryResource(fullName, pSize);
+            new BinaryResourceDAO(em).createBinaryResource(file);
+            template.addFile(file);
+        } else {
+            file.setContentLength(pSize);
+        }
+
+        return dataManager.getVaultFile(file);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        //TODO checkWorkspaceWriteAccess ?
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+
+        PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+        dataManager.delData(file);
+        template.removeFile(file);
+        binDAO.removeBinaryResource(file);
+        return template;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public String generateId(String pWorkspaceId, String pPartMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, PartMasterTemplateNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        PartMasterTemplate template = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(new PartMasterTemplateKey(user.getWorkspaceId(), pPartMTemplateId));
+
+        String newId = null;
+        try {
+            String latestId = new PartMasterDAO(new Locale(user.getLanguage()), em).findLatestPartMId(pWorkspaceId, template.getPartType());
+            String inputMask = template.getMask();
+            String convertedMask = Tools.convertMask(inputMask);
+            newId = Tools.increaseId(latestId, convertedMask);
+        } catch (ParseException ex) {
+            //may happen when a different mask has been used for the same document type
+        } catch (NoResultException ex) {
+            //may happen when no document of the specified type has been created
+        }
+        return newId;
+
+    }
+
+
+
 }
 //TODO when using layers and markers, check for concordance
 //TODO add a method to update a marker

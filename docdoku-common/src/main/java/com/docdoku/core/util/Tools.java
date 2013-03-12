@@ -20,6 +20,7 @@
 package com.docdoku.core.util;
 
 import com.docdoku.core.document.*;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -102,6 +103,7 @@ public class Tools {
         return pActivity;
     }
 
+    /*
     public static DocumentMasterTemplate[] resetParentReferences(DocumentMasterTemplate[] pTemplates) {
         for (DocumentMasterTemplate template : pTemplates) {
             resetParentReferences(template);
@@ -109,7 +111,9 @@ public class Tools {
 
         return pTemplates;
     }
+    */
 
+    /*
     public static DocumentMasterTemplate resetParentReferences(DocumentMasterTemplate pTemplate) {
         for (InstanceAttributeTemplate attr : pTemplate.getAttributeTemplates()) {
             attr.setDocumentMasterTemplate(pTemplate);
@@ -117,6 +121,7 @@ public class Tools {
 
         return pTemplate;
     }
+    */
 
     public static boolean safeEquals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {

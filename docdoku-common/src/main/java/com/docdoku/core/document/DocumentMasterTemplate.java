@@ -24,6 +24,8 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Date;
@@ -71,9 +73,18 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         }
     )
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
-    
-    
-    @OneToMany(mappedBy = "documentMasterTemplate", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+
+
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @JoinTable(name="DOCUMENTMASTERTEMPLATE_ATTR",
+            inverseJoinColumns={
+                    @JoinColumn(name="INSTANCEATTRIBUTETEMPLATE_ID", referencedColumnName="ID")
+            },
+            joinColumns={
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
+            }
+    )
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
     
     @ManyToOne(fetch=FetchType.EAGER)

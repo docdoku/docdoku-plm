@@ -21,7 +21,7 @@
 package com.docdoku.client.ui.common;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import javax.swing.*;
 

@@ -89,7 +89,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
         BinaryResource file = null;
-        String fullName = template.getWorkspaceId() + "/templates/" + template.getId() + "/" + pName;
+        String fullName = template.getWorkspaceId() + "/document-templates/" + template.getId() + "/" + pName;
 
         for (BinaryResource bin : template.getAttachedFiles()) {
             if (bin.getFullName().equals(fullName)) {
@@ -424,7 +424,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attr.setDocumentMasterTemplate(template);
             attrs.add(attr);
         }
 
@@ -568,7 +567,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attr.setDocumentMasterTemplate(template);
             attrs.add(attr);
         }
         template.setAttributeTemplates(attrs);
@@ -984,7 +982,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        DocumentMasterTemplate template = binDAO.getTemplateOwner(file);
+        DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
         dataManager.delData(file);
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
