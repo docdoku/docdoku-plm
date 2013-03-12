@@ -184,7 +184,7 @@ public class DocumentTemplateResource {
     @Path("{templateId}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
-            String fileFullName = workspaceId + "/templates/" + templateId + "/" + fileName;
+            String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
 
             documentService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();

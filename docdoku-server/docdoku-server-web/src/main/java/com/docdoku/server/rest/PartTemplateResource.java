@@ -185,7 +185,7 @@ public class PartTemplateResource {
     @Path("{templateId}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
-            String fileFullName = workspaceId + "/templates/" + templateId + "/" + fileName;
+            String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
 
             productService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();
