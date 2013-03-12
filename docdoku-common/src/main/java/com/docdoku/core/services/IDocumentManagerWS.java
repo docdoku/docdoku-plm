@@ -21,7 +21,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.document.Folder;

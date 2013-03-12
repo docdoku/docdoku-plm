@@ -19,17 +19,17 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.product.PartMasterTemplate;
+import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
-import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.docdoku.server.rest.dto.PartMasterTemplateDTO;
+import com.docdoku.server.rest.dto.PartTemplateCreationDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -37,23 +37,24 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
- * @author Yassine Belouad
+ * @author Morgan Guimard
  */
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-public class DocumentTemplateResource {
+public class PartTemplateResource {
 
     @EJB
-    private IDocumentManagerLocal documentService;
+    private IProductManagerLocal productService;
     private Mapper mapper;
 
-    public DocumentTemplateResource() {
+    public PartTemplateResource() {
     }
 
     @PostConstruct
@@ -63,14 +64,14 @@ public class DocumentTemplateResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId) {
+    public PartMasterTemplateDTO[] getPartMasterTemplates(@PathParam("workspaceId") String workspaceId) {
         try {
 
-            DocumentMasterTemplate[] docMsTemplates = documentService.getDocumentMasterTemplates(workspaceId);
-            DocumentMasterTemplateDTO[] dtos = new DocumentMasterTemplateDTO[docMsTemplates.length];
+            PartMasterTemplate[] partMsTemplates = productService.getPartMasterTemplates(workspaceId);
+            PartMasterTemplateDTO[] dtos = new PartMasterTemplateDTO[partMsTemplates.length];
 
-            for (int i = 0; i < docMsTemplates.length; i++) {
-                dtos[i] = mapper.map(docMsTemplates[i], DocumentMasterTemplateDTO.class);
+            for (int i = 0; i < partMsTemplates.length; i++) {
+                dtos[i] = mapper.map(partMsTemplates[i], PartMasterTemplateDTO.class);
             }
 
             return dtos;
@@ -83,11 +84,11 @@ public class DocumentTemplateResource {
     @GET
     @Path("{templateId}")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    public PartMasterTemplateDTO getPartMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            DocumentMasterTemplate docMsTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
-            DocumentMasterTemplateDTO dto = mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
+            PartMasterTemplate partMsTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
+            PartMasterTemplateDTO dto = mapper.map(partMsTemplate, PartMasterTemplateDTO.class);
 
             return dto;
 
@@ -99,10 +100,10 @@ public class DocumentTemplateResource {
     @GET
     @Path("{templateId}/generate_id")
     @Produces("application/json;charset=UTF-8")
-    public String generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    public String generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            return documentService.generateId(workspaceId, templateId);
+            return productService.generateId(workspaceId, templateId);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -112,11 +113,11 @@ public class DocumentTemplateResource {
     @POST
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentTemplateCreationDTO templateCreationDTO) {
+    public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId, PartTemplateCreationDTO templateCreationDTO) {
 
         try {      
             String id =templateCreationDTO.getReference();
-            String documentType = templateCreationDTO.getDocumentType();
+            String partType = templateCreationDTO.getPartType();
             String mask = templateCreationDTO.getMask();
             boolean idGenerated = templateCreationDTO.isIdGenerated();
 
@@ -128,8 +129,8 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
-            DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
+            PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            PartMasterTemplateDTO templateDto = mapper.map(template, PartMasterTemplateDTO.class);
 
             return templateDto;
 
@@ -142,15 +143,15 @@ public class DocumentTemplateResource {
     @Path("{templateId}") 
     @Consumes("application/json;charset=UTF-8")
     @Produces("application/json;charset=UTF-8")  
-    public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO) {
+    public PartMasterTemplateDTO updatePartMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO) {
 
         try {
-            String id = docMsTemplateDTO.getId();
-            String documentType = docMsTemplateDTO.getDocumentType();
-            String mask = docMsTemplateDTO.getMask();
-            boolean idGenerated = docMsTemplateDTO.isIdGenerated();
+            String id = partMsTemplateDTO.getId();
+            String partType = partMsTemplateDTO.getPartType();
+            String mask = partMsTemplateDTO.getMask();
+            boolean idGenerated = partMsTemplateDTO.isIdGenerated();
 
-            Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
+            Set<InstanceAttributeTemplateDTO> attributeTemplates = partMsTemplateDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
             InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
 
@@ -158,8 +159,8 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
-            DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
+            PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            PartMasterTemplateDTO templateDto = mapper.map(template, PartMasterTemplateDTO.class);
 
             return templateDto;
 
@@ -170,9 +171,9 @@ public class DocumentTemplateResource {
 
     @DELETE
     @Path("{templateId}")
-    public Response deleteDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
-            documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
+            productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -186,7 +187,7 @@ public class DocumentTemplateResource {
         try {
             String fileFullName = workspaceId + "/templates/" + templateId + "/" + fileName;
 
-            documentService.removeFileFromTemplate(fileFullName);
+            productService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -196,11 +197,9 @@ public class DocumentTemplateResource {
 
     private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(InstanceAttributeTemplateDTO[] dtos) {
         InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.length];
-
         for (int i = 0; i < dtos.length; i++) {
             data[i] = createInstanceAttributeTemplateObject(dtos[i]);
         }
-
         return data;
     }
 

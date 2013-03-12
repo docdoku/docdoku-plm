@@ -94,7 +94,9 @@ public class PartMaster implements Serializable {
     private java.util.Date creationDate;
     
     private String name;
-    
+
+    private String type;
+
     @Lob
     private String description;
     
@@ -234,8 +236,15 @@ public class PartMaster implements Serializable {
     public String getWorkspaceId() {
         return workspace == null ? "" : workspace.getId();
     }
-    
-    
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {

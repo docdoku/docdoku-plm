@@ -472,7 +472,8 @@ public class MainModel {
         if (templates == null) {
             try {
                 System.out.println("Retrieving templates");
-                templates = Tools.resetParentReferences(mDocumentService.getDocumentMasterTemplates(getWorkspace().getId()));
+                //templates = Tools.resetParentReferences(mDocumentService.getDocumentMasterTemplates(getWorkspace().getId()));
+                templates = mDocumentService.getDocumentMasterTemplates(getWorkspace().getId());
                 mCache.cacheDocMTemplates(templates);
             } catch (WebServiceException pWSEx) {
                 String message;
@@ -498,7 +499,10 @@ public class MainModel {
         if (template == null) {
             try {
                 System.out.println("Retrieving document template " + pId);
-                template = Tools.resetParentReferences(mDocumentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(getWorkspace().getId(), pId)));
+
+                //template = Tools.resetParentReferences(mDocumentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(getWorkspace().getId(), pId)));
+                template = mDocumentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(getWorkspace().getId(), pId)) ;
+
                 mCache.cacheDocMTemplate(template);
             } catch (WebServiceException pWSEx) {
                 String message;
