@@ -60,8 +60,8 @@ public class DocumentLoggerInterceptor {
                     log.setUserLogin(userLogin);
                     log.setLogDate(new Date());
                     log.setDocumentWorkspaceId(document.getWorkspaceId());
-                    log.setDocumentDocumentMasterId(document.getDocumentMasterId());
-                    log.setDocumentDocumentMasterVersion(document.getDocumentMasterVersion());
+                    log.setDocumentId(document.getDocumentMasterId());
+                    log.setDocumentVersion(document.getDocumentMasterVersion());
                     log.setDocumentIteration(document.getIteration());
                     log.setEvent(EVENT);
                     log.setInfo(fullName);

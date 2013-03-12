@@ -39,7 +39,7 @@ import javax.persistence.Table;
 @Table(name="DOCUMENTLOG")
 @javax.persistence.Entity
 @NamedQueries ({
-    @NamedQuery(name="findLogByDocumentAndUserAndEvent", query="SELECT l FROM DocumentLog l WHERE l.userLogin = :userLogin AND l.documentWorkspaceId = :documentWorkspaceId AND l.documentDocumentMasterId = :documentDocumentMasterId AND l.documentDocumentMasterVersion = :documentDocumentMasterVersion AND l.documentIteration = :documentIteration and l.event = :event ORDER BY l.logDate")
+    @NamedQuery(name="findLogByDocumentAndUserAndEvent", query="SELECT l FROM DocumentLog l WHERE l.userLogin = :userLogin AND l.documentWorkspaceId = :documentWorkspaceId AND l.documentId = :documentId AND l.documentVersion = :documentVersion AND l.documentIteration = :documentIteration AND l.event = :event ORDER BY l.logDate")
 })
 public class DocumentLog implements Serializable, Cloneable {
 
@@ -49,8 +49,8 @@ public class DocumentLog implements Serializable, Cloneable {
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date logDate;
     private String documentWorkspaceId;
-    private String documentDocumentMasterId;
-    private String documentDocumentMasterVersion;
+    private String documentId;
+    private String documentVersion;
     private int documentIteration;
     private String userLogin;
     private String event;
@@ -68,20 +68,20 @@ public class DocumentLog implements Serializable, Cloneable {
         this.documentIteration = documentIteration;
     }
 
-    public String getDocumentDocumentMasterId() {
-        return documentDocumentMasterId;
+    public String getDocumentId() {
+        return documentId;
     }
 
-    public void setDocumentDocumentMasterId(String documentDocumentMasterId) {
-        this.documentDocumentMasterId = documentDocumentMasterId;
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
-    public String getDocumentDocumentMasterVersion() {
-        return documentDocumentMasterVersion;
+    public String getDocumentVersion() {
+        return documentVersion;
     }
 
-    public void setDocumentDocumentMasterVersion(String documentDocumentMasterVersion) {
-        this.documentDocumentMasterVersion = documentDocumentMasterVersion;
+    public void setDocumentVersion(String documentVersion) {
+        this.documentVersion = documentVersion;
     }
 
     public String getDocumentWorkspaceId() {

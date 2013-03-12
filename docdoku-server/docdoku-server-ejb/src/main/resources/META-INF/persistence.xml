@@ -16,6 +16,8 @@
     <class>com.docdoku.core.document.StateChangeSubscription</class>
     <class>com.docdoku.core.document.Tag</class>
     <class>com.docdoku.core.log.DocumentLog</class>
+    <class>com.docdoku.core.log.PartLog</class>
+    <class>com.docdoku.core.log.WorkspaceLog</class>
     <class>com.docdoku.core.meta.InstanceAttribute</class>
     <class>com.docdoku.core.meta.InstanceBooleanAttribute</class>
     <class>com.docdoku.core.meta.InstanceDateAttribute</class>
