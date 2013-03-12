@@ -27,10 +27,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.PartMasterAlreadyExistsException;
 import com.docdoku.core.services.PartMasterNotFoundException;
 import java.util.*;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
+import javax.persistence.*;
 
 public class PartMasterDAO {
 
@@ -96,5 +93,21 @@ public class PartMasterDAO {
             .setParameter("workspaceId", workspaceId)
             .setMaxResults(maxResults)
             .getResultList();
+    }
+
+    public String findLatestPartMId(String pWorkspaceId, String pType) {
+        String docMId;
+        Query query = em.createQuery("SELECT m.id FROM PartMaster m "
+                + "WHERE m.workspaceId = :workspaceId "
+                + "AND m.type = :type "
+                + "AND m.creationDate = ("
+                + "SELECT MAX(m2.creationDate) FROM PartMaster m2 "
+                + "WHERE m2.workspaceId = :workspaceId "
+                + "AND m2.type = :type "
+                + ")");
+        query.setParameter("workspaceId", pWorkspaceId);
+        query.setParameter("type", pType);
+        docMId = (String) query.getSingleResult();
+        return docMId;
     }
 }

@@ -20,6 +20,7 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.core.document.*;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.services.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.document.DocumentLink;
@@ -488,8 +489,12 @@ public class MainController {
         try {
             System.out.println("Saving document master template " + pId + " with mask " + pMask);
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            DocumentMasterTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mDocumentService.createDocumentMasterTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+
+            //DocumentMasterTemplate newTemplate;
+            // newTemplate = Tools.resetParentReferences(mDocumentService.createDocumentMasterTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+
+            DocumentMasterTemplate newTemplate = mDocumentService.createDocumentMasterTemplate(workspaceId, pId, pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated);
+
             MainModel.getInstance().updater.createDocMTemplate(newTemplate);
             return newTemplate;
         } catch (WebServiceException pWSEx) {
@@ -505,8 +510,11 @@ public class MainController {
     public DocumentMasterTemplate updateDocMTemplate(DocumentMasterTemplate pTemplate, String pDocumentType, String pMask, Set<InstanceAttributeTemplate> pAttributeTemplates, boolean pIdGenerated) throws Exception {
         try {
             System.out.println("Saving document master template " + pTemplate);
-            DocumentMasterTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mDocumentService.updateDocumentMasterTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+            //DocumentMasterTemplate newTemplate;
+            //newTemplate = Tools.resetParentReferences(mDocumentService.updateDocumentMasterTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated));
+
+            DocumentMasterTemplate newTemplate = mDocumentService.updateDocumentMasterTemplate(pTemplate.getKey(), pDocumentType, pMask, pAttributeTemplates.toArray(new InstanceAttributeTemplate[pAttributeTemplates.size()]), pIdGenerated);
+
             MainModel.getInstance().updater.updateDocMTemplate(newTemplate);
             return newTemplate;
         } catch (WebServiceException pWSEx) {
@@ -693,8 +701,11 @@ public class MainController {
     public void removeFileFromTemplate(BinaryResource pFile) throws Exception {
         try {
             System.out.println("Removing file " + pFile + " from document template");
-            DocumentMasterTemplate newTemplate;
-            newTemplate = Tools.resetParentReferences(mDocumentService.removeFileFromTemplate(pFile.getFullName()));
+            //DocumentMasterTemplate newTemplate;
+            //newTemplate = Tools.resetParentReferences(mDocumentService.removeFileFromTemplate(pFile.getFullName()));
+
+            DocumentMasterTemplate newTemplate = mDocumentService.removeFileFromTemplate(pFile.getFullName());
+
             MainModel.getInstance().updater.updateDocMTemplate(newTemplate);
         } catch (WebServiceException pWSEx) {
             Throwable t = pWSEx.getCause();

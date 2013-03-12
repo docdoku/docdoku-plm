@@ -21,7 +21,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.document.Folder;
@@ -33,10 +33,8 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.WorkflowModelKey;
+
 import java.io.File;
 
 /**

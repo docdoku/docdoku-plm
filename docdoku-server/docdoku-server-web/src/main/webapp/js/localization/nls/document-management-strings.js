@@ -122,7 +122,7 @@ define({
         "CONTENT_HELP":                 "Document content",
         "COMMENT":                      "Comment",
         "TASK_CLOSED_ON":               "Task closed on",
-        "APPROVE_TASK":                 "Approve task",
+        "APPROVE_TASK":                 "Mark task as done",
         "REJECT_TASK":                  "Reject task",
         "CLOSURE_COMMENT":              "Closure comment",
         "DELETE_LINKED_DOCUMENT":       "Delete link",
