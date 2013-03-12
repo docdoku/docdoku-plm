@@ -40,12 +40,16 @@ define([
         this.STATECONTROL = { PLC : 0, TBC : 1};
         this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
+
+        this.maxInstanceDisplayed = 600;
+        this.levelGeometryValues = [];
     };
 
     SceneManager.prototype = {
 
         init: function() {
             _.bindAll(this);
+            //this.updateLevelGeometryValues(0);
             this.initScene();
             this.listenXHR();
             this.initCamera();
@@ -573,6 +577,16 @@ define([
             var grid = new THREE.Line( geometry, material, THREE.LinePieces );
             this.scene.add( grid );
 
+        },
+
+        updateLevelGeometryValues:function( instanceNumber ){
+            if(instanceNumber < this.maxInstanceDisplayed) {
+                this.levelGeometryValues[0] = 0.5;
+                this.levelGeometryValues[1] = 0;
+            } else {
+                this.levelGeometryValues[0] = 0.6;
+                this.levelGeometryValues[1] = 0.3;
+            }
         }
 
     };

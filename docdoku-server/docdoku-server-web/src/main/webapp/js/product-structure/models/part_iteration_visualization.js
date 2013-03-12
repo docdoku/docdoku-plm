@@ -30,19 +30,16 @@ define(function() {
                     this.radius = radiusAttribute.value;
                 }
 
-                var levelGeometry1 = (isIpad) ? 0.9 : 0.6;
-                var levelGeometry2 = (isIpad) ? 0.6 : 0.3;
-
                 var self = this;
 
                 _.each(this.files, function(file) {
                     var filename = '/files/' + file.fullName;
                     switch (file.quality) {
                         case 0:
-                            self.addLevelGeometry(filename, levelGeometry1, false);
+                            self.addLevelGeometry(filename, sceneManager.levelGeometryValues[0],  false);
                             break;
                         case 1:
-                            self.addLevelGeometry(filename, levelGeometry2, true);
+                            self.addLevelGeometry(filename, sceneManager.levelGeometryValues[1], true);
                             break;
                     }
                 });

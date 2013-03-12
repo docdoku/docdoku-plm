@@ -116,30 +116,35 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
         putOnScene: function() {
             $.getJSON(this.getInstancesUrl(), function(instances) {
-                _.each(instances, function(instanceRaw) {
 
-                    //do something only if this instance is not on scene
-                    if (!sceneManager.isOnScene(instanceRaw.id)) {
+                //get instances that need to be added to the scene
+                var instancesNotOnScene = _.filter(instances, function(instance) {
+                    return !sceneManager.isOnScene(instance.id);
+                });
 
-                        //if we deal with this partIteration for the fist time, we need to create it
-                        if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
-                            sceneManager.addPartIteration(new PartIterationVisualization(instanceRaw));
-                        }
+                //update the levels geometry with the future number of instances
+                sceneManager.updateLevelGeometryValues(sceneManager.instances.length + instancesNotOnScene.length);
 
-                        var partIteration = sceneManager.getPartIteration(instanceRaw.partIterationId);
+                _.each(instancesNotOnScene, function(instanceRaw) {
 
-                        //finally we create the instance and add it to the scene
-                        sceneManager.addInstanceOnScene(new Instance(
-                            instanceRaw.id,
-                            partIteration,
-                            instanceRaw.tx*10,
-                            instanceRaw.ty*10,
-                            instanceRaw.tz*10,
-                            instanceRaw.rx,
-                            instanceRaw.ry,
-                            instanceRaw.rz
-                        ));
+                    //if we deal with this partIteration for the fist time, we need to create it
+                    if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
+                        sceneManager.addPartIteration(new PartIterationVisualization(instanceRaw));
                     }
+
+                    var partIteration = sceneManager.getPartIteration(instanceRaw.partIterationId);
+
+                    //finally we create the instance and add it to the scene
+                    sceneManager.addInstanceOnScene(new Instance(
+                        instanceRaw.id,
+                        partIteration,
+                        instanceRaw.tx*10,
+                        instanceRaw.ty*10,
+                        instanceRaw.tz*10,
+                        instanceRaw.rx,
+                        instanceRaw.ry,
+                        instanceRaw.rz
+                    ));
 
                 });
             });

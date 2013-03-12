@@ -19,7 +19,6 @@ var Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
     this.partIteration = partIteration;
     this.mesh = null;
     this.idle = true;
-    this.loaded = false;
 
 };
 
@@ -41,21 +40,20 @@ Instance.prototype = {
             return true;
         }
 
-        var distance = 0.0;
-        var planes = frustum.planes;
+        var center = new THREE.Vector3();
+
         var matrix = this.matrixWorld;
-        var me = matrix.elements;
-        var radius = this.partIteration.radius * matrix.getMaxScaleOnAxis();
+        var planes = frustum.planes;
+        var negRadius = - this.partIteration.radius * matrix.getMaxScaleOnAxis();
+
+        center.getPositionFromMatrix( matrix );
 
         for ( var i = 0; i < 6; i ++ ) {
-
-            distance = planes[ i ].x * me[12] + planes[ i ].y * me[13] + planes[ i ].z * me[14] + planes[ i ].w;
-            if ( distance <= - radius ){
+            var distance = planes[ i ].distanceToPoint( center );
+            if ( distance < negRadius ) {
                 return false;
             }
-
         }
-
         return true;
     },
 
@@ -68,42 +66,28 @@ Instance.prototype = {
 
             this.idle = false;
             this.partIteration.idle = false;
+            var levelGeometry = null;
 
             if(_.isUndefined(this.partIteration.radius)) {
-                // load best quality only once
-                if(!this.loaded) {
-                    var bestLevelGeometry = this.partIteration.getBestLevelGeometry();
-
-                    var self = this;
-                    this.switchTo(bestLevelGeometry, function() {
-                        self.idle = true;
-                        self.partIteration.idle = true;
-                        self.loaded = true;
-                    });
-                } else {
-                    this.idle = true;
-                    this.partIteration.idle = true;
-                }
-
+                levelGeometry = this.partIteration.getBestLevelGeometry();
             } else {
                 var rating = this.getRating(frustum);
-                //get the level corresponding of this rating
-                var levelGeometry = this.partIteration.getLevelGeometry(rating);
+                levelGeometry = this.partIteration.getLevelGeometry(rating);
+            }
 
-                //if we need to switch geometry
-                if (this.needSwitch(levelGeometry)) {
+            //if we need to switch geometry
+            if (this.needSwitch(levelGeometry)) {
 
-                    var self = this;
+                var self = this;
 
-                    this.switchTo(levelGeometry, function() {
-                        self.idle = true;
-                        self.partIteration.idle = true;
-                    });
+                this.switchTo(levelGeometry, function() {
+                    self.idle = true;
+                    self.partIteration.idle = true;
+                });
 
-                } else {
-                    this.idle = true;
-                    this.partIteration.idle = true;
-                }
+            } else {
+                this.idle = true;
+                this.partIteration.idle = true;
             }
         }
 
