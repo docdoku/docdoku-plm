@@ -41,7 +41,7 @@ define([
         this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
 
-        this.maxInstanceDisplayed = 600;
+        this.maxInstanceDisplayed = 1000;
         this.levelGeometryValues = [];
     };
 
@@ -584,8 +584,8 @@ define([
                 this.levelGeometryValues[0] = 0.5;
                 this.levelGeometryValues[1] = 0;
             } else {
-                this.levelGeometryValues[0] = 0.6;
-                this.levelGeometryValues[1] = 0.3;
+                this.levelGeometryValues[0] = 0.7;
+                this.levelGeometryValues[1] = 0.4;
             }
         }
 

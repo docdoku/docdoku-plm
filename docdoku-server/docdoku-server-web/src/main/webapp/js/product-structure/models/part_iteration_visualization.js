@@ -36,10 +36,10 @@ define(function() {
                     var filename = '/files/' + file.fullName;
                     switch (file.quality) {
                         case 0:
-                            self.addLevelGeometry(filename, sceneManager.levelGeometryValues[0],  false);
+                            self.addLevelGeometry(filename, file.quality,  false);
                             break;
                         case 1:
-                            self.addLevelGeometry(filename, sceneManager.levelGeometryValues[1], true);
+                            self.addLevelGeometry(filename, file.quality, true);
                             break;
                     }
                 });
@@ -48,18 +48,18 @@ define(function() {
 
         },
 
-        addLevelGeometry: function(filename, visibleFromRating, computeVertexNormals) {
+        addLevelGeometry: function(filename, quality, computeVertexNormals) {
             for (var i = 0; i<this.levels.length ; i++) {
-                if (visibleFromRating < this.levels[i].visibleFromRating) {
+                if (quality < this.levels[i].quality) {
                     break;
                 }
             }
-            this.levels.splice(i, 0, new LevelGeometry(filename, visibleFromRating, computeVertexNormals));
+            this.levels.splice(i, 0, new LevelGeometry(filename, quality, computeVertexNormals));
         },
 
         getLevelGeometry: function(rating) {
             for (var i = this.levels.length-1; i>=0 ; i--) {
-                if (rating > this.levels[i].visibleFromRating) {
+                if (rating > sceneManager.levelGeometryValues[i]) {
                     return this.levels[i];
                 }
             }
