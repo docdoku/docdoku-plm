@@ -11,7 +11,11 @@
 <a class="user-popover">{{task.worker.name}}</a>
 {{#task.closureDate}}
 <div class="task-comment">
-    <p>{{i18n.TASK_CLOSED_ON}} {{task.formattedClosureDate}}<br />{{i18n.COMMENT}} : {{task.closureComment}}</p>
+    <p>
+        <b>{{i18n.TASK_CLOSED_ON}}</b><br /> {{task.formattedClosureDate}}<br />
+        <b>{{i18n.ITERATION}}</b> : {{task.targetIteration}}<br />
+        <b>{{i18n.COMMENT}}</b><br />{{task.closureComment}}
+    </p>
 </div>
 {{/task.closureDate}}
 {{#task.isAcceptableOrRejectable}}

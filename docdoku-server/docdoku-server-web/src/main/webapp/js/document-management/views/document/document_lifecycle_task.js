@@ -27,7 +27,7 @@ define([
 
             if(this.task.closureDate){
                 this.task.formattedClosureDate = date.formatTimestamp(
-                    i18n._DATE_SHORT_FORMAT,
+                    i18n._DATE_FORMAT,
                     this.task.closureDate
                 );
             }
