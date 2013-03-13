@@ -51,6 +51,7 @@ import javax.ws.rs.ext.Providers;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -109,7 +110,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             
             setAddComma(false);
             getEntityStream().write(leftSquareBrace);
-            generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths);
+            generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>());
             getEntityStream().write(rightSquareBrace);
         } catch (JAXBException ex) {
             throw new WebApplicationException(ex);
@@ -133,7 +134,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     }
     
     
-    private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath) throws JAXBException, IOException {
+    private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath, List<Integer> instanceIds) throws JAXBException, IOException {
         
         
         //List<InstanceDTO> instancesDTO = new ArrayList<InstanceDTO>();
@@ -168,7 +169,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             double arx = rx + instance.getRx();
             double ary = ry + instance.getRy();
             double arz = rz + instance.getRz();
-            int id = instance.getId();
+            instanceIds.add(instance.getId());
+            String id = StringUtils.join(instanceIds.toArray(),"-");
             
             if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
                 if(getAddComma())
@@ -178,12 +180,13 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 setAddComma(true);
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
+                    ArrayList<Integer> copyInstanceIds = new ArrayList<Integer>(instanceIds);
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath);
+                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds);
                     } else if (component.getId() == filteredPath.get(0)) {
                         ArrayList<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId);
+                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds);
                     }
                 }
             }

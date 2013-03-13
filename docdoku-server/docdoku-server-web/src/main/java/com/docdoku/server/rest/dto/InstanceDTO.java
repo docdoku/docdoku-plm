@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class InstanceDTO implements Serializable {
 
-    private int id;
+    private String id;
     
     /**
      * Id of part iteration
@@ -58,7 +58,7 @@ public class InstanceDTO implements Serializable {
 
     public InstanceDTO() {}
 
-    public InstanceDTO(int id, String partIterationId, double tx, double ty, double tz, double rx, double ry, double rz, List<GeometryDTO> files, List<InstanceAttributeDTO> attributes) {
+    public InstanceDTO(String id, String partIterationId, double tx, double ty, double tz, double rx, double ry, double rz, List<GeometryDTO> files, List<InstanceAttributeDTO> attributes) {
         this.id=id;
         this.partIterationId = partIterationId;
         this.tx = tx;
@@ -143,11 +143,11 @@ public class InstanceDTO implements Serializable {
         this.attributes = attributes;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
     

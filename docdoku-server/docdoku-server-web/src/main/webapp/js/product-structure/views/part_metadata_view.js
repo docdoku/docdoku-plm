@@ -18,7 +18,8 @@ define (["text!templates/part_meta_data.html","i18n!localization/nls/product-str
         },
 
         setModel:function(model){
-            this.model = model;
+            this.model=model;
+            return this;
         },
 
         render: function() {

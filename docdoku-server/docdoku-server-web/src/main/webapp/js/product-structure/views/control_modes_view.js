@@ -2,11 +2,11 @@
 define(
     [
         "views/shortcuts_view",
-        "text!templates/control_choice.html",
+        "text!templates/control_modes.html",
         "i18n!localization/nls/product-structure-strings"
-    ],function(ShortcutsView, template,i18n){
+    ],function(ShortcutsView, template, i18n){
 
-    var ControlChoiceView = Backbone.View.extend({
+    var ControlModesView = Backbone.View.extend({
 
         template : Mustache.compile(template),
 
@@ -44,6 +44,6 @@ define(
 
     });
 
-    return ControlChoiceView;
+    return ControlModesView;
 
 });

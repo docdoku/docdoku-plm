@@ -1,16 +1,15 @@
 /*global sceneManager*/
 define(
     [
-        "text!templates/layers_list.html",
+        "text!templates/control_layers.html",
         "i18n!localization/nls/product-structure-strings"
     ],function(template,i18n){
 
-    var LayersListView = Backbone.View.extend({
+    var ControlLayersView = Backbone.View.extend({
 
         template : Mustache.compile(template),
+
         className:"side_control_group",
-        events:{
-        },
 
         initialize:function(){
         },
@@ -22,6 +21,6 @@ define(
 
     });
 
-    return LayersListView;
+    return ControlLayersView;
 
 });

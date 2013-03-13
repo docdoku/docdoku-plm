@@ -73,7 +73,10 @@ define({
         TOGGLE_ALL_LAYERS:"Toggle all layers",
         APPEND_LAYER:"Create a new layer",
         SCENE_VIEW:"Scene view",
-        BOM_VIEW:"Bom View"
+        BOM_VIEW:"Bom View",
+        OPTIONS:"Options",
+        MATERIALS_SWITCH:"Show/Hide materials",
+        GRID_SWITCH:"Show/Hide the grid"
     },
     "fr": true,
     "es": true
