@@ -32,6 +32,7 @@ LevelGeometry.prototype = {
                     geometry.computeVertexNormals();
                 }
                 _.each(materials, function(material) {
+                    material.wireframe = sceneManager.wireframe;
                     material.transparent = true;
                 });
                 self.geometry = geometry;

@@ -74,9 +74,9 @@ define({
         APPEND_LAYER:"Create a new layer",
         SCENE_VIEW:"Scene view",
         BOM_VIEW:"Bom View",
-        MATERIALS:"Materials",
-        MATERIALS_OFF:"Materials off",
-        MATERIALS_ON:"Materials on"
+        OPTIONS:"Options",
+        MATERIALS_SWITCH:"Show/Hide materials",
+        GRID_SWITCH:"Show/Hide the grid"
     },
     "fr": true,
     "es": true

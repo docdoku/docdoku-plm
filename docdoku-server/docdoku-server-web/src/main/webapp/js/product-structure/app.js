@@ -12,11 +12,11 @@ define(
         "views/control_modes_view",
         "views/control_markers_view",
         "views/control_layers_view",
-        "views/control_materials_view",
+        "views/control_options_view",
         "SceneManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlMaterialsView, SceneManager, template, i18n) {
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, SceneManager, template, i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -56,8 +56,8 @@ define(
 
             this.$ControlsContainer.append(new ControlModesView().render().$el);
             this.$ControlsContainer.append(new ControlMarkersView().render().$el);
+            this.$ControlsContainer.append(new ControlOptionsView().render().$el);
             this.$ControlsContainer.append(new ControlLayersView().render().$el);
-            //this.$ControlsContainer.append(new ControlMaterialsView().render().$el);
 
             try{
                 sceneManager = new SceneManager();

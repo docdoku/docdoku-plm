@@ -43,6 +43,7 @@ define([
 
         this.maxInstanceDisplayed = 1000;
         this.levelGeometryValues = [];
+        this.wireframe = false;
     };
 
     SceneManager.prototype = {
@@ -574,9 +575,15 @@ define([
                 geometry.colors.push( color, color, color, color );
             }
 
-            var grid = new THREE.Line( geometry, material, THREE.LinePieces );
-            this.scene.add( grid );
+            this.grid = new THREE.Line( geometry, material, THREE.LinePieces );
+        },
 
+        showGrid:function() {
+            this.scene.add( this.grid );
+        },
+
+        removeGrid:function() {
+            this.scene.remove( this.grid );
         },
 
         updateLevelGeometryValues:function( instanceNumber ){
@@ -587,7 +594,30 @@ define([
                 this.levelGeometryValues[0] = 0.7;
                 this.levelGeometryValues[1] = 0.4;
             }
+        },
+
+        switchWireframe:function( wireframe ) {
+            if(wireframe) {
+                // Set wireframe to futures parts
+                this.wireframe = true;
+            } else {
+                // Remove wireframe to futures parts
+                this.wireframe = false;
+
+            }
+
+            // Set/remove wireframe to current parts
+            var self = this;
+            _(this.instances).each(function(instance){
+                if(instance.mesh != null){
+                    _(instance.mesh.material.materials).each(function(material){
+                        material.wireframe = self.wireframe;
+                    })
+                }
+            });
+
         }
+
 
     };
 
