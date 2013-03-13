@@ -70,7 +70,7 @@ define({
         VIEW_MODE:"View mode",
         MARKERS:"Markers",
         COMPONENT_SELECTED:"Selected part",
-        TOGGLE_ALL_LAYERS:"Toogle all layers",
+        TOGGLE_ALL_LAYERS:"Toggle all layers",
         APPEND_LAYER:"Create a new layer",
         SCENE_VIEW:"Scene view",
         BOM_VIEW:"Bom View"
