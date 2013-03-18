@@ -1,7 +1,9 @@
 define({
     root: {
         NEW_PRODUCT: "New Product",
+        NEW_PART: "New part",
         CREATE_PRODUCT: "Create Product",
+        CREATE_PART: "Create part",
         DELETE_PRODUCT: "Delete Product",
         CANCEL: "Cancel",
         CLOSE: "Close",

@@ -1,4 +1,5 @@
 define({
+    "WORKSPACE":                    "Espace de travail",
     "APPEND":						"Ajouter",
     "ATTACHED_FILES":               "Fichiers",
     "SELECT_FILE":                  "Choisissez un fichier",

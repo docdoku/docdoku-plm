@@ -1,7 +1,7 @@
 define (
     [
-        "text!templates/parts_management.html",
-        "views/component_view",
+        "text!common-objects/templates/part/parts_management.html",
+        "common-objects/views/part/component_view",
         "i18n!localization/nls/product-structure-strings"
     ],
     function(template,ComponentView,i18n) {
@@ -24,7 +24,7 @@ define (
 
                 this.$("#existingParts").typeahead({
                     source: function(query, process) {
-                        $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts?q=' + query, function(data) {
+                        $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/search?q=' + query, function(data) {
                             process(data);
                         });
                     },

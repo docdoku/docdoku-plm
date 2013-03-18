@@ -905,6 +905,45 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public List<PartMaster> getPartMasters(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new PartMasterDAO(new Locale(user.getLanguage()), em).getParts(pWorkspaceId,start,pMaxResults);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public int getPartMastersCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new PartMasterDAO(new Locale(user.getLanguage()), em).getPartsCount(pWorkspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException {
+
+        User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
+
+        PartMasterDAO partMasterDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
+        PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()),em);
+        PartMaster partMaster = partMasterDAO.loadPartM(partMasterKey);
+
+        // check if part is linked to a product
+        if(configurationItemDAO.isPartMasterLinkedToConfigurationItem(partMaster)){
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException1");
+        }
+
+        // check if this part is in a partUsage
+        if(partUsageLinkDAO.hasPartUsages(partMasterKey.getWorkspace(),partMaster.getNumber())){
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException2");
+        }
+
+        // ok to delete
+        partMasterDAO.removePartM(partMaster);
+    }
+
+    @RolesAllowed("users")
+    @Override
     public String generateId(String pWorkspaceId, String pPartMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, PartMasterTemplateNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);

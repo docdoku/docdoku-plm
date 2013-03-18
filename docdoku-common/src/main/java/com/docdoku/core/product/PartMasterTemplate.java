@@ -75,7 +75,7 @@ public class PartMasterTemplate implements Serializable, FileHolder, Comparable<
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
 
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinTable(name="PARTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
                     @JoinColumn(name="INSTANCEATTRIBUTETEMPLATE_ID", referencedColumnName="ID")

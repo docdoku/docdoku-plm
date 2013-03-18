@@ -28,11 +28,7 @@ import com.docdoku.core.services.LayerNotFoundException;
 
 import java.util.List;
 import java.util.Locale;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 
 public class ConfigurationItemDAO {
 
@@ -113,5 +109,16 @@ public class ConfigurationItemDAO {
             //thrown instead of EntityExistsException
             throw new CreationException(mLocale);
         }
+    }
+
+    public List<ConfigurationItem> findConfigurationItemsByDesignItem(PartMaster partMaster) {
+
+        TypedQuery<ConfigurationItem> query = em.createNamedQuery("ConfigurationItem.findByDesignItem", ConfigurationItem.class);
+        return query.setParameter("designItem", partMaster).getResultList();
+
+    }
+
+    public boolean isPartMasterLinkedToConfigurationItem(PartMaster partMaster){
+        return findConfigurationItemsByDesignItem(partMaster).size() > 0;
     }
 }

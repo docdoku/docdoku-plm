@@ -78,6 +78,10 @@
         <servlet-class>com.docdoku.server.http.PSServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>PMServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.PMServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>VisualizationServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VisualizationServlet</servlet-class>
     </servlet>
@@ -108,6 +112,10 @@
     <servlet-mapping>
         <servlet-name>PSServlet</servlet-name>
         <url-pattern>/product-structure/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PMServlet</servlet-name>
+        <url-pattern>/product-management/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VisualizationServlet</servlet-name>

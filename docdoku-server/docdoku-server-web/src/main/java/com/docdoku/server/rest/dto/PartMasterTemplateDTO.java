@@ -8,11 +8,13 @@ public class PartMasterTemplateDTO {
 
     private String workspaceId;
     private String id;
+    private String reference;
     private String partType;
     private UserDTO author;
     private Date creationDate;
     private boolean idGenerated;
     private String mask;
+
 
     private List<String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
@@ -96,5 +98,13 @@ public class PartMasterTemplateDTO {
 
     public void setPartType(String partType) {
         this.partType = partType;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

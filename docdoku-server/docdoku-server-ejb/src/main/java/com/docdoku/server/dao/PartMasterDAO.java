@@ -110,4 +110,18 @@ public class PartMasterDAO {
         docMId = (String) query.getSingleResult();
         return docMId;
     }
+
+    public List<PartMaster> getParts(String pWorkspaceId, int pStart, int pMaxResults) {
+        return em.createNamedQuery("PartMaster.findByWorkspace", PartMaster.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setFirstResult(pStart)
+                .setMaxResults(pMaxResults)
+                .getResultList();
+    }
+
+    public int getPartsCount(String pWorkspaceId) {
+        return ((Number)em.createNamedQuery("PartMaster.countByWorkspace")
+                .setParameter("workspaceId", pWorkspaceId)
+                .getSingleResult()).intValue();
+    }
 }

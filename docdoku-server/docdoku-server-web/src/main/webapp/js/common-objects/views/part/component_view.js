@@ -1,5 +1,5 @@
 define(  [
-    "text!templates/component_view.html",
+    "text!common-objects/templates/part/component_view.html",
     "i18n!localization/nls/product-structure-strings"
 ],function(template, i18n) {
 

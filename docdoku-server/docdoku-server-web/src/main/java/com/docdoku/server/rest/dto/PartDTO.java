@@ -41,6 +41,7 @@ public class PartDTO implements Serializable {
     private Date checkOutDate;
     private WorkflowDTO workflow;
     private boolean standardPart;
+    private String workspaceId;
 
     public PartDTO() {
     }
@@ -139,5 +140,13 @@ public class PartDTO implements Serializable {
 
     public void setPartKey(String partKey) {
         this.partKey = partKey;
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 }

@@ -2,10 +2,10 @@ define(
     [
     "common-objects/views/components/modal",
     "common-objects/views/file/file_list",
-    'text!templates/part_modal.html',
+    'text!common-objects/templates/part/part_modal.html',
     'i18n!localization/nls/product-structure-strings',
     "common-objects/views/attributes/attributes",
-    "views/parts_management_view",
+    "common-objects/views/part/parts_management_view",
     "common-objects/views/linked_document/linked_documents",
     "common-objects/collections/linked_document_collection"
     ],
@@ -21,7 +21,9 @@ define(
             this.events["submit #form-part"] = "onSubmitForm";
         },
 
+
         render: function() {
+
             this.$el.html(this.template({
                 part: this.model,
                 i18n: i18n
@@ -38,8 +40,9 @@ define(
             this.$inputNewPartStandard = this.$('#inputNewPartStandard');
 
             this.bindUserPopover();
-            this.initAttributesView();
             this.initCadFileUploadView();
+            this.initAttributesView();
+
             this.initPartsManagementView();
             this.initLinkedDocumentsView();
 
@@ -76,7 +79,7 @@ define(
 
             var that = this;
             // cannot pass a collection of cad file to server.
-            var cadFile = this.iteration.get("nativeCADFile").first();
+            var cadFile = this.fileListView.collection.first();
             if(cadFile){
                 this.iteration.set("nativeCADFile", cadFile.get("fullName"));
             }else{
@@ -108,7 +111,7 @@ define(
                 baseName: this.iteration.getBaseName(),
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: this.iteration.getUploadBaseUrl(),
-                collection: this.iteration.get("nativeCADFile"),
+                collection:  this.iteration._nativeCADFile,
                 editMode:this.editMode
             }).render();
 

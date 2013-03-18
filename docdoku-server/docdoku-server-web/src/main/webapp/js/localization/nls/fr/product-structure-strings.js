@@ -49,7 +49,7 @@ define({
     OR_ADD_PART:"Ou ajouter un article existant",
     NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé.",
     TRUE:"Oui",
-    FALSE:"Nom",
+    FALSE:"Non",
     LINKS:"Liens",
     EXPORT:"Exporter",
     FULL_SCREEN:"Plein écran",
