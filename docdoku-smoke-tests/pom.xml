@@ -9,15 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <webapp.url>localhost</webapp.url>
-        <webapp.port>8080</webapp.port>
-        <login.user1>user2</login.user1>
-        <login.user2>asmae</login.user2>
-        <password>password</password>
-        <workspace>workspaceDemo</workspace>
-        <server.mail.address>docdokumailserver@gmail.com</server.mail.address>
+        <webapp.url>docdokuplm.net</webapp.url>
+        <webapp.port>80</webapp.port>
+        <login.user1>testman1</login.user1>
+        <login.user2>testman2</login.user2>
+        <password></password>
+        <workspace>demo</workspace>
+        <imap.server>imap.gmail.com</imap.server>
+        <imap.login></imap.login>
+        <imap.password></imap.password>
     </properties>
-
     <build>
         <resources>
             <resource>
@@ -38,47 +39,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7.2</version>
-
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.7.2</version>
             </plugin>
         </plugins>
     </build>
-    <artifactId>docdoku-smoke</artifactId>
+    <artifactId>docdoku-smoke-tests</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-cli</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -90,7 +61,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4</version>
+            <version>1.4.7</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

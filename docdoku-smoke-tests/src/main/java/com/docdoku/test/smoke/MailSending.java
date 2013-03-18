@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.test.smoke;
 
 import com.docdoku.cli.ScriptingTools;
@@ -9,60 +29,48 @@ import javax.mail.search.FlagTerm;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 
 /**
- * Created with IntelliJ IDEA.
- * User: asmaechadid
- * Date: 08/03/13
- * Time: 16:05
- * To change this template use File | Settings | File Templates.
+ * @author Asmae Chadid
+ *
  */
 public class MailSending {
 
-    private static String folder = "testingFolderMail";
-
+    private final static String FOLDER_NAME = "test";
+    private final static String DOCUMENT_ID = "Test-Document";
+    private final static String MAIL_SUBJECT = "Iteration notification";
     private SmokeTestProperties properties = new SmokeTestProperties();
+
 
     public void checkInCheckOut() throws Exception {
 
-        String fileName = "testingFileMail";
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(properties.getURL(), properties.getLoginForUser1(), properties.getPassword());
-        assertTrue(documentS != null);
-        documentS.createFolder(properties.getWorkspace(), folder);
-        documentS.createDocumentMaster(properties.getWorkspace() + "/" + folder, fileName, "", null, null, null, null, null);
+        assertNotNull(documentS);
+        documentS.createFolder(properties.getWorkspace(), FOLDER_NAME);
+        documentS.createDocumentMaster(properties.getWorkspace() + "/" + FOLDER_NAME, DOCUMENT_ID, "", null, null, null, null, null);
         DocumentMasterKey docMaster = new DocumentMasterKey();
         docMaster.setWorkspaceId(properties.getWorkspace());
         docMaster.setVersion("A");
-        docMaster.setId(fileName);
+        docMaster.setId(DOCUMENT_ID);
 
-        documentS.getStateChangeEventSubscriptions(properties.getWorkspace());
-        documentS.subscribeToStateChangeEvent(docMaster);
         documentS.subscribeToIterationChangeEvent(docMaster);
         documentS.checkInDocument(docMaster);
 
         IDocumentManagerWS documentS2 = ScriptingTools.createDocumentService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
-        documentS2.createVersion(docMaster, "", "", null, null, null);
         documentS2.checkOutDocument(docMaster);
-        documentS.deleteFolder(properties.getWorkspace() + "/" + folder);
-
-
-        System.out.println("Mail sending test has been executed with success ");
-
-
+        documentS.deleteFolder(properties.getWorkspace() + "/" + FOLDER_NAME);
     }
 
 
     public void checkMailReception() throws Exception {
-        String mailSubject = "Iteration notification";
-        //TestParameters params = new TestParameters();
-        Thread.sleep(6000);
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
         Session session = Session.getDefaultInstance(props, null);
         Store store = session.getStore("imaps");
-        store.connect("imap.gmail.com", "demo0313", "password0313");
+        store.connect(properties.getImapServer(), properties.getImapLogin(), properties.getImapPassword());
         javax.mail.Folder inbox = store.getFolder("Inbox");
         inbox.open(javax.mail.Folder.READ_WRITE);
         FlagTerm ft = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
@@ -70,15 +78,13 @@ public class MailSending {
         Message messages[] = inbox.search(ft);
         Message serverMessage = null;
         for (Message message : messages) {
-            if (message.getFrom()[0].toString().equals(properties.getServerMailAddress()) && message.getSubject().equals(mailSubject)) {
+            if (message.getSubject().equals(MAIL_SUBJECT)) {
                 serverMessage = message;
-                System.out.println(message.getFrom()[0].toString());
+                break;
             }
-            message.setFlag(Flags.Flag.SEEN, true);
         }
-        assertFalse("Test mail failed. Notification Mail wasn't delivered.", serverMessage == null);
-
-
+        assertFalse("Mail wasn't delivered.", serverMessage == null);
+        serverMessage.setFlag(Flags.Flag.DELETED, true);
     }
 
 

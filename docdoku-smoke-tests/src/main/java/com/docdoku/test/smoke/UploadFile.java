@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.test.smoke;
 
 import com.docdoku.cli.ScriptingTools;
@@ -7,45 +27,34 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.util.FileIO;
 
 import java.io.File;
 
 import static junit.framework.TestCase.fail;
 
 /**
- * Created with IntelliJ IDEA.
- * User: asmaechadid
- * Date: 11/03/13
- * Time: 10:10
- * To change this template use File | Settings | File Templates.
+ * @author Asmae Chadid
+ *
  */
 public class UploadFile {
 
+    private SmokeTestProperties properties = new SmokeTestProperties();
+    private final static String CAD_FILE = "/com/docdoku/test/smoke/KTM.obj";
+    private final static String PART_NUMBER = "Test-Part";
     public void upload() throws Exception {
-        String pathObjFile = "/Users/asmaechadid/Downloads/obj/joint_part1.obj";
-        //TestParameters parameters= new TestParameters();
-        SmokeTestProperties properties = new SmokeTestProperties();
-        String partNumber = "testPartt1";
-        File cadFile = new File(pathObjFile);
-        IProductManagerWS productS = ScriptingTools.createProductService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
-        if (productS.findPartMasters(properties.getWorkspace(),partNumber,1).isEmpty())
-        {
-            productS.createPartMaster(properties.getWorkspace(), partNumber, "", "", true, null, "");
 
-        }
-        PartRevisionKey partRPK = new PartRevisionKey(properties.getWorkspace(), partNumber, "A");
+        File cadFile =  FileIO.urlToFile(UploadFile.class.getResource(CAD_FILE));
+        IProductManagerWS productS = ScriptingTools.createProductService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
+        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "");
+
+        PartRevisionKey partRPK = new PartRevisionKey(properties.getWorkspace(), PART_NUMBER, "A");
         PartRevision pr = productS.getPartRevision(partRPK);
         PartIteration pi = pr.getLastIteration();
         PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
         FileHelper fh = new FileHelper(properties.getLoginForUser2(), properties.getPassword());
         fh.uploadNativeCADFile(properties.getURL(), cadFile, partIPK);
-        System.out.println("Upload file testing has executed with success");
-        /*ConfigurationItem configItem = productS.createConfigurationItem(TestParameters.getWorkspace(), "newItem2", "no description", partNumber);
-        ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
-        configurationItemKey.setId(configItem.getId());
-        configurationItemKey.setWorkspace(configItem.getWorkspace().getId());
-        productS.deleteConfigurationItem(configurationItemKey);*/
-
+        //TODO delete part
     }
 
 
