@@ -6,38 +6,70 @@
 
     <div class="modal-body">
 
-        <form id="part_creation_form" class="form-horizontal">
+        <div class="tabs">
 
-            <div class="control-group">
-                <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
-                <div class="controls">
-                    <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" required />
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a>
+                </li>
+                <li>
+                    <a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a>
+                </li>
+            </ul>
+
+
+            <form id="part_creation_form" class="form-horizontal">
+
+
+                <div class="tab-pane active" id="tab-main">
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartTemplate">{{i18n.PART_TEMPLATE}}</label>
+
+                        <div class="controls">
+                            <select id="inputPartTemplate">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" required/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartName">{{i18n.PART_NAME}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputPartName" placeholder="{{i18n.PART_NAME}}"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
+
+                        <div class="controls">
+                            <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartStandard">{{i18n.STANDARD_PART}}</label>
+
+                        <div class="controls">
+                            <input type="checkbox" id="inputPartStandard"/>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="tab-pane attributes attributes-edit" id="tab-attributes"></div>
 
-            <div class="control-group">
-                <label class="control-label" for="inputPartName">{{i18n.PART_NAME}}</label>
-                <div class="controls">
-                    <input type="text" id="inputPartName" placeholder="{{i18n.PART_NAME}}" />
-                </div>
-            </div>
+            </form>
+        </div>
 
-            <div class="control-group">
-                <label class="control-label" for="inputDescription">{{i18n.DESCRIPTION}}</label>
-                <div class="controls">
-                    <textarea id="inputDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label" for="inputPartStandard">{{i18n.STANDARD_PART}}</label>
-                <div class="controls">
-                    <input type="checkbox" id="inputPartStandard" />
-                </div>
-            </div>
-
-
-        </form>
 
     </div>
 

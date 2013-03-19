@@ -53,6 +53,7 @@
         <url-pattern>/admin/*</url-pattern>
         <url-pattern>/faces/admin/*</url-pattern>
         <url-pattern>/document-management/*</url-pattern>
+        <url-pattern>/product-management/*</url-pattern>
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>

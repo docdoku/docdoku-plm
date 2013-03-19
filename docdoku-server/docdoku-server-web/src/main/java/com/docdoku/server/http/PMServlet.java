@@ -20,23 +20,22 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.common.Workspace;
 
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class PMServlet extends HttpServlet {
-    
-    @EJB
-    private IProductManagerLocal productService;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -58,9 +57,24 @@ public class PMServlet extends HttpServlet {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
         }
-        
-        if (workspaceID == null ) {
-            pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+
+        if (workspaceID == null) {
+
+            HttpSession sessionHTTP = pRequest.getSession();
+            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
+
+            if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
+                workspaceID = administeredWorkspaces.values().iterator().next().getId();
+            } else if (regularWorkspaces != null && !regularWorkspaces.isEmpty()) {
+                workspaceID = regularWorkspaces.iterator().next().getId();
+            }
+
+            if(workspaceID == null){
+                pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                pResponse.sendRedirect(pRequest.getContextPath() + "/product-management/" + workspaceID);
+            }
         }
         else {
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));

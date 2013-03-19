@@ -48,7 +48,8 @@ define([
         },
 
         addPart:function(model){
-            this.addPartView(model)
+            this.addPartView(model);
+            this.$el.removeClass("hide");
         },
 
         removePart:function(model){
@@ -64,6 +65,10 @@ define([
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
                 viewToRemove.remove();
+            }
+
+            if( this.listItemViews.length == 0){
+                this.$el.addClass("hide");
             }
 
         },

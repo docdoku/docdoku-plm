@@ -65,6 +65,7 @@ define({
     "TASKS":						"Tâches",
     "TEMPLATE":						"Modèle",
     "TEMPLATES":					"Modèles",
+    "NEW_PART_TEMPLATE":			"Nouveau modèle d'article",
     "TEXT":							"Texte",
     "TITLE":						"Titre",
     "TRUE":							"Vrai",

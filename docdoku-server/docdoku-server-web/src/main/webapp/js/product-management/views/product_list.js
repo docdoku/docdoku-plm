@@ -17,7 +17,6 @@ define([
 
         initialize: function () {
             _.bindAll(this);
-
             this.listenTo(this.collection, "reset", this.resetList);
             this.listenTo(this.collection, 'add', this.addProduct);
             this.listenTo(this.collection, 'remove', this.removeProduct);
@@ -49,11 +48,15 @@ define([
         },
 
         addProduct:function(model){
-            this.addProductView(model)
+            this.addProductView(model);
+            this.$el.removeClass("hide");
         },
 
         removeProduct:function(model){
             this.removeProductView(model);
+            if(!this.collection.size()){
+                this.$el.hide();
+            }
         },
 
         removeProductView:function(model){
@@ -65,6 +68,10 @@ define([
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
                 viewToRemove.remove();
+            }
+
+            if( this.listItemViews.length == 0){
+                this.$el.addClass("hide");
             }
 
         },
@@ -90,8 +97,6 @@ define([
         },
 
         onSelectionChanged:function(view){
-
-            var checked = 0;
 
             var checkedViews = _(this.listItemViews).select(function(view){
                 return view.isChecked();

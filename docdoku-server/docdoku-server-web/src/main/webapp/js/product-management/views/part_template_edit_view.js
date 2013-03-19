@@ -34,7 +34,7 @@ define(
             this.fileListView = new FileListView({
                 deleteBaseUrl: this.model.url(),
                 uploadBaseUrl: this.model.getUploadBaseUrl(),
-                collection: this.model.get("attachedFiles"),
+                collection: this.model._attachedFile,
                 editMode: true
             }).render();
 
@@ -59,6 +59,14 @@ define(
         },
 
         onSubmitForm: function(e) {
+
+            // cannot pass a collection of cad file to server.
+            var attachedFile = this.fileListView.collection.first();
+            if(attachedFile){
+                this.model.set("attachedFile", attachedFile.get("fullName"));
+            }else{
+                this.model.set("attachedFile","");
+            }
 
             this.model.save({
                 id: this.$partTemplateReference.val(),

@@ -4,24 +4,29 @@ define([
     "i18n!localization/nls/document-management-strings"
 ], function (AttachedFileCollection,Date,i18n) {
 	var Template = Backbone.Model.extend({
+
+        className : "PartTemplate",
+
         initialize:function(){
-            this.className = "Template";
+            this.resetAttachedFile();
         },
 
-        parse: function(response) {
-            var filesMapping = _.map(response.attachedFiles, function(fullName){
-                return {
-                    "fullName":fullName,
+        resetAttachedFile:function(){
+            var fullName = this.get("attachedFile");
+            if(fullName){
+                var attachedFile = {
+                    fullName : fullName,
                     shortName : _.last(fullName.split("/")),
                     created : true
                 };
-            });
-            response.attachedFiles = new AttachedFileCollection(filesMapping);
-            return response;
+                this._attachedFile = new AttachedFileCollection(attachedFile);
+            }else{
+                this._attachedFile = new AttachedFileCollection() ;
+            }
         },
 
-        defaults :{
-            attachedFiles :[]
+        parse: function(response) {
+            return response;
         },
 
         toJSON: function(){
@@ -39,6 +44,14 @@ define([
 
         getId:function(){
             return this.get("id");
+        },
+
+        getMask:function(){
+            return this.get("mask");
+        },
+
+        isIdGenerated:function(){
+            return this.get("idGenerated");
         },
 
         getAuthorName:function(){
@@ -66,7 +79,12 @@ define([
             }else{
                 return "/api/workspaces/" + APP_CONFIG.workspaceId + "/part-templates";
             }
+        },
+
+        generateIdUrl:function(){
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/part-templates/" + this.get("id") + "/generate_id"
         }
+
     });
 	return Template;
 });

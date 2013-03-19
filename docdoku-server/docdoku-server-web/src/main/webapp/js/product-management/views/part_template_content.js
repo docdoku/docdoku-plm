@@ -68,7 +68,7 @@ define([
             }else{
                 this.deleteButton.hide();
             }
-        },
+        }
 
     });
 

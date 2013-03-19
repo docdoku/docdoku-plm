@@ -8,6 +8,7 @@ define({
     PRODUCT_ID:"Id du produit",
     DESCRIPTION:"Description",
     PART_NUMBER:"Numéro de l'article",
+    PART_TEMPLATE:"Modèle d'article",
     CREATE_NEW_PART:"Créer un nouvel article",
     CANCEL_PART_CREATION:"Annuler la création de l'article",
     PART_NAME:"Nom de l'article",
@@ -17,6 +18,7 @@ define({
     EDIT_PRODUCT:"Editer le produit",
     DELETE_PRODUCT_CONFIRM:"Etes-vous sûr de vouloir supprimer ce produit ?",
     DELETE_PRODUCT_ERROR:"Une erreur est survenue lors de la suppresion.",
-    VISUALIZE_PRODUCT:"Visualiser le produit"
+    VISUALIZE_PRODUCT:"Visualiser le produit",
+    NEW_PART_TEMPLATE:"Nouveau modèle d'article"
 
 });

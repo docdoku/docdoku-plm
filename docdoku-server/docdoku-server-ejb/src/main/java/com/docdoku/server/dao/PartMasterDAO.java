@@ -96,19 +96,19 @@ public class PartMasterDAO {
     }
 
     public String findLatestPartMId(String pWorkspaceId, String pType) {
-        String docMId;
-        Query query = em.createQuery("SELECT m.id FROM PartMaster m "
-                + "WHERE m.workspaceId = :workspaceId "
+        String partMId;
+        Query query = em.createQuery("SELECT m.number FROM PartMaster m "
+                + "WHERE m.workspace.id = :workspaceId "
                 + "AND m.type = :type "
                 + "AND m.creationDate = ("
                 + "SELECT MAX(m2.creationDate) FROM PartMaster m2 "
-                + "WHERE m2.workspaceId = :workspaceId "
+                + "WHERE m2.workspace.id = :workspaceId "
                 + "AND m2.type = :type "
                 + ")");
         query.setParameter("workspaceId", pWorkspaceId);
         query.setParameter("type", pType);
-        docMId = (String) query.getSingleResult();
-        return docMId;
+        partMId = (String) query.getSingleResult();
+        return partMId;
     }
 
     public List<PartMaster> getParts(String pWorkspaceId, int pStart, int pMaxResults) {

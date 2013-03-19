@@ -53,8 +53,7 @@ define(
                 partType:this.$partTemplateType.val(),
                 mask: this.$partTemplateMask.val(),
                 idGenerated:  this.$partTemplateIdGenerated.is(":checked"),
-                attributeTemplates:this.attributesView.collection.toJSON(),
-                attachedFiles:[]
+                attributeTemplates:this.attributesView.collection.toJSON()
             });
 
             this.model.save({}, {

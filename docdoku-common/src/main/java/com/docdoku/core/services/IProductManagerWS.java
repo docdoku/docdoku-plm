@@ -26,7 +26,6 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 
 import java.io.File;
-import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.List;
 
@@ -157,7 +156,10 @@ public interface IProductManagerWS{
      * The description of the first revision, version A, of the item.
      * This revision will be created in the same time than
      * the <a href="PartMaster.html">PartMaster</a> itself.
-     * 
+     *
+     * @param templateId
+     * Refers to a <a href="PartMasterTemplate.html">PartMasterTemplate</a>.
+     *
      * @return
      * The created part master instance
      * 
@@ -169,7 +171,7 @@ public interface IProductManagerWS{
      * @throws PartMasterAlreadyExistsException
      * @throws CreationException
      */
-    PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException;
+    PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription, String templateId) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException;
 
     /**
      * Checks out the supplied part revision to allow the operating user to modify it.

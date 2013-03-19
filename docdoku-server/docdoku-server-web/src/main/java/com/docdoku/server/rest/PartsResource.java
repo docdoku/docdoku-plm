@@ -276,10 +276,10 @@ public class PartsResource {
 
     @POST
     @Produces("application/json;charset=UTF-8")
-    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartDTO partDTO){
+    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partDTO){
 
         try {
-            PartMaster partMaster = productService.createPartMaster(workspaceId, partDTO.getNumber(), partDTO.getName(), partDTO.getDescription(), partDTO.isStandardPart(), null, partDTO.getDescription());
+            PartMaster partMaster = productService.createPartMaster(workspaceId, partDTO.getNumber(), partDTO.getName(), partDTO.getDescription(), partDTO.isStandardPart(), null, partDTO.getDescription(), partDTO.getTemplateId());
             PartDTO dto = new PartDTO();
             dto.setNumber(partMaster.getNumber());
             return dto;
@@ -369,7 +369,7 @@ public class PartsResource {
     }
 
 
-    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException {
+    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
 
         List<PartUsageLink> components = new ArrayList<PartUsageLink>();
         for(PartUsageLinkDTO partUsageLinkDTO : pComponents){
@@ -397,13 +397,13 @@ public class PartsResource {
 
     }
 
-    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException {
+    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
         String componentNumber = componentDTO.getNumber();
         PartMasterKey partMasterKey = new PartMasterKey(workspaceId,componentNumber);
         if(productService.partMasterExists(partMasterKey)){
             return new PartMaster(userManager.getWorkspace(workspaceId),componentNumber);
         }else{
-           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription());
+           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null);
         }
 
     }
