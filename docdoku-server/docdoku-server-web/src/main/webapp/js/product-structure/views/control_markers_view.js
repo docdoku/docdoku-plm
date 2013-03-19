@@ -17,10 +17,18 @@ define(["text!templates/control_markers.html","i18n!localization/nls/product-str
         },
 
         markerZoomLess:function(){
+            if(sceneManager.layerManager.markerScale.length()>0) {
+                sceneManager.layerManager.markerScale.addScalar(-0.5);
+                sceneManager.layerManager.rescaleMarkers();
+            }
         },
         markerState:function(){
+            sceneManager.layerManager.changeMarkerState();
         },
+
         markerZoomMore:function(){
+            sceneManager.layerManager.markerScale.addScalar(0.5);
+            sceneManager.layerManager.rescaleMarkers();
         },
 
         render:function(){

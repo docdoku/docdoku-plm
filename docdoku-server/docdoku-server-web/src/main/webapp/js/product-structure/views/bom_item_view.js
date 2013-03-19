@@ -26,7 +26,7 @@ define(['text!templates/bom_item.html', "models/part"], function(template, Part)
 
         onPartClicked: function() {
             var self = this;
-            require(['views/part_modal_view'], function(PartModalView) {
+            require(['common-objects/views/part/part_modal_view'], function(PartModalView) {
                 self.model.fetch().success(function(){
                     new PartModalView({
                         model: self.model

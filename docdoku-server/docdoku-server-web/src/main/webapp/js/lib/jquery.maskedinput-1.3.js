@@ -8,7 +8,7 @@
 	var pasteEventName = ($.browser.msie ? 'paste' : 'input') + ".mask";
 	var iPhone = (window.orientation != undefined);
 
-	$.mask = {
+/*	$.mask = {
 		//Predefined character definitions
 		definitions: {
 			'9': "[0-9]",
@@ -17,6 +17,16 @@
 		},
 		dataName:"rawMaskFn"
 	};
+*/
+    $.mask = {
+        // Override to handle our mask grammar
+        definitions: {
+            '#': "[0-9]",
+            '%': "[A-Za-z]",
+            '*': "[A-Za-z0-9]"
+        },
+        dataName:"rawMaskFn"
+    };
 
 	$.fn.extend({
 		//Helper Function for Caret positioning

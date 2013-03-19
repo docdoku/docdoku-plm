@@ -1,7 +1,7 @@
 /*global sceneManager*/
-function LevelGeometry(filename, visibleFromRating, computeVertexNormals) {
+function LevelGeometry(filename, quality, computeVertexNormals) {
     this.filename = filename;
-    this.visibleFromRating = visibleFromRating;
+    this.quality = quality;
     this.geometry = null;
     this.instances = 0;
     this.computeVertexNormals = computeVertexNormals;
@@ -32,6 +32,7 @@ LevelGeometry.prototype = {
                     geometry.computeVertexNormals();
                 }
                 _.each(materials, function(material) {
+                    material.wireframe = sceneManager.wireframe;
                     material.transparent = true;
                 });
                 self.geometry = geometry;

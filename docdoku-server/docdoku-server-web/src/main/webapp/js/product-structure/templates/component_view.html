@@ -1,6 +1,0 @@
-{{#model.component.number}}
-<div class="well">{{#editMode}}<a class="remove">×</a>{{/editMode}}<input type="text" name="number" value="{{model.component.number}}" title="{{i18n.PART_NUMBER}}" disabled/> <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" {{^editMode}}disabled{{/editMode}} /> </div>
-{{/model.component.number}}
-{{^model.component.number}}
-<div class="well">{{#editMode}}<a class="remove">×</a>{{/editMode}} <input type="text" name="number" value="" placeholder="{{i18n.PART_NUMBER}}" /> <input type="text" name="name" value="" placeholder="{{i18n.PART_NAME}}" /> <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" /> </div>
-{{/model.component.number}}

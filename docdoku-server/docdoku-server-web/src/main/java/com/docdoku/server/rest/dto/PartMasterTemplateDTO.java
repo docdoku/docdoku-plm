@@ -1,20 +1,19 @@
 package com.docdoku.server.rest.dto;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 public class PartMasterTemplateDTO {
 
     private String workspaceId;
     private String id;
+    private String reference;
     private String partType;
     private UserDTO author;
     private Date creationDate;
     private boolean idGenerated;
     private String mask;
-
-    private List<String> attachedFiles;
+    private String attachedFile;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
 
     public PartMasterTemplateDTO(){
@@ -54,12 +53,12 @@ public class PartMasterTemplateDTO {
         return creationDate;
     }
 
-    public List<String> getAttachedFiles() {
-        return attachedFiles;
+    public String getAttachedFile() {
+        return attachedFile;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
-        this.attachedFiles = attachedFiles;
+    public void setAttachedFile(String attachedFile) {
+        this.attachedFile = attachedFile;
     }
 
     public void setCreationDate(Date creationDate) {
@@ -96,5 +95,13 @@ public class PartMasterTemplateDTO {
 
     public void setPartType(String partType) {
         this.partType = partType;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

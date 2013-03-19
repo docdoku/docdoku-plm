@@ -34,18 +34,23 @@ define([
         this.partIterations = {};
         this.meshesBindedForMarkerCreation = [];
 
-        this.defaultCameraPosition = new THREE.Vector3(0, 10, 1000);
+        this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
 
         this.STATECONTROL = { PLC : 0, TBC : 1};
         this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
+
+        this.maxInstanceDisplayed = 1000;
+        this.levelGeometryValues = [];
+        this.wireframe = false;
     };
 
     SceneManager.prototype = {
 
         init: function() {
             _.bindAll(this);
+            //this.updateLevelGeometryValues(0);
             this.initScene();
             this.listenXHR();
             this.initCamera();
@@ -58,6 +63,7 @@ define([
             this.initLayerManager();
             this.animate();
             this.initIframeScene();
+            this.initGrid();
             this.isLoaded = true;
         },
 
@@ -130,9 +136,8 @@ define([
             if (!_.isUndefined(SCENE_INIT.camera)) {
                 console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z);
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
-            } //else
-                //this.camera.position.set(0, 10, 10000);
-            //this.scene.add(this.camera);
+            }
+
         },
 
         initControls: function() {
@@ -341,7 +346,6 @@ define([
                     self.layerManager.domEvent._isPLC = false;
                 }
 
-                self.layerManager.bindControlEvents();
                 self.layerManager.rescaleMarkers();
                 self.layerManager.renderList();
             });
@@ -553,7 +557,68 @@ define([
             return function () {
                 fn.apply( scope, arguments );
             };
+        },
+
+        initGrid:function(){
+
+            var size = 500, step = 25;
+            var geometry = new THREE.Geometry();
+            var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } );
+            var color1 = new THREE.Color( 0x444444 ), color2 = new THREE.Color( 0x888888 );
+
+            for ( var i = - size; i <= size; i += step ) {
+                geometry.vertices.push( new THREE.Vector3( -size, 0, i ) );
+                geometry.vertices.push( new THREE.Vector3(  size, 0, i ) );
+                geometry.vertices.push( new THREE.Vector3( i, 0, -size ) );
+                geometry.vertices.push( new THREE.Vector3( i, 0,  size ) );
+                var color = i === 0 ? color1 : color2;
+                geometry.colors.push( color, color, color, color );
+            }
+
+            this.grid = new THREE.Line( geometry, material, THREE.LinePieces );
+        },
+
+        showGrid:function() {
+            this.scene.add( this.grid );
+        },
+
+        removeGrid:function() {
+            this.scene.remove( this.grid );
+        },
+
+        updateLevelGeometryValues:function( instanceNumber ){
+            if(instanceNumber < this.maxInstanceDisplayed) {
+                this.levelGeometryValues[0] = 0.5;
+                this.levelGeometryValues[1] = 0;
+            } else {
+                this.levelGeometryValues[0] = 0.7;
+                this.levelGeometryValues[1] = 0.4;
+            }
+        },
+
+        switchWireframe:function( wireframe ) {
+            if(wireframe) {
+                // Set wireframe to futures parts
+                this.wireframe = true;
+            } else {
+                // Remove wireframe to futures parts
+                this.wireframe = false;
+
+            }
+
+            // Set/remove wireframe to current parts
+            var self = this;
+            _(this.instances).each(function(instance){
+                if(instance.mesh != null){
+                    _(instance.mesh.material.materials).each(function(material){
+                        material.wireframe = self.wireframe;
+                    })
+                }
+            });
+
         }
+
+
     };
 
     return SceneManager;

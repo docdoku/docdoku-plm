@@ -1,6 +1,5 @@
 package com.docdoku.server.rest.dto;
 
-import java.util.List;
 import java.util.Set;
 
 public class PartTemplateCreationDTO {
@@ -10,8 +9,7 @@ public class PartTemplateCreationDTO {
     private String partType;
     private boolean idGenerated;
     private String mask;
-
-    private List<String> attachedFiles;
+    private String attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
 
     public PartTemplateCreationDTO(){
@@ -42,11 +40,11 @@ public class PartTemplateCreationDTO {
         return workspaceId;
     }
 
-    public List<String> getAttachedFiles() {
+    public String getAttachedFiles() {
         return attachedFiles;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
+    public void setAttachedFiles(String attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
 

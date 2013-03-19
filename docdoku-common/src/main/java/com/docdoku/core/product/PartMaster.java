@@ -62,7 +62,9 @@ import javax.persistence.TemporalType;
 @IdClass(PartMasterKey.class)
 @Entity
 @NamedQueries({
-    @NamedQuery(name="PartMaster.findByNumber", query="SELECT pm FROM PartMaster pm WHERE pm.number LIKE :partNumber AND pm.workspace.id = :workspaceId")
+    @NamedQuery(name="PartMaster.findByNumber", query="SELECT pm FROM PartMaster pm WHERE pm.number LIKE :partNumber AND pm.workspace.id = :workspaceId"),
+    @NamedQuery(name="PartMaster.findByWorkspace", query="SELECT pm FROM PartMaster pm WHERE pm.workspace.id = :workspaceId ORDER BY pm.number"),
+    @NamedQuery(name="PartMaster.countByWorkspace", query="SELECT count(pm) FROM PartMaster pm WHERE pm.workspace.id = :workspaceId")
 })
 public class PartMaster implements Serializable {
 

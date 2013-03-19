@@ -82,23 +82,14 @@
                                             </c:forEach>
                                         </ul>
                                     </li>
-                                    <!-- my products dropdown menu-->
 
-                                    <li class="dropdown" id="product_container">
+                                    <!-- my products link-->
 
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <li>
+                                        <a href="#{request.contextPath}/product-management/${workspaceID}">
                                             <i class="icon-briefcase"></i>
                                             #{i18nTemplate['toplinks.product']}
-                                            <span class="caret"></span>
                                         </a>
-
-                                        <ul class="dropdown-menu">
-
-                                            <li><a class="product-management">
-                                                <i class="icon-briefcase"></i> #{i18nTemplate['toplinks.manageProducts']}</a>
-                                            </li>
-
-                                        </ul>
                                     </li>
 
                                     <!-- my documents link-->

@@ -149,24 +149,6 @@ define([
             }
         },
 
-        bindControlEvents: function() {
-            var self = this;
-            $('#markerZoomLess').click(function(e) {
-                if(self.markerScale.length()>0) {
-                    self.markerScale.addScalar(-0.5);
-                    self.rescaleMarkers();
-                }
-            });
-
-            $('#markerZoomMore').click(function(e) {
-                self.markerScale.addScalar(0.5);
-                self.rescaleMarkers();
-            });
-
-            $('#markerState').click(function(e) {
-                self.changeMarkerState();
-            });
-        },
 
         showPopup: function(marker) {
             var mimv = new MarkerInfoModalView({model:marker});

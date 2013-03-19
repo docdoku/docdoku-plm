@@ -62,7 +62,7 @@ public class OBJFileConverterImpl implements CADConverter{
         File jsFile=null;
         try {
             String pythonInterpreter = CONF.getProperty("pythonInterpreter");
-            File script = new File(OBJFileConverterImpl.class.getResource(PYTHON_SCRIPT).getPath());
+            File script =  FileIO.urlToFile(OBJFileConverterImpl.class.getResource(PYTHON_SCRIPT));
             String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", cadFile.getAbsolutePath(),"-o",tmpJSFile.getAbsolutePath()};
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();

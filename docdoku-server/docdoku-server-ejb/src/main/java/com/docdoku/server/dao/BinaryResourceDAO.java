@@ -24,7 +24,6 @@ import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.services.FileAlreadyExistsException;
 import com.docdoku.core.services.CreationException;
-import com.docdoku.core.*;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
@@ -115,7 +114,7 @@ public class BinaryResourceDAO {
     }
 
     public PartMasterTemplate getPartTemplateOwner(BinaryResource pBinaryResource) {
-        TypedQuery<PartMasterTemplate> query = em.createQuery("SELECT t FROM PartMasterTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles", PartMasterTemplate.class);
+        TypedQuery<PartMasterTemplate> query = em.createQuery("SELECT t FROM PartMasterTemplate t WHERE t.attachedFile = :binaryResource", PartMasterTemplate.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {

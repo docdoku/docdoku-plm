@@ -82,6 +82,10 @@ public class PartUsageLinkDAO {
             .setParameter("workspaceId", workspaceId)
             .getResultList();
     }
+
+    public boolean hasPartUsages(String workspaceId, String partNumber){
+        return findPartUsages(workspaceId,partNumber).size()>0;
+    }
     
     public PartUsageLink loadPartUsageLink(int pId) throws PartUsageLinkNotFoundException {
         PartUsageLink usageLink = em.find(PartUsageLink.class, pId);

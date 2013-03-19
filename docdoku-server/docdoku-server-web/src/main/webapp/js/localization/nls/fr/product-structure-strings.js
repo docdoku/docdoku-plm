@@ -49,7 +49,7 @@ define({
     OR_ADD_PART:"Ou ajouter un article existant",
     NO_WEBGL:"Le navigateur ne supporte pas WebGL ou n'est pas activé.",
     TRUE:"Oui",
-    FALSE:"Nom",
+    FALSE:"Non",
     LINKS:"Liens",
     EXPORT:"Exporter",
     FULL_SCREEN:"Plein écran",
@@ -67,5 +67,8 @@ define({
     TOGGLE_ALL_LAYERS:"Basculer la visibilité des calques",
     APPEND_LAYER:"Créer un nouveau calque",
     SCENE_VIEW:"Scène",
-    BOM_VIEW:"Liste des matériaux"
+    BOM_VIEW:"Liste des matériaux",
+    OPTIONS:"Options",
+    MATERIALS_SWITCH:"Afficher/Masquer les matériaux",
+    GRID_SWITCH:"Afficher/Masquer la grille"
 });
