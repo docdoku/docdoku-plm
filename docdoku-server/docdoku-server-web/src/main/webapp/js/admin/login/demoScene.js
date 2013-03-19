@@ -1,8 +1,11 @@
+/*global Detector,requestAnimationFrame*/
 window.onload = function() {
-    /* 	Three.js  */
+
     var info_panel = document.getElementById("demo-scene");
     // MAIN
-    if ( ! Detector.webgl ) info_panel.innerHTML = Detector.getWebGLErrorMessage().innerHTML;
+    if ( ! Detector.webgl ){
+        info_panel.innerHTML = Detector.getWebGLErrorMessage().innerHTML;
+    }
     // standard global variables
     var container, scene, camera, renderer, controls, stats;
     var keyboard = new THREEx.KeyboardState();
@@ -11,10 +14,18 @@ window.onload = function() {
     // custom global variables
     var model;
 
-    init();
-    animate();
-
     // FUNCTIONS
+
+    function addModelToScene( geometry )
+    {
+        var material = new THREE.MeshFaceMaterial();
+        model = new THREE.Mesh( geometry, material );
+        model.scale.set(1,1,1);
+        model.position.set(0, 0, 0);
+        model.rotation.set(0.45, 0, 1.55);
+        scene.add( model );
+    }
+
     function init()
     {
         // SCENE
@@ -50,21 +61,24 @@ window.onload = function() {
         scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
         var binaryLoader = new THREE.BinaryLoader();
-        binaryLoader.load("images/pba.js", addModelToScene)
+        binaryLoader.load("images/pba.js", addModelToScene);
 
         var ambientLight = new THREE.AmbientLight(0x111111);
         scene.add(ambientLight);
 
     }
 
-    function addModelToScene( geometry )
+    function update()
     {
-        var material = new THREE.MeshFaceMaterial();
-        model = new THREE.Mesh( geometry, material );
-        model.scale.set(1,1,1);
-        model.position.set(0, 0, 0);
-        model.rotation.set(0.45, 0, 1.55);
-        scene.add( model );
+        if(model){
+            model.rotation.set(0.45, model.rotation.y+0.005, model.rotation.z+0.005);
+        }
+        controls.update();
+    }
+
+    function render()
+    {
+        renderer.render( scene, camera );
     }
 
     function animate()
@@ -74,16 +88,6 @@ window.onload = function() {
         update();
     }
 
-    function update()
-    {
-        if(model)
-            model.rotation.set(0.45, model.rotation.y+0.005, model.rotation.z+0.005);
-
-        controls.update();
-    }
-
-    function render()
-    {
-        renderer.render( scene, camera );
-    }
+    init();
+    animate();
 };

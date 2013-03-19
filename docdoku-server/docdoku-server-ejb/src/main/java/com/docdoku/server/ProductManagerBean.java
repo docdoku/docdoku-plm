@@ -878,7 +878,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
         PartMasterTemplate template = templateDAO.removePartMTemplate(pKey);
         BinaryResource file = template.getAttachedFile();
-        dataManager.delData(file);
+        if(file != null){
+            dataManager.delData(file);
+        }
     }
 
 
