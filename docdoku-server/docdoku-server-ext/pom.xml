@@ -13,7 +13,7 @@
     <name>docdoku-server-ext Java EE 6 Extensions API</name>
     <dependencies>
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>

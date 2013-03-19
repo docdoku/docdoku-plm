@@ -63,7 +63,7 @@
 
         <!-- docdoku core -->
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
