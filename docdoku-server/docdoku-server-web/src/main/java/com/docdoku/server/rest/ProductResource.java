@@ -90,7 +90,7 @@ public class ProductResource {
             ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
             for (int i = 0; i < cis.size(); i++) {
-                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), null);
+                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), cis.get(i).getDesignItem().getNumber());
             }
 
             return dtos;
@@ -295,6 +295,7 @@ public class ProductResource {
         try {
             ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
             ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
+            configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

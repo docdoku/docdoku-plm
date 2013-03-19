@@ -21,15 +21,7 @@ package com.docdoku.core.product;
 
 import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * This class represents an entire product or some portion
@@ -47,7 +39,10 @@ import javax.persistence.Table;
  * @since   V1.1
  */
 @Table(name="CONFIGURATIONITEM")
-@NamedQuery(name="ConfigurationItem.getEffectivities",query="SELECT e FROM Effectivity e WHERE e.configurationItem = :configurationItem")
+@NamedQueries({
+        @NamedQuery(name="ConfigurationItem.getEffectivities",query="SELECT e FROM Effectivity e WHERE e.configurationItem = :configurationItem"),
+        @NamedQuery(name="ConfigurationItem.findByDesignItem",query="SELECT c FROM ConfigurationItem c WHERE c.designItem = :designItem")
+})
 @javax.persistence.IdClass(com.docdoku.core.product.ConfigurationItemKey.class)
 @Entity
 public class ConfigurationItem implements Serializable {

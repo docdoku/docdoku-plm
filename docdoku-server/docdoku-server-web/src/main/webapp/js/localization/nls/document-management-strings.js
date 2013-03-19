@@ -1,5 +1,6 @@
 define({
     root: {
+        "WORKSPACE":                    "Workspace",
         "APPEND":						"Add",
         "ATTACHED_FILES":               "Files",
         "SELECT_FILE":                  "Choose a file",
@@ -50,6 +51,7 @@ define({
         "NEW_FOLDER":					"New folder",
         "NEW_TAG":						"New tag",
         "NEW_TEMPLATE":					"New document template",
+        "NEW_PART_TEMPLATE":			"New part template",
         "NEW_WORKFLOW":					"New workflow",
         "NUMBER":						"Number",
         "OK":                           "OK",

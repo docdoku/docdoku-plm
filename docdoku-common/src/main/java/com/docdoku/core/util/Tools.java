@@ -20,7 +20,6 @@
 package com.docdoku.core.util;
 
 import com.docdoku.core.document.*;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -139,6 +138,7 @@ public class Tools {
     }
 
     public static String increaseId(String id, String mask) throws ParseException {
+        System.out.println("#### Tools.increaseId id = " + id + " , mask = " + mask);
         MaskFormatter formatter = new MaskFormatter(mask);
         formatter.setValueContainsLiteralCharacters(false);
         String value = formatter.stringToValue(id).toString();

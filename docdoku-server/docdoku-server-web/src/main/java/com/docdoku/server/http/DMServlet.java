@@ -21,31 +21,19 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class DMServlet extends HttpServlet {
-    
-    @EJB
-    private IProductManagerLocal productService;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -84,15 +72,7 @@ public class DMServlet extends HttpServlet {
             }else{
                 pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/" + workspaceID);
             }
-        } else {        
-            List<ConfigurationItem> products = null;
-            try {
-                products = productService.getConfigurationItems(workspaceID);
-            } catch (Exception ex) {
-                //Dropdown menu will not be able to be displayed
-                //TODO log it
-            }
-            pRequest.setAttribute("products", products);
+        } else {
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);
             pRequest.getRequestDispatcher("/faces/document-management/index.xhtml").forward(pRequest, pResponse);

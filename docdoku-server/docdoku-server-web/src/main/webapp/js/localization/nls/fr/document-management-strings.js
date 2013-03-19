@@ -1,4 +1,5 @@
 define({
+    "WORKSPACE":                    "Espace de travail",
     "APPEND":						"Ajouter",
     "ATTACHED_FILES":               "Fichiers",
     "SELECT_FILE":                  "Choisissez un fichier",
@@ -64,6 +65,7 @@ define({
     "TASKS":						"Tâches",
     "TEMPLATE":						"Modèle",
     "TEMPLATES":					"Modèles",
+    "NEW_PART_TEMPLATE":			"Nouveau modèle d'article",
     "TEXT":							"Texte",
     "TITLE":						"Titre",
     "TRUE":							"Vrai",

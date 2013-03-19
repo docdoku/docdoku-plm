@@ -21,7 +21,6 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -46,7 +45,7 @@ import java.util.Set;
 @Table(name="PARTMASTERTEMPLATE")
 @IdClass(PartMasterTemplateKey.class)
 @Entity
-public class PartMasterTemplate implements Serializable, FileHolder, Comparable<PartMasterTemplate> {
+public class PartMasterTemplate implements Serializable, Comparable<PartMasterTemplate> {
 
     @Column(length=50)
     @Id
@@ -62,20 +61,10 @@ public class PartMasterTemplate implements Serializable, FileHolder, Comparable<
 
     private String mask;
 
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
-    @JoinTable(name="PARTMASTERTEMPLATE_BINRES",
-        inverseJoinColumns={
-            @JoinColumn(name="ATTACHEDFILE_FULLNAME", referencedColumnName="FULLNAME")
-        },
-        joinColumns={
-            @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
-            @JoinColumn(name="PARTMASTERTEMPLATE_ID", referencedColumnName="ID")
-        }
-    )
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
+    @OneToOne(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    private BinaryResource attachedFile;
 
-
-    @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinTable(name="PARTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
                     @JoinColumn(name="INSTANCEATTRIBUTETEMPLATE_ID", referencedColumnName="ID")
@@ -127,11 +116,6 @@ public class PartMasterTemplate implements Serializable, FileHolder, Comparable<
         mask=pMask;
     }
 
-    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
-        this.attachedFiles = attachedFiles;
-    }
-
-
     public void setId(String id) {
         this.id = id;
     }
@@ -143,17 +127,13 @@ public class PartMasterTemplate implements Serializable, FileHolder, Comparable<
     public void setIdGenerated(boolean idGenerated) {
         this.idGenerated = idGenerated;
     }
-    
-    public boolean removeFile(BinaryResource pBinaryResource){
-        return attachedFiles.remove(pBinaryResource);
+
+    public BinaryResource getAttachedFile() {
+        return attachedFile;
     }
-    
-    public void addFile(BinaryResource pBinaryResource){
-        attachedFiles.add(pBinaryResource);
-    }
-    
-    public Set<BinaryResource> getAttachedFiles() {
-        return attachedFiles;
+
+    public void setAttachedFile(BinaryResource attachedFile) {
+        this.attachedFile = attachedFile;
     }
 
     public Set<InstanceAttributeTemplate> getAttributeTemplates() {

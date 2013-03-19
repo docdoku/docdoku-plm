@@ -15,6 +15,10 @@ define(function() {
             return this.get("id");
         },
 
+        getDesignItemNumber:function(){
+            return this.get("designItemNumber");
+        },
+
         getIndexUrl: function() {
             return "/product-structure/" + APP_CONFIG.workspaceId + "/" + encodeURIComponent(this.getId());
         },

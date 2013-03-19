@@ -102,7 +102,6 @@ public class PartTemplateResource {
     @Produces("application/json;charset=UTF-8")
     public String generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
-
             return productService.generateId(workspaceId, templateId);
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -186,10 +185,8 @@ public class PartTemplateResource {
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
             String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
-
             productService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();
-
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

@@ -109,7 +109,7 @@ define(function() {
 
         onEditPart:function(){
             var self = this;
-            require(['models/part','views/part_modal_view'], function(Part,PartModalView) {
+            require(['models/part','common-objects/views/part/part_modal_view'], function(Part,PartModalView) {
                 var model = new Part({partKey:self.model.getNumber() + "-" + self.model.getVersion()});
                 model.fetch().success(function(){
                     new PartModalView({
@@ -234,7 +234,7 @@ define(function() {
 
         onEditPart:function(){
             var self = this;
-            require(['models/part','views/part_modal_view'], function(Part,PartModalView) {
+            require(['models/part','common-objects/views/part/part_modal_view'], function(Part,PartModalView) {
                 var model = new Part({partKey:self.model.getNumber() + "-" + self.model.getVersion()});
                 model.fetch().success(function(){
                     new PartModalView({

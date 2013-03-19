@@ -24,6 +24,7 @@ define([
         },
 
 		initialize: function () {
+            _.bindAll(this);
 			BaseView.prototype.initialize.apply(this, arguments);
 			this.events["click .add"] = this.addAttribute;
 		},
@@ -42,7 +43,7 @@ define([
 		rendered: function () {
 			this.attributesView = this.addSubView(
 				new AttributeListView({
-					el: "#items-" + this.cid,
+					el: this.$("#items-" + this.cid),
 					collection: this.collection
 				})
 			);

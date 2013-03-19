@@ -64,7 +64,11 @@ public class DocumentServlet extends HttpServlet {
             DocumentIteration doc =  docM.getLastIteration();
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
 
+
+
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
+
+
 
         } catch (Exception pEx) {
             throw new ServletException("Error while fetching your document.", pEx);
