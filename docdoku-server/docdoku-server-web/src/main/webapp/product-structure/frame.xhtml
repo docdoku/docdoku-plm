@@ -10,24 +10,24 @@
             #{i18nPS['title']} - #{workspaceID} - #{productID}
         </ui:define>
         <ui:define name="styles">     
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css"/>
-        <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css?v=${BUILD_NUMBER}"/>
+        <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less?v=${BUILD_NUMBER}"/>
         </ui:define>
         <ui:define name="scripts"> 
 
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three-r56.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three-r56.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js?v=${BUILD_NUMBER}"></script>
 
         <script type="text/javascript">
             var APP_CONFIG = {
@@ -61,7 +61,8 @@
                         i18n: {
                             locale: "#{request.locale.language}"
                         }
-                    }
+                    },
+                    urlArgs:"v=${BUILD_NUMBER}"
                 });
 
                 require(["frameApp"], function(FrameView) {

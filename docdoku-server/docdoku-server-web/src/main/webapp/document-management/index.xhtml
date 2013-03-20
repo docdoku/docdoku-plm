@@ -6,7 +6,7 @@
       xmlns:h="http://java.sun.com/jsf/html">
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
         <ui:define name="styles">
-            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/style.less"/>
+            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/style.less?v=${BUILD_NUMBER}"/>
         </ui:define>
         <ui:define name="title">
             <f:loadBundle var="i18nDM" basename="com.docdoku.server.localization.explorer_resource"/>
@@ -34,7 +34,8 @@
                             i18n: {
                                 locale: "#{request.locale.language}"
                             }
-                        }
+                        },
+                        urlArgs:'v=${BUILD_NUMBER}'
                     });
 
                     require(["app"]);
