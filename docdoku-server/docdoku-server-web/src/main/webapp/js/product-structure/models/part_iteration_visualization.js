@@ -58,7 +58,7 @@ define(function() {
         },
 
         getLevelGeometry: function(rating) {
-            for (var i = this.levels.length-1; i>=0 ; i--) {
+            for (var i = 0; i < this.levels.length ; i++) {
                 if (rating > sceneManager.levelGeometryValues[i]) {
                     return this.levels[i];
                 }
