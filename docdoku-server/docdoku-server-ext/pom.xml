@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>docdoku-server</artifactId>
-        <groupId>org.ow2.docdoku</groupId>
+        <groupId>com.docdoku</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>docdoku-server-ext</artifactId>
@@ -11,7 +11,7 @@
     <name>docdoku-server-ext Java EE 6 Extensions API</name>
     <dependencies>
         <dependency>
-            <groupId>org.ow2.docdoku</groupId>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
