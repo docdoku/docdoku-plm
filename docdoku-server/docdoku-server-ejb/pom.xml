@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.docdoku</groupId>
+        <groupId>org.ow2.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -17,26 +17,26 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <!-- declare dependency as pom and jar for transitive libs inclusion-->
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-obj</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-obj</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>

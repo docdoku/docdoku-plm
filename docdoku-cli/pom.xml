@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>docdoku-plm</artifactId>
-        <groupId>com.docdoku</groupId>
+        <groupId>org.ow2.docdoku</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>docdoku-cli</artifactId>

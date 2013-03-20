@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>docdoku-server</artifactId>
-        <groupId>com.docdoku</groupId>
+        <groupId>org.ow2.docdoku</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>docdoku-server-converter-obj</artifactId>
@@ -17,7 +17,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
