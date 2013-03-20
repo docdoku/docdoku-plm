@@ -2,16 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.docdoku</groupId>
+        <groupId>org.ow2.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.docdoku</groupId>
     <artifactId>docdoku-server-web</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
     <name>docdoku-server-web Java EE 6 Webapp</name>
-    <url>http://www.docdokuplm.com</url>
     <dependencies>
 
         <!-- JAXRS -->
@@ -55,6 +52,7 @@
             <artifactId>jersey-multipart</artifactId>
             <version>1.13</version>
         </dependency>
+
         <!-- WebSocket -->
 
         <dependency>
@@ -65,7 +63,7 @@
 
         <!-- docdoku core -->
         <dependency>
-            <groupId>com.docdoku</groupId>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
@@ -186,12 +184,28 @@
                 <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                        <webResources>
-                            <resource>
-                                <filtering>true</filtering>
-                                <directory>src/main/webapp/resources/default</directory>
-                            </resource>
-                        </webResources>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>resources/default</targetPath>
+                            <directory>src/main/webapp/resources/default</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>document-management</targetPath>
+                            <directory>src/main/webapp/document-management</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>product-management</targetPath>
+                            <directory>src/main/webapp/product-management</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>product-structure</targetPath>
+                            <directory>src/main/webapp/product-structure</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

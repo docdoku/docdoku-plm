@@ -27,7 +27,7 @@ define({
     DELETE_SELECTION:"Supprimer la sélection",
     "DELETE_SELECTION_?":"Supprimer la sélection ?",
     OBJECTS:"Objets",
-    PART_TEMPLATES:"Modèles d'articles",
+    PART_TEMPLATES:"Modèles",
     REFERENCE:"Réference",
     TYPE:"Type",
     NEW_PART_TEMPLATE:"Nouveau modèle d'article",

@@ -50,7 +50,7 @@ define([
 
         init: function() {
             _.bindAll(this);
-            //this.updateLevelGeometryValues(0);
+            this.updateLevelGeometryValues(0);
             this.initScene();
             this.listenXHR();
             this.initCamera();
