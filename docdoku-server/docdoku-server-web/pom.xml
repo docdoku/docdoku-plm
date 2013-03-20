@@ -189,6 +189,7 @@
                         <webResources>
                             <resource>
                                 <filtering>true</filtering>
+                                <targetPath>resources/default</targetPath>
                                 <directory>src/main/webapp/resources/default</directory>
                             </resource>
                         </webResources>
