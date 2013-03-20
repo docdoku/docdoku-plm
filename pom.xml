@@ -16,10 +16,9 @@
   <name>docdoku-plm</name>
   <url>http://www.docdokuplm.com</url>
   <scm>
-    <connection>scm:git:ssh://git@github.com/docdoku/docdoku-plm.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/docdoku/docdoku-plm.git</developerConnection>
-    <url>ssh://git@github.com/docdoku/docdoku-plm.git</url>
-    <tag>HEAD</tag>
+    <connection>scm:git:https://git@github.com/docdoku/docdoku-plm.git</connection>
+    <developerConnection>scm:git:https://git@github.com/docdoku/docdoku-plm.git</developerConnection>
+    <url>https://git@github.com/docdoku/docdoku-plm.git</url>
   </scm>
   <modules>
     <module>docdoku-common</module>
