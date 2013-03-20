@@ -13,7 +13,7 @@
     <name>docdoku-server-web Java EE 6 Webapp</name>
     <url>http://www.docdokuplm.com</url>
     <dependencies>
-
+        
         <!-- JAXRS -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -55,8 +55,9 @@
             <artifactId>jersey-multipart</artifactId>
             <version>1.13</version>
         </dependency>
-        <!-- WebSocket -->
 
+        <!-- WebSocket -->
+        
         <dependency>
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-websockets</artifactId>
@@ -70,7 +71,7 @@
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
-
+        
         <!-- JEE core API -->
         <dependency>
             <groupId>javax</groupId>
@@ -123,7 +124,7 @@
             <artifactId>json</artifactId>
             <version>20080701</version>
         </dependency>
-
+        
         <!-- Open Office -->
         <dependency>
             <groupId>org.openoffice</groupId>
@@ -155,7 +156,7 @@
             <artifactId>unoil</artifactId>
             <version>3.2.1</version>
         </dependency>
-
+        
         <!-- system libs -->
         <dependency>
             <groupId>com.developpez.adiguba</groupId>
@@ -186,13 +187,28 @@
                 <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                        <webResources>
-                            <resource>
-                                <filtering>true</filtering>
-                                <targetPath>resources/default</targetPath>
-                                <directory>src/main/webapp/resources/default</directory>
-                            </resource>
-                        </webResources>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>resources/default</targetPath>
+                            <directory>src/main/webapp/resources/default</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>document-management</targetPath>
+                            <directory>src/main/webapp/document-management</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>product-management</targetPath>
+                            <directory>src/main/webapp/product-management</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>product-structure</targetPath>
+                            <directory>src/main/webapp/product-structure</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

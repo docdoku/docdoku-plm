@@ -276,13 +276,46 @@ public class PartsResource {
 
     @POST
     @Produces("application/json;charset=UTF-8")
-    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partDTO){
+    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO){
 
         try {
-            PartMaster partMaster = productService.createPartMaster(workspaceId, partDTO.getNumber(), partDTO.getName(), partDTO.getDescription(), partDTO.isStandardPart(), null, partDTO.getDescription(), partDTO.getTemplateId());
-            PartDTO dto = new PartDTO();
-            dto.setNumber(partMaster.getNumber());
-            return dto;
+            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.getDescription(), partCreationDTO.isStandardPart(), null, partCreationDTO.getDescription(), partCreationDTO.getTemplateId());
+
+            PartDTO partDTO = mapper.map(partMaster,PartDTO.class);
+
+            PartRevision partRevision = partMaster.getLastRevision();
+
+            partDTO.setNumber(partRevision.getPartNumber());
+            partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partDTO.setName(partRevision.getPartMaster().getName());
+            partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+
+            List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+
+            for(PartIteration partIteration : partRevision.getPartIterations()){
+
+                List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+
+                PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
+
+                for(PartUsageLink partUsageLink : partIteration.getComponents()){
+                    PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
+                    usageLinksDTO.add(partUsageLinkDTO);
+                }
+
+                partIterationDTO.setComponents(usageLinksDTO);
+                partIterationDTOs.add(partIterationDTO);
+            }
+
+            partDTO.setPartIterations(partIterationDTOs);
+
+            if(partRevision.isCheckedOut()){
+                partDTO.setCheckOutDate(partRevision.getCheckOutDate());
+                UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
+                partDTO.setCheckOutUser(checkoutUserDTO);
+            }
+           return partDTO;
+
         } catch (Exception ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

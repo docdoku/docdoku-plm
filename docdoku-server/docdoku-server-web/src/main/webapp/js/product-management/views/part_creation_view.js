@@ -56,8 +56,7 @@ define(
                 number: this.$inputPartNumber.val(),
                 workspaceId: APP_CONFIG.workspaceId,
                 description: this.$inputPartDescription.val(),
-                name:  this.$inputPartName.val(),
-                attributeTemplates: this.attributesView.collection.toJSON()
+                name:  this.$inputPartName.val()
             });
 
             var templateId = this.$inputPartTemplate.val();
@@ -75,6 +74,7 @@ define(
         },
 
         onPartCreated: function() {
+            this.model.getLastIteration().save({instanceAttributes: this.attributesView.collection.toJSON()});
             this.trigger('part:created', this.model);
             this.closeModal();
         },
