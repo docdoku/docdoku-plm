@@ -28,7 +28,7 @@ define({
         DELETE_SELECTION:"Delete selection",
         "DELETE_SELECTION_?":"Delete selection ?",
         OBJECTS:"Objects",
-        PART_TEMPLATES:"Part templates",
+        PART_TEMPLATES:"Templates",
         REFERENCE:"Reference",
         TYPE:"Type",
         NEW_PART_TEMPLATE:"New part template",
