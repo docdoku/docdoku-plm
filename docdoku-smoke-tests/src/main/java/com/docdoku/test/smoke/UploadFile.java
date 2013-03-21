@@ -45,13 +45,15 @@ public class UploadFile {
         IProductManagerWS productS = ScriptingTools.createProductService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
         productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "", null);
 
-        PartRevisionKey partRPK = new PartRevisionKey(properties.getWorkspace(), PART_NUMBER, "A");
+        PartMasterKey partMPK = new PartMasterKey(properties.getWorkspace(), PART_NUMBER);
+
+        PartRevisionKey partRPK = new PartRevisionKey(partMPK, "A");
         PartRevision pr = productS.getPartRevision(partRPK);
         PartIteration pi = pr.getLastIteration();
         PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
         FileHelper fh = new FileHelper(properties.getLoginForUser2(), properties.getPassword());
         fh.uploadNativeCADFile(properties.getURL(), cadFile, partIPK);
-        //TODO delete part Revision
+        productS.deletePartMaster(partMPK);
     }
 
 

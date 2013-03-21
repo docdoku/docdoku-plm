@@ -33,6 +33,7 @@ public class UploadFileTest {
         try {
             uploadFile.upload();
         } catch (Exception e) {
+            e.printStackTrace();
             fail(e.getMessage());
         }
     }

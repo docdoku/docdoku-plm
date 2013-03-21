@@ -158,6 +158,7 @@ public interface IProductManagerWS{
      * the <a href="PartMaster.html">PartMaster</a> itself.
      *
      * @param templateId
+     * The id of the template to use to instantiate the part, may be null.
      * Refers to a <a href="PartMasterTemplate.html">PartMasterTemplate</a>.
      *
      * @return

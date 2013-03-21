@@ -8,17 +8,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <properties>
-        <webapp.url>docdokuplm.net</webapp.url>
-        <webapp.port>80</webapp.port>
-        <login.user1>testman1</login.user1>
-        <login.user2>testman2</login.user2>
-        <password></password>
-        <workspace>demo</workspace>
-        <imap.server>imap.gmail.com</imap.server>
-        <imap.login></imap.login>
-        <imap.password></imap.password>
-    </properties>
     <build>
         <resources>
             <resource>
@@ -27,6 +16,13 @@
                     <include>**/*.properties</include>
                 </includes>
                 <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>
@@ -44,6 +40,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.7.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-1</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>tests.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
