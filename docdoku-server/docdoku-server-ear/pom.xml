@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ow2.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.1</version>
     </parent>
     <artifactId>docdoku-server-ear</artifactId>
     <packaging>ear</packaging>
@@ -39,13 +39,13 @@
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ejb</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1</version>
             <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-web</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1</version>
             <type>war</type>
         </dependency>
     </dependencies>
