@@ -254,7 +254,7 @@ public class ProductResource {
             //when authenticated we use the LastModified header to fake
             //a similar behavior (30 minutes of cache)
             Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.HOUR, -12);
+            cal.add(Calendar.MINUTE, -30);
             Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
             if (rb != null) {
                 return rb.build();
