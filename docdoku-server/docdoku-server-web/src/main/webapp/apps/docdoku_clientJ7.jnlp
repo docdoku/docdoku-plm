@@ -15,7 +15,7 @@
     <j2se version="1.7+" max-heap-size="256m"/>
     <jar href="docdoku-client.jar" main="true"/>
     <jar href="docdoku-common.jar" main="false"/>
-    <jar href="lib/commons-codec-1.3.jar" main="false"/>   
+    <jar href="lib/commons-codec-1.7.jar" main="false"/>
     <jar href="lib/swingx.jar" main="false"/>
     <jar href="lib/l2fprod.jar" main="false"/>
     <jar href="lib/scanner.jar" main="false"/>

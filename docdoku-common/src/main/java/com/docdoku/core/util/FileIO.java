@@ -107,7 +107,7 @@ public class FileIO {
         File f;
         try {
             f = new File(url.toURI());
-        } catch (URISyntaxException ex) {
+        } catch (Exception ex) {
             f = new File(url.getPath());
         }
         return f;

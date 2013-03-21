@@ -22,10 +22,7 @@ package com.docdoku.test.smoke;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.util.FileIO;
 
@@ -46,15 +43,17 @@ public class UploadFile {
 
         File cadFile =  FileIO.urlToFile(UploadFile.class.getResource(CAD_FILE));
         IProductManagerWS productS = ScriptingTools.createProductService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
-        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "");
+        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "", null);
 
-        PartRevisionKey partRPK = new PartRevisionKey(properties.getWorkspace(), PART_NUMBER, "A");
+        PartMasterKey partMPK = new PartMasterKey(properties.getWorkspace(), PART_NUMBER);
+
+        PartRevisionKey partRPK = new PartRevisionKey(partMPK, "A");
         PartRevision pr = productS.getPartRevision(partRPK);
         PartIteration pi = pr.getLastIteration();
         PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
         FileHelper fh = new FileHelper(properties.getLoginForUser2(), properties.getPassword());
         fh.uploadNativeCADFile(properties.getURL(), cadFile, partIPK);
-        //TODO delete part
+        productS.deletePartMaster(partMPK);
     }
 
 

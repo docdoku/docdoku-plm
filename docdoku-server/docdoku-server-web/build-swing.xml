@@ -32,8 +32,8 @@
     </target>
 
     <target name="sign-apps-jars" depends="init">
-        <copy file="../../docdoku-client/dist/docdoku-client.jar" tofile="${web.docbase.dir}/apps/docdoku-client.jar"/>
-        <copy file="../../docdoku-common/dist/docdoku-common.jar" tofile="${web.docbase.dir}/apps/docdoku-common.jar"/>
+        <copy file="../../docdoku-client/target/docdoku-client.jar" tofile="${web.docbase.dir}/apps/docdoku-client.jar"/>
+        <copy file="../../docdoku-common/target/docdoku-common.jar" tofile="${web.docbase.dir}/apps/docdoku-common.jar"/>
 
         <apply executable="pack200" parallel="false">
             <arg value="-J-Xmx256M"/>
