@@ -95,8 +95,8 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.docdoku:docdoku-server-ext</include>
-                                    <include>com.docdoku:docdoku-server-converter-obj</include>
+                                    <include>org.ow2.docdoku:docdoku-server-ext</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
