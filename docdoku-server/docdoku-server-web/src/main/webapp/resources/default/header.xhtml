@@ -106,11 +106,16 @@
 
                                 <ul class="nav pull-right">
 
+                                    <li>
+                                        <h:link outcome="/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
+                                        </h:link>
+                                    </li>
+
                                     <li class="dropdown" id="coworkers_access_module" style="display: none;">
                                         <a class="dropdown-toggle" id="coworkers_access_module_toggler" href="#"
                                            data-toggle="dropdown" title="#{i18nTemplate['toplinks.coworkers']}">
                                             <i class="icon-group"></i>
-                                            <!--#{i18nTemplate['toplinks.coworkers']}-->
+                                            #{i18nTemplate['toplinks.coworkers']}
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu large-entries" id="coworkers_access_module_entries"></ul>
