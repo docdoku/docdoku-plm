@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ow2.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1-RC1</version>
     </parent>
     <artifactId>docdoku-server-web</artifactId>
     <packaging>war</packaging>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.1-RC1</version>
             <type>jar</type>
         </dependency>
         
