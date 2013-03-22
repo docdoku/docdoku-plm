@@ -91,7 +91,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
     }
 
     public BinaryResource getPrevious(){
-        if(getOwnerType().equals("templates"))
+        if(getOwnerType().equals("document-templates") || getOwnerType().equals("part-templates"))
             return null;
         
         int lastS = fullName.lastIndexOf('/');

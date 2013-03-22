@@ -1025,7 +1025,7 @@ public class MainModel {
         return Config.getHTTPCodebase()
                 + "files/"
                 + URLEncoder.encode(getWorkspace().getId(), "UTF-8")
-                + "/" + "templates/"
+                + "/" + "document-templates/"
                 + URLEncoder.encode(pTemplate.getId(), "UTF-8")
                 + "/" + URLEncoder.encode(pRemoteFileName, "UTF-8");
     }
