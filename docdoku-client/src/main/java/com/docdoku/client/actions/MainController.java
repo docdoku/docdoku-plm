@@ -362,7 +362,7 @@ public class MainController {
 
     private String getServletURL(DocumentMasterTemplate pTemplate, File pLocalFile) throws UnsupportedEncodingException {
         MainModel model = MainModel.getInstance();
-        return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "templates/" + URLEncoder.encode(pTemplate.getId(), "UTF-8") + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
+        return Config.getHTTPCodebase() + "files/" + URLEncoder.encode(model.getWorkspace().getId(), "UTF-8") + "/" + "document-templates/" + URLEncoder.encode(pTemplate.getId(), "UTF-8") + "/" + URLEncoder.encode(pLocalFile.getName(), "UTF-8");
     }
 
     private void uploadFileWithServlet(final Component pParent, File pLocalFile, String pURL) throws IOException {

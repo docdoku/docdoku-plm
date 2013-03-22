@@ -71,7 +71,7 @@ public class Config {
     }
 
     public static File getCacheFolder(DocumentMasterTemplate pTemplate){
-        return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "templates" + File.separator + pTemplate.getId());
+        return new File(Config.LOCAL_CACHE_FOLDER, MainModel.getInstance().getWorkspace() + File.separator + "document-templates" + File.separator + pTemplate.getId());
     }
 
     public static String getPermaLink(DocumentMaster pDocM){
