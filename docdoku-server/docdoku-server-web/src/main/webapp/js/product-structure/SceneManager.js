@@ -23,7 +23,6 @@ define([
         this.isLoaded = false;
         this.isPaused = false;
 
-        this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
         this.updateOffset = 0;

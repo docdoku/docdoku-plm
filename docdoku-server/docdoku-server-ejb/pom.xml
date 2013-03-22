@@ -37,6 +37,18 @@
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-converter-kmz</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.docdoku</groupId>
+            <artifactId>docdoku-server-converter-kmz</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
@@ -97,6 +109,7 @@
                                 <includes>
                                     <include>com.docdoku:docdoku-server-ext</include>
                                     <include>com.docdoku:docdoku-server-converter-obj</include>
+                                    <include>com.docdoku:docdoku-server-converter-kmz</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
