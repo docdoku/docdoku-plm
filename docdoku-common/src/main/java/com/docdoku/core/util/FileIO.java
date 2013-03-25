@@ -34,6 +34,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  *
@@ -71,14 +74,18 @@ public class FileIO {
         InputStream in = new BufferedInputStream(new FileInputStream(pIn), BUFFER_CAPACITY);
         OutputStream out = new BufferedOutputStream(new FileOutputStream(pOut), BUFFER_CAPACITY);
 
+        FileIO.copyBufferedStream(in, out);
+
+        in.close();
+        out.close();
+    }
+
+    public static void copyBufferedStream(InputStream in, OutputStream out) throws IOException {
         byte[] data = new byte[CHUNK_SIZE];
         int length;
         while ((length = in.read(data)) != -1) {
             out.write(data, 0, length);
         }
-
-        in.close();
-        out.close();
     }
 
     public static String getExtension(String fileName) {
@@ -150,5 +157,37 @@ public class FileIO {
     public static boolean isImageFile(String fileName){
         String ext=getExtension(fileName);
         return IMAGE_EXTENSIONS.contains(ext);
+    }
+
+    public static void unzipArchive(File archive, File outputDir) {
+    try {
+        ZipFile zipfile = new ZipFile(archive);
+        for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
+            ZipEntry entry = (ZipEntry) e.nextElement();
+            unzipEntry(zipfile, entry, outputDir);
+        }
+    } catch (Exception e) {
+        System.out.println(e.getMessage());
+    }
+}
+
+    private static void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
+        if (entry.isDirectory()) {
+            new File(outputDir, entry.getName()).mkdirs();
+            return;
+        }
+
+        File outputFile = new File(outputDir, entry.getName());
+        if (!outputFile.getParentFile().exists()){
+            outputFile.getParentFile().mkdirs();
+        }
+
+        BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry), BUFFER_CAPACITY);
+        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile), BUFFER_CAPACITY);
+
+        FileIO.copyBufferedStream(in, out);
+
+        in.close();
+        out.close();
     }
 }

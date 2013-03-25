@@ -2,7 +2,7 @@
 function LevelGeometry(filename, quality, computeVertexNormals) {
     this.filename = filename;
     this.quality = quality;
-    this.geometry = null;
+    this.mesh = null;
     this.instances = 0;
     this.computeVertexNormals = computeVertexNormals;
 }
@@ -20,27 +20,23 @@ LevelGeometry.prototype = {
     },
 
     clearGeometry: function() {
-        this.geometry = null;
+        this.mesh = null;
     },
 
     getGeometry: function(callback) {
-        if (this.geometry == null) {
-            var self = this;
+        if (this.mesh == null) {
             var texturePath = this.filename.substring(0,this.filename.lastIndexOf('/'));
-            sceneManager.loader.load(this.filename, function(geometry, materials) {
-                if (self.computeVertexNormals) {
-                    geometry.computeVertexNormals();
-                }
-                _.each(materials, function(material) {
-                    material.wireframe = sceneManager.wireframe;
-                    material.transparent = true;
+            var self = this;
+
+            require(["LoaderManager"], function(LoaderManager) {
+                var loaderManager = new LoaderManager();
+                loaderManager.parseFile(self.filename, texturePath, self.computeVertexNormals, function(mesh) {
+                    self.mesh = mesh;
+                    callback(self.mesh);
                 });
-                self.geometry = geometry;
-                self.materials = materials;
-                callback(self.geometry, self.materials);
-            }, texturePath);
+            });
         } else {
-            callback(this.geometry, this.materials);
+            callback(this.mesh);
         }
     }
 

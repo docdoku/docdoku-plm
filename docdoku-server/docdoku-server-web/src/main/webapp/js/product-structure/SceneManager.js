@@ -23,7 +23,6 @@ define([
         this.isLoaded = false;
         this.isPaused = false;
 
-        this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
         this.updateOffset = 0;
@@ -609,8 +608,8 @@ define([
             // Set/remove wireframe to current parts
             var self = this;
             _(this.instances).each(function(instance){
-                if(instance.mesh != null){
-                    _(instance.mesh.material.materials).each(function(material){
+                if(instance.levelGeometry.mesh != null){
+                    _(instance.levelGeometry.mesh.material.materials).each(function(material){
                         material.wireframe = self.wireframe;
                     })
                 }
