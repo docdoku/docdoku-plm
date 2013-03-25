@@ -608,8 +608,8 @@ define([
             // Set/remove wireframe to current parts
             var self = this;
             _(this.instances).each(function(instance){
-                if(instance.mesh != null){
-                    _(instance.mesh.material.materials).each(function(material){
+                if(instance.levelGeometry.mesh != null){
+                    _(instance.levelGeometry.mesh.material.materials).each(function(material){
                         material.wireframe = self.wireframe;
                     })
                 }
