@@ -30,7 +30,6 @@ define(function() {
 
                     loader.load(filename, function(geometry, materials) {
                         if (computeVertexNormals) {
-                            geometry.computeFaceNormals();
                             geometry.computeVertexNormals();
 
                         }
