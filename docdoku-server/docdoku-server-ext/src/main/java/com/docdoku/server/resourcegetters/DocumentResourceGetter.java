@@ -23,6 +23,6 @@ package com.docdoku.server.resourcegetters;
 import java.io.File;
 
 public interface DocumentResourceGetter {
-    File getResource(String fileName) throws Exception;
-    boolean canGetResource(String fileName);
+    File getDataFile(String fullName) throws Exception;
+    boolean canGetResource(String fullName);
 }

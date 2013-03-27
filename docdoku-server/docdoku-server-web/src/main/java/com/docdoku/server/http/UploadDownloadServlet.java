@@ -25,6 +25,7 @@ import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 
 import java.io.BufferedInputStream;
@@ -68,6 +69,9 @@ public class UploadDownloadServlet extends HttpServlet {
     @EJB
     private IConverterManagerLocal converterService;
 
+    @EJB
+    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
     @Resource
@@ -105,7 +109,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
-                dataFile = documentService.getDataFile(fullName);
+                dataFile = documentResourceGetterService.getDataFile(fullName);
             } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
