@@ -55,7 +55,7 @@ public class ResourceGetterBean implements IDocumentResourceGetterManagerLocal {
             }
         }
         if (selectedResourceGetter != null) {
-            resourceFile = selectedResourceGetter.getResource(fullName);
+            resourceFile = selectedResourceGetter.getDataFile(fullName);
         } else {
             resourceFile = documentService.getDataFile(fullName);
         }
