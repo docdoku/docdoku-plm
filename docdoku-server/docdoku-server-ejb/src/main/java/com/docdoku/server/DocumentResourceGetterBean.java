@@ -34,30 +34,30 @@ import java.io.File;
 /**
  * Resource Getter
  */
-@Stateless(name="ResourceGetterBean")
-public class ResourceGetterBean implements IDocumentResourceGetterManagerLocal {
+@Stateless(name="DocumentResourceGetterBean")
+public class DocumentResourceGetterBean implements IDocumentResourceGetterManagerLocal {
 
     @EJB
     private IDocumentManagerLocal documentService;
 
     @Inject
     @Any
-    private Instance<DocumentResourceGetter> resourceGetters;
+    private Instance<DocumentResourceGetter> documentResourceGetters;
 
     @Override
-    public File getDataFile(String fullName) throws Exception {
-        DocumentResourceGetter selectedResourceGetter = null;
+    public File getDataFile(String resourceFullName, String subResourceName) throws Exception {
+        DocumentResourceGetter selectedDocumentResourceGetter = null;
         File resourceFile = null;
-        for (DocumentResourceGetter resourceGetter : resourceGetters) {
-            if (resourceGetter.canGetResource(fullName)) {
-                selectedResourceGetter = resourceGetter;
+        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
+            if (documentResourceGetter.canGetResource(resourceFullName, subResourceName)) {
+                selectedDocumentResourceGetter = documentResourceGetter;
                 break;
             }
         }
-        if (selectedResourceGetter != null) {
-            resourceFile = selectedResourceGetter.getDataFile(fullName);
+        if (selectedDocumentResourceGetter != null) {
+            resourceFile = selectedDocumentResourceGetter.getDataFile(resourceFullName, subResourceName);
         } else {
-            resourceFile = documentService.getDataFile(fullName);
+            resourceFile = documentService.getDataFile(resourceFullName);
         }
         return resourceFile;
     }

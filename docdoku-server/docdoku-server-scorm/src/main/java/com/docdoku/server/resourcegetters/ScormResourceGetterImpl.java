@@ -25,12 +25,12 @@ import java.io.File;
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @Override
-    public File getDataFile(String fullName) throws Exception {
+    public File getDataFile(String resourceFullName, String subResourceName) throws Exception {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public boolean canGetResource(String fullName) {
+    public boolean canGetResource(String resourceFullName, String subResourceName) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

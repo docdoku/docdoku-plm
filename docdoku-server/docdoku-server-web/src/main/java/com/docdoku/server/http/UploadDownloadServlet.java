@@ -21,12 +21,10 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
-import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -72,6 +70,9 @@ public class UploadDownloadServlet extends HttpServlet {
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
+    @EJB
+    private IDocumentPostUploaderManagerLocal documentPostUploaderService;
+
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
     @Resource
@@ -108,8 +109,13 @@ public class UploadDownloadServlet extends HttpServlet {
                 String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                String[] pathInfosExtra = new String[]{};
+                if (pathInfos.length > offset + 6) {
+                    pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length - 1);
+                }
+                String subResourceName = StringUtils.join(pathInfosExtra, '/');
                 fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
-                dataFile = documentResourceGetterService.getDataFile(fullName);
+                dataFile = documentResourceGetterService.getDataFile(fullName, subResourceName);
             } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
@@ -261,7 +267,8 @@ public class UploadDownloadServlet extends HttpServlet {
                 break;
             }
             if (elementType.equals("documents")) {
-                documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
+                File fileSaved = documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
+                documentPostUploaderService.process(fileSaved);
             } else if (elementType.equals("document-templates")) {
                 documentService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
             } else if (elementType.equals("part-templates")) {

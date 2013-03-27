@@ -22,6 +22,6 @@ package com.docdoku.core.services;
 
 import java.io.File;
 
-public interface IDocumentResourceGetterManagerLocal {
-    File getDataFile(String resourceFullName, String subResourceName) throws Exception;
+public interface IDocumentPostUploaderManagerLocal {
+    void process(File file) throws Exception;
 }
