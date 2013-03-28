@@ -41,7 +41,7 @@ function (
 		},
 		folder: function(path) {
 			this.defaults();
-			FolderNavView.getInstance().show(path);
+			FolderNavView.getInstance().show(decodeURIComponent(path));
 		},
 		tags: function() {
 			this.defaults();

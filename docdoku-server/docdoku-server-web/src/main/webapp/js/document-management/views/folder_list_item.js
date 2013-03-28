@@ -127,7 +127,7 @@ define([
 			this.showContent();
 		},
 		navigate: function () {
-			var path = this.modelPath ? "/" + this.modelPath : "";
+			var path = this.modelPath ? "/" + encodeURIComponent(this.modelPath) : "";
 			this.router.navigate("folders" + path, {trigger: false});
 		},
 		setActive: function () {
