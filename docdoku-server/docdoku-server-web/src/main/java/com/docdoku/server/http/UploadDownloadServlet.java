@@ -19,40 +19,31 @@
  */
 package com.docdoku.server.http;
 
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentMasterTemplateKey;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.activation.FileTypeMap;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import javax.transaction.Status;
+import javax.transaction.UserTransaction;
+import java.io.*;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
-import javax.activation.FileTypeMap;
-
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Part;
-import javax.transaction.Status;
-import javax.transaction.UserTransaction;
 
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024)
@@ -111,7 +102,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 String[] pathInfosExtra = new String[]{};
                 if (pathInfos.length > offset + 6) {
-                    pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length - 1);
+                    pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length);
                 }
                 String subResourceName = StringUtils.join(pathInfosExtra, '/');
                 fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
@@ -146,25 +137,31 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
 
-            File fileToOutput;
-            if ("pdf".equals(pRequest.getParameter("type"))) {
-                pResponse.setContentType("application/pdf");
-                String ooHome = getServletContext().getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
-                fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
-            } else if ("swf".equals(pRequest.getParameter("type"))) {
-                pResponse.setContentType("application/x-shockwave-flash");
-                String pdf2SWFHome = getServletContext().getInitParameter("PDF2SWF_HOME");
-                String ooHome = getServletContext().getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
-                FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
-                fileToOutput = fileConverter.convertToSWF(dataFile);
+            File fileToOutput = null;
+            if (elementType.equals("documents") && "viewer".equals(pRequest.getParameter("type"))) {
+                fileToOutput = documentResourceGetterService.getFileForViewer(pRequest, pResponse, dataFile);
+                if (fileToOutput == null) {
+                    if ("pdf".equals(pRequest.getParameter("fpv"))) {
+                        pResponse.setContentType("application/pdf");
+                        String ooHome = getServletContext().getInitParameter("OO_HOME");
+                        int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
+                        fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
+                    } else if ("swf".equals(pRequest.getParameter("fpv"))) {
+                        pResponse.setContentType("application/x-shockwave-flash");
+                        String pdf2SWFHome = getServletContext().getInitParameter("PDF2SWF_HOME");
+                        String ooHome = getServletContext().getInitParameter("OO_HOME");
+                        int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
+                        FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
+                        fileToOutput = fileConverter.convertToSWF(dataFile);
+                    }
+                }
             } else {
-                //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");             
+                //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");
                 String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
                 pResponse.setContentType(contentType);
                 fileToOutput = dataFile;
             }
+
 
             long lastModified = fileToOutput.lastModified();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");

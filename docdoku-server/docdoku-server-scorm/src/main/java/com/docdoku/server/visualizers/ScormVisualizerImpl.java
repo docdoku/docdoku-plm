@@ -21,13 +21,27 @@ package com.docdoku.server.visualizers;
 
 @ScormVisualizer
 public class ScormVisualizerImpl implements DocumentVisualizer {
+
     @Override
-    public Object visualize(String fileName) throws Exception {
+    public String visualize(String fileName) throws Exception {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public boolean canVisualize(String fileName) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        /*if (FileIO.isArchiveFile(fileName)) {
+            File file = new File(fileName.replace("/files",mBaseDir.getAbsolutePath()));
+            String fileWoExt = FileIO.getFileNameWithoutExtension(file);
+            File archive = new File(file.getAbsolutePath().replace(file.getName(),"scorm/" + fileWoExt));
+            if (archive.exists() && archive.isDirectory()) {
+                File[] children = archive.listFiles();
+                for (int i = 0; i < children.length; i++) {
+                    if (children[i].getName().equals("imsmanifest.xml")) {
+                        return true;
+                    }
+                }
+            }
+        }*/
+        return false;
     }
 }

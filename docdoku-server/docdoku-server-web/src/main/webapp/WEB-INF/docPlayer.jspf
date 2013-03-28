@@ -40,7 +40,7 @@
     <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
     var xiSwfUrlStr = "${expressInstallSwf}";
     var flashvars = {
-        SwfFile : escape("${filePath}?type=swf"),
+        SwfFile : escape("${filePath}?type=viewer&fpv=swf"),
         Scale : 0.6,
         ZoomTransition : "easeOut",
         ZoomTime : 0.5,
@@ -72,7 +72,7 @@
 
 <img height="10px" width="10px" id="btn${index}" src="${context}/images/plus.png" onclick="switchMenu('swf${index}', 'btn${index}','${context}');"/>
 <a href="${filePath}">${fileName}</a>
-<a href="${filePath}?type=pdf"><img style="border-style:none" height="20px" width="20px" src="${context}/images/pdfIcon.png" /></a>
+<a href="${filePath}?type=viewer&fpv=pdf"><img style="border-style:none" height="20px" width="20px" src="${context}/images/pdfIcon.png" /></a>
 
 <div style="display:none;" id="swf${index}">
 

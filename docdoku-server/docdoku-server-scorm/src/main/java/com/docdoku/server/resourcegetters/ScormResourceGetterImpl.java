@@ -19,19 +19,48 @@
  */
 package com.docdoku.server.resourcegetters;
 
+import com.docdoku.core.util.FileIO;
+
+import javax.activation.FileTypeMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 @ScormResourceGetter
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @Override
-    public File getDataFile(String resourceFullName, String subResourceName) throws Exception {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception {
+        File resource = new File(vaultPath + "/" + resourceFullName);
+        return new File(resource.getAbsolutePath().replace(resource.getName(),"scorm/") + FileIO.getFileNameWithoutExtension(resource) + "/" + subResourceName);
     }
 
     @Override
-    public boolean canGetResource(String resourceFullName, String subResourceName) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath) {
+        File resource = new File(vaultPath + "/" + resourceFullName);
+        if (resource.exists() && FileIO.isArchiveFile(resourceFullName) && subResourceName.length() > 0) {
+            File archive = new File(resource.getAbsolutePath().replace(resource.getName(),"scorm/") + FileIO.getFileNameWithoutExtension(resource));
+            return new File(archive, "imsmanifest.xml").exists();
+        }
+        return false;
     }
 
+    @Override
+    public boolean canGetResourceForViewer(File file) {
+        return file.getAbsolutePath().contains("scorm/");
+    }
+
+    @Override
+    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, File dataFile) throws Exception {
+        String contentType;
+
+        if (FileIO.getExtension(dataFile).contains("htm")) {
+            contentType = "text/html";
+        } else {
+            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
+        }
+
+        pResponse.setContentType(contentType);
+        return dataFile;
+    }
 }

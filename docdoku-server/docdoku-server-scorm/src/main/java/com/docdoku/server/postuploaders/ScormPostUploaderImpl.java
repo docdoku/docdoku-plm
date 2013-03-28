@@ -19,6 +19,9 @@
  */
 package com.docdoku.server.postuploaders;
 
+import com.docdoku.core.util.FileIO;
+import com.google.common.io.Files;
+
 import java.io.File;
 
 @ScormPostUploader
@@ -26,11 +29,24 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
 
     @Override
     public void process(File file) throws Exception {
-        //To change body of implemented methods use File | Settings | File Templates.
+        String docExName=FileIO.getFileNameWithoutExtension(file);
+        File tempDir = Files.createTempDir();
+        File archiveFolder = new File(tempDir,docExName);
+        archiveFolder.mkdir();
+        FileIO.unzipArchive(file, archiveFolder);
+        File[] children = archiveFolder.listFiles();
+        for (int i = 0; i < children.length; i++) {
+            if (children[i].getName().equals("imsmanifest.xml")) {
+                File targetFile = new File(file.getAbsolutePath().replace(file.getName(),"") +  "scorm/" + docExName);
+                targetFile.mkdirs();
+                Files.move(archiveFolder, targetFile);
+                break;
+            }
+        }
     }
 
     @Override
     public boolean canProcess(String fileName) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return FileIO.isArchiveFile(fileName);
     }
 }

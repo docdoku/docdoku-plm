@@ -17,10 +17,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.docdoku.core.services;
 
-package com.docdoku.server.visualizers;
-
-public interface DocumentVisualizer {
-    String visualize(String fileName) throws Exception;
-    boolean canVisualize(String fileName);
+public interface IDocumentVisualizerManagerLocal {
+    String getVisualizer(String fullName);
 }

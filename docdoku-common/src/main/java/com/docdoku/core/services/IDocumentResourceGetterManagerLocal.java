@@ -20,8 +20,11 @@
 
 package com.docdoku.core.services;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 public interface IDocumentResourceGetterManagerLocal {
     File getDataFile(String resourceFullName, String subResourceName) throws Exception;
+    File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, File dataFile) throws Exception;
 }

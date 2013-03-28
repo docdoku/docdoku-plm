@@ -23,11 +23,14 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 
@@ -44,22 +47,41 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
     @Any
     private Instance<DocumentResourceGetter> documentResourceGetters;
 
+    @Resource(name = "vaultPath")
+    private String vaultPath;
+
     @Override
     public File getDataFile(String resourceFullName, String subResourceName) throws Exception {
         DocumentResourceGetter selectedDocumentResourceGetter = null;
         File resourceFile = null;
         for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetResource(resourceFullName, subResourceName)) {
+            if (documentResourceGetter.canGetResource(resourceFullName, subResourceName, vaultPath)) {
                 selectedDocumentResourceGetter = documentResourceGetter;
                 break;
             }
         }
         if (selectedDocumentResourceGetter != null) {
-            resourceFile = selectedDocumentResourceGetter.getDataFile(resourceFullName, subResourceName);
+            resourceFile = selectedDocumentResourceGetter.getDataFile(resourceFullName, subResourceName, vaultPath);
         } else {
             resourceFile = documentService.getDataFile(resourceFullName);
         }
         return resourceFile;
+    }
+
+    @Override
+    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, File dataFile) throws Exception {
+        DocumentResourceGetter selectedDocumentResourceGetter = null;
+        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
+            if (documentResourceGetter.canGetResourceForViewer(dataFile)) {
+                selectedDocumentResourceGetter = documentResourceGetter;
+                break;
+            }
+        }
+
+        if (selectedDocumentResourceGetter != null) {
+            return selectedDocumentResourceGetter.getFileForViewer(pRequest,pResponse,dataFile);
+        }
+        return null;
     }
 
 }

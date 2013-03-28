@@ -91,6 +91,8 @@
                         <c:set scope="request" var="fileName" value="${item.name}"/>
                         <c:set scope="request" var="index" value="${status.index}"/>
                         <jsp:useBean scope="request" type="java.lang.String" id="filePath"/>
+
+
                         <c:choose>
                             <c:when test="<%=FileIO.isDocFile(filePath)%>">
                                 <%@include file="/WEB-INF/docPlayer.jspf" %>
@@ -105,6 +107,7 @@
                                 <a href="<%=filePath%>">${item.name}</a>
                             </c:otherwise>
                         </c:choose>
+
                         <br />
                         <br />
                     </c:forEach>

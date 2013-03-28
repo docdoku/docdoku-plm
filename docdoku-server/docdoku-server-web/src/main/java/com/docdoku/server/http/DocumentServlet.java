@@ -20,25 +20,30 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentVisualizerManagerLocal;
 
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-
 public class DocumentServlet extends HttpServlet {
     
     @EJB
     private IDocumentManagerLocal documentService;
+
+    @EJB
+    private IDocumentVisualizerManagerLocal documentVisualizeService;
     
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -63,9 +68,14 @@ public class DocumentServlet extends HttpServlet {
 
             DocumentIteration doc =  docM.getLastIteration();
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
+            pRequest.setAttribute("docv", documentVisualizeService);
 
-
-
+            /*Set<BinaryResource> bs = docM.getLastIteration().getAttachedFiles();
+            BinaryResource b = bs.iterator().next();
+            String p = b.getFullName();
+            File vaultContext = documentService.getDataFile(p);
+            pRequest.setAttribute("vault", vaultContext.getAbsolutePath().replace(p,""));
+            */
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
 
 

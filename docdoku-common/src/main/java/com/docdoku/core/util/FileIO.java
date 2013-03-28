@@ -19,22 +19,10 @@
  */
 package com.docdoku.core.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -51,6 +39,7 @@ public class FileIO {
     private final static List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
     private final static List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
     private final static List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
+    private final static List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
 
     private FileIO() {
     }
@@ -159,17 +148,22 @@ public class FileIO {
         return IMAGE_EXTENSIONS.contains(ext);
     }
 
-    public static void unzipArchive(File archive, File outputDir) {
-    try {
-        ZipFile zipfile = new ZipFile(archive);
-        for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-            ZipEntry entry = (ZipEntry) e.nextElement();
-            unzipEntry(zipfile, entry, outputDir);
-        }
-    } catch (Exception e) {
-        System.out.println(e.getMessage());
+    public static boolean isArchiveFile(String fileName){
+        String ext=getExtension(fileName);
+        return ARCHIVE_EXTENSIONS.contains(ext);
     }
-}
+
+    public static void unzipArchive(File archive, File outputDir) {
+        try {
+            ZipFile zipfile = new ZipFile(archive);
+            for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
+                ZipEntry entry = (ZipEntry) e.nextElement();
+                unzipEntry(zipfile, entry, outputDir);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     private static void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
         if (entry.isDirectory()) {
@@ -185,7 +179,7 @@ public class FileIO {
         BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry), BUFFER_CAPACITY);
         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile), BUFFER_CAPACITY);
 
-        FileIO.copyBufferedStream(in, out);
+        copyBufferedStream(in, out);
 
         in.close();
         out.close();
