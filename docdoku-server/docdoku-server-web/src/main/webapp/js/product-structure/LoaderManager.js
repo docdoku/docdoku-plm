@@ -1,7 +1,9 @@
 /*global sceneManager*/
 define(function() {
 
-    var LoaderManager = function() {}
+    var LoaderManager = function() {
+        this.loader = null;
+    }
 
     LoaderManager.prototype = {
 
@@ -12,9 +14,11 @@ define(function() {
             switch ( extension ) {
                 case 'dae':
 
-                    var loader = new THREE.ColladaLoader();
+                    if(this.loader == null) {
+                        this.loader = new THREE.ColladaLoader();
+                    }
 
-                    loader.load( filename , function(collada) {
+                    this.loader.load( filename , function(collada) {
                         var dae = collada.scene;
                         dae.scale.x = dae.scale.y = dae.scale.z = 1;
                         dae.updateMatrix();
@@ -26,9 +30,11 @@ define(function() {
                 case 'js':
                 case 'json':
 
-                    var loader = new THREE.BinaryLoader();
+                    if(this.loader == null) {
+                        this.loader = new THREE.BinaryLoader();
+                    }
 
-                    loader.load(filename, function(geometry, materials) {
+                    this.loader.load(filename, function(geometry, materials) {
                         if (computeVertexNormals) {
                             geometry.computeVertexNormals();
 

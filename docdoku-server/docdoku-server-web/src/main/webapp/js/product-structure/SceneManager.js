@@ -2,11 +2,13 @@
 define([
     "views/marker_create_modal_view",
     "views/progress_bar_view",
-    "views/blocker_view"
+    "views/blocker_view",
+    "LoaderManager"
 ], function (
     MarkerCreateModalView,
     ProgressBarView,
-    BlockerView
+    BlockerView,
+    LoaderManager
 ) {
     var SceneManager = function (pOptions) {
 
@@ -43,6 +45,8 @@ define([
         this.maxInstanceDisplayed = 1000;
         this.levelGeometryValues = [];
         this.wireframe = false;
+
+        this.loaderManager = null;
     };
 
     SceneManager.prototype = {
@@ -64,6 +68,7 @@ define([
             this.initIframeScene();
             this.initGrid();
             this.isLoaded = true;
+            this.loaderManager = new LoaderManager();
         },
 
         listenXHR: function() {

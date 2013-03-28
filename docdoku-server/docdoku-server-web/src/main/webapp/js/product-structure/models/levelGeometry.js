@@ -23,18 +23,16 @@ LevelGeometry.prototype = {
         this.mesh = null;
     },
 
-    getGeometry: function(callback) {
+    getMesh: function(callback) {
         if (this.mesh == null) {
             var texturePath = this.filename.substring(0,this.filename.lastIndexOf('/'));
-            var self = this;
 
-            require(["LoaderManager"], function(LoaderManager) {
-                var loaderManager = new LoaderManager();
-                loaderManager.parseFile(self.filename, texturePath, self.computeVertexNormals, function(mesh) {
-                    self.mesh = mesh;
-                    callback(self.mesh);
-                });
+            var self = this;
+            sceneManager.loaderManager.parseFile(this.filename, texturePath, this.computeVertexNormals, function(mesh) {
+                self.mesh = mesh;
+                callback(self.mesh);
             });
+
         } else {
             callback(this.mesh);
         }

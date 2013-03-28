@@ -123,7 +123,7 @@ Instance.prototype = {
 
     loadMeshFromLevelGeometry: function(levelGeometry, callback) {
         var self = this;
-        levelGeometry.getGeometry(function(mesh) {
+        levelGeometry.getMesh(function(mesh) {
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
             mesh.matrixAutoUpdate = false;
