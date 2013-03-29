@@ -31,6 +31,7 @@ define([
                 this.check();
                 this.trigger("selectionChanged",this);
             }
+            this.bindUserPopover();
             return this;
         },
 
@@ -63,6 +64,13 @@ define([
                     }).show();
                 });
             });
+        },
+
+        bindUserPopover:function(){
+            this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"left");
+            if(this.model.isCheckout()){
+                this.$(".checkout-user-popover").userPopover(this.model.getCheckOutUserLogin(),this.model.getNumber(),"left");
+            }
         }
 
     });

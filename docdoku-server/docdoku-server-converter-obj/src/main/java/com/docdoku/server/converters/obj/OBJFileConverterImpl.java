@@ -22,8 +22,6 @@ package com.docdoku.server.converters.obj;
 
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
@@ -85,6 +83,9 @@ public class OBJFileConverterImpl implements CADConverter{
 
             if(tmpBINFile!=null)
                 tmpBINFile.delete();
+
+            if(tempDir!=null)
+                FileIO.rmDir(tempDir);
         }
     }
 

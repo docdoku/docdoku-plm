@@ -17,7 +17,6 @@ var Instance = function(id, partIteration, tx, ty, tz, rx, ry, rz) {
 
     this.levelGeometry = null;
     this.partIteration = partIteration;
-    this.mesh = null;
     this.idle = true;
 
 };
@@ -26,7 +25,6 @@ Instance.prototype = {
 
     getRating: function(frustum) {
         var inFrustum = this.isInFrustum(frustum);
-        //var inFrustum = true;
         return inFrustum ? this.partIteration.radius / this.getDistance(sceneManager.cameraPosition) : 0;
     },
 
@@ -114,7 +112,6 @@ Instance.prototype = {
 
                 //save level and mesh for further reuse
                 self.levelGeometry = levelGeometry;
-                self.mesh = mesh;
                 callback();
             });
         } else {
@@ -126,9 +123,7 @@ Instance.prototype = {
 
     loadMeshFromLevelGeometry: function(levelGeometry, callback) {
         var self = this;
-        levelGeometry.getGeometry(function(geometry, materials) {
-            geometry.dynamic = false;
-            var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+        levelGeometry.getMesh(function(mesh) {
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
             mesh.matrixAutoUpdate = false;
@@ -139,17 +134,12 @@ Instance.prototype = {
     },
 
     clearMeshAndLevelGeometry: function() {
-        //remove previous mesh from scene if any
-        if (this.mesh) {
-            sceneManager.scene.remove(this.mesh);
-            this.mesh = null;
-        }
-
-        //notify that we are not using this level anymore
-        if (this.levelGeometry) {
-            this.levelGeometry.onRemove();
-            this.levelGeometry = null;
-        }
+       //notify that we are not using this level anymore
+       if (this.levelGeometry) {
+           sceneManager.scene.remove(this.levelGeometry.mesh);
+           this.levelGeometry.onRemove();
+           this.levelGeometry = null;
+       }
     }
 
 };

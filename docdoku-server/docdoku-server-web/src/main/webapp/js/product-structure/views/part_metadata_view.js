@@ -28,7 +28,9 @@ define (["text!templates/part_meta_data.html","i18n!localization/nls/product-str
         },
 
         authorClicked:function(){
-            Backbone.Events.trigger("NewChatSession",{remoteUser:this.model.getAuthorLogin(),context:this.model.getNumber()});
+            if(this.model.getAuthorLogin() != APP_CONFIG.login) {
+                Backbone.Events.trigger("NewChatSession",{remoteUser:this.model.getAuthorLogin(),context:this.model.getNumber()});
+            }
         }
         
     });

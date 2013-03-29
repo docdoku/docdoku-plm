@@ -2,11 +2,13 @@
 define([
     "views/marker_create_modal_view",
     "views/progress_bar_view",
-    "views/blocker_view"
+    "views/blocker_view",
+    "LoaderManager"
 ], function (
     MarkerCreateModalView,
     ProgressBarView,
-    BlockerView
+    BlockerView,
+    LoaderManager
 ) {
     var SceneManager = function (pOptions) {
 
@@ -23,7 +25,6 @@ define([
         this.isLoaded = false;
         this.isPaused = false;
 
-        this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
         this.updateOffset = 0;
@@ -44,6 +45,8 @@ define([
         this.maxInstanceDisplayed = 1000;
         this.levelGeometryValues = [];
         this.wireframe = false;
+
+        this.loaderManager = null;
     };
 
     SceneManager.prototype = {
@@ -65,6 +68,7 @@ define([
             this.initIframeScene();
             this.initGrid();
             this.isLoaded = true;
+            this.loaderManager = new LoaderManager();
         },
 
         listenXHR: function() {
@@ -609,8 +613,8 @@ define([
             // Set/remove wireframe to current parts
             var self = this;
             _(this.instances).each(function(instance){
-                if(instance.mesh != null){
-                    _(instance.mesh.material.materials).each(function(material){
+                if(instance.levelGeometry != null && instance.levelGeometry.mesh != null){
+                    _(instance.levelGeometry.mesh.material.materials).each(function(material){
                         material.wireframe = self.wireframe;
                     })
                 }
