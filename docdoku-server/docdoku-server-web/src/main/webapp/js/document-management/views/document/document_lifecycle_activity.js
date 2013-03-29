@@ -39,9 +39,13 @@ define([
                 task.parentActivityStep = that.activity.step;
                 task.index = index;
 
-                $tasks.append(
-                    new LifecycleTaskView().setTask(task).render().$el
-                );
+                var lifecycleTaskView = new LifecycleTaskView().setTask(task).render()
+
+                $tasks.append(lifecycleTaskView.$el);
+                lifecycleTaskView.on("task:change",function(){
+                    that.trigger("activity:change");
+                });
+
             });
 
             return this;

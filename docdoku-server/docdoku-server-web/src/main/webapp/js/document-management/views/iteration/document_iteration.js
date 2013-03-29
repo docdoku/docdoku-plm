@@ -162,10 +162,17 @@ define([
             }
 
             if(this.model.get("workflow")){
+
                 this.lifecycleView =  new LifecycleDocumentView({
                     el:"#tab-iteration-lifecycle"
                 }).setWorkflow(this.model.get("workflow")).render();
-                this.$("#iteration-lifecycle").html(this.lifecycleView.el);
+
+                this.lifecycleView.on("lifecycle:change",function(){
+                    that.model.fetch({success:function(){
+                        that.lifecycleView.setWorkflow(that.model.get("workflow")).render();
+                    }});
+                });
+
             }else{
                 this.$("a[href=#tab-iteration-lifecycle]").hide();
             }

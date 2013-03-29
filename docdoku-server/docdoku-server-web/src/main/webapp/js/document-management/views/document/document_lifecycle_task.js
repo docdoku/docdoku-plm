@@ -137,8 +137,10 @@ define([
         },
 
         refreshTask:function(){
-            this.setTask(this.task);
-            this.render();
+            console.log("trigger 1s event")
+            this.trigger("task:change");
+           // this.setTask(this.task);
+          //  this.render();
         }
 
     });
