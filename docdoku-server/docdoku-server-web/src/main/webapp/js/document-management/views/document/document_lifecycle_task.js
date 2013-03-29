@@ -137,8 +137,9 @@ define([
         },
 
         refreshTask:function(){
-            this.setTask(this.task);
-            this.render();
+            this.trigger("task:change");
+           // this.setTask(this.task);
+          //  this.render();
         }
 
     });
