@@ -20,7 +20,16 @@
 
 package com.docdoku.server.visualizers;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.Map;
+
 public interface DocumentVisualizer {
-    String visualize(String fileName) throws Exception;
+    boolean canGetResourceForViewer(File file, HttpServletRequest pRequest);
+    File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
+    String getJspPageName() throws Exception;
     boolean canVisualize(String fileName);
+    Map<String, Object> getExtraParams(String resourceFullName) throws Exception;
 }

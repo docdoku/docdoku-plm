@@ -61,6 +61,42 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-visualizer-image</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-visualizer-image</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-visualizer-doc</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-visualizer-doc</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-visualizer-multimedia</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-visualizer-multimedia</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>1.1-RC2-SNAPSHOT</version>
             <type>jar</type>
@@ -122,6 +158,10 @@
                                     <include>org.ow2.docdoku:docdoku-server-ext</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
+                                    <include>org.ow2.docdoku:docdoku-server-visualizer-doc</include>
+                                    <include>org.ow2.docdoku:docdoku-server-visualizer-image</include>
+                                    <include>org.ow2.docdoku:docdoku-server-visualizer-multimedia</include>
+                                    <include>org.ow2.docdoku:docdoku-server-scorm</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

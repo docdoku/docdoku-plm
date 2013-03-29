@@ -1,0 +1,10 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<img class="image_plus" height="10px" width="10px" id="btn${index}" src="${context}/images/plus.png"/>
+<a href="${filePath}">${fileName}</a>
+<h2>${extraParams.get("organization").getTitle()}</h2>
+<ul>
+<c:forEach var="activity" varStatus="activityStatus" items="${extraParams.get(\"organization\").getActivities()}">
+    <li><a href="${filePath}/${activity.getResourceHref()}?type=viewer">${activity.getTitle()}</a></li>
+</c:forEach>
+</ul>

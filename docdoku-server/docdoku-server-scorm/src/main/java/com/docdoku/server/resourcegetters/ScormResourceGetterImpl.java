@@ -21,9 +21,6 @@ package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.util.FileIO;
 
-import javax.activation.FileTypeMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 @ScormResourceGetter
@@ -43,24 +40,5 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
             return new File(archive, "imsmanifest.xml").exists();
         }
         return false;
-    }
-
-    @Override
-    public boolean canGetResourceForViewer(File file) {
-        return file.getAbsolutePath().contains("scorm/");
-    }
-
-    @Override
-    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, File dataFile) throws Exception {
-        String contentType;
-
-        if (FileIO.getExtension(dataFile).contains("htm")) {
-            contentType = "text/html";
-        } else {
-            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
-        }
-
-        pResponse.setContentType(contentType);
-        return dataFile;
     }
 }

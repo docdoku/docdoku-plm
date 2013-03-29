@@ -34,14 +34,10 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
         File archiveFolder = new File(tempDir,docExName);
         archiveFolder.mkdir();
         FileIO.unzipArchive(file, archiveFolder);
-        File[] children = archiveFolder.listFiles();
-        for (int i = 0; i < children.length; i++) {
-            if (children[i].getName().equals("imsmanifest.xml")) {
-                File targetFile = new File(file.getAbsolutePath().replace(file.getName(),"") +  "scorm/" + docExName);
-                targetFile.mkdirs();
-                Files.move(archiveFolder, targetFile);
-                break;
-            }
+        if (new File(archiveFolder, "imsmanifest.xml").exists()) {
+            File targetFile = new File(file.getAbsolutePath().replace(file.getName(),"") +  "scorm/" + docExName);
+            targetFile.mkdirs();
+            Files.move(archiveFolder, targetFile);
         }
     }
 

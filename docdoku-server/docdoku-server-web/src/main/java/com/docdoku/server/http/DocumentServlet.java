@@ -81,7 +81,8 @@ public class DocumentServlet extends HttpServlet {
 
 
         } catch (Exception pEx) {
-            throw new ServletException("Error while fetching your document.", pEx);
+            pEx.printStackTrace();
+            throw new ServletException("error while fetching your document.", pEx);
         }
     }
 }

@@ -20,13 +20,10 @@
 
 package com.docdoku.server.resourcegetters;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 public interface DocumentResourceGetter {
     File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception;
     boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath);
-    boolean canGetResourceForViewer(File file);
-    File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, File dataFile) throws Exception;
+
 }

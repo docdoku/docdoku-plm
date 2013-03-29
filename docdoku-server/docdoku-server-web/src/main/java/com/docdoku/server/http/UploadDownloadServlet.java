@@ -64,6 +64,9 @@ public class UploadDownloadServlet extends HttpServlet {
     @EJB
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
 
+    @EJB
+    private IDocumentVisualizerManagerLocal documentVisualizerService;
+
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
     @Resource
@@ -139,29 +142,13 @@ public class UploadDownloadServlet extends HttpServlet {
 
             File fileToOutput = null;
             if (elementType.equals("documents") && "viewer".equals(pRequest.getParameter("type"))) {
-                fileToOutput = documentResourceGetterService.getFileForViewer(pRequest, pResponse, dataFile);
-                if (fileToOutput == null) {
-                    if ("pdf".equals(pRequest.getParameter("fpv"))) {
-                        pResponse.setContentType("application/pdf");
-                        String ooHome = getServletContext().getInitParameter("OO_HOME");
-                        int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
-                        fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
-                    } else if ("swf".equals(pRequest.getParameter("fpv"))) {
-                        pResponse.setContentType("application/x-shockwave-flash");
-                        String pdf2SWFHome = getServletContext().getInitParameter("PDF2SWF_HOME");
-                        String ooHome = getServletContext().getInitParameter("OO_HOME");
-                        int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
-                        FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
-                        fileToOutput = fileConverter.convertToSWF(dataFile);
-                    }
-                }
+                fileToOutput = documentVisualizerService.getFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
             } else {
                 //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");
                 String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
                 pResponse.setContentType(contentType);
                 fileToOutput = dataFile;
             }
-
 
             long lastModified = fileToOutput.lastModified();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");
@@ -185,6 +172,7 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
+            pEx.printStackTrace();
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
             throw new ServletException("Error while downloading the file.", pEx);
         }

@@ -10,7 +10,23 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+		        <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/vault</env-entry-value>
+            </env-entry>
+        </session>
+        <session>
+            <ejb-name>DocumentResourceGetterBean</ejb-name>
+            <env-entry>
+                <env-entry-name>vaultPath</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/vault</env-entry-value>
+            </env-entry>
+        </session>
+        <session>
+            <ejb-name>DocumentVisualizerBean</ejb-name>
+            <env-entry>
+                <env-entry-name>vaultPath</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -18,7 +34,7 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+		        <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -26,7 +42,7 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+		        <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -34,7 +50,7 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/index</env-entry-value>
+		        <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/index</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -50,7 +66,7 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/index</env-entry-value>
+		        <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/index</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -58,7 +74,7 @@
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+                <env-entry-value>/Users/etiennemonier/Documents/workspace_plm/vault</env-entry-value>
             </env-entry>
         </session>
     </enterprise-beans>

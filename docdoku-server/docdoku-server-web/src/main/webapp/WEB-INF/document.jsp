@@ -89,24 +89,13 @@
                         <c:set scope="request" var="context" value="<%=request.getContextPath()%>"/>
                         <c:set scope="request" var="filePath" value="${context}/files/${item.fullName}"/>
                         <c:set scope="request" var="fileName" value="${item.name}"/>
+                        <c:set scope="request" var="extraParams" value="${docv.getExtraParams(item.fullName)}"/>
                         <c:set scope="request" var="index" value="${status.index}"/>
+                        <c:set scope="request" var="jspFileName" value="${docv.getJspPageName(item.fullName)}"/>
                         <jsp:useBean scope="request" type="java.lang.String" id="filePath"/>
+                        <jsp:useBean scope="request" type="java.lang.String" id="jspFileName"/>
 
-
-                        <c:choose>
-                            <c:when test="<%=FileIO.isDocFile(filePath)%>">
-                                <%@include file="/WEB-INF/docPlayer.jspf" %>
-                            </c:when>
-                            <c:when test="<%=FileIO.isAVFile(filePath)%>">
-                                <%@include file="/WEB-INF/audioVideoPlayer.jspf" %>
-                            </c:when>
-                            <c:when test="<%=FileIO.isImageFile(filePath)%>">
-                                <%@include file="/WEB-INF/imagePlayer.jspf" %>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="<%=filePath%>">${item.name}</a>
-                            </c:otherwise>
-                        </c:choose>
+                        <jsp:include page="<%=jspFileName%>"/>
 
                         <br />
                         <br />

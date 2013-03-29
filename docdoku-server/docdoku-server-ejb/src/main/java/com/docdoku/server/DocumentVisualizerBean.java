@@ -23,12 +23,17 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentVisualizerManagerLocal;
 import com.docdoku.server.visualizers.DocumentVisualizer;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.util.Map;
 
 @Stateless(name="DocumentVisualizerBean")
 public class DocumentVisualizerBean implements IDocumentVisualizerManagerLocal{
@@ -40,22 +45,62 @@ public class DocumentVisualizerBean implements IDocumentVisualizerManagerLocal{
     @Any
     private Instance<DocumentVisualizer> documentVisualizers;
 
+    @Resource(name = "vaultPath")
+    private String vaultPath;
+
     @Override
-    public String getVisualizer(String fullName) {
+    public String getJspPageName(String resourceFullName) throws Exception {
+        String resourceFile = null;
+        DocumentVisualizer selectedDocumentVisualizer = selectVisualizer(resourceFullName);
+
+        if (selectedDocumentVisualizer != null) {
+            resourceFile = selectedDocumentVisualizer.getJspPageName();
+        } else {
+            resourceFile = "default.jspf";
+        }
+        return resourceFile;
+    }
+
+    private DocumentVisualizer selectVisualizer(String resourceFullName) {
         DocumentVisualizer selectedDocumentVisualizer = null;
-        File resourceFile = null;
         for (DocumentVisualizer documentVisualizer : documentVisualizers) {
-            if (documentVisualizer.canVisualize(fullName)) {
+            if (documentVisualizer.canVisualize(resourceFullName)) {
                 selectedDocumentVisualizer = documentVisualizer;
                 break;
             }
         }
-        /*if (selectedDocumentVisualizer != null) {
-            resourceFile = selectedDocumentVisualizer.visualize(fullName);
-        } else {
-            resourceFile = documentService.getDataFile(resourceFullName);
-        }
-        return resourceFile;*/
-        return "";
+        return selectedDocumentVisualizer;
     }
+
+    @Override
+    public Map<String, Object> getExtraParams(String resourceFullName) throws Exception {
+        DocumentVisualizer selectedDocumentVisualizer = selectVisualizer(resourceFullName);
+        Map<String, Object> extraParams  = null;
+        if (selectedDocumentVisualizer != null) {
+            extraParams = selectedDocumentVisualizer.getExtraParams(resourceFullName);
+        }
+        return extraParams;
+    }
+
+    @Override
+    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+        DocumentVisualizer selectedDocumentVisualizer = null;
+        for (DocumentVisualizer documentVisualizer : documentVisualizers) {
+            if (documentVisualizer.canGetResourceForViewer(dataFile,pRequest)) {
+                selectedDocumentVisualizer = documentVisualizer;
+                break;
+            }
+        }
+
+        if (selectedDocumentVisualizer != null) {
+            return selectedDocumentVisualizer.getFileForViewer(pRequest, pResponse, servletContext,dataFile);
+        }
+        return null;
+    }
+
+    @Override
+    public String getVaultPath() {
+        return vaultPath;
+    }
+
 }

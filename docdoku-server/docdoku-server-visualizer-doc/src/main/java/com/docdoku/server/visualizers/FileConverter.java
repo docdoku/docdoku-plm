@@ -18,16 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.http;
+package com.docdoku.server.visualizers;
 
 import com.developpez.adiguba.shell.ProcessConsumer;
 import com.developpez.adiguba.shell.Shell;
 import com.docdoku.core.util.FileIO;
-import java.io.File;
-import java.io.IOException;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
+
+import java.io.File;
+import java.io.IOException;
 
 
 public class FileConverter {

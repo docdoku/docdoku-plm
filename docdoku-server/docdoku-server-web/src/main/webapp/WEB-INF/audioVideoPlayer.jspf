@@ -6,7 +6,7 @@
 <div align="left"  style="display:none;" id="img${index}" title="Player">
     <div align="center" style="border:3px; display:block; width:443px;">
         <video width="320" height="240" controls>
-            <source src="${filePath}?type=viewer">
+            <source src="${filePath}">
             Your browser does not support the video tag.
         </video>
     </div>

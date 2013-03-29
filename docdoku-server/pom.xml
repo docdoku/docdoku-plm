@@ -13,6 +13,9 @@
     <module>docdoku-server-converter-obj</module>
     <module>docdoku-server-converter-kmz</module>
     <module>docdoku-server-scorm</module>
+    <module>docdoku-server-visualizer-doc</module>
+    <module>docdoku-server-visualizer-image</module>
+    <module>docdoku-server-visualizer-multimedia</module>
     <module>docdoku-server-ejb</module>
     <module>docdoku-server-web</module>
     <module>docdoku-server-ear</module>
