@@ -55,7 +55,6 @@ public class KMZFileConverterImpl implements CADConverter{
 
     @Override
     public File convert(PartIteration partToConvert, File cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, XMLStreamException {
-        String woExName=FileIO.getFileNameWithoutExtension(cadFile);
         File tempDir = Files.createTempDir();
         FileIO.unzipArchive(cadFile, tempDir);
         File tmpDAEFile= new File(tempDir, "models/untitled.dae");
@@ -65,9 +64,7 @@ public class KMZFileConverterImpl implements CADConverter{
         File daeFile = null;
         File tmpNewDAEFile = null;
         try {
-            System.out.println("flag 1");
-            tmpNewDAEFile = parseDAEFile(tmpDAEFile, woExName, tempDir);
-            System.out.println("flag 2");
+            tmpNewDAEFile = parseDAEFile(tmpDAEFile, tempDir);
             PartIterationKey partIPK = partToConvert.getKey();
 
             // Upload each textures
@@ -79,11 +76,9 @@ public class KMZFileConverterImpl implements CADConverter{
                     }
                 }
             }
-            System.out.println("flag 3");
 
             // Upload dae
             daeFile = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length());
-            System.out.println("flag 4");
             Files.copy(tmpNewDAEFile,daeFile);
             return daeFile;
         }
@@ -92,10 +87,13 @@ public class KMZFileConverterImpl implements CADConverter{
                 tmpDAEFile.delete();
 
             if(tmpNewDAEFile!=null)
-                tmpDAEFile.delete();
+                tmpNewDAEFile.delete();
 
             if(tmpTexturesDir!=null)
-                tmpDAEFile.delete();
+                FileIO.rmDir(tmpTexturesDir);
+
+            if(tempDir!=null)
+                FileIO.rmDir(tempDir);
         }
     }
 
@@ -104,28 +102,16 @@ public class KMZFileConverterImpl implements CADConverter{
         return "kmz".equalsIgnoreCase(cadFileExtension);
     }
 
-    public File parseDAEFile (File daeFile, String name, File tempDir) throws XMLStreamException, IOException {
+    public File parseDAEFile (File daeFile, File tempDir) throws XMLStreamException, IOException {
 
         File newDaeFile = new File(tempDir, "models/untitled_final.dae");
 
         XMLEventFactory XMLef = XMLEventFactory.newInstance();
         XMLInputFactory XMLif = XMLInputFactory.newInstance();
         XMLOutputFactory XMLof = XMLOutputFactory.newInstance();
-        System.out.println("flag 1.1");
 
-        try {
-            FileReader fr = new FileReader(daeFile);
-            System.out.println("flag 1.2");
-            FileWriter fw = new FileWriter(newDaeFile);
-            System.out.println("flag 1.3");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        XMLEventReader reader = XMLif.createXMLEventReader(new FileReader(daeFile));
-        System.out.println("flag 1.4");
-        XMLEventWriter writer = XMLof.createXMLEventWriter(new FileWriter(newDaeFile));
-        System.out.println("flag 1.3");
+        XMLEventReader reader = XMLif.createXMLEventReader(new FileInputStream(daeFile));
+        XMLEventWriter writer = XMLof.createXMLEventWriter(new FileOutputStream(newDaeFile));
 
         while(reader.hasNext()){
 
@@ -148,7 +134,6 @@ public class KMZFileConverterImpl implements CADConverter{
         writer.flush();
         reader.close();
         writer.close();
-        System.out.println("flag 1.4");
 
         return newDaeFile;
     }
