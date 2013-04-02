@@ -49,7 +49,7 @@ public class DocumentPostUploaderBean implements IDocumentPostUploaderManagerLoc
     @Asynchronous
     public void process(File file) throws Exception {
         for (DocumentPostUploader documentPostUploader : documentPostUploaders) {
-            if (documentPostUploader.canProcess(file.getName())) {
+            if (documentPostUploader.canProcess(file)) {
                 documentPostUploader.process(file);
             }
         }

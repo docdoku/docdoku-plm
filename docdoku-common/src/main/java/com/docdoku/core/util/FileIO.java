@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
@@ -183,5 +184,10 @@ public class FileIO {
 
         in.close();
         out.close();
+    }
+
+    public static boolean existsInArchive(File archiveFile, String fileName) throws IOException {
+        ZipFile zipfile = new ZipFile(archiveFile);
+        return zipfile.getEntry(fileName) != null;
     }
 }

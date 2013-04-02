@@ -20,6 +20,7 @@
 package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.util.FileIO;
+import com.docdoku.server.visualizers.utils.ScormUtil;
 
 import java.io.File;
 
@@ -35,10 +36,6 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
     @Override
     public boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath) {
         File resource = new File(vaultPath + "/" + resourceFullName);
-        if (resource.exists() && FileIO.isArchiveFile(resourceFullName) && subResourceName.length() > 0) {
-            File archive = new File(resource.getAbsolutePath().replace(resource.getName(),"scorm/") + FileIO.getFileNameWithoutExtension(resource));
-            return new File(archive, "imsmanifest.xml").exists();
-        }
-        return false;
+        return ScormUtil.isScormArchive(resource);
     }
 }

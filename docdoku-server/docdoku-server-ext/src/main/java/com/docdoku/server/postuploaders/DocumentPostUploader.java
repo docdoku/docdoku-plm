@@ -24,5 +24,5 @@ import java.io.File;
 
 public interface DocumentPostUploader {
     void process(File file) throws Exception;
-    boolean canProcess(String fileName);
+    boolean canProcess(File file);
 }
