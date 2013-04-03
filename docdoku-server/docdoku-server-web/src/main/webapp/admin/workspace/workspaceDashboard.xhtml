@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+    <ui:define name="title">
+        <f:loadBundle var="i18nWorkspaceDashboard"
+                      basename="com.docdoku.server.localization.admin.workspaceDashboard_resource"/>
+        #{i18nWorkspaceDashboard['title']}
+    </ui:define>
+
+    <ui:define name="additional-scripts">
+
+        <script type="text/javascript" src="/js/lib/charts/nv3d/lib/d3.v2.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/nv.d3.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/legend.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/pie.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/pieChart.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/discreteBar.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/discreteBarChart.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/src/utils.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/custom/tooltip.js"></script>
+
+        <link href="/css/charts/charts.css" rel="stylesheet" type="text/css" />
+        <link href="/js/lib/charts/nv3d/src/nv.d3.css" rel="stylesheet" type="text/css" />
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div id="sidebar" class="well well-large">
+            <h3>#{i18nWorkspaceDashboard['sidebar.title1']}</h3>
+            <p>
+                <h:outputFormat value="#{i18nWorkspaceDashboard['sidebar.text']}" escape="false"/>
+            </p>
+        </div>
+
+        <h2>#{i18nWorkspaceDashboard['title1']}</h2>
+
+        <h3>#{adminStateBean.selectedWorkspace}</h3>
+
+        <hr/>
+
+        <div class="charts">
+
+            <div class="chart" id="disk_usage_chart">
+                <h2>Disk usage</h2>
+                <svg></svg>
+                <p class="total"></p>
+            </div>
+
+            <div class="chart" id="entities_chart">
+                <h2>Entities</h2>
+                <svg></svg>
+            </div>
+
+        </div>
+
+        <script type="text/javascript">
+            var diskUsage = JSON.parse('#{adminStateBean.diskSpaceUsageStats}');
+            var usersCount = parseInt('#{adminStateBean.usersCount}');
+            var documentsCount = parseInt('#{adminStateBean.documentsCount}');
+            var productsCount = parseInt('#{adminStateBean.productsCount}');
+            var partsCount = parseInt('#{adminStateBean.partsCount}');
+            var cod = JSON.parse('#{adminStateBean.documentsStats}');
+            var usersInWorkspace = JSON.parse('#{adminStateBean.usersInWorkspace}');
+        </script>
+
+        <hr class="clear"/>
+
+        <script type="text/javascript">
+
+            // ----------------------- DISK USAGE
+
+            var diskUsageData = [];
+            var totalDiskUsage = 0;
+            for(var key in diskUsage){
+                diskUsageData.push({key:key,y:diskUsage[key],f:bytesToSize(diskUsage[key])});
+                totalDiskUsage+=diskUsage[key];
+            }
+
+            $("#disk_usage_chart p.total").html("Total Usage : "+bytesToSize(totalDiskUsage));
+
+            nv.addGraph(function() {
+                var chart;
+                var width = 400, height = 200;
+
+                chart = nv.models.pieChart()
+                        .x(function(d) { return d.key })
+                        .y(function(d) { return d.y})
+                         .showLabels(false)
+                        .values(function(d) { return d })
+                        .color(d3.scale.category10().range())
+                        .width(width)
+                        .height(height)
+                        .donut(true)
+                        .tooltipContent(function(x, y, e, graph){return diskUsageTooltip(x, e.point.f)});
+
+                d3.select("#disk_usage_chart svg")
+                        .datum([diskUsageData])
+                        .transition().duration(1200)
+                        .attr('width', width)
+                        .attr('height', height)
+                        .call(chart);
+
+                chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+
+                return chart;
+            });
+
+            // ----------------------- ENTITIES
+
+            var entitiesData = [];
+
+            entitiesData.push({key:"Users",y:usersCount});
+            entitiesData.push({key:"Documents",y:documentsCount});
+            entitiesData.push({key:"Products",y:productsCount});
+            entitiesData.push({key:"Parts",y:partsCount});
+
+            nv.addGraph(function() {
+                var width = 400, height = 200;
+                var chart = nv.models.discreteBarChart()
+                        .x(function(d) { return d.key })
+                        .y(function(d) { return d.y })
+                        .staggerLabels(true)
+                        .tooltips(true)
+                        .width(width)
+                        .height(height)
+                        .showValues(true)
+
+                d3.select('#entities_chart svg')
+                        .datum([{key:"entities",values:entitiesData}])
+                        .transition().duration(500)
+                        .call(chart);
+
+                return chart;
+            });
+
+            // ----------------------- CHECKED OUT DOCUMENTS
+
+            function bytesToSize(bytes) {
+                var sizes = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+                if (bytes == 0) return 'n/a';
+                var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                if (i == 0) { return (bytes / Math.pow(1024, i)) + ' ' + sizes[i]; }
+                return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+            }
+        </script>
+
+    </ui:define>
+</ui:composition>
+</html>
