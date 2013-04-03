@@ -17,7 +17,7 @@ define(["text!templates/control_markers.html","i18n!localization/nls/product-str
         },
 
         markerZoomLess:function(){
-            if(sceneManager.layerManager.markerScale.length()>0) {
+            if(sceneManager.layerManager.markerScale.x>0.5) {
                 sceneManager.layerManager.markerScale.addScalar(-0.5);
                 sceneManager.layerManager.rescaleMarkers();
             }
