@@ -23,21 +23,19 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.UserGroupNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.services.*;
+import org.apache.commons.io.FileUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+import java.io.File;
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -49,7 +47,10 @@ public class AdminStateBean implements Serializable {
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
+    private IProductManagerLocal productService;
+    @EJB
     private IUserManagerLocal userManager;
+
     private String selectedWorkspace;
     private String selectedGroup;
         
@@ -119,6 +120,74 @@ public class AdminStateBean implements Serializable {
             }
         }
         return usersGroups;
+    }
+
+    public int getUsersCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        return documentService.getUsers(selectedWorkspace).length;
+    }
+
+    public int getDocumentsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        return documentService.getDocumentsCountInWorkspace(getCurrentWorkspace().getId());
+    }
+
+    public int getProductsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+        return productService.getConfigurationItems(getCurrentWorkspace().getId()).size();
+    }
+
+    public int getPartsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+        return productService.getPartMastersCount(getCurrentWorkspace().getId());
+    }
+
+    public JSONObject getDiskSpaceUsageStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+
+        Map<String, Long> diskUsage = new HashMap<String,Long>();
+
+        Long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(getCurrentWorkspace().getId());
+        Long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(getCurrentWorkspace().getId());
+        Long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(getCurrentWorkspace().getId());
+        Long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(getCurrentWorkspace().getId());
+
+        diskUsage.put("documents", documentDiskUsage);
+        diskUsage.put("parts", partsDiskUsage);
+        diskUsage.put("document-templates", documentTemplatesDiskUsage);
+        diskUsage.put("part-templates", partTemplatesDiskUsage);
+
+        return new JSONObject(diskUsage);
+
+    }
+
+    public JSONObject getDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+
+        JSONObject documentsStats = new JSONObject();
+
+        DocumentMaster[] checkedOutDocumentMasters = documentService.getCheckedOutDocumentMasters(getCurrentWorkspace().getId());
+
+        JSONArray docMJSONArray = new JSONArray();
+
+        for(DocumentMaster docM : checkedOutDocumentMasters){
+            JSONObject docMJSON = new JSONObject();
+            docMJSON.put("id",docM.getId());
+            docMJSON.put("date",docM.getCheckOutDate().getTime());
+            docMJSON.put("user",docM.getCheckOutUser());
+            docMJSONArray.put(docMJSON);
+        }
+
+        documentsStats.put("checkedOutDocuments",docMJSONArray);
+
+        return documentsStats;
+
+    }
+
+
+    public JSONArray getUsersInWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+
+        JSONArray usersJSONArray = new JSONArray();
+        User[] users = documentService.getUsers(selectedWorkspace);
+        for(int i = 0 ; i< users.length ; i++ ){
+            usersJSONArray.put(users[i].getLogin());
+        }
+        return usersJSONArray;
+
     }
 
     public Workspace getCurrentWorkspace() {
