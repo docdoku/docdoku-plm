@@ -29,13 +29,17 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @Override
     public File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception {
-        File resource = new File(vaultPath + "/" + resourceFullName);
+        File resource = new File(vaultPath + File.separator + resourceFullName);
         return new File(resource.getAbsolutePath().replace(resource.getName(),"scorm/") + FileIO.getFileNameWithoutExtension(resource) + "/" + subResourceName);
     }
 
     @Override
     public boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath) {
-        File resource = new File(vaultPath + "/" + resourceFullName);
-        return ScormUtil.isScormArchive(resource);
+        if (subResourceName != null && !subResourceName.isEmpty()) {
+            File resource = new File(vaultPath + File.separator + resourceFullName);
+            return ScormUtil.isScormArchive(resource);
+        } else {
+            return false;
+        }
     }
 }

@@ -22,9 +22,7 @@ package com.docdoku.server.visualizers.utils;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +56,7 @@ public class ScormManifestParser {
             factory.setProperty("javax.xml.stream.isValidating", Boolean.FALSE);
         }
 
-        reader = factory.createXMLStreamReader(new FileReader(this.manifest));
+        reader = factory.createXMLStreamReader(new FileInputStream(this.manifest), "UTF-8");
 
         return parseDefaultOrganization();
     }

@@ -66,7 +66,7 @@ public class ScormVisualizerImpl implements DocumentVisualizer {
 
     @Override
     public boolean canVisualize(String fileName) {
-        return ScormUtil.isScormArchive(new File(vaultPath + "/" + fileName));
+        return ScormUtil.isScormArchive(new File(vaultPath + File.separator + fileName));
     }
 
     @Override
