@@ -65,7 +65,7 @@ define([
         },
 
         getBaseName:function(){
-            return "/files/" + this.getWorkspace() + "/parts/" + this.get("number")+ "/" + this.get("version") + "/"+ this.get("iteration");
+            return this.getWorkspace() + "/parts/" + this.getNumber()+ "/" + this.getVersion() + "/"+ this.get("iteration") + "/nativecad";
         },
 
         getNumber:function(){

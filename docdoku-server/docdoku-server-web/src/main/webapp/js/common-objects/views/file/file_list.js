@@ -39,7 +39,11 @@ define([
             this.filesToDelete = new Backbone.Collection();
             this.newItems = new Backbone.Collection();
 
-            this.listenTo(this.collection, 'add', this.addOneFile);
+            if(this.options.singleFile) {
+                this.listenTo(this.collection, 'add', this.addSingleFile);
+            } else {
+                this.listenTo(this.collection, 'add', this.addOneFile);
+            }
         },
 
         // cancel event and hover styling
@@ -81,6 +85,11 @@ define([
                 fileView.render();
                 self.filesUL.append(fileView.el);
             });
+        },
+
+        addSingleFile: function(attachedFile) {
+            this.filesUL.empty();
+            this.addOneFile(attachedFile);
         },
 
         uploadNewFile: function(file) {
