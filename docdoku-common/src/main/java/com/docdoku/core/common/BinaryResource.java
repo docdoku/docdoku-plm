@@ -33,6 +33,9 @@ import javax.persistence.*;
  */
 @Table(name="BINARYRESOURCE")
 @Inheritance()
+@NamedQueries ({
+        @NamedQuery(name="BinaryResource.diskUsageInPath", query = "SELECT sum(br.contentLength) FROM BinaryResource br WHERE br.fullName like :path")
+})
 @Entity
 public class BinaryResource implements Serializable, Comparable<BinaryResource>{
 

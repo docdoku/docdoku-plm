@@ -124,4 +124,20 @@ public class PartMasterDAO {
                 .setParameter("workspaceId", pWorkspaceId)
                 .getSingleResult()).intValue();
     }
+
+    public Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/parts/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
+    }
+
+    public Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/part-templates/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
+    }
 }

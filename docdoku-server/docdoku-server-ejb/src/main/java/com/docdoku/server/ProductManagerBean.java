@@ -993,6 +993,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
 
+    @RolesAllowed("users")
+    @Override
+    public Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new PartMasterDAO(new Locale(user.getLanguage()), em).getDiskUsageForPartsInWorkspace(pWorkspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new PartMasterDAO(new Locale(user.getLanguage()), em).getDiskUsageForPartTemplatesInWorkspace(pWorkspaceId);
+    }
+
+
+
 
 }
 //TODO when using layers and markers, check for concordance
