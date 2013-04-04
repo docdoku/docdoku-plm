@@ -1,10 +1,30 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<img class="image_plus" height="10px" width="10px" id="btn${index}" src="${context}/images/plus.png"/>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var scormButton = $("#scorm-viewer-${index}");
+        var scormToc = $("#scorm-toc-${index}");
+
+        scormToc.hide();
+
+        scormButton.toggle(function() {
+            scormToc.show();
+            scormButton.attr("src","${context}/images/minus.png");
+        }, function() {
+            scormToc.hide();
+            scormButton.attr("src", "${context}/images/plus.png");
+        });
+
+    });
+</script>
+<img class="image_plus" height="10px" width="10px" id="scorm-viewer-${index}" src="${context}/images/plus.png"/>
 <a href="${filePath}">${fileName}</a>
-<h4>${extraParams.get("organization").getTitle()}</h4>
-<ul>
-<c:forEach var="activity" varStatus="activityStatus" items="${extraParams.get(\"organization\").getActivities()}">
-    <li><a href="${filePath}/${activity.getResourceHref()}?type=viewer">${activity.getTitle()}</a></li>
-</c:forEach>
-</ul>
+<div id="scorm-toc-${index}">
+    <h4>${extraParams.get("organization").getTitle()}</h4>
+    <ul">
+    <c:forEach var="activity" varStatus="activityStatus" items="${extraParams.get(\"organization\").getActivities()}">
+        <li><a href="${filePath}/${activity.getResourceHref()}?type=viewer">${activity.getTitle()}</a></li>
+    </c:forEach>
+    </ul>
+</div>
