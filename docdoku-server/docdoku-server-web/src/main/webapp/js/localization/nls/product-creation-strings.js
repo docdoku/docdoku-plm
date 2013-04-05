@@ -11,6 +11,7 @@ define({
         PRODUCT_ID:"Product Id",
         DESCRIPTION:"Description",
         PART_NUMBER:"Part number",
+        PART_TEMPLATE:"Part template",
         CREATE_NEW_PART:"Create a new part",
         CANCEL_PART_CREATION:"Cancel part creation",
         PART_NAME:"Part name",
