@@ -31,7 +31,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,6 +41,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import javax.activation.FileTypeMap;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -237,38 +237,37 @@ public class UploadDownloadServlet extends HttpServlet {
                     fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                     vaultFile = productService.saveFileInPartIteration(partPK, fileName, 0);
                 }
-            }
-            vaultFile.getParentFile().mkdirs();
-            Collection<Part> uploadedParts = pRequest.getParts();
-            for (Part item : uploadedParts) {
-                InputStream in = new BufferedInputStream(item.getInputStream(), BUFFER_CAPACITY);
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
 
-                byte[] data = new byte[CHUNK_SIZE];
-                int length;
-                try {
-                    while ((length = in.read(data)) != -1) {
-                        out.write(data, 0, length);
-                    }
-                } finally {
-                    in.close();
-                    out.close();
-                }
-                break;
             }
+            //vaultFile.getParentFile().mkdirs();
+            Collection<Part> uploadedParts = pRequest.getParts();
+            long size = 0;
+            for (Part item : uploadedParts) {
+
+                InputStream in = new BufferedInputStream(item.getInputStream(), BUFFER_CAPACITY);
+
+
+                //size = dataManager.writeFile(in, vaultFile);
+
+                size = documentService.writeFile(in, vaultFile);
+
+
+              break;
+            }
+
             if (elementType.equals("documents")) {
-                documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
+                documentService.saveFileInDocument(docPK, fileName, size);
             } else if (elementType.equals("document-templates")) {
-                documentService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
+                documentService.saveFileInTemplate(templatePK, fileName, size);
             } else if (elementType.equals("part-templates")) {
-                productService.saveFileInTemplate(partTemplatePK, fileName, vaultFile.length());
+                productService.saveFileInTemplate(partTemplatePK, fileName, size);
             }
             else if (elementType.equals("parts")) {
                 if(pathInfos.length==offset + 7){
-                    productService.saveNativeCADInPartIteration(partPK, fileName, vaultFile.length());
+                    productService.saveNativeCADInPartIteration(partPK, fileName, size);
                     converterService.convertCADFileToJSON(partPK, vaultFile);
                 }else{
-                    productService.saveFileInPartIteration(partPK, fileName, vaultFile.length());
+                    productService.saveFileInPartIteration(partPK, fileName, size);
                 }
             }
             utx.commit();

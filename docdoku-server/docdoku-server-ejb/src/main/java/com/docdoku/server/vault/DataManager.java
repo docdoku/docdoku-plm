@@ -22,12 +22,14 @@ package com.docdoku.server.vault;
 
 import com.docdoku.core.common.BinaryResource;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 public interface DataManager {
-
     public void delData(BinaryResource pBinaryResource);
     public void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource);
     public File getDataFile(BinaryResource pBinaryResource);
     public File getVaultFile(BinaryResource pBinaryResource);
+    public long writeFile(File vaultFile, InputStream in) throws Exception;
 }

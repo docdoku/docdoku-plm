@@ -32,6 +32,8 @@ import java.io.*;
 public class DataManagerImpl implements DataManager {
     
     private final File mBaseDir;
+    private final static int BUFFER_CAPACITY = 1024 * 16;
+    private final static int CHUNK_SIZE = 1024 * 8;
     
     public DataManagerImpl(File pBaseDir) {
         mBaseDir = pBaseDir;
@@ -62,6 +64,26 @@ public class DataManagerImpl implements DataManager {
     public File getVaultFile(BinaryResource pBinaryResource) {
         String normalizedName = Tools.unAccent(pBinaryResource.getFullName());
         return new File(mBaseDir,normalizedName);
+    }
+
+    @Override
+    public long writeFile(File vaultFile, InputStream in) throws Exception {
+        vaultFile.getParentFile().mkdirs();
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(vaultFile), BUFFER_CAPACITY);
+        out = new BufferedOutputStream(out, BUFFER_CAPACITY);
+
+        byte[] data = new byte[CHUNK_SIZE];
+        int length;
+        try {
+            while ((length = in.read(data)) != -1) {
+                out.write(data, 0, length);
+            }
+        } finally {
+            in.close();
+            out.flush();
+            out.close();
+        }
+        return vaultFile.length();
     }
 
     @Override

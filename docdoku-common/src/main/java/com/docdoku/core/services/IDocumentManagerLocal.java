@@ -35,8 +35,8 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.workflow.Task;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.File;
+import java.io.InputStream;
 
 /**
  *
@@ -143,4 +143,6 @@ public interface IDocumentManagerLocal {
     Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    long writeFile(InputStream in, File vaultFile) throws Exception;
 }

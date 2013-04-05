@@ -30,6 +30,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.services.*;
+import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.Task;
@@ -39,8 +40,9 @@ import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
+import com.docdoku.server.vault.googlestorage.GoogleStorageManager;
 
-import java.io.File;
+import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -73,14 +75,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private IMailerLocal mailer;
     @EJB
     private IUserManagerLocal userManager;
-    private final static Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
+
     private DataManager dataManager;
+
 
 
 
     @PostConstruct
     private void init() {
-        dataManager = new DataManagerImpl(new File(vaultPath));
+        dataManager = new GoogleStorageManager();
+       // dataManager = new DataManagerImpl(new File(vaultPath));
+       // googleStoreManager = new GoogleStorageManager(new File(vaultPath));
     }
 
     @RolesAllowed("users")
@@ -267,15 +272,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
             PartIteration partIte = partR.removeLastIteration();
             for (Geometry file : partIte.getGeometries()) {
+                //googleStoreManager.delData(file);
                 dataManager.delData(file);
             }
 
             for (BinaryResource file : partIte.getAttachedFiles()) {
+                //googleStoreManager.delData(file);
                 dataManager.delData(file);
             }
 
             BinaryResource nativeCAD = partIte.getNativeCADFile();
             if (nativeCAD != null) {
+               // googleStoreManager.delData(nativeCAD);
                 dataManager.delData(nativeCAD);
             }
 
@@ -407,6 +415,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             if ((partR.isCheckedOut() && !partR.getCheckOutUser().equals(user) && partR.getLastIteration().equals(partIte))) {
                 throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
             } else {
+            //googleStoreManager.getDataFile(file);
                 return dataManager.getDataFile(file);
             }
         } else {
@@ -442,7 +451,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else {
                 file.setContentLength(pSize);
                 file.setQuality(quality);
-            }
+            }       //googleStoreManager.getVaultFile(file);
             return dataManager.getVaultFile(file);
         } else {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
@@ -471,6 +480,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else if (file.getFullName().equals(fullName)) {
                 file.setContentLength(pSize);
             } else {
+                //googleStoreManager.delData(file);
                 dataManager.delData(file);
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(file);
@@ -482,6 +492,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
                 Set<BinaryResource> attachedFiles = new HashSet<>(partI.getAttachedFiles());
                 for(BinaryResource attachedFile : attachedFiles){
+
                     dataManager.delData(attachedFile);
                     partI.removeFile(attachedFile);
                 }
@@ -489,7 +500,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 file = new BinaryResource(fullName, pSize);
                 binDAO.createBinaryResource(file);
                 partI.setNativeCADFile(file);
-            }
+            }      //googleStoreManager.getVaultFile(file);
             return dataManager.getVaultFile(file);
         } else {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
@@ -524,7 +535,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partI.addFile(file);
             } else {
                 file.setContentLength(pSize);
-            }
+            }      // googleStoreManager.getVaultFile(file);
             return dataManager.getVaultFile(file);
         } else {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
@@ -700,6 +711,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()),em).loadPartI(partIKey);
         BinaryResource br = partIteration.getNativeCADFile();
         if(br != null){
+           // googleStoreManager.delData(br);
             dataManager.delData(br);
             partIteration.setNativeCADFile(null);
         }
@@ -912,7 +924,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         } else {
             file.setContentLength(pSize);
         }
-
+        //googleStoreManager.getVaultFile(file);
         return dataManager.getVaultFile(file);
     }
 
@@ -925,6 +937,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+        //googleStoreManager.delData(file);
         dataManager.delData(file);
         template.setAttachedFile(null);
         binDAO.removeBinaryResource(file);
