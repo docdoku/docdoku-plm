@@ -1,8 +1,9 @@
 define([
+    "views/document/document_lifecycle_task_signing",
     "common-objects/utils/date",
     "i18n!localization/nls/document-management-strings",
     "text!templates/document/document_lifecycle_task.html"
-], function(date, i18n, template) {
+], function(LifecycleTaskSigningView, date, i18n, template) {
 
     var LifecycleTaskView = Backbone.View.extend({
 
@@ -45,6 +46,8 @@ define([
             this.$el.addClass(this.task.status.toLowerCase());
             this.$(".user-popover").userPopover(this.task.worker.login,this.task.title,"top");
             this.bindDomElements();
+            var lifecycleTaskSigningView = new LifecycleTaskSigningView().render();
+            this.$tasksigning.append(lifecycleTaskSigningView.$el);
             return this;
         },
 
@@ -54,6 +57,7 @@ define([
             this.$closureCommentTitle = this.$closureComment.find("h5");
             this.$closureTypeInput = this.$closureComment.find("input[name=closure-type]");
             this.$commentInput = this.$closureComment.find("input[name=closure-comment-input]");
+            this.$tasksigning = this.$(".task-signing");
         },
 
         toggleComment:function(){
