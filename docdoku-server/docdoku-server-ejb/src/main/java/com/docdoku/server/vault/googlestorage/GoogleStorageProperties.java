@@ -76,7 +76,7 @@ public class GoogleStorageProperties {
 
     private Properties load() {
         try {
-            properties.load(getClass().getResourceAsStream("/com/docdoku/server/googlestorage/conf.properties"));
+            properties.load(getClass().getResourceAsStream("/com/docdoku/server/googlestorage/vault/conf.properties"));
         } catch (IOException e) {
             throw new RuntimeException("googlestorage.properties not found. Error: ", e);
         }

@@ -29,6 +29,7 @@
 		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
             </env-entry>
         </session>
+
         <session>
             <ejb-name>IndexSearcherBean</ejb-name>
             <env-entry>

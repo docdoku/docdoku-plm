@@ -20,12 +20,8 @@
 
 package com.docdoku.server.vault.googlestorage;
 
-import org.junit.Test;
-
-import javax.annotation.Resource;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -34,10 +30,10 @@ import java.net.URL;
 public class GoogleStorageCloud {
 
     private final static int CHUNK_SIZE = 1024;
-    private String vaultPath="/var/lib/docdoku/vault/";
+    private String vaultPath="/var/lib/docdoku/vault";
     private String OAuth = "Bearer ";
     private String method;
-    private HttpURLConnection httpConn;
+    private HttpURLConnection httpConnection;
     private String fileName;
     private GoogleStorageProperties properties = new GoogleStorageProperties();
 
@@ -46,11 +42,11 @@ public class GoogleStorageCloud {
         this.fileName = fileName;
         this.method = "GET";
         this.init();
-        if (httpConn.getResponseCode() != 200) {
-            throw new IOException(httpConn.getResponseCode() + " " + httpConn.getResponseMessage());
+        if (httpConnection.getResponseCode() != 200) {
+            throw new IOException(httpConnection.getResponseCode() + " " + httpConnection.getResponseMessage());
         } else {
 
-            DataInputStream dataInputStream = new DataInputStream(httpConn.getInputStream());
+            DataInputStream dataInputStream = new DataInputStream(httpConnection.getInputStream());
             File file = new File(fileName.split("/")[fileName.split("/").length - 1]);
             FileOutputStream outputStream = new FileOutputStream(file);
             DataOutputStream wr = new DataOutputStream(outputStream);
@@ -77,7 +73,7 @@ public class GoogleStorageCloud {
         }
 
         this.init();
-        DataOutputStream wr = new DataOutputStream(httpConn.getOutputStream());
+        DataOutputStream wr = new DataOutputStream(httpConnection.getOutputStream());
         InputStream in = inputStream;
 
         byte[] buf = new byte[CHUNK_SIZE];
@@ -90,9 +86,9 @@ public class GoogleStorageCloud {
         wr.close();
 
 
-        if (httpConn.getResponseCode() != 200) {
-            throw new IOException(httpConn.getResponseCode() + " " +
-                    httpConn.getResponseMessage());
+        if (httpConnection.getResponseCode() != 200) {
+            throw new IOException(httpConnection.getResponseCode() + " " +
+                    httpConnection.getResponseMessage());
         }
         return wr.size();
     }
@@ -101,22 +97,22 @@ public class GoogleStorageCloud {
         this.fileName = fileName;
         this.method = "DELETE";
         this.init();
-        if (httpConn.getResponseCode() != 204) {
-            throw new IOException(httpConn.getResponseCode() + " " + httpConn.getResponseMessage());
+        if (httpConnection.getResponseCode() != 204) {
+            throw new IOException(httpConnection.getResponseCode() + " " + httpConnection.getResponseMessage());
         }
     }
 
     private void init() throws IOException{
         OAuth += getOAuthAccessToken();
         URL url = new URL(properties.getURI() + fileName);
-        httpConn = (HttpURLConnection) url.openConnection();
-        httpConn.setRequestMethod(method);
-        httpConn.setRequestProperty("Host", properties.getHost());
-        httpConn.setRequestProperty("Content-Length", "1");
-        httpConn.setRequestProperty("Authorization", OAuth);
-        httpConn.setRequestProperty("x-goog-api-version", properties.getApiVersion());
-        httpConn.setRequestProperty("x-goog-project-id", properties.getProjectId());
-        httpConn.setDoOutput(true);
+        httpConnection = (HttpURLConnection) url.openConnection();
+        httpConnection.setRequestMethod(method);
+        httpConnection.setRequestProperty("Host", properties.getHost());
+        httpConnection.setRequestProperty("Content-Length", "1");
+        httpConnection.setRequestProperty("Authorization", OAuth);
+        httpConnection.setRequestProperty("x-goog-api-version", properties.getApiVersion());
+        httpConnection.setRequestProperty("x-goog-project-id", properties.getProjectId());
+        httpConnection.setDoOutput(true);
     }
 
     private String getOAuthAccessToken()  throws IOException{

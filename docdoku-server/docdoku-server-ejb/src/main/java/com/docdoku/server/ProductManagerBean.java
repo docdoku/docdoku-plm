@@ -248,7 +248,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             if(sourceFile != null){
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
-                String fullName = pWorkspaceId + "/parts/" + pm.getNumber() + "/A/1/" + fileName;
+                String fullName = pWorkspaceId + "/parts/" + pm.getNumber() + "/A/1/nativecad/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length);
                 binDAO.createBinaryResource(targetFile);
                 ite.setNativeCADFile(targetFile);
@@ -480,7 +480,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else if (file.getFullName().equals(fullName)) {
                 file.setContentLength(pSize);
             } else {
-                //googleStoreManager.delData(file);
+
                 dataManager.delData(file);
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(file);
@@ -492,7 +492,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
                 Set<BinaryResource> attachedFiles = new HashSet<>(partI.getAttachedFiles());
                 for(BinaryResource attachedFile : attachedFiles){
-
                     dataManager.delData(attachedFile);
                     partI.removeFile(attachedFile);
                 }
