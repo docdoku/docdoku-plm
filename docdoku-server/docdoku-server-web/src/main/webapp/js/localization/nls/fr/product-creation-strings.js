@@ -1,6 +1,8 @@
 define({
     NEW_PRODUCT: "Nouveau produit",
+    NEW_PART:"Nouvel article",
     CREATE_PRODUCT: "Créer le produit",
+    CREATE_PART: "Créer l'article",
     DELETE_PRODUCT: "Supprimer le produit",
     CANCEL: "Annuler",
     CLOSE: "Fermer",

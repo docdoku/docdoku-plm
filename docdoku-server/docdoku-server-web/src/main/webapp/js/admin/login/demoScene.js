@@ -61,7 +61,7 @@ window.onload = function() {
         scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
         var binaryLoader = new THREE.BinaryLoader();
-        binaryLoader.load("images/pba.js", addModelToScene);
+        binaryLoader.load("/images/pba.js", addModelToScene);
 
         var ambientLight = new THREE.AmbientLight(0x111111);
         scene.add(ambientLight);

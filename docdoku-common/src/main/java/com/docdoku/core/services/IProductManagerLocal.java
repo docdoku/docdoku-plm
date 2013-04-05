@@ -24,6 +24,8 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
+
+import javax.annotation.security.RolesAllowed;
 import java.io.File;
 import java.util.List;
 
@@ -76,4 +78,6 @@ public interface IProductManagerLocal{
     void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException;
     int getPartMastersCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
 
+    Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

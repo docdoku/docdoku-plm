@@ -35,6 +35,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.workflow.Task;
 
+import javax.annotation.security.RolesAllowed;
 import java.io.File;
 
 /**
@@ -137,4 +138,9 @@ public interface IDocumentManagerLocal {
 
     DocumentMaster[] getDocumentMastersWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
+    int getDocumentsCountInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

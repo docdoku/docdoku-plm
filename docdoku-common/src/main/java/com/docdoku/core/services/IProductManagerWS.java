@@ -26,6 +26,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 
 import java.io.File;
+import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.List;
 
@@ -568,4 +569,7 @@ public interface IProductManagerWS{
     List<PartMaster> getPartMasters(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
     void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException;
     int getPartMastersCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
+
+    Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

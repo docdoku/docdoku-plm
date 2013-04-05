@@ -83,6 +83,10 @@ define([
 
         generateIdUrl:function(){
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/part-templates/" + this.get("id") + "/generate_id"
+        },
+
+        getBaseName:function(){
+            return APP_CONFIG.workspaceId + "/part-templates/" + this.get("id");
         }
 
     });

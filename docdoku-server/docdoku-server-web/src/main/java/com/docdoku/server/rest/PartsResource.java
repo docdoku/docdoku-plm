@@ -201,35 +201,38 @@ public class PartsResource {
             List<PartDTO> partDTOs = new ArrayList<PartDTO>();
 
             for (PartMaster partMaster:partMasters) {
-                PartDTO partDTO = mapper.map(partMaster,PartDTO.class);
 
-                PartRevision partRevision = partMaster.getLastRevision();
+                for(PartRevision partRevision : partMaster.getPartRevisions()){
 
-                partDTO.setNumber(partRevision.getPartNumber());
-                partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
-                partDTO.setName(partRevision.getPartMaster().getName());
-                partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
-                partDTO.setVersion(partRevision.getVersion());
+                    PartDTO partDTO = mapper.map(partMaster,PartDTO.class);
 
-                List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
-                for(PartIteration partIteration : partRevision.getPartIterations()){
-                    List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
-                    PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
-                    for(PartUsageLink partUsageLink : partIteration.getComponents()){
-                        PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
-                        usageLinksDTO.add(partUsageLinkDTO);
+                    partDTO.setNumber(partRevision.getPartNumber());
+                    partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+                    partDTO.setName(partRevision.getPartMaster().getName());
+                    partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+                    partDTO.setVersion(partRevision.getVersion());
+
+                    List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+                    for(PartIteration partIteration : partRevision.getPartIterations()){
+                        List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+                        PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
+                        for(PartUsageLink partUsageLink : partIteration.getComponents()){
+                            PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
+                            usageLinksDTO.add(partUsageLinkDTO);
+                        }
+                        partIterationDTO.setComponents(usageLinksDTO);
+                        partIterationDTOs.add(partIterationDTO);
                     }
-                    partIterationDTO.setComponents(usageLinksDTO);
-                    partIterationDTOs.add(partIterationDTO);
+                    partDTO.setPartIterations(partIterationDTOs);
+                    partDTO.setPartIterations(partIterationDTOs);
+                    if(partRevision.isCheckedOut()){
+                        partDTO.setCheckOutDate(partRevision.getCheckOutDate());
+                        UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
+                        partDTO.setCheckOutUser(checkoutUserDTO);
+                    }
+                    partDTOs.add(partDTO);
                 }
-                partDTO.setPartIterations(partIterationDTOs);
-                partDTO.setPartIterations(partIterationDTOs);
-                if(partRevision.isCheckedOut()){
-                    partDTO.setCheckOutDate(partRevision.getCheckOutDate());
-                    UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
-                    partDTO.setCheckOutUser(checkoutUserDTO);
-                }
-                partDTOs.add(partDTO);
+
             }
             return partDTOs;
         } catch (com.docdoku.core.services.ApplicationException ex) {

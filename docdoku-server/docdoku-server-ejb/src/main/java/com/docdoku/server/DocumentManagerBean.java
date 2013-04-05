@@ -1222,6 +1222,29 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return labels;
     }
 
+    @RolesAllowed("users")
+    @Override
+    public int getDocumentsCountInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return documentMasterDAO.getDocumentsCountInWorkspace(pWorkspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return documentMasterDAO.getDiskUsageForDocumentsInWorkspace(pWorkspaceId);
+    }
+
+    @Override
+    public Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return documentMasterDAO.getDiskUsageForDocumentTemplatesInWorkspace(pWorkspaceId);
+    }
+
     private Folder checkWritingRight(User pUser, Folder pFolder) throws NotAllowedException {
         if (pFolder.isPrivate() && (!pFolder.getOwner().equals(pUser.getLogin()))) {
             throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException33");

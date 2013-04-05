@@ -32,10 +32,12 @@ define(
             ).render();
 
             this.fileListView = new FileListView({
+                baseName: this.model.getBaseName(),
                 deleteBaseUrl: this.model.url(),
                 uploadBaseUrl: this.model.getUploadBaseUrl(),
                 collection: this.model._attachedFile,
-                editMode: true
+                editMode: true,
+                singleFile: true
             }).render();
 
             this.$("#tab-files").append(this.fileListView.el);

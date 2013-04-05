@@ -112,7 +112,8 @@ define(
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: this.iteration.getUploadBaseUrl(),
                 collection:  this.iteration._nativeCADFile,
-                editMode:this.editMode
+                editMode:this.editMode,
+                singleFile: true
             }).render();
 
             this.$("#iteration-files").html(this.fileListView.el);

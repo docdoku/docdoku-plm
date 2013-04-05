@@ -306,10 +306,13 @@ define([
                 this.domEventForMarkerCreation._isPLC = false;
             }
 
-            this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
-                return instance.mesh != null;
-            }), 'mesh');
+            var filteredInstances = _.filter(self.instances, function(instance) {
+                return instance.levelGeometry != null &&  instance.levelGeometry.mesh != null;
+            });
 
+            this.meshesBindedForMarkerCreation = _.map(filteredInstances, function(instance) {
+                    return instance.levelGeometry.mesh;
+            });
 
             var onIntersect = function(intersectPoint) {
                 var mcmv = new MarkerCreateModalView({model:layer, intersectPoint:intersectPoint});
