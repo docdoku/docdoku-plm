@@ -19,25 +19,18 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
-import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import java.io.File;
 
 
 /**
  * Resource Getter
  */
 @Stateless(name="DocumentResourceGetterBean")
-public class DocumentResourceGetterBean implements IDocumentResourceGetterManagerLocal {
+public class DocumentResourceGetterBean {
 
+    /*
     @EJB
     private IDocumentManagerLocal documentService;
 
@@ -65,7 +58,7 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
         }
         return resourceFile;
     }
-
+    */
 
 
 }

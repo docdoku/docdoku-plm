@@ -24,13 +24,16 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
+import com.docdoku.server.viewers.DocumentViewer;
 import org.apache.commons.lang.StringUtils;
 
 import javax.activation.FileTypeMap;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,9 +66,6 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @EJB
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
-
-    @EJB
-    private IDocumentVisualizerManagerLocal documentVisualizerService;
 
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
@@ -142,7 +142,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
             File fileToOutput = null;
             if (elementType.equals("documents") && "viewer".equals(pRequest.getParameter("type"))) {
-                fileToOutput = documentVisualizerService.getFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
+                fileToOutput = getFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
             } else {
                 //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");
                 String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
@@ -317,5 +317,43 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @Override
     protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    }
+
+    private File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+        DocumentViewer selectedDocumentViewer = selectDocumentViewer(pRequest, dataFile);
+        if (selectedDocumentViewer != null) {
+            return selectedDocumentViewer.getFileForViewer(pRequest, pResponse, servletContext,dataFile);
+        }
+        return null;
+    }
+
+    private DocumentViewer selectDocumentViewer(HttpServletRequest pRequest, File dataFile) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        Map<String, String> servletsViewer = getServletsViewer();
+
+        for (String className : servletsViewer.keySet()) {
+            Class<?> documentViewerImpl = Class.forName(className);
+            DocumentViewer documentViewer = (DocumentViewer) documentViewerImpl.newInstance();
+            if (documentViewer.canGetResourceForViewer(dataFile,pRequest)) {
+                return documentViewer;
+            }
+        }
+
+        return null;
+    }
+
+    private Map<String, String> getServletsViewer() {
+        Map<String, String> servletsViewer = new HashMap<String, String>();
+
+        Map<String, ? extends ServletRegistration> servletRegistrations = getServletContext().getServletRegistrations();
+
+        for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
+            String documentViewerParam = entry.getValue().getInitParameter("DOCUMENT_VIEWER");
+            if (documentViewerParam != null) {
+                servletsViewer.put(documentViewerParam, entry.getKey());
+            }
+        }
+
+        return servletsViewer;
     }
 }

@@ -20,11 +20,10 @@
 package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.util.FileIO;
-import com.docdoku.server.visualizers.utils.ScormUtil;
+import com.docdoku.server.viewers.utils.ScormUtil;
 
 import java.io.File;
 
-@ScormResourceGetter
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @Override

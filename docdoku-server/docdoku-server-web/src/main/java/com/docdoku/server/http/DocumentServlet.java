@@ -20,30 +20,37 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentVisualizerManagerLocal;
+import com.docdoku.server.viewers.DocumentViewer;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class DocumentServlet extends HttpServlet {
-    
-    @EJB
-    private IDocumentManagerLocal documentService;
+
+    @Resource(name = "vaultPath")
+    private String vaultPath;
 
     @EJB
-    private IDocumentVisualizerManagerLocal documentVisualizeService;
+    private IDocumentManagerLocal documentService;
     
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -51,6 +58,7 @@ public class DocumentServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+
             String login = pRequest.getRemoteUser();
             String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
             int offset;
@@ -68,21 +76,59 @@ public class DocumentServlet extends HttpServlet {
 
             DocumentIteration doc =  docM.getLastIteration();
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
-            pRequest.setAttribute("docv", documentVisualizeService);
 
-            /*Set<BinaryResource> bs = docM.getLastIteration().getAttachedFiles();
-            BinaryResource b = bs.iterator().next();
-            String p = b.getFullName();
-            File vaultContext = documentService.getDataFile(p);
-            pRequest.setAttribute("vault", vaultContext.getAbsolutePath().replace(p,""));
-            */
+            String vaultPath = getServletContext().getInitParameter("vaultPath");
+
+            pRequest.setAttribute("vaultPath", vaultPath);
+
+            Set <BinaryResource> attachedFiles = docM.getLastIteration().getAttachedFiles();
+            for (BinaryResource attachedFile : attachedFiles) {
+                String servletName = selectViewer(attachedFile.getFullName());
+                pRequest.setAttribute("attachedFile", attachedFile);
+                RequestDispatcher dispatcher = getServletContext().getNamedDispatcher(servletName);
+                if (dispatcher != null) {
+                    dispatcher.include(pRequest, pResponse);
+                }
+            }
+
             pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
-
-
 
         } catch (Exception pEx) {
             pEx.printStackTrace();
             throw new ServletException("error while fetching your document.", pEx);
         }
     }
+
+    private String selectViewer(String fileFullName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        String servletName = "";
+
+        Map<String, String> servletsViewer = getServletsViewer();
+
+        for (String className : servletsViewer.keySet()) {
+            Class<?> documentViewerImpl = Class.forName(className);
+            DocumentViewer documentViewer = (DocumentViewer) documentViewerImpl.newInstance();
+            if (documentViewer.canVisualize(fileFullName)) {
+                servletName = servletsViewer.get(className);
+                break;
+            }
+        }
+
+        return servletName;
+    }
+
+    private Map<String, String> getServletsViewer() {
+        Map<String, String> servletsViewer = new HashMap<String, String>();
+
+        Map<String, ? extends ServletRegistration> servletRegistrations = getServletContext().getServletRegistrations();
+
+        for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
+            String documentViewerParam = entry.getValue().getInitParameter("DOCUMENT_VIEWER");
+            if (documentViewerParam != null) {
+                servletsViewer.put(documentViewerParam, entry.getKey());
+            }
+        }
+
+        return servletsViewer;
+    }
+
 }

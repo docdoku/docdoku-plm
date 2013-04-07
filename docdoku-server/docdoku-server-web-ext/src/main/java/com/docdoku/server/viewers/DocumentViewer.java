@@ -17,24 +17,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.postuploaders;
 
-import com.docdoku.core.util.FileIO;
-import com.docdoku.server.viewers.utils.ScormUtil;
+package com.docdoku.server.viewers;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
-public class ScormPostUploaderImpl implements DocumentPostUploader {
-
-    @Override
-    public void process(File file) throws Exception {
-        String fileNameWithoutExtension = FileIO.getFileNameWithoutExtension(file);
-        FileIO.unzipArchive(file, new File(file.getAbsolutePath().replace(file.getName(), "") +  "scorm/" + fileNameWithoutExtension));
-    }
-
-    @Override
-    public boolean canProcess(File file) {
-        return ScormUtil.isScormArchive(file);
-    }
-
+public interface DocumentViewer {
+    boolean canGetResourceForViewer(File file, HttpServletRequest pRequest);
+    File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
+    boolean canVisualize(String fileName);
 }

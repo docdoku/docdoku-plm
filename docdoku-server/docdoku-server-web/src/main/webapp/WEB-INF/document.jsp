@@ -82,29 +82,9 @@
 <div id="page">
     <div id="content">
         <div id="sidebar">
-            <div id="file" class="well">
-                <center><h3><fmt:message key="sidebar.title1"/></h3></center><br />
-                <c:if test="${docm.lastIteration.attachedFiles.size()!=0}">
-                    <c:forEach var="item" varStatus="status" items="${docm.lastIteration.attachedFiles}">
-                        <c:set scope="request" var="context" value="<%=request.getContextPath()%>"/>
-                        <c:set scope="request" var="filePath" value="${context}/files/${item.fullName}"/>
-                        <c:set scope="request" var="fileName" value="${item.name}"/>
-                        <c:set scope="request" var="extraParams" value="${docv.getExtraParams(item.fullName)}"/>
-                        <c:set scope="request" var="index" value="${status.index}"/>
-                        <c:set scope="request" var="jspFileName" value="${docv.getJspPageName(item.fullName)}"/>
-                        <jsp:useBean scope="request" type="java.lang.String" id="filePath"/>
-                        <jsp:useBean scope="request" type="java.lang.String" id="jspFileName"/>
 
-                        <jsp:include page="<%=jspFileName%>"/>
+            <div id="file" class="well"></div>
 
-                        <br />
-                        <br />
-                    </c:forEach>
-                </c:if>
-                <c:if test="${docm.lastIteration.attachedFiles.size()==0}">
-                    <div class="empty"><p><fmt:message key="section2.noFile"/></p></div>
-                </c:if>
-            </div>
             <div id="link" class="well">
                 <center><h3><fmt:message key="sidebar.title2"/></h3></center><br />
                 <p>
