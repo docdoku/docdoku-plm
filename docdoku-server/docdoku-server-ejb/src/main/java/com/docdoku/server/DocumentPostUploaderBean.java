@@ -19,16 +19,25 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
+import postuploaders.DocumentPostUploader;
+
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import java.io.File;
 
 
 /**
  * Document Post Uploader
  */
 @Stateless(name="DocumentPostUploaderBean")
-public class DocumentPostUploaderBean {
+public class DocumentPostUploaderBean implements IDocumentPostUploaderManagerLocal {
 
-    /*
     @EJB
     private IDocumentManagerLocal documentService;
 
@@ -45,6 +54,5 @@ public class DocumentPostUploaderBean {
             }
         }
     }
-    */
 
 }

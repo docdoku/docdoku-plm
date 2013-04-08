@@ -19,7 +19,9 @@
  */
 package com.docdoku.server.viewers;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
+import viewers.DocumentViewer;
 
 import javax.activation.FileTypeMap;
 import javax.servlet.ServletContext;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 public class MultimediaViewerImpl implements DocumentViewer {
+
     @Override
     public boolean canGetResourceForViewer(File file, HttpServletRequest pRequest) {
         return FileIO.isAVFile(file.getName());
@@ -43,6 +46,11 @@ public class MultimediaViewerImpl implements DocumentViewer {
     @Override
     public boolean canVisualize(String fileName) {
         return FileIO.isAVFile(fileName);
+    }
+
+    @Override
+    public String getHtmlForViewer(BinaryResource file) {
+        return null;
     }
 
 }

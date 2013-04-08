@@ -5,8 +5,7 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:c="http://java.sun.com/jsp/jstl/core"
-      xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
-      xmlns:docdokuplm="http://docdokuplm.net/facelets">
+      xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
 
 <f:loadBundle var="i18nDocument" basename="com.docdoku.server.localization.document_permalink_resource"/>
 <head>
@@ -49,7 +48,7 @@
                     case "attribute":
                         $(".a").css("backgroundColor", "#213251");
                         break;
-                    case "file":
+                    case "files":
                         $(".f").css("backgroundColor", "#213251");
                         break;
                     case "link":
@@ -75,7 +74,7 @@
                     <li><a href="#general" style="color: white ; background-color: #213251" class="g">#{i18nDocument['section1.title']}</a></li>
                     <li><a href="#iteration" style="color: white" class="i">#{i18nDocument['section2.title']}</a></li>
                     <li><a href="#attribute" style="color: white" class="a">#{i18nDocument['section2.attributes']}</a></li>
-                    <li><a href="#file" style="color: white" class="f">#{i18nDocument['sidebar.title1']}</a></li>
+                    <li><a href="#files" style="color: white" class="f">#{i18nDocument['sidebar.title1']}</a></li>
                     <li><a href="#link" style="color: white" class="l">#{i18nDocument['sidebar.title2']}</a></li>
                 </ul>
             </div>
@@ -86,9 +85,9 @@
     <div id="content">
         <div id="sidebar">
 
-            <div id="file" class="well">
-                <docdokuplm:scormViewer></docdokuplm:scormViewer>
-            </div>
+            <h:panelGroup layout="block" id="files" styleClass="well"></h:panelGroup>
+            <f:attribute name="attachedFiles" value="${docm.lastIteration.attachedFiles}" />
+            <f:event type="preRenderView" listener="#{viewerBean.process}" />
 
             <div id="link" class="well">
                 <center><h3>#{i18nDocument['sidebar.title2']}</h3></center><br />

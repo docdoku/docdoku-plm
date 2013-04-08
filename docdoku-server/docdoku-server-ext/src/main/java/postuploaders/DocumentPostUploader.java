@@ -18,12 +18,11 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.resourcegetters;
+package postuploaders;
 
 import java.io.File;
 
-public interface DocumentResourceGetter {
-    File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception;
-    boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath);
-
+public interface DocumentPostUploader {
+    void process(File file) throws Exception;
+    boolean canProcess(File file);
 }

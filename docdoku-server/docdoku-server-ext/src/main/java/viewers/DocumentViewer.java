@@ -18,11 +18,18 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.postuploaders;
+package viewers;
 
+import com.docdoku.core.common.BinaryResource;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
-public interface DocumentPostUploader {
-    void process(File file) throws Exception;
-    boolean canProcess(File file);
+public interface DocumentViewer {
+    boolean canGetResourceForViewer(File file, HttpServletRequest pRequest);
+    File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
+    boolean canVisualize(String fileName);
+    String getHtmlForViewer(BinaryResource file);
 }

@@ -1,0 +1,11 @@
+<img class="image_plus" height="10px" width="10px" id="scorm-viewer-{{index}}" src="{{context}}/images/plus.png"/>
+<a href="{{filePath}}">{{fileName}}</a>
+<div id="scorm-toc-{{index}}">
+    <h5>{{organization.title}}</h5>
+    <ul>
+        {{#organization.activities}}
+            <li><a href="{{filePath}}/{{resourceHref}}?type=viewer">{{title}}</a></li>
+        {{/organization.activities}}#link {
+
+    </ul>
+</div>

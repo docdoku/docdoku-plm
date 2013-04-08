@@ -21,6 +21,7 @@ package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.viewers.utils.ScormUtil;
+import resourcegetters.DocumentResourceGetter;
 
 import java.io.File;
 

@@ -20,28 +20,24 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.viewers.DocumentViewer;
+import com.docdoku.server.jsf.actions.ViewerBean;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
+import javax.faces.bean.ManagedProperty;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class DocumentServlet extends HttpServlet {
@@ -51,11 +47,9 @@ public class DocumentServlet extends HttpServlet {
 
     @EJB
     private IDocumentManagerLocal documentService;
-    
+
     @Override
-    protected void doGet(HttpServletRequest pRequest,
-                         HttpServletResponse pResponse)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
 
@@ -81,7 +75,7 @@ public class DocumentServlet extends HttpServlet {
 
             pRequest.setAttribute("vaultPath", vaultPath);
 
-            Set <BinaryResource> attachedFiles = docM.getLastIteration().getAttachedFiles();
+            /*
             for (BinaryResource attachedFile : attachedFiles) {
                 String servletName = selectViewer(attachedFile.getFullName());
                 pRequest.setAttribute("attachedFile", attachedFile);
@@ -90,45 +84,13 @@ public class DocumentServlet extends HttpServlet {
                     dispatcher.include(pRequest, pResponse);
                 }
             }
-
-            pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
+            */
+            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         } catch (Exception pEx) {
             pEx.printStackTrace();
             throw new ServletException("error while fetching your document.", pEx);
         }
-    }
-
-    private String selectViewer(String fileFullName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        String servletName = "";
-
-        Map<String, String> servletsViewer = getServletsViewer();
-
-        for (String className : servletsViewer.keySet()) {
-            Class<?> documentViewerImpl = Class.forName(className);
-            DocumentViewer documentViewer = (DocumentViewer) documentViewerImpl.newInstance();
-            if (documentViewer.canVisualize(fileFullName)) {
-                servletName = servletsViewer.get(className);
-                break;
-            }
-        }
-
-        return servletName;
-    }
-
-    private Map<String, String> getServletsViewer() {
-        Map<String, String> servletsViewer = new HashMap<String, String>();
-
-        Map<String, ? extends ServletRegistration> servletRegistrations = getServletContext().getServletRegistrations();
-
-        for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
-            String documentViewerParam = entry.getValue().getInitParameter("DOCUMENT_VIEWER");
-            if (documentViewerParam != null) {
-                servletsViewer.put(documentViewerParam, entry.getKey());
-            }
-        }
-
-        return servletsViewer;
     }
 
 }

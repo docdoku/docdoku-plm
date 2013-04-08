@@ -19,7 +19,9 @@
  */
 package com.docdoku.server.viewers;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
+import viewers.DocumentViewer;
 
 import javax.activation.FileTypeMap;
 import javax.servlet.ServletContext;
@@ -44,6 +46,11 @@ public class ImageViewerImpl implements DocumentViewer {
     @Override
     public boolean canVisualize(String fileName) {
         return FileIO.isImageFile(fileName);
+    }
+
+    @Override
+    public String getHtmlForViewer(BinaryResource file) {
+        return null;
     }
 
 }

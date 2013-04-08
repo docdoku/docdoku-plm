@@ -21,6 +21,7 @@ package com.docdoku.server.postuploaders;
 
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.viewers.utils.ScormUtil;
+import postuploaders.DocumentPostUploader;
 
 import java.io.File;
 
