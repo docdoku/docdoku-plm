@@ -24,6 +24,7 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.server.rest.dto.TaskDTO;
+import com.docdoku.server.rest.dto.TaskProcessDTO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -56,20 +57,19 @@ public class TaskResource {
     }
 
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json;charset=UTF-8")
     @Path("process")
-    public Response processTask(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, String comment){
+    public Response processTask(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
 
         try {
 
             if (action.equals("approve")) {
-                documentService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment);
+                documentService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
             } else if (action.equals("reject")) {
-                documentService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment);
-            }else{
+                documentService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+            } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-
 
 
             return Response.ok().build();

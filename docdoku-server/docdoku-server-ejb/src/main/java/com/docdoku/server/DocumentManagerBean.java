@@ -626,6 +626,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+        return approve(pWorkspaceId, pTaskKey, pComment, null);
+    }
+
+    @RolesAllowed("users")
+    @CheckActivity
+    @Override
+    public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
+            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
@@ -647,7 +655,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         int previousStep = workflow.getCurrentStep();
-        task.approve(pComment, docM.getLastIteration().getIteration());
+        task.approve(pComment, docM.getLastIteration().getIteration(), pSignature);
         int currentStep = workflow.getCurrentStep();
 
         User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(docM);
@@ -669,6 +677,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMaster reject(String pWorkspaceId, TaskKey pTaskKey, String pComment)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+        return reject(pWorkspaceId, pTaskKey, pComment, null);
+    }
+
+    @RolesAllowed("users")
+    @CheckActivity
+    @Override
+    public DocumentMaster reject(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
+            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
@@ -688,7 +704,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
         }
 
-        task.reject(pComment, docM.getLastIteration().getIteration());
+        task.reject(pComment, docM.getLastIteration().getIteration(), pSignature);
         return docM;
     }
 

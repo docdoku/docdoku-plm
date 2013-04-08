@@ -55,6 +55,7 @@ public class Task implements Serializable, Cloneable {
     
     @Lob
     private String instructions;
+
     private int duration=1;
     
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -73,7 +74,9 @@ public class Task implements Serializable, Cloneable {
     
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date closureDate;
-    
+
+    @Lob
+    private String signature;
     
     private Status status=Status.NOT_STARTED;
     
@@ -195,17 +198,34 @@ public class Task implements Serializable, Cloneable {
         this.closureDate = closureDate;
     }
 
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
 
     public void reject(String pComment, int pTargetIteration){
+        reject(pComment, pTargetIteration, null);
+    }
+
+    public void reject(String pComment, int pTargetIteration, String pSignature){
         closureDate=new Date();
         closureComment=pComment;
+        signature=pSignature;
         status=Status.REJECTED;
         targetIteration=pTargetIteration;
     }
     
     public void approve(String pComment, int pTargetIteration){
+        approve(pComment, pTargetIteration, null);
+    }
+
+    public void approve(String pComment, int pTargetIteration, String pSignature){
         closureDate=new Date();
         closureComment=pComment;
+        signature=pSignature;
         status=Status.APPROVED;
         targetIteration=pTargetIteration;
     }

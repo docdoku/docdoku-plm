@@ -14,7 +14,8 @@
     <p>
         <b>{{i18n.TASK_CLOSED_ON}}</b><br /> {{task.formattedClosureDate}}<br />
         <b>{{i18n.ITERATION}}</b> : {{task.targetIteration}}<br />
-        <b>{{i18n.COMMENT}}</b><br />{{task.closureComment}}
+        <b>{{i18n.COMMENT}}</b><br />{{task.closureComment}}<br />
+        <b>{{i18n.SIGN_TASK}}</b><br /><img src={{task.signature}} />
     </p>
 </div>
 {{/task.closureDate}}

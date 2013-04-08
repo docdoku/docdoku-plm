@@ -9,16 +9,21 @@ define([
         tagName: 'div',
 
         events: {
-            "click .lifecycle-task-signing-link-a": "openSigningCanvas",
+            "click .lifecycle-task-signing-link-a": "toggleSigningCanvas",
             "mousedown .lifecycle-activities-canvas": "canvasMouseDown",
             "mousemove .lifecycle-activities-canvas": "canvasMouseMove",
             "mouseup .lifecycle-activities-canvas": "canvasMouseUp",
-            "mouseleave .lifecycle-activities-canvas": "canvasMouseLeave"
+            "mouseleave .lifecycle-activities-canvas": "canvasMouseLeave",
+            "click .cancel-signing": "cancelSigning",
+            "click .delete-signing": "clearBtnClicked",
+            "click .save-signing": "saveSigning"
         },
 
         initialize: function() {
             this.moves = new Array();
             this.pressed;
+            this.oppened = false;
+            this.signature = null;
         },
 
         render: function() {
@@ -50,17 +55,25 @@ define([
 
         },
 
+        toggleSigningCanvas: function() {
+            this.oppened ? this.closeSigningCanvas() : this.openSigningCanvas();
+            this.oppened = !this.oppened;
+        },
+
         openSigningCanvas: function() {
             this.$signingLink.popover('show');
             this.canvas = this.$(".lifecycle-activities-canvas").get(0);
             this.context = this.canvas.getContext("2d");
             this.canvas.width = $(".popover-content").width();
-            this.canvas.height = $(".popover-content").height();
+            this.canvas.height = 150;
+        },
+
+        closeSigningCanvas: function() {
+            this.$signingLink.popover('hide');
         },
 
         canvasMouseDown: function(e) {
-            console.log("x" +(e.pageX - this.canvas.getBoundingClientRect().left));
-            console.log("y" +(e.pageY -  this.canvas.getBoundingClientRect().top));
+            e.originalEvent.preventDefault();
             this.pressed = true;
             this.moves.push([e.pageX - this.canvas.getBoundingClientRect().left,
                 e.pageY - this.canvas.getBoundingClientRect().top,
@@ -86,13 +99,9 @@ define([
         },
 
         redraw: function() {
-            //this.canvas.width = this.canvas.width; // Limpia el lienzo
-
             this.context.strokeStyle = "#000000";
             this.context.lineJoin = "round";
             this.context.lineWidth = 3;
-
-            //this.context.fillRect(0,0,150,75);
 
             for (var i = 0; i < this.moves.length; i++) {
                 this.context.beginPath();
@@ -105,6 +114,46 @@ define([
                 this.context.closePath();
                 this.context.stroke();
             }
+        },
+
+        cancelSigning: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            this.toggleSigningCanvas();
+        },
+
+        clearBtnClicked: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            this.clearSigning()
+        },
+
+        clearSigning: function() {
+            // Store the current transformation matrix
+            this.context.save();
+
+            // Use the identity matrix while clearing the canvas
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Restore the transform
+            this.context.restore();
+
+            this.moves.length = 0;
+        },
+
+        saveSigning: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            this.signature = this.canvas.toDataURL();
+            $('.lifecycle-task-signing-img img').attr('src', this.signature);
+            $('.lifecycle-task-signing-img').removeClass('hidden');
+
+            this.toggleSigningCanvas();
+            this.clearSigning();
         }
 
     });
