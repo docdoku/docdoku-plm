@@ -110,7 +110,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         } else {
             file.setContentLength(pSize);
         }
-               // googleStore.getVaultFile(file);
         return dataManager.getVaultFile(file);
     }
 
@@ -142,7 +141,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             } else {
                 file.setContentLength(pSize);
             }
-            //googleStore.getVaultFile(file);
             return dataManager.getVaultFile(file);
         } else {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
@@ -166,10 +164,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             if (((owner != null) && (!owner.equals(user.getLogin()))) || (docM.isCheckedOut() && !docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document))) {
                 throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
             } else {
-                       //googleStore.getDataFile(file);
                 return dataManager.getDataFile(file);
             }
-        } else {    //googleStore.getDataFile(file);
+        } else {
             return dataManager.getDataFile(file);
         }
     }
@@ -525,7 +522,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 binDAO.createBinaryResource(targetFile);
 
                 newDoc.addFile(targetFile);
-               // googleStore.copyData(sourceFile,targetFile);
                 dataManager.copyData(sourceFile, targetFile);
             }
         }
@@ -832,7 +828,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             DocumentIteration doc = docM.removeLastIteration();
             for (BinaryResource file : doc.getAttachedFiles()) {
                 dataManager.delData(file);
-                //googleStore.delData(file);
             }
 
             DocumentDAO docDAO = new DocumentDAO(em);
@@ -870,7 +865,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
                 File physicalFile = dataManager.getDataFile(bin);
-               // googleStore.getDataFile(bin);
+
                 indexer.addToIndex(bin.getFullName(), physicalFile.getPath());
             }
 
@@ -901,7 +896,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
                         dataManager.delData(file);
-                        //googleStore.delData(file);
                     }
                 }
             }
@@ -959,7 +953,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         for (DocumentIteration doc : docM.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
                 indexer.removeFromIndex(file.getFullName());
-               // googleStore.delData(file);
                 dataManager.delData(file);
             }
         }
@@ -974,7 +967,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMasterTemplate template = templateDAO.removeDocMTemplate(pKey);
         for (BinaryResource file : template.getAttachedFiles()) {
             dataManager.delData(file);
-            //googleStore.delData(file);
         }
     }
 
@@ -990,7 +982,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMaster docM = document.getDocumentMaster();
         //check access rights on docM ?
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
-            //googleStore.delData(file);
             dataManager.delData(file);
             document.removeFile(file);
             binDAO.removeBinaryResource(file);
@@ -1009,7 +1000,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
-        //googleStore.delData(file);
         dataManager.delData(file);
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
@@ -1119,7 +1109,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 binDAO.createBinaryResource(targetFile);
                 firstIte.addFile(targetFile);
                 dataManager.copyData(sourceFile, targetFile);
-               // googleStore.copyData(sourceFile,targetFile);
             }
 
             Set<DocumentLink> links = new HashSet<DocumentLink>();

@@ -57,6 +57,7 @@ public class Oauth2TokenGetter {
         }
     }
 
+
     private void generateAuthorisationAccess() {
 
         AuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, properties.getClientId(), properties.getClientSecret(), Arrays.asList(properties.getScope()))
@@ -65,7 +66,7 @@ public class Oauth2TokenGetter {
 
         AuthorizationCodeRequestUrl authorizationCodeRequestUrl = flow.newAuthorizationUrl();
         authorizationCodeRequestUrl.setRedirectUri(properties.getRedirectUri()).build();
-
+        authorizationCodeRequestUrl.setRedirectUri(properties.getRedirectUri()).build();
     }
 
     private void generateTokenResponse() throws IOException {
@@ -77,6 +78,7 @@ public class Oauth2TokenGetter {
                 .setApprovalPrompt("force").build();
 
         TokenResponse tokenResponse = flow.newTokenRequest(authorisationCode).setRedirectUri(properties.getRedirectUri()).execute();
+
     }
 
     public String getToken() throws IOException{
