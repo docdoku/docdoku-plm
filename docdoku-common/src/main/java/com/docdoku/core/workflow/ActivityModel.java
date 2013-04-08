@@ -20,6 +20,8 @@
 
 package com.docdoku.core.workflow;
 
+import com.docdoku.core.common.User;
+
 import java.io.Serializable;
 import java.util.*;
 import javax.persistence.*;
@@ -161,6 +163,6 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         return clone;
     }
 
-    public abstract Activity createActivity();
+    public abstract Activity createActivity(Map<Role, User> roleUserMap);
 
 }

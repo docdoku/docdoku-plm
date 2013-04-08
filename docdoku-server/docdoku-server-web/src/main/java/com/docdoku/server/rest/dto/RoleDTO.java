@@ -38,7 +38,7 @@ public class RoleDTO implements Serializable {
     private String id;
     private String name;
     private String workspaceId;
-    private UserDTO defaultUserMappedDTO;
+    private UserDTO defaultUserMapped;
 
     public RoleDTO(){
     }
@@ -63,11 +63,11 @@ public class RoleDTO implements Serializable {
         this.workspaceId = workspaceId;
     }
 
-    public UserDTO getDefaultUserMappedDTO() {
-        return defaultUserMappedDTO;
+    public UserDTO getDefaultUserMapped() {
+        return defaultUserMapped;
     }
 
-    public void setDefaultUserMappedDTO(UserDTO defaultUserMappedDTO) {
-        this.defaultUserMappedDTO = defaultUserMappedDTO;
+    public void setDefaultUserMapped(UserDTO defaultUserMapped) {
+        this.defaultUserMapped = defaultUserMapped;
     }
 }

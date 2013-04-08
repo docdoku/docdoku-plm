@@ -179,12 +179,13 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         },
 
-        createNewVersion: function(title, description, workflow) {
+        createNewVersion: function(title, description, workflow, roleMappingList) {
 
             var data = {
                 title: title,
                 description: description,
-                workflowModelId: workflow ? workflow.get("id") : null
+                workflowModelId: workflow ? workflow.get("id") : null,
+                roleMapping:workflow? roleMappingList: null
             };
 
             $.ajax({

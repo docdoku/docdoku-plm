@@ -22,6 +22,7 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 import java.io.Serializable;
+import java.util.Map;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -36,6 +37,9 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Table(name="TASKMODEL")
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskModelKey.class)
+@NamedQueries({
+        @NamedQuery(name="TaskModel.findByRoleName", query="SELECT t FROM TaskModel t WHERE t.role.name = :roleName")
+})
 @Entity
 public class TaskModel implements Serializable, Cloneable {
     
@@ -66,34 +70,32 @@ public class TaskModel implements Serializable, Cloneable {
     private String instructions;
     private String title;
     private int duration;
-    
+
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="WORKER_LOGIN", referencedColumnName="LOGIN"),
-        @JoinColumn(name="WORKER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            @JoinColumn(name="ROLE_NAME", referencedColumnName="ROLENAME"),
+            @JoinColumn(name="ROLE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private User worker;
+    private Role role;
 
-    public TaskModel(ActivityModel pActivityModel, int pNum, String pTitle, String pInstructions, User pWorker) {
+
+    public TaskModel(ActivityModel pActivityModel, int pNum, String pTitle, String pInstructions, Role pRole) {
         setActivityModel(pActivityModel);
         num=pNum;
         title=pTitle;
-        worker=pWorker;
+        role=pRole;
         instructions=pInstructions;
     }
 
-    public TaskModel(ActivityModel pActivityModel, String pTitle, String pInstructions, User pWorker) {
-        this(pActivityModel, 0,pTitle,pInstructions,pWorker);
+    public TaskModel(ActivityModel pActivityModel, String pTitle, String pInstructions, Role pRole) {
+        this(pActivityModel, 0,pTitle,pInstructions,pRole);
     }
     public TaskModel() {
 
     }
-    
-    public User getWorker() {
-        return worker;
-    }
 
-    public Task createTask() {
+    public Task createTask(Map<Role,User> roleUserMap) {
+        User worker = roleUserMap.get(role);
         return new Task(num, title,instructions,worker);
     }
     
@@ -114,8 +116,12 @@ public class TaskModel implements Serializable, Cloneable {
         return instructions;
     }
 
-    public void setWorker(User pWorker) {
-        worker=pWorker;
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public void setTitle(String pTitle) {

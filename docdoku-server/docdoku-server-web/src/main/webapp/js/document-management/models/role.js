@@ -10,7 +10,7 @@ define(function () {
         },
 
         getMappedUser:function(){
-            return this.get("defaultUserMappedDTO");
+            return this.get("defaultUserMapped");
         },
 
         getMappedUserLogin:function(){

@@ -3,12 +3,14 @@ define([
 	"common-objects/views/attributes/attributes",
 	"views/document/document_template_list",
 	"views/document/document_workflow_list",
+	"views/document/document_workflow_mapping",
 	"text!templates/document/document_new.html"
 ], function (
 	ModalView,
 	DocumentAttributesView,
 	DocumentTemplateListView,
 	DocumentWorkflowListView,
+    DocumentWorkflowMappingView,
 	template
 ) {
 	var DocumentNewView = ModalView.extend({
@@ -21,11 +23,13 @@ define([
         },
 
         rendered: function() {
+
             this.attributesView = this.addSubView(
                 new DocumentAttributesView({
                     el: "#tab-attributes-" + this.cid
                 })
             );
+
             this.attributesView.render();
 
             this.templatesView = this.addSubView(
@@ -42,6 +46,14 @@ define([
                 })
             );
             this.workflowsView.collection.fetch();
+
+            this.workflowsMappingView = this.addSubView(
+                new DocumentWorkflowMappingView({
+                    el: "#workflows-mapping-" + this.cid
+                })
+            );
+
+            this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
         },
 
         onSubmitForm: function() {
@@ -55,7 +67,8 @@ define([
                     title: $("#form-" + this.cid + " .title").val(),
                     description: $("#form-" + this.cid + " .description").val(),
                     workflowModelId: workflow ? workflow.get("id") : null,
-                    templateId: template ? template.get("id") : null
+                    templateId: template ? template.get("id") : null,
+                    roleMapping:workflow? this.workflowsMappingView.toList(): null
                 };
 
                 this.collection.create(data, {

@@ -49,7 +49,7 @@ public class EditTaskModelPanel extends JPanel {
 
     public EditTaskModelPanel(TaskModel pTask){
         this(pTask.getTitle(),pTask.getInstructions());
-        mWorkerList.setSelectedItem(pTask.getWorker());
+        //mWorkerList.setSelectedItem(pTask.getWorker());
     }
 
     private EditTaskModelPanel(String pTitle, String pInstructions) {

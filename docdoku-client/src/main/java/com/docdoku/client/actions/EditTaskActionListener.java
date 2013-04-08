@@ -44,7 +44,7 @@ public class EditTaskActionListener implements ActionListener {
                 String instructions = source.getInstructions();
 
                 TaskModel task = source.getTaskModel();
-                task.setWorker(user);
+                //task.setWorker(user);
                 task.setTitle(title);
                 task.setInstructions(instructions);
 

@@ -1,7 +1,7 @@
 define([
-    "common-objects/models/user"
+    "models/role"
 ],function (
-    User
+    Role
 ) {
     var TaskModel = Backbone.Model.extend({
 
@@ -10,9 +10,11 @@ define([
         },
 
         initialize: function() {
-            if(!_.isUndefined(this.attributes.worker)){
-                this.attributes.worker = new User(this.attributes.worker);
+
+            if(!_.isUndefined(this.attributes.role)){
+                this.attributes.role = new Role(this.attributes.role);
             }
+
         },
 
         toJSON: function() {

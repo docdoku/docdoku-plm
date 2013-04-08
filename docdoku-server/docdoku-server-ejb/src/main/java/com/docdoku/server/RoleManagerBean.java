@@ -113,10 +113,15 @@ public class RoleManagerBean implements IRoleManagerWS, IRoleManagerLocal {
 
     @Override
     @RolesAllowed("users")
-    public void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException {
+    public void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
         RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
         Role role = roleDAO.loadRole(roleKey);
+
+        if(roleDAO.isRoleInUseInWorkflowModel(role)){
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException3");
+        }
+
         roleDAO.deleteRole(role);
     }
 

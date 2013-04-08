@@ -29,7 +29,6 @@ define(
             }));
 
             this.$roleViews = this.$("#form-roles");
-            this.$select = this.$("select.role-user-mapped");
             this.$newRoleName = this.$("input.role-name");
 
 
@@ -42,31 +41,15 @@ define(
             this.listenTo(this.collection,"add",this.onModelAddedToCollection);
 
             this.userList.fetch({success:function(){
-                self.fillUserSelect();
                 self.collection.fetch();
             }});
 
             return this;
         },
 
-        fillUserSelect:function() {
-            var self = this ;
-            this.$select.append("<option value=''></option>");
-            this.userList.each(function(user){
-                self.$select.append("<option value='"+user.get("login")+"'>"+user.get("name")+"</option>");
-            });
-        },
-
         onSubmitNewRole:function (e){
 
-            var userDTO = null;
-
-            if(this.$select.val()){
-                userDTO = {login: this.$select.val()};
-            }
-
-            this.collection.create({workspaceId : APP_CONFIG.workspaceId, name:this.$newRoleName.val(), defaultUserMappedDTO:userDTO});
-
+            this.collection.create({workspaceId : APP_CONFIG.workspaceId, name:this.$newRoleName.val(), defaultUserMapped:null});
             this.resetNewRoleForm();
 
             e.preventDefault();
@@ -80,7 +63,7 @@ define(
 
             // Update models which has changed
             this.collection.each(function(model){
-                if(model.hasChanged("defaultUserMappedDTO") && !_.contains(self.rolesToDelete, model)){
+                if(model.hasChanged("defaultUserMapped") && !_.contains(self.rolesToDelete, model)){
                     model.save();
                 }
             });
@@ -107,7 +90,6 @@ define(
 
         resetNewRoleForm:function(){
             this.$newRoleName.val("");
-            this.$select.val("");
         },
 
         onModelAddedToCollection:function(model){
@@ -116,7 +98,7 @@ define(
 
         addRoleView:function(model){
             var self = this ;
-            var view = new RoleItemView({model:model, userList:this.userList}).render();
+            var view = new RoleItemView({model:model, userList:this.userList,nullable:true}).render();
             this.roleViews.push(view);
             this.$roleViews.append(view.$el);
 

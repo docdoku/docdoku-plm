@@ -45,14 +45,14 @@ public class DefaultValueFactory {
 
     public static SerialActivityModel createDefaultSerialActivityModel(WorkflowModel pWorkflowModel) {
         SerialActivityModel model = new SerialActivityModel(pWorkflowModel, getDefaultLifeCycleState());
-        TaskModel task = new TaskModel(model,I18N.BUNDLE.getString("DefaultTask_title"), null, MainModel.getInstance().getUser());
+        TaskModel task = new TaskModel(model,I18N.BUNDLE.getString("DefaultTask_title"), null, null);
         model.addTaskModel(task);
         return model;
     }
 
     public static ParallelActivityModel createDefaultParallelActivityModel(WorkflowModel pWorkflowModel) {
         ParallelActivityModel model =  new ParallelActivityModel(pWorkflowModel, getDefaultLifeCycleState(), 1);
-        TaskModel task = new TaskModel(model, I18N.BUNDLE.getString("DefaultTask_title"), null, MainModel.getInstance().getUser());
+        TaskModel task = new TaskModel(model, I18N.BUNDLE.getString("DefaultTask_title"), null, null);
         model.addTaskModel(task);
         return model;
     }

@@ -89,7 +89,7 @@ public class RoleResource {
     public Response createRole(RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
 
-            UserDTO userDTO = roleDTO.getDefaultUserMappedDTO();
+            UserDTO userDTO = roleDTO.getDefaultUserMapped();
             String userLogin = null;
             if(userDTO != null){
                 userLogin = userDTO.getLogin();
@@ -110,7 +110,7 @@ public class RoleResource {
     public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
 
-            UserDTO userDTO = roleDTO.getDefaultUserMappedDTO();
+            UserDTO userDTO = roleDTO.getDefaultUserMapped();
             String userLogin = null;
             if(userDTO != null){
                 userLogin = userDTO.getLogin();
@@ -143,7 +143,7 @@ public class RoleResource {
         RoleDTO roleDTO = mapper.map(role,RoleDTO.class);
         roleDTO.setWorkspaceId(role.getWorkspace().getId());
         if(role.getDefaultUserMapped() != null){
-            roleDTO.setDefaultUserMappedDTO(mapper.map(role.getDefaultUserMapped(), UserDTO.class));
+            roleDTO.setDefaultUserMapped(mapper.map(role.getDefaultUserMapped(), UserDTO.class));
         }
         roleDTO.setId(role.getName());
 

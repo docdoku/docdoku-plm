@@ -29,7 +29,11 @@ define(
 
             fillUserList:function(){
                 var self = this ;
-                this.$select.append("<option value=''></option>");
+
+                if(this.options.nullable){
+                    this.$select.append("<option value=''></option>");
+                }
+
                 this.options.userList.each(function(user){
                     var selected = "";
                     if(self.model.getMappedUserLogin() == user.get("login")){
@@ -37,6 +41,7 @@ define(
                     }
                     self.$select.append("<option value='"+user.get("login")+"'"+selected +">"+user.get("name")+"</option>");
                 });
+
             },
 
             removeAndNotify:function(){
@@ -49,7 +54,7 @@ define(
                 if(this.$select.val()){
                     userDTO = {login : this.$select.val()};
                 }
-                this.model.set({defaultUserMappedDTO:userDTO});
+                this.model.set({defaultUserMapped:userDTO});
             }
 
         });

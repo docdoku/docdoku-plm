@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IRoleManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.rest.dto.*;
@@ -57,6 +58,9 @@ public class WorkflowResource {
 
     @EJB
     private IWorkflowManagerLocal workflowService;
+
+    @EJB
+    private IRoleManagerLocal roleService;
 
     private Mapper mapper;
 
@@ -132,7 +136,7 @@ public class WorkflowResource {
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
 
-            User[] users = documentService.getUsers(workspaceId);
+            Role[] roles = roleService.getRoles(workspaceId);
 
             List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
 
@@ -142,10 +146,10 @@ public class WorkflowResource {
 
                 List<TaskModel> taskModelList = activityModels[i].getTaskModels();
                 for(TaskModel taskModel : taskModelList){
-                    String login = taskModel.getWorker().getLogin();
-                    for(int j=0; j<users.length; j++){
-                        if(users[j].getLogin().equals(login))
-                            taskModel.setWorker(users[j]);
+                    String roleName = taskModel.getRole().getName();
+                    for(int j=0; j<roles.length; j++){
+                        if(roles[j].getName().equals(roleName))
+                            taskModel.setRole(roles[j]);
                     }
                 }
             }
