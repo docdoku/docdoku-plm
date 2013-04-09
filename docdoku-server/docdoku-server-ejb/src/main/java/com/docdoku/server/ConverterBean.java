@@ -19,28 +19,23 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.PartIterationNotFoundException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.dao.PartIterationDAO;
-import com.docdoku.server.vault.DataManager;
-import com.docdoku.server.vault.filesystem.DataManagerImpl;
 
-
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.io.*;
+import java.io.File;
 import java.util.concurrent.Future;
 
 
@@ -58,17 +53,9 @@ public class ConverterBean implements IConverterManagerLocal {
     @Resource(name = "vaultPath")
     private String vaultPath;
 
-    private DataManager dataManager;
-
     @Inject
     @Any
     private Instance<CADConverter> converters;
-
-
-    @PostConstruct
-    private void init() {
-        dataManager = new DataManagerImpl(new File(vaultPath));
-    }
 
     @Override
     @Asynchronous

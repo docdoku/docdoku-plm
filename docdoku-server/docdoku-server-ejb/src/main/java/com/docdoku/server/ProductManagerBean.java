@@ -83,8 +83,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @PostConstruct
     private void init() {
-        dataManager = new GoogleStorageManager();
-       // dataManager = new DataManagerImpl(new File(vaultPath));
+        //dataManager = new GoogleStorageManager();
+        dataManager = new DataManagerImpl(new File(vaultPath));
     }
 
     @RolesAllowed("users")

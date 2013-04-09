@@ -30,7 +30,6 @@ import java.net.URL;
 public class GoogleStorageCloud {
 
     private final static int CHUNK_SIZE = 1024;
-    private String vaultPath="/var/lib/docdoku/vault";
     private String OAuth = "Bearer ";
     private String method;
     private HttpURLConnection httpConnection;
@@ -65,12 +64,6 @@ public class GoogleStorageCloud {
 
     public int upload(InputStream inputStream, String fileName) throws IOException {
         this.method = "PUT";
-
-        if (fileName.contains(vaultPath)) {
-            this.fileName = fileName.substring(vaultPath.length());
-        } else {
-            this.fileName = fileName;
-        }
 
         this.init();
         DataOutputStream wr = new DataOutputStream(httpConnection.getOutputStream());

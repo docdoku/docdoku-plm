@@ -78,8 +78,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @PostConstruct
     private void init() {
-        dataManager = new GoogleStorageManager();
-       // dataManager = new DataManagerImpl(new File(vaultPath));
+        //dataManager = new GoogleStorageManager();
+        dataManager = new DataManagerImpl(new File(vaultPath));
     }
 
     @RolesAllowed("users")
@@ -321,16 +321,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocMsWithReferenceLike(pWorkspaceId, reference, maxResults);
         return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
+
     @RolesAllowed("users")
     @Override
     public long writeFile(InputStream in, File vaultFile) throws Exception {
-        String workspaceId ;
-        if (vaultFile.getPath().contains(vaultPath)) {
-            workspaceId = Folder.parseWorkspaceId(vaultFile.getPath().substring(vaultPath.length()+1));
-        } else {
-            workspaceId = Folder.parseWorkspaceId(vaultFile.getPath());
-        }
-        userManager.checkWorkspaceReadAccess(workspaceId);
         return dataManager.writeFile(vaultFile, in);
     }
 

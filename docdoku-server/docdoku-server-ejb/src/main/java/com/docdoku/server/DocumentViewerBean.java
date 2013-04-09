@@ -75,6 +75,14 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
                 e.printStackTrace();
                 template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
             }
+        } else {
+            template = new StringBuilder()
+                    .append("<a href=\"")
+                    .append("/files/")
+                    .append(binaryResource.getFullName())
+                    .append("\">")
+                    .append(binaryResource.getName())
+                    .append("</a>").toString();
         }
         return template;
     }

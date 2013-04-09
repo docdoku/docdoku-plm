@@ -25,12 +25,8 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.jsf.actions.ViewerBean;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedProperty;
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -49,14 +45,8 @@ public class DocumentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-
-            String login = pRequest.getRemoteUser();
             String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-            int offset;
-            if(pRequest.getContextPath().equals(""))
-                offset=2;
-            else
-                offset=3;
+            int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
             
             String workspaceId = URLDecoder.decode(pathInfos[offset],"UTF-8");
             String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
@@ -67,8 +57,6 @@ public class DocumentServlet extends HttpServlet {
 
             DocumentIteration doc =  docM.getLastIteration();
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
-
-            String vaultPath = getServletContext().getInitParameter("vaultPath");
 
             pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 

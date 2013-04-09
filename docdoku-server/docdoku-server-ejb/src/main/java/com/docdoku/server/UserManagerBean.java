@@ -87,6 +87,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @PostConstruct
     private void init() {
+        //dataManager = new GoogleStorageManager();
         dataManager = new DataManagerImpl(new File(vaultPath));
     }
 

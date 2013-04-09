@@ -19,10 +19,6 @@
  */
 package com.docdoku.server.http;
 
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMasterTemplateKey;
-import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.product.PartIterationKey;
@@ -30,33 +26,24 @@ import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.activation.FileTypeMap;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import javax.transaction.Status;
+import javax.transaction.UserTransaction;
+import java.io.*;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
-import javax.activation.FileTypeMap;
-
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Part;
-import javax.transaction.Status;
-import javax.transaction.UserTransaction;
 
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024)
@@ -91,18 +78,9 @@ public class UploadDownloadServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            String login = pRequest.getRemoteUser();
 
-            //String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-            //remove empty entries because of Three.js that generates url with double /
             String[] pathInfos = UploadDownloadServlet.removeEmptyEntries(pRequest.getRequestURI().split("/"));
-            int offset;
-            if (pRequest.getContextPath().equals("")) {
-                offset = 1;
-            } else {
-                offset = 2;
-            }
-
+            int offset = pRequest.getContextPath().isEmpty() ? 1 : 2;
 
             String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
             String elementType = pathInfos[offset + 1];
@@ -191,14 +169,8 @@ public class UploadDownloadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
-        String login = pRequest.getRemoteUser();
         String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-        int offset;
-        if (pRequest.getContextPath().equals("")) {
-            offset = 2;
-        } else {
-            offset = 3;
-        }
+        int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
 
         String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
         String elementType = pathInfos[offset + 1];
@@ -244,20 +216,13 @@ public class UploadDownloadServlet extends HttpServlet {
                 }
 
             }
-            //vaultFile.getParentFile().mkdirs();
+
             Collection<Part> uploadedParts = pRequest.getParts();
             long size = 0;
             for (Part item : uploadedParts) {
-
                 InputStream in = new BufferedInputStream(item.getInputStream(), BUFFER_CAPACITY);
-
-
-                //size = dataManager.writeFile(in, vaultFile);
-
                 size = documentService.writeFile(in, vaultFile);
-
-
-              break;
+                break;
             }
 
             if (elementType.equals("documents")) {
@@ -267,12 +232,11 @@ public class UploadDownloadServlet extends HttpServlet {
                 documentService.saveFileInTemplate(templatePK, fileName, size);
             } else if (elementType.equals("part-templates")) {
                 productService.saveFileInTemplate(partTemplatePK, fileName, size);
-            }
-            else if (elementType.equals("parts")) {
-                if(pathInfos.length==offset + 7){
+            } else if (elementType.equals("parts")) {
+                if (pathInfos.length==offset + 7) {
                     productService.saveNativeCADInPartIteration(partPK, fileName, size);
                     converterService.convertCADFileToJSON(partPK, vaultFile);
-                }else{
+                } else {
                     productService.saveFileInPartIteration(partPK, fileName, size);
                 }
             }
