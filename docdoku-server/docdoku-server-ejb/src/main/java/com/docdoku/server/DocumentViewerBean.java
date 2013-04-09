@@ -22,7 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
-import viewers.DocumentViewer;
+import com.docdoku.server.viewers.DocumentViewer;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -48,41 +48,46 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     @Resource(name = "vaultPath")
     private String vaultPath;
 
-    private DocumentViewer selectViewer(String resourceFullName) {
-        DocumentViewer selectedDocumentViewer = null;
-        for (DocumentViewer documentViewer : documentViewers) {
-            if (documentViewer.canVisualize(resourceFullName)) {
-                selectedDocumentViewer = documentViewer;
-                break;
-            }
-        }
-        return selectedDocumentViewer;
-    }
-
     @Override
-    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+    public File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
         DocumentViewer selectedDocumentViewer = null;
         for (DocumentViewer documentViewer : documentViewers) {
-            if (documentViewer.canGetResourceForViewer(dataFile,pRequest)) {
+            if (documentViewer.canPrepareFileForViewer(dataFile, pRequest)) {
                 selectedDocumentViewer = documentViewer;
                 break;
             }
         }
 
         if (selectedDocumentViewer != null) {
-            return selectedDocumentViewer.getFileForViewer(pRequest, pResponse, servletContext,dataFile);
+            return selectedDocumentViewer.prepareFileForViewer(pRequest, pResponse, servletContext, dataFile);
         }
-        return null;
+        return dataFile;
     }
 
     @Override
-    public String getHtmlForViewer(BinaryResource file) {
+    public String getHtmlForViewer(BinaryResource binaryResource) {
         String template = "";
-        DocumentViewer documentViewerSelected = selectViewer(file.getFullName());
+        DocumentViewer documentViewerSelected = selectViewerForTemplate(binaryResource);
         if (documentViewerSelected != null) {
-            template = documentViewerSelected.getHtmlForViewer(file);
+            try {
+                template = documentViewerSelected.renderHtmlForViewer(vaultPath, binaryResource);
+            } catch (Exception e) {
+                e.printStackTrace();
+                template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
+            }
         }
         return template;
+    }
+
+    private DocumentViewer selectViewerForTemplate(BinaryResource binaryResource) {
+        DocumentViewer selectedDocumentViewer = null;
+        for (DocumentViewer documentViewer : documentViewers) {
+            if (documentViewer.canRenderViewerTemplate(vaultPath, binaryResource)) {
+                selectedDocumentViewer = documentViewer;
+                break;
+            }
+        }
+        return selectedDocumentViewer;
     }
 
 }

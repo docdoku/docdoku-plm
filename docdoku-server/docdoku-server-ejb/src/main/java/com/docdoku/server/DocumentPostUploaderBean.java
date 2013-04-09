@@ -21,7 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
-import postuploaders.DocumentPostUploader;
+import com.docdoku.server.postuploaders.DocumentPostUploader;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;

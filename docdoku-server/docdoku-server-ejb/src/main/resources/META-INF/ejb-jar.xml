@@ -22,6 +22,14 @@
             </env-entry>
         </session>
         <session>
+            <ejb-name>DocumentViewerBean</ejb-name>
+            <env-entry>
+                <env-entry-name>vaultPath</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+            </env-entry>
+        </session>
+        <session>
             <ejb-name>UserManagerBean</ejb-name>
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>

@@ -18,12 +18,18 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package resourcegetters;
+package com.docdoku.server.viewers;
 
+import com.docdoku.core.common.BinaryResource;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
-public interface DocumentResourceGetter {
-    File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception;
-    boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath);
-
+public interface DocumentViewer {
+    boolean canPrepareFileForViewer(File file, HttpServletRequest pRequest);
+    File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
+    boolean canRenderViewerTemplate(String vaultPath, BinaryResource binaryResource);
+    String renderHtmlForViewer(String vaultPath, BinaryResource binaryResource) throws Exception;
 }

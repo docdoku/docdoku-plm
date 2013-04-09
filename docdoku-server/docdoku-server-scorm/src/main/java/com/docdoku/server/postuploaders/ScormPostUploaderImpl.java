@@ -19,23 +19,20 @@
  */
 package com.docdoku.server.postuploaders;
 
-import com.docdoku.core.util.FileIO;
 import com.docdoku.server.viewers.utils.ScormUtil;
-import postuploaders.DocumentPostUploader;
 
 import java.io.File;
 
 public class ScormPostUploaderImpl implements DocumentPostUploader {
 
     @Override
-    public void process(File file) throws Exception {
-        String fileNameWithoutExtension = FileIO.getFileNameWithoutExtension(file);
-        FileIO.unzipArchive(file, new File(file.getAbsolutePath().replace(file.getName(), "") +  "scorm/" + fileNameWithoutExtension));
+    public boolean canProcess(File file) {
+        return ScormUtil.isScormArchive(file);
     }
 
     @Override
-    public boolean canProcess(File file) {
-        return ScormUtil.isScormArchive(file);
+    public void process(File file) throws Exception {
+        ScormUtil.extractScormArchive(file);
     }
 
 }

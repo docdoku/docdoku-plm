@@ -139,25 +139,22 @@ public class UploadDownloadServlet extends HttpServlet {
                 dataFile = productService.getDataFile(fullName);
             }
 
+            //set content type
+            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
+            pResponse.setContentType(contentType);
 
-            File fileToOutput = null;
             if (elementType.equals("documents") && "viewer".equals(pRequest.getParameter("type"))) {
-                fileToOutput = documentViewerService.getFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
-            } else {
-                //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");
-                String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
-                pResponse.setContentType(contentType);
-                fileToOutput = dataFile;
+                dataFile = documentViewerService.prepareFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
             }
 
-            long lastModified = fileToOutput.lastModified();
+            long lastModified = dataFile.lastModified();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");
 
             if (lastModified > ifModified) {
                 setLastModifiedHeaders(lastModified, pResponse);
-                pResponse.setContentLength((int) fileToOutput.length());
+                pResponse.setContentLength((int) dataFile.length());
                 ServletOutputStream httpOut = pResponse.getOutputStream();
-                InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
+                InputStream input = new BufferedInputStream(new FileInputStream(dataFile), BUFFER_CAPACITY);
 
                 byte[] data = new byte[CHUNK_SIZE];
                 int length;

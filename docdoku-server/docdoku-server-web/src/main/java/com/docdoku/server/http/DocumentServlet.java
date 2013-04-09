@@ -42,9 +42,6 @@ import java.util.regex.Pattern;
 
 public class DocumentServlet extends HttpServlet {
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
-
     @EJB
     private IDocumentManagerLocal documentService;
 
@@ -73,18 +70,6 @@ public class DocumentServlet extends HttpServlet {
 
             String vaultPath = getServletContext().getInitParameter("vaultPath");
 
-            pRequest.setAttribute("vaultPath", vaultPath);
-
-            /*
-            for (BinaryResource attachedFile : attachedFiles) {
-                String servletName = selectViewer(attachedFile.getFullName());
-                pRequest.setAttribute("attachedFile", attachedFile);
-                RequestDispatcher dispatcher = getServletContext().getNamedDispatcher(servletName);
-                if (dispatcher != null) {
-                    dispatcher.include(pRequest, pResponse);
-                }
-            }
-            */
             pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         } catch (Exception pEx) {

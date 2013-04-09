@@ -4,8 +4,9 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
 
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
 import javax.faces.component.html.HtmlOutputText;
@@ -23,14 +24,16 @@ public class ViewerBean {
     @EJB
     private IDocumentViewerManagerLocal documentViewerService;
 
-    public void process(ComponentSystemEvent event) {
+    @ManagedProperty(value = "#{docm.lastIteration.attachedFiles}")
+    private Set<BinaryResource> attachedFiles;
 
-        Set<BinaryResource> attachedFiles = (Set<BinaryResource>) event.getComponent().getAttributes().get("attachedFiles");
+    public void process() {
+
         UIComponent filesContainer = FacesContext.getCurrentInstance().getViewRoot().findComponent("files");
 
         List<UIComponent> components = new ArrayList<UIComponent>();
 
-        for (BinaryResource attachedFile : attachedFiles) {
+        for (BinaryResource attachedFile : this.attachedFiles) {
             String template = documentViewerService.getHtmlForViewer(attachedFile);
 
             if (template != null && !template.isEmpty()) {
@@ -50,5 +53,14 @@ public class ViewerBean {
 
         filesContainer.getChildren().addAll(components);
     }
+
+    public Set<BinaryResource> getAttachedFiles() {
+        return attachedFiles;
+    }
+
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+
 
 }

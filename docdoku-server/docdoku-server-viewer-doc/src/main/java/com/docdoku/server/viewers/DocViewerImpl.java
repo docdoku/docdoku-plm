@@ -21,17 +21,22 @@ package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import viewers.DocumentViewer;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DocViewerImpl implements DocumentViewer {
 
     @Override
-    public boolean canGetResourceForViewer(File file, HttpServletRequest pRequest) {
+    public boolean canPrepareFileForViewer(File file, HttpServletRequest pRequest) {
         return FileIO.isDocFile(file.getName()) && hasValidFPV(pRequest);
     }
 
@@ -42,32 +47,41 @@ public class DocViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+    public File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
         File result = null;
-        if ("pdf".equals(pRequest.getParameter("fpv"))) {
+
+        String flexPaperViewerType = pRequest.getParameter("fpv");
+        String ooHome = servletContext.getInitParameter("OO_HOME");
+        int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
+
+        if ("pdf".equals(flexPaperViewerType)) {
             pResponse.setContentType("application/pdf");
-            String ooHome = servletContext.getInitParameter("OO_HOME");
-            int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
             result = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
-        } else if ("swf".equals(pRequest.getParameter("fpv"))) {
+        } else if ("swf".equals(flexPaperViewerType)) {
             pResponse.setContentType("application/x-shockwave-flash");
             String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-            String ooHome = servletContext.getInitParameter("OO_HOME");
-            int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
             FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
             result = fileConverter.convertToSWF(dataFile);
         }
+
         return result;
     }
 
     @Override
-    public boolean canVisualize(String fileName) {
-        return FileIO.isDocFile(fileName);
+    public boolean canRenderViewerTemplate(String vaultPath, BinaryResource binaryResource) {
+        return FileIO.isDocFile(binaryResource.getName());
     }
 
     @Override
-    public String getHtmlForViewer(BinaryResource file) {
-        return null;
+    public String renderHtmlForViewer(String vaultPath, BinaryResource docResource) throws Exception {
+        MustacheFactory mf = new DefaultMustacheFactory();
+        Mustache mustache = mf.compile("com/docdoku/server/viewers/document_viewer.mustache");
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("uriResource", ViewerUtils.getURI(docResource));
+        scopes.put("fileName", docResource.getName());
+        StringWriter templateWriter = new StringWriter();
+        mustache.execute(templateWriter, scopes).flush();
+        return templateWriter.toString();
     }
 
 }

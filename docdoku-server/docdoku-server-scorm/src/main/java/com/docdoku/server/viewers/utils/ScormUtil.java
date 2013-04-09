@@ -7,12 +7,15 @@ import java.io.IOException;
 
 public class ScormUtil {
 
-    public static final String IMS_MANIFEST = "imsmanifest.xml";
+    private ScormUtil(){}
 
-    public static File getManifest(String resourceFullName, String vaultPath) {
-        File archive = new File(vaultPath + "/" + resourceFullName);
-        File folder = new File(archive.getAbsolutePath().replace(archive.getName(), "scorm" + File.separator + FileIO.getFileNameWithoutExtension(archive)));
-        return new File(folder, IMS_MANIFEST);
+    public static final String IMS_MANIFEST = "imsmanifest.xml";
+    public static final String SCORM_FOLDER = "scorm";
+
+    public static File getManifest(String vaultPath, String resourceFullName) {
+        File scormArchive = new File(vaultPath, resourceFullName);
+        File unzippedScormFolder = getUnzippedScormFolder(scormArchive);
+        return new File(unzippedScormFolder, IMS_MANIFEST);
     }
 
     public static boolean isScormArchive(File file) {
@@ -22,6 +25,24 @@ public class ScormUtil {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static void extractScormArchive(File scormArchive) {
+        FileIO.unzipArchive(scormArchive, getUnzippedScormFolder(scormArchive));
+    }
+
+    public static File getScormSubResource(String resourceFullName, String subResourceName, String vaultPath) {
+        File scormArchive = new File(vaultPath, resourceFullName);
+        return new File(getUnzippedScormFolder(scormArchive), subResourceName);
+    }
+
+    public static File getUnzippedScormFolder(File scormArchive) {
+        String fileNameWithoutExtension = FileIO.getFileNameWithoutExtension(scormArchive);
+        return new File(scormArchive.getAbsolutePath().replace(scormArchive.getName(), SCORM_FOLDER), fileNameWithoutExtension);
+    }
+
+    public static boolean isScormPath(File file) {
+        return file.getAbsolutePath().contains(File.separator + SCORM_FOLDER + File.separator);
     }
 
 }

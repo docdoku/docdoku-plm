@@ -21,36 +21,45 @@ package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
-import viewers.DocumentViewer;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 
-import javax.activation.FileTypeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImageViewerImpl implements DocumentViewer {
 
     @Override
-    public boolean canGetResourceForViewer(File file, HttpServletRequest pRequest) {
-        return FileIO.isImageFile(file.getName());
+    public boolean canPrepareFileForViewer(File file, HttpServletRequest pRequest) {
+        return false;
     }
 
     @Override
-    public File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
-        String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
-        pResponse.setContentType(contentType);
-        return dataFile;
-    }
-
-    @Override
-    public boolean canVisualize(String fileName) {
-        return FileIO.isImageFile(fileName);
-    }
-
-    @Override
-    public String getHtmlForViewer(BinaryResource file) {
+    public File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
         return null;
+    }
+
+    @Override
+    public boolean canRenderViewerTemplate(String vaultPath, BinaryResource binaryResource) {
+        return FileIO.isImageFile(binaryResource.getName());
+    }
+
+    @Override
+    public String renderHtmlForViewer(String vaultPath, BinaryResource imageResource) throws Exception {
+        MustacheFactory mf = new DefaultMustacheFactory();
+        Mustache mustache = mf.compile("com/docdoku/server/viewers/image_viewer.mustache");
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("uriResource", ViewerUtils.getURI(imageResource));
+        scopes.put("fileName", imageResource.getName());
+        StringWriter templateWriter = new StringWriter();
+        mustache.execute(templateWriter, scopes).flush();
+        return templateWriter.toString();
     }
 
 }

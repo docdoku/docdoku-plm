@@ -21,7 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
-import resourcegetters.DocumentResourceGetter;
+import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;

@@ -8,6 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 
 public interface IDocumentViewerManagerLocal {
-    File getFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
+    File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
     String getHtmlForViewer(BinaryResource file);
 }
