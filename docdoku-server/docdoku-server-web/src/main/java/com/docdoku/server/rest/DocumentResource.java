@@ -509,12 +509,20 @@ public class DocumentResource {
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
             InstanceNumberAttribute attr = new InstanceNumberAttribute();
             attr.setName(dto.getName());
-            attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            try{
+                attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            }catch(NumberFormatException ex){
+                attr.setNumberValue(0);
+            }
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
             InstanceDateAttribute attr = new InstanceDateAttribute();
             attr.setName(dto.getName());
-            attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            try{
+                attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            }catch(NumberFormatException ex){
+                attr.setDateValue(null);
+            }
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
             InstanceURLAttribute attr = new InstanceURLAttribute();
