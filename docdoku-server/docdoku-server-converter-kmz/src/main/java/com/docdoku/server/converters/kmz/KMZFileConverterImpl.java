@@ -39,19 +39,8 @@ import javax.xml.stream.events.XMLEvent;
 @KMZFileConverter
 public class KMZFileConverterImpl implements CADConverter{
 
-    private final static String CONF_PROPERTIES= "/com/docdoku/server/converters/kmz/conf.properties";
-    private final static Properties CONF = new Properties();
-
     @EJB
     private IProductManagerLocal productService;
-
-    static{
-        try {
-            CONF.load(KMZFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public File convert(PartIteration partToConvert, File cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, XMLStreamException {
