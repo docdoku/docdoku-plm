@@ -47,7 +47,7 @@ public class TaskModelsList extends JList {
     }
 
     public void setTask(int pIndex, TaskModel pTask){
-        String label=pTask.getTitle() + "/" + pTask.getWorker().getName();
+        String label=pTask.getTitle() ; //+ "/" + pTask.getWorker().getName();
         mIndex2Task.set(pIndex,pTask);
         mTasksListModel.set(pIndex,label);
     }
@@ -62,7 +62,7 @@ public class TaskModelsList extends JList {
     }
 
     public void addTask(TaskModel pTask) {
-        String label=pTask.getTitle() + "/" + pTask.getWorker().getName();
+        String label=pTask.getTitle() ; //+ "/" + pTask.getWorker().getName();
         mIndex2Task.add(pTask);
         mTasksListModel.addElement(label);
     }

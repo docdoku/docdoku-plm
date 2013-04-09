@@ -20,8 +20,11 @@
 
 package com.docdoku.core.workflow;
 
+import com.docdoku.core.common.User;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.*;
 
 /**
@@ -51,11 +54,11 @@ public class SerialActivityModel extends ActivityModel {
     }
         
     @Override
-    public Activity createActivity() {
+    public Activity createActivity(Map<Role, User> roleUserMap) {
         Activity activity = new SerialActivity(step, lifeCycleState);
         List<Task> tasks = activity.getTasks();
         for(TaskModel model:taskModels){
-            Task task = model.createTask();
+            Task task = model.createTask(roleUserMap);
             task.setActivity(activity);
             tasks.add(task);
         }

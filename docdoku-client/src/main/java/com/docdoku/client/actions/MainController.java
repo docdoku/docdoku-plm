@@ -471,7 +471,7 @@ public class MainController {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries, null));
             MainModel.getInstance().updater.createDocMInFolder(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -537,7 +537,7 @@ public class MainController {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mDocumentService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mDocumentService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries,null));
             MainModel.getInstance().updater.makeNewVersion(originalAndNewDocM);
             return originalAndNewDocM;
         } catch (WebServiceException pWSEx) {

@@ -53,7 +53,7 @@ define([
             this.updateMaxTasksToComplete();
 
             require(["views/task_model_editor"], function(TaskModelEditorView) {
-                var taskModelEditorView = new TaskModelEditorView({model: taskModel, users: self.options.users});
+                var taskModelEditorView = new TaskModelEditorView({model: taskModel, roles: self.options.roles});
                 self.subviews.push(taskModelEditorView);
                 taskModelEditorView.render();
                 self.tasksUL.append(taskModelEditorView.el);

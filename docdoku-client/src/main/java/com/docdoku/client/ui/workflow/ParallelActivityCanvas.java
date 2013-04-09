@@ -108,7 +108,7 @@ public class ParallelActivityCanvas extends JPanel{
         taskModel.setNum(pTask.getNum());
         taskModel.setTitle(pTask.getTitle());
         taskModel.setInstructions(pTask.getInstructions());
-        taskModel.setWorker(pTask.getWorker());
+        //taskModel.setWorker(pTask.getWorker());
         JComponent canvas=new TaskModelCanvas(taskModel);
         boolean rejected=(pTask.isRejected());
         boolean approved=(pTask.isApproved());

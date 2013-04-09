@@ -294,6 +294,7 @@ public class DocumentResource {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
 
         /*
          * Null value for test purpose only
@@ -320,7 +321,14 @@ public class DocumentResource {
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
             }
-            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
+
+            Map<String, String> roleMappings = new HashMap<String,String>();
+
+            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+            }
+
+            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {

@@ -17,6 +17,7 @@ define([
 			ContentView.prototype.initialize.apply(this, arguments);
 			this.events["click .actions .new"] = "actionNew";
 			this.events["click .actions .delete"] = "actionDelete";
+			this.events["click .actions .roles"] = "actionRoles";
 		},
 		rendered: function () {
 			this.listView = this.addSubView(
@@ -43,7 +44,13 @@ define([
 				view.model.destroy();
 			});
 			return false;
-		}
+		},
+
+        actionRoles:function(){
+            require(['views/roles_modal_view'], function(RolesModalView) {
+                new RolesModalView().show();
+            });
+        }
 	});
 	return WorkflowContentListView;
 });

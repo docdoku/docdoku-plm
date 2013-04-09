@@ -219,6 +219,7 @@ public class DocumentsResource {
         String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
 
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
         String pDocMTemplateId = docCreationDTO.getTemplateId();
 
         /* Null value for test purpose only */
@@ -244,7 +245,15 @@ public class DocumentsResource {
                 }
             }
 
-            DocumentMaster createdDocMs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+            Map<String, String> roleMappings = new HashMap<String,String>();
+
+            if(rolesMappingDTO != null){
+                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                    roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+                }
+            }
+            DocumentMaster createdDocMs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+
             DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
             docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());

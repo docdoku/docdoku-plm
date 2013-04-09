@@ -37,6 +37,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     private String workflowModelId;
     private String templateId;
     private String path;
+    private RoleMappingDTO[] roleMapping;
 
     public DocumentCreationDTO() {
     }
@@ -116,6 +117,16 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     public void setPath(String path) {
         this.path = path;
     }
+
+
+    public RoleMappingDTO[] getRoleMapping() {
+        return roleMapping;
+    }
+
+    public void setRoleMapping(RoleMappingDTO[] roleMapping) {
+        this.roleMapping = roleMapping;
+    }
+
 
     @Override
     public String toString() {

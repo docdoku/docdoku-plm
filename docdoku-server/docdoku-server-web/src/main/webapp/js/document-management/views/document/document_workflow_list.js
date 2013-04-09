@@ -11,6 +11,15 @@ define([
 
 		template: Mustache.compile(template),
 
+        initialize: function() {
+            BaseView.prototype.initialize.apply(this, arguments);
+            this.events["change #select-" + this.cid] = "onChange";
+        },
+
+        onChange:function(){
+            this.trigger("workflow:change",this.selected());
+        },
+
 		collection: function () {
             var collection = new WorkflowList();
             collection.fetch();

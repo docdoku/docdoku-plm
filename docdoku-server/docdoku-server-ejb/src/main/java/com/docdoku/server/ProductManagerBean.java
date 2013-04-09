@@ -207,6 +207,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision newRevision = pm.createNextRevision(user);
 
         if (pWorkflowModelId != null) {
+            //TODO adapt to Part
+            /*
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow();
             newRevision.setWorkflow(workflow);
@@ -217,6 +219,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             //TODO adapt to Part
             //mailer.sendApproval(runningTasks, newRevision);
+            */
         }
         newRevision.setCheckOutUser(user);
         newRevision.setCheckOutDate(now);

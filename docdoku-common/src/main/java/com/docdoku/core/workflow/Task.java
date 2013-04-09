@@ -81,9 +81,8 @@ public class Task implements Serializable, Cloneable {
     
     
     public Task() {
-
     }
-    
+
     public Task(int pNum, String pTitle, String pInstructions, User pWorker) {
         num=pNum;
         title=pTitle;

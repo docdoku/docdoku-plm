@@ -11,10 +11,10 @@ define([
     "i18n!localization/nls/document-management-strings",
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
-    "common-objects/collections/users",
+    "collections/roles",
     "models/activity_model",
     "views/workflow_model_copy"
-], function(require, i18n, WorkflowModel, template, Users, ActivityModel, WorkflowModelCopyView) {
+], function(require, i18n, WorkflowModel, template, Roles, ActivityModel, WorkflowModelCopyView) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
         el: "#document-content",
@@ -29,8 +29,8 @@ define([
         initialize: function() {
             this.subviews = [];
 
-            this.users = new Users();
-            this.users.fetch({async: false});
+            this.roles = new Roles();
+            this.roles.fetch({async: false});
 
             if (_.isUndefined(this.options.workflowModelId)) {
                 this.model = new WorkflowModel();
@@ -57,7 +57,7 @@ define([
         addOneActivity: function(activityModel) {
             var self = this;
             require(["views/activity_model_editor"], function(ActivityModelEditorView) {
-                var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: self.users});
+                var activityModelEditorView = new ActivityModelEditorView({model: activityModel, roles: self.roles});
                 self.subviews.push(activityModelEditorView);
                 activityModelEditorView.render();
                 self.liAddActivitySection.before(activityModelEditorView.el);

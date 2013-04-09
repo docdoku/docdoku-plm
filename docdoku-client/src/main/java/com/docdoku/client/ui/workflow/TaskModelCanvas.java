@@ -58,8 +58,8 @@ public class TaskModelCanvas extends JPanel{
         titleLabel.setVerticalTextPosition(AbstractButton.BOTTOM);
         titleLabel.setHorizontalTextPosition(AbstractButton.CENTER);
         
-        JLabel workerValueLabel = new JLabel(mTaskModel.getWorker().getName());
-        workerValueLabel.setToolTipText(mTaskModel.getWorker().getEmail());
+        //JLabel workerValueLabel = new JLabel(mTaskModel.getWorker().getName());
+        //workerValueLabel.setToolTipText(mTaskModel.getWorker().getEmail());
         
         
         GridBagConstraints constraints = new GridBagConstraints();
@@ -79,7 +79,7 @@ public class TaskModelCanvas extends JPanel{
         add(new JLabel(I18N.BUNDLE.getString("Worker_label")), constraints);
         
         constraints.gridx = 1;
-        add(workerValueLabel, constraints);
+        //add(workerValueLabel, constraints);
         
         setBorder(BorderFactory.createEtchedBorder());
     }
