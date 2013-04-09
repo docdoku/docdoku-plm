@@ -20,32 +20,36 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.server.jsf.actions.ViewerBean;
 
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedProperty;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-
 public class DocumentServlet extends HttpServlet {
-    
+
     @EJB
     private IDocumentManagerLocal documentService;
-    
+
     @Override
-    protected void doGet(HttpServletRequest pRequest,
-                         HttpServletResponse pResponse)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
+
             String login = pRequest.getRemoteUser();
             String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
             int offset;
@@ -64,14 +68,14 @@ public class DocumentServlet extends HttpServlet {
             DocumentIteration doc =  docM.getLastIteration();
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
 
+            String vaultPath = getServletContext().getInitParameter("vaultPath");
 
-
-            pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
-
-
+            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         } catch (Exception pEx) {
-            throw new ServletException("Error while fetching your document.", pEx);
+            pEx.printStackTrace();
+            throw new ServletException("error while fetching your document.", pEx);
         }
     }
+
 }

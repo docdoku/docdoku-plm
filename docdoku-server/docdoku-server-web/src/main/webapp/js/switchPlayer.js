@@ -6,7 +6,7 @@ function switchMenu(obj, btn, context) {
         document.getElementById(btn).src=context+'/images/plus.png';
     }
     else {
-        el.style.display = 'inline';
+        el.style.display = 'block';
         document.getElementById(btn).src=context+'/images/minus.png';
     }
 }

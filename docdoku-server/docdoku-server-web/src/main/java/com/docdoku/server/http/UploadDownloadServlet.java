@@ -25,12 +25,16 @@ import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMasterTemplateKey;
+import com.docdoku.core.services.*;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,7 +45,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import javax.activation.FileTypeMap;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -67,6 +70,15 @@ public class UploadDownloadServlet extends HttpServlet {
 
     @EJB
     private IConverterManagerLocal converterService;
+
+    @EJB
+    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+
+    @EJB
+    private IDocumentPostUploaderManagerLocal documentPostUploaderService;
+
+    @EJB
+    private IDocumentViewerManagerLocal documentViewerService;
 
     private final static int CHUNK_SIZE = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 16;
@@ -104,8 +116,13 @@ public class UploadDownloadServlet extends HttpServlet {
                 String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                String[] pathInfosExtra = new String[]{};
+                if (pathInfos.length > offset + 6) {
+                    pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length);
+                }
+                String subResourceName = StringUtils.join(pathInfosExtra, '/');
                 fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
-                dataFile = documentService.getDataFile(fullName);
+                dataFile = documentResourceGetterService.getDataFile(fullName, subResourceName);
             } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
@@ -135,35 +152,22 @@ public class UploadDownloadServlet extends HttpServlet {
                 dataFile = productService.getDataFile(fullName);
             }
 
+            //set content type
+            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
+            pResponse.setContentType(contentType);
 
-            File fileToOutput;
-            if ("pdf".equals(pRequest.getParameter("type"))) {
-                pResponse.setContentType("application/pdf");
-                String ooHome = getServletContext().getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
-                fileToOutput = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
-            } else if ("swf".equals(pRequest.getParameter("type"))) {
-                pResponse.setContentType("application/x-shockwave-flash");
-                String pdf2SWFHome = getServletContext().getInitParameter("PDF2SWF_HOME");
-                String ooHome = getServletContext().getInitParameter("OO_HOME");
-                int ooPort = Integer.parseInt(getServletContext().getInitParameter("OO_PORT"));
-                FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
-                fileToOutput = fileConverter.convertToSWF(dataFile);
-            } else {
-                //pResponse.setHeader("Content-disposition", "attachment; filename=\"" + dataFile.getName() + "\"");             
-                String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
-                pResponse.setContentType(contentType);
-                fileToOutput = dataFile;
+            if (elementType.equals("documents") && "viewer".equals(pRequest.getParameter("type"))) {
+                dataFile = documentViewerService.prepareFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
             }
 
-            long lastModified = fileToOutput.lastModified();
+            long lastModified = dataFile.lastModified();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");
 
             if (lastModified > ifModified) {
                 setLastModifiedHeaders(lastModified, pResponse);
-                pResponse.setContentLength((int) fileToOutput.length());
+                pResponse.setContentLength((int) dataFile.length());
                 ServletOutputStream httpOut = pResponse.getOutputStream();
-                InputStream input = new BufferedInputStream(new FileInputStream(fileToOutput), BUFFER_CAPACITY);
+                InputStream input = new BufferedInputStream(new FileInputStream(dataFile), BUFFER_CAPACITY);
 
                 byte[] data = new byte[CHUNK_SIZE];
                 int length;
@@ -178,6 +182,7 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
+            pEx.printStackTrace();
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
             throw new ServletException("Error while downloading the file.", pEx);
         }
@@ -256,7 +261,8 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
             if (elementType.equals("documents")) {
-                documentService.saveFileInDocument(docPK, fileName, size);
+                File fileSaved = documentService.saveFileInDocument(docPK, fileName, size);
+                documentPostUploaderService.process(fileSaved);
             } else if (elementType.equals("document-templates")) {
                 documentService.saveFileInTemplate(templatePK, fileName, size);
             } else if (elementType.equals("part-templates")) {
@@ -321,4 +327,5 @@ public class UploadDownloadServlet extends HttpServlet {
     @Override
     protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
+
 }
