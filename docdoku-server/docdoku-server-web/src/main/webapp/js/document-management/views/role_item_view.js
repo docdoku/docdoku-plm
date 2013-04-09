@@ -45,8 +45,13 @@ define(
             },
 
             removeAndNotify:function(){
-                this.remove();
-                this.trigger("view:removed");
+                if(this.options.removable){
+                    this.remove();
+                    this.trigger("view:removed");
+                }else{
+                    alert(i18n.ALERT_ROLE_IN_USE);
+                }
+
             },
 
             changeModel:function(){

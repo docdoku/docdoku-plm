@@ -77,6 +77,14 @@ public class RoleManagerBean implements IRoleManagerWS, IRoleManagerLocal {
     }
 
     @Override
+    public Role[] getRolesInUse(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        List<Role> roles = roleDAO.findRolesInUseWorkspace(pWorkspaceId);
+        return roles.toArray(new Role[roles.size()]);
+    }
+
+    @Override
     @RolesAllowed("users")
     public Role createRole(String roleName, String workspaceId, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);

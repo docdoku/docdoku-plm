@@ -6,7 +6,8 @@ define({
         ROLE_NAME:"Role name",
         ADD:"Add",
         SAVE:"Save",
-        CANCEL:"Cancel"
+        CANCEL:"Cancel",
+        ALERT_ROLE_IN_USE:"This role cannot be removed, because it's in use in a workflow"
     },
     "fr": true
 });

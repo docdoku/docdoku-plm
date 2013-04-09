@@ -5,10 +5,11 @@ define(
         "i18n!localization/nls/roles-strings",
         "models/role",
         "collections/roles",
+        "collections/roles_in_use",
         "views/role_item_view",
         "common-objects/collections/users"
     ],
-    function(ModalView,template,i18n,Role,RolesList,RoleItemView,UserList) {
+    function(ModalView,template,i18n,Role,RolesList,RoleInUseList,RoleItemView,UserList) {
 
     var RolesModalView = ModalView.extend({
 
@@ -34,6 +35,7 @@ define(
 
             this.userList = new UserList();
             this.collection = new RolesList();
+            this.rolesInUse = new RoleInUseList();
 
             this.rolesToDelete=[];
 
@@ -41,7 +43,9 @@ define(
             this.listenTo(this.collection,"add",this.onModelAddedToCollection);
 
             this.userList.fetch({success:function(){
-                self.collection.fetch();
+                self.rolesInUse.fetch({success:function(){
+                    self.collection.fetch();
+                }});
             }});
 
             return this;
@@ -98,13 +102,23 @@ define(
 
         addRoleView:function(model){
             var self = this ;
-            var view = new RoleItemView({model:model, userList:this.userList,nullable:true}).render();
+            var modelCanBeRemoved = this.checkRemovable(model);
+            var view = new RoleItemView({model:model, userList:this.userList,nullable:true,removable:modelCanBeRemoved}).render();
             this.roleViews.push(view);
             this.$roleViews.append(view.$el);
-
             view.on("view:removed", function(){
                 self.rolesToDelete.push(model);
             });
+        },
+
+        checkRemovable:function(pModel){
+            var removable = true;
+            this.rolesInUse.each(function(model){
+                if(pModel.getName() == model.getName()){
+                    removable = false;
+                }
+            });
+            return removable;
         }
 
 

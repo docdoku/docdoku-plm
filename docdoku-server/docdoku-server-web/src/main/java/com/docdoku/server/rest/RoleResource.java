@@ -82,6 +82,27 @@ public class RoleResource {
 
     }
 
+    @GET
+    @Path("inuse")
+    @Produces("application/json;charset=UTF-8")
+    public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId){
+
+        try {
+            Role[] roles = roleService.getRolesInUse(workspaceId);
+            RoleDTO[] rolesDTO = new RoleDTO[roles.length];
+
+            for(int i = 0 ; i< roles.length ; i++){
+                rolesDTO[i] = mapRoleToDTO(roles[i]);
+            }
+
+            return rolesDTO;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
 
     @POST
     @Produces("application/json;charset=UTF-8")
