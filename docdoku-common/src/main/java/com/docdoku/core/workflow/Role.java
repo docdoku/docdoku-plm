@@ -25,6 +25,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * This class is the model used to create roles in a workspace
@@ -37,9 +38,9 @@ import javax.persistence.*;
 @NamedQueries({
         @NamedQuery(name="Role.findByWorkspace", query="SELECT r FROM Role r WHERE r.workspace.id = :workspaceId")
 })
-public class Role {
+public class Role implements Serializable {
 
-    @Column(name="ROLENAME", length = 255)
+    @Column(length = 255)
     @Id
     private String name = "";
 

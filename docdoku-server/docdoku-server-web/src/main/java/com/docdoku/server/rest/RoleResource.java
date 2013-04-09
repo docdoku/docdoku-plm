@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IRoleManagerLocal;
+import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.Role;
 import com.docdoku.core.workflow.RoleKey;
 import com.docdoku.server.rest.dto.RoleDTO;
@@ -50,7 +50,7 @@ import java.net.URLEncoder;
 public class RoleResource {
 
     @EJB
-    private IRoleManagerLocal roleService;
+    private IWorkflowManagerLocal roleService;
 
     private Mapper mapper;
 

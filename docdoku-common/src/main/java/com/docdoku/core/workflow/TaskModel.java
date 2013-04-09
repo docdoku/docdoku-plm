@@ -74,7 +74,7 @@ public class TaskModel implements Serializable, Cloneable {
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name="ROLE_NAME", referencedColumnName="ROLENAME"),
+            @JoinColumn(name="ROLE_NAME", referencedColumnName="NAME"),
             @JoinColumn(name="ROLE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private Role role;

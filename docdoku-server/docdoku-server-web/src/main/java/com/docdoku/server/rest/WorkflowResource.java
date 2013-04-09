@@ -19,11 +19,8 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.meta.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IRoleManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.rest.dto.*;
@@ -38,11 +35,7 @@ import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import static com.docdoku.server.rest.dto.ActivityModelDTO.Type.SERIAL;
 
 /**
  *
@@ -60,7 +53,7 @@ public class WorkflowResource {
     private IWorkflowManagerLocal workflowService;
 
     @EJB
-    private IRoleManagerLocal roleService;
+    private IWorkflowManagerLocal roleService;
 
     private Mapper mapper;
 
@@ -148,8 +141,10 @@ public class WorkflowResource {
                 for(TaskModel taskModel : taskModelList){
                     String roleName = taskModel.getRole().getName();
                     for(int j=0; j<roles.length; j++){
-                        if(roles[j].getName().equals(roleName))
+                        if(roles[j].getName().equals(roleName)){
                             taskModel.setRole(roles[j]);
+                            break;
+                        }
                     }
                 }
             }
