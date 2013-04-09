@@ -10,6 +10,7 @@ define([
 
         events: {
             "click .lifecycle-task-signing-link-a": "toggleSigningCanvas",
+            "click .lifecycle-task-signing-delete-a": "deleteSignature",
             "mousedown .lifecycle-activities-canvas": "canvasMouseDown",
             "mousemove .lifecycle-activities-canvas": "canvasMouseMove",
             "mouseup .lifecycle-activities-canvas": "canvasMouseUp",
@@ -45,6 +46,7 @@ define([
                 html: true,
                 placement: "top",
                 title: i18n.SIGN_TASK,
+                trigger: "manual",
                 content: function() {
                     return self.$signingPopover.html();
                 }
@@ -130,6 +132,16 @@ define([
             this.clearSigning()
         },
 
+        deleteSignature: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            this.signature = null;
+            $('.lifecycle-task-signing-img img').attr('src', this.signature);
+            $('.lifecycle-task-signing-img').addClass('hidden');
+            $('.lifecycle-task-signing-delete-a').addClass('hidden');
+        },
+
         clearSigning: function() {
             // Store the current transformation matrix
             this.context.save();
@@ -151,6 +163,7 @@ define([
             this.signature = this.canvas.toDataURL();
             $('.lifecycle-task-signing-img img').attr('src', this.signature);
             $('.lifecycle-task-signing-img').removeClass('hidden');
+            $('.lifecycle-task-signing-delete-a').removeClass('hidden');
 
             this.toggleSigningCanvas();
             this.clearSigning();
