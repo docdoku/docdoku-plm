@@ -1,31 +1,32 @@
 define([
+    "views/document/document_lifecycle_task_signing",
     "common-objects/utils/date",
     "i18n!localization/nls/document-management-strings",
     "text!templates/document/document_lifecycle_task.html"
-], function(date, i18n, template) {
+], function(LifecycleTaskSigningView, date, i18n, template) {
 
     var LifecycleTaskView = Backbone.View.extend({
 
         tagName: 'div',
-        className:'task well',
+        className: 'task well',
 
         events: {
-            "click i.toggle-comment" : "toggleComment",
-            "click i.approve-task" : "approveTaskButtonClicked",
-            "click i.reject-task" : "rejectTaskButtonClicked",
-            "submit .closure-comment form":"submitClosure",
-            "click .closure-comment .cancel":"cancelClosure"
+            "click i.toggle-comment": "toggleComment",
+            "click i.approve-task": "approveTaskButtonClicked",
+            "click i.reject-task": "rejectTaskButtonClicked",
+            "submit .closure-comment form": "submitClosure",
+            "click .closure-comment .cancel": "cancelClosure"
         },
 
         initialize: function() {
-            this.APPROVE_MODE = "1" ;
-            this.REJECT_MODE = "2" ;
+            this.APPROVE_MODE = "1";
+            this.REJECT_MODE = "2";
         },
 
-        setTask:function(task){
+        setTask: function(task) {
             this.task = task;
 
-            if(this.task.closureDate){
+            if (this.task.closureDate) {
                 this.task.formattedClosureDate = date.formatTimestamp(
                     i18n._DATE_FORMAT,
                     this.task.closureDate
@@ -35,89 +36,100 @@ define([
             this.task.isAcceptableOrRejectable = (
                 this.task.worker.login == APP_CONFIG.login &&
                     this.task.status.toLowerCase() == "in_progress"
-            );
+                );
 
             return this;
         },
 
         render: function() {
-            this.$el.html(Mustache.render(template, {i18n: i18n, task:this.task}));
+            this.$el.html(Mustache.render(template, {i18n: i18n, task: this.task}));
             this.$el.addClass(this.task.status.toLowerCase());
-            this.$(".user-popover").userPopover(this.task.worker.login,this.task.title,"top");
+            this.$(".user-popover").userPopover(this.task.worker.login, this.task.title, "top");
             this.bindDomElements();
+            this.lifecycleTaskSigningView = new LifecycleTaskSigningView().render();
+            this.$tasksigning.append(this.lifecycleTaskSigningView.$el);
             return this;
         },
 
-        bindDomElements:function(){
+        bindDomElements: function() {
             this.$comment = this.$(".task-comment");
             this.$closureComment = this.$(".closure-comment");
             this.$closureCommentTitle = this.$closureComment.find("h5");
             this.$closureTypeInput = this.$closureComment.find("input[name=closure-type]");
             this.$commentInput = this.$closureComment.find("input[name=closure-comment-input]");
+            this.$tasksigning = this.$(".task-signing");
         },
 
-        toggleComment:function(){
+        toggleComment: function() {
             this.$comment.toggleClass("toggled");
         },
 
-        approveTaskButtonClicked:function (){
+        approveTaskButtonClicked: function() {
             this.$closureComment.addClass("toggled");
             this.$closureTypeInput.val(this.APPROVE_MODE);
             this.$closureCommentTitle.text(i18n.APPROVE_TASK);
         },
 
-        rejectTaskButtonClicked:function() {
+        rejectTaskButtonClicked: function() {
             this.$closureComment.addClass("toggled");
             this.$closureTypeInput.val(this.REJECT_MODE);
             this.$closureCommentTitle.text(i18n.REJECT_TASK);
         },
 
-        submitClosure:function(e){
+        submitClosure: function(e) {
 
             var processUrl = "/api/workspaces/"
                 + APP_CONFIG.workspaceId
                 + "/tasks/process?"
-                +"activityWorkflowId="+this.task.parentWorkflowId
-                +"&index="+this.task.index
-                +"&activityStep="+this.task.parentActivityStep;
+                + "activityWorkflowId=" + this.task.parentWorkflowId
+                + "&index=" + this.task.index
+                + "&activityStep=" + this.task.parentActivityStep;
 
-            var closureComment = this.$commentInput.val() ;
-            var closureType = this.$closureTypeInput.val() ;
+            var closureComment = this.$commentInput.val();
+            var closureType = this.$closureTypeInput.val();
+            var signature = this.lifecycleTaskSigningView.signature;
 
-            if(closureType == this.APPROVE_MODE){
+            var dto = JSON.stringify({
+                comment: closureComment,
+                signature: signature
+            });
+
+            if (closureType == this.APPROVE_MODE) {
 
                 $.ajax({
                     context: this,
                     type: "POST",
-                    url: processUrl+"&action=approve",
-                    data : closureComment,
-                    contentType: "text/plain",
+                    url: processUrl + "&action=approve",
+                    data: dto,
+                    contentType: "application/json;charset=UTF-8",
                     success: function() {
                         this.task.closureDate = new Date().getTime();
                         this.task.closureComment = closureComment;
+                        this.task.signature = signature;
                         this.task.status = "approved";
                         this.refreshTask();
                     },
-                    error:function(error){
+                    error: function(error) {
                         alert(error.responseText);
                     }
                 });
 
-            }else if(closureType == this.REJECT_MODE){
+            } else if (closureType == this.REJECT_MODE) {
 
                 $.ajax({
                     context: this,
                     type: "POST",
-                    url: processUrl+"&action=reject",
-                    data : closureComment,
-                    contentType: "text/plain",
+                    url: processUrl + "&action=reject",
+                    data: dto,
+                    contentType: "application/json;charset=UTF-8",
                     success: function() {
                         this.task.closureDate = new Date().getTime();
                         this.task.closureComment = closureComment;
+                        this.task.signature = signature;
                         this.task.status = "rejected";
                         this.refreshTask();
                     },
-                    error:function(error){
+                    error: function(error) {
                         alert(error.responseText);
                     }
                 });
@@ -126,20 +138,20 @@ define([
 
             e.stopPropagation();
             e.preventDefault();
-            return false ;
+            return false;
         },
 
-        cancelClosure:function(e){
+        cancelClosure: function(e) {
             this.$closureComment.removeClass("toggled");
             e.stopPropagation();
             e.preventDefault();
-            return false ;
+            return false;
         },
 
-        refreshTask:function(){
+        refreshTask: function() {
             this.trigger("task:change");
-           // this.setTask(this.task);
-          //  this.render();
+            // this.setTask(this.task);
+            //  this.render();
         }
 
     });

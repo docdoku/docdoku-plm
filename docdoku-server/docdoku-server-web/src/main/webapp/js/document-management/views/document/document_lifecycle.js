@@ -41,6 +41,10 @@ define([
             return this;
         },
 
+        setSigningMode: function() {
+
+        },
+
         bindDomElements: function() {
         }
 

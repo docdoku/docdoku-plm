@@ -14,7 +14,10 @@
     <p>
         <b>{{i18n.TASK_CLOSED_ON}}</b><br /> {{task.formattedClosureDate}}<br />
         <b>{{i18n.ITERATION}}</b> : {{task.targetIteration}}<br />
-        <b>{{i18n.COMMENT}}</b><br />{{task.closureComment}}
+        <b>{{i18n.COMMENT}}</b><br />{{task.closureComment}}<br />
+        {{#task.signature}}
+        <b>{{i18n.SIGN_TASK}}</b><br /><img src={{task.signature}} />
+        {{/task.signature}}
     </p>
 </div>
 {{/task.closureDate}}
@@ -26,6 +29,7 @@
             <input type="hidden" name="closure-type" value="0" />
             <input placeholder="{{i18n.CLOSURE_COMMENT}}" type="text" class="input-medium" name="closure-comment-input" />
         </div>
+        <div class="task-signing"></div>
         <div>
             <input type="submit" class="btn btn-primary" value="Ok"/>
             <button class="btn cancel">{{i18n.CANCEL}}</button>
