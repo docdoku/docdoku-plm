@@ -85,7 +85,7 @@ public class MainController {
             System.out.println("Approving task " + pTaskKey);
             DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.approve(workspaceId, pTaskKey, pComment));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.approve(workspaceId, pTaskKey, pComment, null));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -103,7 +103,7 @@ public class MainController {
             System.out.println("Rejecting task " + pTaskKey);
             DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.reject(workspaceId, pTaskKey, pComment));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.reject(workspaceId, pTaskKey, pComment, null));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {

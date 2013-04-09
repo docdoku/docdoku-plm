@@ -624,14 +624,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment)
-            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-        return approve(pWorkspaceId, pTaskKey, pComment, null);
-    }
-
-    @RolesAllowed("users")
-    @CheckActivity
-    @Override
     public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
@@ -670,14 +662,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
         mailer.sendApproval(runningTasks, docM);
         return docM;
-    }
-
-    @RolesAllowed("users")
-    @CheckActivity
-    @Override
-    public DocumentMaster reject(String pWorkspaceId, TaskKey pTaskKey, String pComment)
-            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-        return reject(pWorkspaceId, pTaskKey, pComment, null);
     }
 
     @RolesAllowed("users")
