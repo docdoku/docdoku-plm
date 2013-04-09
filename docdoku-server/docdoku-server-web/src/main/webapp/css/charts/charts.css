@@ -1,6 +1,14 @@
+
+#disk_usage_chart , #entities_chart{
+    width:450px;
+    height:290px;
+}
+#cod_chart,#cop_chart{
+    width:900px;
+    height:340px;
+    clear:both;
+}
 .chart {
-    height: 290px;
-    width: 400px;
     float: left;
 }
 .chart > svg{

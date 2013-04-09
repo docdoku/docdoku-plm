@@ -22,6 +22,7 @@
         <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/discreteBar.js"></script>
         <script type="text/javascript" src="/js/lib/charts/nv3d/src/models/discreteBarChart.js"></script>
         <script type="text/javascript" src="/js/lib/charts/nv3d/src/utils.js"></script>
+        <script type="text/javascript" src="/js/lib/charts/nv3d/lib/fisheye.js"></script>
         <script type="text/javascript" src="/js/lib/charts/nv3d/custom/tooltip.js"></script>
 
         <link href="/css/charts/charts.css" rel="stylesheet" type="text/css" />
@@ -57,26 +58,48 @@
                 <svg></svg>
             </div>
 
+            <hr class="clear"/>
+            <div class="chart" id="cod_chart">
+                <h2>Checked out documents</h2>
+                <svg></svg>
+            </div>
+
+            <hr class="clear"/>
+            <div class="chart" id="cop_chart">
+                <h2>Checked out parts</h2>
+                <svg></svg>
+            </div>
+
         </div>
 
         <script type="text/javascript">
+
+            // Values from bean
             var diskUsage = JSON.parse('#{adminStateBean.diskSpaceUsageStats}');
             var usersCount = parseInt('#{adminStateBean.usersCount}');
             var documentsCount = parseInt('#{adminStateBean.documentsCount}');
             var productsCount = parseInt('#{adminStateBean.productsCount}');
             var partsCount = parseInt('#{adminStateBean.partsCount}');
-            var cod = JSON.parse('#{adminStateBean.documentsStats}');
+            var cod = JSON.parse('#{adminStateBean.checkedOutDocumentsStats}');
+            var cop = JSON.parse('#{adminStateBean.checkedOutPartsStats}');
             var usersInWorkspace = JSON.parse('#{adminStateBean.usersInWorkspace}');
-        </script>
 
-        <hr class="clear"/>
 
-        <script type="text/javascript">
+            // Charts
 
             // ----------------------- DISK USAGE
 
+            function bytesToSize(bytes) {
+                var sizes = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+                if (bytes == 0) return 'n/a';
+                var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                if (i == 0) { return (bytes / Math.pow(1024, i)) + ' ' + sizes[i]; }
+                return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+            }
+
             var diskUsageData = [];
             var totalDiskUsage = 0;
+
             for(var key in diskUsage){
                 diskUsageData.push({key:key,y:diskUsage[key],f:bytesToSize(diskUsage[key])});
                 totalDiskUsage+=diskUsage[key];
@@ -126,10 +149,12 @@
                         .x(function(d) { return d.key })
                         .y(function(d) { return d.y })
                         .staggerLabels(true)
-                        .tooltips(true)
+                        .tooltips(false)
                         .width(width)
                         .height(height)
                         .showValues(true)
+
+                chart.yAxis.tickFormat(d3.format('.f'));
 
                 d3.select('#entities_chart svg')
                         .datum([{key:"entities",values:entitiesData}])
@@ -141,13 +166,121 @@
 
             // ----------------------- CHECKED OUT DOCUMENTS
 
-            function bytesToSize(bytes) {
-                var sizes = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-                if (bytes == 0) return 'n/a';
-                var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-                if (i == 0) { return (bytes / Math.pow(1024, i)) + ' ' + sizes[i]; }
-                return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+            var maxDays = 30 ;
+
+            function calculateDaysSinceTimestamp(timestamp){
+                var days = parseInt(((((new Date().getTime() - timestamp)/1000)/60)/60)/24);
+                return days &lt; maxDays ? days+1 : maxDays;
             }
+
+            function codData() {
+                var data = [];
+                for(var user in cod){
+                    var documents = cod[user];
+                    var mapDayDoc = {};
+                    var userData = {
+                        key: user,
+                        values: []
+                    };
+                    for(var i = 0 ; i &lt; maxDays+1 ; i++){
+                        mapDayDoc[i]=0;
+                    }
+                    for(var i = 0; i &lt; documents.length ; i++){
+                        mapDayDoc[calculateDaysSinceTimestamp(documents[i].date)] ++;
+                    }
+                    for(var day in mapDayDoc){
+                        if(mapDayDoc[day] > 0){
+                            userData.values.push({
+                                x: day, y: mapDayDoc[day] , size: mapDayDoc[day]
+                            });
+                        }
+                    }
+                    data.push(userData);
+                }
+                return data ;
+
+            }
+
+            nv.addGraph(function() {
+                var width = 900, height = 290;
+                var chart = nv.models.scatterChart()
+                        .showDistX(true)
+                        .showDistY(true)
+                        .width(width)
+                        .height(height)
+                        .forceX([0,maxDays])
+                        .forceY([0,null])
+                        .color(d3.scale.category10().range());
+
+                chart.xAxis.tickFormat(d3.format('.f'))
+                chart.yAxis.tickFormat(d3.format('.f'))
+
+                d3.select('#cod_chart svg')
+                        .datum(codData())
+                        .transition().duration(500)
+                        .call(chart);
+
+                nv.utils.windowResize(chart.update);
+
+                return chart;
+            });
+
+
+            // ----------------------- CHECKED OUT PARTS
+
+            function copData() {
+                var data = [];
+                for(var user in cop){
+                    var parts = cop[user];
+                    var mapDayPart = {};
+                    var userData = {
+                        key: user,
+                        values: []
+                    };
+                    for(var i = 0 ; i &lt; maxDays+1 ; i++){
+                        mapDayPart[i]=0;
+                    }
+                    for(var i = 0; i &lt; parts.length ; i++){
+                        mapDayPart[calculateDaysSinceTimestamp(parts[i].date)] ++;
+                    }
+                    for(var day in mapDayPart){
+                        if(mapDayPart[day] > 0){
+                            userData.values.push({
+                                x: day, y: mapDayPart[day] , size: mapDayPart[day]
+                            });
+                        }
+                    }
+                    data.push(userData);
+                }
+                return data ;
+
+            }
+
+            nv.addGraph(function() {
+                var width = 900, height = 290;
+                var chart = nv.models.scatterChart()
+                        .showDistX(true)
+                        .showDistY(true)
+                        .width(width)
+                        .height(height)
+                        .forceX([0,maxDays])
+                        .forceY([0,null])
+                        .color(d3.scale.category10().range());
+
+                chart.xAxis.tickFormat(d3.format('.f'))
+                chart.yAxis.tickFormat(d3.format('.f'))
+
+                d3.select('#cop_chart svg')
+                        .datum(copData())
+                        .transition().duration(500)
+                        .call(chart);
+
+                nv.utils.windowResize(chart.update);
+
+                return chart;
+            });
+
+
         </script>
 
     </ui:define>

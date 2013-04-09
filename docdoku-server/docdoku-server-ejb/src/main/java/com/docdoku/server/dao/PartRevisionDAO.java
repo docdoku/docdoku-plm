@@ -23,9 +23,11 @@ package com.docdoku.server.dao;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.PartRevisionNotFoundException;
+
+import java.util.List;
 import java.util.Locale;
 import javax.persistence.EntityManager;
-
+import javax.persistence.TypedQuery;
 
 
 public class PartRevisionDAO {
@@ -60,5 +62,11 @@ public class PartRevisionDAO {
 
     public void removeRevision(PartRevision pPartR){
         em.remove(pPartR);
+    }
+
+    public List<PartRevision> findAllCheckedOutPartRevisions(String pWorkspaceId) {
+        TypedQuery<PartRevision> query = em.createQuery("SELECT DISTINCT p FROM PartRevision p WHERE p.checkOutUser is not null and p.partMaster.workspace.id = :workspaceId", PartRevision.class);
+        query.setParameter("workspaceId", pWorkspaceId);
+        return query.getResultList();
     }
 }
