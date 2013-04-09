@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.services.*;
@@ -35,6 +36,7 @@ import org.codehaus.jettison.json.JSONObject;
 import java.io.File;
 import java.io.Serializable;
 
+import java.sql.Array;
 import java.util.*;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -65,7 +67,6 @@ public class AdminStateBean implements Serializable {
         UserGroup ug = userManager.getUserGroup(new UserGroupKey(selectedWorkspace,selectedGroup));
         return ug.getUsers().toArray(new User[ug.getUsers().size()]);
     }
-
     
     public User[] getUsersToManage() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User[] users = documentService.getUsers(selectedWorkspace);
@@ -83,7 +84,6 @@ public class AdminStateBean implements Serializable {
     public UserGroup[] getGroups() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         return userManager.getUserGroups(selectedWorkspace);
     }
-
     
     public Map<String, WorkspaceUserMembership> getUserMembers() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
 
@@ -101,7 +101,6 @@ public class AdminStateBean implements Serializable {
         for (WorkspaceUserGroupMembership membership : groupMemberships) {
             groupMembersMap.put(membership.getMemberId(), membership);
         }
-
 
         return groupMembersMap;
     }
@@ -156,27 +155,62 @@ public class AdminStateBean implements Serializable {
 
     }
 
-    public JSONObject getDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+    public JSONObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
 
-        JSONObject documentsStats = new JSONObject();
+        DocumentMaster[] checkedOutDocumentMasters = documentService.getAllCheckedOutDocumentMasters(getCurrentWorkspace().getId());
 
-        DocumentMaster[] checkedOutDocumentMasters = documentService.getCheckedOutDocumentMasters(getCurrentWorkspace().getId());
+        JSONObject statsByUser = new JSONObject();
 
-        JSONArray docMJSONArray = new JSONArray();
+        for(DocumentMaster documentMaster : checkedOutDocumentMasters){
 
-        for(DocumentMaster docM : checkedOutDocumentMasters){
-            JSONObject docMJSON = new JSONObject();
-            docMJSON.put("id",docM.getId());
-            docMJSON.put("date",docM.getCheckOutDate().getTime());
-            docMJSON.put("user",docM.getCheckOutUser());
-            docMJSONArray.put(docMJSON);
+            String userLogin = documentMaster.getCheckOutUser().getLogin() ;
+
+            JSONArray userArray;
+            try {
+                userArray = (JSONArray) statsByUser.get(userLogin);
+            } catch (JSONException e) {
+                userArray = new JSONArray();
+                statsByUser.put(userLogin, userArray);
+            }
+
+            JSONObject doc = new JSONObject();
+            doc.put("date",documentMaster.getCheckOutDate().getTime());
+            userArray.put(doc);
+
         }
 
-        documentsStats.put("checkedOutDocuments",docMJSONArray);
-
-        return documentsStats;
+        return statsByUser;
 
     }
+
+    public JSONObject getCheckedOutPartsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+
+        PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(getCurrentWorkspace().getId());
+
+        JSONObject statsByUser = new JSONObject();
+
+        for(PartRevision partRevision : checkedOutPartRevisions){
+
+            String userLogin = partRevision.getCheckOutUser().getLogin() ;
+
+            JSONArray userArray;
+            try {
+                userArray = (JSONArray) statsByUser.get(userLogin);
+            } catch (JSONException e) {
+                userArray = new JSONArray();
+                statsByUser.put(userLogin, userArray);
+            }
+
+            JSONObject doc = new JSONObject();
+            doc.put("date",partRevision.getCheckOutDate().getTime());
+            userArray.put(doc);
+
+        }
+
+        return statsByUser;
+
+    }
+
 
 
     public JSONArray getUsersInWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
@@ -201,7 +235,6 @@ public class AdminStateBean implements Serializable {
     public void setSelectedWorkspace(String selectedWorkspace) {
         this.selectedWorkspace = selectedWorkspace;
     }
-    
     
     public String getSelectedGroup() {
         return selectedGroup;
