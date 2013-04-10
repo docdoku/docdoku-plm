@@ -39,35 +39,41 @@
             </p>
         </div>
 
-        <h2>#{i18nWorkspaceDashboard['title1']}</h2>
-
-        <h3>#{adminStateBean.selectedWorkspace}</h3>
+        <h2>#{i18nWorkspaceDashboard['title1']} : #{adminStateBean.selectedWorkspace}</h2>
 
         <hr/>
 
         <div class="charts">
 
             <div class="chart" id="disk_usage_chart">
-                <h2>#{i18nWorkspaceDashboard['chartTitles.diskusage']}</h2>
+                <h3>#{i18nWorkspaceDashboard['chartTitles.diskusage']}</h3>
                 <svg></svg>
                 <p class="total"></p>
             </div>
 
             <div class="chart" id="entities_chart">
-                <h2>#{i18nWorkspaceDashboard['chartTitles.entities']}</h2>
+                <h3>#{i18nWorkspaceDashboard['chartTitles.entities']}</h3>
+                <svg></svg>
+            </div>
+
+            <hr class="clear"/>
+            <div class="chart" id="users_chart">
+                <h3>#{i18nWorkspaceDashboard['chartTitles.users']}</h3>
                 <svg></svg>
             </div>
 
             <hr class="clear"/>
             <div class="chart" id="cod_chart">
-                <h2>#{i18nWorkspaceDashboard['chartTitles.checkedOutDocs']}</h2>
+                <h3>#{i18nWorkspaceDashboard['chartTitles.checkedOutDocs']}</h3>
                 <svg></svg>
+                <p class="total"></p>
             </div>
 
             <hr class="clear"/>
             <div class="chart" id="cop_chart">
-                <h2>#{i18nWorkspaceDashboard['chartTitles.checkedOutParts']}</h2>
+                <h3>#{i18nWorkspaceDashboard['chartTitles.checkedOutParts']}</h3>
                 <svg></svg>
+                <p class="total"></p>
             </div>
 
         </div>
@@ -83,10 +89,9 @@
             var cod = JSON.parse('#{adminStateBean.checkedOutDocumentsStats}');
             var cop = JSON.parse('#{adminStateBean.checkedOutPartsStats}');
             var usersInWorkspace = JSON.parse('#{adminStateBean.usersInWorkspace}');
-
+            var usersStats = JSON.parse('#{adminStateBean.usersStats}');
 
             // Charts
-
             // ----------------------- DISK USAGE
 
             function bytesToSize(bytes) {
@@ -105,7 +110,7 @@
                 totalDiskUsage+=diskUsage[key];
             }
 
-            $("#disk_usage_chart p.total").html("Total Usage : "+bytesToSize(totalDiskUsage));
+            $("#disk_usage_chart p.total").html("#{i18nWorkspaceDashboard['chartInfos.totalusage']} : "+bytesToSize(totalDiskUsage));
 
             nv.addGraph(function() {
                 var chart;
@@ -119,7 +124,7 @@
                         .color(d3.scale.category10().range())
                         .width(width)
                         .height(height)
-                        .donut(true)
+                        .donut(false)
                         .tooltipContent(function(x, y, e, graph){return diskUsageTooltip(x, e.point.f)});
 
                 d3.select("#disk_usage_chart svg")
@@ -128,8 +133,6 @@
                         .attr('width', width)
                         .attr('height', height)
                         .call(chart);
-
-                chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
 
                 return chart;
             });
@@ -152,7 +155,7 @@
                         .tooltips(false)
                         .width(width)
                         .height(height)
-                        .showValues(true)
+                        .showValues(true);
 
                 chart.yAxis.tickFormat(d3.format('.f'));
 
@@ -164,6 +167,39 @@
                 return chart;
             });
 
+
+
+            // ----------------------- USERS AND GROUPS
+
+            var usersAndGroupData = [];
+
+            for(var key in usersStats){
+                usersAndGroupData.push({key:key,y:usersStats[key]});
+            }
+
+            nv.addGraph(function() {
+                var width = 800, height = 200;
+                var chart = nv.models.discreteBarChart()
+                        .x(function(d) { return d.key })
+                        .y(function(d) { return d.y })
+                        .staggerLabels(true)
+                        .tooltips(false)
+                        .width(width)
+                        .height(height)
+                        .showValues(true);
+
+                chart.yAxis.tickFormat(d3.format('.f'));
+
+                d3.select('#users_chart svg')
+                        .datum([{key:"entities",values:usersAndGroupData}])
+                        .transition().duration(500)
+                        .call(chart);
+
+                return chart;
+            });
+
+
+
             // ----------------------- CHECKED OUT DOCUMENTS
 
             var maxDays = 30 ;
@@ -173,32 +209,30 @@
                 return days &lt; maxDays ? days+1 : maxDays;
             }
 
-            function codData() {
-                var data = [];
-                for(var user in cod){
-                    var documents = cod[user];
-                    var mapDayDoc = {};
-                    var userData = {
-                        key: user,
-                        values: []
-                    };
-                    for(var i = 0 ; i &lt; maxDays+1 ; i++){
-                        mapDayDoc[i]=0;
-                    }
-                    for(var i = 0; i &lt; documents.length ; i++){
-                        mapDayDoc[calculateDaysSinceTimestamp(documents[i].date)] ++;
-                    }
-                    for(var day in mapDayDoc){
-                        if(mapDayDoc[day] > 0){
-                            userData.values.push({
-                                x: day, y: mapDayDoc[day] , size: mapDayDoc[day]
-                            });
-                        }
-                    }
-                    data.push(userData);
+            var codData = [];
+            var totalCod = 0;
+            for(var user in cod){
+                var documents = cod[user];
+                var mapDayDoc = {};
+                var userData = {
+                    key: user,
+                    values: []
+                };
+                for(var i = 0 ; i &lt; maxDays+1 ; i++){
+                    mapDayDoc[i]=0;
                 }
-                return data ;
-
+                for(var i = 0; i &lt; documents.length ; i++){
+                    mapDayDoc[calculateDaysSinceTimestamp(documents[i].date)] ++;
+                    totalCod++;
+                }
+                for(var day in mapDayDoc){
+                    if(mapDayDoc[day] > 0){
+                        userData.values.push({
+                            x: day, y: mapDayDoc[day] , size: mapDayDoc[day]
+                        });
+                    }
+                }
+                codData.push(userData);
             }
 
             nv.addGraph(function() {
@@ -218,7 +252,7 @@
                 chart.yAxis.axisLabel("#{i18nWorkspaceDashboard['chartAxis.documentsNumber']}");
 
                 d3.select('#cod_chart svg')
-                        .datum(codData())
+                        .datum(codData)
                         .transition().duration(500)
                         .call(chart);
 
@@ -227,36 +261,38 @@
                 return chart;
             });
 
+            $("#cod_chart p.total").html("#{i18nWorkspaceDashboard['chartInfos.totalcod']} : "+totalCod);
+
 
             // ----------------------- CHECKED OUT PARTS
 
-            function copData() {
-                var data = [];
-                for(var user in cop){
-                    var parts = cop[user];
-                    var mapDayPart = {};
-                    var userData = {
-                        key: user,
-                        values: []
-                    };
-                    for(var i = 0 ; i &lt; maxDays+1 ; i++){
-                        mapDayPart[i]=0;
-                    }
-                    for(var i = 0; i &lt; parts.length ; i++){
-                        mapDayPart[calculateDaysSinceTimestamp(parts[i].date)] ++;
-                    }
-                    for(var day in mapDayPart){
-                        if(mapDayPart[day] > 0){
-                            userData.values.push({
-                                x: day, y: mapDayPart[day] , size: mapDayPart[day]
-                            });
-                        }
-                    }
-                    data.push(userData);
-                }
-                return data ;
 
+            var copData = [];
+            var totalCop = 0;
+            for(var user in cop){
+                var parts = cop[user];
+                var mapDayPart = {};
+                var userData = {
+                    key: user,
+                    values: []
+                };
+                for(var i = 0 ; i &lt; maxDays+1 ; i++){
+                    mapDayPart[i]=0;
+                }
+                for(var i = 0; i &lt; parts.length ; i++){
+                    mapDayPart[calculateDaysSinceTimestamp(parts[i].date)] ++;
+                    totalCop++;
+                }
+                for(var day in mapDayPart){
+                    if(mapDayPart[day] > 0){
+                        userData.values.push({
+                            x: day, y: mapDayPart[day] , size: mapDayPart[day]
+                        });
+                    }
+                }
+                copData.push(userData);
             }
+
 
             nv.addGraph(function() {
                 var width = 900, height = 290;
@@ -275,7 +311,7 @@
                 chart.yAxis.axisLabel("#{i18nWorkspaceDashboard['chartAxis.partsNumber']}");
 
                 d3.select('#cop_chart svg')
-                        .datum(copData())
+                        .datum(copData)
                         .transition().duration(500)
                         .call(chart);
 
@@ -284,6 +320,7 @@
                 return chart;
             });
 
+            $("#cop_chart p.total").html("#{i18nWorkspaceDashboard['chartInfos.totalcop']} : "+totalCop);
 
         </script>
 
