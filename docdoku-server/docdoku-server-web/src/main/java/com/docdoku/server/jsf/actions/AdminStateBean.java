@@ -55,7 +55,7 @@ public class AdminStateBean implements Serializable {
 
     private String selectedWorkspace;
     private String selectedGroup;
-        
+
     public AdminStateBean() {
     }
 
@@ -126,25 +126,25 @@ public class AdminStateBean implements Serializable {
     }
 
     public int getDocumentsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        return documentService.getDocumentsCountInWorkspace(getCurrentWorkspace().getId());
+        return documentService.getDocumentsCountInWorkspace(selectedWorkspace);
     }
 
     public int getProductsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
-        return productService.getConfigurationItems(getCurrentWorkspace().getId()).size();
+        return productService.getConfigurationItems(selectedWorkspace).size();
     }
 
     public int getPartsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
-        return productService.getPartMastersCount(getCurrentWorkspace().getId());
+        return productService.getPartMastersCount(selectedWorkspace);
     }
 
     public JSONObject getDiskSpaceUsageStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
 
         Map<String, Long> diskUsage = new HashMap<String,Long>();
 
-        Long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(getCurrentWorkspace().getId());
-        Long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(getCurrentWorkspace().getId());
-        Long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(getCurrentWorkspace().getId());
-        Long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(getCurrentWorkspace().getId());
+        Long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(selectedWorkspace);
+        Long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(selectedWorkspace);
+        Long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
+        Long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
 
         diskUsage.put("documents", documentDiskUsage);
         diskUsage.put("parts", partsDiskUsage);
@@ -157,7 +157,7 @@ public class AdminStateBean implements Serializable {
 
     public JSONObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
 
-        DocumentMaster[] checkedOutDocumentMasters = documentService.getAllCheckedOutDocumentMasters(getCurrentWorkspace().getId());
+        DocumentMaster[] checkedOutDocumentMasters = documentService.getAllCheckedOutDocumentMasters(selectedWorkspace);
 
         JSONObject statsByUser = new JSONObject();
 
@@ -185,7 +185,7 @@ public class AdminStateBean implements Serializable {
 
     public JSONObject getCheckedOutPartsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
 
-        PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(getCurrentWorkspace().getId());
+        PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(selectedWorkspace);
 
         JSONObject statsByUser = new JSONObject();
 
@@ -224,6 +224,34 @@ public class AdminStateBean implements Serializable {
 
     }
 
+    public JSONObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, JSONException {
+
+        WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(selectedWorkspace);
+        WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(selectedWorkspace);
+
+        int usersCount = getUsersCount();
+        int activeUsersCount = workspaceUserMemberships.length;
+        int inactiveUsersCount = usersCount - activeUsersCount;
+
+        int groupsCount = getGroups().length;
+        int activeGroupsCount = workspaceUserGroupMemberships.length;
+        int inactiveGroupsCount = groupsCount - activeGroupsCount;
+
+        JSONObject usersStats = new JSONObject();
+
+        usersStats.put("users", usersCount);
+        usersStats.put("activeusers", activeUsersCount);
+        usersStats.put("inactiveusers", inactiveUsersCount);
+
+        usersStats.put("groups", groupsCount);
+        usersStats.put("activegroups", activeGroupsCount);
+        usersStats.put("inactivegroups", inactiveGroupsCount);
+
+        return usersStats;
+    }
+
+
+
     public Workspace getCurrentWorkspace() {
         return userManager.getWorkspace(selectedWorkspace); 
     }
@@ -243,5 +271,5 @@ public class AdminStateBean implements Serializable {
     public void setSelectedGroup(String selectedGroup) {
         this.selectedGroup = selectedGroup;
     }
-    
+
 }
