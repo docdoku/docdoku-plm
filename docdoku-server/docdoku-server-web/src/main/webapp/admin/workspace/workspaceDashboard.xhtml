@@ -48,25 +48,25 @@
         <div class="charts">
 
             <div class="chart" id="disk_usage_chart">
-                <h2>Disk usage</h2>
+                <h2>#{i18nWorkspaceDashboard['chartTitles.diskusage']}</h2>
                 <svg></svg>
                 <p class="total"></p>
             </div>
 
             <div class="chart" id="entities_chart">
-                <h2>Entities</h2>
+                <h2>#{i18nWorkspaceDashboard['chartTitles.entities']}</h2>
                 <svg></svg>
             </div>
 
             <hr class="clear"/>
             <div class="chart" id="cod_chart">
-                <h2>Checked out documents</h2>
+                <h2>#{i18nWorkspaceDashboard['chartTitles.checkedOutDocs']}</h2>
                 <svg></svg>
             </div>
 
             <hr class="clear"/>
             <div class="chart" id="cop_chart">
-                <h2>Checked out parts</h2>
+                <h2>#{i18nWorkspaceDashboard['chartTitles.checkedOutParts']}</h2>
                 <svg></svg>
             </div>
 
@@ -212,8 +212,10 @@
                         .forceY([0,null])
                         .color(d3.scale.category10().range());
 
-                chart.xAxis.tickFormat(d3.format('.f'))
-                chart.yAxis.tickFormat(d3.format('.f'))
+                chart.xAxis.tickFormat(d3.format('.f'));
+                chart.xAxis.axisLabel("#{i18nWorkspaceDashboard['chartAxis.daysNumber']}");
+                chart.yAxis.tickFormat(d3.format('.f'));
+                chart.yAxis.axisLabel("#{i18nWorkspaceDashboard['chartAxis.documentsNumber']}");
 
                 d3.select('#cod_chart svg')
                         .datum(codData())
@@ -267,8 +269,10 @@
                         .forceY([0,null])
                         .color(d3.scale.category10().range());
 
-                chart.xAxis.tickFormat(d3.format('.f'))
-                chart.yAxis.tickFormat(d3.format('.f'))
+                chart.xAxis.tickFormat(d3.format('.f'));
+                chart.xAxis.axisLabel("#{i18nWorkspaceDashboard['chartAxis.daysNumber']}");
+                chart.yAxis.tickFormat(d3.format('.f'));
+                chart.yAxis.axisLabel("#{i18nWorkspaceDashboard['chartAxis.partsNumber']}");
 
                 d3.select('#cop_chart svg')
                         .datum(copData())
