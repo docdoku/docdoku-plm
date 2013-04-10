@@ -65,4 +65,5 @@ public interface IUserManagerLocal{
     User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
     boolean hasCommonWorkspace(String user1, String user2);
+    boolean isCallerInRole(String role);
 }

@@ -26,7 +26,9 @@ import com.docdoku.core.services.IUserManagerLocal;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.*;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
@@ -91,10 +93,15 @@ public class ConnectionBean {
 
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
-        if(originURL!=null && originURL.length()>1)
-            ec.redirect(originURL);
-        else
-            ec.redirect(request.getContextPath() + "/document-management/");
+
+        if(userManager.isCallerInRole("admin")){
+            ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+        }else{
+            if(originURL!=null && originURL.length()>1)
+                ec.redirect(originURL);
+            else
+                ec.redirect(request.getContextPath() + "/document-management/");
+        }
     }
 
     public String getLogin() {

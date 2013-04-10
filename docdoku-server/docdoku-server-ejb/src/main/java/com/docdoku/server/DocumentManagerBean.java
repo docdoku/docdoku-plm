@@ -49,7 +49,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.persistence.NoResultException;
 
 
-@DeclareRoles("users")
+@DeclareRoles({"users","admin"})
 @Local(IDocumentManagerLocal.class)
 @Stateless(name = "DocumentManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IDocumentManagerWS")
@@ -575,6 +575,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docM;
     }
 
+    @RolesAllowed({"users","admin"})
     @Override
     public DocumentMaster[] getAllCheckedOutDocumentMasters(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1248,7 +1249,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return user;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","admin"})
     @Override
     public User[] getUsers(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1269,7 +1270,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return labels;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","admin"})
     @Override
     public int getDocumentsCountInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1277,7 +1278,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return documentMasterDAO.getDocumentsCountInWorkspace(pWorkspaceId);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","admin"})
     @Override
     public Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1285,6 +1286,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return documentMasterDAO.getDiskUsageForDocumentsInWorkspace(pWorkspaceId);
     }
 
+    @RolesAllowed({"users","admin"})
     @Override
     public Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
