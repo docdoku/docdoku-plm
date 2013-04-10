@@ -18,6 +18,10 @@ define(
 
             initialize:function(){
                 _.bindAll(this);
+
+                if(!this.options.nullable &&  !this.model.get("defaultUserMapped")){
+                    this.model.set("defaultUserMapped", {login : this.options.userList.first().getLogin()});
+                }
             },
 
             render: function() {
