@@ -64,7 +64,7 @@ public class GoogleStorageCloud {
 
     public int upload(InputStream inputStream, String fileName) throws IOException {
         this.method = "PUT";
-
+        this.fileName = fileName;
         this.init();
         DataOutputStream wr = new DataOutputStream(httpConnection.getOutputStream());
         InputStream in = inputStream;
