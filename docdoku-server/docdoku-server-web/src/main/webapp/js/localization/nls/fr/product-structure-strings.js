@@ -16,6 +16,7 @@ define({
     CANCEL_CHECKOUT: "Annuler la réservation",
     CHECKIN: "Libérer",
     CHECKOUT: "Réserver",
+    DELETE_MARKER: "Supprimer le marqueur",
     NAME : "Nom",
     EMBED_SCENE : "Exporter la scène",
     CONTROLS_SHORTCUTS : "Raccourcis clavier/souris",
