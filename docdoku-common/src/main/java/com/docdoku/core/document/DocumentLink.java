@@ -36,7 +36,10 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Table(name="DOCUMENTLINK")
 @javax.persistence.Entity
-@NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments")
+@NamedQueries ({
+    @NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments"),
+    @NamedQuery(name="DocumentLink.findPartOwner", query = "SELECT p FROM PartIteration p WHERE :link MEMBER OF p.linkedDocuments")
+})
 public class DocumentLink implements Serializable, Cloneable{
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
