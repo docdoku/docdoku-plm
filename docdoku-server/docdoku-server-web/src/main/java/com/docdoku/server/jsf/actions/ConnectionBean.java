@@ -60,6 +60,7 @@ public class ConnectionBean {
         session.removeAttribute("account");
         session.removeAttribute("administeredWorkspaces");
         session.removeAttribute("regularWorkspaces");
+        session.removeAttribute("isSuperAdmin");
         request.logout();
         return "/admin/logout.xhtml";
     }
@@ -96,7 +97,9 @@ public class ConnectionBean {
 
         if(userManager.isCallerInRole("admin")){
             ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            session.setAttribute("isSuperAdmin",true);
         }else{
+            session.setAttribute("isSuperAdmin",false);
             if(originURL!=null && originURL.length()>1)
                 ec.redirect(originURL);
             else
