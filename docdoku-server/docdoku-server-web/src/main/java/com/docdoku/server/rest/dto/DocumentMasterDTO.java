@@ -115,6 +115,9 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     }
 
     public String getLifeCycleState() {
+        if (lifeCycleState != null) {
+            return lifeCycleState;
+        }
         if (workflow != null)
             return workflow.getLifeCycleState();
         else
