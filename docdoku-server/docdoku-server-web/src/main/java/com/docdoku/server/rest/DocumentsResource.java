@@ -126,6 +126,7 @@ public class DocumentsResource {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
                 docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setLifeCycleState(docMs[i].getLifeCycleState());
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
             }
