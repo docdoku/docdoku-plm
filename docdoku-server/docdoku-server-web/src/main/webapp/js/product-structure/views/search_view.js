@@ -61,7 +61,6 @@ define([
         },
 
         toggleHelp: function() {
-            console.log("click");
             this.oppened ? this.$helpLink.popover('hide') : this.$helpLink.popover('show');
             this.oppened = !this.oppened;
         }
