@@ -92,12 +92,16 @@ public class FileIO {
     }
 
     public static String getFileNameWithoutExtension(File file) {
-        int index = file.getName().lastIndexOf(".");
-        if(index!=-1)
-            return file.getName().substring(0, index);
-        else
-            return file.getName();
+        return getFileNameWithoutExtension(file.getName());
+    }
 
+    public static String getFileNameWithoutExtension(String fileName) {
+        int index = fileName.lastIndexOf(".");
+        if(index!=-1) {
+            return fileName.substring(0, index);
+        } else {
+            return fileName;
+        }
     }
 
     public static File urlToFile(URL url) {
