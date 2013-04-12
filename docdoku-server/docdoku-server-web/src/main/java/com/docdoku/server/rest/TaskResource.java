@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.server.rest.dto.TaskDTO;
@@ -48,6 +49,9 @@ public class TaskResource {
     @EJB
     private IDocumentManagerLocal documentService;
 
+    @EJB
+    private IProductManagerLocal productService;
+
     public TaskResource() {
     }
 
@@ -58,8 +62,8 @@ public class TaskResource {
 
     @POST
     @Consumes("application/json;charset=UTF-8")
-    @Path("process")
-    public Response processTask(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
+    @Path("documents/process")
+    public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
 
         try {
 
@@ -67,6 +71,30 @@ public class TaskResource {
                 documentService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
             } else if (action.equals("reject")) {
                 documentService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+
+            return Response.ok().build();
+
+        } catch (Exception ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Path("parts/process")
+    public Response processTaskForParts(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
+
+        try {
+
+            if (action.equals("approve")) {
+                productService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+            } else if (action.equals("reject")) {
+                productService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }

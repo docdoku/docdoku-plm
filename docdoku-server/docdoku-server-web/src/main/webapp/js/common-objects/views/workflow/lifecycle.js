@@ -1,11 +1,11 @@
 define([
-    "views/document/document_lifecycle_activity",
+    "common-objects/views/workflow/lifecycle_activity",
     "i18n!localization/nls/document-management-strings",
-    "text!templates/document/document_lifecycle.html"
+    "text!common-objects/templates/workflow/lifecycle.html"
 
 ], function(LifecycleActivityView, i18n, template) {
 
-    var LifecycleDocumentView = Backbone.View.extend({
+    var LifecycleView = Backbone.View.extend({
 
         tagName: 'div',
 
@@ -20,6 +20,11 @@ define([
             return this;
         },
 
+        setEntityType:function(entityType){
+            this.entityType=entityType;
+            return this;
+        },
+
         render: function() {
 
             var that = this ;
@@ -30,7 +35,7 @@ define([
             _.each(this.workflow.activities,function(activity){
                 activity.parentWorkflowId = that.workflow.id;
 
-                var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).render();
+                var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).setEntityType(that.entityType).render();
                 $lifecycleActivities.append(lifecycleActivityView.$el);
                 lifecycleActivityView.on("activity:change",function(){
                     that.trigger("lifecycle:change");
@@ -49,5 +54,5 @@ define([
         }
 
     });
-    return LifecycleDocumentView;
+    return LifecycleView;
 });

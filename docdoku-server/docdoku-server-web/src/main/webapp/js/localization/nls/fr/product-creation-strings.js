@@ -21,6 +21,7 @@ define({
     DELETE_PRODUCT_CONFIRM:"Etes-vous sûr de vouloir supprimer ce produit ?",
     DELETE_PRODUCT_ERROR:"Une erreur est survenue lors de la suppresion.",
     VISUALIZE_PRODUCT:"Visualiser le produit",
-    NEW_PART_TEMPLATE:"Nouveau modèle d'article"
+    NEW_PART_TEMPLATE:"Nouveau modèle d'article",
+    WORKFLOW:"Workflow"
 
 });

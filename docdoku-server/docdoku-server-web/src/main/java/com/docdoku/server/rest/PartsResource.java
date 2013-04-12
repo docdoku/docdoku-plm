@@ -28,9 +28,7 @@ import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -72,6 +70,10 @@ public class PartsResource {
             partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
             partDTO.setName(partRevision.getPartMaster().getName());
             partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+
+            if(partRevision.hasWorkflow()){
+                partDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
+            }
 
             List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
 
@@ -142,6 +144,10 @@ public class PartsResource {
             partDTO.setPartKey(partRevisionUpdated.getPartNumber() + "-" + partRevisionUpdated.getVersion());
             partDTO.setName(partRevisionUpdated.getPartMaster().getName());
             partDTO.setStandardPart(partRevisionUpdated.getPartMaster().isStandardPart());
+
+            if(partRevisionUpdated.hasWorkflow()){
+                partDTO.setLifeCycleState(partRevisionUpdated.getWorkflow().getLifeCycleState());
+            }
 
             return Response.ok(partDTO).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -221,6 +227,7 @@ public class PartsResource {
                             usageLinksDTO.add(partUsageLinkDTO);
                         }
                         partIterationDTO.setComponents(usageLinksDTO);
+
                         partIterationDTOs.add(partIterationDTO);
                     }
                     partDTO.setPartIterations(partIterationDTOs);
@@ -230,6 +237,11 @@ public class PartsResource {
                         UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
                         partDTO.setCheckOutUser(checkoutUserDTO);
                     }
+
+                    if(partRevision.hasWorkflow()){
+                        partDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
+                    }
+
                     partDTOs.add(partDTO);
                 }
 
@@ -282,7 +294,18 @@ public class PartsResource {
     public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO){
 
         try {
-            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.getDescription(), partCreationDTO.isStandardPart(), null, partCreationDTO.getDescription(), partCreationDTO.getTemplateId());
+            String pWorkflowModelId = partCreationDTO.getWorkflowModelId();
+            RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
+
+            Map<String, String> roleMappings = new HashMap<String,String>();
+
+            if(rolesMappingDTO != null){
+                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                    roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+                }
+            }
+
+            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.getDescription(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings);
 
             PartDTO partDTO = mapper.map(partMaster,PartDTO.class);
 
@@ -317,6 +340,11 @@ public class PartsResource {
                 UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
                 partDTO.setCheckOutUser(checkoutUserDTO);
             }
+
+            if(partRevision.hasWorkflow()){
+                partDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
+            }
+
            return partDTO;
 
         } catch (Exception ex) {
@@ -413,7 +441,7 @@ public class PartsResource {
     }
 
 
-    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
+    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
 
         List<PartUsageLink> components = new ArrayList<PartUsageLink>();
         for(PartUsageLinkDTO partUsageLinkDTO : pComponents){
@@ -441,13 +469,13 @@ public class PartsResource {
 
     }
 
-    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
+    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
         String componentNumber = componentDTO.getNumber();
         PartMasterKey partMasterKey = new PartMasterKey(workspaceId,componentNumber);
         if(productService.partMasterExists(partMasterKey)){
             return new PartMaster(userManager.getWorkspace(workspaceId),componentNumber);
         }else{
-           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null);
+           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null);
         }
 
     }

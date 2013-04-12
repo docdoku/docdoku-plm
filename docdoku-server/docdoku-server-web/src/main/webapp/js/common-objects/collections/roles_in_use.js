@@ -1,5 +1,5 @@
 define([
-	"models/role"
+	"common-objects/models/role"
 ], function (
 	Role
 ) {

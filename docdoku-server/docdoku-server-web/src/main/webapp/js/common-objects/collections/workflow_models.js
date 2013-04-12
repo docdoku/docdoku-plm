@@ -1,5 +1,5 @@
 define([
-	"models/workflow_model"
+	"common-objects/models/workflow_model"
 ], function (
 	WorkflowModel
 ) {

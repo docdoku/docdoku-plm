@@ -1,7 +1,7 @@
 define([
-	"collections/workflow_models",
+	"common-objects/collections/workflow_models",
 	"common-objects/views/base",
-	"text!templates/document/document_workflow_select.html"
+	"text!common-objects/templates/workflow/workflow_select.html"
 ], function (
 	WorkflowList,
 	BaseView,

@@ -81,7 +81,8 @@ define({
         BOM_VIEW:"Bom View",
         OPTIONS:"Options",
         MATERIALS_SWITCH:"Show/Hide materials",
-        GRID_SWITCH:"Show/Hide the grid"
+        GRID_SWITCH:"Show/Hide the grid",
+        LIFECYCLE_STATE:"Life cycle state"
     },
     "fr": true,
     "es": true

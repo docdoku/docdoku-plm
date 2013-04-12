@@ -2,8 +2,8 @@ define([
 	"common-objects/views/components/modal",
 	"common-objects/views/attributes/attributes",
 	"views/document/document_template_list",
-	"views/document/document_workflow_list",
-	"views/document/document_workflow_mapping",
+	"common-objects/views/workflow/workflow_list",
+	"common-objects/views/workflow/workflow_mapping",
 	"text!templates/document/document_new.html"
 ], function (
 	ModalView,

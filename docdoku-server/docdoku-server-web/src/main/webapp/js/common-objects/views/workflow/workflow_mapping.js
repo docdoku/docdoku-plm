@@ -1,9 +1,9 @@
 define([
 	"common-objects/views/base",
 	"common-objects/collections/users",
-	"views/role_item_view",
-	"models/role",
-	"text!templates/document/document_workflow_mapping.html"
+	"common-objects/views/workflow/role_item_view",
+	"common-objects/models/role",
+	"text!common-objects/templates/workflow/workflow_mapping.html"
 ], function (
 	BaseView,
     Users,
@@ -33,8 +33,8 @@ define([
             if(workflowModel){
                 workflowModel.get("activityModels").each(function(activityModel){
                     activityModel.get("taskModels").each(function(taskModel){
-                        if(!_.contains(self.rolesInWorkflowModel,taskModel.get("role"))){
-                            self.rolesInWorkflowModel.push(taskModel.get("role"));
+                        if(!_.contains(self.rolesInWorkflowModel,taskModel.get("role").getName())){
+                            self.rolesInWorkflowModel.push(taskModel.get("role").getName());
                             self.rolesItemViews.push(new RoleItemView({model: new Role(taskModel.get("role").attributes), userList:self.users, nullable:false}).render());
                         }
                     });

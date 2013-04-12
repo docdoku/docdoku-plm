@@ -1,8 +1,8 @@
 define([
-    "views/document/document_lifecycle_task_signing",
+    "common-objects/views/workflow/lifecycle_task_signing",
     "common-objects/utils/date",
     "i18n!localization/nls/document-management-strings",
-    "text!templates/document/document_lifecycle_task.html"
+    "text!common-objects/templates/workflow/lifecycle_task.html"
 ], function(LifecycleTaskSigningView, date, i18n, template) {
 
     var LifecycleTaskView = Backbone.View.extend({
@@ -38,6 +38,11 @@ define([
                     this.task.status.toLowerCase() == "in_progress"
                 );
 
+            return this;
+        },
+
+        setEntityType:function(entityType){
+            this.entityType = entityType;
             return this;
         },
 
@@ -78,9 +83,12 @@ define([
 
         submitClosure: function(e) {
 
+            // documents / parts
+            var entityType = this.entityType;
+
             var processUrl = "/api/workspaces/"
                 + APP_CONFIG.workspaceId
-                + "/tasks/process?"
+                + "/tasks/"+entityType+"/process?"
                 + "activityWorkflowId=" + this.task.parentWorkflowId
                 + "&index=" + this.task.index
                 + "&activityStep=" + this.task.parentActivityStep;

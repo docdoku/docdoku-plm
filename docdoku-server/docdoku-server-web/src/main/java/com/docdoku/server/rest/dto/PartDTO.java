@@ -40,6 +40,7 @@ public class PartDTO implements Serializable {
     private UserDTO checkOutUser;
     private Date checkOutDate;
     private WorkflowDTO workflow;
+    private String lifeCycleState;
     private boolean standardPart;
     private String workspaceId;
 
@@ -148,5 +149,13 @@ public class PartDTO implements Serializable {
 
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
+    }
+
+    public String getLifeCycleState() {
+        return lifeCycleState;
+    }
+
+    public void setLifeCycleState(String lifeCycleState) {
+        this.lifeCycleState = lifeCycleState;
     }
 }

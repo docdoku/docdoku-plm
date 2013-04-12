@@ -20,6 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
@@ -54,5 +55,10 @@ public class WorkflowDAO {
     public DocumentMaster getTarget(Workflow pWorkflow) {
         Query query = em.createQuery("SELECT m FROM DocumentMaster m WHERE m.workflow = :workflow");
         return (DocumentMaster) query.setParameter("workflow", pWorkflow).getSingleResult();
+    }
+
+    public PartRevision getPartTarget(Workflow pWorkflow) {
+        Query query = em.createQuery("SELECT p FROM PartRevision p WHERE p.workflow = :workflow");
+        return (PartRevision) query.setParameter("workflow", pWorkflow).getSingleResult();
     }
 }

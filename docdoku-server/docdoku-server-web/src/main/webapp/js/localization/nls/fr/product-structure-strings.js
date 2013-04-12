@@ -76,5 +76,6 @@ define({
     BOM_VIEW:"Liste des matériaux",
     OPTIONS:"Options",
     MATERIALS_SWITCH:"Afficher/Masquer les matériaux",
-    GRID_SWITCH:"Afficher/Masquer la grille"
+    GRID_SWITCH:"Afficher/Masquer la grille",
+    LIFECYCLE_STATE:"Etat du cycle de vie"
 });

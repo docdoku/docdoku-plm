@@ -1,8 +1,8 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "models/activity_model",
+    "common-objects/models/activity_model",
     "text!templates/activity_model_editor.html",
-    "models/task_model"
+    "common-objects/models/task_model"
 ], function (
     i18n,
     ActivityModel,

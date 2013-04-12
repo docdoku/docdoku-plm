@@ -3,10 +3,10 @@ define(
         "common-objects/views/components/modal",
         "text!templates/roles_modal.html",
         "i18n!localization/nls/roles-strings",
-        "models/role",
-        "collections/roles",
-        "collections/roles_in_use",
-        "views/role_item_view",
+        "common-objects/models/role",
+        "common-objects/collections/roles",
+        "common-objects/collections/roles_in_use",
+        "common-objects/views/workflow/role_item_view",
         "common-objects/collections/users"
     ],
     function(ModalView,template,i18n,Role,RolesList,RoleInUseList,RoleItemView,UserList) {

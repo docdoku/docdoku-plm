@@ -118,6 +118,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get("standardPart") ? i18n.TRUE:i18n.FALSE;
         },
 
+        getLifeCycleState:function(){
+            return this.get("lifeCycleState");
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,

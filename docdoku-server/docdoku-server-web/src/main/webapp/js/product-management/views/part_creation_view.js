@@ -4,9 +4,11 @@ define(
         "i18n!localization/nls/product-creation-strings",
         "common-objects/models/part",
         "collections/part_templates",
-        "common-objects/views/attributes/attributes"
+        "common-objects/views/attributes/attributes",
+        "common-objects/views/workflow/workflow_list",
+        "common-objects/views/workflow/workflow_mapping"
     ],
-    function (template, i18n, Part, PartTemplateCollection, AttributesView) {
+    function (template, i18n, Part, PartTemplateCollection, AttributesView,DocumentWorkflowListView,DocumentWorkflowMappingView) {
 
     var PartCreationView = Backbone.View.extend({
 
@@ -28,6 +30,19 @@ define(
             this.bindPartTemplateSelector();
             this.bindAttributesView();
             this.$(".tabs").tabs();
+
+            this.workflowsView = new DocumentWorkflowListView({
+                el: this.$("#workflows-list")
+            });
+
+            this.workflowsView.collection.fetch();
+
+            this.workflowsMappingView =  new DocumentWorkflowMappingView({
+                el: this.$("#workflows-mapping")
+            });
+
+            this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
+
             return this;
         },
 
@@ -60,7 +75,12 @@ define(
             });
 
             var templateId = this.$inputPartTemplate.val();
-            var saveOptions = templateId ? {templateId:templateId} : {};
+            var workflow = this.workflowsView.selected();
+            var saveOptions = {
+                templateId: templateId ? templateId : null,
+                workflowModelId: workflow ? workflow.get("id") : null,
+                roleMapping: workflow? this.workflowsMappingView.toList(): null
+            };
 
             this.model.save(saveOptions, {
                 wait: true,

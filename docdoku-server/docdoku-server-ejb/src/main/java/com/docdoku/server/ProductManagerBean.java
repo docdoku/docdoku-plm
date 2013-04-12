@@ -21,10 +21,12 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
@@ -32,10 +34,7 @@ import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.Workflow;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
@@ -191,7 +190,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, String pPartMasterDescription, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
+    public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, String pPartMasterDescription, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, Map<String, String> roleMappings) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         if (!NamingConvention.correct(pNumber)) {
@@ -207,10 +206,25 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision newRevision = pm.createNextRevision(user);
 
         if (pWorkflowModelId != null) {
-            //TODO adapt to Part
-            /*
+
+            UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
+            RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+
+            Map<Role,User> roleUserMap = new HashMap<Role,User>();
+
+            Iterator it = roleMappings.entrySet().iterator();
+
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry)it.next();
+                String roleName = (String) pairs.getKey();
+                String userLogin = (String) pairs.getValue();
+                User worker = userDAO.loadUser(new UserKey(user.getWorkspaceId(),userLogin));
+                Role role  = roleDAO.loadRole(new RoleKey(user.getWorkspaceId(),roleName));
+                roleUserMap.put(role,worker);
+            }
+
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            Workflow workflow = workflowModel.createWorkflow();
+            Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             newRevision.setWorkflow(workflow);
 
             Collection<Task> runningTasks = workflow.getRunningTasks();
@@ -219,7 +233,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             //TODO adapt to Part
             //mailer.sendApproval(runningTasks, newRevision);
-            */
+
         }
         newRevision.setCheckOutUser(user);
         newRevision.setCheckOutDate(now);
@@ -1015,6 +1029,77 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).findAllCheckedOutPartRevisions(pWorkspaceId);
         return partRevisions.toArray(new PartRevision[partRevisions.size()]);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartRevision approve(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+        //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+
+        Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
+        Workflow workflow = task.getActivity().getWorkflow();
+        PartRevision partRevision = new WorkflowDAO(em).getPartTarget(workflow);
+
+
+        if (!task.getWorker().equals(user)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
+        }
+
+        if (!workflow.getRunningTasks().contains(task)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException15");
+        }
+
+        if (partRevision.isCheckedOut()) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
+        }
+
+        int previousStep = workflow.getCurrentStep();
+        task.approve(pComment, partRevision.getLastIteration().getIteration(), pSignature);
+        int currentStep = workflow.getCurrentStep();
+
+        // TODO adapt it
+        /*
+        User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(partRevision);
+
+        if (previousStep != currentStep && subscribers.length != 0) {
+            mailer.sendStateNotification(subscribers, partRevision);
+        }*/
+
+        Collection<Task> runningTasks = workflow.getRunningTasks();
+        for (Task runningTask : runningTasks) {
+            runningTask.start();
+        }
+        // mailer.sendApproval(runningTasks, docM);
+        return partRevision;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartRevision reject(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+
+        //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+
+        Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
+        Workflow workflow = task.getActivity().getWorkflow();
+        PartRevision partRevision = new WorkflowDAO(em).getPartTarget(workflow);
+
+        if (!task.getWorker().equals(user)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
+        }
+
+        if (!workflow.getRunningTasks().contains(task)) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException15");
+        }
+
+        if (partRevision.isCheckedOut()) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
+        }
+
+        task.reject(pComment, partRevision.getLastIteration().getIteration(), pSignature);
+        return partRevision;
+
     }
 
 

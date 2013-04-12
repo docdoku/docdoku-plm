@@ -1,5 +1,5 @@
 define([
-    "collections/task_models"
+    "common-objects/collections/task_models"
 ], function (TaskModels) {
     var ActivityModel = Backbone.Model.extend({
 

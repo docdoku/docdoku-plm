@@ -1,6 +1,6 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "text!templates/document/document_lifecycle_task_signing.html"
+    "text!common-objects/templates/workflow/lifecycle_task_signing.html"
 
 ], function(i18n, template) {
 

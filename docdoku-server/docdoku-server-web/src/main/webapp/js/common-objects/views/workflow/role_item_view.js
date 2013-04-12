@@ -1,6 +1,6 @@
 define(
     [
-        "text!templates/role_item.html",
+        "text!common-objects/templates/workflow/role_item.html",
         "i18n!localization/nls/roles-strings"
     ],
     function(template,i18n) {

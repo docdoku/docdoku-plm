@@ -11,8 +11,8 @@ define([
     "i18n!localization/nls/document-management-strings",
     "models/workflow_model",
     "text!templates/workflow_model_editor.html",
-    "collections/roles",
-    "models/activity_model",
+    "common-objects/collections/roles",
+    "common-objects/models/activity_model",
     "views/workflow_model_copy"
 ], function(require, i18n, WorkflowModel, template, Roles, ActivityModel, WorkflowModelCopyView) {
     var WorkflowModelEditorView = Backbone.View.extend({

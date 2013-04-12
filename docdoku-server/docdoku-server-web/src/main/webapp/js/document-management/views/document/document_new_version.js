@@ -1,8 +1,8 @@
 define([
     "i18n!localization/nls/document-management-strings",
     "text!templates/document/document_new_version.html",
-    "views/document/document_workflow_mapping",
-    "views/document/document_workflow_list"
+    "common-objects/views/workflow/workflow_mapping",
+    "common-objects/views/workflow/workflow_list"
 ], function (
     i18n,
     template,

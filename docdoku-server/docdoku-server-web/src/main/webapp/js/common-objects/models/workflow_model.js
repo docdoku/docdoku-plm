@@ -1,5 +1,5 @@
 define([
-    "collections/activity_models"
+    "common-objects/collections/activity_models"
 ], function (ActivityModels) {
 	var WorkflowModel = Backbone.Model.extend({
 

@@ -1,5 +1,5 @@
 define([
-    "models/activity_model"
+    "common-objects/models/activity_model"
 ], function (ActivityModel) {
 
     var ActivityModels = Backbone.Collection.extend({

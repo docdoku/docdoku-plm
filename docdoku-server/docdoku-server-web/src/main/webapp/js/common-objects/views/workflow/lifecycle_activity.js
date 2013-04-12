@@ -1,7 +1,7 @@
 define([
-    "views/document/document_lifecycle_task",
+    "common-objects/views/workflow/lifecycle_task",
     "i18n!localization/nls/document-management-strings",
-    "text!templates/document/document_lifecycle_activity.html"
+    "text!common-objects/templates/workflow/lifecycle_activity.html"
 
 ], function(LifecycleTaskView, i18n, template) {
 
@@ -18,6 +18,11 @@ define([
 
         setActivity:function(activity){
             this.activity = activity;
+            return this;
+        },
+
+        setEntityType:function(entityType){
+            this.entityType=entityType;
             return this;
         },
 
@@ -39,7 +44,7 @@ define([
                 task.parentActivityStep = that.activity.step;
                 task.index = index;
 
-                var lifecycleTaskView = new LifecycleTaskView().setTask(task).render()
+                var lifecycleTaskView = new LifecycleTaskView().setTask(task).setEntityType(that.entityType).render()
 
                 $tasks.append(lifecycleTaskView.$el);
                 lifecycleTaskView.on("task:change",function(){
