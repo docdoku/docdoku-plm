@@ -20,14 +20,13 @@
 package com.docdoku.server;
 
 
-import com.docdoku.server.dao.*;
-
+import com.docdoku.core.common.User;
 import com.docdoku.core.services.*;
-import com.docdoku.core.common.*;
-import com.docdoku.core.meta.*;
-import com.docdoku.core.security.*;
-import com.docdoku.core.workflow.*;
 import com.docdoku.core.util.Tools;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.server.dao.WorkflowModelDAO;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -38,12 +37,9 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.io.File;
-import java.text.ParseException;
-import java.util.*;
-import java.util.logging.Level;
+import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 
@@ -57,8 +53,6 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     private EntityManager em;
     @Resource
     private SessionContext ctx;
-    @Resource(name = "vaultPath")
-    private String vaultPath;
     @EJB
     private IUserManagerLocal userManager;
 

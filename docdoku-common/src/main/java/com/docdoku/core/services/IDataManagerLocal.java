@@ -18,14 +18,18 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters;
+package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 
-import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public interface CADConverter {
-    File convert(PartIteration partToConvert, BinaryResource cadFile) throws Exception;
-    boolean canConvertToJSON(String cadFileExtension);
+public interface IDataManagerLocal {
+    InputStream getBinaryContentInputStream(BinaryResource binaryResource) throws StorageException;
+    InputStream getBinaryContentInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
+    OutputStream getOutputStream(BinaryResource binaryResource) throws StorageException;
+    OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
+    void copyData(BinaryResource source, BinaryResource destination) throws StorageException;
+    void deleteData(BinaryResource binaryResource) throws StorageException;
 }

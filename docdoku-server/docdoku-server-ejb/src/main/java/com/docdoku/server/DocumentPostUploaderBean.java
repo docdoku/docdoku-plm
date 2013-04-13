@@ -19,17 +19,15 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
 import com.docdoku.server.postuploaders.DocumentPostUploader;
 
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import java.io.File;
 
 
 /**
@@ -38,19 +36,16 @@ import java.io.File;
 @Stateless(name="DocumentPostUploaderBean")
 public class DocumentPostUploaderBean implements IDocumentPostUploaderManagerLocal {
 
-    @EJB
-    private IDocumentManagerLocal documentService;
-
     @Inject
     @Any
     private Instance<DocumentPostUploader> documentPostUploaders;
 
     @Override
     @Asynchronous
-    public void process(File file) throws Exception {
+    public void process(BinaryResource binaryResource) throws Exception {
         for (DocumentPostUploader documentPostUploader : documentPostUploaders) {
-            if (documentPostUploader.canProcess(file)) {
-                documentPostUploader.process(file);
+            if (documentPostUploader.canProcess(binaryResource)) {
+                documentPostUploader.process(binaryResource);
             }
         }
     }

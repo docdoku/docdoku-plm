@@ -20,10 +20,9 @@
 
 package com.docdoku.server.resourcegetters;
 
-import java.io.File;
+import com.docdoku.core.common.BinaryResource;
 
 public interface DocumentResourceGetter {
-    File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception;
-    boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath);
-
+    boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
+    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

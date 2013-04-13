@@ -19,11 +19,13 @@
  */
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
+import com.google.common.io.ByteStreams;
 import org.apache.commons.lang.StringUtils;
 
 import javax.activation.FileTypeMap;
@@ -67,8 +69,9 @@ public class UploadDownloadServlet extends HttpServlet {
     @EJB
     private IDocumentViewerManagerLocal documentViewerService;
 
-    private final static int CHUNK_SIZE = 1024 * 8;
-    private final static int BUFFER_CAPACITY = 1024 * 16;
+    @EJB
+    private IDataManagerLocal dataManager;
+
     @Resource
     private UserTransaction utx;
 
@@ -85,76 +88,97 @@ public class UploadDownloadServlet extends HttpServlet {
             String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
             String elementType = pathInfos[offset + 1];
             String fullName = null;
-            File dataFile = null;
+            BinaryResource binaryResource = null;
+            boolean isSubResource = false;
+            boolean isForDocumentViewer = false;
+            String subResourceVirtualPath = "";
 
             if (elementType.equals("documents")) {
+
+                if (pRequest.getParameter("type") != null && pRequest.getParameter("type").equals("viewer")) {
+                    isForDocumentViewer = true;
+                }
+
                 //documents are versioned objects so we can rely on client cache without any risk 
                 setCacheHeaders(86400, pResponse);
                 String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String docMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                String[] pathInfosExtra = new String[]{};
-                if (pathInfos.length > offset + 6) {
-                    pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length);
-                }
-                String subResourceName = StringUtils.join(pathInfosExtra, '/');
                 fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
-                dataFile = documentResourceGetterService.getDataFile(fullName, subResourceName);
+                binaryResource = documentService.getBinaryResource(fullName);
+
+                if (pathInfos.length > offset + 6) {
+                    String[] pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length);
+                    isSubResource = true;
+                    subResourceVirtualPath = documentResourceGetterService.getSubResourceVirtualPath(binaryResource, StringUtils.join(pathInfosExtra, '/'));
+                }
+
             } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                dataFile = documentService.getDataFile(fullName);
-            }else if (elementType.equals("part-templates")) {
+                binaryResource = documentService.getBinaryResource(fullName);
+            } else if (elementType.equals("part-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                dataFile = documentService.getDataFile(fullName);
-            }
-            else if (elementType.equals("parts")) {
+                binaryResource = documentService.getBinaryResource(fullName);
+            } else if (elementType.equals("parts")) {
                 //parts are versioned objects so we can rely on client cache without any risk 
                 setCacheHeaders(86400, pResponse);
                 String partNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String version = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 String fileName;
-                if(pathInfos.length==offset + 7){
+                if (pathInfos.length==offset + 7) {
                     fileName = URLDecoder.decode(pathInfos[offset + 6], "UTF-8");
                     String subType = URLDecoder.decode(pathInfos[offset + 5], "UTF-8"); //subType may be nativecad
                     fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
-                }else{
+                } else {
                     fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                     fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
                 }
-                dataFile = productService.getDataFile(fullName);
+                binaryResource = productService.getBinaryResource(fullName);
             }
 
             //set content type
-            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(dataFile);
+            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(isSubResource ? subResourceVirtualPath : fullName);
             pResponse.setContentType(contentType);
 
-            if (elementType.equals("documents") && "viewer".equals(pRequest.getParameter("type"))) {
-                dataFile = documentViewerService.prepareFileForViewer(pRequest, pResponse, getServletContext(), dataFile);
-            }
-
-            long lastModified = dataFile.lastModified();
+            long lastModified = binaryResource.getLastModified().getTime();
             long ifModified = pRequest.getDateHeader("If-Modified-Since");
 
             if (lastModified > ifModified) {
-                setLastModifiedHeaders(lastModified, pResponse);
-                pResponse.setContentLength((int) dataFile.length());
-                ServletOutputStream httpOut = pResponse.getOutputStream();
-                InputStream input = new BufferedInputStream(new FileInputStream(dataFile), BUFFER_CAPACITY);
 
-                byte[] data = new byte[CHUNK_SIZE];
-                int length;
-                while ((length = input.read(data)) != -1) {
-                    httpOut.write(data, 0, length);
+                setLastModifiedHeaders(lastModified, pResponse);
+
+                InputStream binaryContentInputStream = null;
+                ServletOutputStream httpOut = null;
+
+                try {
+                    if (isSubResource) {
+
+                        binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+
+                    } else {
+
+                        if (isForDocumentViewer) {
+                            binaryContentInputStream = documentViewerService.prepareFileForViewer(pRequest, pResponse, getServletContext(), binaryResource);
+                        } else {
+                            pResponse.setContentLength((int) binaryResource.getContentLength());
+                            binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource);
+                        }
+
+                    }
+                    httpOut = pResponse.getOutputStream();
+                    ByteStreams.copy(binaryContentInputStream, httpOut);
+                } finally {
+                    binaryContentInputStream.close();
+                    httpOut.flush();
+                    httpOut.close();
                 }
-                input.close();
-                httpOut.flush();
-                httpOut.close();
+
             } else {
                 pResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }
@@ -180,7 +204,7 @@ public class UploadDownloadServlet extends HttpServlet {
         DocumentIterationKey docPK = null;
         DocumentMasterTemplateKey templatePK = null;
         PartMasterTemplateKey partTemplatePK = null;
-        File vaultFile = null;
+        BinaryResource binaryResource = null;
 
         try {
             utx.begin();
@@ -190,54 +214,67 @@ public class UploadDownloadServlet extends HttpServlet {
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
-                vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
+                binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
             } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
-                vaultFile = documentService.saveFileInTemplate(templatePK, fileName, 0);
-            }else if (elementType.equals("part-templates")) {
+                binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
+            } else if (elementType.equals("part-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 partTemplatePK = new PartMasterTemplateKey(workspaceId, templateID);
-                vaultFile = productService.saveFileInTemplate(partTemplatePK, fileName, 0);
-            }
-            else if (elementType.equals("parts")) {
+                binaryResource = productService.saveFileInTemplate(partTemplatePK, fileName, 0);
+            } else if (elementType.equals("parts")) {
                 String partMNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String partMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
                 partPK = new PartIterationKey(workspaceId, partMNumber, partMVersion, iteration);
-                if(pathInfos.length==offset + 7){
+                if (pathInfos.length==offset + 7) {
                     fileName = URLDecoder.decode(pathInfos[offset + 6], "UTF-8");
-                    vaultFile = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
-                }else{
+                    binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
+                } else {
                     fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                    vaultFile = productService.saveFileInPartIteration(partPK, fileName, 0);
+                    binaryResource = productService.saveFileInPartIteration(partPK, fileName, 0);
                 }
-
             }
 
             Collection<Part> uploadedParts = pRequest.getParts();
-            long size = 0;
+            long length = 0;
+
             for (Part item : uploadedParts) {
-                InputStream in = new BufferedInputStream(item.getInputStream(), BUFFER_CAPACITY);
-                size = documentService.writeFile(in, vaultFile);
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
+                try {
+                    outputStream = dataManager.getOutputStream(binaryResource);
+                    inputStream = item.getInputStream();
+                    length = ByteStreams.copy(inputStream, outputStream);
+                } finally {
+                    inputStream.close();
+                    outputStream.flush();
+                    outputStream.close();
+                }
                 break;
             }
 
+            /*
+            * TODO: this next bloc update the content length on the BinaryResource,
+            * It would be more readable to use a dedicated method
+            */
             if (elementType.equals("documents")) {
-                File fileSaved = documentService.saveFileInDocument(docPK, fileName, size);
-                documentPostUploaderService.process(fileSaved);
+                documentService.saveFileInDocument(docPK, fileName, length);
+                documentPostUploaderService.process(binaryResource);
             } else if (elementType.equals("document-templates")) {
-                documentService.saveFileInTemplate(templatePK, fileName, size);
+                documentService.saveFileInTemplate(templatePK, fileName, length);
             } else if (elementType.equals("part-templates")) {
-                productService.saveFileInTemplate(partTemplatePK, fileName, size);
+                productService.saveFileInTemplate(partTemplatePK, fileName, length);
             } else if (elementType.equals("parts")) {
                 if (pathInfos.length==offset + 7) {
-                    productService.saveNativeCADInPartIteration(partPK, fileName, size);
-                    converterService.convertCADFileToJSON(partPK, vaultFile);
+                    productService.saveNativeCADInPartIteration(partPK, fileName, length);
+                    //TODO: Should be put in a DocumentPostUploader plugin
+                    converterService.convertCADFileToJSON(partPK, binaryResource);
                 } else {
-                    productService.saveFileInPartIteration(partPK, fileName, size);
+                    productService.saveFileInPartIteration(partPK, fileName, length);
                 }
             }
             utx.commit();

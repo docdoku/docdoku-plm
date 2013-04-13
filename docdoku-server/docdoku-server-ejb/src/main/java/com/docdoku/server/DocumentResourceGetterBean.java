@@ -19,17 +19,16 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import java.io.File;
 
 
 /**
@@ -45,25 +44,19 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
     @Any
     private Instance<DocumentResourceGetter> documentResourceGetters;
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
-
     @Override
-    public File getDataFile(String resourceFullName, String subResourceName) throws Exception {
+    public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {
         DocumentResourceGetter selectedDocumentResourceGetter = null;
-        File resourceFile = null;
         for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetResource(resourceFullName, subResourceName, vaultPath)) {
+            if (documentResourceGetter.canGetSubResourceVirtualPath(binaryResource)) {
                 selectedDocumentResourceGetter = documentResourceGetter;
                 break;
             }
         }
         if (selectedDocumentResourceGetter != null) {
-            resourceFile = selectedDocumentResourceGetter.getDataFile(resourceFullName, subResourceName, vaultPath);
-        } else {
-            resourceFile = documentService.getDataFile(resourceFullName);
+            return selectedDocumentResourceGetter.getSubResourceVirtualPath(binaryResource, subResourceUri);
         }
-        return resourceFile;
+        return "";
     }
 
 }

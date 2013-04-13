@@ -19,20 +19,68 @@
  */
 package com.docdoku.server.postuploaders;
 
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.StorageException;
 import com.docdoku.server.viewers.utils.ScormUtil;
+import com.google.common.io.ByteStreams;
 
-import java.io.File;
+import javax.ejb.EJB;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ScormPostUploaderImpl implements DocumentPostUploader {
 
+    @EJB
+    private IDataManagerLocal dataManager;
+
     @Override
-    public boolean canProcess(File file) {
-        return ScormUtil.isScormArchive(file);
+    public boolean canProcess(final BinaryResource binaryResource) {
+        try {
+            InputStream binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource);
+            return ScormUtil.isScormArchive(binaryResource.getName(), binaryContentInputStream);
+        } catch (StorageException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public void process(File file) throws Exception {
-        ScormUtil.extractScormArchive(file);
+    public void process(final BinaryResource archiveBinaryResource) throws Exception {
+        unzipScormArchive(archiveBinaryResource);
+    }
+
+    public void unzipScormArchive(BinaryResource archiveBinaryResource) {
+        ZipInputStream zipInputStream = null;
+        try {
+            zipInputStream = new ZipInputStream(dataManager.getBinaryContentInputStream(archiveBinaryResource));
+            ZipEntry zipEntry;
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                if (!zipEntry.isDirectory()) {
+                    OutputStream outputStream = null;
+                    try {
+                        String entryName = zipEntry.getName();
+                        String subResourceVirtualPath = ScormUtil.getScormSubResourceVirtualPath(archiveBinaryResource, entryName);
+                        outputStream = dataManager.getOutputStream(archiveBinaryResource, subResourceVirtualPath);
+                        ByteStreams.copy(zipInputStream, outputStream);
+                    } finally {
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                zipInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

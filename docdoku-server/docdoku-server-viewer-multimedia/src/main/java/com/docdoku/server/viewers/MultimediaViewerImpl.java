@@ -28,7 +28,7 @@ import com.github.mustachejava.MustacheFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,22 +36,22 @@ import java.util.Map;
 public class MultimediaViewerImpl implements DocumentViewer {
 
     @Override
-    public boolean canPrepareFileForViewer(File file, HttpServletRequest pRequest) {
+    public boolean canPrepareFileForViewer(BinaryResource binaryResource, HttpServletRequest pRequest) {
         return false;
     }
 
     @Override
-    public File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+    public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource binaryResource) throws Exception {
         return null;
     }
 
     @Override
-    public boolean canRenderViewerTemplate(String vaultPath, BinaryResource binaryResource) {
+    public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
         return FileIO.isAVFile(binaryResource.getName());
     }
 
     @Override
-    public String renderHtmlForViewer(String vaultPath, BinaryResource multimediaResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource multimediaResource) throws Exception {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/multimedia_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();

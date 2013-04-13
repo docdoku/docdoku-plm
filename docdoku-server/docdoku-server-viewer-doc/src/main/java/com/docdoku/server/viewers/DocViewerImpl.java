@@ -20,24 +20,31 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.StorageException;
 import com.docdoku.core.util.FileIO;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DocViewerImpl implements DocumentViewer {
 
+    @EJB
+    private IDataManagerLocal dataManager;
+
     @Override
-    public boolean canPrepareFileForViewer(File file, HttpServletRequest pRequest) {
-        return FileIO.isDocFile(file.getName()) && hasValidFPV(pRequest);
+    public boolean canPrepareFileForViewer(BinaryResource binaryResource, HttpServletRequest pRequest) {
+        return FileIO.isDocFile(binaryResource.getName()) && hasValidFPV(pRequest);
     }
 
     private boolean hasValidFPV(HttpServletRequest pRequest) {
@@ -47,33 +54,49 @@ public class DocViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+    public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, final BinaryResource binaryResource) throws Exception {
         File result = null;
 
+        //TODO : check if we already got the converted file, if not do the conversion and store the converted file
+
         String flexPaperViewerType = pRequest.getParameter("fpv");
+
         String ooHome = servletContext.getInitParameter("OO_HOME");
         int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
 
+        File tmpDir = com.google.common.io.Files.createTempDir();
+        File tmpDocFile = new File(tmpDir, binaryResource.getName());
+        Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+                try {
+                    return dataManager.getBinaryContentInputStream(binaryResource);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                    throw new IOException(e);
+                }
+            }
+        }, tmpDocFile);
+
         if ("pdf".equals(flexPaperViewerType)) {
             pResponse.setContentType("application/pdf");
-            result = new FileConverter(ooHome, ooPort).convertToPDF(dataFile);
+            result = new FileConverter(ooHome, ooPort).convertToPDF(tmpDocFile);
         } else if ("swf".equals(flexPaperViewerType)) {
             pResponse.setContentType("application/x-shockwave-flash");
             String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-            FileConverter fileConverter = new FileConverter(pdf2SWFHome, ooHome, ooPort);
-            result = fileConverter.convertToSWF(dataFile);
+            result = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(tmpDocFile);
         }
 
-        return result;
+        return new FileInputStream(result);
     }
 
     @Override
-    public boolean canRenderViewerTemplate(String vaultPath, BinaryResource binaryResource) {
+    public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
         return FileIO.isDocFile(binaryResource.getName());
     }
 
     @Override
-    public String renderHtmlForViewer(String vaultPath, BinaryResource docResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource docResource) throws Exception {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/document_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();

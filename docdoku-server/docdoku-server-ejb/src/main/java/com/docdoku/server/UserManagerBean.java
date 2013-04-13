@@ -19,21 +19,7 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.UserGroupNotFoundException;
-import com.docdoku.core.services.WorkspaceAlreadyExistsException;
-import com.docdoku.core.services.AccountNotFoundException;
-import com.docdoku.core.services.UserAlreadyExistsException;
-import com.docdoku.core.services.AccountAlreadyExistsException;
-import com.docdoku.core.services.UserGroupAlreadyExistsException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.FolderNotFoundException;
-import com.docdoku.core.services.FolderAlreadyExistsException;
-import com.docdoku.core.services.AccessRightException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -48,15 +34,10 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.PasswordRecoveryRequest;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
 import com.docdoku.server.dao.*;
-import com.docdoku.server.vault.DataManager;
-import com.docdoku.server.vault.filesystem.DataManagerImpl;
-import java.io.File;
+
 import java.util.*;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -76,20 +57,13 @@ public class UserManagerBean implements IUserManagerLocal {
     private EntityManager em;
     @Resource
     private SessionContext ctx;
-    @Resource(name = "vaultPath")
-    private String vaultPath;
     @EJB
     private IMailerLocal mailer;
     @EJB
     private IndexerBean indexer;
-    private DataManager dataManager;
+    @EJB
+    private IDataManagerLocal dataManager;
     private final static Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
-
-    @PostConstruct
-    private void init() {
-        //dataManager = new GoogleStorageManager();
-        dataManager = new DataManagerImpl(new File(vaultPath));
-    }
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
@@ -315,7 +289,11 @@ public class UserManagerBean implements IUserManagerLocal {
                 for (DocumentIteration doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
-                        dataManager.delData(file);
+                        try {
+                            dataManager.deleteData(file);
+                        } catch (StorageException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

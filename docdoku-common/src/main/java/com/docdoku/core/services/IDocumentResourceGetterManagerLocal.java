@@ -20,8 +20,8 @@
 
 package com.docdoku.core.services;
 
-import java.io.File;
+import com.docdoku.core.common.BinaryResource;
 
 public interface IDocumentResourceGetterManagerLocal {
-    File getDataFile(String resourceFullName, String subResourceName) throws Exception;
+    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

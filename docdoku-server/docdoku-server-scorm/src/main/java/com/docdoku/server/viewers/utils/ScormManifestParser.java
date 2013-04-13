@@ -40,12 +40,12 @@ public class ScormManifestParser {
     public static final String RESOURCE = "resource";
     public static final String HREF = "href";
 
-    private File manifest;
+    private InputStream manifestStream;
     private XMLStreamReader reader;
     private Map<String, ScormActivity> activitiesByIdentifierRef;
 
-    public ScormManifestParser(File manifest) {
-        this.manifest = manifest;
+    public ScormManifestParser(InputStream manifestStream) {
+        this.manifestStream = manifestStream;
         this.activitiesByIdentifierRef = new HashMap<String, ScormActivity>();
     }
 
@@ -56,9 +56,17 @@ public class ScormManifestParser {
             factory.setProperty("javax.xml.stream.isValidating", Boolean.FALSE);
         }
 
-        reader = factory.createXMLStreamReader(new FileInputStream(this.manifest), "UTF-8");
+        reader = factory.createXMLStreamReader(manifestStream, "UTF-8");
 
-        return parseDefaultOrganization();
+        ScormOrganization scormOrganization = parseDefaultOrganization();
+
+        try {
+            this.manifestStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return scormOrganization;
     }
 
     private ScormOrganization parseDefaultOrganization() throws XMLStreamException {

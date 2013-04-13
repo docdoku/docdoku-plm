@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  *
@@ -193,5 +194,21 @@ public class FileIO {
     public static boolean existsInArchive(File archiveFile, String fileName) throws IOException {
         ZipFile zipfile = new ZipFile(archiveFile);
         return zipfile.getEntry(fileName) != null;
+    }
+
+    public static boolean existsInArchive(InputStream archiveInputStream, String fileName) {
+        ZipInputStream zipInputStream = new ZipInputStream(archiveInputStream);
+        ZipEntry zipEntry;
+        try {
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                if (zipEntry.getName().equals(fileName)) {
+                    zipInputStream.close();
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -19,16 +19,7 @@
  */
 package com.docdoku.server;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.annotation.Resource;
@@ -46,7 +37,6 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
@@ -105,19 +95,17 @@ public class IndexerBean {
 
     @Asynchronous
     @Lock(LockType.WRITE)
-    public void addToIndex(String fullName, String pathName) {
+    public void addToIndex(String fullName, InputStream inputStream) {
         IndexWriter indexWriter = null;
         Directory indexDir = null;
         try {
             indexDir = FSDirectory.open(new File(indexPath));
             indexWriter = new IndexWriter(indexDir, new StandardAnalyzer(Version.LUCENE_30), IndexWriter.MaxFieldLength.LIMITED);
-            int ext = pathName.lastIndexOf('.');
+            int lastDotIndex = fullName.lastIndexOf('.');
             String extension = "";
-            if (ext != -1) {
-                extension = pathName.substring(ext);
+            if (lastDotIndex != -1) {
+                extension = fullName.substring(lastDotIndex);
             }
-
-
 
             if (extension.equals(".odt")
                     || extension.equals(".ods")
@@ -129,7 +117,7 @@ public class IndexerBean {
                     || extension.equals(".odi")
                     || extension.equals(".odm")) {
                 final StringBuilder text = new StringBuilder();
-                ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(new FileInputStream(pathName)));
+                ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream));
                 ZipEntry zipEntry;
                 while ((zipEntry = zipOpenDoc.getNextEntry()) != null) {
                     if (zipEntry.getName().equals("content.xml")) {
@@ -157,7 +145,7 @@ public class IndexerBean {
                 contentReader.close();
             } else if (extension.equals(".doc")) {
                 //MSWord Document
-                InputStream wordStream = new BufferedInputStream(new FileInputStream(pathName));
+                InputStream wordStream = new BufferedInputStream(inputStream);
                 WordExtractor wordExtractor = new WordExtractor(wordStream);
                 Reader contentReader = new StringReader(wordExtractor.getText());
                 wordStream.close();
@@ -165,7 +153,7 @@ public class IndexerBean {
                 contentReader.close();
             } else if (extension.equals(".ppt") || extension.equals(".pps")) {
                 //MSPowerPoint Document
-                InputStream pptStream = new BufferedInputStream(new FileInputStream(pathName));
+                InputStream pptStream = new BufferedInputStream(inputStream);
                 PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
                 Reader contentReader = new StringReader(pptExtractor.getText(true, true));
                 pptStream.close();
@@ -174,7 +162,7 @@ public class IndexerBean {
                 contentReader.close();
             } else if (extension.equals(".txt")) {
                 //Text Document
-                Reader contentReader = new BufferedReader(new FileReader(pathName));
+                Reader contentReader = new BufferedReader(new InputStreamReader(inputStream));
                 addDoc(indexWriter, contentReader, fullName);
                 contentReader.close();
             } else if (extension.equals(".xls")) {

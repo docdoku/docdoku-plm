@@ -5,9 +5,9 @@ import com.docdoku.core.common.BinaryResource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStream;
 
 public interface IDocumentViewerManagerLocal {
-    File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
+    InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource dataFile) throws Exception;
     String getHtmlForViewer(BinaryResource file);
 }

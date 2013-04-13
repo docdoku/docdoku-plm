@@ -18,18 +18,18 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.vault;
+package com.docdoku.core.services;
 
-import com.docdoku.core.common.BinaryResource;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
+public class StorageException extends Exception {
 
-public interface DataManager {
-    public void delData(BinaryResource pBinaryResource);
-    public void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource);
-    public File getDataFile(BinaryResource pBinaryResource);
-    public File getVaultFile(BinaryResource pBinaryResource);
-    public long writeFile(File vaultFile, InputStream in) throws Exception;
+    public StorageException(String message) {
+        super(message);
+    }
+
+    public StorageException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

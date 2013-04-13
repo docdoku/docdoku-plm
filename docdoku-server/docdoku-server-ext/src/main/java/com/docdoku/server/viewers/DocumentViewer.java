@@ -25,11 +25,11 @@ import com.docdoku.core.common.BinaryResource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStream;
 
 public interface DocumentViewer {
-    boolean canPrepareFileForViewer(File file, HttpServletRequest pRequest);
-    File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception;
-    boolean canRenderViewerTemplate(String vaultPath, BinaryResource binaryResource);
-    String renderHtmlForViewer(String vaultPath, BinaryResource binaryResource) throws Exception;
+    boolean canPrepareFileForViewer(BinaryResource file, HttpServletRequest pRequest);
+    InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource dataFile) throws Exception;
+    boolean canRenderViewerTemplate(BinaryResource binaryResource);
+    String renderHtmlForViewer(BinaryResource binaryResource) throws Exception;
 }

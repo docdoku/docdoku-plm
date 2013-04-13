@@ -24,7 +24,6 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
@@ -33,7 +32,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.InputStream;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {
@@ -45,23 +44,20 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     @Any
     private Instance<DocumentViewer> documentViewers;
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
-
     @Override
-    public File prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, File dataFile) throws Exception {
+    public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource binaryResource) throws Exception {
         DocumentViewer selectedDocumentViewer = null;
         for (DocumentViewer documentViewer : documentViewers) {
-            if (documentViewer.canPrepareFileForViewer(dataFile, pRequest)) {
+            if (documentViewer.canPrepareFileForViewer(binaryResource, pRequest)) {
                 selectedDocumentViewer = documentViewer;
                 break;
             }
         }
 
         if (selectedDocumentViewer != null) {
-            return selectedDocumentViewer.prepareFileForViewer(pRequest, pResponse, servletContext, dataFile);
+            return selectedDocumentViewer.prepareFileForViewer(pRequest, pResponse, servletContext, binaryResource);
         }
-        return dataFile;
+        return null;
     }
 
     @Override
@@ -70,7 +66,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
         DocumentViewer documentViewerSelected = selectViewerForTemplate(binaryResource);
         if (documentViewerSelected != null) {
             try {
-                template = documentViewerSelected.renderHtmlForViewer(vaultPath, binaryResource);
+                template = documentViewerSelected.renderHtmlForViewer(binaryResource);
             } catch (Exception e) {
                 e.printStackTrace();
                 template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
@@ -90,7 +86,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     private DocumentViewer selectViewerForTemplate(BinaryResource binaryResource) {
         DocumentViewer selectedDocumentViewer = null;
         for (DocumentViewer documentViewer : documentViewers) {
-            if (documentViewer.canRenderViewerTemplate(vaultPath, binaryResource)) {
+            if (documentViewer.canRenderViewerTemplate(binaryResource)) {
                 selectedDocumentViewer = documentViewer;
                 break;
             }

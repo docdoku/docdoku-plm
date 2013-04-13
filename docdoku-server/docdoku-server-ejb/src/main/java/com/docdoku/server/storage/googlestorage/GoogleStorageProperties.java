@@ -37,7 +37,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.vault.googlestorage;
+package com.docdoku.server.storage.googlestorage;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -51,10 +51,6 @@ public class GoogleStorageProperties {
     public GoogleStorageProperties() {
         properties = new Properties();
         load();
-    }
-
-    public String getHost() {
-        return properties.getProperty("googlestorage.host");
     }
 
     public String getProjectId() {
@@ -93,9 +89,13 @@ public class GoogleStorageProperties {
         return properties.getProperty("googlestorage.refreshToken");
     }
 
+    public String getBucketName() {
+        return properties.getProperty("googlestorage.bucketName");
+    }
+
     private Properties load() {
         try {
-            properties.load(getClass().getResourceAsStream("/com/docdoku/server/googlestorage/vault/conf.properties"));
+            properties.load(getClass().getResourceAsStream("/com/docdoku/server/storage/googlestorage/conf.properties"));
         } catch (IOException e) {
             throw new RuntimeException("googlestorage.properties not found. Error: ", e);
         }

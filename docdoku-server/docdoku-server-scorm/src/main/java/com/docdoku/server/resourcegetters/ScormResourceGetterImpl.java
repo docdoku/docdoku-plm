@@ -19,24 +19,27 @@
  */
 package com.docdoku.server.resourcegetters;
 
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.viewers.utils.ScormUtil;
 
-import java.io.File;
+import javax.ejb.EJB;
 
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
+    @EJB
+    private IDataManagerLocal dataManager;
+
     @Override
-    public File getDataFile(String resourceFullName, String subResourceName, String vaultPath) throws Exception {
-        return ScormUtil.getScormSubResource(resourceFullName, subResourceName, vaultPath);
+    public boolean canGetSubResourceVirtualPath(BinaryResource binaryResource) {
+        /* TODO see issue #158 */
+        return FileIO.isArchiveFile(binaryResource.getName());
     }
 
     @Override
-    public boolean canGetResource(String resourceFullName, String subResourceName, String vaultPath) {
-        if (subResourceName != null && !subResourceName.isEmpty()) {
-            File resource = new File(vaultPath, resourceFullName);
-            return ScormUtil.isScormArchive(resource);
-        } else {
-            return false;
-        }
+    public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {
+        return ScormUtil.getScormSubResourceVirtualPath(binaryResource, subResourceUri);
     }
+
 }

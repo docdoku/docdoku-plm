@@ -20,8 +20,8 @@
 
 package com.docdoku.core.services;
 
-import java.io.File;
+import com.docdoku.core.common.BinaryResource;
 
 public interface IDocumentPostUploaderManagerLocal {
-    void process(File file) throws Exception;
+    void process(BinaryResource binaryResource) throws Exception;
 }

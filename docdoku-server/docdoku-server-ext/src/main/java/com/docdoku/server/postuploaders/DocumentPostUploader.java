@@ -20,9 +20,9 @@
 
 package com.docdoku.server.postuploaders;
 
-import java.io.File;
+import com.docdoku.core.common.BinaryResource;
 
 public interface DocumentPostUploader {
-    boolean canProcess(File file);
-    void process(File file) throws Exception;
+    boolean canProcess(BinaryResource binaryResource);
+    void process(BinaryResource binaryResource) throws Exception;
 }
