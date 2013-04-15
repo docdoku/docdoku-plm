@@ -25,6 +25,7 @@ define([
 
             this.events["click a#previous-iteration"] = "onPreviousIteration";
             this.events["click a#next-iteration"] = "onNextIteration";
+            this.events["submit form"] = "onSubmitForm";
 
             this.tagsToRemove = [];
 
@@ -186,6 +187,13 @@ define([
             this.tagsManagement(editMode);
 
             return this;
+        },
+
+        onSubmitForm:function(e){
+            // prevent page reload when pressing enter
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
 
         primaryAction: function() {
