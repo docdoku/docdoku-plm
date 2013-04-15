@@ -111,6 +111,7 @@ public class DataManagerBean implements IDataManagerLocal {
     public void copyData(BinaryResource source, BinaryResource destination) throws StorageException {
         try {
             defaultStorageProvider.copyData(source, destination);
+            //don't work for now !
             fileStorageProvider.copySubResources(source, destination);
         } catch (FileNotFoundException e) {
             BinaryResource previous = source.getPrevious();

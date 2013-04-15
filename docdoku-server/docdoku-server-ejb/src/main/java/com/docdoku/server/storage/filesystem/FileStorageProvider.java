@@ -130,9 +130,11 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     public void copySubResources(BinaryResource source, BinaryResource destination) throws StorageException {
+        //TODO : the BinaryResource source could be one of the previous, need to fix that !
         File subResourceFolder = getSubResourceFolder(source);
         if (subResourceFolder.exists()) {
             try {
+                //don't work for now
                 FileIO.copyFolder(subResourceFolder, getSubResourceFolder(destination));
             } catch (IOException e) {
                 e.printStackTrace();
