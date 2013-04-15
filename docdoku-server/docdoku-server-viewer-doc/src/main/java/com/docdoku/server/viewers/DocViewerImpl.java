@@ -21,19 +21,19 @@ package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.StorageException;
 import com.docdoku.core.util.FileIO;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteStreams;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,39 +55,66 @@ public class DocViewerImpl implements DocumentViewer {
 
     @Override
     public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, final BinaryResource binaryResource) throws Exception {
-        File result = null;
-
-        //TODO : check if we already got the converted file, if not do the conversion and store the converted file
-
-        String flexPaperViewerType = pRequest.getParameter("fpv");
 
         String ooHome = servletContext.getInitParameter("OO_HOME");
         int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
 
-        File tmpDir = com.google.common.io.Files.createTempDir();
-        File tmpDocFile = new File(tmpDir, binaryResource.getName());
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                try {
-                    return dataManager.getBinaryContentInputStream(binaryResource);
-                } catch (StorageException e) {
-                    e.printStackTrace();
-                    throw new IOException(e);
-                }
-            }
-        }, tmpDocFile);
+        String flexPaperViewerType = pRequest.getParameter("fpv");
+
+        String extension = FileIO.getExtension(binaryResource.getName());
+
+        InputStream inputStream = null;
 
         if ("pdf".equals(flexPaperViewerType)) {
+
             pResponse.setContentType("application/pdf");
-            result = new FileConverter(ooHome, ooPort).convertToPDF(tmpDocFile);
+
+            if (extension.equals("pdf")) {
+                inputStream = dataManager.getBinaryContentInputStream(binaryResource);
+            } else {
+                String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
+                if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
+                    //if the resource is already converted, return it
+                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                } else {
+                    inputStream = new FileConverter(ooHome, ooPort).convertToPDF(dataManager.getBinaryContentInputStream(binaryResource));
+                    //copy the converted file for further reuse
+                    OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
+                    try {
+                        ByteStreams.copy(inputStream, outputStream);
+                    } finally {
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+                }
+            }
+
         } else if ("swf".equals(flexPaperViewerType)) {
+
             pResponse.setContentType("application/x-shockwave-flash");
-            String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-            result = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(tmpDocFile);
+
+            if (extension.equals("swf")) {
+                inputStream = dataManager.getBinaryContentInputStream(binaryResource);
+            } else {
+                String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".swf";
+                if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
+                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                } else {
+                    String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
+                    inputStream = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(dataManager.getBinaryContentInputStream(binaryResource));
+                    //copy the converted file for further reuse
+                    OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
+                    try {
+                        ByteStreams.copy(inputStream, outputStream);
+                    } finally {
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+                }
+            }
         }
 
-        return new FileInputStream(result);
+        return inputStream;
     }
 
     @Override

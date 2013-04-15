@@ -22,6 +22,7 @@ package com.docdoku.core.util;
 import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -211,4 +212,32 @@ public class FileIO {
         }
         return false;
     }
+
+    public static void copyFolder(File sourceFolder, File destFolder) throws IOException {
+
+        if(!destFolder.exists()) {
+            destFolder.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+        try {
+
+            source = new FileInputStream(sourceFolder).getChannel();
+            destination = new FileOutputStream(destFolder).getChannel();
+
+            long count = 0;
+            long size = source.size();
+            while((count += destination.transferFrom(source, count, size-count)) < size);
+
+        } finally {
+            if(source != null) {
+                source.close();
+            }
+            if(destination != null) {
+                destination.close();
+            }
+        }
+    }
+
 }

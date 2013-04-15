@@ -30,6 +30,7 @@ public interface IDataManagerLocal {
     InputStream getBinaryContentInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     OutputStream getOutputStream(BinaryResource binaryResource) throws StorageException;
     OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
+    boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     void copyData(BinaryResource source, BinaryResource destination) throws StorageException;
     void deleteData(BinaryResource binaryResource) throws StorageException;
 }

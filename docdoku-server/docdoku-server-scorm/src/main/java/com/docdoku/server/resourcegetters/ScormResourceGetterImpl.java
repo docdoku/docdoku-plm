@@ -21,6 +21,7 @@ package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.StorageException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.viewers.utils.ScormUtil;
 
@@ -33,13 +34,17 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @Override
     public boolean canGetSubResourceVirtualPath(BinaryResource binaryResource) {
-        /* TODO see issue #158 */
-        return FileIO.isArchiveFile(binaryResource.getName());
+        try {
+            return dataManager.exists(binaryResource, ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST));
+        } catch (StorageException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {
-        return ScormUtil.getScormSubResourceVirtualPath(binaryResource, subResourceUri);
+        return ScormUtil.getScormSubResourceVirtualPath(subResourceUri);
     }
 
 }

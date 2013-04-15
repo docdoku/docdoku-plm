@@ -26,6 +26,7 @@ import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.storage.StorageProvider;
+import com.google.common.io.Files;
 
 import java.io.*;
 
@@ -50,11 +51,14 @@ public class FileStorageProvider implements StorageProvider {
         return getInputStream(file);
     }
 
-    @Override
     public InputStream getBinaryContentInputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException {
-        File file = new File(getVirtualPath(pBinaryResource));
-        File subResourceFile = new File(file.getParentFile(), subResourceVirtualPath);
+        File subResourceFile = new File(getSubResourceFolder(pBinaryResource), subResourceVirtualPath);
         return getInputStream(subResourceFile);
+    }
+
+    private File getSubResourceFolder(BinaryResource pBinaryResource) {
+        File binaryResourceFile = new File(getVirtualPath(pBinaryResource));
+        return new File(binaryResourceFile.getParentFile(), "_" + binaryResourceFile.getName());
     }
 
     private InputStream getInputStream(File file) throws StorageException, FileNotFoundException {
@@ -80,10 +84,8 @@ public class FileStorageProvider implements StorageProvider {
         }
     }
 
-    @Override
     public OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
-        File file = new File(getVirtualPath(binaryResource));
-        File subResourceFile = new File(file.getParentFile(), subResourceVirtualPath);
+        File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
         subResourceFile.getParentFile().mkdirs();
         try {
             return new FileOutputStream(subResourceFile);
@@ -110,16 +112,40 @@ public class FileStorageProvider implements StorageProvider {
     @Override
     public void delData(BinaryResource pBinaryResource) {
         File fileToRemove = new File(getVirtualPath(pBinaryResource));
-        String woExName = FileIO.getFileNameWithoutExtension(fileToRemove);
         fileToRemove.delete();
-        new File(fileToRemove.getParentFile(), woExName + ".swf").delete();
-        new File(fileToRemove.getParentFile(), woExName + ".pdf").delete();
-        cleanRemove(fileToRemove.getParentFile());
     }
 
-    private void cleanRemove(File pFile){
+    public void cleanParentFolders(BinaryResource pBinaryResource){
+        cleanRemove(new File(getVirtualPath(pBinaryResource)).getParentFile());
+    }
+
+    private void cleanRemove(File pFile) {
         if(!pFile.equals(new File(vaultPath)) && pFile.delete())
             cleanRemove(pFile.getParentFile());
     }
-    
+
+    public boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) {
+        File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
+        return subResourceFile.exists();
+    }
+
+    public void copySubResources(BinaryResource source, BinaryResource destination) throws StorageException {
+        File subResourceFolder = getSubResourceFolder(source);
+        if (subResourceFolder.exists()) {
+            try {
+                FileIO.copyFolder(subResourceFolder, getSubResourceFolder(destination));
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new StorageException("Can't copy subResourceFolder from " + source.getFullName() + " to " + destination.getFullName(), e);
+            }
+        }
+    }
+
+    public void deleteSubResources(BinaryResource binaryResource) {
+        File subResourceFolder = getSubResourceFolder(binaryResource);
+        if (subResourceFolder.exists()) {
+            FileIO.rmDir(subResourceFolder);
+        }
+    }
+
 }

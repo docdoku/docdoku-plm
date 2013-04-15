@@ -30,9 +30,7 @@ import java.io.OutputStream;
 public interface StorageProvider {
     String getVirtualPath(BinaryResource pBinaryResource);
     InputStream getBinaryContentInputStream(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException;
-    InputStream getBinaryContentInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException;
     OutputStream getOutputStream(BinaryResource pBinaryResource) throws StorageException;
-    OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException;
     void delData(BinaryResource pBinaryResource) throws StorageException;
 }

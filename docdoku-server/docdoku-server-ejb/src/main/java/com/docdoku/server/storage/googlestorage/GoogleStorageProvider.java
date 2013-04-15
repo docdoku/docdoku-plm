@@ -62,20 +62,8 @@ public class GoogleStorageProvider implements StorageProvider {
     }
 
     @Override
-    public InputStream getBinaryContentInputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException {
-        String virtualPath = new StringBuilder().append(getVirtualParentPath(pBinaryResource)).append("/").append(subResourceVirtualPath).toString();
-        return GoogleStorageCloud.getInputStream(virtualPath);
-    }
-
-    @Override
     public OutputStream getOutputStream(BinaryResource pBinaryResource) throws StorageException {
         return GoogleStorageCloud.getOutputStream(getVirtualPath(pBinaryResource));
-    }
-
-    @Override
-    public OutputStream getOutputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException {
-        String virtualPath = new StringBuilder().append(getVirtualParentPath(pBinaryResource)).append("/").append(subResourceVirtualPath).toString();
-        return GoogleStorageCloud.getOutputStream(virtualPath);
     }
 
     @Override

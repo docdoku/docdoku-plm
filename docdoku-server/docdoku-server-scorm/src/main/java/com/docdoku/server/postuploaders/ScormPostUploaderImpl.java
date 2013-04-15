@@ -63,7 +63,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
                     OutputStream outputStream = null;
                     try {
                         String entryName = zipEntry.getName();
-                        String subResourceVirtualPath = ScormUtil.getScormSubResourceVirtualPath(archiveBinaryResource, entryName);
+                        String subResourceVirtualPath = ScormUtil.getScormSubResourceVirtualPath(entryName);
                         outputStream = dataManager.getOutputStream(archiveBinaryResource, subResourceVirtualPath);
                         ByteStreams.copy(zipInputStream, outputStream);
                     } finally {

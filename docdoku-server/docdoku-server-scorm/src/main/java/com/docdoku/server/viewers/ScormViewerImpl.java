@@ -21,7 +21,7 @@ package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.util.FileIO;
+import com.docdoku.core.services.StorageException;
 import com.docdoku.server.viewers.utils.ScormManifestParser;
 import com.docdoku.server.viewers.utils.ScormOrganization;
 import com.docdoku.server.viewers.utils.ScormUtil;
@@ -55,13 +55,17 @@ public class ScormViewerImpl implements DocumentViewer {
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
-        /* TODO see issue #158 */
-        return FileIO.isArchiveFile(binaryResource.getName());
+        try {
+            return dataManager.exists(binaryResource, ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST));
+        } catch (StorageException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public String renderHtmlForViewer(BinaryResource scormResource) throws Exception {
-        String manifestVirtualPath = ScormUtil.getScormSubResourceVirtualPath(scormResource, ScormUtil.IMS_MANIFEST);
+        String manifestVirtualPath = ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST);
         ScormOrganization scormOrganization = new ScormManifestParser(dataManager.getBinaryContentInputStream(scormResource, manifestVirtualPath)).parse();
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/scorm_viewer.mustache");

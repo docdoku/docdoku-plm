@@ -1,6 +1,5 @@
 package com.docdoku.server.viewers.utils;
 
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.util.FileIO;
 
 import java.io.InputStream;
@@ -20,8 +19,8 @@ public class ScormUtil {
         }
     }
 
-    public static String getScormSubResourceVirtualPath(BinaryResource binaryResource, String uriSubResource) {
-        StringBuilder sb = new StringBuilder().append(SCORM_FOLDER).append("/").append(FileIO.getFileNameWithoutExtension(binaryResource.getName())).append("/").append(uriSubResource);
+    public static String getScormSubResourceVirtualPath(String uriSubResource) {
+        StringBuilder sb = new StringBuilder().append(SCORM_FOLDER).append("/").append(uriSubResource);
         return sb.toString();
     }
 

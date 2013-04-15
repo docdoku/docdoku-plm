@@ -23,7 +23,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.StorageException;
-import com.docdoku.core.services.VaultException;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
 import com.docdoku.server.storage.googlestorage.GoogleStorageProvider;
@@ -45,20 +44,21 @@ public class DataManagerBean implements IDataManagerLocal {
     @Resource(name = "vaultPath")
     private String vaultPath;
 
-    private StorageProvider storageProvider;
+    private StorageProvider defaultStorageProvider;
+    private FileStorageProvider fileStorageProvider;
 
     private final static Logger LOGGER = Logger.getLogger(DataManagerBean.class.getName());
 
     @PostConstruct
     private void init() {
-        //storageProvider = new GoogleStorageProvider(vaultPath);
-        storageProvider = new FileStorageProvider(vaultPath);
+        defaultStorageProvider = new GoogleStorageProvider("");
+        fileStorageProvider = new FileStorageProvider(vaultPath);
     }
 
     @Override
     public InputStream getBinaryContentInputStream(BinaryResource binaryResource) throws StorageException {
         try {
-            return storageProvider.getBinaryContentInputStream(binaryResource);
+            return defaultStorageProvider.getBinaryContentInputStream(binaryResource);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
             if (previous != null)
@@ -72,7 +72,7 @@ public class DataManagerBean implements IDataManagerLocal {
     @Override
     public InputStream getBinaryContentInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
         try {
-            return storageProvider.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+            return fileStorageProvider.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
             if (previous != null)
@@ -85,18 +85,33 @@ public class DataManagerBean implements IDataManagerLocal {
 
     @Override
     public OutputStream getOutputStream(BinaryResource binaryResource) throws StorageException {
-        return storageProvider.getOutputStream(binaryResource);
+        return defaultStorageProvider.getOutputStream(binaryResource);
     }
 
     @Override
     public OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
-        return storageProvider.getOutputStream(binaryResource, subResourceVirtualPath);
+        return fileStorageProvider.getOutputStream(binaryResource, subResourceVirtualPath);
+    }
+
+    @Override
+    public boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
+        if (fileStorageProvider.exists(binaryResource, subResourceVirtualPath)) {
+            return true;
+        } else {
+            BinaryResource previous = binaryResource.getPrevious();
+            if (previous != null) {
+                return exists(previous, subResourceVirtualPath);
+            } else {
+                return false;
+            }
+        }
     }
 
     @Override
     public void copyData(BinaryResource source, BinaryResource destination) throws StorageException {
         try {
-            storageProvider.copyData(source, destination);
+            defaultStorageProvider.copyData(source, destination);
+            fileStorageProvider.copySubResources(source, destination);
         } catch (FileNotFoundException e) {
             BinaryResource previous = source.getPrevious();
             if (previous != null)
@@ -109,7 +124,9 @@ public class DataManagerBean implements IDataManagerLocal {
 
     @Override
     public void deleteData(BinaryResource binaryResource) throws StorageException {
-        storageProvider.delData(binaryResource);
+        defaultStorageProvider.delData(binaryResource);
+        fileStorageProvider.deleteSubResources(binaryResource);
+        fileStorageProvider.cleanParentFolders(binaryResource);
     }
 
 }

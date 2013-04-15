@@ -23,13 +23,15 @@ package com.docdoku.server.viewers;
 import com.developpez.adiguba.shell.ProcessConsumer;
 import com.developpez.adiguba.shell.Shell;
 import com.docdoku.core.util.FileIO;
+import com.google.common.io.InputSupplier;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
 
 public class FileConverter {
 
@@ -51,23 +53,45 @@ public class FileConverter {
         this.ooPort = ooPort;
     }
 
-    public File convertToSWF(File fileToConvert) throws IOException {
-        if ("swf".equals(FileIO.getExtension(fileToConvert))) {
-            return fileToConvert;
-        }
-        String swfFileNameWOExt = FileIO.getFileNameWithoutExtension(fileToConvert);
-        File swfFile = new File(fileToConvert.getParentFile(), swfFileNameWOExt + ".swf");
+    public InputStream convertToPDF(final InputStream streamToConvert) throws IOException {
+        File tmpDir = com.google.common.io.Files.createTempDir();
+        File fileToConvert = new File(tmpDir, "source.tmp");
 
-        if (swfFile.exists() && fileToConvert.lastModified() < swfFile.lastModified()) {
-            return swfFile;
-        }
+        com.google.common.io.Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+                return streamToConvert;
+            }
+        }, fileToConvert);
 
-        File pdfFile=convertToPDF(fileToConvert);
+        File pdfFile = directConvertToPDF(fileToConvert);
+
+        //clean-up
+        tmpDir.deleteOnExit();
+
+        return new FileInputStream(pdfFile);
+    }
+
+    public InputStream convertToSWF(final InputStream streamToConvert) throws IOException {
+        File tmpDir = com.google.common.io.Files.createTempDir();
+        File fileToConvert = new File(tmpDir, "source.tmp");
+        File swfFile = new File(tmpDir, "converted.swf");
+
+        com.google.common.io.Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+                return streamToConvert;
+            }
+        }, fileToConvert);
+
+        File pdfFile = directConvertToPDF(fileToConvert);
         String sep = File.separator;
 
         String sourceFile = pdfFile.getAbsolutePath();
         String outputFile = swfFile.getAbsolutePath();
+
         String pdf2SWFCmd = pdf2SWFHome + sep + "pdf2swf";
+
         String[] cmdArray = {pdf2SWFCmd, sourceFile, "-o", outputFile, "-T 9", "-f"};
 
         Shell sh = new Shell();
@@ -75,25 +99,12 @@ public class FileConverter {
         ProcessConsumer pc = sh.exec(cmdArray);
         pc.consume();
 
-        /*
-        String swfViewer = FileIO.urlToFile(FileConverter.class.getResource(RFX_VIEWER)).getAbsolutePath();
-        cmdArray = new String[]{pdf2SWFHome + sep + "swfcombine", swfViewer, "viewport=" + outputFile, "-o", outputFile};
-        pc = sh.exec(cmdArray);
-        pc.consume();
-        */
-        return swfFile;
+        tmpDir.deleteOnExit();
+        return new FileInputStream(swfFile);
     }
 
-    public File convertToPDF(File fileToConvert) {
-        if ("pdf".equals(FileIO.getExtension(fileToConvert))) {
-            return fileToConvert;
-        }
-        String pdfFileNameWOExt = FileIO.getFileNameWithoutExtension(fileToConvert);
-        File pdfFile = new File(fileToConvert.getParentFile(), pdfFileNameWOExt + ".pdf");
-
-        if (pdfFile.exists() && fileToConvert.lastModified() < pdfFile.lastModified()) {
-            return pdfFile;
-        }
+    public File directConvertToPDF(File fileToConvert) {
+        File pdfFile = new File(fileToConvert.getParentFile(), "converted.tmp");
 
         OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
                 .setOfficeHome(new File(ooHome))
@@ -103,6 +114,8 @@ public class FileConverter {
         OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
         converter.convert(fileToConvert, pdfFile);
         officeManager.stop();
+
         return pdfFile;
     }
+
 }
