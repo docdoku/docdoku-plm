@@ -27,6 +27,9 @@ define([
 
 		itemViewFactory: function (model) {
 			var type = model.get("type");
+            if(!type){
+                type=model.get("attributeType");
+            }
 			var constructor = this.typeViewMapping[type];
             var view = new constructor({
                 model: model
