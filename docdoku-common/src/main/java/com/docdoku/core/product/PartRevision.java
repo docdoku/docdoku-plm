@@ -298,7 +298,12 @@ public class PartRevision implements Serializable {
     public void setEffectivities(Set<Effectivity> effectivities) {
         this.effectivities = effectivities;
     }
-    
+
+    @Override
+    public String toString() {
+        return partMaster.getNumber() + "-" + version;
+    }
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {

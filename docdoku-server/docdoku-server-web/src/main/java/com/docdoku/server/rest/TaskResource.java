@@ -75,7 +75,6 @@ public class TaskResource {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
 
-
             return Response.ok().build();
 
         } catch (Exception ex) {
@@ -98,7 +97,6 @@ public class TaskResource {
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-
 
             return Response.ok().build();
 

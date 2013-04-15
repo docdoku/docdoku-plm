@@ -134,10 +134,10 @@ public class ProductStructureSampleLoader {
     
     private static void createBikeSampleProduct() throws Exception {
 
-        PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader",null);
+        PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader",null,null);
         pm.createConfigurationItem(workspace, "Bike", "Bicycle Motocross", "BMX");
 
-        PartMaster componentM = pm.createPartMaster(workspace, "BPM12VTX", "", "", false, null, "",null);
+        PartMaster componentM = pm.createPartMaster(workspace, "BPM12VTX", "", "", false, null, "",null,null);
         List<PartUsageLink> subParts = new ArrayList<PartUsageLink>();
         PartUsageLink link = new PartUsageLink();
         link.setAmount(1);

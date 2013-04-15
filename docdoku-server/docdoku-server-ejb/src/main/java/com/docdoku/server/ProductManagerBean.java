@@ -231,8 +231,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             for (Task runningTask : runningTasks) {
                 runningTask.start();
             }
-            //TODO adapt to Part
-            //mailer.sendApproval(runningTasks, newRevision);
+
+            mailer.sendApproval(runningTasks, newRevision);
 
         }
         newRevision.setCheckOutUser(user);
@@ -379,7 +379,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttribute attr : beforeLastPartIteration.getInstanceAttributes().values()) {
                 InstanceAttribute newAttr = attr.clone();
-                //newAttr.setDocument(newDoc);
                 //Workaround for the NULL DTYPE bug
                 attrDAO.createAttribute(newAttr);
                 attrs.put(newAttr.getName(), newAttr);
@@ -1051,26 +1050,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         if (partRevision.isCheckedOut()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException17");
         }
 
         int previousStep = workflow.getCurrentStep();
         task.approve(pComment, partRevision.getLastIteration().getIteration(), pSignature);
         int currentStep = workflow.getCurrentStep();
 
-        // TODO adapt it
-        /*
-        User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(partRevision);
-
-        if (previousStep != currentStep && subscribers.length != 0) {
-            mailer.sendStateNotification(subscribers, partRevision);
-        }*/
-
         Collection<Task> runningTasks = workflow.getRunningTasks();
         for (Task runningTask : runningTasks) {
             runningTask.start();
         }
-        // mailer.sendApproval(runningTasks, docM);
+        mailer.sendApproval(runningTasks, partRevision);
         return partRevision;
     }
 
@@ -1094,7 +1085,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         if (partRevision.isCheckedOut()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException16");
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException17");
         }
 
         task.reject(pComment, partRevision.getLastIteration().getIteration(), pSignature);

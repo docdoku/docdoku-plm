@@ -21,6 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.common.User;
 import com.docdoku.core.services.IMailerLocal;
@@ -180,6 +181,51 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
+    @Asynchronous
+    @Override
+    public void sendApproval(Collection<Task> pRunningTasks, PartRevision partRevision) {
+        try {
+            for (Task task : pRunningTasks) {
+                try {
+                    javax.mail.Message message = new MimeMessage(mailSession);
+                    User worker = task.getWorker();
+                    message.setRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress(worker.getEmail(), worker.getName()));
+                    message.setSubject("Approval required");
+                    message.setSentDate(new Date());
+                    message.setContent(getApprovalRequiredMessage(task, partRevision, new Locale(worker.getLanguage())),
+                            "text/html; charset=utf-8");
+                    message.setFrom();
+                    Transport.send(message);
+                    LOGGER.info("Sending approval required emails");
+                    LOGGER.info("for the part " + partRevision.getLastIteration());
+                } catch (UnsupportedEncodingException pUEEx) {
+                    LOGGER.warning("Mail address format error.");
+                    LOGGER.warning(pUEEx.getMessage());
+                }
+            }
+        } catch (MessagingException pMEx) {
+            LOGGER.severe("Message format error.");
+            LOGGER.severe("Approval can't be sent.");
+            LOGGER.severe(pMEx.getMessage());
+        }
+
+    }
+
+    private String getApprovalRequiredMessage(Task pTask, PartRevision partRevision, Locale pLocale) {
+        String voteURL = codebase + "/action/vote";
+        String instructions = pTask.getInstructions()==null?"-":pTask.getInstructions();
+        Object[] args = {voteURL, partRevision.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(partRevision), partRevision, instructions};
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("Approval_part_text"), args);
+    }
+
+    private String getURL(PartRevision partRevision) {
+        String workspace = partRevision.getWorkspaceId();
+        String docMId = partRevision.getPartNumber();
+        return codebase + "/parts/" + workspace + "/" + docMId + "/" + partRevision.getVersion();
+    }
+
     private String getPasswordRecoveryMessage(Account account, String pPasswordRRUuid, Locale pLocale) {
         String recoveryURL = codebase + "/faces/recoveryForm.xhtml?id=" + pPasswordRRUuid;
         Object[] args = {recoveryURL, account.getLogin()};
@@ -193,7 +239,7 @@ public class MailerBean implements IMailerLocal {
         String instructions = pTask.getInstructions()==null?"-":pTask.getInstructions();
         Object[] args = {voteURL, pDocumentMaster.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentMaster), pDocumentMaster, instructions};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("Approval_text"), args);
+        return MessageFormat.format(bundle.getString("Approval_document_text"), args);
     }
 
     private String getIterationNotificationMessage(DocumentMaster pDocumentMaster, Locale pLocale) {

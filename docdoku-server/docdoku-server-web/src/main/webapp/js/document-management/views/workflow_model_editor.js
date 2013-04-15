@@ -1,15 +1,7 @@
-/**
- * Created with IntelliJ IDEA.
- * User: yannsergent
- * Date: 13/11/12
- * Time: 13:13
- * To change this template use File | Settings | File Templates.
- */
-
 define([
     "require",
     "i18n!localization/nls/document-management-strings",
-    "models/workflow_model",
+    "common-objects/models/workflow_model",
     "text!templates/workflow_model_editor.html",
     "common-objects/collections/roles",
     "common-objects/models/activity_model",
