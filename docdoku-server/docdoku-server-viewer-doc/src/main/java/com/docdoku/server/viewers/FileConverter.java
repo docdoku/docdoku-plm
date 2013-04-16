@@ -22,6 +22,7 @@ package com.docdoku.server.viewers;
 
 import com.developpez.adiguba.shell.ProcessConsumer;
 import com.developpez.adiguba.shell.Shell;
+import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
@@ -52,11 +53,11 @@ public class FileConverter {
         this.ooPort = ooPort;
     }
 
-    public InputStream convertToPDF(final InputStream streamToConvert) throws IOException {
+    public InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
         File tmpDir = com.google.common.io.Files.createTempDir();
-        File fileToConvert = new File(tmpDir, "source.tmp");
+        File fileToConvert = new File(tmpDir, sourceName);
 
-        com.google.common.io.Files.copy(new InputSupplier<InputStream>() {
+        Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {
                 return streamToConvert;
@@ -71,12 +72,12 @@ public class FileConverter {
         return new FileInputStream(pdfFile);
     }
 
-    public InputStream convertToSWF(final InputStream streamToConvert) throws IOException {
-        File tmpDir = com.google.common.io.Files.createTempDir();
-        File fileToConvert = new File(tmpDir, "source.tmp");
+    public InputStream convertToSWF(String sourceName, final InputStream streamToConvert) throws IOException {
+        File tmpDir = Files.createTempDir();
+        File fileToConvert = new File(tmpDir, sourceName);
         File swfFile = new File(tmpDir, "converted.swf");
 
-        com.google.common.io.Files.copy(new InputSupplier<InputStream>() {
+        Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {
                 return streamToConvert;
@@ -103,7 +104,7 @@ public class FileConverter {
     }
 
     public File convertToPDF(File fileToConvert) {
-        File pdfFile = new File(fileToConvert.getParentFile(), "converted.tmp");
+        File pdfFile = new File(fileToConvert.getParentFile(), "converted.pdf");
 
         OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
                 .setOfficeHome(new File(ooHome))

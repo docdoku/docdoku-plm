@@ -77,13 +77,13 @@ public class DocViewerImpl implements DocumentViewer {
                     //if the resource is already converted, return it
                     inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
                 } else {
-                    InputStream inputStreamConverted = new FileConverter(ooHome, ooPort).convertToPDF(dataManager.getBinaryContentInputStream(binaryResource));
+                    InputStream inputStreamConverted = new FileConverter(ooHome, ooPort).convertToPDF(binaryResource.getName(), dataManager.getBinaryContentInputStream(binaryResource));
                     //copy the converted file for further reuse
                     OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
                     try {
                         ByteStreams.copy(inputStreamConverted, outputStream);
                     } finally {
-                        inputStream.close();
+                        inputStreamConverted.close();
                         outputStream.flush();
                         outputStream.close();
                     }
@@ -103,15 +103,17 @@ public class DocViewerImpl implements DocumentViewer {
                     inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
                 } else {
                     String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-                    inputStream = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(dataManager.getBinaryContentInputStream(binaryResource));
+                    InputStream inputStreamConverted = inputStream = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(binaryResource.getName(), dataManager.getBinaryContentInputStream(binaryResource));
                     //copy the converted file for further reuse
                     OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
                     try {
                         ByteStreams.copy(inputStream, outputStream);
                     } finally {
+                        inputStreamConverted.close();
                         outputStream.flush();
                         outputStream.close();
                     }
+                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
                 }
             }
         }
