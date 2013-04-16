@@ -40,7 +40,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
     @Override
     public boolean canProcess(final BinaryResource binaryResource) {
         try {
-            InputStream binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource);
+            InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return ScormUtil.isScormArchive(binaryResource.getName(), binaryContentInputStream);
         } catch (StorageException e) {
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
     public void unzipScormArchive(BinaryResource archiveBinaryResource) {
         ZipInputStream zipInputStream = null;
         try {
-            zipInputStream = new ZipInputStream(dataManager.getBinaryContentInputStream(archiveBinaryResource));
+            zipInputStream = new ZipInputStream(dataManager.getBinaryResourceInputStream(archiveBinaryResource));
             ZipEntry zipEntry;
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 if (!zipEntry.isDirectory()) {
@@ -64,7 +64,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
                     try {
                         String entryName = zipEntry.getName();
                         String subResourceVirtualPath = ScormUtil.getScormSubResourceVirtualPath(entryName);
-                        outputStream = dataManager.getOutputStream(archiveBinaryResource, subResourceVirtualPath);
+                        outputStream = dataManager.getBinarySubResourceOutputStream(archiveBinaryResource, subResourceVirtualPath);
                         ByteStreams.copy(zipInputStream, outputStream);
                     } finally {
                         outputStream.flush();

@@ -40,8 +40,7 @@ public class GoogleStorageProvider implements StorageProvider {
         this.vaultPath = vaultPath;
     }
 
-    @Override
-    public String getVirtualPath(BinaryResource pBinaryResource) {
+    private String getVirtualPath(BinaryResource pBinaryResource) {
         String normalizedName = Tools.unAccent(pBinaryResource.getFullName());
         if (vaultPath != null && !vaultPath.isEmpty()) {
             return new StringBuilder().append(vaultPath).append("/").append(normalizedName).toString();
@@ -50,19 +49,13 @@ public class GoogleStorageProvider implements StorageProvider {
         }
     }
 
-    public String getVirtualParentPath(BinaryResource pBinaryResource) {
-        String virtualPath = getVirtualPath(pBinaryResource);
-        int index = virtualPath.lastIndexOf("/");
-        return virtualPath.substring(0, index);
-    }
-
     @Override
-    public InputStream getBinaryContentInputStream(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException {
+    public InputStream getBinaryResourceInputStream(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException {
         return GoogleStorageCloud.getInputStream(getVirtualPath(pBinaryResource));
     }
 
     @Override
-    public OutputStream getOutputStream(BinaryResource pBinaryResource) throws StorageException {
+    public OutputStream getBinaryResourceOutputStream(BinaryResource pBinaryResource) throws StorageException {
         return GoogleStorageCloud.getOutputStream(getVirtualPath(pBinaryResource));
     }
 

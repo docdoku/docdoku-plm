@@ -66,7 +66,7 @@ public class ScormViewerImpl implements DocumentViewer {
     @Override
     public String renderHtmlForViewer(BinaryResource scormResource) throws Exception {
         String manifestVirtualPath = ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST);
-        ScormOrganization scormOrganization = new ScormManifestParser(dataManager.getBinaryContentInputStream(scormResource, manifestVirtualPath)).parse();
+        ScormOrganization scormOrganization = new ScormManifestParser(dataManager.getBinarySubResourceInputStream(scormResource, manifestVirtualPath)).parse();
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/scorm_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();

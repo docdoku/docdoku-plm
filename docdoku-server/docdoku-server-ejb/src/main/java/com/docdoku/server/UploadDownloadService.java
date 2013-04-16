@@ -114,7 +114,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            outputStream = dataManager.getOutputStream(binaryResource);
+            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             inputStream = data.getInputStream();
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
@@ -141,7 +141,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            outputStream = dataManager.getOutputStream(binaryResource);
+            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             inputStream = data.getInputStream();
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
@@ -169,7 +169,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            outputStream = dataManager.getOutputStream(binaryResource);
+            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             inputStream = data.getInputStream();
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
@@ -197,7 +197,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            outputStream = dataManager.getOutputStream(binaryResource);
+            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             inputStream = data.getInputStream();
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
@@ -224,7 +224,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            outputStream = dataManager.getOutputStream(binaryResource);
+            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             inputStream = data.getInputStream();
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
@@ -241,7 +241,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     private DataSource getBinaryResourceDataSource(final BinaryResource binaryResource) {
         try {
 
-            final InputStream binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource);
+            final InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
 
             DataSource binaryResourceDataSource = new DataSource() {
                 @Override

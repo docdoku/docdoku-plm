@@ -56,13 +56,13 @@ public class DataManagerBean implements IDataManagerLocal {
     }
 
     @Override
-    public InputStream getBinaryContentInputStream(BinaryResource binaryResource) throws StorageException {
+    public InputStream getBinaryResourceInputStream(BinaryResource binaryResource) throws StorageException {
         try {
-            return defaultStorageProvider.getBinaryContentInputStream(binaryResource);
+            return defaultStorageProvider.getBinaryResourceInputStream(binaryResource);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
             if (previous != null)
-                return getBinaryContentInputStream(previous);
+                return getBinaryResourceInputStream(previous);
             else {
                 throw new StorageException(new StringBuilder().append("Can't find ").append(binaryResource.getFullName()).toString());
             }
@@ -70,13 +70,13 @@ public class DataManagerBean implements IDataManagerLocal {
     }
 
     @Override
-    public InputStream getBinaryContentInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
+    public InputStream getBinarySubResourceInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
         try {
-            return fileStorageProvider.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+            return fileStorageProvider.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
             if (previous != null)
-                return getBinaryContentInputStream(previous, subResourceVirtualPath);
+                return getBinarySubResourceInputStream(previous, subResourceVirtualPath);
             else {
                 throw new StorageException(new StringBuilder().append("Can't find sub resource ").append(subResourceVirtualPath).append(" of ").append(binaryResource.getFullName()).toString());
             }
@@ -84,13 +84,13 @@ public class DataManagerBean implements IDataManagerLocal {
     }
 
     @Override
-    public OutputStream getOutputStream(BinaryResource binaryResource) throws StorageException {
-        return defaultStorageProvider.getOutputStream(binaryResource);
+    public OutputStream getBinaryResourceOutputStream(BinaryResource binaryResource) throws StorageException {
+        return defaultStorageProvider.getBinaryResourceOutputStream(binaryResource);
     }
 
     @Override
-    public OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
-        return fileStorageProvider.getOutputStream(binaryResource, subResourceVirtualPath);
+    public OutputStream getBinarySubResourceOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
+        return fileStorageProvider.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
     }
 
     @Override

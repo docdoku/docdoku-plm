@@ -26,7 +26,6 @@ import com.docdoku.core.services.FileNotFoundException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.storage.StorageProvider;
-import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -40,19 +39,18 @@ public class FileStorageProvider implements StorageProvider {
         this.vaultPath = vaultPath;
     }
 
-    @Override
-    public String getVirtualPath(BinaryResource pBinaryResource) {
+    private String getVirtualPath(BinaryResource pBinaryResource) {
         String normalizedName = Tools.unAccent(pBinaryResource.getFullName());
         return new StringBuilder().append(this.vaultPath).append("/").append(normalizedName).toString();
     }
 
     @Override
-    public InputStream getBinaryContentInputStream(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException {
+    public InputStream getBinaryResourceInputStream(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException {
         File file = new File(getVirtualPath(pBinaryResource));
         return getInputStream(file);
     }
 
-    public InputStream getBinaryContentInputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException {
+    public InputStream getBinarySubResourceInputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException {
         File subResourceFile = new File(getSubResourceFolder(pBinaryResource), subResourceVirtualPath);
         return getInputStream(subResourceFile);
     }
@@ -75,7 +73,7 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     @Override
-    public OutputStream getOutputStream(BinaryResource pBinaryResource) throws StorageException {
+    public OutputStream getBinaryResourceOutputStream(BinaryResource pBinaryResource) throws StorageException {
         File file = new File(getVirtualPath(pBinaryResource));
         file.getParentFile().mkdirs();
         try {
@@ -85,7 +83,7 @@ public class FileStorageProvider implements StorageProvider {
         }
     }
 
-    public OutputStream getOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
+    public OutputStream getBinarySubResourceOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
         File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
         subResourceFile.getParentFile().mkdirs();
         try {

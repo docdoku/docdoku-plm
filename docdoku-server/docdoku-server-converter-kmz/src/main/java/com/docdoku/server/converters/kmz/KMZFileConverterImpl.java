@@ -53,7 +53,7 @@ public class KMZFileConverterImpl implements CADConverter{
             @Override
             public InputStream getInput() throws IOException {
                 try {
-                    return dataManager.getBinaryContentInputStream(cadFile);
+                    return dataManager.getBinaryResourceInputStream(cadFile);
                 } catch (StorageException e) {
                     e.printStackTrace();
                     throw new IOException(e);
@@ -79,7 +79,7 @@ public class KMZFileConverterImpl implements CADConverter{
                         BinaryResource finalTextureBinaryResource = productService.saveFileInPartIteration(partIPK, tempTexture.getName(), tempTexture.length());
                         OutputStream finalTextureOutputStream = null;
                         try {
-                            finalTextureOutputStream = dataManager.getOutputStream(finalTextureBinaryResource);
+                            finalTextureOutputStream = dataManager.getBinaryResourceOutputStream(finalTextureBinaryResource);
                             Files.copy(tempTexture, finalTextureOutputStream);
                         } finally {
                             finalTextureOutputStream.flush();
@@ -93,7 +93,7 @@ public class KMZFileConverterImpl implements CADConverter{
             BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length());
             OutputStream daeOutputStream = null;
             try {
-                daeOutputStream = dataManager.getOutputStream(daeBinaryResource);
+                daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);
                 Files.copy(tmpNewDAEFile, daeOutputStream);
             } finally {
                 daeOutputStream.flush();

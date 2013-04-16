@@ -70,16 +70,16 @@ public class DocViewerImpl implements DocumentViewer {
             pResponse.setContentType("application/pdf");
 
             if (extension.equals("pdf")) {
-                inputStream = dataManager.getBinaryContentInputStream(binaryResource);
+                inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             } else {
                 String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
                 if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
                     //if the resource is already converted, return it
-                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 } else {
-                    InputStream inputStreamConverted = new FileConverter(ooHome, ooPort).convertToPDF(binaryResource.getName(), dataManager.getBinaryContentInputStream(binaryResource));
+                    InputStream inputStreamConverted = new FileConverter(ooHome, ooPort).convertToPDF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
                     //copy the converted file for further reuse
-                    OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
+                    OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                     try {
                         ByteStreams.copy(inputStreamConverted, outputStream);
                     } finally {
@@ -87,7 +87,7 @@ public class DocViewerImpl implements DocumentViewer {
                         outputStream.flush();
                         outputStream.close();
                     }
-                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 }
             }
 
@@ -96,16 +96,16 @@ public class DocViewerImpl implements DocumentViewer {
             pResponse.setContentType("application/x-shockwave-flash");
 
             if (extension.equals("swf")) {
-                inputStream = dataManager.getBinaryContentInputStream(binaryResource);
+                inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             } else {
                 String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".swf";
                 if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
-                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 } else {
                     String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-                    InputStream inputStreamConverted = inputStream = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(binaryResource.getName(), dataManager.getBinaryContentInputStream(binaryResource));
+                    InputStream inputStreamConverted = inputStream = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
                     //copy the converted file for further reuse
-                    OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
+                    OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                     try {
                         ByteStreams.copy(inputStream, outputStream);
                     } finally {
@@ -113,7 +113,7 @@ public class DocViewerImpl implements DocumentViewer {
                         outputStream.flush();
                         outputStream.close();
                     }
-                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 }
             }
         }

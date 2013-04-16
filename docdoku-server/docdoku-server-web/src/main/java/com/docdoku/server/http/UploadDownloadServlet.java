@@ -159,7 +159,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 try {
                     if (isSubResource) {
 
-                        binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
+                        binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
 
                     } else {
 
@@ -167,7 +167,7 @@ public class UploadDownloadServlet extends HttpServlet {
                             binaryContentInputStream = documentViewerService.prepareFileForViewer(pRequest, pResponse, getServletContext(), binaryResource);
                         } else {
                             pResponse.setContentLength((int) binaryResource.getContentLength());
-                            binaryContentInputStream = dataManager.getBinaryContentInputStream(binaryResource);
+                            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
                         }
 
                     }
@@ -246,7 +246,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 InputStream inputStream = null;
                 OutputStream outputStream = null;
                 try {
-                    outputStream = dataManager.getOutputStream(binaryResource);
+                    outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
                     inputStream = item.getInputStream();
                     length = ByteStreams.copy(inputStream, outputStream);
                 } finally {

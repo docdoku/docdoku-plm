@@ -855,7 +855,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
                 try {
-                    InputStream inputStream = dataManager.getBinaryContentInputStream(bin);
+                    InputStream inputStream = dataManager.getBinaryResourceInputStream(bin);
                     indexer.addToIndex(bin.getFullName(), inputStream);
                 } catch (StorageException e) {
                     e.printStackTrace();

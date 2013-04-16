@@ -75,7 +75,7 @@ public class OBJFileConverterImpl implements CADConverter{
                 @Override
                 public InputStream getInput() throws IOException {
                     try {
-                        return dataManager.getBinaryContentInputStream(cadFile);
+                        return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
                         e.printStackTrace();
                         throw new IOException(e);
@@ -94,7 +94,7 @@ public class OBJFileConverterImpl implements CADConverter{
                 BinaryResource binBinaryResource = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
                 OutputStream binOutputStream = null;
                 try {
-                    binOutputStream = dataManager.getOutputStream(binBinaryResource);
+                    binOutputStream = dataManager.getBinaryResourceOutputStream(binBinaryResource);
                     Files.copy(tmpBINFile, binOutputStream);
                 } finally {
                     binOutputStream.flush();
@@ -104,7 +104,7 @@ public class OBJFileConverterImpl implements CADConverter{
                 BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
                 OutputStream jsOutputStream = null;
                 try {
-                    jsOutputStream = dataManager.getOutputStream(jsBinaryResource);
+                    jsOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
                     Files.copy(tmpJSFile, jsOutputStream);
                 } finally {
                     jsOutputStream.flush();
