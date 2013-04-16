@@ -142,7 +142,6 @@
             <artifactId>google-api-client</artifactId>
             <version>1.14.1-beta</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-jackson2</artifactId>
@@ -152,6 +151,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
     </dependencies>
     <build>

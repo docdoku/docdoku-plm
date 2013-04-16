@@ -22,7 +22,6 @@ package com.docdoku.server.viewers;
 
 import com.developpez.adiguba.shell.ProcessConsumer;
 import com.developpez.adiguba.shell.Shell;
-import com.docdoku.core.util.FileIO;
 import com.google.common.io.InputSupplier;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
@@ -64,7 +63,7 @@ public class FileConverter {
             }
         }, fileToConvert);
 
-        File pdfFile = directConvertToPDF(fileToConvert);
+        File pdfFile = convertToPDF(fileToConvert);
 
         //clean-up
         tmpDir.deleteOnExit();
@@ -84,7 +83,7 @@ public class FileConverter {
             }
         }, fileToConvert);
 
-        File pdfFile = directConvertToPDF(fileToConvert);
+        File pdfFile = convertToPDF(fileToConvert);
         String sep = File.separator;
 
         String sourceFile = pdfFile.getAbsolutePath();
@@ -103,7 +102,7 @@ public class FileConverter {
         return new FileInputStream(swfFile);
     }
 
-    public File directConvertToPDF(File fileToConvert) {
+    public File convertToPDF(File fileToConvert) {
         File pdfFile = new File(fileToConvert.getParentFile(), "converted.tmp");
 
         OfficeManager officeManager = new DefaultOfficeManagerConfiguration()

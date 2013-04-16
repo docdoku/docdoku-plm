@@ -77,15 +77,17 @@ public class DocViewerImpl implements DocumentViewer {
                     //if the resource is already converted, return it
                     inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
                 } else {
-                    inputStream = new FileConverter(ooHome, ooPort).convertToPDF(dataManager.getBinaryContentInputStream(binaryResource));
+                    InputStream inputStreamConverted = new FileConverter(ooHome, ooPort).convertToPDF(dataManager.getBinaryContentInputStream(binaryResource));
                     //copy the converted file for further reuse
                     OutputStream outputStream = dataManager.getOutputStream(binaryResource, subResourceVirtualPath);
                     try {
-                        ByteStreams.copy(inputStream, outputStream);
+                        ByteStreams.copy(inputStreamConverted, outputStream);
                     } finally {
+                        inputStream.close();
                         outputStream.flush();
                         outputStream.close();
                     }
+                    inputStream = dataManager.getBinaryContentInputStream(binaryResource, subResourceVirtualPath);
                 }
             }
 
