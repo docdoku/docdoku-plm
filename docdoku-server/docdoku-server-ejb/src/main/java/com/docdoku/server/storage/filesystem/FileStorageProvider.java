@@ -63,7 +63,7 @@ public class FileStorageProvider implements StorageProvider {
     private InputStream getInputStream(File file) throws StorageException, FileNotFoundException {
         if (file.exists()) {
             try {
-                return new FileInputStream(file);
+                return new BufferedInputStream(new FileInputStream(file));
             } catch (java.io.FileNotFoundException e) {
                 throw new StorageException(e.getMessage(), e);
             }
@@ -77,7 +77,7 @@ public class FileStorageProvider implements StorageProvider {
         File file = new File(getVirtualPath(pBinaryResource));
         file.getParentFile().mkdirs();
         try {
-            return new FileOutputStream(file);
+            return new BufferedOutputStream(new FileOutputStream(file));
         } catch (java.io.FileNotFoundException e) {
             throw new StorageException(e.getMessage(), e);
         }
@@ -87,7 +87,7 @@ public class FileStorageProvider implements StorageProvider {
         File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
         subResourceFile.getParentFile().mkdirs();
         try {
-            return new FileOutputStream(subResourceFile);
+            return new BufferedOutputStream(new FileOutputStream(subResourceFile));
         } catch (java.io.FileNotFoundException e) {
             throw new StorageException(e.getMessage(), e);
         }
