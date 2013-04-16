@@ -164,6 +164,19 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getPartKey();
             }
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/";
+        },
+
+
+        getPermalink: function() {
+            return encodeURI(
+                window.location.origin
+                    + "/parts/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getNumber()
+                    + "/"
+                    + this.getVersion()
+            );
         }
 
     });

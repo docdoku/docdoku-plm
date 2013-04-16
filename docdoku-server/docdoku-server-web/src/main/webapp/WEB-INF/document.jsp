@@ -13,7 +13,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/switchPlayer.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/swfobject/swfobject.js"></script>
 
-    <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/perma-link/style.less"/>
+    <link rel="stylesheet/less" type="text/css" href="<%=request.getContextPath()%>/less/document-permalink/style.less"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/less-1.3.3.min.js"></script>
 
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/lib/jquery-1.8.2.min.js"></script>

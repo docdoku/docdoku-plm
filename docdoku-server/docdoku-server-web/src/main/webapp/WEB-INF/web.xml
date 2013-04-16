@@ -71,6 +71,10 @@
         <servlet-class>com.docdoku.server.http.DocumentServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>PartServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.PartServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>DMServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.DMServlet</servlet-class>
     </servlet>
@@ -105,6 +109,10 @@
     <servlet-mapping>
         <servlet-name>DocumentServlet</servlet-name>
         <url-pattern>/documents/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PartServlet</servlet-name>
+        <url-pattern>/parts/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DMServlet</servlet-name>

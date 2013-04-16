@@ -28,7 +28,8 @@ define(
 
             this.$el.html(this.template({
                 part: this.model,
-                i18n: i18n
+                i18n: i18n,
+                permalink : this.model.getPermalink()
             }));
 
             this.editMode = this.model.isCheckoutByConnectedUser() ;
