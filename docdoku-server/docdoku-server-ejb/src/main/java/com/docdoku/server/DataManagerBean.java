@@ -51,8 +51,9 @@ public class DataManagerBean implements IDataManagerLocal {
 
     @PostConstruct
     private void init() {
-        defaultStorageProvider = new GoogleStorageProvider("");
+        //defaultStorageProvider = new GoogleStorageProvider("");
         fileStorageProvider = new FileStorageProvider(vaultPath);
+        defaultStorageProvider = fileStorageProvider;
     }
 
     @Override
