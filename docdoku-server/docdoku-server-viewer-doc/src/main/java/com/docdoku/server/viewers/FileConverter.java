@@ -32,28 +32,32 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 public class FileConverter {
 
-    private String pdf2SWFHome;
-    private String ooHome;
-    private int ooPort;
+    private final static String ooHome;
+    private final static int ooPort;
+    private final static String pdf2SWFHome;
 
-    private final static String SIMPLE_VIEWER="/com/docdoku/server/http/resources/swf/simple_viewer.swf";
-    private final static String RFX_VIEWER="/com/docdoku/server/http/resources/swf/rfxview.swf";
-  
-    public FileConverter(String pdf2SWFHome, String ooHome, int ooPort) {
-        this.pdf2SWFHome = pdf2SWFHome;
-        this.ooHome = ooHome;
-        this.ooPort = ooPort;
+    private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
+    private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
+    private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
+    private static final String PDF2SWFHOME_KEY = "com.docdoku.server.viewers.pdf2SWFHome";
+
+    static {
+        try {
+            Properties properties = new Properties();
+            properties.load(FileConverter.class.getResourceAsStream(PROPERTIES_FILE));
+            ooHome = properties.getProperty(OO_HOME_KEY);
+            ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
+            pdf2SWFHome = properties.getProperty(PDF2SWFHOME_KEY);
+        } catch (IOException e) {
+            throw new RuntimeException("Can't read conf.properties file for documents conversion", e);
+        }
     }
 
-    public FileConverter(String ooHome, int ooPort) {
-        this.ooHome = ooHome;
-        this.ooPort = ooPort;
-    }
-
-    public InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
+    public static InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
         File tmpDir = com.google.common.io.Files.createTempDir();
         File fileToConvert = new File(tmpDir, sourceName);
 
@@ -72,7 +76,7 @@ public class FileConverter {
         return new FileInputStream(pdfFile);
     }
 
-    public InputStream convertToSWF(String sourceName, final InputStream streamToConvert) throws IOException {
+    public static InputStream convertToSWF(String sourceName, final InputStream streamToConvert) throws IOException {
         File tmpDir = Files.createTempDir();
         File fileToConvert = new File(tmpDir, sourceName);
         File swfFile = new File(tmpDir, "converted.swf");
@@ -103,7 +107,7 @@ public class FileConverter {
         return new FileInputStream(swfFile);
     }
 
-    public File convertToPDF(File fileToConvert) {
+    private static File convertToPDF(File fileToConvert) {
         File pdfFile = new File(fileToConvert.getParentFile(), "converted.pdf");
 
         OfficeManager officeManager = new DefaultOfficeManagerConfiguration()

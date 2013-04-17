@@ -57,9 +57,6 @@ public class DocViewerImpl implements DocumentViewer {
     @Override
     public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, final BinaryResource binaryResource) throws Exception {
 
-        String ooHome = servletContext.getInitParameter("OO_HOME");
-        int ooPort = Integer.parseInt(servletContext.getInitParameter("OO_PORT"));
-
         String flexPaperViewerType = pRequest.getParameter("fpv");
 
         String extension = FileIO.getExtension(binaryResource.getName());
@@ -78,7 +75,7 @@ public class DocViewerImpl implements DocumentViewer {
                     //if the resource is already converted, return it
                     inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 } else {
-                    InputStream inputStreamConverted = new FileConverter(ooHome, ooPort).convertToPDF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
+                    InputStream inputStreamConverted = FileConverter.convertToPDF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
                     //copy the converted file for further reuse
                     OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                     try {
@@ -103,8 +100,7 @@ public class DocViewerImpl implements DocumentViewer {
                 if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
                     inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 } else {
-                    String pdf2SWFHome = servletContext.getInitParameter("PDF2SWF_HOME");
-                    InputStream inputStreamConverted = inputStream = new FileConverter(pdf2SWFHome, ooHome, ooPort).convertToSWF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
+                    InputStream inputStreamConverted = inputStream = FileConverter.convertToSWF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
                     //copy the converted file for further reuse
                     OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                     try {
