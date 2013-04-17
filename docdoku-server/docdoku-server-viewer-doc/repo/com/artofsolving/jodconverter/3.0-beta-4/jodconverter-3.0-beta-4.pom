@@ -5,5 +5,28 @@
   <groupId>com.artofsolving</groupId>
   <artifactId>jodconverter</artifactId>
   <version>3.0-beta-4</version>
-  <description>POM was created from install:install-file</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>juh</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>ridl</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>unoil</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+  </dependencies>
+
 </project>
