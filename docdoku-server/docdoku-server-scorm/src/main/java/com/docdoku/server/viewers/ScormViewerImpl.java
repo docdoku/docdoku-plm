@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ScormViewerImpl implements DocumentViewer {
 
@@ -73,6 +74,7 @@ public class ScormViewerImpl implements DocumentViewer {
         scopes.put("organization", scormOrganization);
         scopes.put("uriResource", ViewerUtils.getURI(scormResource));
         scopes.put("fileName", scormResource.getName());
+        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
         return templateWriter.toString();

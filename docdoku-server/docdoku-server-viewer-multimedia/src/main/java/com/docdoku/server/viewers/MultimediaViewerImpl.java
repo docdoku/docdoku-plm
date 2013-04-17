@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MultimediaViewerImpl implements DocumentViewer {
 
@@ -57,6 +58,7 @@ public class MultimediaViewerImpl implements DocumentViewer {
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(multimediaResource));
         scopes.put("fileName", multimediaResource.getName());
+        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
         return templateWriter.toString();

@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DocViewerImpl implements DocumentViewer {
 
@@ -133,6 +134,7 @@ public class DocViewerImpl implements DocumentViewer {
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(docResource));
         scopes.put("fileName", docResource.getName());
+        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
         return templateWriter.toString();

@@ -1,5 +1,9 @@
-<img class="image_plus" height="10px" width="10px" id="btn" src="/images/plus.png" />
-<a href="{{uriResource}}">{{fileName}}</a>
-<div>
-    <img width="510" height="422" src="{{uriResource}}"/>
+<div class="accordion-heading">
+    <a class="download" href="{{uriResource}}"><i class="icon-cloud-download"></i></a>
+    <a class="accordion-toggle" data-toggle="collapse" href="#{{thisId}}">{{fileName}}</a>
+</div>
+<div id="{{thisId}}" class="accordion-body collapse">
+    <div class="accordion-inner">
+        <img class="image-viewer" src="{{uriResource}}"/>
+    </div>
 </div>

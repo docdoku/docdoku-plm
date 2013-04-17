@@ -39,13 +39,10 @@ public class ViewerBean {
             if (template != null && !template.isEmpty()) {
                 HtmlPanelGroup fileDiv = new HtmlPanelGroup();
                 fileDiv.setLayout("block");
-                fileDiv.setStyleClass("attached-file");
-
+                fileDiv.setStyleClass("attached-file accordion-group");
                 UIOutput output = new UIOutput();
                 output.setValue(template);
-
                 fileDiv.getChildren().add(output);
-
                 components.add(fileDiv);
             }
 

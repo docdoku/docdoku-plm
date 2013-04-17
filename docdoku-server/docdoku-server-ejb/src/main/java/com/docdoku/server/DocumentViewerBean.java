@@ -23,6 +23,10 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
+import com.docdoku.server.viewers.ViewerUtils;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -32,7 +36,12 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {
@@ -64,22 +73,18 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     public String getHtmlForViewer(BinaryResource binaryResource) {
         String template = "";
         DocumentViewer documentViewerSelected = selectViewerForTemplate(binaryResource);
-        if (documentViewerSelected != null) {
-            try {
+
+        try {
+            if (documentViewerSelected != null) {
                 template = documentViewerSelected.renderHtmlForViewer(binaryResource);
-            } catch (Exception e) {
-                e.printStackTrace();
-                template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
+            }else{
+                template = getDefaultTemplate(binaryResource);
             }
-        } else {
-            template = new StringBuilder()
-                    .append("<a href=\"")
-                    .append("/files/")
-                    .append(binaryResource.getFullName())
-                    .append("\">")
-                    .append(binaryResource.getName())
-                    .append("</a>").toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
         }
+
         return template;
     }
 
@@ -92,6 +97,17 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
             }
         }
         return selectedDocumentViewer;
+    }
+
+    private String getDefaultTemplate(BinaryResource binaryResource) throws IOException {
+        MustacheFactory mf = new DefaultMustacheFactory();
+        Mustache mustache = mf.compile("com/docdoku/server/viewers/default_viewer.mustache");
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("uriResource", ViewerUtils.getURI(binaryResource));
+        scopes.put("fileName", binaryResource.getName());
+        StringWriter templateWriter = new StringWriter();
+        mustache.execute(templateWriter, scopes).flush();
+        return templateWriter.toString();
     }
 
 }
