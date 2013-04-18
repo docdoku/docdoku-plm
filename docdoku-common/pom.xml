@@ -21,23 +21,6 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8</version>
-                <configuration>
-                    <source>1.6</source>
-<!--                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>-->
-                    <show>private</show> 
-<!--                    <docletArtifact>
-                        <groupId>org.umlgraph</groupId>
-                        <artifactId>doclet</artifactId>
-                        <version>5.1</version>
-                    </docletArtifact>-->
-<!--                    <additionalparam>-attributes -visibility -types -enumerations -enumconstants -inferrel -inferdep -hide java.* -collpackages java.util.*</additionalparam>-->
-                    <useStandardDocletOptions>true</useStandardDocletOptions>
-                </configuration>
-            </plugin>
         </plugins>
         <finalName>docdoku-common</finalName>
     </build>
