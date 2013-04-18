@@ -41,7 +41,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {

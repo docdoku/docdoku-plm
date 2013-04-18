@@ -20,8 +20,6 @@
 
 package com.docdoku.core.services;
 
-import java.io.*;
-
 public class StorageException extends Exception {
 
     public StorageException(String message) {
