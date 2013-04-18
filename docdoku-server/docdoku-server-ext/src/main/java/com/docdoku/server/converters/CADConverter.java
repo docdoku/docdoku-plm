@@ -20,15 +20,12 @@
 
 package com.docdoku.server.converters;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
 
 import java.io.File;
-import java.io.IOException;
-
 
 public interface CADConverter {
-
-    File convert(PartIteration partToConvert, File cadFile) throws Exception;
+    File convert(PartIteration partToConvert, BinaryResource cadFile) throws Exception;
     boolean canConvertToJSON(String cadFileExtension);
-
 }

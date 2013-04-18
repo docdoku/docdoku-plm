@@ -23,24 +23,19 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.PartIterationNotFoundException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.dao.PartIterationDAO;
-import com.docdoku.server.vault.DataManager;
-import com.docdoku.server.vault.filesystem.DataManagerImpl;
 
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.io.*;
+import java.io.File;
 import java.util.concurrent.Future;
 
 
@@ -55,25 +50,14 @@ public class ConverterBean implements IConverterManagerLocal {
     @PersistenceContext
     private EntityManager em;
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
-
-    private DataManager dataManager;
-
     @Inject
     @Any
     private Instance<CADConverter> converters;
 
-
-    @PostConstruct
-    private void init() {
-        dataManager = new DataManagerImpl(new File(vaultPath));
-    }
-
     @Override
     @Asynchronous
-    public Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, File cadFile) throws Exception {
-        String ext = FileIO.getExtension(cadFile);
+    public Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
+        String ext = FileIO.getExtension(cadBinaryResource.getName());
         File convertedFile = null;
         CADConverter selectedConverter=null;
         for(CADConverter converter:converters){
@@ -86,7 +70,7 @@ public class ConverterBean implements IConverterManagerLocal {
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             PartIteration partI = partIDAO.loadPartI(pPartIPK);
 
-            convertedFile = selectedConverter.convert(partI, cadFile);
+            convertedFile = selectedConverter.convert(partI, cadBinaryResource);
         }
         return new AsyncResult<File>(convertedFile);
     }

@@ -20,39 +20,33 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
 
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-
 public class DocumentServlet extends HttpServlet {
-    
+
     @EJB
     private IDocumentManagerLocal documentService;
-    
+
     @Override
-    protected void doGet(HttpServletRequest pRequest,
-                         HttpServletResponse pResponse)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-            String login = pRequest.getRemoteUser();
             String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-            int offset;
-            if(pRequest.getContextPath().equals(""))
-                offset=2;
-            else
-                offset=3;
+            int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
             
             String workspaceId = URLDecoder.decode(pathInfos[offset],"UTF-8");
             String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
@@ -64,14 +58,12 @@ public class DocumentServlet extends HttpServlet {
             DocumentIteration doc =  docM.getLastIteration();
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
 
-
-
-            pRequest.getRequestDispatcher("/WEB-INF/document.jsp").forward(pRequest, pResponse);
-
-
+            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         } catch (Exception pEx) {
-            throw new ServletException("Error while fetching your document.", pEx);
+            pEx.printStackTrace();
+            throw new ServletException("error while fetching your document.", pEx);
         }
     }
+
 }

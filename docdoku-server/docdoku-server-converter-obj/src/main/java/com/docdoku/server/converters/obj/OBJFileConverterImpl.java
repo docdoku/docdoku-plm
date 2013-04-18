@@ -20,16 +20,20 @@
 
 package com.docdoku.server.converters.obj;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 
@@ -43,6 +47,9 @@ public class OBJFileConverterImpl implements CADConverter{
     @EJB
     private IProductManagerLocal productService;
 
+    @EJB
+    private IDataManagerLocal dataManager;
+
     static{
         try {
             CONF.load(OBJFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
@@ -52,44 +59,64 @@ public class OBJFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public File convert(PartIteration partToConvert, File cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException {
-        String woExName=FileIO.getFileNameWithoutExtension(cadFile);
-        File tempDir = Files.createTempDir();
-        File tmpJSFile=new File(tempDir, woExName+".js");
-        File tmpBINFile = new File(tmpJSFile.getParentFile(), woExName + ".bin");
-        File jsFile=null;
+    public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+        String woExName = FileIO.getFileNameWithoutExtension(cadFile.getName());
+        File tmpDir = Files.createTempDir();
+        File tmpCadFile;
+        File tmpJSFile = new File(tmpDir, woExName+".js");
+        File tmpBINFile = new File(tmpDir, woExName + ".bin");
+        File jsFile = null;
         try {
             String pythonInterpreter = CONF.getProperty("pythonInterpreter");
             File script =  FileIO.urlToFile(OBJFileConverterImpl.class.getResource(PYTHON_SCRIPT));
-            String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", cadFile.getAbsolutePath(),"-o",tmpJSFile.getAbsolutePath()};
+
+            tmpCadFile = new File(tmpDir, cadFile.getName());
+            Files.copy(new InputSupplier<InputStream>() {
+                @Override
+                public InputStream getInput() throws IOException {
+                    try {
+                        return dataManager.getBinaryResourceInputStream(cadFile);
+                    } catch (StorageException e) {
+                        e.printStackTrace();
+                        throw new IOException(e);
+                    }
+                }
+            }, tmpCadFile);
+
+            String[] args = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", tmpCadFile.getAbsolutePath(), "-o", tmpJSFile.getAbsolutePath()};
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();
             //Process proc = Runtime.getRuntime().exec(args);
             proc.waitFor();
             int exitCode = proc.exitValue();
-            if(exitCode==0){
+            if (exitCode==0) {
                 PartIterationKey partIPK = partToConvert.getKey();
-                File binFile = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
-                Files.copy(tmpBINFile,binFile);
+                BinaryResource binBinaryResource = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
+                OutputStream binOutputStream = null;
+                try {
+                    binOutputStream = dataManager.getBinaryResourceOutputStream(binBinaryResource);
+                    Files.copy(tmpBINFile, binOutputStream);
+                } finally {
+                    binOutputStream.flush();
+                    binOutputStream.close();
+                }
 
-                jsFile = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
-                Files.copy(tmpJSFile,jsFile);
+                BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
+                OutputStream jsOutputStream = null;
+                try {
+                    jsOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
+                    Files.copy(tmpJSFile, jsOutputStream);
+                } finally {
+                    jsOutputStream.flush();
+                    jsOutputStream.close();
+                }
+
             }
             return jsFile;
-        }
-        finally {
-            if(tmpJSFile!=null)
-                tmpJSFile.delete();
-
-            if(tmpBINFile!=null)
-                tmpBINFile.delete();
-
-            if(tempDir!=null)
-                FileIO.rmDir(tempDir);
+        } finally {
+            FileIO.rmDir(tmpDir);
         }
     }
-
-
 
     @Override
     public boolean canConvertToJSON(String cadFileExtension) {

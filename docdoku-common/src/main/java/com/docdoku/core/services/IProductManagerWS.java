@@ -20,14 +20,13 @@
 
 package com.docdoku.core.services;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.workflow.TaskKey;
 
-import java.io.File;
-import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.List;
 import java.util.Map;
@@ -255,7 +254,7 @@ public interface IProductManagerWS{
      * Number of bytes of the physical file
      *
      * @return
-     * The physical file, a java.io.File instance, that now needs to be created
+     * The binary resource, a BinaryResource instance, that now needs to be created
      *
      * @throws UserNotFoundException
      * @throws UserNotActiveException
@@ -265,7 +264,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    java.io.File saveNativeCADInPartIteration(PartIterationKey partIPK, String name, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    BinaryResource saveNativeCADInPartIteration(PartIterationKey partIPK, String name, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
 
     /**
      * Creates a <a href="Geometry.html">Geometry</a> file,
@@ -287,7 +286,7 @@ public interface IProductManagerWS{
      * Number of bytes of the physical file
      * 
      * @return
-     * The physical file, a java.io.File instance, that now needs to be created
+     * The binary resource, a BinaryResource instance, that now needs to be created
      * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
@@ -297,7 +296,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    java.io.File saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     
     /**
      * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>
@@ -316,7 +315,7 @@ public interface IProductManagerWS{
      * Number of bytes of the physical file
      * 
      * @return
-     * The physical file, a java.io.File instance, that now needs to be created
+     * The binary resource, a BinaryResource instance, that now needs to be created
      * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
@@ -326,7 +325,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    java.io.File saveFileInPartIteration(PartIterationKey partIPK, String name, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    BinaryResource saveFileInPartIteration(PartIterationKey partIPK, String name, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     
     /**
      * Updates the specified <a href="PartIteration.html">PartIteration</a> with
@@ -367,15 +366,14 @@ public interface IProductManagerWS{
     PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] linkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException;
     
     /**
-     * Returns the java.io.File object that references the physical file of the
-     * supplied binary resource.
+     * Returns the BinaryResource object given his Id.
      * 
      * @param fullName
      * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
      * data file will be returned
      * 
      * @return
-     * The physical file of the binary resource
+     * The binary resource, a BinaryResource instance, that now needs to be created
      * 
      * @throws UserNotFoundException
      * @throws UserNotActiveException
@@ -383,7 +381,7 @@ public interface IProductManagerWS{
      * @throws FileNotFoundException
      * @throws NotAllowedException
      */
-    File getDataFile(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
+    BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
     
     /**
      * Retrieves all product structures that belong to the given workspace.
@@ -563,7 +561,7 @@ public interface IProductManagerWS{
     void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
 
     PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException;
-    File saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException ;
+    BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException ;
     String generateId(String pWorkspaceId, String pPartMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, PartMasterTemplateNotFoundException;
     PartMasterTemplate[] getPartMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     PartMasterTemplate getPartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException;

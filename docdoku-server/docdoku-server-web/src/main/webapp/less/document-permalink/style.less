@@ -3,55 +3,41 @@
 @import "../common/variables";
 
 body{
-  background-color: #CFD7E4;
-  margin-left: 30%;
-  margin-right: 30%;
+  background-color: #e2e7ef;
 }
-
-h3{
-  margin-bottom: 20px;
-  color: lighten(@navbarBackground, 20%);
+#page{
+  margin: 0 auto;
+  padding-top:41px;
+  width: 80%;
 }
-
-#file{
-  position: relative;
-  top:105px;
+#content{
+  margin: 0 auto 20px auto;
+  padding:9px;
+  background: white;
+  min-height:150px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 0px 3px #9b9b9b;
+  -moz-box-shadow: 0 0px 3px #9b9b9b;
+  box-shadow: 0 0px 3px #9b9b9b;
 }
-
-#link{
-  position: relative;
-  top:105px;
-}
-
-#general{
-  position: relative;
-  top:105px;
-}
-
-#iteration{
-  position: relative;
-  top:105px;
-}
-
-#attribute{
-  position: relative;
-  top:105px;
-}
-
-.well{
-  background-color: white;
-  display: none;
-}
-
-.empty p {
-  color: red;
-  text-align: center;
-}
-
 #brand-logo {
   float: left;
   display: inline-block;
   height: 30px;
   width: 30px;
   margin: 5px;
+}
+
+.accordion-heading {
+  position: relative;
+  a.download{
+    position: absolute;
+    left:8px;
+    top:8px;
+  }
+  .accordion-toggle {
+    padding: 8px 30px;
+  }
 }

@@ -17,8 +17,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -46,26 +46,6 @@
             <groupId>org.swinglabs</groupId>
             <artifactId>swingx</artifactId>
             <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>synthetica</groupId>
-            <artifactId>synthetica</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>synthetica</groupId>
-            <artifactId>synthetica-addons</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>synthetica</groupId>
-            <artifactId>synthetica-bluemoon</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>synthetica</groupId>
-            <artifactId>synthetica-bluemoon-addon</artifactId>
-            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>uk.co.mmscomputing</groupId>

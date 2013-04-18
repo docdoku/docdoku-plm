@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+<web-app metadata-complete="false" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Production</param-value>
@@ -7,21 +7,6 @@
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
         <param-value>client</param-value>
-    </context-param>
-    <context-param>
-        <param-name>PDF2SWF_HOME</param-name>
-        <param-value>/usr/local/bin</param-value>
-        <!--<param-value>C:\tools\SWFTools</param-value>-->
-       <!--<param-value>/usr/bin</param-value>-->
-    </context-param>
-    <context-param>
-        <param-name>OO_HOME</param-name>
-        <!--<param-value>C:\Program Files\OpenOffice.org 3</param-value>-->
-        <param-value>/opt/openoffice.org3</param-value>
-    </context-param>
-    <context-param>
-        <param-name>OO_PORT</param-name>
-        <param-value>8100</param-value>
     </context-param>
     <listener>
         <listener-class>com.docdoku.server.http.HttpSessionCollector</listener-class>

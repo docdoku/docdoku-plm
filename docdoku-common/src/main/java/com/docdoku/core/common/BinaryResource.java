@@ -21,6 +21,7 @@
 package com.docdoku.core.common;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.*;
 
 /**
@@ -39,17 +40,21 @@ import javax.persistence.*;
 @Entity
 public class BinaryResource implements Serializable, Comparable<BinaryResource>{
 
-    
     @Id
     protected String fullName="";
+
     protected long contentLength;
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date lastModified;
     
     public BinaryResource() {
     }
     
-    public BinaryResource(String pFullName, long pContentLength) {
+    public BinaryResource(String pFullName, long pContentLength, Date pLastModified) {
         fullName = pFullName;
         contentLength = pContentLength;
+        lastModified = pLastModified;
     }
     
     public String getWorkspaceId(){
@@ -106,7 +111,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
             iteration--;
             if(iteration>0){
                 String previousFullName=parts[0] + "/parts/" + parts[2] + "/" +parts[3]  + "/" + iteration + "/nativecad/" +name;
-                return new BinaryResource(previousFullName,contentLength);
+                return new BinaryResource(previousFullName, contentLength, lastModified);
             }else
                 return null;
         }else{
@@ -116,7 +121,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
             iteration--;
             if(iteration>0){
                 String previousFullName=truncatedName.substring(0,beforeLastS)+"/"+iteration+"/"+name;
-                return new BinaryResource(previousFullName,contentLength);
+                return new BinaryResource(previousFullName, contentLength, lastModified);
             }else
                 return null;
         }
@@ -134,8 +139,8 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
     public long getContentLength() {
         return contentLength;
     }
-    
-    
+
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {
@@ -159,5 +164,13 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
     @Override
     public String toString() {
         return getName();
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 }
