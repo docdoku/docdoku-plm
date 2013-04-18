@@ -1,59 +1,43 @@
 <script type="text/javascript">
-    <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. -->
-            var swfVersionStr = "9.0.124";
-    <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
-    var xiSwfUrlStr = "${expressInstallSwf}";
-    var flashvars = {
-        SwfFile : escape("{{uriResource}}?type=viewer&fpv=swf"),
-        Scale : 0.6,
-        ZoomTransition : "easeOut",
-        ZoomTime : 0.5,
-        ZoomInterval : 0.1,
-        FitPageOnLoad : false,
-        FitWidthOnLoad : true,
-        PrintEnabled : true,
-        FullScreenAsMaxWindow : false,
-        ProgressiveLoading : true,
-        localeChain: "fr_FR"
-    };
-    var params = {
+    //
+    // Fetch the PDF document from the URL using promices
+    //
+    PDFJS.workerSrc = '/pdfjs/pdf.js';
 
-    }
-    params.quality = "high";
-    params.bgcolor = "#ffffff";
-    params.allowscriptaccess = "sameDomain";
-    params.allowfullscreen = "true";
-    var attributes = {};
-    attributes.id = "FlexPaperViewer";
-    attributes.name = "FlexPaperViewer";
-    swfobject.embedSWF(
-            "/swf/FlexPaperViewer.swf", "flashContent-{{thisId}}",
-            "540", "422",
-            swfVersionStr, xiSwfUrlStr,
-            flashvars, params, attributes);
-    swfobject.createCSS("#flashContent-{{thisId}}", "display:block;text-align:left;");
+    PDFJS.getDocument('{{uriResource}}?type=viewer&fpv=pdf').then(function(pdf) {
+
+        // Using promise to fetch the page
+        pdf.getPage(1).then(function(page) {
+            var scale = 1.5;
+            var viewport = page.getViewport(scale);
+
+            //
+            // Prepare canvas using PDF page dimensions
+            //
+            var canvas = document.getElementById('pdfjs-{{thisId}}');
+            var context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            //
+            // Render PDF page into canvas context
+            //
+            var renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            page.render(renderContext);
+        });
+    });
+
 </script>
-
 <div class="accordion-heading">
     <a class="download" href="{{uriResource}}"><i class="icon-cloud-download"></i></a>
+    <a class="open_in_pdfjs" href="/pdfjs/viewer.html?file=..{{uriResource}}%3Ftype%3Dviewer%26fpv%3Dpdf" target="_blank"><i class="icon-fullscreen"></i></a>
     <a class="accordion-toggle" data-toggle="collapse" href="#{{thisId}}">{{fileName}}</a>
 </div>
 <div id="{{thisId}}" class="accordion-body collapse">
     <div class="accordion-inner">
-        <a href="{{uriResource}}?type=viewer&fpv=pdf"><img style="border-style:none" height="20px" width="20px" src="/images/pdfIcon.png" /></a>
-        <br /><br />
-        <div id="flashContent-{{thisId}}">
-                <p>
-                    To view this page ensure that Adobe Flash Player version
-                    9.0.124 or greater is installed.
-                </p>
-                <script type="text/javascript">
-                    var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://");
-                    document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='"
-                            + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" );
-                </script>
-            </div>
-
-
+        <canvas id="pdfjs-{{thisId}}" style="border:1px solid black;"/>
     </div>
 </div>
