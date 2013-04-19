@@ -48,25 +48,24 @@ public class DocViewerImpl implements DocumentViewer {
 
     @Override
     public boolean canPrepareFileForViewer(BinaryResource binaryResource, HttpServletRequest pRequest) {
-        return FileIO.isDocFile(binaryResource.getName()) && hasValidFPV(pRequest);
+        return FileIO.isDocFile(binaryResource.getName()) && hasValidOutput(pRequest);
     }
 
-    private boolean hasValidFPV(HttpServletRequest pRequest) {
-        String fpvParam = pRequest.getParameter("fpv");
-        return fpvParam != null &&
-                ("pdf".equals(fpvParam) || "swf".equals(fpvParam));
+    private boolean hasValidOutput(HttpServletRequest pRequest) {
+        String output = pRequest.getParameter("output");
+        return output != null && output.equals("pdf");
     }
 
     @Override
     public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, final BinaryResource binaryResource) throws Exception {
 
-        String flexPaperViewerType = pRequest.getParameter("fpv");
+        String output = pRequest.getParameter("output");
 
         String extension = FileIO.getExtension(binaryResource.getName());
 
         InputStream inputStream = null;
 
-        if ("pdf".equals(flexPaperViewerType)) {
+        if ("pdf".equals(output)) {
 
             pResponse.setContentType("application/pdf");
 

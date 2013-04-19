@@ -2,7 +2,7 @@
     //
     // Fetch the PDF document from the URL using promices
     //
-    PDFJS.getDocument('{{uriResource}}?type=viewer&fpv=pdf').then(function(pdf) {
+    PDFJS.getDocument('{{uriResource}}?type=viewer&output=pdf').then(function(pdf) {
 
         // Using promise to fetch the page
         pdf.getPage(1).then(function(page) {
