@@ -16,6 +16,9 @@ import java.util.UUID;
 @Inheritance()
 @Entity
 @javax.persistence.IdClass(SharedEntityKey.class)
+@NamedQueries({
+        @NamedQuery(name="SharedEntity.findSharedEntityForGivenUuid", query="SELECT se FROM SharedEntity se WHERE se.uuid = :pUuid")
+})
 public class SharedEntity implements Serializable {
 
     @Id

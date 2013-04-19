@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -34,9 +34,11 @@
         </div>
     </div>
 </div>
+
 <div id="page">
 
     <h3>${docm}</h3>
+
     <div id="content">
 
         <div class="tabs">
@@ -48,7 +50,8 @@
                 <li><a href="#tab-document-files" data-toggle="tab">#{i18nDocument['tabs.files']}</a></li>
                 <li><a href="#tab-document-links" data-toggle="tab">#{i18nDocument['tabs.links']}</a></li>
             </ul>
-                <div class="tab-content form-horizontal">
+
+            <div class="tab-content form-horizontal">
                 <div id="tab-document-general" class="tab-pane active">
 
                     <table class="table table-striped table-condensed">
@@ -194,6 +197,7 @@
                 </div>
 
             </div>
+
         </div>
 
     </div>

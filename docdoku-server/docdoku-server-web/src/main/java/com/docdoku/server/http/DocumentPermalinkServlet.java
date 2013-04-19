@@ -20,9 +20,11 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.*;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -34,40 +36,34 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class PartServlet extends HttpServlet {
-    
+public class DocumentPermalinkServlet extends HttpServlet {
+
     @EJB
-    private IProductManagerLocal productService;
-    
+    private IDocumentManagerLocal documentService;
+
     @Override
-    protected void doGet(HttpServletRequest pRequest,
-                         HttpServletResponse pResponse)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-            String login = pRequest.getRemoteUser();
             String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-            int offset;
-            if(pRequest.getContextPath().equals(""))
-                offset=2;
-            else
-                offset=3;
+            int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
             
             String workspaceId = URLDecoder.decode(pathInfos[offset],"UTF-8");
-            String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
-            String partVersion = pathInfos[offset+2];
+            String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
+            String docMVersion = pathInfos[offset+2];
 
-            PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+            pRequest.setAttribute("docm", docM);
 
-            pRequest.setAttribute("partRevision", partRevision);
+            DocumentIteration doc =  docM.getLastIteration();
+            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
 
-            PartIteration partIteration =  partRevision.getLastIteration();
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
-
-            pRequest.getRequestDispatcher("/WEB-INF/part.jsp").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         } catch (Exception pEx) {
-            throw new ServletException("Error while fetching your part.", pEx);
+            pEx.printStackTrace();
+            throw new ServletException("error while fetching your document.", pEx);
         }
     }
+
 }

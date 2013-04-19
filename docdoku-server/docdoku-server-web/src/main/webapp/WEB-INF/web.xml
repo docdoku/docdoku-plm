@@ -52,12 +52,16 @@
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DocumentServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.DocumentServlet</servlet-class>
+        <servlet-name>DocumentPermalinkServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.DocumentPermalinkServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>PartServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PartServlet</servlet-class>
+        <servlet-name>PartPermalinkServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.PartPermalinkServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PrivateShareServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.PrivateShareServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DMServlet</servlet-name>
@@ -92,12 +96,16 @@
         <url-pattern>/action/vote</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>DocumentServlet</servlet-name>
+        <servlet-name>DocumentPermalinkServlet</servlet-name>
         <url-pattern>/documents/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PartServlet</servlet-name>
+        <servlet-name>PartPermalinkServlet</servlet-name>
         <url-pattern>/parts/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PrivateShareServlet</servlet-name>
+        <url-pattern>/shared/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DMServlet</servlet-name>

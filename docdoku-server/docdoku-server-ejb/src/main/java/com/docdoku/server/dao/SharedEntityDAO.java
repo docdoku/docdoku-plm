@@ -24,9 +24,11 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.SharedEntityNotFoundException;
 import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
@@ -107,5 +109,30 @@ public class SharedEntityDAO {
     public void deleteSharesForPart(PartRevision pPartR) {
         TypedQuery<SharedPart> query = em.createNamedQuery("SharedPart.deleteSharesForGivenPart", SharedPart.class);
         query.setParameter("pPartR", pPartR).executeUpdate();
+    }
+
+    public SharedEntity loadSharedEntity(String pUuid) throws SharedEntityNotFoundException {
+        TypedQuery<SharedEntity> query = em.createNamedQuery("SharedEntity.findSharedEntityForGivenUuid", SharedEntity.class);
+        try {
+            return query.setParameter("pUuid", pUuid).getSingleResult();
+        }catch(NoResultException ex){
+            throw new SharedEntityNotFoundException(mLocale, pUuid);
+        }
+
+    }
+
+    public void deleteSharedEntity(SharedEntity pSharedEntity) {
+
+        try {
+            SharedEntity sharedEntity = loadSharedEntity(pSharedEntity.getUuid());
+            if(pSharedEntity instanceof SharedDocument){
+                deleteSharedDocument((SharedDocument) sharedEntity);
+            }else if(pSharedEntity instanceof SharedPart){
+                deleteSharedPart((SharedPart) sharedEntity);
+            }
+        } catch (SharedEntityNotFoundException e) {
+            return;
+        }
+
     }
 }
