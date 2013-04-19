@@ -24,6 +24,8 @@ import com.docdoku.core.document.*;
 import com.docdoku.core.common.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.*;
+import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.sharing.SharedEntityKey;
 import com.docdoku.core.workflow.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
@@ -1327,6 +1329,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
         return documentMasterDAO.getDiskUsageForDocumentTemplatesInWorkspace(pWorkspaceId);
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public SharedDocument createSharedDocument(DocumentMasterKey pDocMPK, String pPassword, Date pExpireDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, DocumentMasterNotFoundException, UserNotActiveException, NotAllowedException {
+        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+        SharedDocument sharedDocument = new SharedDocument(user.getWorkspace(), user, pExpireDate, pPassword, getDocumentMaster(pDocMPK));
+        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(new Locale(user.getLanguage()),em);
+        sharedEntityDAO.createSharedDocument(sharedDocument);
+        return sharedDocument;
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public void deleteSharedDocument(SharedEntityKey sharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(sharedEntityKey.getWorkspace());
+        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(new Locale(user.getLanguage()),em);
+        SharedDocument sharedDocument = sharedEntityDAO.loadSharedDocument(sharedEntityKey.getUuid());
+        sharedEntityDAO.deleteSharedDocument(sharedDocument);
     }
 
     private Folder checkWritingRight(User pUser, Folder pFolder) throws NotAllowedException {

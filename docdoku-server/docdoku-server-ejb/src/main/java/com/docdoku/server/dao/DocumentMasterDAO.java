@@ -242,6 +242,9 @@ public class DocumentMasterDAO {
         for(DocumentIteration doc:pDocM.getDocumentIterations())
             docDAO.removeDoc(doc);
 
+        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(em);
+        sharedEntityDAO.deleteSharesForDocument(pDocM);
+
         em.remove(pDocM);
     }
 

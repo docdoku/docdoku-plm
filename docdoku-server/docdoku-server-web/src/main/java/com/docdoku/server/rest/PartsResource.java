@@ -24,6 +24,7 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
+import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -386,7 +387,59 @@ public class PartsResource {
         }
     }
 
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("{partKey}/share")
+    public Response createSharedPart(@PathParam("workspaceId") String workspaceId, SharedPartDTO pSharedPartDTO) {
 
+        String number = pSharedPartDTO.getPartMasterNumber();
+        String version = pSharedPartDTO.getPartMasterVersion();
+        String password = pSharedPartDTO.getPassword();
+        Date expireDate = pSharedPartDTO.getExpireDate();
+
+        try {
+            SharedPart sharedPart = productService.createSharedPart(new PartRevisionKey(workspaceId, number, version), password, expireDate);
+            SharedPartDTO sharedPartDTO = mapper.map(sharedPart,SharedPartDTO.class);
+            return Response.ok().entity(sharedPartDTO).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{partKey}/publish")
+    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+        try {
+            int lastDash = partKey.lastIndexOf('-');
+            String number = partKey.substring(0, lastDash);
+            String version = partKey.substring(lastDash + 1, partKey.length());
+            PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,number,version));
+            partRevision.setPublicShared(true);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("{partKey}/unpublish")
+    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+        try {
+            int lastDash = partKey.lastIndexOf('-');
+            String number = partKey.substring(0, lastDash);
+            String version = partKey.substring(lastDash + 1, partKey.length());
+            PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,number,version));
+            partRevision.setPublicShared(false);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 
     private List<InstanceAttribute> createInstanceAttribute(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {

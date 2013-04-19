@@ -32,6 +32,7 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
+import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -469,6 +470,62 @@ public class DocumentResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
+
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("share")
+    public Response createSharedDocument(@PathParam("workspaceId") String workspaceId, SharedDocumentDTO pSharedDocumentDTO) {
+
+        String id = pSharedDocumentDTO.getDocumentMasterId();
+        String version = pSharedDocumentDTO.getDocumentMasterVersion();
+        String password = pSharedDocumentDTO.getPassword();
+        Date expireDate = pSharedDocumentDTO.getExpireDate();
+
+        try {
+            SharedDocument sharedDocument = documentService.createSharedDocument(new DocumentMasterKey(workspaceId, id, version),password,expireDate);
+            SharedDocumentDTO sharedDocumentDTO = mapper.map(sharedDocument,SharedDocumentDTO.class);
+            return Response.ok().entity(sharedDocumentDTO).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("publish")
+    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+            DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            documentMaster.setPublicShared(true);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("unpublish")
+    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+            DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            documentMaster.setPublicShared(false);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
     }
 
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {

@@ -43,6 +43,7 @@ public class PartDTO implements Serializable {
     private String lifeCycleState;
     private boolean standardPart;
     private String workspaceId;
+    private boolean publicShared;
 
     public PartDTO() {
     }
@@ -157,5 +158,13 @@ public class PartDTO implements Serializable {
 
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
+    }
+
+    public boolean isPublicShared() {
+        return publicShared;
+    }
+
+    public void setPublicShared(boolean publicShared) {
+        this.publicShared = publicShared;
     }
 }

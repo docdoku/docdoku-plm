@@ -119,6 +119,8 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
 
+    private boolean publicShared;
+
     public DocumentMaster() {
     }
     
@@ -389,7 +391,14 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         this.version = version;
     }
 
-    
+    public boolean isPublicShared() {
+        return publicShared;
+    }
+
+    public void setPublicShared(boolean publicShared) {
+        this.publicShared = publicShared;
+    }
+
     /**
      * perform a deep clone operation
      */

@@ -27,6 +27,7 @@ define([
 			this.events["click .reference"] = this.actionEdit;
 			this.events["click .state-subscription"] = this.toggleStateSubscription;
 			this.events["click .iteration-subscription"] = this.toggleIterationSubscription;
+			this.events["click .document-master-share i"] = this.shareDocument;
             this.events["dragstart a.dochandle"] = this.dragStart;
             this.events["dragend a.dochandle"] = this.dragEnd;
             this.events["dragstart td.doc-ref"] = this.dragStart;
@@ -118,6 +119,15 @@ define([
 
         toggleIterationSubscription:function(evt){
             this.model.toggleIterationSubscribe(this.model.isIterationChangedSubscribed());
+        },
+
+        shareDocument:function(){
+            var that = this;
+            require(["common-objects/views/share/share_entity"],function(ShareView){
+                var shareView = new ShareView({model:that.model,entityType:"documents"});
+                $("body").append(shareView.render().el);
+                shareView.openModal();
+            });
         }
 
     });

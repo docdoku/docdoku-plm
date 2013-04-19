@@ -50,6 +50,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private WorkflowDTO workflow;
     private String path;
     private String lifeCycleState;
+    private boolean publicShared;
 
     public DocumentMasterDTO() {
     }
@@ -224,7 +225,14 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
-    
+
+    public boolean isPublicShared() {
+        return publicShared;
+    }
+
+    public void setPublicShared(boolean publicShared) {
+        this.publicShared = publicShared;
+    }
 
     @Override
     public String toString() {
