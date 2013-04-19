@@ -43,6 +43,9 @@ public class DocViewerImpl implements DocumentViewer {
     @EJB
     private IDataManagerLocal dataManager;
 
+    @EJB
+    private FileConverter fileConverter;
+
     @Override
     public boolean canPrepareFileForViewer(BinaryResource binaryResource, HttpServletRequest pRequest) {
         return FileIO.isDocFile(binaryResource.getName()) && hasValidFPV(pRequest);
@@ -75,7 +78,7 @@ public class DocViewerImpl implements DocumentViewer {
                     //if the resource is already converted, return it
                     inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 } else {
-                    InputStream inputStreamConverted = FileConverter.convertToPDF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
+                    InputStream inputStreamConverted = fileConverter.convertToPDF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
                     //copy the converted file for further reuse
                     OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                     try {

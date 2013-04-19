@@ -2,8 +2,6 @@
     //
     // Fetch the PDF document from the URL using promices
     //
-    PDFJS.workerSrc = '/pdfjs/pdf.js';
-
     PDFJS.getDocument('{{uriResource}}?type=viewer&fpv=pdf').then(function(pdf) {
 
         // Using promise to fetch the page
@@ -33,7 +31,6 @@
 </script>
 <div class="accordion-heading">
     <a class="download" href="{{uriResource}}"><i class="icon-cloud-download"></i></a>
-    <a class="open_in_pdfjs" href="/pdfjs/viewer.html?file=..{{uriResource}}%3Ftype%3Dviewer%26fpv%3Dpdf" target="_blank"><i class="icon-fullscreen"></i></a>
     <a class="accordion-toggle" data-toggle="collapse" href="#{{thisId}}">{{fileName}}</a>
 </div>
 <div id="{{thisId}}" class="accordion-body collapse">
