@@ -4,8 +4,9 @@ define([
     "views/document_list",
     "views/document/documents_tags",
     "views/document/document_new_version",
-    "views/advanced_search"
-], function(i18n, ContentView, DocumentListView, DocumentsTagsView, DocumentNewVersionView, AdvancedSearchView) {
+    "views/advanced_search",
+    "common-objects/views/prompt"
+], function(i18n, ContentView, DocumentListView, DocumentsTagsView, DocumentNewVersionView, AdvancedSearchView, PromptView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -118,8 +119,30 @@ define([
         },
 
         actionCheckin: function() {
+            var self = this;
             this.listView.eachChecked(function(view) {
-                view.model.checkin();
+                if (_.isNull(view.model.getLastIteration().attributes.revisionNote)) {
+                    var promptView = new PromptView();
+                    promptView.setPromptOptions(i18n.REVISION_NOTE, i18n.REVISION_NOTE_PROMPT_LABEL, i18n.REVISION_NOTE_PROMPT_OK, i18n.REVISION_NOTE_PROMPT_CANCEL);
+                    $("body").append(promptView.render().el);
+                    promptView.openModal();
+                    self.listenTo(promptView, 'prompt-ok', function(args) {
+                        revisionNote = args[0];
+                        if(_.isEqual(revisionNote, "")) {
+                            revisionNote = null;
+                        }
+                        view.model.getLastIteration().save({
+                            revisionNote: revisionNote
+                        });
+                        view.model.checkin();
+                    });
+                    self.listenTo(promptView, 'prompt-cancel', function() {
+                        view.model.checkin();
+                    });
+                } else {
+                    view.model.checkin();
+                }
+
             });
             return false;
         },
@@ -172,16 +195,16 @@ define([
 
         },
 
-        onQuickSearch:function(e){
+        onQuickSearch: function(e) {
 
-            if(e.target.children[0].value){
-                this.router.navigate("search/id="+e.target.children[0].value, {trigger: true});
+            if (e.target.children[0].value) {
+                this.router.navigate("search/id=" + e.target.children[0].value, {trigger: true});
             }
 
             return false;
         },
 
-        onAdvancedSearchButton:function(){
+        onAdvancedSearchButton: function() {
             var advancedSearchView = new AdvancedSearchView();
             $("body").append(advancedSearchView.render().el);
             advancedSearchView.openModal();

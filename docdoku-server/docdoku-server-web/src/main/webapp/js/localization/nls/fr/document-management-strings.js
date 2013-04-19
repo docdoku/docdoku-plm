@@ -58,6 +58,9 @@ define({
     "REFERENCES":					"Objets",
     "RENAME":						"Renommer",
     "REVISION_NOTE":				"Note de révision",
+    "REVISION_NOTE_PROMPT_LABEL":   "La note de révision n'a pas été définie. Souhaitez-vous l'ajouter ?",
+    "REVISION_NOTE_PROMPT_CANCEL":  "Ignorer",
+    "REVISION_NOTE_PROMPT_OK":      "Ajouter la note de révision",
     "SAVED":						"Sauvegardé",
     "SAVE":							"Enregistrer",
     "CLOSE":					    "Fermer",
@@ -134,5 +137,6 @@ define({
     "NEW_VERSION_OF":               "Nouvelle version de",
     "SIGN_TASK":                    "Signature",
     "MASK_HELP":                    "D\u00e9finissez le format de la r\u00e9f\u00e9rence des documents cr\u00e9\u00e9s avec ce mod\u00e8le de document.</br></br>En plus des caract\u00e8res ordinaires, vous pouvez utiliser '#' pour tout nombre valide et '*' pour n'importe quel caract\u00e8re.</br></br>Par exemple 'FAX_***_##' accepte 'FAX-AZE-12' comme entr\u00e9e valide pour la r\u00e9f\u00e9rence.",
-    "CLEAR":                        "Effacer"
+    "CLEAR":                        "Effacer",
+
 });
