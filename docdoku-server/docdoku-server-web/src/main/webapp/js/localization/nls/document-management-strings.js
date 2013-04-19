@@ -135,7 +135,8 @@ define({
         "NEW_VERSION_OF":               "New version of",
         "SIGN_TASK":                    "Signing up",
         "MASK_HELP":                    "Define the mask format for the IDs of documents that will instanciate this template.</br></br>Additionally to any regular characters, you can use '#' symbol for any valid number and '*' for any character.</br></br>For instance 'FAX-***-##' will accept 'FAX-AZE-12' as a valid ID.",
-        "CLEAR":                        "Clear"
+        "CLEAR":                        "Clear",
+        "PUBLISH":                      "Publish"
     },
     "fr": true,
     "es": true

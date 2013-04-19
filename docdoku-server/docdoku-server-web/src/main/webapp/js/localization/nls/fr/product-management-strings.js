@@ -40,5 +40,6 @@ define({
     SAVE:"Enregistrer",
     MASK:"Masque",
     ID_GENERATION:"Génération de l'id",
-    LIFECYCLE_STATE:"Etat du cycle de vie"
+    LIFECYCLE_STATE:"Etat du cycle de vie",
+    PUBLISH:"Publier"
 });

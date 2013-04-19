@@ -41,7 +41,8 @@ define({
         SAVE:"Save",
         MASK:"Mask",
         ID_GENERATION:"Id generation",
-        LIFECYCLE_STATE:"Life cycle state"
+        LIFECYCLE_STATE:"Life cycle state",
+        PUBLISH:"Publish"
     },
     "fr": true
 });

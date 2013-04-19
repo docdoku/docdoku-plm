@@ -10,6 +10,9 @@ import java.util.Date;
 
 @Table(name="SHAREDPART")
 @Entity
+@NamedQueries({
+        @NamedQuery(name="SharedPart.deleteSharesForGivenPart", query="DELETE FROM SharedPart sp WHERE sp.partRevision = :pPartR")
+})
 public class SharedPart extends SharedEntity{
 
     @ManyToOne(optional=false, fetch=FetchType.EAGER)

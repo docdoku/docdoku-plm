@@ -11,7 +11,7 @@ import java.util.Date;
 @Table(name="SHAREDDOCUMENT")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="SharedDocument.findDocumentMasterByWorkspace", query="SELECT sd.documentMaster FROM SharedDocument sd WHERE sd.documentMaster.workspaceId = :workspaceId")
+        @NamedQuery(name="SharedDocument.deleteSharesForGivenDocument", query="DELETE FROM SharedDocument sd WHERE sd.documentMaster = :pDocM"),
 })
 public class SharedDocument extends SharedEntity{
 

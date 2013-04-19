@@ -221,8 +221,6 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
         },
 
         createShare:function(args){
-            console.log("submit share");
-            console.log(args);
             $.ajax({
                 type: "POST",
                 url: this.url() + "/share",

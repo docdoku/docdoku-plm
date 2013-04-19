@@ -15,7 +15,7 @@ define(
         templateShared : Mustache.compile(templateShared),
 
         events: {
-            "submit form":"createShare"
+            "click #generate-private-share":"createShare"
         },
 
         initialize: function() {
@@ -35,13 +35,13 @@ define(
                 default : break;
             }
 
-            this.$el.html(this.template({i18n:i18n, title:title}));
+            this.$el.html(this.template({i18n:i18n, title:title, permalink:this.model.getPermalink()}));
             this.bindDomElements();
 
-            this.$publicShared.bootstrapSwitch();
-            this.$publicShared.bootstrapSwitch('setState', this.model.get("publicShared"));
+            this.$publicSharedSwitch.bootstrapSwitch();
+            this.$publicSharedSwitch.bootstrapSwitch('setState', this.model.get("publicShared"));
 
-            this.$publicShared.on('switch-change', function (e, data) {
+            this.$publicSharedSwitch.on('switch-change', function (e, data) {
                 if(that.model.get("publicShared")){
                     that.model.unpublish({success:function(){
                         that.model.fetch();
@@ -72,11 +72,10 @@ define(
 
         bindDomElements:function(){
             this.$modal = this.$('#share-modal');
-            this.$modalBody = this.$('.modal-body');
-            this.$modalFooter = this.$('.modal-footer');
             this.$password = this.$('.password');
             this.$expireDate = this.$('.expire-date');
-            this.$publicShared = this.$(".public-shared");
+            this.$publicSharedSwitch = this.$(".public-shared-switch");
+            this.$privateShare = this.$("#private-share");
         },
 
         setEntityType:function(entityType){
@@ -100,14 +99,10 @@ define(
             data.expireDate=this.$expireDate.val() ? this.$expireDate.val():null;
 
             this.model.createShare({data:data,success:function(pData){
-                that.$modalBody.empty();
-                that.$modalFooter.empty();
-                that.$modalBody.html(that.templateShared({i18n:i18n,generatedUrl:that.generateUrlFromUUID(pData.uuid)}));
+                that.$privateShare.empty();
+                that.$privateShare.html(that.templateShared({i18n:i18n,generatedUrl:that.generateUrlFromUUID(pData.uuid)}));
             }});
 
-            e.preventDefault();
-            e.stopPropagation();
-            return false ;
         },
 
         generateUrlFromUUID:function(uuid){

@@ -26,7 +26,7 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template(this.model));
+            this.$el.html(this.template({model:this.model,i18n:i18n}));
             this.$checkbox = this.$("input[type=checkbox]");
             if(this.isChecked()){
                 this.check();

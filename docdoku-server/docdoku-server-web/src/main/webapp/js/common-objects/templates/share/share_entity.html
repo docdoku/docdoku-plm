@@ -6,47 +6,61 @@
     </div>
     <div class="modal-body">
 
-        <form id="form-share" class="form-horizontal">
+        <div class="form-horizontal">
 
             <h4>Public access to permalink</h4>
 
             <div class="control-group">
                 <label class="control-label">{{i18n.PUBLIC_SHARE}}</label>
                 <div class="controls">
-                    <div class="public-shared switch switch-small" data-on="success" data-off="danger">
+                    <div class="public-shared-switch switch switch-small" data-on="success" data-off="danger">
                         <input type="checkbox" checked />
                     </div>
                 </div>
             </div>
 
+            <div class="control-group">
+                <label class="control-label">{{i18n.PERMALINK}}</label>
+                <div class="controls">
+                    <a href="{{permalink}}" target="_blank">{{permalink}}</a>
+                </div>
+            </div>
 
             <hr />
 
             <h4>Private share</h4>
-            <div class="control-group">
-                <label class="control-label">{{i18n.PASSWORD}}</label>
-                <div class="controls">
-                    <input type="text" class="input-xlarge password" />
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">{{i18n.EXPIRE_DATE}}</label>
-                <div class="controls">
-                    <input type="date" class="input-xlarge expire-date" />
-                </div>
-            </div>
-            <div class="control-group">
-                <span class="help-block">
-                    {{i18n.FORM_HELPER}}
-                </span>
-            </div>
 
-        </form>
+            <div id="private-share">
+                <div class="control-group">
+                    <label class="control-label">{{i18n.PASSWORD}}</label>
+                    <div class="controls">
+                        <input type="text" class="password" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{i18n.EXPIRE_DATE}}</label>
+                    <div class="controls">
+                        <input type="date" class="expire-date" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        {{i18n.FORM_HELPER}}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button id="generate-private-share" class="btn btn-primary">{{i18n.SHARE}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 
     <div class="modal-footer">
-        <button id="save-part" class="btn btn-primary" form="form-share">{{i18n.SHARE}}</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
     </div>
 </div>
