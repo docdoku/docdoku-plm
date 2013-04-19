@@ -85,7 +85,7 @@ public class MainController {
             System.out.println("Approving task " + pTaskKey);
             DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.approve(workspaceId, pTaskKey, pComment));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.approve(workspaceId, pTaskKey, pComment, null));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -103,7 +103,7 @@ public class MainController {
             System.out.println("Rejecting task " + pTaskKey);
             DocumentMaster newDocumentMaster;
             String workspaceId = MainModel.getInstance().getWorkspace().getId();
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.reject(workspaceId, pTaskKey, pComment));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.reject(workspaceId, pTaskKey, pComment, null));
             MainModel.getInstance().updater.updateDocM(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -471,7 +471,7 @@ public class MainController {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            newDocumentMaster = Tools.resetParentReferences(mDocumentService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            newDocumentMaster = Tools.resetParentReferences(mDocumentService.createDocumentMaster(pParentFolder, pDocMId, pTitle, pDescription, pTemplate == null ? null : pTemplate.getId(), pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries, null));
             MainModel.getInstance().updater.createDocMInFolder(newDocumentMaster);
             return newDocumentMaster;
         } catch (WebServiceException pWSEx) {
@@ -537,7 +537,7 @@ public class MainController {
             ACLUserEntry[] userEntries = null;
             ACLUserGroupEntry[] groupEntries = null;
 
-            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mDocumentService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries));
+            DocumentMaster[] originalAndNewDocM = Tools.resetParentReferences(mDocumentService.createVersion(pDocumentMaster.getKey(), pTitle, pDescription, pWorkflowModel == null ? null : pWorkflowModel.getId(), userEntries, groupEntries,null));
             MainModel.getInstance().updater.makeNewVersion(originalAndNewDocM);
             return originalAndNewDocM;
         } catch (WebServiceException pWSEx) {

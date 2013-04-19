@@ -22,8 +22,10 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -41,12 +43,30 @@ public class DocumentDAO {
     }
 
     public void removeDoc(DocumentIteration pDoc){
+
         TypedQuery<DocumentIteration> docQuery = em.createNamedQuery("DocumentLink.findDocumentOwner", DocumentIteration.class);
+        TypedQuery<PartIteration> partQuery = em.createNamedQuery("DocumentLink.findPartOwner", PartIteration.class);
+
         TypedQuery<DocumentLink> linkQuery = em.createNamedQuery("DocumentIteration.findLinks", DocumentLink.class);
         List<DocumentLink> result = linkQuery.setParameter("target", pDoc).getResultList();
+
         for(DocumentLink link:result){
-            DocumentIteration doc = docQuery.setParameter("link",link).getSingleResult();
-            doc.getLinkedDocuments().remove(link);
+
+            try{
+                DocumentIteration doc = docQuery.setParameter("link",link).getSingleResult();
+                doc.getLinkedDocuments().remove(link);
+
+            }catch(NoResultException ex){
+
+                try{
+                    PartIteration part = partQuery.setParameter("link",link).getSingleResult();
+                    part.getLinkedDocuments().remove(link);
+
+                }catch(NoResultException ex2){
+                    // TODO : log it ?
+                }
+            }
+
         }
         em.remove(pDoc);
     }

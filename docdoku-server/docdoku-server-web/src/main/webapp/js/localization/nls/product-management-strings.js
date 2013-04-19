@@ -40,7 +40,9 @@ define({
         CREATE:"Create",
         SAVE:"Save",
         MASK:"Mask",
-        ID_GENERATION:"Id generation"
+        ID_GENERATION:"Id generation",
+        LIFECYCLE_STATE:"Life cycle state",
+        PUBLISH:"Publish"
     },
     "fr": true
 });

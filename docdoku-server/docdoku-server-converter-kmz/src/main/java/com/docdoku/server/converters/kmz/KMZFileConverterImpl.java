@@ -20,80 +20,89 @@
 
 package com.docdoku.server.converters.kmz;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.*;
-import java.util.Properties;
-
 import javax.xml.stream.*;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
+import java.io.*;
 
 
 @KMZFileConverter
 public class KMZFileConverterImpl implements CADConverter{
 
-    private final static String CONF_PROPERTIES= "/com/docdoku/server/converters/kmz/conf.properties";
-    private final static Properties CONF = new Properties();
-
     @EJB
     private IProductManagerLocal productService;
 
-    static{
-        try {
-            CONF.load(KMZFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    @EJB
+    private IDataManagerLocal dataManager;
 
     @Override
-    public File convert(PartIteration partToConvert, File cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, XMLStreamException {
-        File tempDir = Files.createTempDir();
-        FileIO.unzipArchive(cadFile, tempDir);
-        File tmpDAEFile= new File(tempDir, "models/untitled.dae");
+    public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, XMLStreamException, StorageException {
+        File tmpDir = Files.createTempDir();
+        File tmpCadFile = new File(tmpDir, cadFile.getName());
+        Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+                try {
+                    return dataManager.getBinaryResourceInputStream(cadFile);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                    throw new IOException(e);
+                }
+            }
+        }, tmpCadFile);
 
-        File tmpTexturesDir = new File(tempDir,"models/untitled");
+        FileIO.unzipArchive(tmpCadFile, tmpDir);
+        File tmpDAEFile= new File(tmpDir, "models/untitled.dae");
+
+        File tmpTexturesDir = new File(tmpDir, "models/untitled");
 
         File daeFile = null;
-        File tmpNewDAEFile = null;
+        File tmpNewDAEFile;
         try {
-            tmpNewDAEFile = parseDAEFile(tmpDAEFile, tempDir);
+            tmpNewDAEFile = parseDAEFile(tmpDAEFile, tmpDir);
             PartIterationKey partIPK = partToConvert.getKey();
 
             // Upload each textures
             if(tmpTexturesDir.isDirectory()) {
                 for (File tempTexture : tmpTexturesDir.listFiles()) {
                     if (!tempTexture.isDirectory()) {
-                        File finalTexture = productService.saveFileInPartIteration(partIPK, tempTexture.getName(), tempTexture.length());
-                        Files.copy(tempTexture,finalTexture);
+                        BinaryResource finalTextureBinaryResource = productService.saveFileInPartIteration(partIPK, tempTexture.getName(), tempTexture.length());
+                        OutputStream finalTextureOutputStream = null;
+                        try {
+                            finalTextureOutputStream = dataManager.getBinaryResourceOutputStream(finalTextureBinaryResource);
+                            Files.copy(tempTexture, finalTextureOutputStream);
+                        } finally {
+                            finalTextureOutputStream.flush();
+                            finalTextureOutputStream.close();
+                        }
                     }
                 }
             }
 
             // Upload dae
-            daeFile = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length());
-            Files.copy(tmpNewDAEFile,daeFile);
+            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length());
+            OutputStream daeOutputStream = null;
+            try {
+                daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);
+                Files.copy(tmpNewDAEFile, daeOutputStream);
+            } finally {
+                daeOutputStream.flush();
+                daeOutputStream.close();
+            }
             return daeFile;
         }
         finally {
-            if(tmpDAEFile!=null)
-                tmpDAEFile.delete();
-
-            if(tmpNewDAEFile!=null)
-                tmpNewDAEFile.delete();
-
-            if(tmpTexturesDir!=null)
-                FileIO.rmDir(tmpTexturesDir);
-
-            if(tempDir!=null)
-                FileIO.rmDir(tempDir);
+            FileIO.rmDir(tmpDir);
         }
     }
 

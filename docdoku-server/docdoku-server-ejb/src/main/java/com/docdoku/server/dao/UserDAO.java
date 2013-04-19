@@ -35,11 +35,7 @@ import com.docdoku.core.common.UserKey;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
 import java.util.List;
 import java.util.Locale;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 
 public class UserDAO {
 
@@ -54,6 +50,16 @@ public class UserDAO {
     public UserDAO(EntityManager pEM) {
         em = pEM;
         mLocale = Locale.getDefault();
+    }
+
+    public User loadAdmin(String userLogin) throws UserNotFoundException {
+        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE u.login = :userLogin");
+        try{
+            User admin = (User) query.setParameter("userLogin",userLogin).getSingleResult();
+            return admin;
+        }catch(NoResultException ex){
+            throw new UserNotFoundException(mLocale, userLogin);
+        }
     }
 
     public User loadUser(UserKey pUserKey) throws UserNotFoundException {

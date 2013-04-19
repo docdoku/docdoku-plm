@@ -24,6 +24,7 @@ package com.docdoku.core.product;
 import com.docdoku.core.common.BinaryResource;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * Wraps a CAD file providing quality information.
@@ -39,7 +40,6 @@ import javax.persistence.Table;
 @Entity
 public class Geometry extends BinaryResource{
 
-        
     /**
      * Starts at 0, smaller is greater.
      */
@@ -49,8 +49,8 @@ public class Geometry extends BinaryResource{
     public Geometry() {
     }
     
-    public Geometry(int pQuality, String pFullName, long pContentLength) {
-        super(pFullName, pContentLength);
+    public Geometry(int pQuality, String pFullName, long pContentLength, Date pLastModified) {
+        super(pFullName, pContentLength, pLastModified);
         this.quality=pQuality;
     }
 
@@ -61,6 +61,5 @@ public class Geometry extends BinaryResource{
     public void setQuality(int quality) {
         this.quality = quality;
     }
-
     
 }

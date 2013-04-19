@@ -53,6 +53,7 @@ define({
         "NEW_TEMPLATE":					"New document template",
         "NEW_PART_TEMPLATE":			"New part template",
         "NEW_WORKFLOW":					"New workflow",
+        "ROLES":					    "Roles",
         "NUMBER":						"Number",
         "OK":                           "OK",
         "REFERENCE":					"ID",
@@ -96,7 +97,7 @@ define({
         "TASK_NAME_PLACEHOLDER":        "New task",
         "DELETE_TASK":                  "Remove task",
         "INSTRUCTIONS":                 "Instructions",
-        "RESPONSABLE":                  "Responsible",
+        "ROLE":                         "Role",
         "WORKSPACES":					"Workspaces",
         "VALIDATION_FAILED_FOR":        "Validation failed for ",
         "ADD_NEW_TAG":                  "Add a new tag",
@@ -132,8 +133,10 @@ define({
         "ADD_DOCUMENT":                 "Add document",
         "CREATE_NEW_VERSION":           "Create new version",
         "NEW_VERSION_OF":               "New version of",
-        "MASK_HELP":                    "Define the mask format for the IDs of documents that will instanciate this template.</br></br>Additionally to any regular characters, you can use '#' symbol for any valid number and '*' for any character.</br></br>For instance 'FAX-***-##' will accept 'FAX-AZE-12' as a valid ID."
-
+        "SIGN_TASK":                    "Signing up",
+        "MASK_HELP":                    "Define the mask format for the IDs of documents that will instanciate this template.</br></br>Additionally to any regular characters, you can use '#' symbol for any valid number and '*' for any character.</br></br>For instance 'FAX-***-##' will accept 'FAX-AZE-12' as a valid ID.",
+        "CLEAR":                        "Clear",
+        "PUBLISH":                      "Publish"
     },
     "fr": true,
     "es": true

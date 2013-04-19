@@ -2,7 +2,7 @@
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3><span class="icon"></span>{{part.getPartKey}}</h3>
+        <h3><span class="icon"></span><a target="_blank" href="{{permalink}}">{{part.getPartKey}}</a></h3>
     </div>
     <div class="modal-body">
 
@@ -14,6 +14,7 @@
                 <li><a href="#tab-part-files" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
                 <li><a href="#tab-part-sub-parts" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
+                <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
             </ul>
 
             <div class="tab-content form-horizontal">
@@ -58,6 +59,12 @@
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
+                            <div class="controls">
+                                <span class="help-inline">{{part.getLifeCycleState}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
                             <div class="controls">
                                 <span class="help-inline"><a class="checkout-user-popover">{{part.getCheckOutUserName}}</a></span>
@@ -94,6 +101,10 @@
 
                 <div id="tab-part-links" class="tab-pane">
                     <div id="iteration-links"></div>
+                </div>
+
+                <div id="tab-iteration-lifecycle" class="tab-pane ">
+                    <div id="iteration-lifecycle"></div>
                 </div>
             </div>
 

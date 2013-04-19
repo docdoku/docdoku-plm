@@ -1,10 +1,12 @@
 define([
     "i18n!localization/nls/document-management-strings",
     "text!templates/document/document_new_version.html",
-    "views/document/document_workflow_list"
+    "common-objects/views/workflow/workflow_mapping",
+    "common-objects/views/workflow/workflow_list"
 ], function (
     i18n,
     template,
+    DocumentWorkflowMappingView,
     DocumentWorkflowListView
     ) {
     var DocumentsNewVersionView = Backbone.View.extend({
@@ -34,7 +36,14 @@ define([
 
             this.workflowsView = new DocumentWorkflowListView();
             this.newVersionWorkflowDiv.html(this.workflowsView.el);
-            this.workflowsView.collection.fetch();
+
+            this.workflowsMappingView =  new DocumentWorkflowMappingView({
+                el: this.$("#workflows-mapping")
+            });
+
+            this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
+
+            this.$(".tabs").tabs();
 
             return this;
         },
@@ -46,7 +55,7 @@ define([
         },
 
         createNewVersionAction: function() {
-            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected());
+            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected(), this.workflowsMappingView.toList());
             this.closeModalAction();
         },
 

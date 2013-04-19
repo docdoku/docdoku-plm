@@ -242,6 +242,9 @@ public class DocumentMasterDAO {
         for(DocumentIteration doc:pDocM.getDocumentIterations())
             docDAO.removeDoc(doc);
 
+        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(em);
+        sharedEntityDAO.deleteSharesForDocument(pDocM);
+
         em.remove(pDocM);
     }
 
@@ -277,5 +280,11 @@ public class DocumentMasterDAO {
 
         return result != null ? result.longValue() : 0L;
 
+    }
+
+    public List<DocumentMaster> findAllCheckedOutDocMs(String pWorkspaceId) {
+        TypedQuery<DocumentMaster> query = em.createQuery("SELECT DISTINCT m FROM DocumentMaster m WHERE m.checkOutUser is not null and m.workspace.id = :workspaceId", DocumentMaster.class);
+        query.setParameter("workspaceId", pWorkspaceId);
+        return query.getResultList();
     }
 }

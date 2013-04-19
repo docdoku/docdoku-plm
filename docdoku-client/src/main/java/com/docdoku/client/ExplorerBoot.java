@@ -95,18 +95,12 @@ public class ExplorerBoot {
         Prefs.initLocale();
         FileIO.rmDir(Config.LOCAL_TEMP_FOLDER);
         try {
-           String version = System.getProperty("java.version"); 
-           if(version.startsWith("1.7")){
-            Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE=Config.JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE;
             for (UIManager.LookAndFeelInfo laf:UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(laf.getName())) {
                    UIManager.setLookAndFeel(laf.getClassName());
                 }
             }
-           }else{
-               Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE=Config.JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE;
-               UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel");
-           }
+
         } catch (Exception pEx) {
             System.err.println("Look And Feel Exception.");
             System.err.println(pEx.getMessage());

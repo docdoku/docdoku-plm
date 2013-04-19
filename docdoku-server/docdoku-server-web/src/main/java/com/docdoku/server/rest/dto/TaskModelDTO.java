@@ -32,7 +32,7 @@ public class TaskModelDTO implements Serializable {
     private int num;
     private String title;
     private String instructions;
-    private UserDTO worker;
+    private RoleDTO role;
     private int duration;
 
     public TaskModelDTO() {
@@ -70,11 +70,11 @@ public class TaskModelDTO implements Serializable {
         this.instructions = instructions;
     }
 
-    public UserDTO getWorker() {
-        return worker;
+    public RoleDTO getRole() {
+        return role;
     }
 
-    public void setWorker(UserDTO worker) {
-        this.worker = worker;
+    public void setRole(RoleDTO role) {
+        this.role = role;
     }
 }

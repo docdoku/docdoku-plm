@@ -6,27 +6,11 @@
          xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
     <enterprise-beans>
         <session>
-            <ejb-name>DocumentManagerBean</ejb-name>
+            <ejb-name>DataManagerBean</ejb-name>
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
-            </env-entry>
-        </session>
-        <session>
-            <ejb-name>UserManagerBean</ejb-name>
-            <env-entry>
-                <env-entry-name>vaultPath</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
-            </env-entry>
-        </session>
-        <session>
-            <ejb-name>ProductManagerBean</ejb-name>
-            <env-entry>
-                <env-entry-name>vaultPath</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+		        <env-entry-value>/var/lib/docdoku/vault</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -34,7 +18,7 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/index</env-entry-value>
+                <env-entry-value>/var/lib/docdoku/index</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -42,7 +26,7 @@
             <env-entry>
                 <env-entry-name>codebase</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>http://www.docdokuplm.net</env-entry-value>
+                <env-entry-value>http://docdokuplm.net</env-entry-value>
             </env-entry>
         </session>
         <session>
@@ -50,15 +34,7 @@
             <env-entry>
                 <env-entry-name>indexPath</env-entry-name>
                 <env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>/var/lib/docdoku/index</env-entry-value>
-            </env-entry>
-        </session>
-        <session>
-            <ejb-name>ConverterBean</ejb-name>
-            <env-entry>
-                <env-entry-name>vaultPath</env-entry-name>
-                <env-entry-type>java.lang.String</env-entry-type>
-                <env-entry-value>/var/lib/docdoku/vault</env-entry-value>
+		        <env-entry-value>/var/lib/docdoku/index</env-entry-value>
             </env-entry>
         </session>
     </enterprise-beans>

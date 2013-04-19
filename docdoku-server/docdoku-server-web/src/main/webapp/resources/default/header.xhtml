@@ -25,19 +25,31 @@
 
                         <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
 
-                        <a id="brand-title" class="brand" href="/">
-                            DocDoku<strong>PLM</strong>
-                        </a>
+
+                        <c:choose>
+                            <c:when test="${isSuperAdmin==true}">
+                                <a id="brand-title" class="brand" href="/faces/admin/workspace/workspacesMenu.xhtml">
+                                    DocDoku<strong>PLM</strong>
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                            <a id="brand-title" class="brand" href="/">
+                                DocDoku<strong>PLM</strong>
+                            </a>
+                            </c:otherwise>
+                        </c:choose>
 
                         <c:choose>
                             <c:when test="${sessionScope.account==null}">
                                 <ul class="nav">
-                                    <li><a href="#{request.contextPath}/"><i class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a>
+                                    <li><a href="#{request.contextPath}/"><i
+                                            class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a>
                                     </li>
 
                                     <li>
-                                        <h:link outcome="/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
-                                        </h:link>
+                                        <!--<h:link outcome="/download.xhtml"><i
+                                                class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
+                                        </h:link>-->
                                     </li>
                                 </ul>
                                 <ul class="nav pull-right">
@@ -49,66 +61,77 @@
                             </c:when>
                             <c:otherwise>
 
+                                <c:choose>
+                                    <c:when test="${isSuperAdmin==true}">
+                                    </c:when>
+                                    <c:otherwise>
 
-                                <ul class="nav" id="header_left_menu">
 
-                                    <!-- current workspace & workspaces dropdown menu-->
-                                    <li class="dropdown" id="workspace_container">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                            <i class="icon-home"></i>
-                                            #{i18nTemplate['toplinks.workspace']}
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <c:forEach var="item" items="${administeredWorkspaces}">
-                                             <li>
-                                                <a href="#{request.contextPath}/document-management/${item.value.id}">
-                                                    <c:if test="${workspaceID==item.value.id}">
-                                                        <i class="icon-ok"></i>
-                                                    </c:if>
-                                                    ${item.value.id}
+                                        <ul class="nav" id="header_left_menu">
+
+                                            <!-- current workspace & workspaces dropdown menu-->
+                                            <li class="dropdown" id="workspace_container">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="icon-home"></i>
+                                                    #{i18nTemplate['toplinks.workspace']}
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <c:forEach var="item" items="${administeredWorkspaces}">
+                                                        <li>
+                                                            <a href="#{request.contextPath}/document-management/${item.value.id}">
+                                                                <c:if test="${workspaceID==item.value.id}">
+                                                                    <i class="icon-ok"></i>
+                                                                </c:if>
+                                                                ${item.value.id}
+                                                            </a>
+                                                        </li>
+                                                    </c:forEach>
+                                                    <c:forEach var="item" items="${regularWorkspaces}">
+                                                        <li>
+                                                            <a href="#{request.contextPath}/document-management/${item.id}">
+                                                                <c:if test="${workspaceID==item.id}">
+                                                                    <i class="icon-ok"></i>
+                                                                </c:if>
+                                                                ${item.id}
+                                                            </a>
+                                                        </li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </li>
+
+                                            <!-- my products link-->
+
+                                            <li>
+                                                <a href="#{request.contextPath}/product-management/${workspaceID}">
+                                                    <i class="icon-briefcase"></i>
+                                                    #{i18nTemplate['toplinks.product']}
                                                 </a>
                                             </li>
-                                            </c:forEach>
-                                            <c:forEach var="item" items="${regularWorkspaces}">
-                                                    <li>
-                                                        <a href="#{request.contextPath}/document-management/${item.id}">
-                                                            <c:if test="${workspaceID==item.id}">
-                                                                <i class="icon-ok"></i>
-                                                            </c:if>
-                                                            ${item.id}
-                                                        </a>
-                                                    </li>
-                                            </c:forEach>
+
+                                            <!-- my documents link-->
+
+                                            <li>
+                                                <a href="#{request.contextPath}/document-management/${workspaceID}">
+                                                    <i class="icon-file"></i>
+                                                    #{i18nTemplate['toplinks.document']}
+                                                </a>
+                                            </li>
+
+
                                         </ul>
-                                    </li>
-
-                                    <!-- my products link-->
-
-                                    <li>
-                                        <a href="#{request.contextPath}/product-management/${workspaceID}">
-                                            <i class="icon-briefcase"></i>
-                                            #{i18nTemplate['toplinks.product']}
-                                        </a>
-                                    </li>
-
-                                    <!-- my documents link-->
-
-                                    <li>
-                                        <a href="#{request.contextPath}/document-management/${workspaceID}">
-                                            <i class="icon-file"></i>
-                                            #{i18nTemplate['toplinks.document']}
-                                        </a>
-                                    </li>
 
 
-                                </ul>
+                                    </c:otherwise>
+                                </c:choose>
+
 
                                 <ul class="nav pull-right">
 
                                     <li>
-                                        <h:link outcome="/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
-                                        </h:link>
+                                        <!--<h:link outcome="/download.xhtml"><i
+                                                class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
+                                        </h:link>-->
                                     </li>
 
                                     <li class="dropdown" id="coworkers_access_module" style="display: none;">
@@ -118,7 +141,8 @@
                                             #{i18nTemplate['toplinks.coworkers']}
                                             <span class="caret"></span>
                                         </a>
-                                        <ul class="dropdown-menu large-entries" id="coworkers_access_module_entries"></ul>
+                                        <ul class="dropdown-menu large-entries"
+                                            id="coworkers_access_module_entries"></ul>
                                     </li>
 
                                     <li class="dropdown" id="account_name_node">
@@ -152,6 +176,7 @@
                                     </li>
 
                                 </ul>
+
                             </c:otherwise>
                         </c:choose>
                     </div>

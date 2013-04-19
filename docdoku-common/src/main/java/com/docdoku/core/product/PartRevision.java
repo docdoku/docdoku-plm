@@ -121,6 +121,8 @@ public class PartRevision implements Serializable {
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
 
+    private boolean publicShared;
+
     public PartRevision(){
 
     }
@@ -298,7 +300,20 @@ public class PartRevision implements Serializable {
     public void setEffectivities(Set<Effectivity> effectivities) {
         this.effectivities = effectivities;
     }
-    
+
+    public boolean isPublicShared() {
+        return publicShared;
+    }
+
+    public void setPublicShared(boolean publicShared) {
+        this.publicShared = publicShared;
+    }
+
+    @Override
+    public String toString() {
+        return partMaster.getNumber() + "-" + version;
+    }
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {

@@ -16,6 +16,7 @@ define({
     CANCEL_CHECKOUT: "Annuler la réservation",
     CHECKIN: "Libérer",
     CHECKOUT: "Réserver",
+    DELETE_MARKER: "Supprimer le marqueur",
     NAME : "Nom",
     EMBED_SCENE : "Exporter la scène",
     CONTROLS_SHORTCUTS : "Raccourcis clavier/souris",
@@ -56,6 +57,11 @@ define({
     CONFIG_SPEC:"Config spec",
     LATEST:"Dernière",
     SEARCH_PARTS:"Recherche d'articles",
+    SEARCH_OPTIONS:"Options de recherche",
+    PART_NAME_HELP:"partName",
+    SEARCH_PART_CALLED:"Rechercher l'article",
+    SEARCH_PART_BEGINNING:"Article commencant par",
+    SEARCH_PART_ENDING:"Article finissant par",
     FLYING_MODE:"Mode libre",
     TRACKBALL_MODE:"Mode trackball",
     MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
@@ -70,5 +76,6 @@ define({
     BOM_VIEW:"Liste des matériaux",
     OPTIONS:"Options",
     MATERIALS_SWITCH:"Afficher/Masquer les matériaux",
-    GRID_SWITCH:"Afficher/Masquer la grille"
+    GRID_SWITCH:"Afficher/Masquer la grille",
+    LIFECYCLE_STATE:"Etat du cycle de vie"
 });

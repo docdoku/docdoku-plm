@@ -77,4 +77,12 @@ public class WorkspaceDAO {
             return workspace;
         }
     }
+
+    public Long getDiskUsageForWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
+    }
 }

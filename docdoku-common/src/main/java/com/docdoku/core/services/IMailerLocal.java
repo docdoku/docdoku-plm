@@ -22,6 +22,7 @@ package com.docdoku.core.services;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Task;
 import java.util.Collection;
 import java.util.Locale;
@@ -39,4 +40,6 @@ public interface IMailerLocal {
     void sendApproval(Collection<Task> pRunningTasks, DocumentMaster pDocumentMaster);
 
     void sendPasswordRecovery(Account account, String passwordRRUuid);
+
+    void sendApproval(Collection<Task> runningTasks, PartRevision partRevision);
 }

@@ -1,10 +1,9 @@
 @import "../common/style.less";
 @import "menu.less";
 @import "content.less";
-@import "documents";
-@import "workflowModels";
-@import "search";
-@import "lifecycle";
+@import "documents.less";
+@import "workflowModels.less";
+@import "search.less";
 @import "tags.less";
 
 #iteration-attributes {
@@ -38,3 +37,11 @@ td.document-master-subscriptions {
   }
 }
 
+td.document-master-share {
+  i {
+    cursor: pointer;
+    &:hover{
+      color:#333;
+    }
+  }
+}

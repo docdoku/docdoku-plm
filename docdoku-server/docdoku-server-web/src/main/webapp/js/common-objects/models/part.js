@@ -118,6 +118,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get("standardPart") ? i18n.TRUE:i18n.FALSE;
         },
 
+        getLifeCycleState:function(){
+            return this.get("lifeCycleState");
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,
@@ -160,7 +164,47 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getPartKey();
             }
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/";
+        },
+
+
+        getPermalink: function() {
+            return encodeURI(
+                window.location.origin
+                    + "/parts/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getNumber()
+                    + "/"
+                    + this.getVersion()
+            );
+        },
+
+        createShare:function(args){
+            $.ajax({
+                type: "POST",
+                url: this.url() + "/share",
+                data: JSON.stringify(args.data),
+                contentType: "application/json; charset=utf-8",
+                success: args.success
+            });
+        },
+
+        publish:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/publish",
+                success: args.success
+            });
+        },
+
+        unpublish:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/unpublish",
+                success: args.success
+            });
         }
+
 
     });
 

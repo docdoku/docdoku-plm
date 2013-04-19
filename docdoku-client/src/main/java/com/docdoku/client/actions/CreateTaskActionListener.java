@@ -44,7 +44,7 @@ public class CreateTaskActionListener implements ActionListener {
                 User user = source.getUser();
                 String title = source.getTaskTitle();
                 String instructions = source.getInstructions();
-                TaskModel task = new TaskModel(activityModel, title, instructions, user);
+                TaskModel task = new TaskModel(activityModel, title, instructions, null);
                 activityModel.addTaskModel(task);
                 sourcePanel.getTasksList().addTask(task);
             }

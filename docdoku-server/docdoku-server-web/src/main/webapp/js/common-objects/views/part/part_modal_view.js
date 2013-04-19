@@ -7,11 +7,13 @@ define(
     "common-objects/views/attributes/attributes",
     "common-objects/views/part/parts_management_view",
     "common-objects/views/linked_document/linked_documents",
-    "common-objects/collections/linked_document_collection"
+    "common-objects/collections/linked_document_collection",
+    "common-objects/views/workflow/lifecycle"
     ],
-    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection ) {
+    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection,LifecycleView ) {
 
-    var PartModalView = ModalView.extend({
+
+        var PartModalView = ModalView.extend({
 
         template: Mustache.compile(template),
 
@@ -26,7 +28,8 @@ define(
 
             this.$el.html(this.template({
                 part: this.model,
-                i18n: i18n
+                i18n: i18n,
+                permalink : this.model.getPermalink()
             }));
 
             this.editMode = this.model.isCheckoutByConnectedUser() ;
@@ -45,6 +48,7 @@ define(
 
             this.initPartsManagementView();
             this.initLinkedDocumentsView();
+            this.initLifeCycleView();
 
             return this;
         },
@@ -137,6 +141,25 @@ define(
 
             /* Add the documentLinksView to the tab */
             this.$("#iteration-links").html(this.linkedDocumentsView.el);
+        },
+
+        initLifeCycleView : function () {
+            var that = this ;
+            if(this.model.get("workflow")){
+
+                this.lifecycleView =  new LifecycleView({
+                    el:"#tab-iteration-lifecycle"
+                }).setWorkflow(this.model.get("workflow")).setEntityType("parts").render();
+
+                this.lifecycleView.on("lifecycle:change",function(){
+                    that.model.fetch({success:function(){
+                        that.lifecycleView.setWorkflow(that.model.get("workflow")).setEntityType("parts").render();
+                    }});
+                });
+
+            }else{
+                this.$("a[href=#tab-iteration-lifecycle]").hide();
+            }
         }
 
     });

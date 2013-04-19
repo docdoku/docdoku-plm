@@ -5,6 +5,10 @@
         <role-name>users</role-name>
         <group-name>users</group-name>
     </security-role-mapping>
+    <security-role-mapping>
+        <role-name>admin</role-name>
+        <group-name>admin</group-name>
+    </security-role-mapping>
     <enterprise-beans>
         <ejb>
             <ejb-name>DocumentManagerBean</ejb-name>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ow2.docdoku</groupId>
         <artifactId>docdoku-server</artifactId>
-        <version>1.1-RC2-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
     <artifactId>docdoku-server-web</artifactId>
     <packaging>war</packaging>
@@ -14,43 +14,13 @@
         <!-- JAXRS -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
+            <artifactId>jersey-json</artifactId>
             <version>1.13</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
             <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jvnet</groupId>
-            <artifactId>mimepull</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>1.9.8</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.glassfish.v3.osgi</groupId>
-            <artifactId>jersey-gf-server</artifactId>
-            <version>1.13</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>1.13</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-multipart</artifactId>
-            <version>1.13</version>
         </dependency>
 
         <!-- WebSocket -->
@@ -65,8 +35,8 @@
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
-            <version>1.1-RC2-SNAPSHOT</version>
-            <type>jar</type>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JEE core API -->
@@ -77,29 +47,19 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.5</version>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
         </dependency>
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
-            <version>5.3.2</version>
+            <version>5.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.mnode.ical4j</groupId>
@@ -107,63 +67,9 @@
             <version>1.0.2</version>
         </dependency>
         <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.mojo.webstart</groupId>
             <artifactId>webstart-jnlp-servlet</artifactId>
             <version>1.0-6.0.02_ea_b02.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20080701</version>
-        </dependency>
-
-        <!-- Open Office -->
-        <dependency>
-            <groupId>org.openoffice</groupId>
-            <artifactId>juh</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openoffice</groupId>
-            <artifactId>jurt</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openoffice</groupId>
-            <artifactId>ridl</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openoffice</groupId>
-            <artifactId>unoil</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-
-        <!-- system libs -->
-        <dependency>
-            <groupId>com.developpez.adiguba</groupId>
-            <artifactId>shell</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.artofsolving</groupId>
-            <artifactId>jodconverter</artifactId>
-            <version>3.0-beta-4</version>
         </dependency>
     </dependencies>
     <build>
@@ -223,12 +129,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-web</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
-    <repositories>
-        <repository>
-            <id>repo</id>
-            <url>file://${project.basedir}/repo</url>
-        </repository>
-    </repositories>
 </project>

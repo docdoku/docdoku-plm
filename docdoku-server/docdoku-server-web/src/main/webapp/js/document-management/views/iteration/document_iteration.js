@@ -2,7 +2,7 @@ define([
     "common-objects/views/components/modal",
     "common-objects/views/file/file_list",
     "common-objects/views/attributes/attributes",
-    "views/document/document_lifecycle",
+    "common-objects/views/workflow/lifecycle",
     "common-objects/views/linked_document/linked_documents",
     "models/tag",
     "views/document/document_tag",
@@ -10,7 +10,7 @@ define([
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common-objects/utils/date"
-], function (ModalView, FileListView, DocumentAttributesView, LifecycleDocumentView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, i18n, date) {
+], function (ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, i18n, date) {
 
     var IterationView = ModalView.extend({
 
@@ -25,6 +25,7 @@ define([
 
             this.events["click a#previous-iteration"] = "onPreviousIteration";
             this.events["click a#next-iteration"] = "onNextIteration";
+            this.events["submit form"] = "onSubmitForm";
 
             this.tagsToRemove = [];
 
@@ -163,13 +164,13 @@ define([
 
             if(this.model.get("workflow")){
 
-                this.lifecycleView =  new LifecycleDocumentView({
+                this.lifecycleView =  new LifecycleView({
                     el:"#tab-iteration-lifecycle"
-                }).setWorkflow(this.model.get("workflow")).render();
+                }).setWorkflow(this.model.get("workflow")).setEntityType("documents").render();
 
                 this.lifecycleView.on("lifecycle:change",function(){
                     that.model.fetch({success:function(){
-                        that.lifecycleView.setWorkflow(that.model.get("workflow")).render();
+                        that.lifecycleView.setWorkflow(that.model.get("workflow")).setEntityType("documents").render();
                     }});
                 });
 
@@ -186,6 +187,13 @@ define([
             this.tagsManagement(editMode);
 
             return this;
+        },
+
+        onSubmitForm:function(e){
+            // prevent page reload when pressing enter
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
 
         primaryAction: function() {

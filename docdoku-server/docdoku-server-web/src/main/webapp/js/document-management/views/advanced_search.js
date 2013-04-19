@@ -13,7 +13,8 @@ define(    [
         events: {
             "hidden #advanced_search_modal": "onHidden",
             "submit #advanced_search_form" : "onSubmitForm",
-            "click #search-add-attributes" : "addAttribute"
+            "click #search-add-attributes" : "addAttribute",
+            "change #template-attributes-helper" : "changeAttributes"
         },
 
         template: Mustache.compile(template),
@@ -56,12 +57,18 @@ define(    [
 
             this.templates = new Templates();
             this.types = [];
+            this.templatesId = [];
             this.templates.fetch({success:function(){
                 that.templates.each(function(template){
                     var type = template.get("documentType");
                     if(!_.contains(that.types, type) && type){
                         that.types.push(type);
                         that.$type.append("<option value='"+type+"'>"+type+"</option>");
+                    }
+                    var templateId = template.get("id");
+                    if(!_.contains(that.templatesId, templateId) && templateId){
+                        that.templatesId.push(type);
+                        that.$templatesId.append("<option value='"+templateId+"'>"+templateId+"</option>");
                     }
                 });
             }});
@@ -110,6 +117,18 @@ define(    [
             this.$content = this.$("#search-content");
             this.$from    = this.$("#search-from");
             this.$to      = this.$("#search-to");
+            this.$templatesId = this.$("#template-attributes-helper");
+        },
+
+        changeAttributes:function(e){
+            if(e.target.value){
+                var search = _.where(this.templates.models,{id: e.target.value});
+                if(search[0]){
+                    this.attributes.reset(search[0].get("attributeTemplates"));
+                }
+            }else{
+                this.attributes.reset();
+            }
         },
 
         constructQueryString : function(){

@@ -62,6 +62,11 @@ define({
         CONFIG_SPEC:"Config spec",
         LATEST:"Latest",
         SEARCH_PARTS:"Search parts",
+        SEARCH_OPTIONS:"Search options",
+        PART_NAME_HELP:"partName",
+        SEARCH_PART_CALLED:"Search part called",
+        SEARCH_PART_BEGINNING:"Search part beginning by",
+        SEARCH_PART_ENDING:"Search part ending by ",
         FLYING_MODE:"Fly mode",
         TRACKBALL_MODE:"Trackball mode",
         MARKERS_SIZE_MIN:"Reduce markers size",
@@ -76,7 +81,8 @@ define({
         BOM_VIEW:"Bom View",
         OPTIONS:"Options",
         MATERIALS_SWITCH:"Show/Hide materials",
-        GRID_SWITCH:"Show/Hide the grid"
+        GRID_SWITCH:"Show/Hide the grid",
+        LIFECYCLE_STATE:"Life cycle state"
     },
     "fr": true,
     "es": true
