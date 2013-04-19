@@ -41,11 +41,9 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-        <finalName>docdoku-cli</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>

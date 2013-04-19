@@ -29,14 +29,9 @@
             </p>
             <p><h:outputText value="#{i18nDownload['section1.text1']}" escape="false" /></p>
             <p>#{i18nDownload['section1.text2']}</p>
-            <!--
-            <script type="text/javascript" src="http://java.com/js/deployJava.js"></script>
-            <script type="text/javascript">
-                deployJava.createWebStartLaunchButton('#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/apps/docdoku_client.jnlp','1.6.0_10');
-            </script>
-            -->
+
             <br/>
-            <a href="#{request.contextPath}/apps/docdoku_client.jnlp">Java 6</a> | <a href="#{request.contextPath}/apps/docdoku_clientJ7.jnlp">Java 7</a>
+            <a href="#{request.contextPath}/apps/docdoku_clientJ7.jnlp">Java 7</a>
 
 
         </ui:define>

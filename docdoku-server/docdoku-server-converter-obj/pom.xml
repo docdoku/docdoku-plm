@@ -44,6 +44,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-converter-obj</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
 </project>

@@ -23,7 +23,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>docdoku-client</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
     <dependencies>
         <dependency>

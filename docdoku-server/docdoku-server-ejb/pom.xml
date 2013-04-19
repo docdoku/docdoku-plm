@@ -20,7 +20,7 @@
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <!-- declare dependency as pom and jar for transitive libs inclusion-->
         <dependency>
@@ -178,7 +178,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ejb-plugin</artifactId>
-                <version>2.1</version>
+                <version>2.3</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
                 </configuration>
@@ -210,6 +210,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-ejb</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
 </project>

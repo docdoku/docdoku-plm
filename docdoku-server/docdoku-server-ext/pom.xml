@@ -39,6 +39,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-ext</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
 </project>

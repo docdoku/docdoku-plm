@@ -36,7 +36,7 @@
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         
         <!-- JEE core API -->
@@ -129,6 +129,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-web</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
 </project>

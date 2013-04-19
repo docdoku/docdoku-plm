@@ -32,7 +32,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>docdoku-common</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
     <dependencies>
         <dependency>
