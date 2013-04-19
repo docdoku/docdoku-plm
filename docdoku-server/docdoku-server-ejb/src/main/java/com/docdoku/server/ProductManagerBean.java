@@ -26,13 +26,14 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.services.*;
 import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.sharing.SharedEntityKey;
+import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
@@ -1142,7 +1143,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed({"users"})
+    @Override
+    public SharedPart createSharedPart(PartRevisionKey pPartRevisionKey, String pPassword, Date pExpireDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceWriteAccess(pPartRevisionKey.getPartMaster().getWorkspace());
+        SharedPart sharedPart = new SharedPart(user.getWorkspace(), user, pExpireDate, pPassword, getPartRevision(pPartRevisionKey));
+        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(new Locale(user.getLanguage()),em);
+        sharedEntityDAO.createSharedPart(sharedPart);
+        return sharedPart;
+    }
 
+    @RolesAllowed({"users"})
+    @Override
+    public void deleteSharedPart(SharedEntityKey pSharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(pSharedEntityKey.getWorkspace());
+        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(new Locale(user.getLanguage()),em);
+        SharedPart sharedPart = sharedEntityDAO.loadSharedPart(pSharedEntityKey.getUuid());
+        sharedEntityDAO.deleteSharedPart(sharedPart);
+    }
 }
 //TODO when using layers and markers, check for concordance
 //TODO add a method to update a marker

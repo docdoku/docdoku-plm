@@ -218,6 +218,32 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                     }
                 }
             });
+        },
+
+        createShare:function(args){
+            $.ajax({
+                type: "POST",
+                url: this.url() + "/share",
+                data: JSON.stringify(args.data),
+                contentType: "application/json; charset=utf-8",
+                success: args.success
+            });
+        },
+
+        publish:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/publish",
+                success: args.success
+            });
+        },
+
+        unpublish:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/unpublish",
+                success: args.success
+            });
         }
 
 
