@@ -20,8 +20,6 @@
 
 package com.docdoku.server.viewers;
 
-import com.developpez.adiguba.shell.ProcessConsumer;
-import com.developpez.adiguba.shell.Shell;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
@@ -38,12 +36,10 @@ public class FileConverter {
 
     private final static String ooHome;
     private final static int ooPort;
-    private final static String pdf2SWFHome;
 
     private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
     private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
     private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
-    private static final String PDF2SWFHOME_KEY = "com.docdoku.server.viewers.pdf2SWFHome";
 
     static {
         try {
@@ -51,7 +47,6 @@ public class FileConverter {
             properties.load(FileConverter.class.getResourceAsStream(PROPERTIES_FILE));
             ooHome = properties.getProperty(OO_HOME_KEY);
             ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
-            pdf2SWFHome = properties.getProperty(PDF2SWFHOME_KEY);
         } catch (IOException e) {
             throw new RuntimeException("Can't read conf.properties file for documents conversion", e);
         }
@@ -74,37 +69,6 @@ public class FileConverter {
         tmpDir.deleteOnExit();
 
         return new FileInputStream(pdfFile);
-    }
-
-    public static InputStream convertToSWF(String sourceName, final InputStream streamToConvert) throws IOException {
-        File tmpDir = Files.createTempDir();
-        File fileToConvert = new File(tmpDir, sourceName);
-        File swfFile = new File(tmpDir, "converted.swf");
-
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return streamToConvert;
-            }
-        }, fileToConvert);
-
-        File pdfFile = convertToPDF(fileToConvert);
-        String sep = File.separator;
-
-        String sourceFile = pdfFile.getAbsolutePath();
-        String outputFile = swfFile.getAbsolutePath();
-
-        String pdf2SWFCmd = pdf2SWFHome + sep + "pdf2swf";
-
-        String[] cmdArray = {pdf2SWFCmd, sourceFile, "-o", outputFile, "-T 9", "-f"};
-
-        Shell sh = new Shell();
-        sh.setDirectory(new File(pdf2SWFHome));
-        ProcessConsumer pc = sh.exec(cmdArray);
-        pc.consume();
-
-        tmpDir.deleteOnExit();
-        return new FileInputStream(swfFile);
     }
 
     private static File convertToPDF(File fileToConvert) {

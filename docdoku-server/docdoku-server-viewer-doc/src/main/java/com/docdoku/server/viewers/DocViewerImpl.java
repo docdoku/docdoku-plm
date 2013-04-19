@@ -88,31 +88,6 @@ public class DocViewerImpl implements DocumentViewer {
                     inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 }
             }
-
-        } else if ("swf".equals(flexPaperViewerType)) {
-
-            pResponse.setContentType("application/x-shockwave-flash");
-
-            if (extension.equals("swf")) {
-                inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
-            } else {
-                String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".swf";
-                if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
-                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
-                } else {
-                    InputStream inputStreamConverted = inputStream = FileConverter.convertToSWF(binaryResource.getName(), dataManager.getBinaryResourceInputStream(binaryResource));
-                    //copy the converted file for further reuse
-                    OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
-                    try {
-                        ByteStreams.copy(inputStream, outputStream);
-                    } finally {
-                        inputStreamConverted.close();
-                        outputStream.flush();
-                        outputStream.close();
-                    }
-                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
-                }
-            }
         }
 
         return inputStream;
