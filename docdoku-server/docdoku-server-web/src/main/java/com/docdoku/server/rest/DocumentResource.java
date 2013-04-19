@@ -322,10 +322,12 @@ public class DocumentResource {
                 }
             }
 
-            Map<String, String> roleMappings = new HashMap<String,String>();
+            Map<String, String> roleMappings = new HashMap<>();
 
-            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
-                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+            if (rolesMappingDTO != null) {
+                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
+                    roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+                }
             }
 
             DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
