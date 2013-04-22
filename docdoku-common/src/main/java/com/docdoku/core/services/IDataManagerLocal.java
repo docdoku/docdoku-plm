@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 public interface IDataManagerLocal {
     InputStream getBinaryResourceInputStream(BinaryResource binaryResource) throws StorageException;
@@ -33,4 +34,5 @@ public interface IDataManagerLocal {
     boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     void copyData(BinaryResource source, BinaryResource destination) throws StorageException;
     void deleteData(BinaryResource binaryResource) throws StorageException;
+    Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
 }

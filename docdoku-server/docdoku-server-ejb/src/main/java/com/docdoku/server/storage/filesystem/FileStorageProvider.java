@@ -29,6 +29,7 @@ import com.docdoku.server.storage.StorageProvider;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.util.Date;
 
 
 public class FileStorageProvider implements StorageProvider {
@@ -144,6 +145,15 @@ public class FileStorageProvider implements StorageProvider {
         File subResourceFolder = getSubResourceFolder(binaryResource);
         if (subResourceFolder.exists()) {
             FileIO.rmDir(subResourceFolder);
+        }
+    }
+
+    public Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws FileNotFoundException {
+        File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
+        if (subResourceFile.exists()) {
+            return new Date(subResourceFile.lastModified());
+        } else {
+            throw new FileNotFoundException(new StringBuilder("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
         }
     }
 

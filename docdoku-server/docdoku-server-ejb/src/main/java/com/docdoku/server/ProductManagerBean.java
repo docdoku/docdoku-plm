@@ -26,7 +26,6 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
@@ -465,6 +464,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else {
                 geometryBinaryResource.setContentLength(pSize);
                 geometryBinaryResource.setQuality(quality);
+                geometryBinaryResource.setLastModified(new Date());
             }
             return geometryBinaryResource;
         } else {
@@ -493,6 +493,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partI.setNativeCADFile(nativeCADBinaryResource);
             } else if (nativeCADBinaryResource.getFullName().equals(fullName)) {
                 nativeCADBinaryResource.setContentLength(pSize);
+                nativeCADBinaryResource.setLastModified(new Date());
             } else {
 
                 try {
@@ -560,6 +561,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partI.addFile(binaryResource);
             } else {
                 binaryResource.setContentLength(pSize);
+                binaryResource.setLastModified(new Date());
             }
             return binaryResource;
         } else {
@@ -962,6 +964,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             template.setAttachedFile(binaryResource);
         } else {
             binaryResource.setContentLength(pSize);
+            binaryResource.setLastModified(new Date());
         }
         return binaryResource;
     }

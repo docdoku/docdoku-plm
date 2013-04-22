@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -73,7 +74,8 @@ public class DocViewerImpl implements DocumentViewer {
                 inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             } else {
                 String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
-                if (dataManager.exists(binaryResource, subResourceVirtualPath)) {
+                if (dataManager.exists(binaryResource, subResourceVirtualPath) &&
+                        dataManager.getLastModified(binaryResource, subResourceVirtualPath).after(binaryResource.getLastModified())) {
                     //if the resource is already converted, return it
                     inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 } else {
