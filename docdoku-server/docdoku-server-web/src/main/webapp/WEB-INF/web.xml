@@ -42,7 +42,7 @@
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
-    </filter-mapping>    
+    </filter-mapping>
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
         <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>
@@ -154,7 +154,6 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/documents/*</url-pattern>
             <url-pattern>/files/*</url-pattern>
             <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>

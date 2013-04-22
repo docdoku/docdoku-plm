@@ -36,6 +36,10 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+/**
+ * @author Morgan Guimard
+ */
+
 public class DocumentPermalinkServlet extends HttpServlet {
 
     @EJB
@@ -52,7 +56,14 @@ public class DocumentPermalinkServlet extends HttpServlet {
             String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
             String docMVersion = pathInfos[offset+2];
 
-            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+            DocumentMaster docM;
+
+            docM = documentService.getPublicDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+
+            if(docM == null){
+                docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+            }
+
             pRequest.setAttribute("docm", docM);
 
             DocumentIteration doc =  docM.getLastIteration();

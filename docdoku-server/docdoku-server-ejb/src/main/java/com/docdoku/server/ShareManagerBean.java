@@ -34,6 +34,10 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.logging.Logger;
 
+/**
+ * @author Morgan Guimard
+ */
+
 @Local(IShareManagerLocal.class)
 @Stateless(name = "ShareManagerBean")
 public class ShareManagerBean implements IShareManagerLocal {
