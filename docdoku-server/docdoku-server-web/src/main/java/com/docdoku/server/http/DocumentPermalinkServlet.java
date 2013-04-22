@@ -58,18 +58,11 @@ public class DocumentPermalinkServlet extends HttpServlet {
 
             DocumentMaster docM;
 
-            System.out.println("#### try to get a public document");
-
             docM = documentService.getPublicDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
 
-            System.out.println("#### check if null");
-
             if(docM == null){
-                System.out.println("#### document is null");
                 docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
             }
-
-            System.out.println("#### serve the doc");
 
             pRequest.setAttribute("docm", docM);
 
