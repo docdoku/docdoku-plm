@@ -127,7 +127,7 @@ define([
                     $("body").append(promptView.render().el);
                     promptView.openModal();
                     self.listenTo(promptView, 'prompt-ok', function(args) {
-                        revisionNote = args[0];
+                        var revisionNote = args[0];
                         if(_.isEqual(revisionNote, "")) {
                             revisionNote = null;
                         }
