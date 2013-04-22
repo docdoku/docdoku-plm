@@ -260,6 +260,17 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docM;
     }
 
+    @Override
+    public DocumentMaster getPublicDocumentMaster(DocumentMasterKey pDocMPK) throws DocumentMasterNotFoundException {
+        DocumentMaster docM = new DocumentMasterDAO(em).loadDocM(pDocMPK);
+        if(docM.isPublicShared()){
+            return docM;
+        }else{
+            return null;
+        }
+    }
+
+
     @RolesAllowed("users")
     @Override
     public DocumentMaster[] getCheckedOutDocumentMasters(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {

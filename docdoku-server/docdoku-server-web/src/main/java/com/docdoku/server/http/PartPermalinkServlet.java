@@ -34,6 +34,10 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+/**
+ * @author Morgan Guimard
+ */
+
 public class PartPermalinkServlet extends HttpServlet {
     
     @EJB
@@ -57,7 +61,16 @@ public class PartPermalinkServlet extends HttpServlet {
             String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
             String partVersion = pathInfos[offset+2];
 
-            PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+
+
+
+            PartRevision partRevision;
+
+            partRevision = productService.getPublicPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+
+            if(partRevision == null){
+                partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+            }
 
             pRequest.setAttribute("partRevision", partRevision);
 

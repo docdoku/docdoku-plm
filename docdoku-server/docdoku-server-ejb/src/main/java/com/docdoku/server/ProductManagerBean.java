@@ -692,6 +692,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partR;
     }
 
+    @Override
+    public PartRevision getPublicPartRevision(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException {
+        PartRevision partR = new PartRevisionDAO(em).loadPartR(pPartRPK);
+
+        if(partR.isPublicShared()){
+            return partR;
+        }else{
+            return null;
+        }
+    }
+
+
     @RolesAllowed("users")
     @Override
     public List<PartUsageLink> getComponents(PartIterationKey pPartIPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, NotAllowedException {

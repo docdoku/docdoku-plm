@@ -587,4 +587,6 @@ public interface IProductManagerWS{
 
     SharedPart createSharedPart(PartRevisionKey pPartRevisionKey, String pPassword, Date pExpireDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, UserNotActiveException;
     void deleteSharedPart(SharedEntityKey pSharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException;
+
+    PartRevision getPublicPartRevision(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException;
 }

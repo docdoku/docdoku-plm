@@ -42,7 +42,16 @@
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
-    </filter-mapping>    
+    </filter-mapping>
+    <filter>
+        <filter-name>PermalinkFilter</filter-name>
+        <filter-class>com.docdoku.server.http.PermalinkFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PermalinkFilter</filter-name>
+        <url-pattern>/documents/*</url-pattern>
+        <url-pattern>/parts/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
         <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>
@@ -154,7 +163,7 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/documents/*</url-pattern>
+            <url-pattern>/parts/*</url-pattern>
             <url-pattern>/files/*</url-pattern>
             <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>
