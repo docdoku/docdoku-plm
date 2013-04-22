@@ -42,7 +42,11 @@ define({
         MASK:"Mask",
         ID_GENERATION:"Id generation",
         LIFECYCLE_STATE:"Life cycle state",
-        PUBLISH:"Publish"
+        PUBLISH:"Publish",
+        "ITERATION_NOTE":"Iteration note",
+        "ITERATION_NOTE_PROMPT_LABEL":"The iteration note has not been defined. Do you want to add it?",
+        "ITERATION_NOTE_PROMPT_CANCEL":"Ignore",
+        "ITERATION_NOTE_PROMPT_OK":"Add iteration note"
     },
     "fr": true
 });

@@ -3,13 +3,15 @@ define([
     "text!templates/part_content.html",
     "i18n!localization/nls/product-management-strings",
     "views/part_list",
-    "views/part_creation_view"
+    "views/part_creation_view",
+    "common-objects/views/prompt"
 ], function (
     PartCollection,
     template,
     i18n,
     PartListView,
-    PartCreationView
+    PartCreationView,
+    PromptView
     ) {
     var PartContentView = Backbone.View.extend({
 
@@ -112,7 +114,33 @@ define([
         },
 
         checkin:function(){
-            this.partListView.getSelectedPart().checkin();
+            var self = this;
+            var selectedPart = this.partListView.getSelectedPart();
+
+            if(_.isNull(selectedPart.getLastIteration().attributes.iterationNote)) {
+
+                var promptView = new PromptView();
+                promptView.setPromptOptions(i18n.ITERATION_NOTE, i18n.ITERATION_NOTE_PROMPT_LABEL, i18n.ITERATION_NOTE_PROMPT_OK, i18n.ITERATION_NOTE_PROMPT_CANCEL);
+                $("body").append(promptView.render().el);
+                promptView.openModal();
+
+                self.listenTo(promptView, 'prompt-ok', function(args) {
+                    var iterationNote = args[0];
+                    if(_.isEqual(iterationNote, "")) {
+                        iterationNote = null;
+                    }
+                    selectedPart.getLastIteration().save({
+                        iterationNote: iterationNote
+                    });
+                    selectedPart.checkin();
+                });
+
+                self.listenTo(promptView, 'prompt-cancel', function() {
+                    selectedPart.checkin();
+                });
+            } else {
+                selectedPart.checkin();
+            }
         },
         checkout:function(){
             this.partListView.getSelectedPart().checkout();
