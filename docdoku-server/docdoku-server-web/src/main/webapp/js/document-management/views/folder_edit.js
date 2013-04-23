@@ -17,15 +17,19 @@ define([
 			this.nameInput.val(this.model.get("name"));
 		},
 		primaryAction: function () {
-			var name = this.nameInput.val();
-			if (name) {
+			var name = $.trim(this.nameInput.val());
+
+            if(name != this.model.get("name") && name != ""){
 				this.model.save({
 					name: name
 				}, {
 					success: this.success,
 					error: this.error
 				});
-			}
+            }else{
+                this.hide();
+            }
+
 			return false;
 		},
 		success: function (model, response) {

@@ -1,7 +1,7 @@
 define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localization/nls/product-structure-strings","collections/part_collection"], function (BomItemView, template, i18n, PartList) {
     var BomContentView = Backbone.View.extend({
 
-        el: $("#bom_table_container"),
+        el: "#bom_table_container",
 
         events: {
             "change th > input": "onHeaderSelectionChanged",

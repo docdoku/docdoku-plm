@@ -1,12 +1,14 @@
 /*global sceneManager*/
 define([
     "views/marker_create_modal_view",
-    "views/controls_infos_modal_view",
-    "views/progress_bar_view"
+    "views/progress_bar_view",
+    "views/blocker_view",
+    "LoaderManager"
 ], function (
     MarkerCreateModalView,
-    ControlsInfosModalView,
-    ProgressBarView
+    ProgressBarView,
+    BlockerView,
+    LoaderManager
 ) {
     var SceneManager = function (pOptions) {
 
@@ -23,7 +25,6 @@ define([
         this.isLoaded = false;
         this.isPaused = false;
 
-        this.loader = (this.typeLoader == 'binary') ? new THREE.BinaryLoader() : new THREE.JSONLoader();
         this.material = (this.typeMaterial == 'face') ? new THREE.MeshFaceMaterial() : (this.typeMaterial == 'lambert') ? new THREE.MeshLambertMaterial() : new THREE.MeshNormalMaterial();
 
         this.updateOffset = 0;
@@ -34,23 +35,29 @@ define([
         this.partIterations = {};
         this.meshesBindedForMarkerCreation = [];
 
-        this.defaultCameraPosition = new THREE.Vector3(0, 10, 1000);
+        this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
 
         this.STATECONTROL = { PLC : 0, TBC : 1};
         this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
+
+        this.maxInstanceDisplayed = 1000;
+        this.levelGeometryValues = [];
+        this.wireframe = false;
+
+        this.loaderManager = null;
     };
 
     SceneManager.prototype = {
 
         init: function() {
             _.bindAll(this);
-            this.listenXHR();
+            this.updateLevelGeometryValues(0);
             this.initScene();
+            this.listenXHR();
             this.initCamera();
             this.initControls();
-            this.bindSwitchControlEvents();
             this.initLights();
             this.initAxes();
             this.initRenderer();
@@ -59,8 +66,9 @@ define([
             this.initLayerManager();
             this.animate();
             this.initIframeScene();
-            this.initShortcuts();
+            this.initGrid();
             this.isLoaded = true;
+            this.loaderManager = new LoaderManager();
         },
 
         listenXHR: function() {
@@ -115,13 +123,15 @@ define([
 
         initScene: function() {
             this.$container = $('div#container');
-            this.$blocker = $('div#blocker');
+            this.$blocker = new BlockerView().render().$el;
+            this.$container.append(this.$blocker);
             this.$instructions = $('div#instructions');
 
             // Init frame
             if (this.$container.length === 0) {
                 this.$container = $('div#frameContainer');
             }
+
             this.scene = new THREE.Scene();
         },
 
@@ -130,9 +140,8 @@ define([
             if (!_.isUndefined(SCENE_INIT.camera)) {
                 console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z);
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
-            } //else
-                //this.camera.position.set(0, 10, 10000);
-            //this.scene.add(this.camera);
+            }
+
         },
 
         initControls: function() {
@@ -150,30 +159,6 @@ define([
                     break;
             }
 
-
-            if (Modernizr.touch) {
-                $('#side_controls_container').hide();
-                $('#scene_container').width(90 + '%');
-                $('#center_container').height(83 + '%');
-            }
-        },
-
-        bindSwitchControlEvents: function() {
-            var self = this;
-            $('#flying_mode_view_btn').click(function(e) {
-                self.$blocker.show();
-                self.updateNewCamera();
-                //self.setFirstPersonControls();
-                self.setPointerLockControls();
-                self.updateLayersManager();
-            });
-
-            $('#tracking_mode_view_btn').click(function(e) {
-                self.$blocker.hide();
-                self.updateNewCamera();
-                self.setTrackBallControls();
-                self.updateLayersManager();
-            });
         },
 
         setPointerLockControls: function() {
@@ -321,10 +306,13 @@ define([
                 this.domEventForMarkerCreation._isPLC = false;
             }
 
-            this.meshesBindedForMarkerCreation = _.pluck(_.filter(self.instances, function(instance) {
-                return instance.mesh != null;
-            }), 'mesh');
+            var filteredInstances = _.filter(self.instances, function(instance) {
+                return instance.levelGeometry != null &&  instance.levelGeometry.mesh != null;
+            });
 
+            this.meshesBindedForMarkerCreation = _.map(filteredInstances, function(instance) {
+                    return instance.levelGeometry.mesh;
+            });
 
             var onIntersect = function(intersectPoint) {
                 var mcmv = new MarkerCreateModalView({model:layer, intersectPoint:intersectPoint});
@@ -365,7 +353,6 @@ define([
                     self.layerManager.domEvent._isPLC = false;
                 }
 
-                self.layerManager.bindControlEvents();
                 self.layerManager.rescaleMarkers();
                 self.layerManager.renderList();
             });
@@ -405,7 +392,7 @@ define([
 
         initStats: function() {
             this.stats = new Stats();
-            document.body.appendChild(this.stats.domElement);
+            $("#scene_container").append(this.stats.domElement);
 
             this.$stats = $(this.stats.domElement);
             this.$stats.attr('id','statsWin');
@@ -417,25 +404,6 @@ define([
             var that = this;
             this.$statsArrow.bind('click', function() {
                 that.$stats.toggleClass('statsWinMinimized statsWinMaximized');
-            });
-        },
-
-        initShortcuts: function() {
-            var self = this;
-            $('#shortcuts a').bind("click", function() {
-                var cimv;
-
-                switch (self.stateControl) {
-                    case self.STATECONTROL.PLC:
-                        cimv = new ControlsInfosModalView({isPLC:true, isTBC:false});
-                        break;
-                    case self.STATECONTROL.TBC:
-                        cimv = new ControlsInfosModalView({isPLC:false, isTBC:true});
-                        break;
-                }
-
-                $("body").append(cimv.render().el);
-                cimv.openModal();
             });
         },
 
@@ -596,7 +564,68 @@ define([
             return function () {
                 fn.apply( scope, arguments );
             };
+        },
+
+        initGrid:function(){
+
+            var size = 500, step = 25;
+            var geometry = new THREE.Geometry();
+            var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } );
+            var color1 = new THREE.Color( 0x444444 ), color2 = new THREE.Color( 0x888888 );
+
+            for ( var i = - size; i <= size; i += step ) {
+                geometry.vertices.push( new THREE.Vector3( -size, 0, i ) );
+                geometry.vertices.push( new THREE.Vector3(  size, 0, i ) );
+                geometry.vertices.push( new THREE.Vector3( i, 0, -size ) );
+                geometry.vertices.push( new THREE.Vector3( i, 0,  size ) );
+                var color = i === 0 ? color1 : color2;
+                geometry.colors.push( color, color, color, color );
+            }
+
+            this.grid = new THREE.Line( geometry, material, THREE.LinePieces );
+        },
+
+        showGrid:function() {
+            this.scene.add( this.grid );
+        },
+
+        removeGrid:function() {
+            this.scene.remove( this.grid );
+        },
+
+        updateLevelGeometryValues:function( instanceNumber ){
+            if(instanceNumber < this.maxInstanceDisplayed) {
+                this.levelGeometryValues[0] = 0.5;
+                this.levelGeometryValues[1] = 0;
+            } else {
+                this.levelGeometryValues[0] = 0.7;
+                this.levelGeometryValues[1] = 0.4;
+            }
+        },
+
+        switchWireframe:function( wireframe ) {
+            if(wireframe) {
+                // Set wireframe to futures parts
+                this.wireframe = true;
+            } else {
+                // Remove wireframe to futures parts
+                this.wireframe = false;
+
+            }
+
+            // Set/remove wireframe to current parts
+            var self = this;
+            _(this.instances).each(function(instance){
+                if(instance.levelGeometry != null && instance.levelGeometry.mesh != null){
+                    _(instance.levelGeometry.mesh.material.materials).each(function(material){
+                        material.wireframe = self.wireframe;
+                    })
+                }
+            });
+
         }
+
+
     };
 
     return SceneManager;

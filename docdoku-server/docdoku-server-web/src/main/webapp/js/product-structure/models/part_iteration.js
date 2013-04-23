@@ -19,19 +19,22 @@ define([
             var attributes = new AttributeCollection(this.get("instanceAttributes"));
             this.set("instanceAttributes", attributes);
 
-            var nativeCADFullName = this.get("nativeCADFile");
+            this.resetNativeCADFile();
 
+        },
+
+        resetNativeCADFile:function(){
+            var nativeCADFullName = this.get("nativeCADFile");
             if(nativeCADFullName){
                 var nativeCad = {
                     fullName : nativeCADFullName,
                     shortName : _.last(nativeCADFullName.split("/")),
                     created : true
                 };
-                this.set("nativeCADFile", new AttachedFileCollection(nativeCad));
+                this._nativeCADFile = new AttachedFileCollection(nativeCad);
             }else{
-                this.set("nativeCADFile", new AttachedFileCollection());
+                this._nativeCADFile = new AttachedFileCollection() ;
             }
-
         },
 
         defaults :{

@@ -127,7 +127,7 @@ define([
 			this.showContent();
 		},
 		navigate: function () {
-			var path = this.modelPath ? "/" + this.modelPath : "";
+			var path = this.modelPath ? "/" + encodeURIComponent(this.modelPath) : "";
 			this.router.navigate("folders" + path, {trigger: false});
 		},
 		setActive: function () {
@@ -204,12 +204,8 @@ define([
             if(!_.isUndefined(e.dataTransfer.getData("document:text/plain"))){
                 e.dataTransfer.dropEffect = "copy";
                 this.folderDiv.addClass("move-doc-into");
-                if(this.isActive())
-                    return true;
-
-                return false;
+                return this.isActive();
             }
-
             return true;
         },
 
@@ -223,9 +219,9 @@ define([
             var document = new Document(JSON.parse(e.dataTransfer.getData("document:text/plain")));
 
             var path = document.getWorkspace();
-            if(this.model)
+            if(this.model){
                 path = this.model.getPath()+"/"+this.model.getName();
-
+            }
             document.moveInto(path, function(){
                 Backbone.Events.trigger("document-moved");
                 that.folderDiv.removeClass("move-doc-into");

@@ -39,7 +39,10 @@ public class WorkspaceResource {
     private FolderResource folders;
 
     @EJB
-    private DocumentTemplateResource templates;
+    private DocumentTemplateResource docTemplates;
+
+    @EJB
+    private PartTemplateResource partTemplates;
 
     @EJB
     private ProductResource products;
@@ -78,9 +81,14 @@ public class WorkspaceResource {
         return folders;
     }
 
-    @Path("/templates")
-    public DocumentTemplateResource templates() {
-        return templates;
+    @Path("/document-templates")
+    public DocumentTemplateResource docTemplates() {
+        return docTemplates;
+    }
+
+    @Path("/part-templates")
+    public PartTemplateResource partTemplates() {
+        return partTemplates;
     }
 
     @Path("/products")

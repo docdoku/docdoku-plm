@@ -1,8 +1,8 @@
 /*global sceneManager*/
-function LevelGeometry(filename, visibleFromRating, computeVertexNormals) {
+function LevelGeometry(filename, quality, computeVertexNormals) {
     this.filename = filename;
-    this.visibleFromRating = visibleFromRating;
-    this.geometry = null;
+    this.quality = quality;
+    this.mesh = null;
     this.instances = 0;
     this.computeVertexNormals = computeVertexNormals;
 }
@@ -20,26 +20,21 @@ LevelGeometry.prototype = {
     },
 
     clearGeometry: function() {
-        this.geometry = null;
+        this.mesh = null;
     },
 
-    getGeometry: function(callback) {
-        if (this.geometry == null) {
-            var self = this;
+    getMesh: function(callback) {
+        if (this.mesh == null) {
             var texturePath = this.filename.substring(0,this.filename.lastIndexOf('/'));
-            sceneManager.loader.load(this.filename, function(geometry, materials) {
-                if (self.computeVertexNormals) {
-                    geometry.computeVertexNormals();
-                }
-                _.each(materials, function(material) {
-                    material.transparent = true;
-                });
-                self.geometry = geometry;
-                self.materials = materials;
-                callback(self.geometry, self.materials);
-            }, texturePath);
+
+            var self = this;
+            sceneManager.loaderManager.parseFile(this.filename, texturePath, this.computeVertexNormals, function(mesh) {
+                self.mesh = mesh;
+                callback(self.mesh);
+            });
+
         } else {
-            callback(this.geometry, this.materials);
+            callback(this.mesh);
         }
     }
 

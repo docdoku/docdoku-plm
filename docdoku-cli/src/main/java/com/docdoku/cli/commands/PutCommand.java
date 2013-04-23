@@ -30,6 +30,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
@@ -37,16 +38,20 @@ import java.net.URLEncoder;
 public class PutCommand extends AbstractCommandLine{
 
 
-    @Option(name="-v", required = true, aliases = "--version", usage="specify revision of the part to save ('A', 'B'...)")
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to save ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to save")
+    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to save; if not specified choose the part corresponding to the cad file if it has already been imported")
     private String partNumber;
 
-    @Argument(metaVar = "<cadfile>", required = true, index=1, usage = "specify the native cad file of the part to import")
+    @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
     public void execImpl() throws Exception {
+        if(partNumber==null || revision==null){
+            loadMetadata();
+        }
+
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
 
@@ -58,6 +63,16 @@ public class PutCommand extends AbstractCommandLine{
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
 
+    private void loadMetadata() throws IOException {
+        MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
+        String filePath = cadFile.getAbsolutePath();
+        partNumber = meta.getPartNumber(filePath);
+        String strRevision = meta.getRevision(filePath);
+        if(partNumber==null || strRevision==null){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+        }
+        revision = new Version(strRevision);
+    }
     @Override
     public String getDescription() {
         return "Save the current local copy of the cad file to the server. The part will remain checked out.";

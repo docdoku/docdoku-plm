@@ -39,7 +39,7 @@ define(function () {
                     + "/"
                     + this.getDocumentMasterVersion()
             );
-        },
+        }
     });
     return linkedDocument;
 });

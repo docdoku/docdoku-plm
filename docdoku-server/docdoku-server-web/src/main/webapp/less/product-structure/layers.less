@@ -1,180 +1,147 @@
 #manageMarker {
-    height: 40px;
-    width: 100px;
-    margin: 0px auto;
+  width: 100px;
+  margin: 0px auto;
 }
 
 #layer-wrapper {
+
+  nav {
+    max-height: 202px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: 0px 0px 3px #9b9b9b;
-    border-radius: 8px;
     width: 100%;
+    margin-top: 10px;
 
     ul {
-        text-align: left;
-        color: #434C64;
-        margin: 0;
-        padding: 0;
-        background-color: white;
-        -webkit-font-smoothing: antialiased;
-        font-smoothing: antialiased;
-    }
 
-    nav {
-        max-height: 409px;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        border-bottom-right-radius: 8px;
-        border-bottom-left-radius: 8px;
+      text-align: left;
+      color: #434C64;
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      -webkit-font-smoothing: antialiased;
+      font-smoothing: antialiased;
 
-        li {
-          border-bottom: 1px solid #ccc;
-            color: #999;
+      li {
 
-          &:hover{
-            background: #eee;
-            .icon-remove{
-              opacity: 0.6;
-            }
-          }
-
-            &:last-child {
-                border-bottom: none;
-
-                .color {
-                    border-bottom-left-radius: 8px;
-                }
-
-            }
-
-            &.shown {
-                color: #434C64;
-
-                i.start {
-                    opacity: 1;
-                }
-
-            }
-
-        }
-
-    }
-
-    ul#layer-header {
-        border-top-right-radius: 8px;
-        border-top-left-radius: 8px;
-        font-weight: bold;
-        color: #F5F5F5;
-        text-shadow: 0px 1px 0px black;
-        background: #3F5F99;
-        #gradient > .vertical(#7a99c1, #2c4361);
-        font-size: 14px;
-
-        i {
-            color: #F5F5F5;
-
-            &.end {
-                opacity: 1;
-            }
-
-        }
-
-    }
-
-    li {
-
+        border-bottom: 1px solid #ccc;
+        color: #999;
         margin: 0px;
         position: relative;
-        height: 30px;
-        line-height: 30px;
-        padding: 5px 40px 5px 50px;
+        height: 18px;
+        line-height: 18px;
+        padding: 5px 45px 5px 40px;
         list-style-type: none;
+        background:#fff;
+
+        &:nth-child(odd){
+          background: @tableBackgroundAccent;
+        }
+
+        &:hover {
+          background: #eee;
+          .icon-remove {
+            opacity: 0.6;
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         &.editingName {
-
-            input.edit {
-                display: block;
-            }
-
-            p {
-                display: none;
-            }
-
+          input.edit {
+            display: block;
+          }
+          p {
+            display: none;
+          }
         }
 
         &.editingMarkers {
-            i.end {
-                opacity: 1;
-            }
+          i.end {
+            opacity: 1;
+          }
         }
 
         &.shown {
-            i.start {
-                opacity: 1;
-            }
+          color: #434C64;
+          i.start {
+            opacity: 1;
+          }
+
         }
 
         i {
-            cursor: pointer;
-            opacity: 0.5;
-            position: absolute;
-            font-size: 20px;
+          cursor: pointer;
+          opacity: 0.5;
+          position: absolute;
+          font-size: 20px;
 
-            &.start {
-                left: 10px;
-                top: 10px;
-            }
+          &.start {
+            left: 10px;
+            top: 3px;
+          }
 
-            &.end {
-                right: 5px;
-                top: 10px;
-            }
+          &.end {
+            right: 5px;
+            top: 6px;
+          }
 
-          &.icon-remove{
-            right:25px;
-            top:8px;
+          &.icon-remove {
+            right: 25px;
+            top: 4px;
             opacity: 0;
             font-weight: normal;
           }
 
         }
 
-    }
+        input.edit {
+          position: relative;
+          margin: 0;
+          width: 100%;
+          height: 18px;
+          font-family: inherit;
+          border: 0;
+          outline: none;
+          color: inherit;
+          border: 1px solid #999;
+          box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          -webkit-font-smoothing: antialiased;
+          font-smoothing: antialiased;
+          display: none;
+        }
 
-    input.edit {
-        position: relative;
-        margin: 0 0 0 -4px;
-        width: 100%;
-        height: 30px;
-        font-family: inherit;
-        border: 0;
-        outline: none;
-        color: inherit;
-        border: 1px solid #999;
-        box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        -webkit-font-smoothing: antialiased;
-        font-smoothing: antialiased;
-        display: none;
-    }
+        p {
+          cursor: pointer;
+          margin: 0px;
+          padding: 0px;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          line-height: 18px;
+        }
 
-    p {
-      cursor:pointer;
-        margin: 0px;
-        padding: 0px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        line-height: 30px;
-    }
+        .color {
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          display: block;
+          width:8px;
+          height: 100%;
+        }
 
-    .color {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        display: block;
-        width: 5px;
-        height: 100%;
+      }
+
     }
+  }
+
+
+
+
 
 }

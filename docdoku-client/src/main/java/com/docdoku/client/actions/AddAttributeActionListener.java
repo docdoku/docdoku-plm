@@ -23,7 +23,7 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.common.CreateAttributeTemplateDialog;
 import com.docdoku.client.ui.doc.EditAttributesPanel;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

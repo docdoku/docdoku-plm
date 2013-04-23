@@ -70,35 +70,26 @@
                                                 </a>
                                             </li>
                                             </c:forEach>
-
                                             <c:forEach var="item" items="${regularWorkspaces}">
-                                                <c:if test="${workspaceID!=item.id}">
                                                     <li>
                                                         <a href="#{request.contextPath}/document-management/${item.id}">
+                                                            <c:if test="${workspaceID==item.id}">
+                                                                <i class="icon-ok"></i>
+                                                            </c:if>
                                                             ${item.id}
                                                         </a>
                                                     </li>
-                                                </c:if>
                                             </c:forEach>
                                         </ul>
                                     </li>
-                                    <!-- my products dropdown menu-->
 
-                                    <li class="dropdown" id="product_container">
+                                    <!-- my products link-->
 
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <li>
+                                        <a href="#{request.contextPath}/product-management/${workspaceID}">
                                             <i class="icon-briefcase"></i>
                                             #{i18nTemplate['toplinks.product']}
-                                            <span class="caret"></span>
                                         </a>
-
-                                        <ul class="dropdown-menu">
-
-                                            <li><a class="product-management">
-                                                <i class="icon-briefcase"></i> #{i18nTemplate['toplinks.manageProducts']}</a>
-                                            </li>
-
-                                        </ul>
                                     </li>
 
                                     <!-- my documents link-->
@@ -115,11 +106,16 @@
 
                                 <ul class="nav pull-right">
 
+                                    <li>
+                                        <h:link outcome="/download.xhtml"><i class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
+                                        </h:link>
+                                    </li>
+
                                     <li class="dropdown" id="coworkers_access_module" style="display: none;">
                                         <a class="dropdown-toggle" id="coworkers_access_module_toggler" href="#"
                                            data-toggle="dropdown" title="#{i18nTemplate['toplinks.coworkers']}">
                                             <i class="icon-group"></i>
-                                            <!--#{i18nTemplate['toplinks.coworkers']}-->
+                                            #{i18nTemplate['toplinks.coworkers']}
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu large-entries" id="coworkers_access_module_entries"></ul>

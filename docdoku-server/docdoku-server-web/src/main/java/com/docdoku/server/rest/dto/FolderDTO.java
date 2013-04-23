@@ -39,7 +39,8 @@ public class FolderDTO implements Serializable{
     }
     
     public FolderDTO(String parentFolder, String name) {
-        path=parentFolder+"/"+name;
+        this.name = name.trim();
+        path=parentFolder+"/"+this.name;
     }
 
     public boolean isHome() {
@@ -63,7 +64,7 @@ public class FolderDTO implements Serializable{
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
 

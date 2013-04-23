@@ -27,10 +27,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.PartMasterAlreadyExistsException;
 import com.docdoku.core.services.PartMasterNotFoundException;
 import java.util.*;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
+import javax.persistence.*;
 
 public class PartMasterDAO {
 
@@ -96,5 +93,51 @@ public class PartMasterDAO {
             .setParameter("workspaceId", workspaceId)
             .setMaxResults(maxResults)
             .getResultList();
+    }
+
+    public String findLatestPartMId(String pWorkspaceId, String pType) {
+        String partMId;
+        Query query = em.createQuery("SELECT m.number FROM PartMaster m "
+                + "WHERE m.workspace.id = :workspaceId "
+                + "AND m.type = :type "
+                + "AND m.creationDate = ("
+                + "SELECT MAX(m2.creationDate) FROM PartMaster m2 "
+                + "WHERE m2.workspace.id = :workspaceId "
+                + "AND m2.type = :type "
+                + ")");
+        query.setParameter("workspaceId", pWorkspaceId);
+        query.setParameter("type", pType);
+        partMId = (String) query.getSingleResult();
+        return partMId;
+    }
+
+    public List<PartMaster> getParts(String pWorkspaceId, int pStart, int pMaxResults) {
+        return em.createNamedQuery("PartMaster.findByWorkspace", PartMaster.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setFirstResult(pStart)
+                .setMaxResults(pMaxResults)
+                .getResultList();
+    }
+
+    public int getPartsCount(String pWorkspaceId) {
+        return ((Number)em.createNamedQuery("PartMaster.countByWorkspace")
+                .setParameter("workspaceId", pWorkspaceId)
+                .getSingleResult()).intValue();
+    }
+
+    public Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/parts/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
+    }
+
+    public Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/part-templates/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
     }
 }

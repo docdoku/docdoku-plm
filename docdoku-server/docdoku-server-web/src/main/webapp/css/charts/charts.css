@@ -1,0 +1,12 @@
+.chart {
+    height: 290px;
+    width: 400px;
+    float: left;
+}
+.chart > svg{
+    height: auto;
+    width:auto;
+}
+.clear{
+    clear:both;
+}

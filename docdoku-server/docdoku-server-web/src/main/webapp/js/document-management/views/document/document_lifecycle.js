@@ -29,9 +29,12 @@ define([
 
             _.each(this.workflow.activities,function(activity){
                 activity.parentWorkflowId = that.workflow.id;
-                $lifecycleActivities.append(
-                    new LifecycleActivityView().setActivity(activity).render().$el
-                );
+
+                var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).render();
+                $lifecycleActivities.append(lifecycleActivityView.$el);
+                lifecycleActivityView.on("activity:change",function(){
+                    that.trigger("lifecycle:change");
+                });
             });
 
             this.bindDomElements();
@@ -40,6 +43,7 @@ define([
 
         bindDomElements: function() {
         }
+
     });
     return LifecycleDocumentView;
 });

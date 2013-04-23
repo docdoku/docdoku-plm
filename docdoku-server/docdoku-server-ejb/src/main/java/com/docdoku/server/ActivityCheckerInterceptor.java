@@ -59,8 +59,8 @@ public class ActivityCheckerInterceptor {
         if (em.createNamedQuery("findLogByDocumentAndUserAndEvent").
                 setParameter("userLogin", user.getLogin()).
                 setParameter("documentWorkspaceId", doc.getWorkspaceId()).
-                setParameter("documentDocumentMasterId", doc.getDocumentMasterId()).
-                setParameter("documentDocumentMasterVersion", doc.getDocumentMasterVersion()).
+                setParameter("documentId", doc.getDocumentMasterId()).
+                setParameter("documentVersion", doc.getDocumentMasterVersion()).
                 setParameter("documentIteration", doc.getIteration()).
                 setParameter("event", "DOWNLOAD").
                 getResultList().isEmpty()) {

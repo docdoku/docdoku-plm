@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
@@ -184,7 +184,7 @@ public class DocumentTemplateResource {
     @Path("{templateId}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
-            String fileFullName = workspaceId + "/templates/" + templateId + "/" + fileName;
+            String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
 
             documentService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();

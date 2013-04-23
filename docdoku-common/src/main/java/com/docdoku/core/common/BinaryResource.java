@@ -33,6 +33,9 @@ import javax.persistence.*;
  */
 @Table(name="BINARYRESOURCE")
 @Inheritance()
+@NamedQueries ({
+        @NamedQuery(name="BinaryResource.diskUsageInPath", query = "SELECT sum(br.contentLength) FROM BinaryResource br WHERE br.fullName like :path")
+})
 @Entity
 public class BinaryResource implements Serializable, Comparable<BinaryResource>{
 
@@ -91,7 +94,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
     }
 
     public BinaryResource getPrevious(){
-        if(getOwnerType().equals("templates"))
+        if(getOwnerType().equals("document-templates") || getOwnerType().equals("part-templates"))
             return null;
         
         int lastS = fullName.lastIndexOf('/');

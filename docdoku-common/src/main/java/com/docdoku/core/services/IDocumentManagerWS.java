@@ -21,7 +21,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.document.SearchQuery;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.TagKey;
 import com.docdoku.core.document.Folder;
@@ -35,6 +35,8 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.workflow.Task;
+
+import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 
 /**
@@ -137,4 +139,9 @@ public interface IDocumentManagerWS {
 
     DocumentMaster[] getDocumentMastersWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
+    int getDocumentsCountInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

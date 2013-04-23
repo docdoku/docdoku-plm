@@ -90,7 +90,7 @@ public class ProductResource {
             ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
             for (int i = 0; i < cis.size(); i++) {
-                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), null);
+                dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), cis.get(i).getDesignItem().getNumber());
             }
 
             return dtos;
@@ -254,7 +254,7 @@ public class ProductResource {
             //when authenticated we use the LastModified header to fake
             //a similar behavior (30 minutes of cache)
             Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.HOUR, -12);
+            cal.add(Calendar.MINUTE, -30);
             Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
             if (rb != null) {
                 return rb.build();
@@ -295,6 +295,7 @@ public class ProductResource {
         try {
             ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
             ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
+            configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

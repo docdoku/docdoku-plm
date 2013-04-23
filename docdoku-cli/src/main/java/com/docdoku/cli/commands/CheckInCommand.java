@@ -32,26 +32,31 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
+import java.io.IOException;
 
 public class CheckInCommand extends AbstractCommandLine{
 
 
-    @Option(name="-v", required = true, aliases = "--version", usage="specify revision of the part to check in ('A', 'B'...)")
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check in ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to check in")
+    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to check in; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<path>]", index=1, usage = "specify where to look at the native cad files; if path is omitted, the working directory is used")
+    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to check in or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-n", aliases = "--no-upload", usage="do not upload the native cad file of the part if any")
+    @Option(name="-n", aliases = "--no-upload", usage="do not upload the cad file of the part if any")
     private boolean noUpload;
 
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
     public void execImpl() throws Exception {
+        if(partNumber==null || revision==null){
+            loadMetadata();
+        }
+
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
 
@@ -75,8 +80,23 @@ public class CheckInCommand extends AbstractCommandLine{
         PartRevision pr = productS.checkInPart(partRPK);
         PartIteration pi = pr.getLastIteration();
         System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+    }
 
-
+    private void loadMetadata() throws IOException {
+        if(path.isDirectory()){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and the supplied path is not a file");
+        }
+        MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
+        String filePath = path.getAbsolutePath();
+        partNumber = meta.getPartNumber(filePath);
+        String strRevision = meta.getRevision(filePath);
+        if(partNumber==null || strRevision==null){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+        }
+        revision = new Version(strRevision);
+        //once partNumber and revision have been inferred, set path to folder where files are stored
+        //in order to implement perform the rest of the treatment
+        path=path.getParentFile();
     }
 
     @Override

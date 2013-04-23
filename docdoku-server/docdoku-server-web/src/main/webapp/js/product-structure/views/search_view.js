@@ -1,20 +1,30 @@
 define([
-    "collections/result_path_collection"
+    "text!templates/nav_list_action_bar.html",
+    "collections/result_path_collection",
+    "i18n!localization/nls/product-structure-strings"
 ], function (
-    ResultPathCollection
+    template,
+    ResultPathCollection,
+    i18n
     ) {
 
     var SearchView = Backbone.View.extend({
 
-        el: 'div#search_control_container',
+        el: '#nav_list_action_bar',
+
+        template:Mustache.compile(template),
 
         events: {
             "submit form#nav_list_search" : "search"
         },
 
         initialize: function() {
-            this.searchInput = this.$el.find('input');
             this.collection = new ResultPathCollection();
+        },
+
+        render:function(){
+            this.$el.html(this.template({i18n:i18n}));
+            return this;
         },
 
         search: function(e){

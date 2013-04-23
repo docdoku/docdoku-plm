@@ -1,8 +1,10 @@
 define({
     root: {
+        "WORKSPACE":                    "Workspace",
         "APPEND":						"Add",
         "ATTACHED_FILES":               "Files",
         "SELECT_FILE":                  "Choose a file",
+        "DROP_FILE_HERE":               "or drop file here",
         "ATTRIBUTES":					"Attributes",
         "AUTHOR":						"Author",
         "BOOLEAN":						"Boolean",
@@ -49,6 +51,7 @@ define({
         "NEW_FOLDER":					"New folder",
         "NEW_TAG":						"New tag",
         "NEW_TEMPLATE":					"New document template",
+        "NEW_PART_TEMPLATE":			"New part template",
         "NEW_WORKFLOW":					"New workflow",
         "NUMBER":						"Number",
         "OK":                           "OK",
@@ -121,7 +124,7 @@ define({
         "CONTENT_HELP":                 "Document content",
         "COMMENT":                      "Comment",
         "TASK_CLOSED_ON":               "Task closed on",
-        "APPROVE_TASK":                 "Approve task",
+        "APPROVE_TASK":                 "Mark task as done",
         "REJECT_TASK":                  "Reject task",
         "CLOSURE_COMMENT":              "Closure comment",
         "DELETE_LINKED_DOCUMENT":       "Delete link",

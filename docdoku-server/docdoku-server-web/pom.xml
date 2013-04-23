@@ -184,6 +184,28 @@
                 <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>resources/default</targetPath>
+                            <directory>src/main/webapp/resources/default</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>document-management</targetPath>
+                            <directory>src/main/webapp/document-management</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>product-management</targetPath>
+                            <directory>src/main/webapp/product-management</directory>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <targetPath>product-structure</targetPath>
+                            <directory>src/main/webapp/product-structure</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

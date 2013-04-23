@@ -10,7 +10,7 @@ define([
         className:'task well',
 
         events: {
-            "click i.toogle-comment" : "toggleComment",
+            "click i.toggle-comment" : "toggleComment",
             "click i.approve-task" : "approveTaskButtonClicked",
             "click i.reject-task" : "rejectTaskButtonClicked",
             "submit .closure-comment form":"submitClosure",
@@ -27,7 +27,7 @@ define([
 
             if(this.task.closureDate){
                 this.task.formattedClosureDate = date.formatTimestamp(
-                    i18n._DATE_SHORT_FORMAT,
+                    i18n._DATE_FORMAT,
                     this.task.closureDate
                 );
             }
@@ -137,8 +137,9 @@ define([
         },
 
         refreshTask:function(){
-            this.setTask(this.task);
-            this.render();
+            this.trigger("task:change");
+           // this.setTask(this.task);
+          //  this.render();
         }
 
     });

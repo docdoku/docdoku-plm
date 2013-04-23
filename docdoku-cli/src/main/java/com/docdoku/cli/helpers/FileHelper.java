@@ -201,11 +201,10 @@ public class FileHelper {
         String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
 
         File path = cadFile.getParentFile();
-        String filePath=cadFile.getAbsolutePath();
-
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
-        meta.setDigest(filePath,digest);
-        meta.setLastModifiedDate(filePath, cadFile.lastModified());
+
+        saveMetadata(meta, partIPK, digest, cadFile);
+
     }
 
     public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevision pr, PartIteration pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
@@ -214,9 +213,7 @@ public class FileHelper {
         PartIterationKey partIPK = new PartIterationKey(workspace,partNumber,pr.getVersion(),pi.getIteration());
         boolean writable = (pr.isCheckedOut()) && (pr.getCheckOutUser().getLogin().equals(login)) && (pr.getLastIteration().getIteration()==pi.getIteration());
         File localFile = new File(path,fileName);
-
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
-        String filePath=localFile.getAbsolutePath();
 
         if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
             boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
@@ -228,8 +225,18 @@ public class FileHelper {
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
         localFile.setWritable(writable);
 
-        meta.setDigest(filePath,digest);
-        meta.setLastModifiedDate(filePath, localFile.lastModified());
+        saveMetadata(meta, partIPK, digest, localFile);
+    }
 
+    private void saveMetadata(MetaDirectoryManager meta, PartIterationKey partIPK, String digest, File localFile) throws IOException {
+        String filePath=localFile.getAbsolutePath();
+
+        meta.setDigest(filePath,digest);
+
+        meta.setPartNumber(filePath,partIPK.getPartMasterNumber());
+        meta.setRevision(filePath,partIPK.getPartRevision().getVersion());
+        meta.setIteration(filePath,partIPK.getIteration());
+
+        meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 }

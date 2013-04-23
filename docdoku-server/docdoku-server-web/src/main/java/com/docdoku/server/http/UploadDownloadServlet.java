@@ -20,6 +20,7 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.document.DocumentIterationKey;
@@ -105,12 +106,18 @@ public class UploadDownloadServlet extends HttpServlet {
                 String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
                 dataFile = documentService.getDataFile(fullName);
-            } else if (elementType.equals("templates")) {
+            } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
                 dataFile = documentService.getDataFile(fullName);
-            } else if (elementType.equals("parts")) {
+            }else if (elementType.equals("part-templates")) {
+                String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
+                fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
+                dataFile = documentService.getDataFile(fullName);
+            }
+            else if (elementType.equals("parts")) {
                 //parts are versioned objects so we can rely on client cache without any risk 
                 setCacheHeaders(86400, pResponse);
                 String partNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
@@ -195,6 +202,7 @@ public class UploadDownloadServlet extends HttpServlet {
         PartIterationKey partPK = null;
         DocumentIterationKey docPK = null;
         DocumentMasterTemplateKey templatePK = null;
+        PartMasterTemplateKey partTemplatePK = null;
         File vaultFile = null;
 
         try {
@@ -206,12 +214,18 @@ public class UploadDownloadServlet extends HttpServlet {
                 fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
                 docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
                 vaultFile = documentService.saveFileInDocument(docPK, fileName, 0);
-            } else if (elementType.equals("templates")) {
+            } else if (elementType.equals("document-templates")) {
                 String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
                 templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
                 vaultFile = documentService.saveFileInTemplate(templatePK, fileName, 0);
-            } else if (elementType.equals("parts")) {
+            }else if (elementType.equals("part-templates")) {
+                String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
+                partTemplatePK = new PartMasterTemplateKey(workspaceId, templateID);
+                vaultFile = productService.saveFileInTemplate(partTemplatePK, fileName, 0);
+            }
+            else if (elementType.equals("parts")) {
                 String partMNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
                 String partMVersion = pathInfos[offset + 3];
                 int iteration = Integer.parseInt(pathInfos[offset + 4]);
@@ -244,9 +258,12 @@ public class UploadDownloadServlet extends HttpServlet {
             }
             if (elementType.equals("documents")) {
                 documentService.saveFileInDocument(docPK, fileName, vaultFile.length());
-            } else if (elementType.equals("templates")) {
+            } else if (elementType.equals("document-templates")) {
                 documentService.saveFileInTemplate(templatePK, fileName, vaultFile.length());
-            }else if (elementType.equals("parts")) {
+            } else if (elementType.equals("part-templates")) {
+                productService.saveFileInTemplate(partTemplatePK, fileName, vaultFile.length());
+            }
+            else if (elementType.equals("parts")) {
                 if(pathInfos.length==offset + 7){
                     productService.saveNativeCADInPartIteration(partPK, fileName, vaultFile.length());
                     converterService.convertCADFileToJSON(partPK, vaultFile);

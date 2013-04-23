@@ -42,16 +42,16 @@ import java.util.List;
 public class GetCommand extends AbstractCommandLine{
 
 
-    @Option(name="-v", aliases = "--version", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
     private Version revision;
 
     @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")
     private int iteration;
 
-    @Argument(metaVar = "<partnumber>", required = true, index=0, usage = "the part number of the part to fetch")
+    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to fetch; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<path>]", index=1, usage = "specify where to place downloaded files; if path is omitted, the working directory is used")
+    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to fetch or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
@@ -65,7 +65,9 @@ public class GetCommand extends AbstractCommandLine{
 
 
     public void execImpl() throws Exception {
-
+        if(partNumber==null){
+            loadMetadata();
+        }
 
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
         String strRevision = revision==null?null:revision.toString();
@@ -73,6 +75,24 @@ public class GetCommand extends AbstractCommandLine{
 
     }
 
+    private void loadMetadata() throws IOException {
+        if(path.isDirectory()){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and the supplied path is not a file");
+        }
+        MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
+        String filePath = path.getAbsolutePath();
+        partNumber = meta.getPartNumber(filePath);
+        String strRevision = meta.getRevision(filePath);
+        if(partNumber==null || strRevision==null){
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+        }
+        revision = new Version(strRevision);
+        //The part is inferred from the cad file, hence fetch the fresh (latest) iteration
+        iteration=0;
+        //once partNumber and revision have been inferred, set path to folder where files are stored
+        //in order to implement perform the rest of the treatment
+        path=path.getParentFile();
+    }
 
     private void getPart(String pPartNumber, String pRevision, int pIteration) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
         PartRevision pr;

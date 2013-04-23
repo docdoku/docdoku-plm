@@ -89,7 +89,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
         BinaryResource file = null;
-        String fullName = template.getWorkspaceId() + "/templates/" + template.getId() + "/" + pName;
+        String fullName = template.getWorkspaceId() + "/document-templates/" + template.getId() + "/" + pName;
 
         for (BinaryResource bin : template.getAttachedFiles()) {
             if (bin.getFullName().equals(fullName)) {
@@ -424,7 +424,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attr.setDocumentMasterTemplate(template);
             attrs.add(attr);
         }
 
@@ -568,7 +567,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attr.setDocumentMasterTemplate(template);
             attrs.add(attr);
         }
         template.setAttributeTemplates(attrs);
@@ -984,7 +982,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        DocumentMasterTemplate template = binDAO.getTemplateOwner(file);
+        DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
         dataManager.delData(file);
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
@@ -1222,6 +1220,29 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             labels[i++] = t.getLabel();
         }
         return labels;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public int getDocumentsCountInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return documentMasterDAO.getDocumentsCountInWorkspace(pWorkspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return documentMasterDAO.getDiskUsageForDocumentsInWorkspace(pWorkspaceId);
+    }
+
+    @Override
+    public Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return documentMasterDAO.getDiskUsageForDocumentTemplatesInWorkspace(pWorkspaceId);
     }
 
     private Folder checkWritingRight(User pUser, Folder pFolder) throws NotAllowedException {

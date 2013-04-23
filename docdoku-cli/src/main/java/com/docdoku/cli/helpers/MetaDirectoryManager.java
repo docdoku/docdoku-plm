@@ -33,6 +33,10 @@ public class MetaDirectoryManager {
     private final static String META_DIRECTORY_NAME = ".dplm";
     private final static String INDEX_FILE_NAME = "index.xml";
 
+    private final static String PART_NUMBER_PROP = "partNumber";
+    private final static String REVISION_PROP = "revision";
+    private final static String ITERATION_PROP = "iteration";
+
     private final static String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
     private final static String DIGEST_PROP = "digest";
 
@@ -63,6 +67,21 @@ public class MetaDirectoryManager {
         indexProps.storeToXML(out, null);
     }
 
+    public void setPartNumber(String filePath, String partNumber) throws IOException {
+        indexProps.setProperty(filePath + "." + PART_NUMBER_PROP, partNumber);
+        saveIndex();
+    }
+
+    public void setRevision(String filePath, String revision) throws IOException {
+        indexProps.setProperty(filePath + "." + REVISION_PROP, revision);
+        saveIndex();
+    }
+
+    public void setIteration(String filePath, int iteration) throws IOException {
+        indexProps.setProperty(filePath + "." + ITERATION_PROP, iteration+"");
+        saveIndex();
+    }
+
     public void setLastModifiedDate(String filePath, long lastModifiedDate) throws IOException {
         indexProps.setProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, lastModifiedDate+"");
         saveIndex();
@@ -84,6 +103,18 @@ public class MetaDirectoryManager {
 
     public long getLastModifiedDate(String filePath){
         return Long.parseLong(indexProps.getProperty(filePath + "." + LAST_MODIFIED_DATE_PROP,"0"));
+    }
+
+    public String getPartNumber(String filePath){
+        return indexProps.getProperty(filePath + "." + PART_NUMBER_PROP);
+    }
+
+    public String getRevision(String filePath){
+        return indexProps.getProperty(filePath + "." + REVISION_PROP);
+    }
+
+    public int getIteration(String filePath){
+        return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP,"0"));
     }
 
 }

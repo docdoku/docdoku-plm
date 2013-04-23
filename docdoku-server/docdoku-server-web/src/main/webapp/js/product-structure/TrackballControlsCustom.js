@@ -424,7 +424,10 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
         event.preventDefault();
         event.stopPropagation();
 
-        _this.zoomCameraWheel(-event.wheelDeltaY * 0.0001);
+        if ( event.wheelDelta ) // webkit, opera, IE9
+            _this.zoomCameraWheel(-event.wheelDeltaY * 0.0001);
+        else if ( event.detail ) // firefox
+            _this.zoomCameraWheel(event.detail * 0.0015);
     }
 
     function touchstart( event ) {

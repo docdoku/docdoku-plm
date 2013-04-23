@@ -62,7 +62,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     private int iteration;
 
     @OrderBy("quality")
-    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name="PARTITERATION_GEOMETRY", inverseJoinColumns = {
         @JoinColumn(name = "GEOMETRY_FULLNAME", referencedColumnName = "FULLNAME")
     },
@@ -91,7 +91,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     private Set<DocumentLink> linkedDocuments=new HashSet<DocumentLink>();
 
 
-    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name="PARTITERATION_BINRES", inverseJoinColumns = {
         @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
     },

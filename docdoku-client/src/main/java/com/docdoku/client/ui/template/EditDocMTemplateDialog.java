@@ -24,7 +24,7 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterTemplate;
 
 import java.awt.*;

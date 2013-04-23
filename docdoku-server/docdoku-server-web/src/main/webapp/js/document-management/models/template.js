@@ -32,7 +32,7 @@ define([
         },
 
         getUploadBaseUrl: function () {
-            return "/files/" + this.get("workspaceId") + "/templates/" + this.get("id")+"/";
+            return "/files/" + this.get("workspaceId") + "/document-templates/" + this.get("id")+"/";
         }
     });
 	return Template;

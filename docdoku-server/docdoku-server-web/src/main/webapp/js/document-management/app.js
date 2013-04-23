@@ -1,10 +1,6 @@
-function debug(str){
-    console.log(str);
-}
-
 define([
 	"router",
-	"models/workspace",
+	"common-objects/models/workspace",
 	"views/workspace",
     "modules/navbar-module/views/navbar_view"
 ], function (
@@ -19,8 +15,8 @@ define([
 
     new WorkspaceView({
 		el: "#content",
-		model: this.workspace
-	}).render();
+		model: workspace
+	}).render().menuResizable();
 
     new NavBarView();
 

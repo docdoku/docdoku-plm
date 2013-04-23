@@ -14,7 +14,7 @@ define([
 		},
 		primaryAction: function () {
 			this.nameInput = this.$el.find("input.name").first();
-			var name = this.nameInput.val();
+			var name = $.trim(this.nameInput.val());
 			if (name) {
 				this.collection.create({
 					name: name

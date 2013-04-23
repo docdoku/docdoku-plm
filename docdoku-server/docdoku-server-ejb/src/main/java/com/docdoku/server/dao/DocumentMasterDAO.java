@@ -254,4 +254,28 @@ public class DocumentMasterDAO {
         return em.createNamedQuery("findDocumentMastersWithReference").
                 setParameter("workspaceId", pWorkspaceId).setParameter("id", "%"+reference+"%").setMaxResults(maxResults).getResultList();
     }
+
+    public int getDocumentsCountInWorkspace(String pWorkspaceId) {
+        return ((Number)em.createNamedQuery("countDocumentMastersInWorkspace")
+                .setParameter("workspaceId", pWorkspaceId)
+                .getSingleResult()).intValue();
+    }
+
+    public Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/documents/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
+
+    }
+
+    public Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) {
+        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+                .setParameter("path", pWorkspaceId+"/document-templates/%")
+                .getSingleResult());
+
+        return result != null ? result.longValue() : 0L;
+
+    }
 }

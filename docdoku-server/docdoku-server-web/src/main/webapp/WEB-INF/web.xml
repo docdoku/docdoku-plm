@@ -53,6 +53,7 @@
         <url-pattern>/admin/*</url-pattern>
         <url-pattern>/faces/admin/*</url-pattern>
         <url-pattern>/document-management/*</url-pattern>
+        <url-pattern>/product-management/*</url-pattern>
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
@@ -76,6 +77,10 @@
     <servlet>
         <servlet-name>PSServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.PSServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PMServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.PMServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>VisualizationServlet</servlet-name>
@@ -108,6 +113,10 @@
     <servlet-mapping>
         <servlet-name>PSServlet</servlet-name>
         <url-pattern>/product-structure/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PMServlet</servlet-name>
+        <url-pattern>/product-management/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VisualizationServlet</servlet-name>

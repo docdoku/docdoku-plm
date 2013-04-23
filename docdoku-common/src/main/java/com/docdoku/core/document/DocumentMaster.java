@@ -45,7 +45,8 @@ import javax.persistence.*;
         @NamedQuery(name="findStateChangeSubscriptionWithGivenUserAndGivenDocMaster", query="SELECT s FROM StateChangeSubscription s WHERE s.subscriber = :user AND s.observedDocumentMaster = :docM"),
         @NamedQuery(name="findIterationChangeSubscriptionWithGivenUserAndGivenDocMaster", query="SELECT s FROM IterationChangeSubscription s WHERE s.subscriber = :user AND s.observedDocumentMaster = :docM"),
         @NamedQuery(name="findDocumentMastersWithAssignedTasksForGivenUser", query="SELECT d FROM DocumentMaster d, Task t WHERE t.activity.workflow = d.workflow AND  d.workflow IS NOT NULL AND t.worker.login = :assignedUserLogin AND d.workspace.id = :workspaceId"),
-        @NamedQuery(name="findDocumentMastersWithReference", query="SELECT d FROM DocumentMaster d WHERE d.id LIKE :id AND d.workspace.id = :workspaceId")
+        @NamedQuery(name="findDocumentMastersWithReference", query="SELECT d FROM DocumentMaster d WHERE d.id LIKE :id AND d.workspace.id = :workspaceId"),
+        @NamedQuery(name="countDocumentMastersInWorkspace", query="SELECT COUNT(d) FROM DocumentMaster d WHERE d.workspace.id = :workspaceId")
 })
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
     

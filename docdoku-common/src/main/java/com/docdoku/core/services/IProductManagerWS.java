@@ -22,19 +22,11 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.ConfigSpec;
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.Layer;
-import com.docdoku.core.product.Marker;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.product.PartUsageLink;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.product.*;
+
 import java.io.File;
+import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.List;
 
@@ -129,7 +121,7 @@ public interface IProductManagerWS{
      * @throws ConfigurationItemAlreadyExistsException
      * @throws CreationException
      */
-    ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException;
+    ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, PartMasterNotFoundException;
     
     /**
      * Creates a new <a href="PartMaster.html">PartMaster</a>. Be aware that
@@ -165,7 +157,11 @@ public interface IProductManagerWS{
      * The description of the first revision, version A, of the item.
      * This revision will be created in the same time than
      * the <a href="PartMaster.html">PartMaster</a> itself.
-     * 
+     *
+     * @param templateId
+     * The id of the template to use to instantiate the part, may be null.
+     * Refers to a <a href="PartMasterTemplate.html">PartMasterTemplate</a>.
+     *
      * @return
      * The created part master instance
      * 
@@ -177,7 +173,7 @@ public interface IProductManagerWS{
      * @throws PartMasterAlreadyExistsException
      * @throws CreationException
      */
-    PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException;
+    PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription, String templateId) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException;
 
     /**
      * Checks out the supplied part revision to allow the operating user to modify it.
@@ -561,4 +557,19 @@ public interface IProductManagerWS{
 
     void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
 
+    PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException;
+    File saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException ;
+    String generateId(String pWorkspaceId, String pPartMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, PartMasterTemplateNotFoundException;
+    PartMasterTemplate[] getPartMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    PartMasterTemplate getPartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException;
+    PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException;
+    void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException;
+    PartMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException;
+
+    List<PartMaster> getPartMasters(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
+    void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException;
+    int getPartMastersCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
+
+    Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

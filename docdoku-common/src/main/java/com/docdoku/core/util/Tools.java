@@ -102,6 +102,7 @@ public class Tools {
         return pActivity;
     }
 
+    /*
     public static DocumentMasterTemplate[] resetParentReferences(DocumentMasterTemplate[] pTemplates) {
         for (DocumentMasterTemplate template : pTemplates) {
             resetParentReferences(template);
@@ -109,7 +110,9 @@ public class Tools {
 
         return pTemplates;
     }
+    */
 
+    /*
     public static DocumentMasterTemplate resetParentReferences(DocumentMasterTemplate pTemplate) {
         for (InstanceAttributeTemplate attr : pTemplate.getAttributeTemplates()) {
             attr.setDocumentMasterTemplate(pTemplate);
@@ -117,6 +120,7 @@ public class Tools {
 
         return pTemplate;
     }
+    */
 
     public static boolean safeEquals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {
@@ -134,6 +138,7 @@ public class Tools {
     }
 
     public static String increaseId(String id, String mask) throws ParseException {
+        System.out.println("#### Tools.increaseId id = " + id + " , mask = " + mask);
         MaskFormatter formatter = new MaskFormatter(mask);
         formatter.setValueContainsLiteralCharacters(false);
         String value = formatter.stringToValue(id).toString();

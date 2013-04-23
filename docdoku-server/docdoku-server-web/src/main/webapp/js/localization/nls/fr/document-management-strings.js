@@ -1,4 +1,5 @@
 define({
+    "WORKSPACE":                    "Espace de travail",
     "APPEND":						"Ajouter",
     "ATTACHED_FILES":               "Fichiers",
     "SELECT_FILE":                  "Choisissez un fichier",
@@ -64,6 +65,7 @@ define({
     "TASKS":						"Tâches",
     "TEMPLATE":						"Modèle",
     "TEMPLATES":					"Modèles",
+    "NEW_PART_TEMPLATE":			"Nouveau modèle d'article",
     "TEXT":							"Texte",
     "TITLE":						"Titre",
     "TRUE":							"Vrai",
@@ -121,7 +123,7 @@ define({
     "CONTENT_HELP":                 "Contenu du document",
     "COMMENT":                      "Commentaire",
     "TASK_CLOSED_ON":               "Tâche fermée le",
-    "APPROVE_TASK":                 "Approuver la tâche",
+    "APPROVE_TASK":                 "Marquer la tâche comme effectuée",
     "REJECT_TASK":                  "Rejeter la tâche",
     "CLOSURE_COMMENT":              "Commentaire",
     "DELETE_LINKED_DOCUMENT":       "Supprimer le lien",

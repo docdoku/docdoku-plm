@@ -30,8 +30,7 @@ define([
 		},
 		selected: function () {
 			var id = $("#select-" + this.cid).val();
-			var model = this.collection.get(id);
-			return model;
+            return this.collection.get(id);
 		},
 		changed: function () {
 			// Reset reference field
@@ -59,7 +58,7 @@ define([
 		generate_id: function (template) {
 			var elId = this.parentView.$el.find("input.reference:first");
 			// Set field mask
-			var mask = template.get("mask").replace(/#/g, "9");
+			var mask = template.get("mask");//.replace(/#/g, "9");
 			elId.mask(mask);
 			// Get the next id from the webservice if any
 			$.get(template.url() + "/generate_id", function (data) {

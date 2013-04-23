@@ -92,6 +92,12 @@ public class PartsResource {
 
             partDTO.setPartIterations(partIterationDTOs);
 
+            if(partRevision.isCheckedOut()){
+                partDTO.setCheckOutDate(partRevision.getCheckOutDate());
+                UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
+                partDTO.setCheckOutUser(checkoutUserDTO);
+            }
+
             return Response.ok(partDTO).build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -188,6 +194,66 @@ public class PartsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
+    public List<PartDTO> getParts(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start) {
+        try {
+            int maxResults = 20;
+            List<PartMaster> partMasters = productService.getPartMasters(Tools.stripTrailingSlash(workspaceId), start, maxResults);
+            List<PartDTO> partDTOs = new ArrayList<PartDTO>();
+
+            for (PartMaster partMaster:partMasters) {
+
+                for(PartRevision partRevision : partMaster.getPartRevisions()){
+
+                    PartDTO partDTO = mapper.map(partMaster,PartDTO.class);
+
+                    partDTO.setNumber(partRevision.getPartNumber());
+                    partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+                    partDTO.setName(partRevision.getPartMaster().getName());
+                    partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+                    partDTO.setVersion(partRevision.getVersion());
+
+                    List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+                    for(PartIteration partIteration : partRevision.getPartIterations()){
+                        List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+                        PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
+                        for(PartUsageLink partUsageLink : partIteration.getComponents()){
+                            PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
+                            usageLinksDTO.add(partUsageLinkDTO);
+                        }
+                        partIterationDTO.setComponents(usageLinksDTO);
+                        partIterationDTOs.add(partIterationDTO);
+                    }
+                    partDTO.setPartIterations(partIterationDTOs);
+                    partDTO.setPartIterations(partIterationDTOs);
+                    if(partRevision.isCheckedOut()){
+                        partDTO.setCheckOutDate(partRevision.getCheckOutDate());
+                        UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
+                        partDTO.setCheckOutUser(checkoutUserDTO);
+                    }
+                    partDTOs.add(partDTO);
+                }
+
+            }
+            return partDTOs;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("count")
+    @Produces("application/json;charset=UTF-8")
+    public int getPartsCount(@PathParam("workspaceId") String workspaceId) {
+        try {
+            return productService.getPartMastersCount(Tools.stripTrailingSlash(workspaceId));
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("search")
+    @Produces("application/json;charset=UTF-8")
     public String[] searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
             List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
@@ -211,24 +277,68 @@ public class PartsResource {
         return partKey.substring(lastDash + 1, partKey.length());
     }
 
-    @PUT
+    @POST
     @Produces("application/json;charset=UTF-8")
-    public ComponentDTO createNewPart(@PathParam("workspaceId") String workspaceId, ComponentDTO componentDTO){
+    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO){
 
         try {
-            PartMaster partMaster = productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription());
+            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.getDescription(), partCreationDTO.isStandardPart(), null, partCreationDTO.getDescription(), partCreationDTO.getTemplateId());
 
-            ComponentDTO dto = new ComponentDTO();
+            PartDTO partDTO = mapper.map(partMaster,PartDTO.class);
 
-            dto.setNumber(partMaster.getNumber());
+            PartRevision partRevision = partMaster.getLastRevision();
 
-            return componentDTO;
+            partDTO.setNumber(partRevision.getPartNumber());
+            partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+            partDTO.setName(partRevision.getPartMaster().getName());
+            partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+
+            List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+
+            for(PartIteration partIteration : partRevision.getPartIterations()){
+
+                List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+
+                PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
+
+                for(PartUsageLink partUsageLink : partIteration.getComponents()){
+                    PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
+                    usageLinksDTO.add(partUsageLinkDTO);
+                }
+
+                partIterationDTO.setComponents(usageLinksDTO);
+                partIterationDTOs.add(partIterationDTO);
+            }
+
+            partDTO.setPartIterations(partIterationDTOs);
+
+            if(partRevision.isCheckedOut()){
+                partDTO.setCheckOutDate(partRevision.getCheckOutDate());
+                UserDTO checkoutUserDTO = mapper.map(partRevision.getCheckOutUser(),UserDTO.class);
+                partDTO.setCheckOutUser(checkoutUserDTO);
+            }
+           return partDTO;
 
         } catch (Exception ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
     }
+
+    @DELETE
+    @Path("{partKey}")
+    @Produces("application/json;charset=UTF-8")
+    public Response deletePartMaster(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+        try {
+            int lastDash = partKey.lastIndexOf('-');
+            String number = partKey.substring(0, lastDash);
+            productService.deletePartMaster(new PartMasterKey(workspaceId,number));
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
 
     @DELETE
     @Consumes("application/json;charset=UTF-8")
@@ -277,12 +387,20 @@ public class PartsResource {
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
             InstanceNumberAttribute attr = new InstanceNumberAttribute();
             attr.setName(dto.getName());
-            attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            try{
+                attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            }catch(NumberFormatException ex){
+                attr.setNumberValue(0);
+            }
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
             InstanceDateAttribute attr = new InstanceDateAttribute();
             attr.setName(dto.getName());
-            attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            try{
+                attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            }catch(NumberFormatException ex){
+                attr.setDateValue(null);
+            }
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
             InstanceURLAttribute attr = new InstanceURLAttribute();
@@ -295,7 +413,7 @@ public class PartsResource {
     }
 
 
-    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException {
+    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
 
         List<PartUsageLink> components = new ArrayList<PartUsageLink>();
         for(PartUsageLinkDTO partUsageLinkDTO : pComponents){
@@ -323,14 +441,13 @@ public class PartsResource {
 
     }
 
-    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException {
+    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO) throws NotAllowedException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException {
         String componentNumber = componentDTO.getNumber();
         PartMasterKey partMasterKey = new PartMasterKey(workspaceId,componentNumber);
         if(productService.partMasterExists(partMasterKey)){
-
             return new PartMaster(userManager.getWorkspace(workspaceId),componentNumber);
         }else{
-           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription());
+           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null);
         }
 
     }

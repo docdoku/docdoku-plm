@@ -37,6 +37,18 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-kmz</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-kmz</artifactId>
+            <version>1.1-RC2-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>1.1-RC2-SNAPSHOT</version>
             <type>jar</type>
@@ -95,8 +107,9 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.docdoku:docdoku-server-ext</include>
-                                    <include>com.docdoku:docdoku-server-converter-obj</include>
+                                    <include>org.ow2.docdoku:docdoku-server-ext</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
