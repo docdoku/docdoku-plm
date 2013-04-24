@@ -18,7 +18,7 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
-            this.listenTo(this.collection, 'add', this.addProduct);
+            this.listenTo(this.collection, 'add', this.addNewProduct);
             this.listenTo(this.collection, 'remove', this.removeProduct);
             this.listItemViews = [];
         },
@@ -47,9 +47,16 @@ define([
             this.collection.push(product);
         },
 
-        addProduct:function(model){
-            this.addProductView(model);
+        addNewProduct:function(model){
+            this.addProduct(model,true);
+        },
+
+        addProduct:function(model,effect){
+            var view = this.addProductView(model);
             this.$el.removeClass("hide");
+            if(effect){
+                view.$el.effect("highlight", {color: "#8fbc8f"}, 1000);
+            }
         },
 
         removeProduct:function(model){
@@ -81,6 +88,7 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            return view;
         },
 
         toggleSelection:function(){

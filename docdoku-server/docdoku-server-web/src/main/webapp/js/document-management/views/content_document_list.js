@@ -42,6 +42,7 @@ define([
 
             this.listenTo(this.listView, "selectionChange", this.onStateChange);
             this.listenTo(this.collection, "change", this.onStateChange);
+            this.listenTo(this.collection, "add", this.highlightAddedView);
 
             this.$(".tabs").tabs();
         },
@@ -209,6 +210,13 @@ define([
             $("body").append(advancedSearchView.render().el);
             advancedSearchView.openModal();
             advancedSearchView.setRouter(this.router);
+        },
+
+        highlightAddedView:function(model){
+            var addedView = _.filter(this.listView.subViews, function(view){ return view.model == model})[0];
+            if(addedView){
+                addedView.$el.effect("highlight", {color: "#8fbc8f"}, 1000);
+            }
         }
 
 

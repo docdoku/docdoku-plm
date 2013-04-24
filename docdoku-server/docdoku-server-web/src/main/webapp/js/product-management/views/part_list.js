@@ -18,7 +18,7 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
-            this.listenTo(this.collection, 'add', this.addPart);
+            this.listenTo(this.collection, 'add', this.addNewPart);
             this.listItemViews = [];
         },
 
@@ -47,9 +47,16 @@ define([
             this.collection.push(part);
         },
 
-        addPart:function(model){
-            this.addPartView(model);
+        addNewPart:function(model){
+            this.addPart(model,true);
+        },
+
+        addPart:function(model, effect){
+            var view = this.addPartView(model);
             this.$el.removeClass("hide");
+            if(effect){
+                view.$el.effect("highlight", {color: "#8fbc8f"}, 1000);
+            }
         },
 
         removePart:function(model){
@@ -78,6 +85,7 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            return view;
         },
 
         toggleSelection:function(){
