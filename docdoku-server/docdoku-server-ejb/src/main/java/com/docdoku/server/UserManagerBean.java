@@ -337,6 +337,17 @@ public class UserManagerBean implements IUserManagerLocal {
         if (pPassword != null) {
             accountDAO.updateCredential(account.getLogin(), pPassword);
         }
+
+        // Sync user data in workspaces
+        UserDAO userDAO = new UserDAO(new Locale(pLanguage), em);
+        User[] users = userDAO.getUsers(account.getLogin());
+
+        for(int i=0; i<users.length;i++){
+            users[i].setEmail(pEmail);
+            users[i].setLanguage(pLanguage);
+            users[i].setName(pName);
+        }
+
     }
 
     @Override
