@@ -33,6 +33,8 @@ import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.common.UserKey;
 
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.persistence.*;
@@ -195,5 +197,28 @@ public class UserDAO {
         }
 
         return users;
+    }
+
+    public User[] findReachableUsersForCaller(String callerLogin) {
+
+        List<User> users = new ArrayList<User>();
+
+        List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login")
+                .setParameter("login", callerLogin).getResultList();
+
+        List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId")
+                .setParameter("workspacesId", listWorkspaceId).getResultList();
+
+        List<String> loginsAdded = new ArrayList<String>();
+
+        for (int i = 0; i < listUsers.size(); i++) {
+            if(!loginsAdded.contains( ((User)listUsers.get(i)).getLogin()) ){
+                loginsAdded.add(((User)listUsers.get(i)).getLogin());
+                users.add((User) listUsers.get(i));
+            }
+        }
+
+        return users.toArray(new User[users.size()]);
+
     }
 }

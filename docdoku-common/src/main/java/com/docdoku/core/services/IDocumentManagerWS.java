@@ -100,6 +100,8 @@ public interface IDocumentManagerWS {
 
     User[] getUsers(String workspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
+    User[] getReachableUsers() throws AccountNotFoundException;
+
     Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
     DocumentMaster moveDocumentMaster(String parentFolder, DocumentMasterKey docMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException;

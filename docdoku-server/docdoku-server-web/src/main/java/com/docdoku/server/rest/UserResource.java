@@ -69,5 +69,25 @@ public class UserResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
+
+    @GET
+    @Path("reachable")
+    @Produces("application/json;charset=UTF-8")
+    public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId) {
+        try {
+
+            User[] users = documentService.getReachableUsers();
+            UserDTO[] dtos = new UserDTO[users.length];
+
+            for(int i=0; i<users.length; i++){
+                dtos[i] = mapper.map(users[i], UserDTO.class);
+            }
+
+            return dtos;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 }
 

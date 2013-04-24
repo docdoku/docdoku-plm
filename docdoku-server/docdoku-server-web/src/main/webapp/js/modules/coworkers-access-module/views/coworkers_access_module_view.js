@@ -1,6 +1,6 @@
 define(
     [
-        "common-objects/collections/users",
+        "common-objects/collections/reachable_users",
         "modules/coworkers-access-module/views/coworkers_item_view"
     ],
     function(Users,CoWorkersItemView){

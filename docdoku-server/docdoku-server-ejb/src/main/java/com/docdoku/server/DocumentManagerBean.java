@@ -1306,6 +1306,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
+    public User[] getReachableUsers() throws AccountNotFoundException {
+        String callerLogin = ctx.getCallerPrincipal().getName();
+        Account account = new AccountDAO(em).loadAccount(callerLogin);
+        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin);
+    }
+
+    @RolesAllowed("users")
+    @Override
     public String[] getTags(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Tag[] tags = new TagDAO(new Locale(user.getLanguage()), em).findAllTags(pWorkspaceId);
