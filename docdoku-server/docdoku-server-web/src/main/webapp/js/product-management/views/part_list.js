@@ -55,7 +55,7 @@ define([
             var view = this.addPartView(model);
             this.$el.removeClass("hide");
             if(effect){
-                view.$el.effect("highlight", {color: "#8fbc8f"}, 1000);
+                view.$el.effect("highlight", {color: "#ffffd7"}, 1000);
             }
         },
 

@@ -225,7 +225,7 @@ define([
             document.moveInto(path, function(){
                 Backbone.Events.trigger("document-moved");
                 that.folderDiv.removeClass("move-doc-into");
-                that.folderDiv.effect("highlight", {color: "#8fbc8f"}, 500);
+                that.folderDiv.effect("highlight", {color: "#ffffd7"}, 500);
             });
         }
 	});

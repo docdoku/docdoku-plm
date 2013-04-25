@@ -213,9 +213,9 @@ define([
         },
 
         highlightAddedView:function(model){
-            var addedView = _.filter(this.listView.subViews, function(view){ return view.model == model})[0];
+            var addedView = _.find(this.listView.subViews, function(view){ return view.model == model});
             if(addedView){
-                addedView.$el.effect("highlight", {color: "#8fbc8f"}, 1000);
+                addedView.$el.effect("highlight", {color: "#ffffd7"}, 1000);
             }
         }
 
