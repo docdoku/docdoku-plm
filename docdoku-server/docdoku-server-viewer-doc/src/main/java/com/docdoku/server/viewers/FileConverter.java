@@ -20,44 +20,50 @@
 
 package com.docdoku.server.viewers;
 
-import com.developpez.adiguba.shell.ProcessConsumer;
-import com.developpez.adiguba.shell.Shell;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@Singleton
 public class FileConverter {
 
-    private final static String ooHome;
-    private final static int ooPort;
-    private final static String pdf2SWFHome;
+    private String ooHome;
+    private int ooPort;
 
     private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
     private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
     private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
-    private static final String PDF2SWFHOME_KEY = "com.docdoku.server.viewers.pdf2SWFHome";
 
-    static {
+    private final static Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
+
+    @PostConstruct
+    private void init() {
         try {
             Properties properties = new Properties();
             properties.load(FileConverter.class.getResourceAsStream(PROPERTIES_FILE));
             ooHome = properties.getProperty(OO_HOME_KEY);
             ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
-            pdf2SWFHome = properties.getProperty(PDF2SWFHOME_KEY);
         } catch (IOException e) {
-            throw new RuntimeException("Can't read conf.properties file for documents conversion", e);
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RuntimeException(e);
         }
     }
 
-    public static InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
+    @Lock(LockType.WRITE)
+    public InputStream convertToPDF(String sourceName, final InputStream streamToConvert) throws IOException {
         File tmpDir = com.google.common.io.Files.createTempDir();
         File fileToConvert = new File(tmpDir, sourceName);
 
@@ -76,38 +82,7 @@ public class FileConverter {
         return new FileInputStream(pdfFile);
     }
 
-    public static InputStream convertToSWF(String sourceName, final InputStream streamToConvert) throws IOException {
-        File tmpDir = Files.createTempDir();
-        File fileToConvert = new File(tmpDir, sourceName);
-        File swfFile = new File(tmpDir, "converted.swf");
-
-        Files.copy(new InputSupplier<InputStream>() {
-            @Override
-            public InputStream getInput() throws IOException {
-                return streamToConvert;
-            }
-        }, fileToConvert);
-
-        File pdfFile = convertToPDF(fileToConvert);
-        String sep = File.separator;
-
-        String sourceFile = pdfFile.getAbsolutePath();
-        String outputFile = swfFile.getAbsolutePath();
-
-        String pdf2SWFCmd = pdf2SWFHome + sep + "pdf2swf";
-
-        String[] cmdArray = {pdf2SWFCmd, sourceFile, "-o", outputFile, "-T 9", "-f"};
-
-        Shell sh = new Shell();
-        sh.setDirectory(new File(pdf2SWFHome));
-        ProcessConsumer pc = sh.exec(cmdArray);
-        pc.consume();
-
-        tmpDir.deleteOnExit();
-        return new FileInputStream(swfFile);
-    }
-
-    private static File convertToPDF(File fileToConvert) {
+    private File convertToPDF(File fileToConvert) {
         File pdfFile = new File(fileToConvert.getParentFile(), "converted.pdf");
 
         OfficeManager officeManager = new DefaultOfficeManagerConfiguration()

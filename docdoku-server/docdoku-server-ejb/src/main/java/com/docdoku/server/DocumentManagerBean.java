@@ -105,6 +105,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             template.addFile(binaryResource);
         } else {
             binaryResource.setContentLength(pSize);
+            binaryResource.setLastModified(new Date());
         }
         return binaryResource;
     }
@@ -136,6 +137,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 document.addFile(binaryResource);
             } else {
                 binaryResource.setContentLength(pSize);
+                binaryResource.setLastModified(new Date());
             }
             return binaryResource;
         } else {

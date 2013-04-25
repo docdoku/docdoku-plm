@@ -34,6 +34,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.logging.Logger;
 
 @DeclareRoles("users")
@@ -128,6 +129,20 @@ public class DataManagerBean implements IDataManagerLocal {
         defaultStorageProvider.delData(binaryResource);
         fileStorageProvider.deleteSubResources(binaryResource);
         fileStorageProvider.cleanParentFolders(binaryResource);
+    }
+
+    @Override
+    public Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
+        try {
+            return fileStorageProvider.getLastModified(binaryResource, subResourceVirtualPath);
+        } catch (FileNotFoundException e) {
+            BinaryResource previous = binaryResource.getPrevious();
+            if (previous != null)
+                return getLastModified(previous, subResourceVirtualPath);
+            else {
+                throw new StorageException(new StringBuilder().append("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
+            }
+        }
     }
 
 }

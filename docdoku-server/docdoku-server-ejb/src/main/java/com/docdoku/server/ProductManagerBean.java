@@ -466,6 +466,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else {
                 geometryBinaryResource.setContentLength(pSize);
                 geometryBinaryResource.setQuality(quality);
+                geometryBinaryResource.setLastModified(new Date());
             }
             return geometryBinaryResource;
         } else {
@@ -494,6 +495,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partI.setNativeCADFile(nativeCADBinaryResource);
             } else if (nativeCADBinaryResource.getFullName().equals(fullName)) {
                 nativeCADBinaryResource.setContentLength(pSize);
+                nativeCADBinaryResource.setLastModified(new Date());
             } else {
 
                 try {
@@ -561,6 +563,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partI.addFile(binaryResource);
             } else {
                 binaryResource.setContentLength(pSize);
+                binaryResource.setLastModified(new Date());
             }
             return binaryResource;
         } else {
@@ -975,6 +978,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             template.setAttachedFile(binaryResource);
         } else {
             binaryResource.setContentLength(pSize);
+            binaryResource.setLastModified(new Date());
         }
         return binaryResource;
     }
