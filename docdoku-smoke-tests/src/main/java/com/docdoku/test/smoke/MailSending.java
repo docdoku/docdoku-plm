@@ -49,7 +49,7 @@ public class MailSending {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(properties.getURL(), properties.getLoginForUser1(), properties.getPassword());
         assertNotNull(documentS);
         documentS.createFolder(properties.getWorkspace(), FOLDER_NAME);
-        documentS.createDocumentMaster(properties.getWorkspace() + "/" + FOLDER_NAME, DOCUMENT_ID, "", null, null, null, null, null);
+        documentS.createDocumentMaster(properties.getWorkspace() + "/" + FOLDER_NAME, DOCUMENT_ID, "", null, null, null, null, null, null);
         DocumentMasterKey docMaster = new DocumentMasterKey();
         docMaster.setWorkspaceId(properties.getWorkspace());
         docMaster.setVersion("A");

@@ -41,7 +41,7 @@ public class DocumentCreation {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(properties.getURL(),properties.getLoginForUser1(),properties.getPassword());
         assertNotNull(documentS);
         documentS.createFolder(properties.getWorkspace(), FOLDER_NAME);
-        documentS.createDocumentMaster(properties.getWorkspace() + "/" + FOLDER_NAME, DOCUMENT_ID, "", null, null, null, null, null);
+        documentS.createDocumentMaster(properties.getWorkspace() + "/" + FOLDER_NAME, DOCUMENT_ID, "", null, null, null, null, null, null);
         documentS.deleteFolder(properties.getWorkspace() + "/" + FOLDER_NAME);
     }
 
