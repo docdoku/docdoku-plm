@@ -22,15 +22,26 @@ package com.docdoku.server.resourcegetters;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.StorageException;
-import com.docdoku.core.util.FileIO;
 import com.docdoku.server.viewers.utils.ScormUtil;
 
 import javax.ejb.EJB;
+import java.io.InputStream;
 
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
     @EJB
     private IDataManagerLocal dataManager;
+
+
+    @Override
+    public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {
+        return false;
+    }
+
+    @Override
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+        return null;
+    }
 
     @Override
     public boolean canGetSubResourceVirtualPath(BinaryResource binaryResource) {

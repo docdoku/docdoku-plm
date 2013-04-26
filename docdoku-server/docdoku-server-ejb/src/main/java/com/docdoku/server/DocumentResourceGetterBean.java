@@ -29,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import java.io.InputStream;
 
 
 /**
@@ -43,6 +44,22 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
     @Inject
     @Any
     private Instance<DocumentResourceGetter> documentResourceGetters;
+
+    @Override
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+        DocumentResourceGetter selectedDocumentResourceGetter = null;
+        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
+            if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
+                selectedDocumentResourceGetter = documentResourceGetter;
+                break;
+            }
+        }
+        if (selectedDocumentResourceGetter != null) {
+            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource);
+        }
+
+        return null;
+    }
 
     @Override
     public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {

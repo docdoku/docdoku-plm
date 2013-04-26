@@ -17,29 +17,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.viewers;
+package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import com.google.common.io.ByteStreams;
 
 import javax.ejb.EJB;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
-public class DocViewerImpl implements DocumentViewer {
+public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -48,27 +37,22 @@ public class DocViewerImpl implements DocumentViewer {
     private FileConverter fileConverter;
 
     @Override
-    public boolean canPrepareFileForViewer(BinaryResource binaryResource, HttpServletRequest pRequest) {
-        return FileIO.isDocFile(binaryResource.getName()) && hasValidOutput(pRequest);
+    public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {
+        return FileIO.isDocFile(binaryResource.getName()) && outputSupported(outputFormat);
     }
 
-    private boolean hasValidOutput(HttpServletRequest pRequest) {
-        String output = pRequest.getParameter("output");
-        return output != null && output.equals("pdf");
+    private boolean outputSupported(String outputFormat) {
+        return outputFormat != null && outputFormat.equals("pdf");
     }
 
     @Override
-    public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, final BinaryResource binaryResource) throws Exception {
-
-        String output = pRequest.getParameter("output");
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
 
         String extension = FileIO.getExtension(binaryResource.getName());
 
         InputStream inputStream = null;
 
-        if ("pdf".equals(output)) {
-
-            pResponse.setContentType("application/pdf");
+        if ("pdf".equals(outputFormat)) {
 
             if (extension.equals("pdf")) {
                 inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
@@ -98,21 +82,13 @@ public class DocViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
-        return FileIO.isDocFile(binaryResource.getName());
+    public boolean canGetSubResourceVirtualPath(BinaryResource binaryResource) {
+        return false;
     }
 
     @Override
-    public String renderHtmlForViewer(BinaryResource docResource) throws Exception {
-        MustacheFactory mf = new DefaultMustacheFactory();
-        Mustache mustache = mf.compile("com/docdoku/server/viewers/document_viewer.mustache");
-        Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(docResource));
-        scopes.put("fileName", docResource.getName());
-        scopes.put("thisId", UUID.randomUUID().toString());
-        StringWriter templateWriter = new StringWriter();
-        mustache.execute(templateWriter, scopes).flush();
-        return templateWriter.toString();
+    public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {
+        return null;
     }
 
 }

@@ -25,26 +25,12 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class ImageViewerImpl implements DocumentViewer {
-
-    @Override
-    public boolean canPrepareFileForViewer(BinaryResource binaryResource, HttpServletRequest pRequest) {
-        return false;
-    }
-
-    @Override
-    public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource binaryResource) throws Exception {
-        return null;
-    }
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {

@@ -22,7 +22,11 @@ package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
 
+import java.io.InputStream;
+
 public interface DocumentResourceGetter {
+    boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
+    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception;
     boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
     String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

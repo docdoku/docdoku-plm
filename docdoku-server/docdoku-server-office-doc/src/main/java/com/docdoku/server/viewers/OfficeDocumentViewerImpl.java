@@ -30,20 +30,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MultimediaViewerImpl implements DocumentViewer {
+public class OfficeDocumentViewerImpl implements DocumentViewer {
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
-        return FileIO.isAVFile(binaryResource.getName());
+        return FileIO.isDocFile(binaryResource.getName());
     }
 
     @Override
-    public String renderHtmlForViewer(BinaryResource multimediaResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource docResource) throws Exception {
         MustacheFactory mf = new DefaultMustacheFactory();
-        Mustache mustache = mf.compile("com/docdoku/server/viewers/multimedia_viewer.mustache");
+        Mustache mustache = mf.compile("com/docdoku/server/viewers/document_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(multimediaResource));
-        scopes.put("fileName", multimediaResource.getName());
+        scopes.put("uriResource", ViewerUtils.getURI(docResource));
+        scopes.put("fileName", docResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();

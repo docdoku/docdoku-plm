@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.viewers;
+package com.docdoku.server.resourcegetters;
 
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;

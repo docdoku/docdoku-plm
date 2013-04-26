@@ -79,13 +79,13 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-viewer-doc</artifactId>
+            <artifactId>docdoku-server-office-doc</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-viewer-doc</artifactId>
+            <artifactId>docdoku-server-office-doc</artifactId>
             <version>${project.version}</version>
             <type>pom</type>
         </dependency>
@@ -200,7 +200,7 @@
                                     <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
                                     <include>org.ow2.docdoku:docdoku-server-scorm</include>
-                                    <include>org.ow2.docdoku:docdoku-server-viewer-doc</include>
+                                    <include>org.ow2.docdoku:docdoku-server-office-doc</include>
                                     <include>org.ow2.docdoku:docdoku-server-viewer-image</include>
                                     <include>org.ow2.docdoku:docdoku-server-viewer-multimedia</include>
                                 </includes>
