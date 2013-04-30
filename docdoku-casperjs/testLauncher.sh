@@ -8,3 +8,5 @@ casperjs test   --pre=login.js \
                 tests/product-management/productCreation.js \
                 tests/product-management/productDeletion.js \
                 tests/product-management/partDeletion.js \
+                tests/document-management/folderCreation.js \
+                tests/document-management/folderDeletion.js \

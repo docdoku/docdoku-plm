@@ -7,6 +7,7 @@ var partCreationNumber = '000-AAA-CasperJsTest';
 var partCreationName = 'CasperJsTest';
 var productCreationNumber = '000-AAA-CasperJsTestProduct';
 var productCreationName = 'CasperJsTestProduct';
+var folderCreationName = 'CasperJsTestFolder';
 
 casper.options.viewportSize = {
     width: 1680,
