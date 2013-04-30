@@ -77,5 +77,8 @@ define({
     OPTIONS:"Options",
     MATERIALS_SWITCH:"Afficher/Masquer les matériaux",
     GRID_SWITCH:"Afficher/Masquer la grille",
-    LIFECYCLE_STATE:"Etat du cycle de vie"
+    LIFECYCLE_STATE:"Etat du cycle de vie",
+    "REFERENCE":"Référence",
+    "REVISION_NOTE":"Note de révision",
+    "MODIFICATION_DATE":"Date de modification"
 });

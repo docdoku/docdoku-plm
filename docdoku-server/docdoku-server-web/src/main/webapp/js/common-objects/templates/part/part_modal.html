@@ -47,12 +47,6 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">{{i18n.ITERATION}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{#part.getLastIteration}}{{id}}{{/part.getLastIteration}}{{^part.getLastIteration}} - {{/part.getLastIteration}}</span>
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label">{{i18n.AUTHOR}}</label>
                             <div class="controls">
                                 <span class="help-inline"><a class="author-popover">{{part.getAuthorName}}</a></span>
@@ -85,7 +79,34 @@
                     </form>
                 </div>
 
-                <div id="tab-part-iteration" class="tab-pane"></div>
+                <div id="tab-part-iteration" class="tab-pane">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.REFERENCE}}</label>
+                            <div class="controls">
+                                <span class="help-inline">{{reference}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
+                            <div class="controls">
+                                <input type="text" id="inputRevisionNote" value="{{iteration.iterationNote}}" {{^editMode}}disabled="disabled"{{/editMode}} />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
+                            <div class="controls">
+                                <span class="help-inline">{{iteration.creationDate}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.AUTHOR}}</label>
+                            <div class="controls">
+                                <span class="help-inline">{{iteration.author.name}}</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
                 <div id="tab-part-attributes" class="tab-pane">
                     <div id="attributes-list" class="attributes attributes-edit"></div>
@@ -108,22 +129,32 @@
                 </div>
             </div>
 
-
         </div>
-
-
 
     </div>
 
     <div class="modal-footer">
-        {{#part.isCheckoutByConnectedUser}}
+
+        {{#iteration}}
+        <ul id="switch-iteration" class="pager">
+            <li class="{{^hasPreviousIteration}}disabled{{/hasPreviousIteration}}">
+                <a href="#" id="previous-iteration"><i class="icon-angle-left icon-large"></i></a>
+            </li>
+            <li>{{iteration}}</li>
+            <li class="{{^hasNextIteration}}disabled{{/hasNextIteration}}">
+                <a href="#" id="next-iteration"><i class="icon-angle-right icon-large"></i></a>
+            </li>
+        </ul>
+        {{/iteration}}
+
+        {{#editMode}}
         <button id="save-part" class="btn btn-primary" form="form-part">
             {{i18n.SAVE}}
         </button>
         <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
-        {{/part.isCheckoutByConnectedUser}}
-        {{^part.isCheckoutByConnectedUser}}
+        {{/editMode}}
+        {{^editMode}}
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
-        {{/part.isCheckoutByConnectedUser}}
+        {{/editMode}}
     </div>
 </div>

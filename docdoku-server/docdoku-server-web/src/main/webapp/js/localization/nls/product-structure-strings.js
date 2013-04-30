@@ -82,7 +82,10 @@ define({
         OPTIONS:"Options",
         MATERIALS_SWITCH:"Show/Hide materials",
         GRID_SWITCH:"Show/Hide the grid",
-        LIFECYCLE_STATE:"Life cycle state"
+        LIFECYCLE_STATE:"Life cycle state",
+        "REFERENCE":"ID",
+        "REVISION_NOTE":"Revision note",
+        "MODIFICATION_DATE":"Modification date"
     },
     "fr": true,
     "es": true

@@ -8,9 +8,10 @@ define(
     "common-objects/views/part/parts_management_view",
     "common-objects/views/linked_document/linked_documents",
     "common-objects/collections/linked_document_collection",
-    "common-objects/views/workflow/lifecycle"
+    "common-objects/views/workflow/lifecycle",
+    "common-objects/utils/date"
     ],
-    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection,LifecycleView ) {
+    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection,LifecycleView , date) {
 
 
         var PartModalView = ModalView.extend({
@@ -19,28 +20,75 @@ define(
 
         initialize:function(){
             this.iteration = this.model.getLastIteration();
+            this.iterations = this.model.getIterations();
+
             ModalView.prototype.initialize.apply(this, arguments);
+            this.events["click a#previous-iteration"] = "onPreviousIteration";
+            this.events["click a#next-iteration"] = "onNextIteration";
             this.events["submit #form-part"] = "onSubmitForm";
         },
 
+        onPreviousIteration: function() {
+            if (this.iterations.hasPreviousIteration(this.iteration)) {
+                this.switchIteration(this.iterations.previous(this.iteration));
+            }
+            return false;
+        },
+
+        onNextIteration: function() {
+            if (this.iterations.hasNextIteration(this.iteration)) {
+                this.switchIteration(this.iterations.next(this.iteration));
+            }
+            return false;
+        },
+
+        switchIteration: function(iteration) {
+            this.iteration = iteration;
+            var activeTabIndex = this.getActiveTabIndex();
+            this.render();
+            this.activateTab(activeTabIndex);
+        },
+
+        getActiveTabIndex: function() {
+            return this.$tabs.filter('.active').index();
+        },
+
+        activateTab:function(index) {
+            this.$tabs.eq(index).children().tab('show');
+        },
 
         render: function() {
 
-            this.$el.html(this.template({
+            var data ={
                 part: this.model,
                 i18n: i18n,
                 permalink : this.model.getPermalink()
-            }));
+            };
 
-            this.editMode = this.model.isCheckoutByConnectedUser() ;
+            this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
+
+            data.editMode = this.editMode ;
+
+            if (this.model.hasIterations()) {
+                var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
+                var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
+                data.iteration = this.iteration.toJSON();
+                data.iteration.hasNextIteration = hasNextIteration;
+                data.iteration.hasPreviousIteration = hasPreviousIteration;
+                data.reference = this.iteration.getReference();
+                data.iteration.creationDate = date.formatTimestamp(
+                    i18n._DATE_FORMAT,
+                    data.iteration.creationDate
+                );
+            }
+
+            this.$el.html(this.template(data));
 
             this.$authorLink = this.$('.author-popover');
             this.$checkoutUserLink = this.$('.checkout-user-popover');
 
-            this.$inputNewPartNumber = this.$('#inputNewPartNumber');
-            this.$inputNewPartName = this.$('#inputNewPartName');
-            this.$inputNewPartDescription = this.$('#inputNewPartDescription');
-            this.$inputNewPartStandard = this.$('#inputNewPartStandard');
+            this.$inputIterationNote=this.$('#inputRevisionNote');
+            this.$tabs = this.$('.nav-tabs li');
 
             this.bindUserPopover();
             this.initCadFileUploadView();
@@ -73,7 +121,7 @@ define(
             this.partAttributesView.setEditMode(this.editMode);
             this.partAttributesView.render();
 
-            _.each(this.model.getLastIteration().getAttributes().models ,function(item){
+            _.each(this.iteration.getAttributes().models ,function(item){
                 that.partAttributesView.addAndFillAttribute(item);
             });
 
@@ -91,6 +139,7 @@ define(
             }
 
             this.iteration.save({
+                iterationNote: this.$inputIterationNote.val(),
                 instanceAttributes: this.partAttributesView.collection.toJSON(),
                 components : this.partsManagementView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()

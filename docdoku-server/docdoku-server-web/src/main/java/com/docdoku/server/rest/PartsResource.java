@@ -29,7 +29,6 @@ import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import java.util.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -37,6 +36,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.*;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -90,6 +90,8 @@ public class PartsResource {
                 }
 
                 partIterationDTO.setComponents(usageLinksDTO);
+                partIterationDTO.setNumber(partRevision.getPartNumber());
+                partIterationDTO.setVersion(partRevision.getVersion());
                 partIterationDTOs.add(partIterationDTO);
             }
 
@@ -228,7 +230,8 @@ public class PartsResource {
                             usageLinksDTO.add(partUsageLinkDTO);
                         }
                         partIterationDTO.setComponents(usageLinksDTO);
-
+                        partIterationDTO.setNumber(partRevision.getPartNumber());
+                        partIterationDTO.setVersion(partRevision.getVersion());
                         partIterationDTOs.add(partIterationDTO);
                     }
                     partDTO.setPartIterations(partIterationDTOs);
@@ -331,6 +334,8 @@ public class PartsResource {
                 }
 
                 partIterationDTO.setComponents(usageLinksDTO);
+                partIterationDTO.setNumber(partRevision.getPartNumber());
+                partIterationDTO.setVersion(partRevision.getVersion());
                 partIterationDTOs.add(partIterationDTO);
             }
 
