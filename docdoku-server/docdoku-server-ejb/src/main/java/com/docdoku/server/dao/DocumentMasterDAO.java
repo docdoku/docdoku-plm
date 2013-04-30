@@ -19,18 +19,15 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.*;
-import com.docdoku.core.services.DocumentMasterNotFoundException;
-import com.docdoku.core.services.DocumentMasterAlreadyExistsException;
-import com.docdoku.core.services.CreationException;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.*;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.DocumentMasterAlreadyExistsException;
+import com.docdoku.core.services.DocumentMasterNotFoundException;
+
+import javax.persistence.*;
 import java.util.*;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 public class DocumentMasterDAO {
 
@@ -255,7 +252,7 @@ public class DocumentMasterDAO {
 
     public List<DocumentMaster> findDocMsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
         return em.createNamedQuery("findDocumentMastersWithReference").
-                setParameter("workspaceId", pWorkspaceId).setParameter("id", "%"+reference+"%").setMaxResults(maxResults).getResultList();
+                setParameter("workspaceId", pWorkspaceId).setParameter("id", "%" + reference + "%").setMaxResults(maxResults).getResultList();
     }
 
     public int getDocumentsCountInWorkspace(String pWorkspaceId) {
@@ -286,5 +283,15 @@ public class DocumentMasterDAO {
         TypedQuery<DocumentMaster> query = em.createQuery("SELECT DISTINCT m FROM DocumentMaster m WHERE m.checkOutUser is not null and m.workspace.id = :workspaceId", DocumentMaster.class);
         query.setParameter("workspaceId", pWorkspaceId);
         return query.getResultList();
+    }
+
+    public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) {
+        TypedQuery<DocumentIteration> query = em.createNamedQuery("DocumentIteration.findByBinaryResource", DocumentIteration.class);
+        query.setParameter("binaryResource", pBinaryResource);
+        try{
+            return query.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
     }
 }

@@ -19,23 +19,17 @@
  */
 package com.docdoku.core.services;
 
-import com.docdoku.core.document.SearchQuery;
-import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.*;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.TagKey;
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntityKey;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.workflow.Task;
 
 import javax.annotation.security.RolesAllowed;
@@ -159,4 +153,7 @@ public interface IDocumentManagerWS {
     void deleteSharedDocument(SharedEntityKey sharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException;
 
     DocumentMaster getPublicDocumentMaster(DocumentMasterKey pDocMPK) throws DocumentMasterNotFoundException;
+
+    DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
 }

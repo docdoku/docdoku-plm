@@ -272,6 +272,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @Override
+    public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pBinaryResource.getWorkspaceId());
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
+        return  documentMasterDAO.findDocumentIterationByBinaryResource(pBinaryResource);
+    }
 
     @RolesAllowed("users")
     @Override
@@ -1370,6 +1376,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         SharedDocument sharedDocument = sharedEntityDAO.loadSharedDocument(sharedEntityKey.getUuid());
         sharedEntityDAO.deleteSharedDocument(sharedDocument);
     }
+
+
 
     private Folder checkWritingRight(User pUser, Folder pFolder) throws NotAllowedException {
         if (pFolder.isPrivate() && (!pFolder.getOwner().equals(pUser.getLogin()))) {

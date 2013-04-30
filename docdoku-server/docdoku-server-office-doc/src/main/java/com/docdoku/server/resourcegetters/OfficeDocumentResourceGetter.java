@@ -20,18 +20,26 @@
 package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
 
 import javax.ejb.EJB;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 
 public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
     @EJB
     private IDataManagerLocal dataManager;
+
+    @EJB
+    private IDocumentManagerLocal documentService;
 
     @EJB
     private FileConverter fileConverter;
@@ -75,6 +83,15 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
                     }
                     inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
                 }
+            }
+        }
+
+        if(binaryResource.getOwnerType().equals("documents")){
+            DocumentIteration docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
+            User user = documentService.whoAmI(docI.getWorkspaceId());
+            Locale locale = new Locale(user.getLanguage());
+            if(docI != null){
+                return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, locale);
             }
         }
 
