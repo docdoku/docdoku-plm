@@ -102,7 +102,7 @@
 
                                             <!-- my products link-->
 
-                                            <li>
+                                            <li id="products_link">
                                                 <a href="#{request.contextPath}/product-management/${workspaceID}">
                                                     <i class="icon-briefcase"></i>
                                                     #{i18nTemplate['toplinks.product']}
@@ -166,7 +166,7 @@
                                                 </h:link>
                                             </li>
                                             <li class="divider"></li>
-                                            <li>
+                                            <li id="logout_link">
                                                 <h:commandLink action="#{connectionBean.logOut}">
                                                     <i class="icon-off"></i>
                                                     #{i18nTemplate['toplinks.logout']}

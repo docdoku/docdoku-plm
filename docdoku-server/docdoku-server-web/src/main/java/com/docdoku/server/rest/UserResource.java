@@ -69,5 +69,17 @@ public class UserResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
+
+    @GET
+    @Path("/me")
+    @Produces("application/json;charset=UTF-8")
+    public UserDTO whoami(@PathParam("workspaceId") String workspaceId){
+        try {
+            User  user = documentService.whoAmI(workspaceId);
+            return mapper.map(user, UserDTO.class);
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 }
 
