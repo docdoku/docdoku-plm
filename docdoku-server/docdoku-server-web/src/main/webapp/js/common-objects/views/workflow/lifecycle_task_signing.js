@@ -137,9 +137,9 @@ define([
             e.preventDefault();
 
             this.signature = null;
-            $('.lifecycle-task-signing-img img').attr('src', this.signature);
-            $('.lifecycle-task-signing-img').addClass('hidden');
-            $('.lifecycle-task-signing-delete-a').addClass('hidden');
+            this.$('.lifecycle-task-signing-img img').attr('src', this.signature);
+            this.$('.lifecycle-task-signing-img').addClass('hidden');
+            this.$('.lifecycle-task-signing-delete-a').addClass('hidden');
         },
 
         clearSigning: function() {
@@ -161,9 +161,9 @@ define([
             e.preventDefault();
 
             this.signature = this.canvas.toDataURL();
-            $('.lifecycle-task-signing-img img').attr('src', this.signature);
-            $('.lifecycle-task-signing-img').removeClass('hidden');
-            $('.lifecycle-task-signing-delete-a').removeClass('hidden');
+            this.$('.lifecycle-task-signing-img img').attr('src', this.signature);
+            this.$('.lifecycle-task-signing-img').removeClass('hidden');
+            this.$('.lifecycle-task-signing-delete-a').removeClass('hidden');
 
             this.toggleSigningCanvas();
             this.clearSigning();
