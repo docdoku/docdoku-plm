@@ -22,18 +22,11 @@ package com.docdoku.core.security;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * This class can be attached to a

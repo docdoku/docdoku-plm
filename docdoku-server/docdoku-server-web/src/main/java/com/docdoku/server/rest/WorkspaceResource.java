@@ -71,6 +71,9 @@ public class WorkspaceResource {
     @EJB
     private RoleResource roles;
 
+    @EJB
+    private WorkspaceMembershipResource workspaceMemberships;
+
     public WorkspaceResource() {
     }
 
@@ -137,6 +140,11 @@ public class WorkspaceResource {
     @Path("/roles")
     public RoleResource roles() {
         return roles;
+    }
+
+    @Path("/memberships")
+    public WorkspaceMembershipResource workspaceMemberships() {
+        return workspaceMemberships;
     }
 
 }
