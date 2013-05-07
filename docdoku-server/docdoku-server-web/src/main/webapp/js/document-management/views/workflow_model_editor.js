@@ -19,26 +19,9 @@ define([
         },
 
         initialize: function() {
+            var that = this ;
             this.subviews = [];
-
             this.roles = new Roles();
-            this.roles.fetch({async: false});
-
-            if (_.isUndefined(this.options.workflowModelId)) {
-                this.model = new WorkflowModel();
-                this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
-            } else {
-                this.model = new WorkflowModel({
-                    id: this.options.workflowModelId
-                });
-
-                var self = this;
-
-                this.model.fetch({success: function() {
-                    self.inputFinalState.val(self.model.get('finalLifeCycleState'));
-                    self.addAllActivity();
-                } });
-            }
         },
 
         addAllActivity: function() {
@@ -117,11 +100,31 @@ define([
 
         render: function() {
 
-            this.template = Mustache.render(template, {i18n: i18n, workflow: this.model.attributes});
+            var that = this ;
 
-            this.$el.html(this.template);
+            this.roles.fetch({reset:true,success:function(){
 
-            this.bindDomElements();
+                if (_.isUndefined(that.options.workflowModelId)) {
+                    that.model = new WorkflowModel();
+                    that.model.attributes.activityModels.bind('add', that.addOneActivity, that);
+                } else {
+                    that.model = new WorkflowModel({
+                        id: that.options.workflowModelId
+                    });
+
+                    that.model.fetch({success: function() {
+                        that.inputFinalState.val(that.model.get('finalLifeCycleState'));
+                        that.addAllActivity();
+                    } });
+                }
+
+                that.template = Mustache.render(template, {i18n: i18n, workflow: that.model.attributes});
+
+                that.$el.html(that.template);
+
+                that.bindDomElements();
+
+            }});
 
             return this;
         },

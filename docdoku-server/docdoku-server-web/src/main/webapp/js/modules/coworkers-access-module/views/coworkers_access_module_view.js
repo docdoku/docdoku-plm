@@ -17,7 +17,7 @@ define(
 
             var $ul = this.$("#coworkers_access_module_entries");
 
-            users.fetch({"async": true, "success": function () {
+            users.fetch({reset: true, success: function () {
 
                 _.each(users.models, function(user){
 

@@ -23,7 +23,7 @@ define([
             this.listenTo(this.collection, 'add', this.addOne)
                 .listenTo(this.collection, 'remove', this.onRemove)
                 .listenTo(this.collection, 'reset', this.addAll);
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
         },
 
         addAll: function() {

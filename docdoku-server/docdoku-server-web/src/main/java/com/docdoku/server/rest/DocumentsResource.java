@@ -144,6 +144,7 @@ public class DocumentsResource {
 
             for (int i = 0; i < docMs.length; i++) {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
@@ -168,7 +169,7 @@ public class DocumentsResource {
             for (int i = 0; i < docMs.length; i++) {
 
                 DocumentMasterDTO docDTO = mapper.map(docMs[i], DocumentMasterDTO.class);
-
+                docDTO.setPath(docMs[i].getLocation().getCompletePath());
                 docDTO = Tools.createLightDocumentMasterDTO(docDTO);
                 docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
                 docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
@@ -197,6 +198,7 @@ public class DocumentsResource {
 
             for (int i = 0; i < docMs.length; i++) {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));

@@ -49,7 +49,7 @@ define(    [
             var that = this ;
 
             this.users = new Users();
-            this.users.fetch({success:function(){
+            this.users.fetch({reset:true,success:function(){
                 that.users.each(function(user){
                     that.$author.append("<option value='"+user.get("login")+"'>"+user.get("name")+"</option>");
                 });
@@ -58,7 +58,7 @@ define(    [
             this.templates = new Templates();
             this.types = [];
             this.templatesId = [];
-            this.templates.fetch({success:function(){
+            this.templates.fetch({reset:true,success:function(){
                 that.templates.each(function(template){
                     var type = template.get("documentType");
                     if(!_.contains(that.types, type) && type){

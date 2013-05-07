@@ -25,7 +25,7 @@ define([
 					el: "#list-" + this.cid
 				})
 			);
-			this.listView.collection.fetch();
+			this.listView.collection.fetch({reset:true});
 			this.listView.on("selectionChange", this.selectionChanged);
 			this.selectionChanged();
 		},

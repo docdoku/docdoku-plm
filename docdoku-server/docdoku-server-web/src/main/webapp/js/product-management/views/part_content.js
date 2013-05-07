@@ -149,7 +149,7 @@ define([
             this.partListView.getSelectedPart().undocheckout();
         },
         resetCollection:function(){
-            this.partListView.collection.fetch();
+            this.partListView.collection.fetch({reset:true});
         },
 
         onPageCountFetched:function(){
@@ -164,32 +164,32 @@ define([
         goToPage:function(){
             var requestedPage = prompt(i18n.GO_TO_PAGE,"1");
             if( requestedPage - 1 >= 0 && requestedPage <= this.partListView.collection.getPageCount()){
-                this.partListView.collection.setCurrentPage(requestedPage-1).fetch();
+                this.partListView.collection.setCurrentPage(requestedPage-1).fetch({reset:true});
                 this.updatePageIndicator();
                 this.partListView.onNoPartSelected();
             }
         },
 
         toFirstPage:function(){
-            this.partListView.collection.setFirstPage().fetch();
+            this.partListView.collection.setFirstPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },
 
         toLastPage:function(){
-            this.partListView.collection.setLastPage().fetch();
+            this.partListView.collection.setLastPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },
 
         toNextPage:function(){
-            this.partListView.collection.setNextPage().fetch();
+            this.partListView.collection.setNextPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },
 
         toPreviousPage:function(){
-            this.partListView.collection.setPreviousPage().fetch();
+            this.partListView.collection.setPreviousPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },

@@ -41,8 +41,8 @@ function (
 		},
 		folder: function(path) {
 			this.defaults();
-			FolderNavView.getInstance().show(decodeURIComponent(path));
-		},
+            FolderNavView.getInstance().show(decodeURIComponent(path));
+        },
 		tags: function() {
 			this.defaults();
 			TagNavView.getInstance().toggle();

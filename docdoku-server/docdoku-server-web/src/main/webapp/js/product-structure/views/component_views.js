@@ -14,7 +14,7 @@ define(function() {
             if (this.collection.isEmpty()) {
                 this.listenTo(this.collection, 'reset', this.addAllComponentsView)
                     .listenTo(this.collection, 'add', this.addComponentView);
-                this.collection.fetch();
+                this.collection.fetch({reset:true});
             } else {
                 this.addAllComponentsView();
             }
@@ -50,7 +50,7 @@ define(function() {
         fetchAll:function(){
             var that = this ;
             this.$el.empty();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
         }
 
     });

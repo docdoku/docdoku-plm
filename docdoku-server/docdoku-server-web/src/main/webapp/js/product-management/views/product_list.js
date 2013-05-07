@@ -26,7 +26,7 @@ define([
         render:function(){
             this.$el.html(this.template({i18n:i18n}));
             this.bindDomElements();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
             return this;
         },
 
@@ -55,7 +55,7 @@ define([
             var view = this.addProductView(model);
             this.$el.removeClass("hide");
             if(effect){
-                view.$el.effect("highlight", {color: "#ffffd7"}, 1000);
+                view.$el.highlightEffect();
             }
         },
 

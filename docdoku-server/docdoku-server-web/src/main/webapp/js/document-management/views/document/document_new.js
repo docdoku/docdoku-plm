@@ -38,14 +38,14 @@ define([
                     attributesView: this.attributesView
                 })
             );
-            this.templatesView.collection.fetch();
+
+            this.templatesView.collection.fetch({reset:true});
 
             this.workflowsView = this.addSubView(
                 new DocumentWorkflowListView({
                     el: "#workflows-" + this.cid
                 })
             );
-            this.workflowsView.collection.fetch();
 
             this.workflowsMappingView = this.addSubView(
                 new DocumentWorkflowMappingView({

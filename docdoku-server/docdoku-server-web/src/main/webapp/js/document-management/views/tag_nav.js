@@ -21,7 +21,7 @@ define([
             var that = this ;
 
             Backbone.Events.on("refreshTagNavViewCollection",function(){
-                that.tagsView.collection.fetch();
+                that.tagsView.collection.fetch({reset:true});
             });
 
 			this.render();

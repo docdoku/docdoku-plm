@@ -9,6 +9,7 @@ define([
 			this.$el.addClass("in");
 			var that = this;
 			this.collection.fetch({
+                reset:true,
 				success: function () {
 					if (_.isFunction(that.shown)) {
 						that.shown();

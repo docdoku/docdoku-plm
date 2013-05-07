@@ -26,6 +26,7 @@ define([
             this.events["click a#previous-iteration"] = "onPreviousIteration";
             this.events["click a#next-iteration"] = "onNextIteration";
             this.events["submit form"] = "onSubmitForm";
+            this.events["click a.document-path"] = "onFolderPathClicked";
 
             this.tagsToRemove = [];
 
@@ -95,6 +96,16 @@ define([
                 i18n._DATE_FORMAT,
                 data.master.creationDate
             );
+
+
+            var fullPath = data.master.path;
+            var re = new RegExp(APP_CONFIG.workspaceId,"");
+            fullPath = fullPath.replace(re,"");
+            this.folderPath =fullPath.replace(/\//g, ":");
+            if(this.folderPath[0] == ":"){
+                this.folderPath = this.folderPath.substr(1,this.folderPath.length);
+            }
+
 
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
@@ -286,6 +297,12 @@ define([
                     }
                 });
             }
+        },
+
+        onFolderPathClicked:function(e){
+            var redirectPath = this.folderPath ? "folders/" + encodeURIComponent(this.folderPath) : "folders";
+            this.router.navigate(redirectPath, {trigger: true});
+            ModalView.prototype.cancelAction.call(this);
         }
 
     });

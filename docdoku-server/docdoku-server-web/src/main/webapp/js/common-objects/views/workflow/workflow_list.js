@@ -22,7 +22,7 @@ define([
 
 		collection: function () {
             var collection = new WorkflowList();
-            collection.fetch();
+            collection.fetch({reset:true});
 			return collection;
 		},
 

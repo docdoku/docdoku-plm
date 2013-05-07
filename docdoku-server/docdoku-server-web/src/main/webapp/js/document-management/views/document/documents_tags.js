@@ -26,6 +26,7 @@ define([
             this._existingTagsViews = [];
 
             this._existingTagsCollection.fetch({
+                reset:true,
                 success: this.renderExistingTabs
             });
 

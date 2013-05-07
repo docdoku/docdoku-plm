@@ -38,7 +38,7 @@ define([
                 })
             );
 
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
 
             this.listenTo(this.listView, "selectionChange", this.onStateChange);
             this.listenTo(this.collection, "change", this.onStateChange);
@@ -215,7 +215,7 @@ define([
         highlightAddedView:function(model){
             var addedView = _.find(this.listView.subViews, function(view){ return view.model == model});
             if(addedView){
-                addedView.$el.effect("highlight", {color: "#ffffd7"}, 1000);
+                addedView.$el.highlightEffect();
             }
         }
 

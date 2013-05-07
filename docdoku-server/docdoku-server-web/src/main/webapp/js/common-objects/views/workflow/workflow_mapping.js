@@ -21,7 +21,7 @@ define([
             this.roles = [];
             this.rolesItemViews = [];
             this.users = new Users();
-            this.users.fetch({success:this.render});
+            this.users.fetch({reset:true,success:this.render});
         },
 
         updateMapping:function(workflowModel){

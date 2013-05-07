@@ -42,9 +42,9 @@ define(
             this.listenTo(this.collection,"reset",this.onCollectionReset);
             this.listenTo(this.collection,"add",this.onModelAddedToCollection);
 
-            this.userList.fetch({success:function(){
-                self.rolesInUse.fetch({success:function(){
-                    self.collection.fetch();
+            this.userList.fetch({reset:true,success:function(){
+                self.rolesInUse.fetch({reset:true,success:function(){
+                    self.collection.fetch({reset:true});
                 }});
             }});
 

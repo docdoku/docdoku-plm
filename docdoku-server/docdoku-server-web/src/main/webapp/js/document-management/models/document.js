@@ -195,7 +195,7 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                    this.collection.fetch();
+                    this.collection.fetch({reset:true});
                 }
             });
         },

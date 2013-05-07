@@ -35,8 +35,6 @@ define(
                 el: this.$("#workflows-list")
             });
 
-            this.workflowsView.collection.fetch();
-
             this.workflowsMappingView =  new DocumentWorkflowMappingView({
                 el: this.$("#workflows-mapping")
             });
@@ -57,7 +55,7 @@ define(
         bindPartTemplateSelector:function(){
             this.templateCollection = new PartTemplateCollection();
             this.listenTo(this.templateCollection,"reset",this.onTemplateCollectionReset);
-            this.templateCollection.fetch();
+            this.templateCollection.fetch({reset:true});
         },
 
         bindAttributesView:function(){

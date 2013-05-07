@@ -9,7 +9,8 @@ define([
         events: {
             "click #cancelPrompt": "cancelAction",
             "click #submitPrompt": "primaryAction",
-            "hidden #prompt_modal": "onHidden"
+            "hidden #prompt_modal": "onHidden",
+            "shown #prompt_modal": "onShown"
         },
 
         initialize: function() {
@@ -57,6 +58,9 @@ define([
             this.$modal.modal('hide');
         },
 
+        onShown: function() {
+            this.$promptInput.focus();
+        },
         onHidden: function() {
             this.remove();
         }

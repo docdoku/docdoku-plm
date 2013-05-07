@@ -39,7 +39,7 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(component.getUrlForBom());
             this.listenTo(this.partsCollection, "reset", this.addAllBomItem);
-            this.partsCollection.fetch();
+            this.partsCollection.fetch({reset:true});
         },
 
         showRoot:function(rootComponent){
@@ -47,7 +47,7 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
             this.listenTo(this.partsCollection, "reset", this.addAllBomItem);
-            this.partsCollection.fetch();
+            this.partsCollection.fetch({reset:true});
         },
 
         addAllBomItem: function(parts) {

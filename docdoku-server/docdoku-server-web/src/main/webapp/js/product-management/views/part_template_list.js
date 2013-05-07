@@ -25,7 +25,7 @@ define([
         render:function(){
             this.$el.html(this.template({i18n:i18n}));
             this.bindDomElements();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
             return this;
         },
 

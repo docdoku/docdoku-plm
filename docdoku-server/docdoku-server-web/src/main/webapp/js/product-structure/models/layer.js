@@ -83,7 +83,7 @@ define([
             this.on('change:id', this._setMarkersUrl);
             if (!this.isNew()) {
                 this._setMarkersUrl();
-                this.markers.fetch();
+                this.markers.fetch({reset:true});
             }
         },
 

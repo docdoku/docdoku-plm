@@ -45,7 +45,7 @@ define([
                         shown = true;
 
                         // Fetch and display user data
-                        users.fetch({"async": true, "success": function () {
+                        users.fetch({reset: true, success: function () {
 
                             // find user in collection
                             var user = users.where({"login": userLogin})[0];

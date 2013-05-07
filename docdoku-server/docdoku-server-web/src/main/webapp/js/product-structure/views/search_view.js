@@ -52,7 +52,7 @@ define([
 
             if (searchString.length > 0) {
                 this.collection.searchString = searchString;
-                this.collection.fetch();
+                this.collection.fetch({reset:true});
             } else {
                 this.collection.reset();
             }
