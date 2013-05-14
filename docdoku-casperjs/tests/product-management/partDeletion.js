@@ -13,7 +13,7 @@ casper.waitForSelector('#part-nav',
 );
 
 // delete the part
-casper.then(function() {
+casper.waitForSelector('#part_table', function() {
     this.test.assertEquals(partCreationName, this.getHTML('#part_table tbody tr:first-child td:nth-child(6)'), 'Part to delete found');
     this.test.assertExists('#part_table tbody tr:first-child td:first-child input', 'Checkbox found');
     this.click("#part_table tbody tr:first-child td:first-child input");

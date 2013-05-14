@@ -3,6 +3,7 @@ casperjs test   --pre=login.js \
                 --post=logout.js \
                 --includes=conf.js \
                 --fail-fast \
+                --xunit=testsResults.xml \
                 tests/product-management/partCreation.js \
                 tests/product-management/showPartDetails.js \
                 tests/product-management/productCreation.js \
