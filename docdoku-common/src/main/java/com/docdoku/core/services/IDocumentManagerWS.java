@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.*;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.sharing.SharedDocument;
@@ -36,6 +37,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -155,5 +157,7 @@ public interface IDocumentManagerWS {
     DocumentMaster getPublicDocumentMaster(DocumentMasterKey pDocMPK) throws DocumentMasterNotFoundException;
 
     DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,ACL.Permission> userEntries, Map<String,ACL.Permission> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException;
 
 }

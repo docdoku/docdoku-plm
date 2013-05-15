@@ -2,12 +2,14 @@ define([
     "i18n!localization/nls/document-management-strings",
     "text!templates/document/document_new_version.html",
     "common-objects/views/workflow/workflow_mapping",
-    "common-objects/views/workflow/workflow_list"
+    "common-objects/views/workflow/workflow_list",
+    "common-objects/views/security/acl"
 ], function (
     i18n,
     template,
     DocumentWorkflowMappingView,
-    DocumentWorkflowListView
+    DocumentWorkflowListView,
+    ACLView
     ) {
     var DocumentsNewVersionView = Backbone.View.extend({
 
@@ -43,6 +45,11 @@ define([
 
             this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
 
+            this.aclView = new ACLView({
+                el: this.$("#acl-mapping"),
+                editMode:true
+            }).render();
+
             this.$(".tabs").tabs();
 
             return this;
@@ -55,7 +62,7 @@ define([
         },
 
         createNewVersionAction: function() {
-            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected(), this.workflowsMappingView.toList());
+            this.model.createNewVersion(this.inputNewVersionTitle.val(), this.textAreaNewVersionDescription.val(), this.workflowsView.selected(), this.workflowsMappingView.toList(), this.aclView.toList());
             this.closeModalAction();
         },
 

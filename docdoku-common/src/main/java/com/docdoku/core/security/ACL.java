@@ -43,11 +43,9 @@ import java.util.Map;
 @Entity
 public class ACL implements Serializable, Cloneable{
 
-
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     private int id;
-
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="acl", fetch=FetchType.EAGER)
     @MapKey(name="principal")
@@ -109,7 +107,6 @@ public class ACL implements Serializable, Cloneable{
         return false;
     }
 
-    
     public void addEntry(User user, Permission perm){
         userEntries.put(user, new ACLUserEntry(this,user,perm));
     }
@@ -126,6 +123,22 @@ public class ACL implements Serializable, Cloneable{
         groupEntries.remove(group);
     }
 
+    public Map<User, ACLUserEntry> getUserEntries() {
+        return userEntries;
+    }
+
+    public void setUserEntries(Map<User, ACLUserEntry> userEntries) {
+        this.userEntries = userEntries;
+    }
+
+    public Map<UserGroup, ACLUserGroupEntry> getGroupEntries() {
+        return groupEntries;
+    }
+
+    public void setGroupEntries(Map<UserGroup, ACLUserGroupEntry> groupEntries) {
+        this.groupEntries = groupEntries;
+    }
+
     /**
      * perform a deep clone operation
      */
@@ -139,7 +152,7 @@ public class ACL implements Serializable, Cloneable{
         }
         //perform a deep copy
         Map<User,ACLUserEntry> clonedUserEntries = new HashMap<User,ACLUserEntry>();
-        for (Map.Entry<User,ACLUserEntry> entry : clonedUserEntries.entrySet()) {
+        for (Map.Entry<User,ACLUserEntry> entry : userEntries.entrySet()) {
             ACLUserEntry aclEntry = entry.getValue().clone();
             aclEntry.setACL(clone);
             clonedUserEntries.put(entry.getKey(),aclEntry);
@@ -148,13 +161,31 @@ public class ACL implements Serializable, Cloneable{
 
         //perform a deep copy
         Map<UserGroup,ACLUserGroupEntry> clonedGroupEntries = new HashMap<UserGroup,ACLUserGroupEntry>();
-        for (Map.Entry<UserGroup,ACLUserGroupEntry> entry : clonedGroupEntries.entrySet()) {
+        for (Map.Entry<UserGroup,ACLUserGroupEntry> entry : groupEntries.entrySet()) {
             ACLUserGroupEntry aclEntry = entry.getValue().clone();
             aclEntry.setACL(clone);
             clonedGroupEntries.put(entry.getKey(),aclEntry);
         }
         clone.groupEntries = clonedGroupEntries;
         return clone;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ACL)) {
+            return false;
+        }
+        ACL acl = (ACL) obj;
+        return acl.id == id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
 }

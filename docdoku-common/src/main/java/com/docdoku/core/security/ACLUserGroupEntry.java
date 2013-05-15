@@ -19,15 +19,11 @@
  */
 package com.docdoku.core.security;
 
-import com.docdoku.core.security.ACL.Permission;
 import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.security.ACL.Permission;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * Class that belongs to the ACL classe and makes the mapping between a group
@@ -39,24 +35,15 @@ import javax.persistence.Table;
  */
 @Table(name="ACLUSERGROUPENTRY")
 @Entity
-@javax.persistence.IdClass(com.docdoku.core.security.ACLUserGroupEntryKey.class)
+@IdClass(com.docdoku.core.security.ACLUserGroupEntryKey.class)
 public class ACLUserGroupEntry implements Serializable, Cloneable {
 
-    @javax.persistence.Column(name = "ACL_ID", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private int aclId;
-
+    @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private ACL acl;
+    @JoinColumn(name="ACL_ID", referencedColumnName="ID")
+    protected ACL acl;
 
-    @javax.persistence.Column(name = "PRINCIPAL_ID", length=50, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String principalId = "";
-
-    @javax.persistence.Column(name = "PRINCIPAL_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String principalWorkspaceId="";
-
+    @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "PRINCIPAL_ID", referencedColumnName = "ID"),
@@ -70,8 +57,6 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
 
     }
 
-
-
     public ACLUserGroupEntry(ACL acl, UserGroup principal, Permission permission) {
         setACL(acl);
         setPrincipal(principal);
@@ -80,7 +65,6 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
 
     public void setACL(ACL pACL) {
         this.acl = pACL;
-        this.aclId=pACL.getId();
     }
 
     public void setPermission(Permission permission) {
@@ -89,8 +73,6 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
 
     public void setPrincipal(UserGroup pPrincipal) {
         this.principal = pPrincipal;
-        this.principalId=pPrincipal.getId();
-        this.principalWorkspaceId=pPrincipal.getWorkspaceId();
     }
 
     public Permission getPermission() {
@@ -102,12 +84,9 @@ public class ACLUserGroupEntry implements Serializable, Cloneable {
     }
 
     public String getPrincipalId() {
-        return principalId;
+        return principal.getId();
     }
 
-    public String getPrincipalWorkspaceId() {
-        return principalWorkspaceId;
-    }
 
     @Override
     public ACLUserGroupEntry clone() {

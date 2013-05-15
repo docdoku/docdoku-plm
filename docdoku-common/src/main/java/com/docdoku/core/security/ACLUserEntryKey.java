@@ -19,6 +19,8 @@
  */
 package com.docdoku.core.security;
 
+import com.docdoku.core.common.UserKey;
+
 import java.io.Serializable;
 
 /**
@@ -27,48 +29,36 @@ import java.io.Serializable;
  */
 public class ACLUserEntryKey implements Serializable {
 
-    private String principalWorkspaceId;
-    private String principalLogin;
-    private int aclId;
+    private UserKey principal;
+    private int acl;
 
     public ACLUserEntryKey() {
     }
 
-    public ACLUserEntryKey(int aclId, String principalWorkspaceId, String principalLogin) {
-        this.aclId = aclId;
-        this.principalWorkspaceId = principalWorkspaceId;
-        this.principalLogin = principalLogin;
+    public ACLUserEntryKey(int acl, UserKey principal) {
+        this.acl = acl;
+        this.principal = principal;
     }
 
-    public int getAclId() {
-        return aclId;
+    public int getAcl() {
+        return acl;
     }
 
-    public String getPrincipalLogin() {
-        return principalLogin;
+    public UserKey getPrincipal() {
+        return principal;
     }
 
-    public String getPrincipalWorkspaceId() {
-        return principalWorkspaceId;
+    public void setAcl(int aclId) {
+        this.acl = aclId;
     }
 
-    public void setAclId(int aclId) {
-        this.aclId = aclId;
+    public void setPrincipal(UserKey principal) {
+        this.principal = principal;
     }
-
-    public void setPrincipalLogin(String principalLogin) {
-        this.principalLogin = principalLogin;
-    }
-
-    public void setPrincipalWorkspaceId(String principalWorkspaceId) {
-        this.principalWorkspaceId = principalWorkspaceId;
-    }
-
-
 
     @Override
     public String toString() {
-        return aclId + "/" + principalWorkspaceId + "-" + principalLogin;
+        return acl + "/" + principal ;
     }
 
     @Override
@@ -80,15 +70,14 @@ public class ACLUserEntryKey implements Serializable {
             return false;
         }
         ACLUserEntryKey key = (ACLUserEntryKey) pObj;
-        return ((key.aclId==aclId) && (key.principalWorkspaceId.equals(principalWorkspaceId)) && (key.principalLogin.equals(principalLogin)));
+        return ((key.acl==acl) && (key.principal.equals(principal)));
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + principalWorkspaceId.hashCode();
-        hash = 31 * hash + principalLogin.hashCode();
-        hash = 31 * hash + aclId;
+        hash = 31 * hash + principal.hashCode();
+        hash = 31 * hash + acl;
         return hash;
     }
 }

@@ -20,15 +20,11 @@
 
 package com.docdoku.core.security;
 
-import com.docdoku.core.security.ACL.Permission;
 import com.docdoku.core.common.User;
+import com.docdoku.core.security.ACL.Permission;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * Class that belongs to the ACL classe and makes the mapping between a user
@@ -40,24 +36,15 @@ import javax.persistence.Table;
  */
 @Table(name="ACLUSERENTRY")
 @Entity
-@javax.persistence.IdClass(com.docdoku.core.security.ACLUserEntryKey.class)
+@IdClass(com.docdoku.core.security.ACLUserEntryKey.class)
 public class ACLUserEntry implements Serializable, Cloneable {
 
-    @javax.persistence.Column(name = "ACL_ID", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private int aclId;
-
+    @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private ACL acl;
-    
-    @javax.persistence.Column(name = "PRINCIPAL_LOGIN", nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String principalLogin = "";
+    @JoinColumn(name="ACL_ID", referencedColumnName="ID")
+    protected ACL acl;
 
-    @javax.persistence.Column(name = "PRINCIPAL_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String principalWorkspaceId="";
-    
+    @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "PRINCIPAL_LOGIN", referencedColumnName = "LOGIN"),
@@ -78,7 +65,6 @@ public class ACLUserEntry implements Serializable, Cloneable {
 
     public void setACL(ACL pACL) {
         this.acl = pACL;
-        this.aclId=pACL.getId();
     }
 
 
@@ -88,8 +74,6 @@ public class ACLUserEntry implements Serializable, Cloneable {
 
     public void setPrincipal(User pPrincipal) {
         this.principal = pPrincipal;
-        this.principalLogin=pPrincipal.getLogin();
-        this.principalWorkspaceId=pPrincipal.getWorkspaceId();
     }
 
     public Permission getPermission() {
@@ -101,11 +85,7 @@ public class ACLUserEntry implements Serializable, Cloneable {
     }
 
     public String getPrincipalLogin() {
-        return principalLogin;
-    }
-
-    public String getPrincipalWorkspaceId() {
-        return principalWorkspaceId;
+        return principal.getLogin();
     }
 
     @Override

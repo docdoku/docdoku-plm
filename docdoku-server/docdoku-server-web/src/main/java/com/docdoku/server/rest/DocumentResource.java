@@ -31,7 +31,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -79,6 +79,10 @@ public class DocumentResource {
             docMsDTO.setLifeCycleState(docM.getLifeCycleState());
             docMsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docM));
             docMsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docM));
+            ACL acl = docM.getACL();
+            if(acl != null){
+                docMsDTO.setAcl(Tools.mapACLtoACLDTO(acl));
+            }
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -296,11 +300,7 @@ public class DocumentResource {
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
         RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
-
-        /*
-         * Null value for test purpose only
-         */
-        ACLDTO acl = null;
+        ACLDTO acl = docCreationDTO.getAcl();
 
         try {
 
@@ -310,13 +310,13 @@ public class DocumentResource {
                 userEntries = new ACLUserEntry[acl.getUserEntries().size()];
                 userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
                 int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                     userEntries[i] = new ACLUserEntry();
                     userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
                     userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
                 i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
                     userGroupEntries[i] = new ACLUserGroupEntry();
                     userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
@@ -527,6 +527,28 @@ public class DocumentResource {
         }
 
     }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("acl")
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("docKey") String docKey, ACLDTO acl) {
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+        DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
+
+        try {
+            if (acl != null) {
+                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, acl.getUserEntries(), acl.getGroupEntries());
+            }
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
 
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {

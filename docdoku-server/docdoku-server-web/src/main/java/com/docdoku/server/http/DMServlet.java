@@ -56,11 +56,11 @@ public class DMServlet extends HttpServlet {
             //we'll try to switch to default workspace
         }
 
-        if (workspaceID == null) {
-            HttpSession sessionHTTP = pRequest.getSession();
-            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
+        HttpSession sessionHTTP = pRequest.getSession();
+        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
+        if (workspaceID == null) {
+            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
             if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
                 workspaceID = administeredWorkspaces.values().iterator().next().getId();
             } else if (regularWorkspaces != null && !regularWorkspaces.isEmpty()) {
@@ -73,6 +73,7 @@ public class DMServlet extends HttpServlet {
                 pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/" + workspaceID);
             }
         } else {
+            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID) ? true : false);
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);
             pRequest.getRequestDispatcher("/faces/document-management/index.xhtml").forward(pRequest, pResponse);

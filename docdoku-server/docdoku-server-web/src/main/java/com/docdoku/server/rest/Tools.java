@@ -20,10 +20,17 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.DocumentMasterDTO;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -65,8 +72,28 @@ public class Tools {
        }
        
        docMsDTO.setTags(null);
-       docMsDTO.setWorkflow(null);       
-       
+       docMsDTO.setWorkflow(null);
+       docMsDTO.setAcl(null);
+
        return docMsDTO;
-   }    
+   }
+
+
+    public static ACLDTO mapACLtoACLDTO(ACL acl) {
+
+        ACLDTO aclDTO = new ACLDTO();
+
+        for (Map.Entry<User,ACLUserEntry> entry : acl.getUserEntries().entrySet()) {
+            ACLUserEntry aclEntry = entry.getValue();
+            aclDTO.addUserEntry(aclEntry.getPrincipalLogin(),aclEntry.getPermission());
+        }
+
+        for (Map.Entry<UserGroup,ACLUserGroupEntry> entry : acl.getGroupEntries().entrySet()) {
+            ACLUserGroupEntry aclEntry = entry.getValue();
+            aclDTO.addGroupEntry(aclEntry.getPrincipalId(),aclEntry.getPermission());
+        }
+
+        return aclDTO;
+
+    }
 }

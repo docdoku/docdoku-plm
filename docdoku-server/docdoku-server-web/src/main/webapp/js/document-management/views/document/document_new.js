@@ -4,6 +4,7 @@ define([
 	"views/document/document_template_list",
 	"common-objects/views/workflow/workflow_list",
 	"common-objects/views/workflow/workflow_mapping",
+	"common-objects/views/security/acl",
 	"text!templates/document/document_new.html"
 ], function (
 	ModalView,
@@ -11,6 +12,7 @@ define([
 	DocumentTemplateListView,
 	DocumentWorkflowListView,
     DocumentWorkflowMappingView,
+    ACLView,
 	template
 ) {
 	var DocumentNewView = ModalView.extend({
@@ -54,9 +56,15 @@ define([
             );
 
             this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
+
+            this.workspaceMembershipsView = new ACLView({
+                el: this.$("#acl-mapping-" + this.cid),
+                editMode:true
+            }).render();
         },
 
         onSubmitForm: function() {
+
             var reference = $("#form-" + this.cid + " .reference").val();
 
             if (reference) {
@@ -68,7 +76,8 @@ define([
                     description: $("#form-" + this.cid + " .description").val(),
                     workflowModelId: workflow ? workflow.get("id") : null,
                     templateId: template ? template.get("id") : null,
-                    roleMapping:workflow? this.workflowsMappingView.toList(): null
+                    roleMapping:workflow? this.workflowsMappingView.toList(): null,
+                    acl:this.workspaceMembershipsView.toList()
                 };
 
                 this.collection.create(data, {

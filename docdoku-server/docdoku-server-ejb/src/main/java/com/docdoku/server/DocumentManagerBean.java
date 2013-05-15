@@ -19,24 +19,23 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.*;
-import com.docdoku.core.document.*;
 import com.docdoku.core.common.*;
-import com.docdoku.core.meta.*;
-import com.docdoku.core.security.*;
+import com.docdoku.core.document.*;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntityKey;
-import com.docdoku.core.workflow.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
+import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -44,9 +43,14 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.annotation.security.DeclareRoles;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 
 @DeclareRoles({"users","admin"})
@@ -208,13 +212,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             DocumentMaster docM = ite.next();
             if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
                 ite.remove();
-                continue;
-            }
-            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+            }else if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
                 docM = docM.clone();
                 docM.removeLastIteration();
                 ite.set(docM);
-
             }
         }
         return docMs.toArray(new DocumentMaster[docMs.size()]);
@@ -233,13 +234,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             DocumentMaster docM = ite.next();
             if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
                 ite.remove();
-                continue;
-            }
-            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+            }else if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
                 docM = docM.clone();
                 docM.removeLastIteration();
                 ite.set(docM);
-
             }
         }
         return docMs.toArray(new DocumentMaster[docMs.size()]);
@@ -278,6 +276,63 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
         return  documentMasterDAO.findDocumentIterationByBinaryResource(pBinaryResource);
     }
+
+    @RolesAllowed("users")
+    @Override
+    public void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,ACL.Permission> pACLUserEntries, Map<String,ACL.Permission> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = documentMasterDAO.getDocMRef(docKey);
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
+
+        if (docM.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+
+            if (docM.getACL() == null) {
+
+                ACL acl = new ACL();
+
+                if (pACLUserEntries != null) {
+                    for (Map.Entry<String, ACL.Permission> entry : pACLUserEntries.entrySet()) {
+                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),entry.getValue());
+                    }
+                }
+
+                if (pACLUserGroupEntries != null) {
+                    for (Map.Entry<String, ACL.Permission> entry : pACLUserGroupEntries.entrySet()) {
+                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),entry.getValue());
+                    }
+                }
+
+                new ACLDAO(em).createACL(acl);
+                docM.setACL(acl);
+
+            }else{
+                if (pACLUserEntries != null) {
+                    for (ACLUserEntry entry : docM.getACL().getUserEntries().values()) {
+                        ACL.Permission newPermission = pACLUserEntries.get(entry.getPrincipalLogin());
+                        if(newPermission != null){
+                            entry.setPermission(newPermission);
+                        }
+                    }
+                }
+
+                if (pACLUserGroupEntries != null) {
+                    for (ACLUserGroupEntry entry : docM.getACL().getGroupEntries().values()) {
+                        ACL.Permission newPermission = pACLUserGroupEntries.get(entry.getPrincipalId());
+                        if(newPermission != null){
+                            entry.setPermission(newPermission);
+                        }
+                    }
+                }
+            }
+
+        }else {
+                throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+
 
     @RolesAllowed("users")
     @Override

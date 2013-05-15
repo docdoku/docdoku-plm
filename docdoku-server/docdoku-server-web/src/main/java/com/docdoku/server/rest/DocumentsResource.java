@@ -1,5 +1,4 @@
-/*
- * DocDoku, Professional Open Source
+/* DocDoku, Professional Open Source
  * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
@@ -107,6 +106,10 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -129,6 +132,10 @@ public class DocumentsResource {
                 docMsDTOs[i].setLifeCycleState(docMs[i].getLifeCycleState());
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -148,6 +155,10 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -173,7 +184,10 @@ public class DocumentsResource {
                 docDTO = Tools.createLightDocumentMasterDTO(docDTO);
                 docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
                 docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
-
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docDTO.setAcl(Tools.mapACLtoACLDTO(acl));
+                }
                 docMsDTOs.add(docDTO);
 
             }
@@ -202,6 +216,10 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -226,7 +244,7 @@ public class DocumentsResource {
         String pDocMTemplateId = docCreationDTO.getTemplateId();
 
         /* Null value for test purpose only */
-        ACLDTO acl = null;
+        ACLDTO acl = docCreationDTO.getAcl();
 
         try {
             ACLUserEntry[] userEntries = null;
@@ -235,13 +253,13 @@ public class DocumentsResource {
                 userEntries = new ACLUserEntry[acl.getUserEntries().size()];
                 userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
                 int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                     userEntries[i] = new ACLUserEntry();
                     userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
                     userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
                 i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
                     userGroupEntries[i] = new ACLUserGroupEntry();
                     userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));

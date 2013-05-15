@@ -51,6 +51,11 @@ define([
                 );
             }
 
+            if(this.model.hasACLForCurrentUser()){
+                data.isReadOnly = this.model.isReadOnly();
+                data.isFullAccess = this.model.isFullAccess();
+            }
+
             data.isCheckoutByConnectedUser = this.model.isCheckoutByConnectedUser();
             data.isCheckout = this.model.isCheckout();
 
@@ -88,7 +93,13 @@ define([
 
             Backbone.Events.on("document-moved", function(){
                 Backbone.Events.off("document-moved");
+                Backbone.Events.off("document-error-moved");
                 that.model.collection.remove(that.model);
+            });
+            Backbone.Events.on("document-error-moved", function(){
+                Backbone.Events.off("document-moved");
+                Backbone.Events.off("document-error-moved");
+                that.$el.removeClass("moving");
             });
             var data = JSON.stringify(this.model);
             e.dataTransfer.setData("document:text/plain", data);
@@ -100,6 +111,7 @@ define([
         dragEnd: function(e) {
             if(e.dataTransfer.dropEffect == "none"){
                 Backbone.Events.off("document-moved");
+                Backbone.Events.off("document-error-moved");
                 this.$el.removeClass("moving");
             }
         },
