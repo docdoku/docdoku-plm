@@ -47,7 +47,7 @@ public class DocumentLink implements Serializable, Cloneable{
     private int id;
 
     
-    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name="TARGET_ITERATION", referencedColumnName="ITERATION"),
         @JoinColumn(name="TARGET_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),

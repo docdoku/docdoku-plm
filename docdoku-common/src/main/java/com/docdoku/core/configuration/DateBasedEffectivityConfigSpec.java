@@ -19,49 +19,47 @@
  */
 
 
-package com.docdoku.core.product;
+package com.docdoku.core.configuration;
 
-import java.io.Serializable;
+import com.docdoku.core.configuration.EffectivityConfigSpec;
+
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
- * A ConfigSpec is used to filter the right
- * <a href="PartIteration.html">PartIteration</a> of
- * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
+ * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
+ * expressed by date and time.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="CONFIGSPEC")
-@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class})
-@Inheritance()
+@Table(name="DATEBASEDEFFCS")
 @Entity
-public abstract class ConfigSpec implements Serializable{
+public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Id
-    private int id;
+    /**
+     * The date and/or time of the context.
+     */
+    @Column(name="DATECONFIG")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
 
+    public DateBasedEffectivityConfigSpec() {
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
     
-    public ConfigSpec() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    
-
     
     
 }

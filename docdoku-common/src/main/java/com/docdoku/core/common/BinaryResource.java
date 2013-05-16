@@ -26,7 +26,7 @@ import javax.persistence.*;
 
 /**
  * <a href="BinaryResource.html">BinaryResource</a> is the representation
- * of a file contained in either a document or a document template.
+ * of a file contained in either a document, part or template.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

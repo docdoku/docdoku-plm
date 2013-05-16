@@ -23,6 +23,8 @@ package com.docdoku.core.sharing;
 import java.io.Serializable;
 
 /**
+ * Identity class of <a href="SharedEntity.html">SharedEntity</a> objects.
+ *
  * @author Morgan Guimard
  */
 

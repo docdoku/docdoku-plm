@@ -17,7 +17,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.product;
+package com.docdoku.core.configuration;
+
+import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;

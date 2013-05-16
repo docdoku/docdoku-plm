@@ -19,25 +19,48 @@
  */
 
 
-package com.docdoku.core.product;
+package com.docdoku.core.configuration;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
+ * A ConfigSpec is used to filter the right
+ * <a href="PartIteration.html">PartIteration</a> of
+ * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="LATESTCONFIGSPEC")
+@Table(name="CONFIGSPEC")
+@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class})
+@Inheritance()
 @Entity
-public class LatestConfigSpec extends ConfigSpec{
+public abstract class ConfigSpec implements Serializable{
+
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id
+    private int id;
 
     
-    public LatestConfigSpec() {
+    public ConfigSpec() {
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
 
     
     

@@ -19,39 +19,43 @@
  */
 
 
-package com.docdoku.core.product;
+package com.docdoku.core.configuration;
+
+import com.docdoku.core.configuration.EffectivityConfigSpec;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * A kind of <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * based on serial number.
+ * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
+ * based on a specific lot.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="SERIALNUMBERBASEDEFFCS")
+@Table(name="LOTBASEDEFFCS")
 @Entity
-public class SerialNumberBasedEffectivityConfigSpec extends EffectivityConfigSpec{
+public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec {
 
     /**
-     * The serial number of the particular item specified by the context.
+     * The lot id of the particular batch of items specified by the context.
      */
-    @Column(name="NUMBERCONFIG")
-    private String number;
+    @Column(name="LOTIDCONFIG")
+    private String lotId;
 
-    public SerialNumberBasedEffectivityConfigSpec() {
+    public LotBasedEffectivityConfigSpec() {
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    
+    
+    public String getLotId() {
+        return lotId;
     }
 
-    public String getNumber() {
-        return number;
+    public void setLotId(String lotId) {
+        this.lotId = lotId;
     }
     
     

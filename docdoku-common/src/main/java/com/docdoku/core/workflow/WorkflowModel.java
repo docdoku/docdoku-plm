@@ -28,7 +28,7 @@ import javax.persistence.*;
 
 /**
  * This class is the model used to create instances of 
- * <a href="Workflow.html">Workflow</a> attached to documents.
+ * <a href="Workflow.html">Workflow</a> attached to documents or parts.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

@@ -23,7 +23,6 @@ package com.docdoku.core.document;
 import java.io.Serializable;
 
 /**
- *
  * @author Florent Garin
  */
 public class DocumentMasterKey implements Serializable, Comparable<DocumentMasterKey>, Cloneable {
@@ -35,39 +34,38 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
 
     public DocumentMasterKey() {
     }
-    
+
     public DocumentMasterKey(String pWorkspaceId, String pId, String pVersion) {
-        workspaceId=pWorkspaceId;
-        id=pId;
+        workspaceId = pWorkspaceId;
+        id = pId;
         version = pVersion;
     }
-
 
 
     public String getWorkspaceId() {
         return workspaceId;
     }
-    
+
     public void setWorkspaceId(String pWorkspaceId) {
         workspaceId = pWorkspaceId;
     }
-    
+
     public String getId() {
         return id;
     }
-    
+
     public void setId(String pId) {
         id = pId;
     }
-    
+
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String pVersion){
-        version=pVersion;
+    public void setVersion(String pVersion) {
+        version = pVersion;
     }
-    
+
     @Override
     public String toString() {
         return workspaceId + "-" + id + "-" + version;
@@ -87,10 +85,10 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + id.hashCode();
         hash = 31 * hash + version.hashCode();
-	return hash;
+        return hash;
     }
 
     public int compareTo(DocumentMasterKey pDocMKey) {
@@ -103,7 +101,7 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
         else
             return version.compareTo(pDocMKey.version);
     }
-    
+
     @Override
     public DocumentMasterKey clone() {
         DocumentMasterKey clone = null;

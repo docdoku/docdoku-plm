@@ -19,43 +19,41 @@
  */
 
 
-package com.docdoku.core.product;
+package com.docdoku.core.configuration;
 
-import java.util.Date;
+import com.docdoku.core.configuration.EffectivityConfigSpec;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
- * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * expressed by date and time.
+ * A kind of <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
+ * based on serial number.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="DATEBASEDEFFCS")
+@Table(name="SERIALNUMBERBASEDEFFCS")
 @Entity
-public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec{
+public class SerialNumberBasedEffectivityConfigSpec extends EffectivityConfigSpec {
 
     /**
-     * The date and/or time of the context.
+     * The serial number of the particular item specified by the context.
      */
-    @Column(name="DATECONFIG")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    @Column(name="NUMBERCONFIG")
+    private String number;
 
-    public DateBasedEffectivityConfigSpec() {
+    public SerialNumberBasedEffectivityConfigSpec() {
     }
 
-    public Date getDate() {
-        return date;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public String getNumber() {
+        return number;
     }
     
     

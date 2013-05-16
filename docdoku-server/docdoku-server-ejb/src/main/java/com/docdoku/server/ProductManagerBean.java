@@ -23,6 +23,8 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;

@@ -21,6 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -29,8 +30,6 @@ import com.docdoku.core.sharing.SharedEntityKey;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.workflow.TaskKey;
 
-import javax.annotation.security.RolesAllowed;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

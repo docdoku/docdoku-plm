@@ -19,43 +19,28 @@
  */
 
 
-package com.docdoku.core.product;
+package com.docdoku.core.configuration;
 
-import javax.persistence.Column;
+import com.docdoku.core.configuration.ConfigSpec;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * based on a specific lot.
+ * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="LOTBASEDEFFCS")
+@Table(name="LATESTCONFIGSPEC")
 @Entity
-public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec{
-
-    /**
-     * The lot id of the particular batch of items specified by the context.
-     */
-    @Column(name="LOTIDCONFIG")
-    private String lotId;
-
-    public LotBasedEffectivityConfigSpec() {
-    }
+public class LatestConfigSpec extends ConfigSpec {
 
     
-    
-    public String getLotId() {
-        return lotId;
+    public LatestConfigSpec() {
     }
 
-    public void setLotId(String lotId) {
-        this.lotId = lotId;
-    }
-    
     
     
 }

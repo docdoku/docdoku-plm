@@ -21,6 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -272,7 +273,7 @@ public interface IProductManagerWS{
     /**
      * Creates a <a href="Geometry.html">Geometry</a> file,
      * a specialized kind of binary resource which contains CAD data, and
-     * attachs it to the part iteration passed as parameter.
+     * attaches it to the part iteration passed as parameter.
      * The part must be in the checkout state and the calling user must have
      * write access rights to the part.
      * 
@@ -303,7 +304,7 @@ public interface IProductManagerWS{
     
     /**
      * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>
-     * object, and attachs it to the part iteration instance passed
+     * object, and attaches it to the part iteration instance passed
      * as parameter. The part must be in the checkout state and
      * the calling user must have write access rights to the part.
      * 

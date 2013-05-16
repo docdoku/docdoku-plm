@@ -32,6 +32,9 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * Abstract class for all classes that allow the definition of permanent link to business objects
+ * like documents or parts.
+ *
  * @author Morgan Guimard
  */
 
@@ -43,7 +46,7 @@ import java.util.UUID;
 @NamedQueries({
         @NamedQuery(name="SharedEntity.findSharedEntityForGivenUuid", query="SELECT se FROM SharedEntity se WHERE se.uuid = :pUuid")
 })
-public class SharedEntity implements Serializable {
+public abstract class SharedEntity implements Serializable {
 
     @Id
     private String uuid;

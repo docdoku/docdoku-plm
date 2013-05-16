@@ -29,6 +29,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
+ * SharedDocument permits the creation of permanent link to document for users that do not have an account.
+ *
  * @author Morgan Guimard
  */
 

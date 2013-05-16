@@ -21,10 +21,10 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.ConfigSpec;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.LatestConfigSpec;
+import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;

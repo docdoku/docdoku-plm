@@ -29,6 +29,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
+ * SharedPart permits the creation of permanent link to part for users that do not have an account.
  * @author Morgan Guimard
  */
 

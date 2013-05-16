@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * This class stands between <a href="PartMaster.html">PartMaster</a>
  * and <a href="PartIteration.html">PartIteration</a>.
- * Its main purpose is to hold effectivities.
+ * Its main purpose is to hold effectivities. It represents a formal revision of a part.
  *
  * @author Florent Garin
  * @version 1.1, 31/10/11
