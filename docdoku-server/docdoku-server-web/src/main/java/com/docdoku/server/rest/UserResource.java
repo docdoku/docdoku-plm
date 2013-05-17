@@ -20,19 +20,23 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.workflow.*;
-import com.docdoku.server.rest.dto.*;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.rest.dto.UserDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.*;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -41,6 +45,10 @@ public class UserResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+
+    @EJB
+    private IUserManagerLocal userManager;
+
     private Mapper mapper;
 
     public UserResource() {
@@ -100,6 +108,14 @@ public class UserResource {
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
+    }
+
+    @GET
+    @Path("admin")
+    @Produces("application/json;charset=UTF-8")
+    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId) {
+        Workspace workspace = userManager.getWorkspace(workspaceId);
+        return mapper.map(workspace.getAdmin(),UserDTO.class);
     }
 }
 

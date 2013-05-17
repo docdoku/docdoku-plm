@@ -2,12 +2,14 @@ define([
     "common-objects/collections/security/workspace_user_memberships",
     "common-objects/collections/security/workspace_user_group_memberships",
     "common-objects/views/security/membership_item",
+    "common-objects/models/security/admin",
     "text!common-objects/templates/security/acl_entries.html",
     "i18n!localization/nls/security-strings"
 ], function (
     WorkspaceUserMemberships,
     WorkspaceUserGroupMemberships,
     MembershipItemView,
+    Admin,
     template,
     i18n
 ) {
@@ -20,16 +22,25 @@ define([
         },
 
         render:function(){
+
             this.$el.html(this.template({i18n:i18n}));
             this.bindDomElements();
+
+            var that = this;
+
+            this.admin = new Admin();
             this.userMemberships = new WorkspaceUserMemberships();
             this.userGroupMemberships = new WorkspaceUserGroupMemberships();
 
-            this.listenToOnce(this.userMemberships,"reset",this.onUserMembershipsReset);
-            this.listenToOnce(this.userGroupMemberships,"reset",this.onUserGroupMembershipsReset);
+            this.admin.fetch({reset:true,success:function(){
 
-            this.userMemberships.fetch({reset:true});
-            this.userGroupMemberships.fetch({reset:true});
+                that.listenToOnce(that.userMemberships,"reset",that.onUserMembershipsReset);
+                that.listenToOnce(that.userGroupMemberships,"reset",that.onUserGroupMembershipsReset);
+
+                that.userMemberships.fetch({reset:true});
+                that.userGroupMemberships.fetch({reset:true});
+            }});
+
             return this;
         },
 
@@ -41,7 +52,7 @@ define([
         onUserMembershipsReset:function(){
             var that = this ;
             this.userMemberships.each(function(userMembership){
-                var view = new MembershipItemView({model:userMembership, editMode:that.options.editMode && userMembership.getUserLogin() != APP_CONFIG.login}).render();
+                var view = new MembershipItemView({model:userMembership, editMode:that.options.editMode && userMembership.getUserLogin() != that.admin.getLogin()  && userMembership.getUserLogin() != APP_CONFIG.login}).render();
                 that.$usersAcls.append(view.$el);
             });
         },

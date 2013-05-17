@@ -5,6 +5,7 @@
     "common-objects/models/security/acl_user_entry",
     "common-objects/models/security/acl_user_group_entry",
     "common-objects/views/security/acl_item",
+    "common-objects/models/security/admin",
     "text!common-objects/templates/security/acl_edit.html",
     "i18n!localization/nls/security-strings"
 ], function (
@@ -14,6 +15,7 @@
     ACLUserEntry,
     ACLUserGroupEntry,
     ACLItemView,
+    Admin,
     template,
     i18n
 ) {
@@ -57,23 +59,28 @@
 
             this.bindDomElements();
 
-            if(this.acl == null){
-                this.onNoAclGiven();
-            }else{
-                var that = this ;
+            var that = this ;
 
-                for(var key in this.acl.userEntries){
-                    var view = new ACLItemView({model:new ACLUserEntry({userLogin : key, permission :this.acl.userEntries[key]}), editMode:that.options.editMode && key != APP_CONFIG.login}).render();
-                    that.$usersAcls.append(view.$el);
-                    this.aclUserEntries.push(view.model);
-                }
+            this.admin = new Admin();
+            this.admin.fetch({reset:true,success:function(){
 
-                for(var key in this.acl.groupEntries){
-                    var view = new ACLItemView({model:new ACLUserGroupEntry({groupId : key, permission :this.acl.groupEntries[key]}), editMode:that.options.editMode}).render();
-                    that.$userGroupsAcls.append(view.$el);
-                    this.aclUserGroupEntries.push(view.model);
+                if(that.acl == null){
+                    that.onNoAclGiven();
+                }else{
+
+                    for(var key in that.acl.userEntries){
+                        var view = new ACLItemView({model:new ACLUserEntry({userLogin : key, permission :that.acl.userEntries[key]}), editMode:that.options.editMode  && key != that.admin.getLogin() && key != APP_CONFIG.login}).render();
+                        that.$usersAcls.append(view.$el);
+                        that.aclUserEntries.push(view.model);
+                    }
+
+                    for(var key in that.acl.groupEntries){
+                        var view = new ACLItemView({model:new ACLUserGroupEntry({groupId : key, permission :that.acl.groupEntries[key]}), editMode:that.options.editMode}).render();
+                        that.$userGroupsAcls.append(view.$el);
+                        that.aclUserGroupEntries.push(view.model);
+                    }
                 }
-            }
+            }});
 
             return this;
         },
@@ -95,7 +102,7 @@
         onUserMembershipsReset:function(){
             var that = this ;
             this.userMemberships.each(function(userMembership){
-                var view = new ACLItemView({model:new ACLUserEntry({userLogin : userMembership.key(), permission :userMembership.getPermission()}), editMode:that.options.editMode && userMembership.key() != APP_CONFIG.login}).render();
+                var view = new ACLItemView({model:new ACLUserEntry({userLogin : userMembership.key(), permission :userMembership.getPermission()}), editMode:that.options.editMode && userMembership.key() != that.admin.getLogin() && userMembership.key() != APP_CONFIG.login}).render();
                 that.$usersAcls.append(view.$el);
                 that.aclUserEntries.push(view.model);
             });

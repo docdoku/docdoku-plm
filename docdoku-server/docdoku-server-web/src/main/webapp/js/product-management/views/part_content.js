@@ -189,8 +189,8 @@ define([
                         selectedPart.set("acl",acl);
                         aclEditView.closeModal();
                     },
-                    error:function(){
-                        alert("Error on update acl")
+                    error:function(error) {
+                        alert(error.responseText);
                     }
                 });
 

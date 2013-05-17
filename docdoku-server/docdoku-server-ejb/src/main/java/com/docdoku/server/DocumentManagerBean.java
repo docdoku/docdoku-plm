@@ -1485,6 +1485,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     private User checkDocumentMasterWriteAccess(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(documentMasterKey.getWorkspaceId());
+        if(user.isAdministrator()){
+            return user;
+        }
         DocumentMaster documentMaster = new DocumentMasterDAO(em).loadDocM(documentMasterKey);
 
         if(documentMaster.getACL()==null){
@@ -1502,6 +1505,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     private User checkDocumentMasterReadAccess(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(documentMasterKey.getWorkspaceId());
+        if(user.isAdministrator()){
+            return user;
+        }
         DocumentMaster documentMaster = new DocumentMasterDAO(em).loadDocM(documentMasterKey);
 
         if(documentMaster.getACL()==null){

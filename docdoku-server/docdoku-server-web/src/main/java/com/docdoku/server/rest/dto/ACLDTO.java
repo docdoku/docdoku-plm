@@ -59,5 +59,4 @@ public class ACLDTO implements Serializable{
         return userEntries;
     }
 
-    
 }
