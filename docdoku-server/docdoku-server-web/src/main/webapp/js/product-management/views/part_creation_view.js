@@ -6,9 +6,10 @@ define(
         "collections/part_templates",
         "common-objects/views/attributes/attributes",
         "common-objects/views/workflow/workflow_list",
-        "common-objects/views/workflow/workflow_mapping"
+        "common-objects/views/workflow/workflow_mapping",
+        "common-objects/views/security/acl"
     ],
-    function (template, i18n, Part, PartTemplateCollection, AttributesView,DocumentWorkflowListView,DocumentWorkflowMappingView) {
+    function (template, i18n, Part, PartTemplateCollection, AttributesView,DocumentWorkflowListView,DocumentWorkflowMappingView,ACLView) {
 
     var PartCreationView = Backbone.View.extend({
 
@@ -40,6 +41,11 @@ define(
             });
 
             this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
+
+            this.workspaceMembershipsView = new ACLView({
+                el: this.$("#acl-mapping"),
+                editMode:true
+            }).render();
 
             return this;
         },
@@ -77,7 +83,8 @@ define(
             var saveOptions = {
                 templateId: templateId ? templateId : null,
                 workflowModelId: workflow ? workflow.get("id") : null,
-                roleMapping: workflow? this.workflowsMappingView.toList(): null
+                roleMapping: workflow? this.workflowsMappingView.toList(): null,
+                acl:this.workspaceMembershipsView.toList()
             };
 
             this.model.save(saveOptions, {

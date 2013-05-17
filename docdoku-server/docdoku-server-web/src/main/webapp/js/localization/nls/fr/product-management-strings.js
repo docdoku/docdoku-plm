@@ -45,5 +45,6 @@ define({
     "ITERATION_NOTE":"Note d'itération",
     "ITERATION_NOTE_PROMPT_LABEL":"La note d'itération n'a pas été définie. Souhaitez-vous l'ajouter ?",
     "ITERATION_NOTE_PROMPT_CANCEL":"Ignorer",
-    "ITERATION_NOTE_PROMPT_OK":"Ajouter la note d'itération"
+    "ITERATION_NOTE_PROMPT_OK":"Ajouter la note d'itération",
+    "ACL":"Droits"
 });

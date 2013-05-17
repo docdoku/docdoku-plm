@@ -131,16 +131,20 @@ define([
         onNoPartSelected:function(){
             this.trigger("delete-button:display",false);
             this.trigger("checkout-group:display",false);
+            this.trigger("acl-edit-button:display",false);
         },
 
         onOnePartSelected:function(){
             this.trigger("delete-button:display",true);
             this.trigger("checkout-group:display",true);
+            var partSelected = this.getSelectedPart();
+            this.trigger("acl-edit-button:display", partSelected ? (APP_CONFIG.workspaceAdmin || partSelected.getAuthorLogin() == APP_CONFIG.login) : false);
         },
 
         onSeveralPartsSelected:function(){
             this.trigger("delete-button:display",true);
             this.trigger("checkout-group:display",false);
+            this.trigger("acl-edit-button:display",false);
         },
 
         deleteSelectedParts:function(){
@@ -151,7 +155,6 @@ define([
                         view.model.destroy({success:function(){
                             that.removePart(view.model);
                         },error:function(model,err){
-
                             alert(err.responseText)
                         }});
                     }

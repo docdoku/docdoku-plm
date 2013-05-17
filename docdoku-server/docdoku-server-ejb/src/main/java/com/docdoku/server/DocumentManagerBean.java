@@ -84,9 +84,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
-        User user = userManager.checkWorkspaceReadAccess(pDocMTemplateKey.getWorkspaceId());
-        //TODO checkWorkspaceWriteAccess ?
+    public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
+        User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
+
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
@@ -116,15 +116,28 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
-        User user = userManager.checkWorkspaceReadAccess(pDocPK.getWorkspaceId());
+    public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
+
+        User user = checkDocumentMasterWriteAccess(new DocumentMasterKey(pDocPK.getWorkspaceId(),pDocPK.getDocumentMasterId(),pDocPK.getDocumentMasterVersion()));
+
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(em);
         DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentMasterVersion()));
+
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocPK.getWorkspaceId());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+
+        // check write access on acl
+        if(!isAdmin && (docM.getACL() == null || !docM.getACL().hasWriteAccess(user))){
+
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
+
         DocumentIteration document = docM.getIteration(pDocPK.getIteration());
+
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
             BinaryResource binaryResource = null;
             String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/" + docM.getVersion() + "/" + document.getIteration() + "/" + pName;
@@ -152,7 +165,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @LogDocument
     @RolesAllowed("users")
     @Override
-    public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
+    public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
@@ -161,13 +174,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentIteration document = binDAO.getDocumentOwner(binaryResource);
         if (document != null) {
             DocumentMaster docM = document.getDocumentMaster();
-            String owner = docM.getLocation().getOwner();
 
-            if (((owner != null) && (!owner.equals(user.getLogin()))) || (docM.isCheckedOut() && !docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document))) {
-                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
-            } else {
-                return binaryResource;
+            if((docM.getACL() != null && docM.getACL().hasReadAccess(user)) || docM.getACL() == null){
+                String owner = docM.getLocation().getOwner();
+
+                if (((owner != null) && (!owner.equals(user.getLogin()))) || (docM.isCheckedOut() && !docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document))) {
+                    throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
+                } else {
+                    return binaryResource;
+                }
+            }else{
+                throw new AccessRightException(new Locale(user.getLanguage()),user);
             }
+
         } else {
             return binaryResource;
         }
@@ -245,7 +264,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster getDocumentMaster(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster getDocumentMaster(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
         DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).loadDocM(pDocMPK);
         String owner = docM.getLocation().getOwner();
@@ -253,11 +272,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
-        if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
-            docM = docM.clone();
-            docM.removeLastIteration();
+        if((docM.getACL() != null && docM.getACL().hasReadAccess(user)) || docM.getACL() == null){
+
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
+            }
+            return docM;
+
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
-        return docM;
+
     }
 
     @Override
@@ -281,7 +307,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,ACL.Permission> pACLUserEntries, Map<String,ACL.Permission> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
 
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        User user = checkDocumentMasterWriteAccess(docKey);
+
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = documentMasterDAO.getDocMRef(docKey);
         Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
@@ -457,7 +484,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 ite.set(docM);
             }
 
-            //Check acess rights
+            //Check access rights
             if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
                 ite.remove();
                 continue;
@@ -687,7 +714,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMaster moveDocumentMaster(String pParentFolder, DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
         //TODO security check if both parameter belong to the same workspace
-        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
+
         Folder newLocation = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
         checkWritingRight(user, newLocation);
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
@@ -803,16 +831,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster checkOutDocument(DocumentMasterKey pDocMPK)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, CreationException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, CreationException, UserNotActiveException {
+
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
         //Check access rights on docM
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocMPK.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)) {
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
+
         String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
@@ -870,8 +897,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster saveTags(DocumentMasterKey pDocMPK, String[] pTags)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
+
         Locale userLocale = new Locale(user.getLanguage());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(userLocale, em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
@@ -913,8 +942,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster undoCheckOutDocument(DocumentMasterKey pDocMPK)
-            throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+            throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
+
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
+
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
@@ -940,16 +971,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster checkInDocument(DocumentMasterKey pDocMPK)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
+
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
-        //Check access rights on docM
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocMPK.getWorkspaceId());
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)) {
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
+
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
             User[] subscribers = new SubscriptionDAO(em).getIterationChangeEventSubscribers(docM);
 
@@ -1037,8 +1065,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public void deleteDocumentMaster(DocumentMasterKey pDocMPK)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMPK.getWorkspaceId());
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
         //Check access rights on
@@ -1092,7 +1121,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         DocumentIteration document = binDAO.getDocumentOwner(file);
         DocumentMaster docM = document.getDocumentMaster();
-        //check access rights on docM ?
+
+        //check access rights on docM
+        user = checkDocumentMasterWriteAccess(docM.getKey());
+
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user) && docM.getLastIteration().equals(document)) {
             try {
                 dataManager.deleteData(file);
@@ -1128,8 +1160,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster updateDocument(DocumentIterationKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public DocumentMaster updateDocument(DocumentIterationKey pKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        User user = checkDocumentMasterWriteAccess(new DocumentMasterKey(pKey.getWorkspaceId(), pKey.getDocumentMasterId(), pKey.getDocumentMasterVersion()));
+
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(new DocumentMasterKey(pKey.getWorkspaceId(), pKey.getDocumentMasterId(), pKey.getDocumentMasterVersion()));
@@ -1310,8 +1344,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void subscribeToStateChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+    public void subscribeToStateChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+        User user = checkDocumentMasterReadAccess(pDocMPK);
         DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).loadDocM(pDocMPK);
         String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
@@ -1323,16 +1357,16 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void unsubscribeToStateChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+    public void unsubscribeToStateChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, DocumentMasterNotFoundException {
+        User user = checkDocumentMasterReadAccess(pDocMPK);
         SubscriptionKey key = new SubscriptionKey(user.getWorkspaceId(), user.getLogin(), pDocMPK.getWorkspaceId(), pDocMPK.getId(), pDocMPK.getVersion());
         new SubscriptionDAO(em).removeStateChangeSubscription(key);
     }
 
     @RolesAllowed("users")
     @Override
-    public void subscribeToIterationChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+    public void subscribeToIterationChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+        User user = checkDocumentMasterReadAccess(pDocMPK);
         DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).getDocMRef(pDocMPK);
         String owner = docM.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
@@ -1344,8 +1378,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void unsubscribeToIterationChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
+    public void unsubscribeToIterationChangeEvent(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, DocumentMasterNotFoundException {
+        User user = checkDocumentMasterReadAccess(pDocMPK);
         SubscriptionKey key = new SubscriptionKey(user.getWorkspaceId(), user.getLogin(), pDocMPK.getWorkspaceId(), pDocMPK.getId(), pDocMPK.getVersion());
         new SubscriptionDAO(em).removeIterationChangeSubscription(key);
     }
@@ -1446,5 +1480,39 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (wks.isFolderLocked() && (!pUser.isAdministrator())) {
             throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException7");
         }
+    }
+
+    private User checkDocumentMasterWriteAccess(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(documentMasterKey.getWorkspaceId());
+        DocumentMaster documentMaster = new DocumentMasterDAO(em).loadDocM(documentMasterKey);
+
+        if(documentMaster.getACL()==null){
+            return userManager.checkWorkspaceWriteAccess(documentMasterKey.getWorkspaceId());
+        }else{
+            if(documentMaster.getACL().hasWriteAccess(user)){
+                return user;
+            }else{
+                throw new AccessRightException(new Locale(user.getLanguage()),user);
+            }
+        }
+
+    }
+
+    private User checkDocumentMasterReadAccess(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(documentMasterKey.getWorkspaceId());
+        DocumentMaster documentMaster = new DocumentMasterDAO(em).loadDocM(documentMasterKey);
+
+        if(documentMaster.getACL()==null){
+            return user;
+        }else{
+            if(documentMaster.getACL().hasReadAccess(user)){
+                return user;
+            }else{
+                throw new AccessRightException(new Locale(user.getLanguage()),user);
+            }
+        }
+
     }
 }

@@ -20,14 +20,14 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.PartRevisionNotFoundException;
-
-import java.util.List;
-import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.List;
+import java.util.Locale;
 
 
 public class PartRevisionDAO {
@@ -68,5 +68,35 @@ public class PartRevisionDAO {
         TypedQuery<PartRevision> query = em.createQuery("SELECT DISTINCT p FROM PartRevision p WHERE p.checkOutUser is not null and p.partMaster.workspace.id = :workspaceId", PartRevision.class);
         query.setParameter("workspaceId", pWorkspaceId);
         return query.getResultList();
+    }
+
+    public int getPartRevisionCount(String pWorkspaceId) {
+        return ((Number)em.createNamedQuery("PartRevision.countByWorkspace")
+                .setParameter("workspaceId", pWorkspaceId)
+                .getSingleResult()).intValue();
+    }
+
+    public List<PartRevision> getPartRevisions(String pWorkspaceId, int pStart, int pMaxResults) {
+        return em.createNamedQuery("PartRevision.findByWorkspace", PartRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setFirstResult(pStart)
+                .setMaxResults(pMaxResults)
+                .getResultList();
+    }
+
+    public int getPartRevisionCountFiltered(User caller,String workspaceId){
+        return ((Number)em.createNamedQuery("PartRevision.countByWorkspace.filterUserACLEntry")
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("user", caller)
+                .getSingleResult()).intValue();
+    }
+
+    public List<PartRevision> getPartRevisionsFiltered(User caller, String pWorkspaceId, int pStart, int pMaxResults) {
+        return em.createNamedQuery("PartRevision.findByWorkspace.filterUserACLEntry", PartRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .setParameter("user",caller)
+                .setFirstResult(pStart)
+                .setMaxResults(pMaxResults)
+                .getResultList();
     }
 }

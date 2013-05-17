@@ -22,6 +22,7 @@ define({
     DELETE_PRODUCT_ERROR:"Une erreur est survenue lors de la suppresion.",
     VISUALIZE_PRODUCT:"Visualiser le produit",
     NEW_PART_TEMPLATE:"Nouveau modèle d'article",
-    WORKFLOW:"Workflow"
+    WORKFLOW:"Workflow",
+    ACL:"Droits"
 
 });

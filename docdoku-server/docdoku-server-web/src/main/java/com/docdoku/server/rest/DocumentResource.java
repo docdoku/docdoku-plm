@@ -532,23 +532,20 @@ public class DocumentResource {
     @Consumes("application/json;charset=UTF-8")
     @Path("acl")
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("docKey") String docKey, ACLDTO acl) {
-
-        int lastDash = docKey.lastIndexOf('-');
-        String id = docKey.substring(0, lastDash);
-        String version = docKey.substring(lastDash + 1, docKey.length());
-        DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
-
         try {
             if (acl != null) {
+                int lastDash = docKey.lastIndexOf('-');
+                String id = docKey.substring(0, lastDash);
+                String version = docKey.substring(lastDash + 1, docKey.length());
+                DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
+
                 documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, acl.getUserEntries(), acl.getGroupEntries());
             }
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-
     }
-
 
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {

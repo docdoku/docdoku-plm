@@ -22,27 +22,10 @@ package com.docdoku.loaders;
 import com.docdoku.client.ScriptingTools;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceNumberAttribute;
-import com.docdoku.core.product.CADInstance;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.AccessRightException;
-import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.FileAlreadyExistsException;
-import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.PartMasterAlreadyExistsException;
-import com.docdoku.core.services.PartRevisionNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkflowModelNotFoundException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
+import com.docdoku.core.product.*;
+import com.docdoku.core.services.*;
+
+import javax.activation.DataHandler;
 import java.io.Console;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -51,7 +34,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import javax.activation.DataHandler;
 
 public class ProductStructureSampleLoader {
 
@@ -134,10 +116,10 @@ public class ProductStructureSampleLoader {
     
     private static void createBikeSampleProduct() throws Exception {
 
-        PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader",null,null);
+        PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader",null,null,null,null);
         pm.createConfigurationItem(workspace, "Bike", "Bicycle Motocross", "BMX");
 
-        PartMaster componentM = pm.createPartMaster(workspace, "BPM12VTX", "", "", false, null, "",null,null);
+        PartMaster componentM = pm.createPartMaster(workspace, "BPM12VTX", "", "", false, null, "",null,null,null,null);
         List<PartUsageLink> subParts = new ArrayList<PartUsageLink>();
         PartUsageLink link = new PartUsageLink();
         link.setAmount(1);

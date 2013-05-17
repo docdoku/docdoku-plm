@@ -115,7 +115,7 @@ public class PartMasterDAO {
         return partMId;
     }
 
-    public List<PartMaster> getParts(String pWorkspaceId, int pStart, int pMaxResults) {
+    public List<PartMaster> getPartMasters(String pWorkspaceId, int pStart, int pMaxResults) {
         return em.createNamedQuery("PartMaster.findByWorkspace", PartMaster.class)
                 .setParameter("workspaceId", pWorkspaceId)
                 .setFirstResult(pStart)
@@ -123,7 +123,7 @@ public class PartMasterDAO {
                 .getResultList();
     }
 
-    public int getPartsCount(String pWorkspaceId) {
+    public int getPartMasterCount(String pWorkspaceId) {
         return ((Number)em.createNamedQuery("PartMaster.countByWorkspace")
                 .setParameter("workspaceId", pWorkspaceId)
                 .getSingleResult()).intValue();

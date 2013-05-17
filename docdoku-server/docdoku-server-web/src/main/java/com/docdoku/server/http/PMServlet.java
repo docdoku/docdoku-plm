@@ -57,11 +57,10 @@ public class PMServlet extends HttpServlet {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
         }
+        HttpSession sessionHTTP = pRequest.getSession();
+        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
         if (workspaceID == null) {
-
-            HttpSession sessionHTTP = pRequest.getSession();
-            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
             Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
 
             if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
@@ -77,6 +76,7 @@ public class PMServlet extends HttpServlet {
             }
         }
         else {
+            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID) ? true : false);
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);

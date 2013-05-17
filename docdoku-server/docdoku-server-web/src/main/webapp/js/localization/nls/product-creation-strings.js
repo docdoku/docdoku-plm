@@ -24,7 +24,8 @@ define({
         VISUALIZE_PRODUCT:"Visualize product",
         GENERAL:"General",
         ATTRIBUTES:"Attributes",
-        WORKFLOW:"Workflow"
+        WORKFLOW:"Workflow",
+        ACL:"ACL"
     },
     "fr": true
 });
