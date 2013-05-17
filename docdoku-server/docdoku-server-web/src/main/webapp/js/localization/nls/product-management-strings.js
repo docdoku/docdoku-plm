@@ -46,7 +46,8 @@ define({
         "ITERATION_NOTE":"Iteration note",
         "ITERATION_NOTE_PROMPT_LABEL":"The iteration note has not been defined. Do you want to add it?",
         "ITERATION_NOTE_PROMPT_CANCEL":"Ignore",
-        "ITERATION_NOTE_PROMPT_OK":"Add iteration note"
+        "ITERATION_NOTE_PROMPT_OK":"Add iteration note",
+        "ACL":"ACL"
     },
     "fr": true
 });

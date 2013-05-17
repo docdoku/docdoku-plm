@@ -67,7 +67,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @XmlMimeType("application/octet-stream")
     @Override
-    public DataHandler downloadFromDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DataHandler downloadFromDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         String fullName = workspaceId + "/documents/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
@@ -94,7 +94,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @XmlMimeType("application/octet-stream")
     @Override
-    public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         String fullName = workspaceId + "/templates/" + templateID + "/" + fileName;
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
@@ -103,7 +103,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @Override
     public void uploadToDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
+            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
 
@@ -214,7 +214,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @Override
     public void uploadToTemplate(String workspaceId, String templateID, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException {
+            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentMasterTemplateKey templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
         BinaryResource binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);

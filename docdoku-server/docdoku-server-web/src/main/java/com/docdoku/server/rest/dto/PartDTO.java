@@ -21,7 +21,6 @@
 package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +43,7 @@ public class PartDTO implements Serializable {
     private boolean standardPart;
     private String workspaceId;
     private boolean publicShared;
+    private ACLDTO acl;
 
     public PartDTO() {
     }
@@ -166,5 +166,13 @@ public class PartDTO implements Serializable {
 
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
     }
 }

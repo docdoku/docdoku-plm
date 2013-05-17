@@ -18,12 +18,20 @@
     {{/model.getLastIteration}}</td>
 <td>{{model.isStandardPartReadable}}</td>
 <td>{{model.getName}}</td>
-<td><a class="author-popover">{{getAuthorName}}</a></td>
+<td><a class="author-popover">{{model.getAuthorName}}</a></td>
 <td>{{model.getLifeCycleState}}</a></td>
 
 <td>{{model.getFormattedCreationDate}}</td>
 <td>{{model.getFormattedCheckoutDate}}</td>
 <td><a class="checkout-user-popover">{{model.getCheckOutUserName}}</a></td>
+<td class="part-acl-info">
+    {{#model.isReadOnly}}
+    <i class="icon-lock read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/model.isReadOnly}}
+    {{#model.isFullAccess}}
+    <i class="icon-lock full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/model.isFullAccess}}
+</td>
 <td class="part-revision-share">
     <i class="icon-globe" title="{{i18n.PUBLISH}}"></i>
 </td>

@@ -43,6 +43,7 @@ public class PartCreationDTO implements Serializable {
     private String workspaceId;
     private String templateId;
     private RoleMappingDTO[] roleMapping;
+    private ACLDTO acl;
 
     public PartCreationDTO() {
     }
@@ -165,5 +166,13 @@ public class PartCreationDTO implements Serializable {
 
     public void setRoleMapping(RoleMappingDTO[] roleMapping) {
         this.roleMapping = roleMapping;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
     }
 }

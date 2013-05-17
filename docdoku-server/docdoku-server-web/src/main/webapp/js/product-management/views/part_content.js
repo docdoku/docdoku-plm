@@ -4,14 +4,16 @@ define([
     "i18n!localization/nls/product-management-strings",
     "views/part_list",
     "views/part_creation_view",
-    "common-objects/views/prompt"
+    "common-objects/views/prompt",
+    "common-objects/views/security/acl_edit"
 ], function (
     PartCollection,
     template,
     i18n,
     PartListView,
     PartCreationView,
-    PromptView
+    PromptView,
+    ACLEditView
     ) {
     var PartContentView = Backbone.View.extend({
 
@@ -25,6 +27,7 @@ define([
             "click button.checkout":"checkout",
             "click button.undocheckout":"undocheckout",
             "click button.checkin":"checkin",
+            "click button.edit-acl":"updateACL",
             "click button.next-page":"toNextPage",
             "click button.previous-page":"toPreviousPage",
             "click button.first-page":"toFirstPage",
@@ -53,6 +56,7 @@ define([
             this.partListView.on("delete-button:display", this.changeDeleteButtonDisplay);
             this.partListView.on("checkout-group:display", this.changeCheckoutGroupDisplay);
             this.partListView.on("checkout-group:update", this.updateCheckoutButtons);
+            this.partListView.on("acl-edit-button:display", this.changeACLButtonDisplay);
 
             return this;
         },
@@ -62,6 +66,7 @@ define([
             this.checkoutGroup = this.$(".checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");
+            this.aclButton = this.$(".edit-acl");
             this.checkinButton = this.$(".checkin");
             this.currentPageIndicator =this.$(".current-page");
             this.pageControls =this.$(".page-controls");
@@ -96,6 +101,14 @@ define([
                 this.deleteButton.show();
             }else{
                 this.deleteButton.hide();
+            }
+        },
+
+        changeACLButtonDisplay:function(state){
+            if(state){
+                this.aclButton.show();
+            }else{
+                this.aclButton.hide();
             }
         },
 
@@ -148,6 +161,43 @@ define([
         undocheckout:function(){
             this.partListView.getSelectedPart().undocheckout();
         },
+
+        updateACL:function(){
+
+            var that = this;
+
+            var selectedPart = that.partListView.getSelectedPart();
+
+            var aclEditView = new ACLEditView({
+                editMode:true,
+                acl:selectedPart.get("acl")
+            });
+
+            aclEditView.setTitle(selectedPart.getPartKey());
+
+            $("body").append(aclEditView.render().el);
+
+            aclEditView.openModal();
+
+            aclEditView.on("acl:update",function(){
+
+                var acl = aclEditView.toList() ;
+
+                selectedPart.updateACL({
+                    acl:acl,
+                    success:function(){
+                        selectedPart.set("acl",acl);
+                        aclEditView.closeModal();
+                    },
+                    error:function(){
+                        alert("Error on update acl")
+                    }
+                });
+
+            });
+
+        },
+
         resetCollection:function(){
             this.partListView.collection.fetch({reset:true});
         },

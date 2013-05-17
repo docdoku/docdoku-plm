@@ -219,6 +219,12 @@ public class DocumentMasterDAO {
                 WorkflowDAO workflowDAO = new WorkflowDAO(em);
                 workflowDAO.createWorkflow(pDocumentMaster.getWorkflow());
             }
+
+            if(pDocumentMaster.getACL()!=null){
+                ACLDAO aclDAO = new ACLDAO(em);
+                aclDAO.createACL(pDocumentMaster.getACL());
+            }
+
             //the EntityExistsException is thrown only when flush occurs
             em.persist(pDocumentMaster);
             em.flush();

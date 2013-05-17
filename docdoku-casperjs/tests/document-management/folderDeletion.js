@@ -12,10 +12,10 @@ casper.waitForSelector('#folder-nav',
     }
 );
 
-casper.waitForSelector('#items-view7',
+casper.waitForSelector('#folder-nav .items',
     function deleteNewFolder() {
-        this.test.assertExists('#items-view7 li:nth-child(2)', 'Folder deletion link found');
-        this.click("#items-view7 li:nth-child(2) .delete a");
+        this.test.assertExists('#folder-nav .items a[title='+folderCreationName+']', 'Folder created found');
+        this.click("#folder-nav .items a[title="+folderCreationName+"] + .btn-group .delete a");
     }
 );
 

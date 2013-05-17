@@ -203,6 +203,40 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 url: this.url() + "/unpublish",
                 success: args.success
             });
+        },
+
+        updateACL:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/acl",
+                data: JSON.stringify(args.acl),
+                contentType: "application/json; charset=utf-8",
+                success: args.success,
+                error : args.error
+            });
+        },
+
+        hasACLForCurrentUser:function(){
+            return this.getACLPermissionForCurrentUser() != false;
+        },
+
+        isForbidden:function(){
+            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
+        },
+
+        isReadOnly:function(){
+            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
+        },
+
+        isFullAccess:function(){
+            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
+        },
+
+        getACLPermissionForCurrentUser:function(){
+            if(this.get("acl")){
+                return this.get("acl").userEntries[APP_CONFIG.login];
+            }
+            return false;
         }
 
 

@@ -77,6 +77,9 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 url: this.url() + "/checkout",
                 success: function() {
                     this.fetch();
+                },
+                error:function(xhr,status,errorThrown){
+                    alert(xhr.responseText);
                 }
             });
         },
@@ -88,6 +91,9 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 url: this.url() + "/undocheckout",
                 success: function() {
                     this.fetch();
+                },
+                error:function(xhr,status,errorThrown){
+                    alert(xhr.responseText);
                 }
             });
         },
@@ -99,6 +105,9 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 url: this.url() + "/checkin",
                 success: function() {
                     this.fetch();
+                },
+                error:function(xhr,status,errorThrown){
+                    alert(xhr.responseText);
                 }
             });
         },
@@ -179,13 +188,14 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
 
         },
 
-        createNewVersion: function(title, description, workflow, roleMappingList) {
+        createNewVersion: function(title, description, workflow, roleMappingList, aclList) {
 
             var data = {
                 title: title,
                 description: description,
                 workflowModelId: workflow ? workflow.get("id") : null,
-                roleMapping:workflow? roleMappingList: null
+                roleMapping:workflow? roleMappingList: null,
+                acl:aclList
             };
 
             $.ajax({
@@ -200,7 +210,7 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
             });
         },
 
-        moveInto: function(path, callback) {
+        moveInto: function(path, callback, error) {
 
             var data = {
                 path: path
@@ -216,6 +226,10 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                     if(callback){
                         callback();
                     }
+                },
+                error:function(xhr,status,errorThrown){
+                    alert(xhr.responseText);
+                    error();
                 }
             });
         },
@@ -244,8 +258,41 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
                 url: this.url() + "/unpublish",
                 success: args.success
             });
-        }
+        },
 
+        updateACL:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/acl",
+                data: JSON.stringify(args.acl),
+                contentType: "application/json; charset=utf-8",
+                success: args.success,
+                error : args.error
+            });
+        },
+
+        hasACLForCurrentUser:function(){
+            return this.getACLPermissionForCurrentUser() != false;
+        },
+
+        isForbidden:function(){
+            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
+        },
+
+        isReadOnly:function(){
+            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
+        },
+
+        isFullAccess:function(){
+            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
+        },
+
+        getACLPermissionForCurrentUser:function(){
+            if(this.get("acl")){
+                return this.get("acl").userEntries[APP_CONFIG.login];
+            }
+            return false;
+        }
 
     });
 

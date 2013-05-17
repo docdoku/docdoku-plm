@@ -38,6 +38,7 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
     private String templateId;
     private String path;
     private RoleMappingDTO[] roleMapping;
+    private ACLDTO acl;
 
     public DocumentCreationDTO() {
     }
@@ -127,6 +128,13 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         this.roleMapping = roleMapping;
     }
 
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
+    }
 
     @Override
     public String toString() {

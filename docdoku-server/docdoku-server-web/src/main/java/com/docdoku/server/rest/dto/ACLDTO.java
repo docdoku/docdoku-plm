@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.security.ACL;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,23 +29,17 @@ import java.util.Map;
 
 public class ACLDTO implements Serializable{
 
-    private Map<String,Permission> userEntries=new HashMap<String,Permission>();
-    private Map<String,Permission> groupEntries=new HashMap<String,Permission>();
-
-    public enum Permission{FORBIDDEN, READ_ONLY, FULL_ACCESS}
-
+    private Map<String,ACL.Permission> userEntries=new HashMap<String,ACL.Permission>();
+    private Map<String,ACL.Permission> groupEntries=new HashMap<String,ACL.Permission>();
 
     public ACLDTO(){
-        
     }
-
     
-    
-    public void addUserEntry(String login, Permission perm){
+    public void addUserEntry(String login, ACL.Permission perm){
         userEntries.put(login, perm);
     }
 
-    public void addGroupEntry(String groupId, Permission perm){
+    public void addGroupEntry(String groupId, ACL.Permission perm){
         groupEntries.put(groupId, perm);
     }
 
@@ -55,11 +51,11 @@ public class ACLDTO implements Serializable{
         groupEntries.remove(groupId);
     }
 
-    public Map<String, Permission> getGroupEntries() {
+    public Map<String, ACL.Permission> getGroupEntries() {
         return groupEntries;
     }
 
-    public Map<String, Permission> getUserEntries() {
+    public Map<String, ACL.Permission> getUserEntries() {
         return userEntries;
     }
 

@@ -5,8 +5,9 @@ define([
     "views/document/documents_tags",
     "views/document/document_new_version",
     "views/advanced_search",
-    "common-objects/views/prompt"
-], function(i18n, ContentView, DocumentListView, DocumentsTagsView, DocumentNewVersionView, AdvancedSearchView, PromptView) {
+    "common-objects/views/prompt",
+    "common-objects/views/security/acl_edit"
+], function(i18n, ContentView, DocumentListView, DocumentsTagsView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -19,6 +20,7 @@ define([
             this.events["click .actions .new-version"] = "actionNewVersion";
             this.events["submit .actions #document-search-form"] = "onQuickSearch";
             this.events["click .actions .advanced-search-button"] = "onAdvancedSearchButton";
+            this.events["click .actions .edit-acl"] = "onEditAcl";
         },
 
         rendered: function() {
@@ -30,6 +32,7 @@ define([
             this.deleteButton = this.$(".actions .delete");
             this.tagsButton = this.$(".actions .tags");
             this.newVersionButton = this.$(".actions .new-version");
+            this.aclButton = this.$(".actions .edit-acl");
 
             this.listView = this.addSubView(
                 new DocumentListView({
@@ -70,6 +73,7 @@ define([
             this.checkoutGroup.hide();
             this.tagsButton.hide();
             this.newVersionButton.hide();
+            this.aclButton.hide();
         },
 
         onOneDocumentSelected: function(document) {
@@ -90,6 +94,11 @@ define([
                 this.updateActionsButton(true, false);
             }
 
+
+           if((APP_CONFIG.workspaceAdmin || document.attributes.author.login == APP_CONFIG.login)){
+                this.aclButton.show();
+           }
+
         },
 
         onSeveralDocumentsSelected: function() {
@@ -97,6 +106,7 @@ define([
             this.tagsButton.show();
             this.newVersionButton.hide();
             this.checkoutGroup.hide();
+            this.aclButton.hide();
         },
 
         updateActionsButton: function(canCheckout, canUndoAndCheckin) {
@@ -210,6 +220,48 @@ define([
             $("body").append(advancedSearchView.render().el);
             advancedSearchView.openModal();
             advancedSearchView.setRouter(this.router);
+        },
+
+        onEditAcl:function(){
+
+            var documentChecked;
+
+            this.listView.eachChecked(function(view) {
+                documentChecked = view.model;
+            });
+
+            if(documentChecked){
+
+                    var aclEditView = new ACLEditView({
+                        editMode:true,
+                        acl:documentChecked.get("acl")
+                    });
+
+                    aclEditView.setTitle(documentChecked.getReference());
+                    $("body").append(aclEditView.render().el);
+
+                    aclEditView.openModal();
+                    aclEditView.on("acl:update",function(){
+                        var acl = aclEditView.toList() ;
+                        documentChecked.updateACL({
+                            acl:acl,
+                            success:function(){
+                                documentChecked.set("acl",acl);
+                                aclEditView.closeModal();
+                            },
+                            error:function(){
+                                alert("Error on update acl")
+                            }
+                        });
+
+                    });
+
+
+
+            }
+
+            return false;
+
         },
 
         highlightAddedView:function(model){
