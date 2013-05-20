@@ -98,6 +98,7 @@
                                         <sourceFile>com/docdoku/cli/commands/GetCommand.java</sourceFile>
                                         <sourceFile>com/docdoku/cli/commands/PutCommand.java</sourceFile>
                                         <sourceFile>com/docdoku/cli/commands/UndoCheckOutCommand.java</sourceFile>
+                                        <sourceFile>com/docdoku/cli/commands/StatusCommand.java</sourceFile>
                                     </sourceFiles>
                                 </configuration>
                             </execution>
