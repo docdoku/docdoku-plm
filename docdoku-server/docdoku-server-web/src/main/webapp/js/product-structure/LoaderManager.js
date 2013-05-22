@@ -27,6 +27,24 @@ define(function() {
 
                     break;
 
+                case 'stl':
+
+                    if(this.loader == null) {
+                        this.loader = new THREE.STLLoader();
+                    }
+
+                    this.loader.addEventListener( 'load', function ( stl ) {
+                        var geometry = stl.content;
+                        var material = new THREE.MeshPhongMaterial();
+                        var mesh = new THREE.Mesh(geometry,material);
+
+                        callback(mesh);
+                    });
+
+                    this.loader.load( filename );
+
+                    break;
+
                 case 'js':
                 case 'json':
 
