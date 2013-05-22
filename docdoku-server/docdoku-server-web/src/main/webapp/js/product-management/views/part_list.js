@@ -35,6 +35,9 @@ define([
         },
 
         resetList:function(){
+            if(this.oTable){
+                this.oTable.fnDestroy();
+            }
             this.$el.html(this.template({i18n:i18n}));
             this.bindDomElements();
             var that = this;
@@ -42,19 +45,7 @@ define([
             this.collection.each(function(model){
                 that.addPart(model);
             });
-            this.$el.dataTable().fnDestroy();
-            this.$el.dataTable({
-                bDestroy:true,
-                iDisplayLength:-1,
-                oLanguage:{
-                    sSearch: "<i class='icon-search'></i>"
-                },
-                sDom : 'ft',
-                aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0,11,12 ] }
-                ]
-            });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
+            this.dataTable();
         },
 
         pushPart:function(part){
@@ -63,11 +54,11 @@ define([
 
         addNewPart:function(model){
             this.addPart(model,true);
+            this.redraw();
         },
 
         addPart:function(model, effect){
             var view = this.addPartView(model);
-            this.$el.removeClass("hide");
             if(effect){
                 view.$el.highlightEffect();
             }
@@ -75,6 +66,7 @@ define([
 
         removePart:function(model){
             this.removePartView(model);
+            this.redraw();
         },
 
         removePartView:function(model){
@@ -85,11 +77,9 @@ define([
 
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
+                var row = viewToRemove.$el.get(0);
+                this.oTable.fnDeleteRow(this.oTable.fnGetPosition(row));
                 viewToRemove.remove();
-            }
-
-            if( this.listItemViews.length == 0){
-                this.$el.addClass("hide");
             }
 
         },
@@ -99,6 +89,7 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            view.on("rendered",this.redraw);
             return view;
         },
 
@@ -186,6 +177,26 @@ define([
                 return checkedView.model;
             }
 
+        },
+        redraw:function(){
+            this.dataTable();
+        },
+        dataTable:function(){
+            if(this.oTable){
+                this.$el.dataTable().fnDestroy();
+            }
+            this.oTable = this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>"
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,11,12 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         }
 
     });

@@ -26,8 +26,6 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
-            this.bindDomElements();
             this.collection.fetch({reset:true});
             return this;
         },
@@ -38,24 +36,17 @@ define([
         },
 
         resetList:function(){
+            if(this.oTable){
+                this.oTable.fnDestroy();
+            }
+            this.$el.html(this.template({i18n:i18n}));
+            this.bindDomElements();
+            this.listItemViews=[];
             var that = this;
-            this.$items.empty();
             this.collection.each(function(model){
                 that.addProduct(model);
             });
-            this.$el.dataTable().fnDestroy();
-            this.$el.dataTable({
-                bDestroy:true,
-                iDisplayLength:-1,
-                oLanguage:{
-                    sSearch: "<i class='icon-search'></i>"
-                },
-                sDom : 'ft',
-                aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0,3 ] }
-                ]
-            });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
+            this.dataTable();
         },
 
         pushProduct:function(product){
@@ -64,11 +55,11 @@ define([
 
         addNewProduct:function(model){
             this.addProduct(model,true);
+            this.redraw();
         },
 
         addProduct:function(model,effect){
             var view = this.addProductView(model);
-            this.$el.removeClass("hide");
             if(effect){
                 view.$el.highlightEffect();
             }
@@ -76,9 +67,7 @@ define([
 
         removeProduct:function(model){
             this.removeProductView(model);
-            if(!this.collection.size()){
-                this.$el.hide();
-            }
+            this.redraw();
         },
 
         removeProductView:function(model){
@@ -89,11 +78,9 @@ define([
 
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
+                var row = viewToRemove.$el.get(0);
+                this.oTable.fnDeleteRow(this.oTable.fnGetPosition(row));
                 viewToRemove.remove();
-            }
-
-            if( this.listItemViews.length == 0){
-                this.$el.addClass("hide");
             }
 
         },
@@ -103,6 +90,7 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            view.on("rendered",this.redraw);
             return view;
         },
 
@@ -155,6 +143,26 @@ define([
                     }
                 });
             }
+        },
+        redraw:function(){
+            this.dataTable();
+        },
+        dataTable:function(){
+            if(this.oTable){
+                this.$el.dataTable().fnDestroy();
+            }
+            this.oTable = this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>"
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,3 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         }
 
     });

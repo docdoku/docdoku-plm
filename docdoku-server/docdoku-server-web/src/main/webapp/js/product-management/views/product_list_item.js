@@ -22,6 +22,7 @@ define([
         render:function(){
             this.$el.html(this.template({model:this.model, i18n:i18n}));
             this.$checkbox = this.$("input[type=checkbox]");
+            this.trigger("rendered",this);
             return this;
         },
 

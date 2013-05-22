@@ -14,27 +14,37 @@ define([
 		template: Mustache.compile(template),
 
 		itemViewFactory: function (model) {
-			return new DocumentListItemView({
+            model.on("change",this.redraw);
+            return new DocumentListItemView({
 				model: model
 			});
 		},
         rendered:function(){
             var that = this ;
             this.on("ready",function(){
-                that.$el.dataTable({
-                    bDestroy:true,
-                    iDisplayLength:-1,
-                    oLanguage:{
-                        sSearch: "<i class='icon-search'></i>"
-                    },
-                    sDom : 'ft',
-                    aoColumnDefs: [
-                        { "bSortable": false, "aTargets": [ 0,1,12,13,14,15 ] }
-                    ]
-                });
-                that.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
+                that.dataTable();
             });
 
+        },
+        redraw:function(){
+            this.dataTable();
+        },
+        dataTable:function(){
+            if(this.oTable){
+                this.oTable.fnDestroy();
+            }
+            this.oTable = this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>"
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,1,12,13,14,15 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
         }
 
 	});

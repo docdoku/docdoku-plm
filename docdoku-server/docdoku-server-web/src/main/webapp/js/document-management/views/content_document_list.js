@@ -159,9 +159,10 @@ define([
         },
 
         actionDelete: function() {
+            var that = this;
             if (confirm(i18n["DELETE_SELECTION_?"])) {
                 this.listView.eachChecked(function(view) {
-                    view.model.destroy();
+                    view.model.destroy({success:function(){that.listView.redraw()}});
                 });
             }
             return false;
@@ -224,6 +225,7 @@ define([
 
         onEditAcl:function(){
 
+            var that = this;
             var documentChecked;
 
             this.listView.eachChecked(function(view) {
@@ -248,6 +250,7 @@ define([
                             success:function(){
                                 documentChecked.set("acl",acl);
                                 aclEditView.closeModal();
+                                that.listView.redraw();
                             },
                             error:function(){
                                 alert("Error on update acl")
@@ -265,12 +268,12 @@ define([
         },
 
         highlightAddedView:function(model){
+            this.listView.redraw();
             var addedView = _.find(this.listView.subViews, function(view){ return view.model == model});
             if(addedView){
                 addedView.$el.highlightEffect();
             }
         }
-
 
     });
 

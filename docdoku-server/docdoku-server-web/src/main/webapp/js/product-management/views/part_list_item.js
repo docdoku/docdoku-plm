@@ -33,6 +33,7 @@ define([
                 this.trigger("selectionChanged",this);
             }
             this.bindUserPopover();
+            this.trigger("rendered",this);
             return this;
         },
 
