@@ -1,11 +1,13 @@
 define([
     "text!templates/product_list.html",
     "i18n!localization/nls/product-management-strings",
-    "views/product_list_item"
+    "views/product_list_item",
+    "i18n!localization/nls/datatable-strings"
 ], function (
     template,
     i18n,
-    ProductListItemView
+    ProductListItemView,
+    i18nDt
     ) {
     var ProductListView = Backbone.View.extend({
 
@@ -41,6 +43,19 @@ define([
             this.collection.each(function(model){
                 that.addProduct(model);
             });
+            this.$el.dataTable().fnDestroy();
+            this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>"
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,3 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
         },
 
         pushProduct:function(product){

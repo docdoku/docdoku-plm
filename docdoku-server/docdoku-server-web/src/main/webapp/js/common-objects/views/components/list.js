@@ -7,9 +7,10 @@ define([
 		collectionReset: function () {
 			this.clear();
 			if (this.collection.length > 0) {
-				this.render();
-				this.collection.each(this.createItemView);
-			}
+                this.render();
+                this.collection.each(this.createItemView);
+            }
+            this.trigger("ready");
 		},
 		collectionAdd: function () {
 			this.collectionReset();

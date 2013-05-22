@@ -1,11 +1,13 @@
 define([
     "text!templates/part_list.html",
     "i18n!localization/nls/product-management-strings",
-    "views/part_list_item"
+    "views/part_list_item",
+    "i18n!localization/nls/datatable-strings"
 ], function (
     template,
     i18n,
-    PartListItemView
+    PartListItemView,
+    i18nDt
     ) {
     var PartListView = Backbone.View.extend({
 
@@ -23,8 +25,6 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
-            this.bindDomElements();
             this.collection.fetch({reset:true});
             return this;
         },
@@ -35,12 +35,26 @@ define([
         },
 
         resetList:function(){
+            this.$el.html(this.template({i18n:i18n}));
+            this.bindDomElements();
             var that = this;
             this.listItemViews = [];
-            this.$items.empty();
             this.collection.each(function(model){
                 that.addPart(model);
             });
+            this.$el.dataTable().fnDestroy();
+            this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>"
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,11,12 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
         },
 
         pushPart:function(part){

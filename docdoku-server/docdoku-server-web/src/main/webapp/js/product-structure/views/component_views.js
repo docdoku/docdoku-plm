@@ -104,7 +104,7 @@ define(function() {
 
         onComponentSelected: function(e) {
             e.stopPropagation();
-            this.$("a").trigger("component_selected", [this.model,this.$el]);
+            this.$(">a").trigger("component_selected", [this.model,this.$el]);
         },
 
         onEditPart:function(){
@@ -225,7 +225,7 @@ define(function() {
 
         onComponentSelected: function(e) {
             e.stopPropagation();
-            this.$("a").trigger("component_selected", [this.model,this.$el]);
+            this.$(">a").trigger("component_selected", [this.model,this.$el]);
         },
 
         isChecked: function() {

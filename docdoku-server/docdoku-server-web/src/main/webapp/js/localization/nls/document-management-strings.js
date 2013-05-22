@@ -143,7 +143,8 @@ define({
         "PATH":                         "Folder",
         "ACL":                          "ACL",
         "FULL_ACCESS":                  "Full access",
-        "READ_ONLY":                    "Read only"
+        "READ_ONLY":                    "Read only",
+        "FILTER":                       "Filter"
     },
     "fr": true,
     "es": true

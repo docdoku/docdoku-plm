@@ -142,5 +142,6 @@ define({
     "PATH":                         "Dossier",
     "ACL":                          "Droits",
     "FULL_ACCESS":                  "Accès complet",
-    "READ_ONLY":                    "Lecture seule"
+    "READ_ONLY":                    "Lecture seule",
+    "FILTER":                       "Filtrer"
 });
