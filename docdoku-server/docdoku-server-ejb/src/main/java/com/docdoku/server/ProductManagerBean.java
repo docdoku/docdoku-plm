@@ -277,6 +277,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
             newRevision.setACL(acl);
+            new ACLDAO(em).createACL(acl);
         }
 
         PartMasterDAO partMDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
