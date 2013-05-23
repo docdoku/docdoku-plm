@@ -189,7 +189,9 @@ define([
                 bDestroy:true,
                 iDisplayLength:-1,
                 oLanguage:{
-                    sSearch: "<i class='icon-search'></i>"
+                    sSearch: "<i class='icon-search'></i>",
+                    sEmptyTable:i18nDt.NO_DATA,
+                    sZeroRecords:i18nDt.NO_FILTERED_DATA
                 },
                 sDom : 'ft',
                 aoColumnDefs: [
