@@ -21,6 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -607,4 +608,11 @@ public interface IProductManagerWS{
     int getPartRevisionsCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
 
     void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException;
+
+    void createBaseline(ConfigurationItemKey configurationItemKey, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
+
+    List<Baseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    ConfigSpec getConfigSpecForBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
 }

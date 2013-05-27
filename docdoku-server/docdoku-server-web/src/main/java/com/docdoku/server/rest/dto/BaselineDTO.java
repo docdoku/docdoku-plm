@@ -18,34 +18,25 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.docdoku.server.rest.dto;
 
-package com.docdoku.core.configuration;
+import java.util.Date;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import java.io.Serializable;
+public class BaselineDTO {
 
-/**
- * A ConfigSpec is used to filter the right
- * <a href="PartIteration.html">PartIteration</a> of
- * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
- * 
- * @author Florent Garin
- * @version 1.1, 30/10/11
- * @since   V1.1
- */
-@Table(name="CONFIGSPEC")
-@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class, BaselineConfigSpec.class})
-@Inheritance()
-@Entity
-public abstract class ConfigSpec implements Serializable{
-
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Id
     private int id;
+    private String name;
+    private String description;
+    private Date creationDate;
 
-    
-    public ConfigSpec() {
+    public BaselineDTO() {
+    }
+
+    public BaselineDTO(int id, String name, String description, Date creationDate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.creationDate = creationDate;
     }
 
     public int getId() {
@@ -55,8 +46,28 @@ public abstract class ConfigSpec implements Serializable{
     public void setId(int id) {
         this.id = id;
     }
-    
 
-    
-    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 }

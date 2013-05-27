@@ -19,14 +19,13 @@
  */
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.ConfigurationItem;
 
-import java.io.Serializable;
-import java.util.*;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Baseline refers to a specific configuration, it could be seen as
@@ -40,6 +39,10 @@ import javax.persistence.*;
  */
 @Table(name="BASELINE")
 @Entity
+@NamedQueries({
+        @NamedQuery(name="Baseline.findByConfigurationItemId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId"),
+        @NamedQuery(name="Baseline.findByConfigurationItemIdAndBaselineId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId AND b.id = :baselineId")
+})
 public class Baseline implements Serializable {
 
 
@@ -48,15 +51,20 @@ public class Baseline implements Serializable {
     private int id;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Workspace workspace;
+    @JoinColumns({
+            @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
+            @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private ConfigurationItem configurationItem;
+
+    @Column(nullable = false)
+    private String name;
 
     @Lob
     private String description;
 
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate;
-
-    private String name;
 
     @MapsId("baselinedPartKey")
     @OneToMany(mappedBy="baseline", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
@@ -65,12 +73,27 @@ public class Baseline implements Serializable {
     public Baseline() {
     }
 
+    public Baseline(ConfigurationItem configurationItem, String name, String description) {
+        this.configurationItem = configurationItem;
+        this.name = name;
+        this.description = description;
+        this.creationDate = new Date();
+    }
+
     public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
         return baselinedParts;
     }
 
-    public void setBaselinedParts(Map<BaselinedPartKey, BaselinedPart> baselinedParts) {
-        this.baselinedParts = baselinedParts;
+    public void addBasedLinedPart(BaselinedPart baselinedPart){
+        baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
+    }
+
+    public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
+        return baselinedParts.get(baselinedPartKey);
+    }
+
+    public boolean hasBasedLinedPart(BaselinedPartKey baselinedPartKey){
+        return baselinedParts.get(baselinedPartKey) != null;
     }
 
     public String getName() {
@@ -97,16 +120,16 @@ public class Baseline implements Serializable {
         this.description = description;
     }
 
-    public Workspace getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
-    }
-
     public int getId() {
         return id;
+    }
+
+    public ConfigurationItem getConfigurationItem() {
+        return configurationItem;
+    }
+
+    public void setConfigurationItem(ConfigurationItem configurationItem) {
+        this.configurationItem = configurationItem;
     }
 
     @Override

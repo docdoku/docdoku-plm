@@ -13,10 +13,11 @@ define(
         "views/control_markers_view",
         "views/control_layers_view",
         "views/control_options_view",
+        "views/baseline_select_view",
         "SceneManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, SceneManager, template, i18n) {
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, BaselineSelectView, SceneManager, template, i18n) {
 
     var AppView = Backbone.View.extend({
 
@@ -32,7 +33,7 @@ define(
         template:Mustache.compile(template),
 
         initialize: function() {
-
+            window.config_spec = "latest";
         },
 
         render:function(){
@@ -53,6 +54,8 @@ define(
             }).render();
 
             this.bomView = new BomView().render();
+
+            this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
             this.$ControlsContainer.append(new ControlModesView().render().$el);
             this.$ControlsContainer.append(new ControlMarkersView().render().$el);
@@ -88,6 +91,7 @@ define(
         listenEvents:function(){
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
+            this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
         },
 
         bindDomElements:function(){
@@ -211,6 +215,12 @@ define(
 
         onNoWebGLSupport:function(){
             this.centerSceneContainer.html("<span class='alert'>"+i18n.NO_WEBGL+"</span>");
+        },
+
+        onConfigSpecChange:function(configSpec){
+            window.config_spec = configSpec;
+            Backbone.Events.trigger("refresh_tree");
+            sceneManager.clear();
         }
 
     });

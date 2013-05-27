@@ -22,7 +22,6 @@ package com.docdoku.core.configuration;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -45,10 +44,13 @@ public class BaselinedPartKey implements Serializable{
     @Column(name = "TARGET_PARTMASTER_PARTNUMBER", length=50, nullable = false, insertable = false, updatable = false)
     private String targetPartNumber="";
 
-
-
     public BaselinedPartKey(){
+    }
 
+    public BaselinedPartKey(int baselineId, String targetPartWorkspaceId, String targetPartNumber) {
+        this.baselineId = baselineId;
+        this.targetPartWorkspaceId = targetPartWorkspaceId;
+        this.targetPartNumber = targetPartNumber;
     }
 
     public int getBaselineId() {

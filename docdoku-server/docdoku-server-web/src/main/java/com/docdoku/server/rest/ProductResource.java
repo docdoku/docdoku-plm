@@ -20,28 +20,17 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.configuration.LatestConfigSpec;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartMasterKey;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartUsageLink;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -52,8 +41,10 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.*;
 
 /**
  *
@@ -108,7 +99,14 @@ public class ProductResource {
         try {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs = new LatestConfigSpec();
+
+            ConfigSpec cs ;
+
+            if(configSpecType == null || configSpecType.equals("latest")){
+                cs = new LatestConfigSpec();
+            }else{
+                cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));
+            }
 
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, 1);
 
@@ -138,7 +136,13 @@ public class ProductResource {
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs = new LatestConfigSpec();
+            ConfigSpec cs ;
+
+            if(configSpecType == null || configSpecType.equals("latest")){
+                cs = new LatestConfigSpec();
+            }else{
+                cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));
+            }
 
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
 
@@ -265,8 +269,15 @@ public class ProductResource {
                 cc.setMaxAge(60 * 30);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-                //TODO configSpecType should be used
-                ConfigSpec cs = new LatestConfigSpec();
+
+                ConfigSpec cs ;
+
+                if(configSpecType == null || configSpecType.equals("latest")){
+                    cs = new LatestConfigSpec();
+                }else{
+                    cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));
+                }
+
                 PartUsageLink rootUsageLink;
                 List<Integer> usageLinkPaths = new ArrayList<Integer>();
                 if(path != null && !path.equals("null")){
@@ -297,6 +308,37 @@ public class ProductResource {
             ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
             configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("{ciId}/baseline")
+    @Produces("application/json;charset=UTF-8")
+    public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        try {
+
+            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
+            List<Baseline> baselines = productService.getBaselines(configurationItemKey);
+            List<BaselineDTO> baselinesDTO = new ArrayList<BaselineDTO>();
+            for(Baseline baseline:baselines){
+                baselinesDTO.add(mapper.map(baseline,BaselineDTO.class));
+            }
+            return baselinesDTO;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+
+        }
+    }
+
+    @POST
+    @Path("{ciId}/baseline")
+    @Consumes("application/json;charset=UTF-8")
+    public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
+        try {
+            productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
+            return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

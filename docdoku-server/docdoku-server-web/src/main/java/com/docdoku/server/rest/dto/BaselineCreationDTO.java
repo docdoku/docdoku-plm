@@ -18,45 +18,28 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.docdoku.server.rest.dto;
 
-package com.docdoku.core.configuration;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 
-/**
- * A ConfigSpec is used to filter the right
- * <a href="PartIteration.html">PartIteration</a> of
- * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
- * 
- * @author Florent Garin
- * @version 1.1, 30/10/11
- * @since   V1.1
- */
-@Table(name="CONFIGSPEC")
-@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class, BaselineConfigSpec.class})
-@Inheritance()
-@Entity
-public abstract class ConfigSpec implements Serializable{
+public class BaselineCreationDTO implements Serializable {
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Id
-    private int id;
+    private String name;
+    private String description;
 
-    
-    public ConfigSpec() {
+    public String getName() {
+        return name;
     }
 
-    public int getId() {
-        return id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getDescription() {
+        return description;
     }
-    
 
-    
-    
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

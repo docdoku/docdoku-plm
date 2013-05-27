@@ -125,14 +125,27 @@ define([
 
         onNoProductSelected:function(){
             this.trigger("delete-button:display",false);
+            this.trigger("create-baseline-button:display",false);
         },
 
         onOneProductSelected:function(){
             this.trigger("delete-button:display",true);
+            this.trigger("create-baseline-button:display",true);
         },
 
         onSeveralProductsSelected:function(){
             this.trigger("delete-button:display",true);
+            this.trigger("create-baseline-button:display",false);
+        },
+
+        getSelectedProduct:function(){
+            var model = null;
+            _(this.listItemViews).each(function(view){
+                if(view.isChecked()){
+                    model = view.model;
+                }
+            });
+            return model;
         },
 
         deleteSelectedProducts:function(){

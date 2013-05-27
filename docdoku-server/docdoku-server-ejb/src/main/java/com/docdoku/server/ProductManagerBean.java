@@ -20,8 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.configuration.LatestConfigSpec;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
@@ -115,6 +114,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             } else {
                 filterLatestConfigSpec(rootUsageLink.getComponent(), depth);
             }
+        }else if (configSpec instanceof BaselineConfigSpec){
+            if (depth == null) {
+                filterBaselineConfigSpec(((BaselineConfigSpec) configSpec).getBaseline(), rootUsageLink.getComponent(), -1);
+            } else {
+                filterBaselineConfigSpec(((BaselineConfigSpec) configSpec).getBaseline(), rootUsageLink.getComponent(), depth);
+            }
         }
         return rootUsageLink;
     }
@@ -135,6 +140,49 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
                     for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
                         filterLatestConfigSpec(subLink.getSubstitute(), 0);
+                    }
+                }
+            }
+        }
+
+        for (PartAlternateLink alternateLink : root.getAlternates()) {
+            filterLatestConfigSpec(alternateLink.getAlternate(), 0);
+        }
+
+        em.detach(root);
+        if (root.getPartRevisions().size() > 1) {
+            root.getPartRevisions().retainAll(Collections.singleton(partR));
+        }
+        if (partR != null && partR.getNumberOfIterations() > 1) {
+            partR.getPartIterations().retainAll(Collections.singleton(partI));
+        }
+
+        return root;
+    }
+
+    private PartMaster filterBaselineConfigSpec(Baseline baseline, PartMaster root, int depth) {
+
+
+        // int baselineId, String targetPartWorkspaceId, String targetPartNumber
+        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),root.getWorkspaceId(),root.getNumber());
+
+        BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
+
+        PartRevision partR = baselinedRootPart.getTargetPart().getPartRevision();
+        PartIteration partI = null;
+
+        if (partR != null) {
+            partI = baselinedRootPart.getTargetPart();
+        }
+
+        if (partI != null) {
+            if (depth != 0) {
+                depth--;
+                for (PartUsageLink usageLink : partI.getComponents()) {
+                    filterBaselineConfigSpec(baseline, usageLink.getComponent(), depth);
+
+                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
+                        filterBaselineConfigSpec(baseline, subLink.getSubstitute(), 0);
                     }
                 }
             }
@@ -1197,6 +1245,49 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @Override
+    public void createBaseline(ConfigurationItemKey configurationItemKey, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
+        ConfigurationItem configurationItem = new ConfigurationItemDAO(new Locale(user.getLanguage()),em).loadConfigurationItem(configurationItemKey);
+
+        Baseline baseline = new Baseline(configurationItem,name,description);
+        new BaselineDAO(em).createBaseline(baseline);
+
+        fillBaselineParts(baseline, configurationItem.getDesignItem().getLastRevision().getLastIteration(), user);
+
+    }
+
+    @Override
+    public List<Baseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        List<Baseline> baselines = baselineDAO.findBaselines(configurationItemKey.getId());
+        return baselines;
+    }
+
+    @Override
+    public ConfigSpec getConfigSpecForBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
+        return new BaselineConfigSpec(baseline);
+    }
+
+    private void fillBaselineParts(Baseline baseline, PartIteration lastIteration, User user) {
+
+        BaselinedPartKey baselinedPartKey = new BaselinedPartKey(baseline.getId(),baseline.getConfigurationItem().getWorkspaceId(),lastIteration.getPartRevision().getPartMaster().getNumber());
+        BaselinedPart baselinedPart = new BaselinedPart(baseline,lastIteration,user);
+
+        if(baseline.hasBasedLinedPart(baselinedPartKey)) return ;
+
+        baseline.addBasedLinedPart(baselinedPart);
+
+        for(PartUsageLink partUsageLink : lastIteration.getComponents()){
+            fillBaselineParts(baseline, partUsageLink.getComponent().getLastRevision().getLastIteration() ,user);
+        }
+
+    }
 
     @RolesAllowed("users")
     @Override

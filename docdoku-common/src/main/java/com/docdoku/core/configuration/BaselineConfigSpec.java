@@ -17,46 +17,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package com.docdoku.core.configuration;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-/**
- * A ConfigSpec is used to filter the right
- * <a href="PartIteration.html">PartIteration</a> of
- * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
- * 
- * @author Florent Garin
- * @version 1.1, 30/10/11
- * @since   V1.1
- */
-@Table(name="CONFIGSPEC")
-@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class, BaselineConfigSpec.class})
-@Inheritance()
+@Table(name="BASELINECONFIGSPEC")
 @Entity
-public abstract class ConfigSpec implements Serializable{
+public class BaselineConfigSpec extends ConfigSpec {
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Id
-    private int id;
+    private Baseline baseline;
 
-    
-    public ConfigSpec() {
+    public BaselineConfigSpec(Baseline baseline) {
+        this.baseline = baseline;
     }
 
-    public int getId() {
-        return id;
+    public Baseline getBaseline() {
+        return baseline;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setBaseline(Baseline baseline) {
+        this.baseline = baseline;
     }
-    
-
-    
-    
 }

@@ -22,10 +22,7 @@ package com.docdoku.core.configuration;
 
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.sharing.SharedEntity;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -68,8 +65,6 @@ public class BaselinedPart implements Serializable{
     @Column(name = "TARGET_PARTREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     private String targetPartVersion="";
 
-
-
     @Column(name="COMMENTDATA")
     private String comment;
 
@@ -86,6 +81,19 @@ public class BaselinedPart implements Serializable{
     public BaselinedPart(){
     }
 
+    public BaselinedPart(Baseline baseline, PartIteration targetPart, User author, String comment) {
+        this.baseline = baseline;
+        this.targetPart = targetPart;
+        this.author = author;
+        this.comment = comment;
+        this.creationDate = new Date();
+        this.baselinedPartKey=new BaselinedPartKey(baseline.getId(), targetPart.getWorkspaceId(),targetPart.getPartNumber());
+    }
+
+    public BaselinedPart(Baseline baseline, PartIteration targetPart, User user) {
+        this(baseline, targetPart, user, null);
+    }
+
     @XmlTransient
     public Baseline getBaseline() {
         return baseline;
@@ -93,6 +101,10 @@ public class BaselinedPart implements Serializable{
 
     public void setBaseline(Baseline baseline) {
         this.baseline = baseline;
+    }
+
+    public BaselinedPartKey getBaselinedPartKey() {
+        return baselinedPartKey;
     }
 
     public PartIteration getTargetPart() {
@@ -161,6 +173,7 @@ public class BaselinedPart implements Serializable{
 
     @Override
     public int hashCode() {
-        return baselinedPartKey.hashCode();
+        int result = baselinedPartKey != null ? baselinedPartKey.hashCode() : 0;
+        return result;
     }
 }
