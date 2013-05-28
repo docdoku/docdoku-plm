@@ -159,12 +159,13 @@ define([
                     if(view.isChecked()){
                         view.model.destroy({success:function(){
                             that.removePart(view.model);
+                            that.onSelectionChanged();
                         },error:function(model,err){
-                            alert(err.responseText)
+                            alert(err.responseText);
+                            that.onSelectionChanged();
                         }});
                     }
                 });
-                this.onNoPartSelected();
             }
         },
 
