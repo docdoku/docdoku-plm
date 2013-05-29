@@ -633,8 +633,14 @@ define([
             this.instances=[];
             this.instancesMap={};
 
-        }
+        },
 
+        cleanRootId:function(instance){
+            if(instance.id.match(/^0\-.*/)){
+                instance.id = instance.id.substr(2,instance.id.length);
+            }
+            return instance;
+        }
 
     };
 

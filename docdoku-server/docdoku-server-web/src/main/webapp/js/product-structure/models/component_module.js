@@ -119,6 +119,7 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
                 //get instances that need to be added to the scene
                 var instancesNotOnScene = _.filter(instances, function(instance) {
+                    instance = sceneManager.cleanRootId(instance);
                     return !sceneManager.isOnScene(instance.id);
                 });
 
@@ -151,8 +152,10 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
         },
 
         removeFromScene: function() {
+
             $.getJSON(this.getInstancesUrl(), function(instances) {
                 _.each(instances, function(instanceRaw) {
+                    instanceRaw = sceneManager.cleanRootId(instanceRaw);
                     if (sceneManager.isOnScene(instanceRaw.id)) {
                         sceneManager.removeInstanceFromScene(instanceRaw.id);
                     }
