@@ -38,6 +38,8 @@ define(
             this.$el.html(this.template({i18n:i18n, title:title, permalink:this.model.getPermalink()}));
             this.bindDomElements();
 
+            this.$badPasswordLabel.hide();
+
             this.$publicSharedSwitch.bootstrapSwitch();
             this.$publicSharedSwitch.bootstrapSwitch('setState', this.model.get("publicShared"));
 
@@ -73,6 +75,9 @@ define(
         bindDomElements:function(){
             this.$modal = this.$('#share-modal');
             this.$password = this.$('.password');
+            this.$confirmPassword = this.$('.confirm-password');
+            this.$badPasswordLabel = this.$('.help-block');
+            this.$passwordControl = this.$('#password-control');
             this.$expireDate = this.$('.expire-date');
             this.$publicSharedSwitch = this.$(".public-shared-switch");
             this.$privateShare = this.$("#private-share");
@@ -95,13 +100,18 @@ define(
                 default : break;
             }
 
-            data.password=this.$password.val() ? this.$password.val():null;
-            data.expireDate=this.$expireDate.val() ? this.$expireDate.val():null;
+            if(this.$password.val()!==this.$confirmPassword.val()) {
+                this.$passwordControl.addClass("error");
+                this.$badPasswordLabel.show();
+            } else {
+                data.password=this.$password.val() ? this.$password.val():null;
+                data.expireDate=this.$expireDate.val() ? this.$expireDate.val():null;
 
-            this.model.createShare({data:data,success:function(pData){
-                that.$privateShare.empty();
-                that.$privateShare.html(that.templateShared({i18n:i18n,generatedUrl:that.generateUrlFromUUID(pData.uuid)}));
-            }});
+                this.model.createShare({data:data,success:function(pData){
+                    that.$privateShare.empty();
+                    that.$privateShare.html(that.templateShared({i18n:i18n,generatedUrl:that.generateUrlFromUUID(pData.uuid)}));
+                }});
+            }
 
         },
 
