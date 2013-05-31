@@ -885,8 +885,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @Override
-    public void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException {
+    public void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        List<Baseline> baselines = baselineDAO.findBaselines(configurationItemKey.getId());
+        if(baselines.size() > 0 ){
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException4");
+        }
         new ConfigurationItemDAO(new Locale(user.getLanguage()),em).removeConfigurationItem(configurationItemKey);
     }
 
@@ -1184,6 +1189,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartMasterDAO partMasterDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
         PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(new Locale(user.getLanguage()), em);
+        BaselineDAO baselineDAO = new BaselineDAO(em);
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()),em);
         PartMaster partMaster = partMasterDAO.loadPartM(partMasterKey);
 
@@ -1195,6 +1201,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // check if this part is in a partUsage
         if(partUsageLinkDAO.hasPartUsages(partMasterKey.getWorkspace(),partMaster.getNumber())){
             throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException2");
+        }
+
+        // check if part is baselined
+        if(baselineDAO.existBaselinedPart(partMasterKey.getNumber())){
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException5");
         }
 
         // delete CAD files attached with this partMaster
@@ -1272,6 +1283,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BaselineDAO baselineDAO = new BaselineDAO(em);
         Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
         return new BaselineConfigSpec(baseline);
+    }
+
+    @Override
+    public void deleteBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        baselineDAO.deleteBaseline(configurationItemKey.getId(),baselineId);
     }
 
     private void fillBaselineParts(Baseline baseline, PartIteration lastIteration, User user) {

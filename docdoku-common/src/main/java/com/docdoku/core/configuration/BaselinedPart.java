@@ -39,6 +39,9 @@ import java.util.Date;
 
 @Table(name="BASELINEDPART")
 @Entity
+@NamedQueries({
+        @NamedQuery(name="BaselinePart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.targetPart.partRevision.partMaster.number LIKE :partNumber")
+})
 public class BaselinedPart implements Serializable{
 
     @EmbeddedId

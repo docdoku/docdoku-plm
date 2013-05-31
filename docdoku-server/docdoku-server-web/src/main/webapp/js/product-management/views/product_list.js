@@ -21,7 +21,6 @@ define([
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
             this.listenTo(this.collection, 'add', this.addNewProduct);
-            this.listenTo(this.collection, 'remove', this.removeProduct);
             this.listItemViews = [];
         },
 
@@ -149,10 +148,17 @@ define([
         },
 
         deleteSelectedProducts:function(){
+            var that = this;
             if(confirm("Delete Products")){
                 _(this.listItemViews).each(function(view){
                     if(view.isChecked()){
-                        view.model.destroy();
+                        view.model.destroy({success:function(){
+                            that.removeProduct(view.model);
+                            that.onSelectionChanged();
+                        },error:function(model,err){
+                            alert(err.responseText);
+                            that.onSelectionChanged();
+                        }});
                     }
                 });
             }
