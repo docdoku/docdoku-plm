@@ -344,4 +344,16 @@ public class ProductResource {
         }
     }
 
+    @DELETE
+    @Path("{ciId}/baseline/{baselineId}")
+    @Consumes("application/json;charset=UTF-8")
+    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
+        try {
+            productService.deleteBaseline(new ConfigurationItemKey(workspaceId,ciId), Integer.parseInt(baselineId));
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
 }

@@ -1,5 +1,5 @@
 define([
-    "collections/baselines",
+    "common-objects/collections/baselines",
     "text!templates/baseline_select.html",
     "i18n!localization/nls/product-structure-strings"
 ],function(Baselines,template,i18n){
@@ -13,7 +13,7 @@ define([
         },
 
         initialize:function(){
-            this.collection = new Baselines();
+            this.collection = new Baselines({},{productId:APP_CONFIG.productId});
             this.listenToOnce(this.collection,"reset",this.onCollectionReset);
         },
 

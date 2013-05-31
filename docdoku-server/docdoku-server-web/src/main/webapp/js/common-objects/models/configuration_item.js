@@ -36,6 +36,28 @@ define(function() {
                 success:callbacks.success,
                 error:callbacks.error
             });
+        },
+
+        deleteBaselines:function(baselines){
+            var that = this ;
+            var errors = [];
+            _.each(baselines,function(baseline){
+                that.deleteBaseline(baseline.getId(),{success:function(){},error:function(){
+                    errors.push(baseline);
+                }})
+            });
+            return errors;
+        },
+
+        deleteBaseline:function(baselineId,callbacks){
+            $.ajax({
+                type: "DELETE",
+                async:false,
+                url: this.urlRoot + "/" + this.getId() + "/baseline/"+baselineId,
+                contentType: "application/json; charset=utf-8",
+                success:callbacks.success,
+                error:callbacks.error
+            });
         }
 
     });

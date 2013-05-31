@@ -55,4 +55,18 @@ public class BaselineDAO {
             return null;
         }
     }
+
+    public void deleteBaseline(String ciId, int baselineId) {
+        Baseline baseline = findBaseline(ciId,baselineId);
+        if(baseline != null){
+            em.remove(baseline);
+            em.flush();
+        }
+    }
+
+    public boolean existBaselinedPart(String partNumber) {
+        return em.createNamedQuery("BaselinePart.existBaselinedPart", Baseline.class)
+            .setParameter("partNumber", partNumber)
+            .executeUpdate() > 0;
+    }
 }
