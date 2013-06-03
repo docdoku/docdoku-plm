@@ -1,7 +1,7 @@
 define(
     [
         "text!templates/baseline_creation_view.html",
-        "i18n!localization/nls/baseline-creation-strings"
+        "i18n!localization/nls/baseline-strings"
     ],
     function (template, i18n) {
 

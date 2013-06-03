@@ -7,7 +7,8 @@ define(["text!templates/baseline_list_item.html"],function(template){
         className:"baseline-item",
 
         events:{
-            "change input[type=checkbox]":"toggleStroke"
+            "change input[type=checkbox]":"toggleStroke",
+            "click a":"toBaselineEditView"
         },
 
         template:Mustache.compile(template),
@@ -29,6 +30,10 @@ define(["text!templates/baseline_list_item.html"],function(template){
 
         isChecked:function(){
             return this.$checkbox.is(":checked");
+        },
+
+        toBaselineEditView:function(){
+            this.trigger("baseline:to-edit-modal",this.model);
         }
 
     });

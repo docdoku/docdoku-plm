@@ -52,8 +52,17 @@ define(
         },
 
         initBaselinesView: function() {
+            var that = this ;
             this.baselineListView = new BaselineListView({},{productId:this.model.getId()}).render();
             this.$tabBaselines.append(this.baselineListView.$el);
+            this.listenToOnce(this.baselineListView,"baseline:to-edit-modal",function(baseline){
+                that.closeModal();
+                require(["views/baseline_edit_view"],function(BaselineEditView){
+                    var baselineEditView = new BaselineEditView({model:baseline});
+                    $("body").append(baselineEditView.render().el);
+                    baselineEditView.openModal();
+                });
+            })
         },
 
         onError: function(model, error) {
