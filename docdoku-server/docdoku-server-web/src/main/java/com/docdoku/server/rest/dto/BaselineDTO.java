@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.util.Date;
+import java.util.List;
 
 public class BaselineDTO {
 
@@ -28,6 +29,7 @@ public class BaselineDTO {
     private String name;
     private String description;
     private Date creationDate;
+    private List<BaselinedPartDTO> baselinedParts;
 
     public BaselineDTO() {
     }
@@ -69,5 +71,13 @@ public class BaselineDTO {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public List<BaselinedPartDTO> getBaselinedParts() {
+        return baselinedParts;
+    }
+
+    public void setBaselinedParts(List<BaselinedPartDTO> baselinedParts) {
+        this.baselinedParts = baselinedParts;
     }
 }

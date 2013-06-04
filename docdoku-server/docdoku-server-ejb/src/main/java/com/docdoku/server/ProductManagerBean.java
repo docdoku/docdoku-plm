@@ -1256,6 +1256,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed("users")
     @Override
     public void createBaseline(ConfigurationItemKey configurationItemKey, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
 
@@ -1269,6 +1270,30 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed("users")
+    @Override
+    public Baseline duplicateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
+        ConfigurationItem configurationItem = new ConfigurationItemDAO(new Locale(user.getLanguage()),em).loadConfigurationItem(configurationItemKey);
+
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
+
+        Baseline duplicatedBaseline = new Baseline(configurationItem,name,description);
+        baselineDAO.createBaseline(duplicatedBaseline);
+
+        // copy partIterations
+        Set<Map.Entry<BaselinedPartKey, BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
+        for(Map.Entry<BaselinedPartKey,BaselinedPart> entry : entries){
+            duplicatedBaseline.addBaselinedPart(new BaselinedPart(duplicatedBaseline, entry.getValue().getTargetPart(),user));
+        }
+
+        return duplicatedBaseline;
+
+    }
+
+    @RolesAllowed("users")
     @Override
     public List<Baseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
@@ -1277,6 +1302,34 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return baselines;
     }
 
+    @RolesAllowed("users")
+    @Override
+    public Baseline getBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
+        return baseline;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void updateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        PartIterationDAO partIterationDAO = new PartIterationDAO(new Locale(user.getLanguage()),em);
+        Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
+
+        baselineDAO.flushBaselinedParts(baseline);
+
+        for(PartIterationKey partIterationKey : partIterationKeys){
+            PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
+            BaselinedPart baselinedPartNew = new BaselinedPart(baseline,partIteration,user);
+            baseline.addBaselinedPart(baselinedPartNew);
+        }
+
+    }
+
+    @RolesAllowed("users")
     @Override
     public ConfigSpec getConfigSpecForBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
@@ -1299,7 +1352,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if(baseline.hasBasedLinedPart(baselinedPartKey)) return ;
 
-        baseline.addBasedLinedPart(baselinedPart);
+        baseline.addBaselinedPart(baselinedPart);
 
         for(PartUsageLink partUsageLink : lastIteration.getComponents()){
             fillBaselineParts(baseline, partUsageLink.getComponent().getLastRevision().getLastIteration() ,user);

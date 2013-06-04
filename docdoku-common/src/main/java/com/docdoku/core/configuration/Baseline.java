@@ -67,7 +67,7 @@ public class Baseline implements Serializable {
     private java.util.Date creationDate;
 
     @MapsId("baselinedPartKey")
-    @OneToMany(mappedBy="baseline", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="baseline", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
     private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<BaselinedPartKey, BaselinedPart>();
 
     public Baseline() {
@@ -84,7 +84,7 @@ public class Baseline implements Serializable {
         return baselinedParts;
     }
 
-    public void addBasedLinedPart(BaselinedPart baselinedPart){
+    public void addBaselinedPart(BaselinedPart baselinedPart){
         baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
     }
 

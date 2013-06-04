@@ -58,9 +58,7 @@ define(
             this.listenToOnce(this.baselineListView,"baseline:to-edit-modal",function(baseline){
                 that.closeModal();
                 require(["views/baseline_edit_view"],function(BaselineEditView){
-                    var baselineEditView = new BaselineEditView({model:baseline});
-                    $("body").append(baselineEditView.render().el);
-                    baselineEditView.openModal();
+                    var baselineEditView = new BaselineEditView({model:baseline},{productId:that.model.getId()}).render();
                 });
             })
         },

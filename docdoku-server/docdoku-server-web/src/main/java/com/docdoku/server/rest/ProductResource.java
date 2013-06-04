@@ -318,7 +318,6 @@ public class ProductResource {
     @Produces("application/json;charset=UTF-8")
     public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         try {
-
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
             List<Baseline> baselines = productService.getBaselines(configurationItemKey);
             List<BaselineDTO> baselinesDTO = new ArrayList<BaselineDTO>();
@@ -328,7 +327,21 @@ public class ProductResource {
             return baselinesDTO;
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 
+    @GET
+    @Path("{ciId}/baseline/{baselineId}")
+    @Produces("application/json;charset=UTF-8")
+    public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
+        try {
+            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
+            Baseline baseline = productService.getBaseline(configurationItemKey,Integer.parseInt(baselineId));
+            BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
+            baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
+            return baselineDTO;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
@@ -339,6 +352,38 @@ public class ProductResource {
         try {
             productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
             return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Path("{ciId}/baseline/{baselineId}")
+    @Consumes("application/json;charset=UTF-8")
+    public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
+        try {
+
+            List<PartIterationKey> partIterationKeys = new ArrayList<PartIterationKey>();
+
+            for(BaselinedPartDTO baselinedPartDTO : baselineDTO.getBaselinedParts()){
+                partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
+            }
+
+            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getDescription(),partIterationKeys);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @POST
+    @Path("{ciId}/baseline/{baselineId}/duplicate")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId,  BaselineCreationDTO baselineCreationDTO){
+        try {
+            Baseline baseline = productService.duplicateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
+            return mapper.map(baseline, BaselineDTO.class);
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

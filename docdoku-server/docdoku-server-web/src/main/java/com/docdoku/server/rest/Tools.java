@@ -22,6 +22,9 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.BaselinedPartKey;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
@@ -35,6 +38,7 @@ import org.dozer.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -152,5 +156,26 @@ public class Tools {
         partIterationDTO.setVersion(partIteration.getPartRevision().getVersion());
 
         return partIterationDTO;
+    }
+
+    public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(Baseline baseline){
+        List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<BaselinedPartDTO>();
+        Set<Map.Entry<BaselinedPartKey,BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
+
+        for(Map.Entry<BaselinedPartKey,BaselinedPart> entry : entries){
+            baselinedPartDTOs.add(mapBaselinedPartToBaselinedPartDTO(entry.getValue()));
+        }
+
+        return baselinedPartDTOs;
+    }
+
+    public static BaselinedPartDTO mapBaselinedPartToBaselinedPartDTO(BaselinedPart baselinedPart){
+        BaselinedPartDTO baselinedPartDTO = new BaselinedPartDTO();
+        PartIteration partI = baselinedPart.getTargetPart();
+        baselinedPartDTO.setNumber(partI.getPartNumber());
+        baselinedPartDTO.setVersion(partI.getPartVersion());
+        baselinedPartDTO.setIteration(partI.getIteration());
+        baselinedPartDTO.setLastIteration(partI.getPartRevision().getLastIteration().getIteration());
+        return baselinedPartDTO;
     }
 }

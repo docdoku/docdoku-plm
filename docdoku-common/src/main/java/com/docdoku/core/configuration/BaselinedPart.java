@@ -40,7 +40,7 @@ import java.util.Date;
 @Table(name="BASELINEDPART")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="BaselinePart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.targetPart.partRevision.partMaster.number LIKE :partNumber")
+        @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.targetPart.partRevision.partMaster.number LIKE :partNumber")
 })
 public class BaselinedPart implements Serializable{
 
@@ -150,6 +150,10 @@ public class BaselinedPart implements Serializable{
 
     public void setTargetPartVersion(String targetPartVersion) {
         this.targetPartVersion = targetPartVersion;
+    }
+
+    public String getTargetPartNumber() {
+        return targetPart.getPartNumber();
     }
 
 

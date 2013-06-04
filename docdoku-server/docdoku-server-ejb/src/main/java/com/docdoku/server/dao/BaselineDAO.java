@@ -21,10 +21,15 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.BaselinedPartKey;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BaselineDAO {
 
@@ -65,8 +70,17 @@ public class BaselineDAO {
     }
 
     public boolean existBaselinedPart(String partNumber) {
-        return em.createNamedQuery("BaselinePart.existBaselinedPart", Baseline.class)
+        return em.createNamedQuery("BaselinedPart.existBaselinedPart", Baseline.class)
             .setParameter("partNumber", partNumber)
             .executeUpdate() > 0;
+    }
+
+    public void flushBaselinedParts(Baseline baseline) {
+        Set<Map.Entry<BaselinedPartKey,BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
+        for(Iterator<Map.Entry<BaselinedPartKey,BaselinedPart>> it = entries.iterator(); it.hasNext(); ) {
+            it.next();
+            it.remove();
+        }
+        em.flush();
     }
 }

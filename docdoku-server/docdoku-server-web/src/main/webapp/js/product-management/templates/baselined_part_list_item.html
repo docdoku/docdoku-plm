@@ -1,0 +1,5 @@
+<div class="well">
+    <input name="number" type="text" value="{{model.getNumber}}" readonly required />
+    <input name="version" type="text" class="input-small" value="{{model.getVersion}}" readonly  required />
+    <input name="iteration" class="input-small" type="number" min="1" max="{{model.getLastIteration}}" range="1" value="{{model.getIteration}}" required />
+</div>
