@@ -85,4 +85,8 @@ public class WorkspaceDAO {
 
         return result != null ? result.longValue() : 0L;
     }
+
+    public void removeWorkspace(Workspace workspace) {
+        // TODO : impl
+    }
 }

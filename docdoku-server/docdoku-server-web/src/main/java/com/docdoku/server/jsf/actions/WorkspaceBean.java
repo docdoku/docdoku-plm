@@ -23,26 +23,8 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.AccessRightException;
-import com.docdoku.core.services.AccountNotFoundException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.FolderAlreadyExistsException;
-import com.docdoku.core.services.FolderNotFoundException;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.UserAlreadyExistsException;
-import com.docdoku.core.services.UserGroupAlreadyExistsException;
-import com.docdoku.core.services.UserGroupNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.WorkspaceAlreadyExistsException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.docdoku.core.services.*;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
@@ -50,6 +32,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.*;
 
 @ManagedBean(name = "workspaceBean")
 @RequestScoped
@@ -57,6 +40,9 @@ public class WorkspaceBean {
 
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IWorkflowManagerLocal workspaceManager;
+
     @EJB
     private IUserManagerLocal userManager;
     private Map<String, Boolean> selectedGroups = new HashMap<String, Boolean>();
@@ -84,7 +70,13 @@ public class WorkspaceBean {
         return "/admin/workspace/workspaceEditionForm.xhtml";
     }
 
-    public String createGroup() throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException {
+    public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+        Workspace wks = adminState.getCurrentWorkspace();
+        workspaceManager.deleteWorkspace(wks.getId());
+        return "/admin/workspace/workspacesMenu.xhtml";
+    }
+
+    public String createGroup() throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         userManager.createUserGroup(groupToCreate, adminState.getCurrentWorkspace());
         return "/admin/workspace/manageUsers.xhtml";
     }

@@ -170,4 +170,21 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         roleDAO.deleteRole(role);
     }
 
+    @Override
+    @RolesAllowed({"users","admin"})
+    public void deleteWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(em);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+
+        if(userManager.isCallerInRole("admin") || workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
+            workspaceDAO.removeWorkspace(workspace);
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
+
+    }
+
 }

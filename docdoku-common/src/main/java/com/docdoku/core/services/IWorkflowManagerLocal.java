@@ -19,14 +19,7 @@
  */
 package com.docdoku.core.services;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.*;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.workflow.*;
-
-import java.io.File;
 
 /**
  *
@@ -45,5 +38,6 @@ public interface IWorkflowManagerLocal {
     Role updateRole(RoleKey roleKey, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException;
     void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, EntityConstraintException;
 
+    void deleteWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException;
 
 }
