@@ -20,10 +20,13 @@
 
 package com.docdoku.core.services;
 
+import java.io.IOException;
+
 /**
  *
  * @author Morgan Guimard
  */
 public interface IWorkspaceManagerLocal {
     Long getDiskUsageInWorkspace(String workspaceId) throws UserNotFoundException;
+    void deleteWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IOException, StorageException;
 }

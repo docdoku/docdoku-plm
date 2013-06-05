@@ -21,8 +21,8 @@ package com.docdoku.server;
 
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.services.IWorkspaceManagerLocal;
-import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.*;
 import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
@@ -30,11 +30,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -42,6 +44,12 @@ import java.util.logging.Logger;
 @Local(IWorkspaceManagerLocal.class)
 @Stateless(name = "WorkspaceManagerBean")
 public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
+
+    @EJB
+    private IDataManagerLocal dataManager;
+
+    @EJB
+    private IUserManagerLocal userManager;
 
     @PersistenceContext
     private EntityManager em;
@@ -62,4 +70,20 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         return new WorkspaceDAO(new Locale(admin.getLanguage()),em).getDiskUsageForWorkspace(workspaceId);
     }
 
+    @Override
+    @RolesAllowed({"users","admin"})
+    public void deleteWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IOException, StorageException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(em, dataManager);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+
+        if(userManager.isCallerInRole("admin") || workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
+            workspaceDAO.removeWorkspace(workspace);
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
+
+    }
 }
