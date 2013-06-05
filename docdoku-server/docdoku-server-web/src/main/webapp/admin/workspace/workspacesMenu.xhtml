@@ -30,7 +30,7 @@
                         <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> |
                         <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/> |
                         <h:commandLink value="#{i18nWorkspacesMenu['section.dashboard']}" action="/admin/workspace/workspaceDashboard.xhtml"/> |
-                        <h:commandLink value="#{i18nWorkspacesMenu['section.delete']}" action="#{workspaceBean.deleteWorkspace}" onclick="if(confirm('#{i18nWorkspacesMenu['section.deleteConfirm']}'))return true; else return false;" />
+                        <h:commandLink value="#{i18nWorkspacesMenu['section.delete']}" action="#{workspaceBean.deleteWorkspace}" onclick="return prompt('#{i18nWorkspacesMenu['section.deleteConfirm']}') == '#{i18nWorkspacesMenu['section.deleteConfirmPromptValue']}'" />
                     </div>
 
                     <c:if test="#{isSuperAdmin==true}">

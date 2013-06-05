@@ -30,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.util.Date;
+import java.util.List;
 
 
 public class FileStorageProvider implements StorageProvider {
@@ -157,4 +158,17 @@ public class FileStorageProvider implements StorageProvider {
         }
     }
 
+    @Override
+    public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
+        if(workspaceId != null && workspaceId != ""){
+            try{
+                File rootFolder = new File(new StringBuilder().append(vaultPath).append("/").append(workspaceId).toString());
+                if(rootFolder.exists()){
+                    FileUtils.deleteDirectory(rootFolder);
+                }
+            } catch (IOException e) {
+                throw new StorageException(new StringBuilder().append("Error in deletind workspace directory for workspace : ").append(workspaceId).toString(), e);
+            }
+        }
+    }
 }

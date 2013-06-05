@@ -32,6 +32,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.*;
 
 @ManagedBean(name = "workspaceBean")
@@ -41,10 +42,13 @@ public class WorkspaceBean {
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
-    private IWorkflowManagerLocal workspaceManager;
-
+    private IWorkspaceManagerLocal workspaceManager;
     @EJB
     private IUserManagerLocal userManager;
+
+    @ManagedProperty(value = "#{adminStateBean}")
+    private AdminStateBean adminState;
+
     private Map<String, Boolean> selectedGroups = new HashMap<String, Boolean>();
     private Map<String, Boolean> selectedLogins = new HashMap<String, Boolean>();
     private String loginToAdd;
@@ -53,8 +57,6 @@ public class WorkspaceBean {
     private String workspaceId;
     private String workspaceDescription;
     private boolean freezeFolders;
-    @ManagedProperty(value = "#{adminStateBean}")
-    private AdminStateBean adminState;
 
     public WorkspaceBean() {
     }
@@ -70,10 +72,28 @@ public class WorkspaceBean {
         return "/admin/workspace/workspaceEditionForm.xhtml";
     }
 
-    public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+    public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException, StorageException, AccountNotFoundException {
         Workspace wks = adminState.getCurrentWorkspace();
+
         workspaceManager.deleteWorkspace(wks.getId());
-        return "/admin/workspace/workspacesMenu.xhtml";
+
+        // Re construct session attributes
+
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        HttpSession session = (HttpSession) request.getSession();
+
+        Map<String, Workspace> administeredWorkspaces = new HashMap<String, Workspace>();
+        for (Workspace workspace : userManager.getAdministratedWorkspaces()) {
+            administeredWorkspaces.put(workspace.getId(), workspace);
+        }
+        session.setAttribute("administeredWorkspaces", administeredWorkspaces);
+
+        Set<Workspace> regularWorkspaces = new HashSet<Workspace>();
+        regularWorkspaces.addAll(Arrays.asList(userManager.getWorkspaces()));
+        regularWorkspaces.removeAll(administeredWorkspaces.values());
+        session.setAttribute("regularWorkspaces", regularWorkspaces);
+
+        return "/admin/workspace/workspaceDeleted.xhtml";
     }
 
     public String createGroup() throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
