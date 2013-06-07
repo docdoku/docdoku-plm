@@ -36,10 +36,17 @@
 
 <div class="accordion-heading">
     <a class="download" href="{{uriResource}}"><i class="icon-cloud-download"></i></a>
+    {{#externalUriResource}}
+        <a class="external-download" href="{{externalUriResource}}"><i class="icon-google-plus-sign"></i></a>
+    {{/externalUriResource}}
     <a class="accordion-toggle" data-toggle="collapse" href="#{{thisId}}">{{fileName}}</a>
 </div>
 <div id="{{thisId}}" class="accordion-body collapse">
     <div class="accordion-inner">
+        {{#externalUriResource}}
+            <i class="icon-google-plus-sign"></i> <input type="text" class="input-xxlarge" readonly value="{{externalUriResource}}" />
+            <br /> <br />
+        {{/externalUriResource}}
         <a href="{{uriResource}}?type=viewer&fpv=pdf"><img style="border-style:none" height="20px" width="20px" src="/images/pdfIcon.png" /></a>
         <br /><br />
         <div id="flashContent-{{thisId}}">

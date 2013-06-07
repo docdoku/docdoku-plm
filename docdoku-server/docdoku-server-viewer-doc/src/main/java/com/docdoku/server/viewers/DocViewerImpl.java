@@ -129,6 +129,7 @@ public class DocViewerImpl implements DocumentViewer {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/document_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(docResource));
+        scopes.put("externalUriResource", dataManager.getExternalStorageURI(docResource));
         scopes.put("fileName", docResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();

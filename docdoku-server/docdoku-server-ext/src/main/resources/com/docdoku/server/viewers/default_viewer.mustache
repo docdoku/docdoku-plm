@@ -1,4 +1,7 @@
 <div class="accordion-heading">
     <a class="download" href="{{uriResource}}"><i class="icon-cloud-download"></i></a>
+    {{#externalUriResource}}
+        <a class="external-download" href="{{externalUriResource}}"><i class="icon-google-plus-sign"></i></a>
+    {{/externalUriResource}}
     <a class="accordion-toggle" href="{{uriResource}}">{{fileName}}</a>
 </div>

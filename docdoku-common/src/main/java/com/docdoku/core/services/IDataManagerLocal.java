@@ -33,4 +33,5 @@ public interface IDataManagerLocal {
     boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     void copyData(BinaryResource source, BinaryResource destination) throws StorageException;
     void deleteData(BinaryResource binaryResource) throws StorageException;
+    String getExternalStorageURI(BinaryResource binaryResource);
 }
