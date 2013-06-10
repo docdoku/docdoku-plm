@@ -43,7 +43,7 @@ public class UploadFile {
 
         File cadFile =  FileIO.urlToFile(UploadFile.class.getResource(CAD_FILE));
         IProductManagerWS productS = ScriptingTools.createProductService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
-        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "", null);
+        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "", null, null);
 
         PartMasterKey partMPK = new PartMasterKey(properties.getWorkspace(), PART_NUMBER);
 

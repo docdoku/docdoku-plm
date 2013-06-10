@@ -13,7 +13,8 @@ define([
 
         events:{
             "click input[type=checkbox]":"selectionChanged",
-            "click td.part_number":"toPartModal"
+            "click td.part_number":"toPartModal",
+            "click td.part-revision-share i":"sharePart"
         },
 
         tagName:"tr",
@@ -25,13 +26,14 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template(this.model));
+            this.$el.html(this.template({model:this.model,i18n:i18n}));
             this.$checkbox = this.$("input[type=checkbox]");
             if(this.isChecked()){
                 this.check();
                 this.trigger("selectionChanged",this);
             }
             this.bindUserPopover();
+            this.trigger("rendered",this);
             return this;
         },
 
@@ -71,6 +73,15 @@ define([
             if(this.model.isCheckout()){
                 this.$(".checkout-user-popover").userPopover(this.model.getCheckOutUserLogin(),this.model.getNumber(),"left");
             }
+        },
+
+        sharePart:function(){
+            var that = this;
+            require(["common-objects/views/share/share_entity"],function(ShareView){
+                var shareView = new ShareView({model:that.model,entityType:"parts"});
+                $("body").append(shareView.render().el);
+                shareView.openModal();
+            });
         }
 
     });

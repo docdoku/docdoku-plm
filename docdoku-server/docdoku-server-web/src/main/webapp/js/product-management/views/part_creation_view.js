@@ -4,9 +4,12 @@ define(
         "i18n!localization/nls/product-creation-strings",
         "common-objects/models/part",
         "collections/part_templates",
-        "common-objects/views/attributes/attributes"
+        "common-objects/views/attributes/attributes",
+        "common-objects/views/workflow/workflow_list",
+        "common-objects/views/workflow/workflow_mapping",
+        "common-objects/views/security/acl"
     ],
-    function (template, i18n, Part, PartTemplateCollection, AttributesView) {
+    function (template, i18n, Part, PartTemplateCollection, AttributesView,DocumentWorkflowListView,DocumentWorkflowMappingView,ACLView) {
 
     var PartCreationView = Backbone.View.extend({
 
@@ -28,6 +31,22 @@ define(
             this.bindPartTemplateSelector();
             this.bindAttributesView();
             this.$(".tabs").tabs();
+
+            this.workflowsView = new DocumentWorkflowListView({
+                el: this.$("#workflows-list")
+            });
+
+            this.workflowsMappingView =  new DocumentWorkflowMappingView({
+                el: this.$("#workflows-mapping")
+            });
+
+            this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
+
+            this.workspaceMembershipsView = new ACLView({
+                el: this.$("#acl-mapping"),
+                editMode:true
+            }).render();
+
             return this;
         },
 
@@ -42,7 +61,7 @@ define(
         bindPartTemplateSelector:function(){
             this.templateCollection = new PartTemplateCollection();
             this.listenTo(this.templateCollection,"reset",this.onTemplateCollectionReset);
-            this.templateCollection.fetch();
+            this.templateCollection.fetch({reset:true});
         },
 
         bindAttributesView:function(){
@@ -60,7 +79,13 @@ define(
             });
 
             var templateId = this.$inputPartTemplate.val();
-            var saveOptions = templateId ? {templateId:templateId} : {};
+            var workflow = this.workflowsView.selected();
+            var saveOptions = {
+                templateId: templateId ? templateId : null,
+                workflowModelId: workflow ? workflow.get("id") : null,
+                roleMapping: workflow? this.workflowsMappingView.toList(): null,
+                acl:this.workspaceMembershipsView.toList()
+            };
 
             this.model.save(saveOptions, {
                 wait: true,

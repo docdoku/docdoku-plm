@@ -20,6 +20,7 @@
 package com.docdoku.server.dao;
 
 
+import com.docdoku.core.configuration.EffectivityConfigSpec;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
 import com.docdoku.core.services.ConfigurationItemNotFoundException;

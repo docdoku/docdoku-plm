@@ -118,6 +118,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get("standardPart") ? i18n.TRUE:i18n.FALSE;
         },
 
+        getLifeCycleState:function(){
+            return this.get("lifeCycleState");
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,
@@ -160,7 +164,81 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getPartKey();
             }
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/";
+        },
+
+
+        getPermalink: function() {
+            return encodeURI(
+                window.location.origin
+                    + "/parts/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getNumber()
+                    + "/"
+                    + this.getVersion()
+            );
+        },
+
+        createShare:function(args){
+            $.ajax({
+                type: "POST",
+                url: this.url() + "/share",
+                data: JSON.stringify(args.data),
+                contentType: "application/json; charset=utf-8",
+                success: args.success
+            });
+        },
+
+        publish:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/publish",
+                success: args.success
+            });
+        },
+
+        unpublish:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/unpublish",
+                success: args.success
+            });
+        },
+
+        updateACL:function(args){
+            $.ajax({
+                type: "PUT",
+                url: this.url() + "/acl",
+                data: JSON.stringify(args.acl),
+                contentType: "application/json; charset=utf-8",
+                success: args.success,
+                error : args.error
+            });
+        },
+
+        hasACLForCurrentUser:function(){
+            return this.getACLPermissionForCurrentUser() != false;
+        },
+
+        isForbidden:function(){
+            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
+        },
+
+        isReadOnly:function(){
+            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
+        },
+
+        isFullAccess:function(){
+            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
+        },
+
+        getACLPermissionForCurrentUser:function(){
+            if(this.get("acl")){
+                return this.get("acl").userEntries[APP_CONFIG.login];
+            }
+            return false;
         }
+
 
     });
 

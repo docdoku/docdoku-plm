@@ -36,7 +36,10 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Table(name="DOCUMENTLINK")
 @javax.persistence.Entity
-@NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments")
+@NamedQueries ({
+    @NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments"),
+    @NamedQuery(name="DocumentLink.findPartOwner", query = "SELECT p FROM PartIteration p WHERE :link MEMBER OF p.linkedDocuments")
+})
 public class DocumentLink implements Serializable, Cloneable{
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -44,7 +47,7 @@ public class DocumentLink implements Serializable, Cloneable{
     private int id;
 
     
-    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name="TARGET_ITERATION", referencedColumnName="ITERATION"),
         @JoinColumn(name="TARGET_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),

@@ -111,7 +111,7 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
         },
 
         getInstancesUrl: function() {
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + this.getPath();
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path=" + this.getPath();
         },
 
         putOnScene: function() {
@@ -119,6 +119,7 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
                 //get instances that need to be added to the scene
                 var instancesNotOnScene = _.filter(instances, function(instance) {
+                    instance = sceneManager.cleanRootId(instance);
                     return !sceneManager.isOnScene(instance.id);
                 });
 
@@ -151,8 +152,10 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
         },
 
         removeFromScene: function() {
+
             $.getJSON(this.getInstancesUrl(), function(instances) {
                 _.each(instances, function(instanceRaw) {
+                    instanceRaw = sceneManager.cleanRootId(instanceRaw);
                     if (sceneManager.isOnScene(instanceRaw.id)) {
                         sceneManager.removeInstanceFromScene(instanceRaw.id);
                     }
@@ -163,7 +166,7 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
         getUrlForBom: function() {
 
             if(this.isAssembly()) {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/bom?configSpec=latest&partUsageLink=" + this.getPartUsageLinkId();
+                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/bom?configSpec="+window.config_spec+"&partUsageLink=" + this.getPartUsageLinkId();
             } else {
                 return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber()+ "-" + this.getVersion();
             }
@@ -190,9 +193,9 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
         url: function() {
             if (this.isRoot) {
-                return this.urlBase + "?configSpec=latest&depth=0";
+                return this.urlBase + "?configSpec="+window.config_spec+"&depth=0";
             } else {
-                return this.urlBase + "?configSpec=latest&partUsageLink=" + this.parentUsageLinkId + "&depth=1";
+                return this.urlBase + "?configSpec="+window.config_spec+"&partUsageLink=" + this.parentUsageLinkId + "&depth=1";
             }
         },
 

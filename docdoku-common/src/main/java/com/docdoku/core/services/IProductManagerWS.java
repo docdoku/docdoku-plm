@@ -21,13 +21,23 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.sharing.SharedEntityKey;
+import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.workflow.TaskKey;
 
 import javax.jws.WebService;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -44,7 +54,7 @@ import java.util.List;
 public interface IProductManagerWS{
     
     /**
-     * Searchs all instances of a part and returns their paths, defined by a
+     * Searches all instances of a part and returns their paths, defined by a
      * serie of usage links, from the top of the structure to their own usage
      * link.
      * 
@@ -161,6 +171,15 @@ public interface IProductManagerWS{
      * The id of the template to use to instantiate the part, may be null.
      * Refers to a <a href="PartMasterTemplate.html">PartMasterTemplate</a>.
      *
+     * @param roleMappings
+     * Role mapping for the selected workflow model
+     *
+     * @param userEntries
+     * ACL user entries
+     *
+     * @param userGroupEntries
+     * ACL group entries
+     *
      * @return
      * The created part master instance
      * 
@@ -172,7 +191,7 @@ public interface IProductManagerWS{
      * @throws PartMasterAlreadyExistsException
      * @throws CreationException
      */
-    PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription, String templateId) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException;
+    PartMaster createPartMaster(String workspaceId, String number, String name, String partMasterDescription, boolean standardPart, String workflowModelId, String partRevisionDescription, String templateId, Map<String, String> roleMappings, ACLUserEntry[] userEntries, ACLUserGroupEntry[] userGroupEntries) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException;
 
     /**
      * Checks out the supplied part revision to allow the operating user to modify it.
@@ -212,7 +231,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      */
-    PartRevision undoCheckOutPart(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    PartRevision undoCheckOutPart(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
     
     /**
      * Checks in the supplied part revision so its latest iteration,
@@ -264,7 +283,7 @@ public interface IProductManagerWS{
     /**
      * Creates a <a href="Geometry.html">Geometry</a> file,
      * a specialized kind of binary resource which contains CAD data, and
-     * attachs it to the part iteration passed as parameter.
+     * attaches it to the part iteration passed as parameter.
      * The part must be in the checkout state and the calling user must have
      * write access rights to the part.
      * 
@@ -295,7 +314,7 @@ public interface IProductManagerWS{
     
     /**
      * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>
-     * object, and attachs it to the part iteration instance passed
+     * object, and attaches it to the part iteration instance passed
      * as parameter. The part must be in the checkout state and
      * the calling user must have write access rights to the part.
      * 
@@ -549,7 +568,7 @@ public interface IProductManagerWS{
 
     boolean partMasterExists(PartMasterKey partMasterKey)throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
-    void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException;
+    void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException, EntityConstraintException;
 
     void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException;
 
@@ -570,4 +589,38 @@ public interface IProductManagerWS{
 
     Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    PartRevision[] getAllCheckedOutPartRevisions(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    PartRevision approve(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
+
+    PartRevision reject(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
+
+    SharedPart createSharedPart(PartRevisionKey pPartRevisionKey, String pPassword, Date pExpireDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, UserNotActiveException;
+    void deleteSharedPart(SharedEntityKey pSharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException;
+
+    PartRevision getPublicPartRevision(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException;
+
+    void updatePartRevisionACL(String workspaceId, PartRevisionKey revisionKey, Map<String,String> userEntries, Map<String,String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, DocumentMasterNotFoundException;
+
+    List<PartRevision> getPartRevisions(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
+
+    int getPartRevisionsCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException;
+
+    void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException;
+
+    void createBaseline(ConfigurationItemKey configurationItemKey, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
+
+    List<Baseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    ConfigSpec getConfigSpecForBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    void deleteBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+
+    Baseline getBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Baseline duplicateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
+
+    void updateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
+
 }

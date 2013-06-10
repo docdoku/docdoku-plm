@@ -1,0 +1,19 @@
+<div id="acl_edit_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <form id="form-acl-edit" class="tab-content form-horizontal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>{{i18n.ACL}} : {{title}}</h3>
+        </div>
+        <div class="modal-body">
+            <h4>{{i18n.USERS}}</h4>
+            <div id="users-acl-entries"></div>
+            <hr />
+            <h4>{{i18n.GROUPS}}</h4>
+            <div id="groups-acl-entries"></div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">{{i18n.CANCEL}}</a>
+            <button class="btn btn-primary" type="submit">{{i18n.SAVE}}</button>
+        </div>
+    </form>
+</div>

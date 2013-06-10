@@ -10,7 +10,7 @@
     <packaging>war</packaging>
     <name>docdoku-server-web Java EE 6 Webapp</name>
     <dependencies>
-        
+
         <!-- JAXRS -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -24,7 +24,7 @@
         </dependency>
 
         <!-- WebSocket -->
-        
+
         <dependency>
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-websockets</artifactId>
@@ -36,9 +36,9 @@
             <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
-        
+
         <!-- JEE core API -->
         <dependency>
             <groupId>javax</groupId>
@@ -129,6 +129,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-web</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
 </project>

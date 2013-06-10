@@ -1,11 +1,13 @@
 define([
     "text!templates/part_list.html",
     "i18n!localization/nls/product-management-strings",
-    "views/part_list_item"
+    "views/part_list_item",
+    "i18n!localization/nls/datatable-strings"
 ], function (
     template,
     i18n,
-    PartListItemView
+    PartListItemView,
+    i18nDt
     ) {
     var PartListView = Backbone.View.extend({
 
@@ -18,14 +20,12 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
-            this.listenTo(this.collection, 'add', this.addPart);
+            this.listenTo(this.collection, 'add', this.addNewPart);
             this.listItemViews = [];
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
-            this.bindDomElements();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
             return this;
         },
 
@@ -35,25 +35,38 @@ define([
         },
 
         resetList:function(){
+            if(this.oTable){
+                this.oTable.fnDestroy();
+            }
+            this.$el.html(this.template({i18n:i18n}));
+            this.bindDomElements();
             var that = this;
             this.listItemViews = [];
-            this.$items.empty();
             this.collection.each(function(model){
                 that.addPart(model);
             });
+            this.dataTable();
         },
 
         pushPart:function(part){
             this.collection.push(part);
         },
 
-        addPart:function(model){
-            this.addPartView(model);
-            this.$el.removeClass("hide");
+        addNewPart:function(model){
+            this.addPart(model,true);
+            this.redraw();
+        },
+
+        addPart:function(model, effect){
+            var view = this.addPartView(model);
+            if(effect){
+                view.$el.highlightEffect();
+            }
         },
 
         removePart:function(model){
             this.removePartView(model);
+            this.redraw();
         },
 
         removePartView:function(model){
@@ -64,11 +77,9 @@ define([
 
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
+                var row = viewToRemove.$el.get(0);
+                this.oTable.fnDeleteRow(this.oTable.fnGetPosition(row));
                 viewToRemove.remove();
-            }
-
-            if( this.listItemViews.length == 0){
-                this.$el.addClass("hide");
             }
 
         },
@@ -78,6 +89,8 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            view.on("rendered",this.redraw);
+            return view;
         },
 
         toggleSelection:function(){
@@ -123,16 +136,20 @@ define([
         onNoPartSelected:function(){
             this.trigger("delete-button:display",false);
             this.trigger("checkout-group:display",false);
+            this.trigger("acl-edit-button:display",false);
         },
 
         onOnePartSelected:function(){
             this.trigger("delete-button:display",true);
             this.trigger("checkout-group:display",true);
+            var partSelected = this.getSelectedPart();
+            this.trigger("acl-edit-button:display", partSelected ? (APP_CONFIG.workspaceAdmin || partSelected.getAuthorLogin() == APP_CONFIG.login) : false);
         },
 
         onSeveralPartsSelected:function(){
             this.trigger("delete-button:display",true);
             this.trigger("checkout-group:display",false);
+            this.trigger("acl-edit-button:display",false);
         },
 
         deleteSelectedParts:function(){
@@ -142,13 +159,13 @@ define([
                     if(view.isChecked()){
                         view.model.destroy({success:function(){
                             that.removePart(view.model);
+                            that.onSelectionChanged();
                         },error:function(model,err){
-
-                            alert(err.responseText)
+                            alert(err.responseText);
+                            that.onSelectionChanged();
                         }});
                     }
                 });
-                this.onNoPartSelected();
             }
         },
 
@@ -161,6 +178,28 @@ define([
                 return checkedView.model;
             }
 
+        },
+        redraw:function(){
+            this.dataTable();
+        },
+        dataTable:function(){
+            if(this.oTable){
+                this.$el.dataTable().fnDestroy();
+            }
+            this.oTable = this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>",
+                    sEmptyTable:i18nDt.NO_DATA,
+                    sZeroRecords:i18nDt.NO_FILTERED_DATA
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,11,12 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         }
 
     });

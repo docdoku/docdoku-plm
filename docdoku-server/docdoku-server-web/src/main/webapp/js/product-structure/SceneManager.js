@@ -528,7 +528,7 @@ define([
         initIframeScene: function() {
             if (!_.isUndefined(SCENE_INIT.pathForIframe)) {
                 var self = this;
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=latest&path=" + SCENE_INIT.pathForIframe;
+                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path=" + SCENE_INIT.pathForIframe;
                 $.getJSON(instancesUrl, function(instances) {
                     _.each(instances, function(instanceRaw) {
 
@@ -623,8 +623,24 @@ define([
                 }
             });
 
-        }
+        },
 
+        clear:function(){
+            for(var instance in this.instances){
+                sceneManager.instances[instance].clearMeshAndLevelGeometry();
+                delete this.instancesMap[instance];
+            }
+            this.instances=[];
+            this.instancesMap={};
+
+        },
+
+        cleanRootId:function(instance){
+            if(instance.id.match(/^0\-.*/)){
+                instance.id = instance.id.substr(2,instance.id.length);
+            }
+            return instance;
+        }
 
     };
 

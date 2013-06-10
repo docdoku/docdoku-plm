@@ -25,6 +25,39 @@ define(function() {
 
         getFrameUrl: function() {
             return  "/visualization/" + APP_CONFIG.workspaceId + "/" + encodeURIComponent(this.getId())+"?cameraX=0&cameraY=10&cameraZ=1000&pathToLoad=null";
+        },
+
+        createBaseline:function(baselineArgs,callbacks){
+            $.ajax({
+                type: "POST",
+                url: this.urlRoot + "/" + this.getId() + "/baseline",
+                data: JSON.stringify(baselineArgs),
+                contentType: "application/json; charset=utf-8",
+                success:callbacks.success,
+                error:callbacks.error
+            });
+        },
+
+        deleteBaselines:function(baselines){
+            var that = this ;
+            var errors = [];
+            _.each(baselines,function(baseline){
+                that.deleteBaseline(baseline.getId(),{success:function(){},error:function(){
+                    errors.push(baseline);
+                }})
+            });
+            return errors;
+        },
+
+        deleteBaseline:function(baselineId,callbacks){
+            $.ajax({
+                type: "DELETE",
+                async:false,
+                url: this.urlRoot + "/" + this.getId() + "/baseline/"+baselineId,
+                contentType: "application/json; charset=utf-8",
+                success:callbacks.success,
+                error:callbacks.error
+            });
         }
 
     });

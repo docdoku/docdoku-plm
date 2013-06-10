@@ -1,5 +1,4 @@
-/*
- * DocDoku, Professional Open Source
+/* DocDoku, Professional Open Source
  * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
@@ -107,6 +106,10 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -126,8 +129,13 @@ public class DocumentsResource {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
                 docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setLifeCycleState(docMs[i].getLifeCycleState());
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -143,9 +151,14 @@ public class DocumentsResource {
 
             for (int i = 0; i < docMs.length; i++) {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -167,11 +180,14 @@ public class DocumentsResource {
             for (int i = 0; i < docMs.length; i++) {
 
                 DocumentMasterDTO docDTO = mapper.map(docMs[i], DocumentMasterDTO.class);
-
+                docDTO.setPath(docMs[i].getLocation().getCompletePath());
                 docDTO = Tools.createLightDocumentMasterDTO(docDTO);
                 docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
                 docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
-
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docDTO.setAcl(Tools.mapACLtoACLDTO(acl));
+                }
                 docMsDTOs.add(docDTO);
 
             }
@@ -196,9 +212,14 @@ public class DocumentsResource {
 
             for (int i = 0; i < docMs.length; i++) {
                 docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
             }
 
             return docMsDTOs;
@@ -219,10 +240,11 @@ public class DocumentsResource {
         String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
 
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
+        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
         String pDocMTemplateId = docCreationDTO.getTemplateId();
 
         /* Null value for test purpose only */
-        ACLDTO acl = null;
+        ACLDTO acl = docCreationDTO.getAcl();
 
         try {
             ACLUserEntry[] userEntries = null;
@@ -231,20 +253,28 @@ public class DocumentsResource {
                 userEntries = new ACLUserEntry[acl.getUserEntries().size()];
                 userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
                 int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                     userEntries[i] = new ACLUserEntry();
                     userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
                     userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
                 i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
                     userGroupEntries[i] = new ACLUserGroupEntry();
                     userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
             }
 
-            DocumentMaster createdDocMs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries);
+            Map<String, String> roleMappings = new HashMap<String,String>();
+
+            if(rolesMappingDTO != null){
+                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                    roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
+                }
+            }
+            DocumentMaster createdDocMs =  documentService.createDocumentMaster(decodedCompletePath, pDocMID, pTitle, pDescription, pDocMTemplateId, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+
             DocumentMasterDTO docMsDTO = mapper.map(createdDocMs, DocumentMasterDTO.class);
             docMsDTO.setPath(createdDocMs.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(createdDocMs.getLifeCycleState());

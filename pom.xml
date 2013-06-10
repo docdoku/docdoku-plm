@@ -15,7 +15,15 @@
     <packaging>pom</packaging>
     <version>2.0-SNAPSHOT</version>
     <name>docdoku-plm</name>
+    <description>DocDoku PLM is a high end Open Source PLM solution.</description>
     <url>http://www.docdokuplm.com</url>
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License, version 3</name>
+            <url>http://www.gnu.org/licenses/agpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <scm>
         <connection>scm:git:https://git@github.com/docdoku/docdoku-plm.git</connection>
         <developerConnection>scm:git:https://git@github.com/docdoku/docdoku-plm.git</developerConnection>
@@ -27,4 +35,16 @@
         <module>docdoku-server</module>
         <module>docdoku-cli</module>
     </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <useReleaseProfile>true</useReleaseProfile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -1,8 +1,8 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "models/activity_model",
+    "common-objects/models/activity_model",
     "text!templates/activity_model_editor.html",
-    "models/task_model"
+    "common-objects/models/task_model"
 ], function (
     i18n,
     ActivityModel,
@@ -53,7 +53,7 @@ define([
             this.updateMaxTasksToComplete();
 
             require(["views/task_model_editor"], function(TaskModelEditorView) {
-                var taskModelEditorView = new TaskModelEditorView({model: taskModel, users: self.options.users});
+                var taskModelEditorView = new TaskModelEditorView({model: taskModel, roles: self.options.roles});
                 self.subviews.push(taskModelEditorView);
                 taskModelEditorView.render();
                 self.tasksUL.append(taskModelEditorView.el);

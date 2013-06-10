@@ -40,7 +40,16 @@ define({
         CREATE:"Create",
         SAVE:"Save",
         MASK:"Mask",
-        ID_GENERATION:"Id generation"
+        ID_GENERATION:"Id generation",
+        LIFECYCLE_STATE:"Life cycle state",
+        PUBLISH:"Publish",
+        "ITERATION_NOTE":"Iteration note",
+        "ITERATION_NOTE_PROMPT_LABEL":"The iteration note has not been defined. Do you want to add it?",
+        "ITERATION_NOTE_PROMPT_CANCEL":"Ignore",
+        "ITERATION_NOTE_PROMPT_OK":"Add iteration note",
+        "ACL":"ACL",
+        BASELINES:"Baselines",
+        CREATE_BASELINE:"Create a baseline"
     },
     "fr": true
 });

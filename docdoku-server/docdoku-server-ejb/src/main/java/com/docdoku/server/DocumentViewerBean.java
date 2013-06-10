@@ -21,7 +21,6 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
 import com.docdoku.server.viewers.ViewerUtils;
@@ -34,20 +33,14 @@ import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {
-
-    @EJB
-    private IDocumentManagerLocal documentService;
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -55,22 +48,6 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     @Inject
     @Any
     private Instance<DocumentViewer> documentViewers;
-
-    @Override
-    public InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource binaryResource) throws Exception {
-        DocumentViewer selectedDocumentViewer = null;
-        for (DocumentViewer documentViewer : documentViewers) {
-            if (documentViewer.canPrepareFileForViewer(binaryResource, pRequest)) {
-                selectedDocumentViewer = documentViewer;
-                break;
-            }
-        }
-
-        if (selectedDocumentViewer != null) {
-            return selectedDocumentViewer.prepareFileForViewer(pRequest, pResponse, servletContext, binaryResource);
-        }
-        return null;
-    }
 
     @Override
     public String getHtmlForViewer(BinaryResource binaryResource) {
@@ -109,6 +86,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
         scopes.put("uriResource", ViewerUtils.getURI(binaryResource));
         scopes.put("externalUriResource", dataManager.getExternalStorageURI(binaryResource));
         scopes.put("fileName", binaryResource.getName());
+        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
         return templateWriter.toString();

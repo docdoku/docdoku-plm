@@ -19,8 +19,6 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.meta.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
@@ -37,11 +35,7 @@ import javax.ws.rs.core.Response;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import static com.docdoku.server.rest.dto.ActivityModelDTO.Type.SERIAL;
 
 /**
  *
@@ -57,6 +51,9 @@ public class WorkflowResource {
 
     @EJB
     private IWorkflowManagerLocal workflowService;
+
+    @EJB
+    private IWorkflowManagerLocal roleService;
 
     private Mapper mapper;
 
@@ -132,7 +129,7 @@ public class WorkflowResource {
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
 
-            User[] users = documentService.getUsers(workspaceId);
+            Role[] roles = roleService.getRoles(workspaceId);
 
             List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
 
@@ -142,10 +139,12 @@ public class WorkflowResource {
 
                 List<TaskModel> taskModelList = activityModels[i].getTaskModels();
                 for(TaskModel taskModel : taskModelList){
-                    String login = taskModel.getWorker().getLogin();
-                    for(int j=0; j<users.length; j++){
-                        if(users[j].getLogin().equals(login))
-                            taskModel.setWorker(users[j]);
+                    String roleName = taskModel.getRole().getName();
+                    for(int j=0; j<roles.length; j++){
+                        if(roles[j].getName().equals(roleName)){
+                            taskModel.setRole(roles[j]);
+                            break;
+                        }
                     }
                 }
             }

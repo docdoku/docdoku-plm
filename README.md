@@ -29,3 +29,5 @@ You may fork or just clone the code on [GitHub](https://github.com/docdoku/docdo
 ## License
 
 AGPL version 3
+
+## [Cloud Hosting](http://docdokuplm.net)

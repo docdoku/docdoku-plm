@@ -1,4 +1,4 @@
-define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localization/nls/product-structure-strings","collections/part_collection"], function (BomItemView, template, i18n, PartList) {
+define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localization/nls/product-structure-strings","collections/part_collection","i18n!localization/nls/datatable-strings"], function (BomItemView, template, i18n, PartList, i18nDt) {
     var BomContentView = Backbone.View.extend({
 
         el: "#bom_table_container",
@@ -17,6 +17,7 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
 
         render: function() {
             this.$el.html(this.template({i18n : i18n}));
+            this.table = this.$('table');
             this.tbody = this.$('tbody');
             return this;
         },
@@ -39,7 +40,7 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(component.getUrlForBom());
             this.listenTo(this.partsCollection, "reset", this.addAllBomItem);
-            this.partsCollection.fetch();
+            this.partsCollection.fetch({reset:true});
         },
 
         showRoot:function(rootComponent){
@@ -47,13 +48,28 @@ define(["views/bom_item_view", "text!templates/bom_content.html", "i18n!localiza
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
             this.listenTo(this.partsCollection, "reset", this.addAllBomItem);
-            this.partsCollection.fetch();
+            this.partsCollection.fetch({reset:true});
         },
 
         addAllBomItem: function(parts) {
-            this.tbody.empty();
+            this.render();
             parts.each(this.addBomItem, this);
             this.notifySelectionChanged();
+
+            this.table.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>",
+                    sEmptyTable:i18nDt.NO_DATA,
+                    sZeroRecords:i18nDt.NO_FILTERED_DATA
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         },
 
         addBomItem: function(part) {

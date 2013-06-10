@@ -33,13 +33,11 @@ import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.common.UserKey;
 
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 
 public class UserDAO {
 
@@ -54,6 +52,16 @@ public class UserDAO {
     public UserDAO(EntityManager pEM) {
         em = pEM;
         mLocale = Locale.getDefault();
+    }
+
+    public User loadAdmin(String userLogin) throws UserNotFoundException {
+        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE u.login = :userLogin");
+        try{
+            User admin = (User) query.setParameter("userLogin",userLogin).getSingleResult();
+            return admin;
+        }catch(NoResultException ex){
+            throw new UserNotFoundException(mLocale, userLogin);
+        }
     }
 
     public User loadUser(UserKey pUserKey) throws UserNotFoundException {
@@ -189,5 +197,28 @@ public class UserDAO {
         }
 
         return users;
+    }
+
+    public User[] findReachableUsersForCaller(String callerLogin) {
+
+        List<User> users = new ArrayList<User>();
+
+        List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login")
+                .setParameter("login", callerLogin).getResultList();
+
+        List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId")
+                .setParameter("workspacesId", listWorkspaceId).getResultList();
+
+        List<String> loginsAdded = new ArrayList<String>();
+
+        for (int i = 0; i < listUsers.size(); i++) {
+            if(!loginsAdded.contains( ((User)listUsers.get(i)).getLogin()) ){
+                loginsAdded.add(((User)listUsers.get(i)).getLogin());
+                users.add((User) listUsers.get(i));
+            }
+        }
+
+        return users.toArray(new User[users.size()]);
+
     }
 }

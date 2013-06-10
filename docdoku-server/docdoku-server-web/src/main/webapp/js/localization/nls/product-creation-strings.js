@@ -23,7 +23,9 @@ define({
         DELETE_PRODUCT_ERROR:"Error on product deletion",
         VISUALIZE_PRODUCT:"Visualize product",
         GENERAL:"General",
-        ATTRIBUTES:"Attributes"
+        ATTRIBUTES:"Attributes",
+        WORKFLOW:"Workflow",
+        ACL:"ACL"
     },
     "fr": true
 });

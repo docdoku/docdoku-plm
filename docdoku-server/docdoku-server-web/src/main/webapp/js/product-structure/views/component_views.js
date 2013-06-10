@@ -14,7 +14,7 @@ define(function() {
             if (this.collection.isEmpty()) {
                 this.listenTo(this.collection, 'reset', this.addAllComponentsView)
                     .listenTo(this.collection, 'add', this.addComponentView);
-                this.collection.fetch();
+                this.collection.fetch({reset:true});
             } else {
                 this.addAllComponentsView();
             }
@@ -50,7 +50,7 @@ define(function() {
         fetchAll:function(){
             var that = this ;
             this.$el.empty();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
         }
 
     });
@@ -104,7 +104,7 @@ define(function() {
 
         onComponentSelected: function(e) {
             e.stopPropagation();
-            this.$("a").trigger("component_selected", [this.model,this.$el]);
+            this.$(">a").trigger("component_selected", [this.model,this.$el]);
         },
 
         onEditPart:function(){
@@ -225,7 +225,7 @@ define(function() {
 
         onComponentSelected: function(e) {
             e.stopPropagation();
-            this.$("a").trigger("component_selected", [this.model,this.$el]);
+            this.$(">a").trigger("component_selected", [this.model,this.$el]);
         },
 
         isChecked: function() {

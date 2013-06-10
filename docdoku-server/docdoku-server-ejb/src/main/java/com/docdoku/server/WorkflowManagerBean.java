@@ -21,12 +21,15 @@ package com.docdoku.server;
 
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserKey;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.Tools;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.core.workflow.*;
+import com.docdoku.server.dao.RoleDAO;
+import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkflowModelDAO;
+import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -39,6 +42,7 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -98,4 +102,72 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         return new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(pKey);
     }
+
+
+    @Override
+    @RolesAllowed("users")
+    public Role[] getRoles(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        List<Role> roles = roleDAO.findRolesInWorkspace(pWorkspaceId);
+        return roles.toArray(new Role[roles.size()]);
+    }
+
+    @Override
+    public Role[] getRolesInUse(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        List<Role> roles = roleDAO.findRolesInUseWorkspace(pWorkspaceId);
+        return roles.toArray(new Role[roles.size()]);
+    }
+
+    @Override
+    @RolesAllowed("users")
+    public Role createRole(String roleName, String workspaceId, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
+        Role role = new Role(roleName,wks);
+
+        if(userLogin != null){
+            System.out.println("#### userLogin not null ! "+userLogin + "  " + workspaceId);
+            User userMapped = new UserDAO(new Locale(user.getLanguage()),em).loadUser(new UserKey(workspaceId,userLogin));
+            role.setDefaultUserMapped(userMapped);
+        }
+
+        roleDAO.createRole(role);
+        return role;
+    }
+
+    @Override
+    public Role updateRole(RoleKey roleKey, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
+        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        Role role = roleDAO.loadRole(roleKey);
+
+        if(userLogin != null){
+            User userMapped = new UserDAO(new Locale(user.getLanguage()),em).loadUser(new UserKey(roleKey.getWorkspace(),userLogin));
+            role.setDefaultUserMapped(userMapped);
+        }else{
+            role.setDefaultUserMapped(null);
+        }
+
+        return role;
+
+    }
+
+    @Override
+    @RolesAllowed("users")
+    public void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, EntityConstraintException {
+        User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
+        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        Role role = roleDAO.loadRole(roleKey);
+
+        if(roleDAO.isRoleInUseInWorkflowModel(role)){
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException3");
+        }
+
+        roleDAO.deleteRole(role);
+    }
+
 }

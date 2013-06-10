@@ -45,7 +45,10 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Table(name = "DOCUMENTITERATION")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentIterationKey.class)
-@NamedQuery(name="DocumentIteration.findLinks", query = "SELECT l FROM DocumentLink l WHERE l.targetDocument = :target")
+@NamedQueries ({
+        @NamedQuery(name="DocumentIteration.findLinks", query = "SELECT l FROM DocumentLink l WHERE l.targetDocument = :target"),
+        @NamedQuery(name="DocumentIteration.findByBinaryResource", query = "SELECT d FROM DocumentIteration d WHERE :binaryResource member of d.attachedFiles")
+})
 @javax.persistence.Entity
 public class DocumentIteration implements Serializable, FileHolder, Comparable<DocumentIteration>, Cloneable {
 

@@ -44,6 +44,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-converter-kmz</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
 </project>

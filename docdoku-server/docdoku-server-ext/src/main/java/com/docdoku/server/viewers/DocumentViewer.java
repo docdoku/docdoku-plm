@@ -22,14 +22,7 @@ package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-
 public interface DocumentViewer {
-    boolean canPrepareFileForViewer(BinaryResource file, HttpServletRequest pRequest);
-    InputStream prepareFileForViewer(HttpServletRequest pRequest, HttpServletResponse pResponse, ServletContext servletContext, BinaryResource dataFile) throws Exception;
     boolean canRenderViewerTemplate(BinaryResource binaryResource);
     String renderHtmlForViewer(BinaryResource binaryResource) throws Exception;
 }

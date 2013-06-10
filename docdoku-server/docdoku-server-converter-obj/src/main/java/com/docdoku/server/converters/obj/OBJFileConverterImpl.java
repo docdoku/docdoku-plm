@@ -30,6 +30,9 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

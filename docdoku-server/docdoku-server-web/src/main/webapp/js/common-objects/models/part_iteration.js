@@ -84,6 +84,10 @@ define([
             return this.get("linkedDocuments");
         },
 
+        getLifeCycleState:function(){
+            return this.get("lifeCycleState");
+        },
+
 
         /**
          * file Upload uses the old servlet, not the JAXRS Api         *

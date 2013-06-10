@@ -27,12 +27,12 @@
                 <version>2.4</version>
                 <configuration>
                     <version>6</version>
-                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <defaultLibBundleDir>/lib</defaultLibBundleDir>
                     <generateApplicationXml>false</generateApplicationXml>
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>docdoku-server-ear</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
     <dependencies>
         <dependency>

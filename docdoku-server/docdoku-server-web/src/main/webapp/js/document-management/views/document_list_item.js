@@ -27,6 +27,7 @@ define([
 			this.events["click .reference"] = this.actionEdit;
 			this.events["click .state-subscription"] = this.toggleStateSubscription;
 			this.events["click .iteration-subscription"] = this.toggleIterationSubscription;
+			this.events["click .document-master-share i"] = this.shareDocument;
             this.events["dragstart a.dochandle"] = this.dragStart;
             this.events["dragend a.dochandle"] = this.dragEnd;
             this.events["dragstart td.doc-ref"] = this.dragStart;
@@ -48,6 +49,11 @@ define([
                     i18n._DATE_FORMAT,
                     data.checkOutDate
                 );
+            }
+
+            if(this.model.hasACLForCurrentUser()){
+                data.isReadOnly = this.model.isReadOnly();
+                data.isFullAccess = this.model.isFullAccess();
             }
 
             data.isCheckoutByConnectedUser = this.model.isCheckoutByConnectedUser();
@@ -87,7 +93,13 @@ define([
 
             Backbone.Events.on("document-moved", function(){
                 Backbone.Events.off("document-moved");
+                Backbone.Events.off("document-error-moved");
                 that.model.collection.remove(that.model);
+            });
+            Backbone.Events.on("document-error-moved", function(){
+                Backbone.Events.off("document-moved");
+                Backbone.Events.off("document-error-moved");
+                that.$el.removeClass("moving");
             });
             var data = JSON.stringify(this.model);
             e.dataTransfer.setData("document:text/plain", data);
@@ -99,6 +111,7 @@ define([
         dragEnd: function(e) {
             if(e.dataTransfer.dropEffect == "none"){
                 Backbone.Events.off("document-moved");
+                Backbone.Events.off("document-error-moved");
                 this.$el.removeClass("moving");
             }
         },
@@ -118,6 +131,15 @@ define([
 
         toggleIterationSubscription:function(evt){
             this.model.toggleIterationSubscribe(this.model.isIterationChangedSubscribed());
+        },
+
+        shareDocument:function(){
+            var that = this;
+            require(["common-objects/views/share/share_entity"],function(ShareView){
+                var shareView = new ShareView({model:that.model,entityType:"documents"});
+                $("body").append(shareView.render().el);
+                shareView.openModal();
+            });
         }
 
     });

@@ -1,7 +1,7 @@
 <td><a href="#" class="dochandle icon-reorder"></a></td>
 <td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
 <td class="reference doc-ref">
-    <a href="#">
+    <a title="{{model.path}}/{{model.id}}" >
     {{#model.isCheckout}}
         {{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}
         {{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}
@@ -24,11 +24,23 @@
 <td>{{model.title}}</td>
 <td><a class="author-popover">{{model.author.name}}</a></td>
 <td>{{model.lastIteration.creationDate}}</td>
+<td>{{model.lifeCycleState}}</td>
 <td>{{model.checkOutDate}}</td>
 <td><a class="checkout-user-popover">{{model.checkOutUser.name}}</a></td>
+<td class="document-acl-info">
+    {{#model.isReadOnly}}
+        <i class="icon-lock read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/model.isReadOnly}}
+    {{#model.isFullAccess}}
+        <i class="icon-lock full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/model.isFullAccess}}
+</td>
 <td class="document-master-subscriptions">
     <i class="iteration-subscription"></i>
 </td>
 <td class="document-master-subscriptions">
     <i class="state-subscription"></i>
+</td>
+<td class="document-master-share">
+    <i class="icon-globe" title="{{i18n.PUBLISH}}"></i>
 </td>

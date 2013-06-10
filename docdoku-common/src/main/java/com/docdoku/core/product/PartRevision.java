@@ -21,36 +21,18 @@ package com.docdoku.core.product;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.workflow.Workflow;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This class stands between <a href="PartMaster.html">PartMaster</a>
  * and <a href="PartIteration.html">PartIteration</a>.
- * Its main purpose is to hold effectivities.
+ * Its main purpose is to hold effectivities. It represents a formal revision of a part.
  *
  * @author Florent Garin
  * @version 1.1, 31/10/11
@@ -59,6 +41,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name="PARTREVISION")
 @IdClass(PartRevisionKey.class)
 @Entity
+@NamedQueries({
+        @NamedQuery(name="PartRevision.findByWorkspace", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId ORDER BY pr.partMaster.number ASC"),
+        @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId"),
+        @NamedQuery(name="PartRevision.findByWorkspace.filterUserACLEntry", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl)) ORDER BY pr.partMaster.number ASC"),
+        @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))")
+})
 public class PartRevision implements Serializable {
 
 
@@ -120,6 +108,11 @@ public class PartRevision implements Serializable {
     
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
+
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private ACL acl;
+
+    private boolean publicShared;
 
     public PartRevision(){
 
@@ -228,6 +221,13 @@ public class PartRevision implements Serializable {
         return (workflow != null);
     }
     
+    public ACL getACL() {
+        return acl;
+    }
+
+    public void setACL(ACL acl) {
+        this.acl = acl;
+    }
     
     public PartIteration createNextIteration(User pUser){
         PartIteration lastPart=getLastIteration();
@@ -298,7 +298,20 @@ public class PartRevision implements Serializable {
     public void setEffectivities(Set<Effectivity> effectivities) {
         this.effectivities = effectivities;
     }
-    
+
+    public boolean isPublicShared() {
+        return publicShared;
+    }
+
+    public void setPublicShared(boolean publicShared) {
+        this.publicShared = publicShared;
+    }
+
+    @Override
+    public String toString() {
+        return partMaster.getNumber() + "-" + version;
+    }
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {

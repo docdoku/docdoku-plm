@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
     
     <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
         <ui:define name="title">
@@ -28,6 +29,14 @@
                     <div class="actions-btn">
                         <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> | <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/> | <h:commandLink value="#{i18nWorkspacesMenu['section.dashboard']}" action="/admin/workspace/workspaceDashboard.xhtml"/>
                     </div>
+
+                    <c:if test="#{isSuperAdmin==true}">
+                        <h3>#{i18nWorkspacesMenu['section.title2']}</h3>
+                        <div class="actions-btn">
+                            <h:commandLink value="#{i18nWorkspacesMenu['section.superdashboard']}" action="/admin/superadmin/superDashboard.xhtml"/>
+                        </div>
+                    </c:if>
+
                 </fieldset>
             </h:form>
         </ui:define>

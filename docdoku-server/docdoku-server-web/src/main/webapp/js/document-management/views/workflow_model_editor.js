@@ -1,20 +1,12 @@
-/**
- * Created with IntelliJ IDEA.
- * User: yannsergent
- * Date: 13/11/12
- * Time: 13:13
- * To change this template use File | Settings | File Templates.
- */
-
 define([
     "require",
     "i18n!localization/nls/document-management-strings",
-    "models/workflow_model",
+    "common-objects/models/workflow_model",
     "text!templates/workflow_model_editor.html",
-    "common-objects/collections/users",
-    "models/activity_model",
+    "common-objects/collections/roles",
+    "common-objects/models/activity_model",
     "views/workflow_model_copy"
-], function(require, i18n, WorkflowModel, template, Users, ActivityModel, WorkflowModelCopyView) {
+], function(require, i18n, WorkflowModel, template, Roles, ActivityModel, WorkflowModelCopyView) {
     var WorkflowModelEditorView = Backbone.View.extend({
 
         el: "#document-content",
@@ -27,26 +19,9 @@ define([
         },
 
         initialize: function() {
+            var that = this ;
             this.subviews = [];
-
-            this.users = new Users();
-            this.users.fetch({async: false});
-
-            if (_.isUndefined(this.options.workflowModelId)) {
-                this.model = new WorkflowModel();
-                this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
-            } else {
-                this.model = new WorkflowModel({
-                    id: this.options.workflowModelId
-                });
-
-                var self = this;
-
-                this.model.fetch({success: function() {
-                    self.inputFinalState.val(self.model.get('finalLifeCycleState'));
-                    self.addAllActivity();
-                } });
-            }
+            this.roles = new Roles();
         },
 
         addAllActivity: function() {
@@ -57,7 +32,7 @@ define([
         addOneActivity: function(activityModel) {
             var self = this;
             require(["views/activity_model_editor"], function(ActivityModelEditorView) {
-                var activityModelEditorView = new ActivityModelEditorView({model: activityModel, users: self.users});
+                var activityModelEditorView = new ActivityModelEditorView({model: activityModel, roles: self.roles});
                 self.subviews.push(activityModelEditorView);
                 activityModelEditorView.render();
                 self.liAddActivitySection.before(activityModelEditorView.el);
@@ -125,11 +100,31 @@ define([
 
         render: function() {
 
-            this.template = Mustache.render(template, {i18n: i18n, workflow: this.model.attributes});
+            var that = this ;
 
-            this.$el.html(this.template);
+            this.roles.fetch({reset:true,success:function(){
 
-            this.bindDomElements();
+                if (_.isUndefined(that.options.workflowModelId)) {
+                    that.model = new WorkflowModel();
+                    that.model.attributes.activityModels.bind('add', that.addOneActivity, that);
+                } else {
+                    that.model = new WorkflowModel({
+                        id: that.options.workflowModelId
+                    });
+
+                    that.model.fetch({success: function() {
+                        that.inputFinalState.val(that.model.get('finalLifeCycleState'));
+                        that.addAllActivity();
+                    } });
+                }
+
+                that.template = Mustache.render(template, {i18n: i18n, workflow: that.model.attributes});
+
+                that.$el.html(that.template);
+
+                that.bindDomElements();
+
+            }});
 
             return this;
         },

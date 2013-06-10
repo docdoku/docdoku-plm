@@ -17,6 +17,8 @@ public class PartIterationDTO implements Serializable {
     private List<InstanceAttributeDTO> instanceAttributes;
     private List<PartUsageLinkDTO> components;
     private List<DocumentIterationDTO> linkedDocuments;
+    private String number;
+    private String version;
 
     public PartIterationDTO() {
     }
@@ -91,5 +93,21 @@ public class PartIterationDTO implements Serializable {
 
     public void setLinkedDocuments(List<DocumentIterationDTO> linkedDocuments) {
         this.linkedDocuments = linkedDocuments;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

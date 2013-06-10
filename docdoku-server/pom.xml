@@ -12,8 +12,9 @@
     <module>docdoku-server-ext</module>
     <module>docdoku-server-converter-obj</module>
     <module>docdoku-server-converter-kmz</module>
+    <module>docdoku-server-converter-all</module>
     <module>docdoku-server-scorm</module>
-    <module>docdoku-server-viewer-doc</module>
+    <module>docdoku-server-office-doc</module>
     <module>docdoku-server-viewer-image</module>
     <module>docdoku-server-viewer-multimedia</module>
     <module>docdoku-server-ejb</module>

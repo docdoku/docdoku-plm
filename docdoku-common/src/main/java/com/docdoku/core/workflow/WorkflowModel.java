@@ -23,16 +23,12 @@ package com.docdoku.core.workflow;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 import javax.persistence.*;
 
 /**
  * This class is the model used to create instances of 
- * <a href="Workflow.html">Workflow</a> attached to documents.
+ * <a href="Workflow.html">Workflow</a> attached to documents or parts.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
@@ -128,11 +124,11 @@ public class WorkflowModel implements Serializable, Cloneable {
         return activityModels.set(pStep, pActivity);
     }
 
-    public Workflow createWorkflow() {
+    public Workflow createWorkflow(Map<Role, User> roleUserMap) {
         Workflow workflow = new Workflow(finalLifeCycleState);
         List<Activity> activities = workflow.getActivities();
         for(ActivityModel model:activityModels){
-            Activity activity = model.createActivity();
+            Activity activity = model.createActivity(roleUserMap);
             activity.setWorkflow(workflow);
             activities.add(activity);
         }

@@ -34,6 +34,7 @@ public class TaskDTO implements Serializable {
     private String instructions;
     private int targetIteration;
     private Date closureDate;
+    private String signature;
     private UserDTO worker;
     private Status status;
 
@@ -99,5 +100,13 @@ public class TaskDTO implements Serializable {
 
     public void setWorker(UserDTO worker) {
         this.worker = worker;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

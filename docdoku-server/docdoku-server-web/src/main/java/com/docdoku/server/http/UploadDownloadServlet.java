@@ -90,13 +90,16 @@ public class UploadDownloadServlet extends HttpServlet {
             String fullName = null;
             BinaryResource binaryResource = null;
             boolean isSubResource = false;
-            boolean isForDocumentViewer = false;
+            boolean isDocumentAndOutputSpecified = false;
+            String outputFormat = null;
             String subResourceVirtualPath = "";
 
             if (elementType.equals("documents")) {
 
-                if (pRequest.getParameter("type") != null && pRequest.getParameter("type").equals("viewer")) {
-                    isForDocumentViewer = true;
+                outputFormat = pRequest.getParameter("output");
+
+                if (outputFormat != null && !outputFormat.isEmpty()) {
+                    isDocumentAndOutputSpecified = true;
                 }
 
                 //documents are versioned objects so we can rely on client cache without any risk 
@@ -143,7 +146,17 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
             //set content type
-            String contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(isSubResource ? subResourceVirtualPath : fullName);
+            String contentType = "";
+            if (isSubResource) {
+                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(subResourceVirtualPath);
+            } else {
+                if (isDocumentAndOutputSpecified) {
+                    contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName + "." + outputFormat);
+                } else {
+                    contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName);
+                }
+            }
+
             pResponse.setContentType(contentType);
 
             long lastModified = binaryResource.getLastModified().getTime();
@@ -163,8 +176,8 @@ public class UploadDownloadServlet extends HttpServlet {
 
                     } else {
 
-                        if (isForDocumentViewer) {
-                            binaryContentInputStream = documentViewerService.prepareFileForViewer(pRequest, pResponse, getServletContext(), binaryResource);
+                        if (isDocumentAndOutputSpecified) {
+                            binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
                         } else {
                             pResponse.setContentLength((int) binaryResource.getContentLength());
                             binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);

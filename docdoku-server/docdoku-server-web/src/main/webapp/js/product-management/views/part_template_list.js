@@ -1,11 +1,13 @@
 define([
     "text!templates/part_template_list.html",
     "i18n!localization/nls/product-management-strings",
-    "views/part_template_list_item"
+    "views/part_template_list_item",
+    "i18n!localization/nls/datatable-strings"
 ], function (
     template,
     i18n,
-    PartTemplateListItemView
+    PartTemplateListItemView,
+    i18nDt
     ) {
     var PartTemplateListView = Backbone.View.extend({
 
@@ -18,14 +20,12 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
-            this.listenTo(this.collection, 'add', this.addPartTemplate);
+            this.listenTo(this.collection, 'add', this.addNewPartTemplate);
             this.listItemViews = [];
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
-            this.bindDomElements();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
             return this;
         },
 
@@ -35,25 +35,35 @@ define([
         },
 
         resetList:function(){
+            this.$el.html(this.template({i18n:i18n}));
+            this.bindDomElements();
             var that = this;
             this.listItemViews = [];
-            this.$items.empty();
             this.collection.each(function(model){
                 that.addPartTemplate(model);
             });
+            this.dataTable();
         },
 
         pushPartTemplate:function(partTemplate){
             this.collection.push(partTemplate);
         },
 
-        addPartTemplate:function(model){
-            this.addPartTemplateView(model);
-            this.$el.removeClass("hide");
+        addNewPartTemplate:function(model){
+            this.addPartTemplate(model,true);
+            this.redraw();
+        },
+
+        addPartTemplate:function(model,effect){
+            var view = this.addPartTemplateView(model);
+            if(effect){
+                view.$el.highlightEffect();
+            }
         },
 
         removePartTemplate:function(model){
             this.removePartTemplateView(model);
+            this.redraw();
         },
 
         removePartTemplateView:function(model){
@@ -64,11 +74,9 @@ define([
 
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
+                var row = viewToRemove.$el.get(0);
+                this.oTable.fnDeleteRow(this.oTable.fnGetPosition(row));
                 viewToRemove.remove();
-            }
-
-            if( this.listItemViews.length == 0){
-                this.$el.addClass("hide");
             }
 
         },
@@ -78,6 +86,8 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            view.on("rendered",this.redraw);
+            return view;
         },
 
         toggleSelection:function(){
@@ -146,6 +156,28 @@ define([
                 return checkedView.model;
             }
 
+        },
+        redraw:function(){
+            this.dataTable();
+        },
+        dataTable:function(){
+            if(this.oTable){
+                this.$el.dataTable().fnDestroy();
+            }
+            this.oTable = this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>",
+                    sEmptyTable:i18nDt.NO_DATA,
+                    sZeroRecords:i18nDt.NO_FILTERED_DATA
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         }
 
     });

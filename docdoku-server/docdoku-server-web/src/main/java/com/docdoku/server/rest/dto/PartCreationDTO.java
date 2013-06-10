@@ -38,10 +38,12 @@ public class PartCreationDTO implements Serializable {
     private List<PartIterationDTO> partIterations;
     private UserDTO checkOutUser;
     private Date checkOutDate;
-    private WorkflowDTO workflow;
+    private String workflowModelId;
     private boolean standardPart;
     private String workspaceId;
     private String templateId;
+    private RoleMappingDTO[] roleMapping;
+    private ACLDTO acl;
 
     public PartCreationDTO() {
     }
@@ -126,12 +128,12 @@ public class PartCreationDTO implements Serializable {
         this.checkOutDate = checkOutDate;
     }
 
-    public WorkflowDTO getWorkflow() {
-        return workflow;
+    public String getWorkflowModelId() {
+        return workflowModelId;
     }
 
-    public void setWorkflow(WorkflowDTO workflow) {
-        this.workflow = workflow;
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
     }
 
     public String getPartKey() {
@@ -156,5 +158,21 @@ public class PartCreationDTO implements Serializable {
 
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
+    }
+
+    public RoleMappingDTO[] getRoleMapping() {
+        return roleMapping;
+    }
+
+    public void setRoleMapping(RoleMappingDTO[] roleMapping) {
+        this.roleMapping = roleMapping;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
     }
 }

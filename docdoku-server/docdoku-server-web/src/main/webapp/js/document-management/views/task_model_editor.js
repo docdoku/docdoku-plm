@@ -1,6 +1,6 @@
 define([
     "i18n!localization/nls/document-management-strings",
-    "models/task_model",
+    "common-objects/models/task_model",
     "text!templates/task_model_editor.html"
 ], function (
     i18n,
@@ -19,7 +19,7 @@ define([
             "click i.icon-minus" : "gotoFoldState",
             "change input.task-name" : "titleChanged",
             "change textarea.instructions" : "instructionsChanged",
-            "change select.worker": "workerSelected"
+            "change select.role": "roleSelected"
         },
 
         States : {
@@ -32,23 +32,23 @@ define([
 
             this.state = this.States.FOLD;
 
-            if(_.isUndefined(this.model.get("worker"))){
+            if(_.isUndefined(this.model.get("role"))){
                 this.model.set({
-                    worker: this.options.users.at(0)
+                    role: this.options.roles.at(0)
                 });
             }
 
-            var users = [];
-            _.each(this.options.users.models, function(user){
-                if(self.model.get("worker") && self.model.get("worker").get("name") == user.get("name")){
-                    users.push({name: user.get("name"), selected: true});
+            var roles = [];
+            _.each(this.options.roles.models, function(role){
+                if(self.model.get("role") && self.model.get("role").get("name") == role.get("name")){
+                    roles.push({name: role.get("name"), selected: true});
                 }
                 else{
-                    users.push({name: user.get("name"), selected: false});
+                    roles.push({name: role.get("name"), selected: false});
                 }
             });
 
-            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, users: users, i18n: i18n});
+            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, roles: roles, i18n: i18n});
         },
 
         deleteTaskAction: function(){
@@ -75,13 +75,13 @@ define([
             });
         },
 
-        workerSelected: function(e){
+        roleSelected: function(e){
             var nameSelected = e.target.value;
-            var userSelected = _.find(this.options.users.models, function(user){
-                return nameSelected == user.get("name");
+            var roleSelected = _.find(this.options.roles.models, function(role){
+                return nameSelected == role.get("name");
             });
             this.model.set({
-                worker: userSelected
+                role: roleSelected
             });
         },
 

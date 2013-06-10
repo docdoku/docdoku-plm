@@ -42,14 +42,6 @@ public class ScriptingTools {
     public final static String DEFAULT_WORKFLOW_WSDL_LOCATION = "http://localhost:8080/services/workflow?wsdl";
     public final static String DEFAULT_FILE_MANAGER_WSDL_LOCATION = "http://localhost:8080/services/UploadDownload?wsdl";
 
-    static {
-        String version = System.getProperty("java.version"); 
-        if (version.startsWith("1.7")) {
-            Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE = Config.JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE;        
-        } else {
-            Config.HTTP_CLIENT_STREAMING_CHUNK_SIZE = Config.JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE;
-        }
-    }
     private ScriptingTools() {
         
     }

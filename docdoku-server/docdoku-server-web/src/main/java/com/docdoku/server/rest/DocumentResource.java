@@ -31,7 +31,8 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -78,6 +79,10 @@ public class DocumentResource {
             docMsDTO.setLifeCycleState(docM.getLifeCycleState());
             docMsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docM));
             docMsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docM));
+            ACL acl = docM.getACL();
+            if(acl != null){
+                docMsDTO.setAcl(Tools.mapACLtoACLDTO(acl));
+            }
             return docMsDTO;
 
         } catch (com.docdoku.core.services.ApplicationException ex) {
@@ -294,11 +299,8 @@ public class DocumentResource {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
-
-        /*
-         * Null value for test purpose only
-         */
-        ACLDTO acl = null;
+        RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
+        ACLDTO acl = docCreationDTO.getAcl();
 
         try {
 
@@ -308,19 +310,28 @@ public class DocumentResource {
                 userEntries = new ACLUserEntry[acl.getUserEntries().size()];
                 userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
                 int i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getUserEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                     userEntries[i] = new ACLUserEntry();
                     userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
                     userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
                 i = 0;
-                for (Map.Entry<String, ACLDTO.Permission> entry : acl.getGroupEntries().entrySet()) {
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
                     userGroupEntries[i] = new ACLUserGroupEntry();
                     userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
                     userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
                 }
             }
-            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries);
+
+            Map<String, String> roleMappings = new HashMap<>();
+
+            if (rolesMappingDTO != null) {
+                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
+                    roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+                }
+            }
+
+            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
@@ -461,6 +472,81 @@ public class DocumentResource {
         }
     }
 
+    @POST
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    @Path("share")
+    public Response createSharedDocument(@PathParam("workspaceId") String workspaceId, SharedDocumentDTO pSharedDocumentDTO) {
+
+        String id = pSharedDocumentDTO.getDocumentMasterId();
+        String version = pSharedDocumentDTO.getDocumentMasterVersion();
+        String password = pSharedDocumentDTO.getPassword();
+        Date expireDate = pSharedDocumentDTO.getExpireDate();
+
+        try {
+            SharedDocument sharedDocument = documentService.createSharedDocument(new DocumentMasterKey(workspaceId, id, version),password,expireDate);
+            SharedDocumentDTO sharedDocumentDTO = mapper.map(sharedDocument,SharedDocumentDTO.class);
+            return Response.ok().entity(sharedDocumentDTO).build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("publish")
+    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+            DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            documentMaster.setPublicShared(true);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("unpublish")
+    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+        try {
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+            DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            documentMaster.setPublicShared(false);
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+
+    }
+
+    @PUT
+    @Consumes("application/json;charset=UTF-8")
+    @Path("acl")
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("docKey") String docKey, ACLDTO acl) {
+        try {
+            if (acl != null) {
+                int lastDash = docKey.lastIndexOf('-');
+                String id = docKey.substring(0, lastDash);
+                String version = docKey.substring(lastDash + 1, docKey.length());
+                DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
+
+                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, acl.getUserEntries(), acl.getGroupEntries());
+            }
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
     private InstanceAttribute[] createInstanceAttribute(InstanceAttributeDTO[] dtos) {
         if (dtos == null) {
             return null;
@@ -501,12 +587,20 @@ public class DocumentResource {
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
             InstanceNumberAttribute attr = new InstanceNumberAttribute();
             attr.setName(dto.getName());
-            attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            try{
+                attr.setNumberValue(Float.parseFloat(dto.getValue()));
+            }catch(NumberFormatException ex){
+                attr.setNumberValue(0);
+            }
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
             InstanceDateAttribute attr = new InstanceDateAttribute();
             attr.setName(dto.getName());
-            attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            try{
+                attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
+            }catch(NumberFormatException ex){
+                attr.setDateValue(null);
+            }
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
             InstanceURLAttribute attr = new InstanceURLAttribute();

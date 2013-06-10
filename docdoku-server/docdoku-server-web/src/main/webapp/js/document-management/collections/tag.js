@@ -35,7 +35,7 @@ define([
                 data : JSON.stringify(tags),
                 contentType: "application/json; charset=utf-8",
                 success: function() {
-                    this.fetch();
+                    this.fetch({reset:true});
                     callbackSuccess();
                 },
                 error:function(){

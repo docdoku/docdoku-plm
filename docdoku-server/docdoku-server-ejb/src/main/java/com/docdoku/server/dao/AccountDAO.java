@@ -48,7 +48,7 @@ public class AccountDAO {
         mLocale=Locale.getDefault();
         em=pEM;
     }
-    
+
     public void createAccount(Account pAccount, String pPassword) throws AccountAlreadyExistsException, CreationException {
         try{
             //the EntityExistsException is thrown only when flush occurs 
@@ -97,4 +97,16 @@ public class AccountDAO {
         
         return workspaces;    
     }
+
+    public Workspace[] getAllWorkspaces() {
+        Workspace[] workspaces;
+        Query query = em.createQuery("SELECT DISTINCT w FROM Workspace w");
+        List listWorkspaces = query.getResultList();
+        workspaces = new Workspace[listWorkspaces.size()];
+        for(int i=0;i<listWorkspaces.size();i++)
+            workspaces[i]=(Workspace) listWorkspaces.get(i);
+
+        return workspaces;
+    }
+
 }

@@ -2,13 +2,17 @@ define([
 	"common-objects/views/components/modal",
 	"common-objects/views/attributes/attributes",
 	"views/document/document_template_list",
-	"views/document/document_workflow_list",
+	"common-objects/views/workflow/workflow_list",
+	"common-objects/views/workflow/workflow_mapping",
+	"common-objects/views/security/acl",
 	"text!templates/document/document_new.html"
 ], function (
 	ModalView,
 	DocumentAttributesView,
 	DocumentTemplateListView,
 	DocumentWorkflowListView,
+    DocumentWorkflowMappingView,
+    ACLView,
 	template
 ) {
 	var DocumentNewView = ModalView.extend({
@@ -21,11 +25,13 @@ define([
         },
 
         rendered: function() {
+
             this.attributesView = this.addSubView(
                 new DocumentAttributesView({
                     el: "#tab-attributes-" + this.cid
                 })
             );
+
             this.attributesView.render();
 
             this.templatesView = this.addSubView(
@@ -34,17 +40,31 @@ define([
                     attributesView: this.attributesView
                 })
             );
-            this.templatesView.collection.fetch();
+
+            this.templatesView.collection.fetch({reset:true});
 
             this.workflowsView = this.addSubView(
                 new DocumentWorkflowListView({
                     el: "#workflows-" + this.cid
                 })
             );
-            this.workflowsView.collection.fetch();
+
+            this.workflowsMappingView = this.addSubView(
+                new DocumentWorkflowMappingView({
+                    el: "#workflows-mapping-" + this.cid
+                })
+            );
+
+            this.workflowsView.on("workflow:change",this.workflowsMappingView.updateMapping);
+
+            this.workspaceMembershipsView = new ACLView({
+                el: this.$("#acl-mapping-" + this.cid),
+                editMode:true
+            }).render();
         },
 
         onSubmitForm: function() {
+
             var reference = $("#form-" + this.cid + " .reference").val();
 
             if (reference) {
@@ -55,7 +75,9 @@ define([
                     title: $("#form-" + this.cid + " .title").val(),
                     description: $("#form-" + this.cid + " .description").val(),
                     workflowModelId: workflow ? workflow.get("id") : null,
-                    templateId: template ? template.get("id") : null
+                    templateId: template ? template.get("id") : null,
+                    roleMapping:workflow? this.workflowsMappingView.toList(): null,
+                    acl:this.workspaceMembershipsView.toList()
                 };
 
                 this.collection.create(data, {

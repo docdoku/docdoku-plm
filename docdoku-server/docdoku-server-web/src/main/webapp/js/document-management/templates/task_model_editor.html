@@ -1,7 +1,7 @@
 <div class="task fold">
     <div class="task-topbar">
         <i class="icon-reorder"></i>
-        <button class="btn minimize-task" title="{{i18n.FOLD_TASK}}""><i class="icon-minus"></i></button>
+        <button class="btn minimize-task" title="{{i18n.FOLD_TASK}}"><i class="icon-minus"></i></button>
         <p class="task-name" title="{{i18n.UNFOLD_TASK}}">
             {{#task.title}}{{task.title}}{{/task.title}}
             {{^task.title}}{{i18n.TASK_NAME_PLACEHOLDER}}{{/task.title}}
@@ -13,11 +13,11 @@
         <label for="instructions-{{cid}}">{{i18n.INSTRUCTIONS}}</label>
         <textarea id="instructions-{{cid}}" class="instructions" rows="2">{{task.instructions}}</textarea>
         </br>
-        <label for="worker-{{cid}}">{{i18n.RESPONSABLE}}</label>
-        <select id="worker-{{cid}}" class="worker">
-            {{#users}}
+        <label for="role-{{cid}}">{{i18n.ROLE}}</label>
+        <select id="role-{{cid}}" class="role">
+            {{#roles}}
             <option {{#selected}}selected{{/selected}} value="{{name}}">{{name}}</option>
-            {{/users}}
+            {{/roles}}
         </select>
     </div>
 </div>

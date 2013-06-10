@@ -39,5 +39,14 @@ define({
     CREATE:"Créer",
     SAVE:"Enregistrer",
     MASK:"Masque",
-    ID_GENERATION:"Génération de l'id"
+    ID_GENERATION:"Génération de l'id",
+    LIFECYCLE_STATE:"Etat du cycle de vie",
+    PUBLISH:"Publier",
+    "ITERATION_NOTE":"Note d'itération",
+    "ITERATION_NOTE_PROMPT_LABEL":"La note d'itération n'a pas été définie. Souhaitez-vous l'ajouter ?",
+    "ITERATION_NOTE_PROMPT_CANCEL":"Ignorer",
+    "ITERATION_NOTE_PROMPT_OK":"Ajouter la note d'itération",
+    "ACL":"Droits",
+    BASELINES:"Baselines",
+    CREATE_BASELINE:"Créer une baseline"
 });

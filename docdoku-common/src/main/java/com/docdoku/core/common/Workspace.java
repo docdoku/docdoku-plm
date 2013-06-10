@@ -27,7 +27,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Table;
 
 /**
- * The context in which documents, workflow models, document templates and all
+ * The context in which documents, workflow models, parts, products, templates and all
  * the other objects reside.  
  * 
  * @author Florent Garin

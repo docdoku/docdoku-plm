@@ -20,11 +20,11 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -50,6 +50,8 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private WorkflowDTO workflow;
     private String path;
     private String lifeCycleState;
+    private boolean publicShared;
+    private ACLDTO acl;
 
     public DocumentMasterDTO() {
     }
@@ -115,6 +117,9 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     }
 
     public String getLifeCycleState() {
+        if (lifeCycleState != null) {
+            return lifeCycleState;
+        }
         if (workflow != null)
             return workflow.getLifeCycleState();
         else
@@ -221,7 +226,22 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
-    
+
+    public boolean isPublicShared() {
+        return publicShared;
+    }
+
+    public void setPublicShared(boolean publicShared) {
+        this.publicShared = publicShared;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
+    }
 
     @Override
     public String toString() {

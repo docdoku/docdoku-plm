@@ -3,13 +3,17 @@ define([
     "text!templates/part_content.html",
     "i18n!localization/nls/product-management-strings",
     "views/part_list",
-    "views/part_creation_view"
+    "views/part_creation_view",
+    "common-objects/views/prompt",
+    "common-objects/views/security/acl_edit"
 ], function (
     PartCollection,
     template,
     i18n,
     PartListView,
-    PartCreationView
+    PartCreationView,
+    PromptView,
+    ACLEditView
     ) {
     var PartContentView = Backbone.View.extend({
 
@@ -23,6 +27,7 @@ define([
             "click button.checkout":"checkout",
             "click button.undocheckout":"undocheckout",
             "click button.checkin":"checkin",
+            "click button.edit-acl":"updateACL",
             "click button.next-page":"toNextPage",
             "click button.previous-page":"toPreviousPage",
             "click button.first-page":"toFirstPage",
@@ -51,6 +56,7 @@ define([
             this.partListView.on("delete-button:display", this.changeDeleteButtonDisplay);
             this.partListView.on("checkout-group:display", this.changeCheckoutGroupDisplay);
             this.partListView.on("checkout-group:update", this.updateCheckoutButtons);
+            this.partListView.on("acl-edit-button:display", this.changeACLButtonDisplay);
 
             return this;
         },
@@ -60,6 +66,7 @@ define([
             this.checkoutGroup = this.$(".checkout-group");
             this.checkoutButton = this.$(".checkout");
             this.undoCheckoutButton = this.$(".undocheckout");
+            this.aclButton = this.$(".edit-acl");
             this.checkinButton = this.$(".checkin");
             this.currentPageIndicator =this.$(".current-page");
             this.pageControls =this.$(".page-controls");
@@ -97,6 +104,14 @@ define([
             }
         },
 
+        changeACLButtonDisplay:function(state){
+            if(state){
+                this.aclButton.show();
+            }else{
+                this.aclButton.hide();
+            }
+        },
+
         changeCheckoutGroupDisplay:function(state){
             if(state){
                 this.checkoutGroup.show();
@@ -112,7 +127,33 @@ define([
         },
 
         checkin:function(){
-            this.partListView.getSelectedPart().checkin();
+            var self = this;
+            var selectedPart = this.partListView.getSelectedPart();
+
+            if(_.isNull(selectedPart.getLastIteration().attributes.iterationNote)) {
+
+                var promptView = new PromptView();
+                promptView.setPromptOptions(i18n.ITERATION_NOTE, i18n.ITERATION_NOTE_PROMPT_LABEL, i18n.ITERATION_NOTE_PROMPT_OK, i18n.ITERATION_NOTE_PROMPT_CANCEL);
+                $("body").append(promptView.render().el);
+                promptView.openModal();
+
+                self.listenTo(promptView, 'prompt-ok', function(args) {
+                    var iterationNote = args[0];
+                    if(_.isEqual(iterationNote, "")) {
+                        iterationNote = null;
+                    }
+                    selectedPart.getLastIteration().save({
+                        iterationNote: iterationNote
+                    });
+                    selectedPart.checkin();
+                });
+
+                self.listenTo(promptView, 'prompt-cancel', function() {
+                    selectedPart.checkin();
+                });
+            } else {
+                selectedPart.checkin();
+            }
         },
         checkout:function(){
             this.partListView.getSelectedPart().checkout();
@@ -120,8 +161,45 @@ define([
         undocheckout:function(){
             this.partListView.getSelectedPart().undocheckout();
         },
+
+        updateACL:function(){
+
+            var that = this;
+
+            var selectedPart = that.partListView.getSelectedPart();
+
+            var aclEditView = new ACLEditView({
+                editMode:true,
+                acl:selectedPart.get("acl")
+            });
+
+            aclEditView.setTitle(selectedPart.getPartKey());
+
+            $("body").append(aclEditView.render().el);
+
+            aclEditView.openModal();
+
+            aclEditView.on("acl:update",function(){
+
+                var acl = aclEditView.toList() ;
+
+                selectedPart.updateACL({
+                    acl:acl,
+                    success:function(){
+                        selectedPart.set("acl",acl);
+                        aclEditView.closeModal();
+                    },
+                    error:function(error) {
+                        alert(error.responseText);
+                    }
+                });
+
+            });
+
+        },
+
         resetCollection:function(){
-            this.partListView.collection.fetch();
+            this.partListView.collection.fetch({reset:true});
         },
 
         onPageCountFetched:function(){
@@ -136,32 +214,32 @@ define([
         goToPage:function(){
             var requestedPage = prompt(i18n.GO_TO_PAGE,"1");
             if( requestedPage - 1 >= 0 && requestedPage <= this.partListView.collection.getPageCount()){
-                this.partListView.collection.setCurrentPage(requestedPage-1).fetch();
+                this.partListView.collection.setCurrentPage(requestedPage-1).fetch({reset:true});
                 this.updatePageIndicator();
                 this.partListView.onNoPartSelected();
             }
         },
 
         toFirstPage:function(){
-            this.partListView.collection.setFirstPage().fetch();
+            this.partListView.collection.setFirstPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },
 
         toLastPage:function(){
-            this.partListView.collection.setLastPage().fetch();
+            this.partListView.collection.setLastPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },
 
         toNextPage:function(){
-            this.partListView.collection.setNextPage().fetch();
+            this.partListView.collection.setNextPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },
 
         toPreviousPage:function(){
-            this.partListView.collection.setPreviousPage().fetch();
+            this.partListView.collection.setPreviousPage().fetch({reset:true});
             this.updatePageIndicator();
             this.partListView.onNoPartSelected();
         },

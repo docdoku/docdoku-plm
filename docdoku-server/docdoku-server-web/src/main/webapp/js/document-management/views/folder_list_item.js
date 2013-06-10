@@ -48,7 +48,8 @@ define([
                 "dragleave >.nav-list-entry":   "onDragLeave",
                 "drop >.nav-list-entry":        "onDrop"
 			});
-			this.events['click [data-target="#items-' + this.cid + '"]'] = "toggle";
+			this.events['click [data-target="#items-' + this.cid + '"]'] = "forceShow";
+			this.events['click .status'] = "toggle";
 		},
 		hideActions: function () {
 			// Prevents the actions menu to stay opened all the time
@@ -73,7 +74,6 @@ define([
 				this.$(".edit").remove();
 			}
 
-			var FolderListView = require("views/folder_list"); // Circular dependency
 			this.foldersView = this.addSubView(
 				new FolderListView({
 					el: "#items-" + this.cid,
@@ -84,28 +84,40 @@ define([
 			this.bind("hidden", this.hidden);
 
             this.folderDiv = this.$(">.nav-list-entry");
+
 		},
+        forceShow:function(e){
+            var isRoot = _.isUndefined(this.model);
+            if (isRoot){
+                this.show();
+            }else{
+                this.showContent();
+                this.navigate();
+            }
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        },
 		show: function (routePath) {
+            if(routePath){
+                this.listenToOnce(this.collection,"reset",this.traverse);
+            }
 			this.routePath = routePath;
 			this.isOpen = true;
-			this.foldersView.show();
-			this.trigger("shown");
-			this.collection.fetch({
-				success: this.traverse
-			});
-		},
+            this.foldersView.show();
+            this.trigger("shown");
+        },
 		shown: function () {
 			this.$el.addClass("open");
-			if (this.routePath) {
-				// If from direct url acces (address bar)
-
+			if (!_.isUndefined(this.routePath)) {
+				// If from direct url access (address bar)
 				// show documents only if not traversed
 				var pattern = new RegExp("^" + this.modelPath);
 				if (this.routePath.match(pattern)) {
-					this.showContent();
+                    this.showContent();
 				}
 			} else {
-				// If not from direct url acces (click)
+				// If not from direct url access (click)
 				this.showContent();
 				this.navigate();
 			}
@@ -225,7 +237,11 @@ define([
             document.moveInto(path, function(){
                 Backbone.Events.trigger("document-moved");
                 that.folderDiv.removeClass("move-doc-into");
-                that.folderDiv.effect("highlight", {color: "#8fbc8f"}, 500);
+                that.folderDiv.highlightEffect();
+            }, function(){
+                Backbone.Events.trigger("document-error-moved");
+                that.folderDiv.removeClass("move-doc-into");
+
             });
         }
 	});

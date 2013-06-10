@@ -8,12 +8,13 @@
 		<div class="tabs">
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#tab-main-{{view.cid}}" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+				<li><a href="#tab-workflow-{{view.cid}}" data-toggle="tab">{{i18n.WORKFLOW}}</a></li>
 				<li><a href="#tab-attributes-{{view.cid}}" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+				<li><a href="#tab-acl-{{view.cid}}" data-toggle="tab">{{i18n.ACL}}</a></li>
 			</ul>
 			<form id="form-{{view.cid}}" class="tab-content form-horizontal">
 				<div id="tab-main-{{view.cid}}" class="tab-pane active">
 					<div id="templates-{{view.cid}}"></div>
-					<div id="workflows-{{view.cid}}"></div>
 					<div class="control-group">
 						<label class="control-label required" for="form-{{view.cid}}-reference">{{i18n.REFERENCE}}</label>
 						<div class="controls">
@@ -36,7 +37,14 @@
 						</div>
 					</div>
 				</div>
+				<div id="tab-workflow-{{view.cid}}" class="tab-pane">
+                    <div id="workflows-{{view.cid}}"></div>
+                    <div id="workflows-mapping-{{view.cid}}" class="role-mapping"></div>
+				</div>
 				<div id="tab-attributes-{{view.cid}}" class="tab-pane attributes attributes-edit"></div>
+				<div id="tab-acl-{{view.cid}}" class="tab-pane">
+                    <div id="acl-mapping-{{view.cid}}"></div>
+				</div>
 			</form>
 		</div>
 	</div>

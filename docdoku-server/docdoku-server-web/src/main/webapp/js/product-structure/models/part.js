@@ -151,6 +151,18 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             });
         },
 
+        getPermalink: function() {
+            return encodeURI(
+                window.location.origin
+                    + "/parts/"
+                    + this.getWorkspace()
+                    + "/"
+                    + this.getNumber()
+                    + "/"
+                    + this.getVersion()
+            );
+        },
+
         isCheckout:function(){
             return !_.isNull(this.get("checkOutDate"));
         },

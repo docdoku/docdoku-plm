@@ -31,6 +31,7 @@ define([
                 this.check();
                 this.trigger("selectionChanged",this);
             }
+            this.trigger("rendered",this);
             return this;
         },
 

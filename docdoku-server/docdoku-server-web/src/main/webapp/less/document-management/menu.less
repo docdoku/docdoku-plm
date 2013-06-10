@@ -55,7 +55,7 @@
       text-overflow: ellipsis;
       line-height: 26px;
       white-space: nowrap;
-      max-width: 130px;
+      width: 100%;
       float: left;
 
       .status {
@@ -179,6 +179,9 @@
   .folder {
     .status {
       .plm-icon-nav-folder-status-closed;
+      &:hover{
+        opacity: 1;
+      }
     }
     .icon {
       .plm-icon-nav-folder;
@@ -188,6 +191,9 @@
   .folder.open > div > a {
     >.status {
       .plm-icon-nav-folder-status-opened;
+      &:hover{
+        opacity: 1;
+      }
     }
 
     >.icon {

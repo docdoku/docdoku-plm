@@ -1,11 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
-      xmlns:fmt="http://java.sun.com/jsp/jstl/fmt">
+      xmlns:c="http://java.sun.com/jsp/jstl/core" >
 
 <f:loadBundle var="i18nDocument" basename="com.docdoku.server.localization.document_permalink_resource"/>
 
@@ -14,14 +13,12 @@
     <title>#{i18nDocument['title']}</title>
 
     <link rel="Shortcut Icon" type="image/ico" href="#{request.contextPath}/images/favicon.ico"/>
-    <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/perma-link/style.less"/>
+    <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/permalink/style.less"/>
     <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.min.css"/>
 
     <script type="text/javascript" src="#{request.contextPath}/js/lib/less-1.3.3.min.js"></script>
     <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery-1.8.2.min.js"></script>
     <script type="text/javascript" src="#{request.contextPath}/js/lib/bootstrap-2.2.2.min.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/js/swfobject/swfobject.js"></script>
-
 </head>
 
 <body>
@@ -35,9 +32,11 @@
         </div>
     </div>
 </div>
+
 <div id="page">
 
     <h3>${docm}</h3>
+
     <div id="content">
 
         <div class="tabs">
@@ -49,7 +48,8 @@
                 <li><a href="#tab-document-files" data-toggle="tab">#{i18nDocument['tabs.files']}</a></li>
                 <li><a href="#tab-document-links" data-toggle="tab">#{i18nDocument['tabs.links']}</a></li>
             </ul>
-                <div class="tab-content form-horizontal">
+
+            <div class="tab-content form-horizontal">
                 <div id="tab-document-general" class="tab-pane active">
 
                     <table class="table table-striped table-condensed">
@@ -195,6 +195,7 @@
                 </div>
 
             </div>
+
         </div>
 
     </div>

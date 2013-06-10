@@ -1,11 +1,13 @@
 define([
     "text!templates/product_list.html",
     "i18n!localization/nls/product-management-strings",
-    "views/product_list_item"
+    "views/product_list_item",
+    "i18n!localization/nls/datatable-strings"
 ], function (
     template,
     i18n,
-    ProductListItemView
+    ProductListItemView,
+    i18nDt
     ) {
     var ProductListView = Backbone.View.extend({
 
@@ -18,15 +20,12 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
-            this.listenTo(this.collection, 'add', this.addProduct);
-            this.listenTo(this.collection, 'remove', this.removeProduct);
+            this.listenTo(this.collection, 'add', this.addNewProduct);
             this.listItemViews = [];
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
-            this.bindDomElements();
-            this.collection.fetch();
+            this.collection.fetch({reset:true});
             return this;
         },
 
@@ -36,27 +35,38 @@ define([
         },
 
         resetList:function(){
+            if(this.oTable){
+                this.oTable.fnDestroy();
+            }
+            this.$el.html(this.template({i18n:i18n}));
+            this.bindDomElements();
+            this.listItemViews=[];
             var that = this;
-            this.$items.empty();
             this.collection.each(function(model){
                 that.addProduct(model);
             });
+            this.dataTable();
         },
 
         pushProduct:function(product){
             this.collection.push(product);
         },
 
-        addProduct:function(model){
-            this.addProductView(model);
-            this.$el.removeClass("hide");
+        addNewProduct:function(model){
+            this.addProduct(model,true);
+            this.redraw();
+        },
+
+        addProduct:function(model,effect){
+            var view = this.addProductView(model);
+            if(effect){
+                view.$el.highlightEffect();
+            }
         },
 
         removeProduct:function(model){
             this.removeProductView(model);
-            if(!this.collection.size()){
-                this.$el.hide();
-            }
+            this.redraw();
         },
 
         removeProductView:function(model){
@@ -67,11 +77,9 @@ define([
 
             if(viewToRemove){
                 this.listItemViews = _(this.listItemViews).without(viewToRemove);
+                var row = viewToRemove.$el.get(0);
+                this.oTable.fnDeleteRow(this.oTable.fnGetPosition(row));
                 viewToRemove.remove();
-            }
-
-            if( this.listItemViews.length == 0){
-                this.$el.addClass("hide");
             }
 
         },
@@ -81,6 +89,8 @@ define([
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
+            view.on("rendered",this.redraw);
+            return view;
         },
 
         toggleSelection:function(){
@@ -114,24 +124,66 @@ define([
 
         onNoProductSelected:function(){
             this.trigger("delete-button:display",false);
+            this.trigger("create-baseline-button:display",false);
         },
 
         onOneProductSelected:function(){
             this.trigger("delete-button:display",true);
+            this.trigger("create-baseline-button:display",true);
         },
 
         onSeveralProductsSelected:function(){
             this.trigger("delete-button:display",true);
+            this.trigger("create-baseline-button:display",false);
+        },
+
+        getSelectedProduct:function(){
+            var model = null;
+            _(this.listItemViews).each(function(view){
+                if(view.isChecked()){
+                    model = view.model;
+                }
+            });
+            return model;
         },
 
         deleteSelectedProducts:function(){
+            var that = this;
             if(confirm("Delete Products")){
                 _(this.listItemViews).each(function(view){
                     if(view.isChecked()){
-                        view.model.destroy();
+                        view.model.destroy({success:function(){
+                            that.removeProduct(view.model);
+                            that.onSelectionChanged();
+                        },error:function(model,err){
+                            alert(err.responseText);
+                            that.onSelectionChanged();
+                        }});
                     }
                 });
             }
+        },
+        redraw:function(){
+            this.dataTable();
+        },
+        dataTable:function(){
+            if(this.oTable){
+                this.$el.dataTable().fnDestroy();
+            }
+            this.oTable = this.$el.dataTable({
+                bDestroy:true,
+                iDisplayLength:-1,
+                oLanguage:{
+                    sSearch: "<i class='icon-search'></i>",
+                    sEmptyTable:i18nDt.NO_DATA,
+                    sZeroRecords:i18nDt.NO_FILTERED_DATA
+                },
+                sDom : 'ft',
+                aoColumnDefs: [
+                    { "bSortable": false, "aTargets": [ 0,3 ] }
+                ]
+            });
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         }
 
     });

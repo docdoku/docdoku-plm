@@ -10,7 +10,8 @@ define([
         template: Mustache.compile(template),
 
         events:{
-            "click input[type=checkbox]":"selectionChanged"
+            "click input[type=checkbox]":"selectionChanged",
+            "click td.product_id":"openDetailsView"
         },
 
         tagName:"tr",
@@ -22,6 +23,7 @@ define([
         render:function(){
             this.$el.html(this.template({model:this.model, i18n:i18n}));
             this.$checkbox = this.$("input[type=checkbox]");
+            this.trigger("rendered",this);
             return this;
         },
 
@@ -42,6 +44,15 @@ define([
         unCheck:function(){
             this.$checkbox.prop("checked", false);
             this._isChecked = false;
+        },
+
+        openDetailsView:function(){
+            var that = this ;
+            require(["views/product_details_view"],function(ProductDetailsView){
+                var pdv = new ProductDetailsView({model:that.model});
+                $("body").append(pdv.render().el);
+                pdv.openModal();
+            })
         }
 
     });
