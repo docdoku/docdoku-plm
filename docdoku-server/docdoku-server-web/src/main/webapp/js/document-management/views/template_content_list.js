@@ -43,12 +43,14 @@ define([
 					collection: this.collection
 				})
 			).show();
+            this.listView.redraw();
 			return false;
 		},
 		actionDelete: function () {
+            var that = this;
 			if (confirm(i18n["DELETE_SELECTION_?"])) {
 				this.listView.eachChecked(function (view) {
-					view.model.destroy();
+                    view.model.destroy({success:function(){that.listView.redraw()}});
 				});
 			}
 			return false;
