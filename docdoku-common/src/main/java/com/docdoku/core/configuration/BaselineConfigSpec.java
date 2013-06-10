@@ -20,13 +20,21 @@
 package com.docdoku.core.configuration;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Table(name="BASELINECONFIGSPEC")
 @Entity
 public class BaselineConfigSpec extends ConfigSpec {
 
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Baseline baseline;
+
+    public BaselineConfigSpec(){
+
+    }
+
 
     public BaselineConfigSpec(Baseline baseline) {
         this.baseline = baseline;
