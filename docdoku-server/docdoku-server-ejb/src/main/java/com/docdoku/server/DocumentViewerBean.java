@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
 import com.docdoku.server.viewers.ViewerUtils;
@@ -27,6 +28,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -35,9 +37,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {
+
+    @EJB
+    private IDataManagerLocal dataManager;
 
     @Inject
     @Any
@@ -78,7 +84,9 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/default_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(binaryResource));
+        scopes.put("externalUriResource", dataManager.getExternalStorageURI(binaryResource));
         scopes.put("fileName", binaryResource.getName());
+        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
         return templateWriter.toString();

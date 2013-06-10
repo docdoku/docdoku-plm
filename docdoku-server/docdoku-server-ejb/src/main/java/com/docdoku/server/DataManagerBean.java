@@ -25,7 +25,6 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.StorageException;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
-import com.docdoku.server.storage.googlestorage.GoogleStorageProvider;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -143,6 +142,11 @@ public class DataManagerBean implements IDataManagerLocal {
                 throw new StorageException(new StringBuilder().append("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
             }
         }
+    }
+
+    @Override
+    public String getExternalStorageURI(BinaryResource binaryResource) {
+        return defaultStorageProvider.getExternalResourceURI(binaryResource);
     }
 
 }

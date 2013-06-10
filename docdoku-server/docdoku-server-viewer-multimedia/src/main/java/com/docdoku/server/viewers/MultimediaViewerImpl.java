@@ -20,17 +20,22 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+import javax.ejb.EJB;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class MultimediaViewerImpl implements DocumentViewer {
+
+    @EJB
+    private IDataManagerLocal dataManager;
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
@@ -43,6 +48,7 @@ public class MultimediaViewerImpl implements DocumentViewer {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/multimedia_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(multimediaResource));
+        scopes.put("externalUriResource", dataManager.getExternalStorageURI(multimediaResource));
         scopes.put("fileName", multimediaResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();

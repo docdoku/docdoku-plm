@@ -59,6 +59,7 @@ public class ScormViewerImpl implements DocumentViewer {
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("organization", scormOrganization);
         scopes.put("uriResource", ViewerUtils.getURI(scormResource));
+        scopes.put("externalUriResource", dataManager.getExternalStorageURI(scormResource));
         scopes.put("fileName", scormResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();

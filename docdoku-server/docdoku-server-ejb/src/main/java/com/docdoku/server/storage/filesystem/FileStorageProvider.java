@@ -115,6 +115,11 @@ public class FileStorageProvider implements StorageProvider {
         fileToRemove.delete();
     }
 
+    @Override
+    public String getExternalResourceURI(BinaryResource binaryResource) {
+        return null;
+    }
+
     public void cleanParentFolders(BinaryResource pBinaryResource){
         cleanRemove(new File(getVirtualPath(pBinaryResource)).getParentFile());
     }

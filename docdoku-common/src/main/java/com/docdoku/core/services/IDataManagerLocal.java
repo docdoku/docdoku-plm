@@ -35,4 +35,5 @@ public interface IDataManagerLocal {
     void copyData(BinaryResource source, BinaryResource destination) throws StorageException;
     void deleteData(BinaryResource binaryResource) throws StorageException;
     Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
+    String getExternalStorageURI(BinaryResource binaryResource);
 }
