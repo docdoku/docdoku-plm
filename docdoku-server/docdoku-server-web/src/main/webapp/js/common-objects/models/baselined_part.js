@@ -20,6 +20,13 @@ define([],function(){
 
         setIteration:function(iteration){
             this.set("iteration",iteration);
+        },
+
+        setExcluded:function(excluded){
+            this.set("excluded",excluded);
+        },
+        isExcluded:function(){
+            return this.get("excluded");
         }
 
     });

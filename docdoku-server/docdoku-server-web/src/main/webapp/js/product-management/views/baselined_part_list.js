@@ -42,11 +42,13 @@ define([
             var baselinedParts = [];
 
             _.each(this.baselinedParts,function(baselinedPart){
-                baselinedParts.push({
-                    number:baselinedPart.getNumber(),
-                    version:baselinedPart.getVersion(),
-                    iteration:baselinedPart.getIteration()
-                });
+                if(!baselinedPart.isExcluded()){
+                    baselinedParts.push({
+                        number:baselinedPart.getNumber(),
+                        version:baselinedPart.getVersion(),
+                        iteration:baselinedPart.getIteration()
+                    });
+                }
             });
 
             return baselinedParts ;
