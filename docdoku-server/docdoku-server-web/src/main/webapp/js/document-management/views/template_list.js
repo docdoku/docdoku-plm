@@ -18,19 +18,19 @@ define([
 			});
 		},
         rendered:function(){
-            var that = this;
-            this.on("ready",function(){
-                that.dataTable();
-            });
+            this.once("_ready",this.dataTable);
         },
         redraw:function(){
             this.dataTable();
         },
         dataTable:function(){
+            var oldSort = [[0,"asc"]];
             if(this.oTable){
+                oldSort = this.oTable.fnSettings().aaSorting;
                 this.oTable.fnDestroy();
             }
             this.oTable = this.$el.dataTable({
+                aaSorting:oldSort,
                 bDestroy:true,
                 iDisplayLength:-1,
                 oLanguage:{
@@ -40,7 +40,8 @@ define([
                 },
                 sDom : 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0 ] }
+                    { "bSortable": false, "aTargets": [ 0 ] },
+                    { "sType":i18nDt.DATE_SORT, "aTargets": [4] }
                 ]
             });
             this.$el.parent().find(".dataTables_filter input").attr("placeholder", i18nDt.FILTER);
