@@ -47,7 +47,7 @@ import java.util.*;
         @NamedQuery(name="PartRevision.findByWorkspace.filterUserACLEntry", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl)) ORDER BY pr.partMaster.number ASC"),
         @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))")
 })
-public class PartRevision implements Serializable {
+public class PartRevision implements Serializable, Comparable<PartRevision>, Cloneable {
 
 
     @Id
@@ -332,5 +332,51 @@ public class PartRevision implements Serializable {
         hash = 31 * hash + version.hashCode();
 	return hash;
     }
-    
+
+    @Override
+    public int compareTo(PartRevision pPartR) {
+        int wksComp = partMaster.getWorkspaceId().compareTo(pPartR.getPartMaster().getWorkspaceId());
+        if (wksComp != 0)
+            return wksComp;
+        int numberComp = getPartNumber().compareTo(pPartR.getPartNumber());
+        if (numberComp != 0)
+            return numberComp;
+        else
+            return version.compareTo(pPartR.version);
+    }
+
+    /**
+     * perform a deep clone operation
+     */
+    @Override
+    public PartRevision clone() {
+        PartRevision clone = null;
+        try {
+            clone = (PartRevision) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        //perform a deep copy
+        List<PartIteration> clonedPartIterations = new ArrayList<PartIteration>();
+        for (PartIteration part : partIterations) {
+            PartIteration clonedPart=part.clone();
+            clonedPart.setPartRevision(clone);
+            clonedPartIterations.add(clonedPart);
+        }
+        clone.partIterations = clonedPartIterations;
+
+        if(workflow !=null)
+            clone.workflow = workflow.clone();
+
+        if(acl !=null)
+            clone.acl = acl.clone();
+
+        if(creationDate!=null)
+            clone.creationDate = (Date) creationDate.clone();
+
+        if(checkOutDate!=null)
+            clone.checkOutDate = (Date) checkOutDate.clone();
+
+        return clone;
+    }
 }
