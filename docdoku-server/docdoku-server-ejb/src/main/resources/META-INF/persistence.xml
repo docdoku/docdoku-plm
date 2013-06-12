@@ -29,6 +29,7 @@
     <class>com.docdoku.core.configuration.ConfigSpec</class>
     <class>com.docdoku.core.product.ConfigurationItem</class>
     <class>com.docdoku.core.product.DateBasedEffectivity</class>
+    <class>com.docdoku.core.configuration.BaselineConfigSpec</class>
     <class>com.docdoku.core.configuration.DateBasedEffectivityConfigSpec</class>
     <class>com.docdoku.core.product.Effectivity</class>
     <class>com.docdoku.core.configuration.EffectivityConfigSpec</class>
@@ -44,8 +45,8 @@
     <class>com.docdoku.core.product.PartUsageLink</class>
     <class>com.docdoku.core.product.SerialNumberBasedEffectivity</class>
     <class>com.docdoku.core.configuration.SerialNumberBasedEffectivityConfigSpec</class>
-      <class>com.docdoku.core.configuration.Baseline</class>
-      <class>com.docdoku.core.configuration.BaselinedPart</class>
+    <class>com.docdoku.core.configuration.Baseline</class>
+    <class>com.docdoku.core.configuration.BaselinedPart</class>
     <class>com.docdoku.core.security.ACL</class>
     <class>com.docdoku.core.security.ACLUserEntry</class>
     <class>com.docdoku.core.security.ACLUserGroupEntry</class>

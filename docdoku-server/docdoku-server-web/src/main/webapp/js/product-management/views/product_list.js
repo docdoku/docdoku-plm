@@ -167,10 +167,13 @@ define([
             this.dataTable();
         },
         dataTable:function(){
+            var oldSort = [[0,"asc"]];
             if(this.oTable){
-                this.$el.dataTable().fnDestroy();
+                oldSort = this.oTable.fnSettings().aaSorting;
+                this.oTable.fnDestroy();
             }
             this.oTable = this.$el.dataTable({
+                aaSorting:oldSort,
                 bDestroy:true,
                 iDisplayLength:-1,
                 oLanguage:{

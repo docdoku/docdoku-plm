@@ -183,10 +183,15 @@ define([
             this.dataTable();
         },
         dataTable:function(){
+            var oldSort = [[0,"asc"]];
             if(this.oTable){
-                this.$el.dataTable().fnDestroy();
+                if(this.oTable.fnSettings()){
+                    oldSort = this.oTable.fnSettings().aaSorting;
+                    this.oTable.fnDestroy();
+                }
             }
             this.oTable = this.$el.dataTable({
+                aaSorting:oldSort,
                 bDestroy:true,
                 iDisplayLength:-1,
                 oLanguage:{
@@ -196,7 +201,8 @@ define([
                 },
                 sDom : 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0,11,12 ] }
+                    { "bSortable": false, "aTargets": [ 0,11,12 ] },
+                    { "sType":i18nDt.DATE_SORT, "aTargets": [7,8] }
                 ]
             });
             this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
