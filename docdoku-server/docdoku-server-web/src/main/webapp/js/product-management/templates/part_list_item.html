@@ -1,26 +1,13 @@
 <td><input type="checkbox"/></td>
 <td class="part_number">
-    {{#model.isCheckout}}
-    {{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}
-    {{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}
-    {{/model.isCheckout}}
-    {{^model.isCheckout}}
-    <i class="icon-eye-open"></i>
-    {{/model.isCheckout}}
-    {{model.getNumber}}
+    {{#model.isCheckout}}{{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}{{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}{{/model.isCheckout}}{{^model.isCheckout}}<i class="icon-eye-open"></i>{{/model.isCheckout}}{{model.getNumber}}
 </td>
 <td>{{model.getVersion}}</td>
-<td>{{#model.getLastIteration}}
-        {{id}}
-    {{/model.getLastIteration}}
-    {{^model.getLastIteration}}
-    -
-    {{/model.getLastIteration}}</td>
+<td>{{#model.getLastIteration}}{{id}}{{/model.getLastIteration}}{{^model.getLastIteration}}-{{/model.getLastIteration}}</td>
 <td>{{model.isStandardPartReadable}}</td>
 <td>{{model.getName}}</td>
 <td><a class="author-popover">{{model.getAuthorName}}</a></td>
-<td>{{model.getLifeCycleState}}</a></td>
-
+<td>{{model.getLifeCycleState}}</td>
 <td>{{model.getFormattedCreationDate}}</td>
 <td>{{model.getFormattedCheckoutDate}}</td>
 <td><a class="checkout-user-popover">{{model.getCheckOutUserName}}</a></td>

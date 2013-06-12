@@ -9,7 +9,11 @@ define({
         DUPLICATE_BASELINE:"Duplicate baseline",
         DUPLICATE:"Duplicate",
         EDIT_BASELINE:"Edit baseline",
-        SAVE:"Save"
+        SAVE:"Save",
+        EXCLUDE:"Exclude part from baseline",
+        NUMBER:"Part number",
+        VERSION:"Part version",
+        ITERATION:"Part iteration"
     },
     "fr": true
 });

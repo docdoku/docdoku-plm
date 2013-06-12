@@ -162,17 +162,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     private PartMaster filterBaselineConfigSpec(Baseline baseline, PartMaster root, int depth) {
 
-
         // int baselineId, String targetPartWorkspaceId, String targetPartNumber
         BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),root.getWorkspaceId(),root.getNumber());
 
         BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
 
-        PartRevision partR = baselinedRootPart.getTargetPart().getPartRevision();
-        PartIteration partI = null;
+        PartRevision partR ;
+        PartIteration partI;
 
-        if (partR != null) {
+        if(baselinedRootPart != null){
+            partR = baselinedRootPart.getTargetPart().getPartRevision();
             partI = baselinedRootPart.getTargetPart();
+        }else{
+            // the part isn't in baseline, choose the latest version-iteration
+            partR = root.getLastRevision();
+            partI = partR.getLastIteration();
         }
 
         if (partI != null) {
