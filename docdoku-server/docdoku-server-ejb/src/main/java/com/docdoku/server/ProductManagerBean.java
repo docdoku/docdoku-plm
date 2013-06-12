@@ -1376,6 +1376,48 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
 
+            // copy components
+            List<PartUsageLink> components = new LinkedList<PartUsageLink>();
+            for (PartUsageLink usage : lastPartI.getComponents()) {
+                PartUsageLink newUsage = usage.clone();
+                components.add(newUsage);
+            }
+            firstPartI.setComponents(components);
+
+            // copy geometries
+            for (Geometry sourceFile : lastPartI.getGeometries()) {
+                String fileName = sourceFile.getName();
+                long length = sourceFile.getContentLength();
+                int quality = sourceFile.getQuality();
+                Date lastModified = sourceFile.getLastModified();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + version + "/1/" + fileName;
+                Geometry targetFile = new Geometry(quality, fullName, length, lastModified);
+                binDAO.createBinaryResource(targetFile);
+                firstPartI.addGeometry(targetFile);
+                try {
+                    dataManager.copyData(sourceFile, targetFile);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            BinaryResource nativeCADFile = lastPartI.getNativeCADFile();
+            if (nativeCADFile != null) {
+                String fileName = nativeCADFile.getName();
+                long length = nativeCADFile.getContentLength();
+                Date lastModified = nativeCADFile.getLastModified();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + version + "/1/nativecad/" + fileName;
+                BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
+                binDAO.createBinaryResource(targetFile);
+                firstPartI.setNativeCADFile(targetFile);
+                try {
+                    dataManager.copyData(nativeCADFile, targetFile);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
             Set<DocumentLink> links = new HashSet<DocumentLink>();
             for (DocumentLink link : lastPartI.getLinkedDocuments()) {
                 DocumentLink newLink = link.clone();
