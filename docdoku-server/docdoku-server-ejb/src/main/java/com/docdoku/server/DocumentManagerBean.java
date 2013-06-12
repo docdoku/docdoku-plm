@@ -131,8 +131,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
         // check write access on acl
-        if(!isAdmin && (docM.getACL() == null || !docM.getACL().hasWriteAccess(user))){
-
+        if (!isAdmin && docM.getACL() != null && !docM.getACL().hasWriteAccess(user)){
             throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
 
