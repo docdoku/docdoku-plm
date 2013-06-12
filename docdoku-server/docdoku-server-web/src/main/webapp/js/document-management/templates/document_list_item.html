@@ -1,25 +1,10 @@
 <td><a href="#" class="dochandle icon-reorder"></a></td>
 <td><input type="checkbox" id="check-toggle-{{view.cid}}" /></td>
 <td class="reference doc-ref">
-    <a title="{{model.path}}/{{model.id}}" >
-    {{#model.isCheckout}}
-        {{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}
-        {{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}
-    {{/model.isCheckout}}
-    {{^model.isCheckout}}
-        <i class="icon-eye-open"></i>
-    {{/model.isCheckout}}
-    {{model.id}}
-    </a>
+    <a title="{{model.path}}/{{model.id}}" >{{#model.isCheckout}}{{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}{{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}{{/model.isCheckout}}{{^model.isCheckout}}<i class="icon-eye-open"></i>{{/model.isCheckout}}{{model.id}}</a>
 </td>
 <td>{{model.version}}</td>
-<td>{{#model.lastIteration}}
-        {{model.lastIteration.iteration}}
-    {{/model.lastIteration}}
-    {{^model.lastIteration}}
-        -
-    {{/model.lastIteration}}
-</td>
+<td>{{#model.lastIteration}}{{model.lastIteration.iteration}}{{/model.lastIteration}}{{^model.lastIteration}}-{{/model.lastIteration}}</td>
 <td>{{model.type}}</td>
 <td>{{model.title}}</td>
 <td><a class="author-popover">{{model.author.name}}</a></td>

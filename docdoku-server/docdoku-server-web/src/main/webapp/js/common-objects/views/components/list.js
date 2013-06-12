@@ -10,7 +10,7 @@ define([
                 this.render();
                 this.collection.each(this.createItemView);
             }
-            this.trigger("ready");
+            this.trigger("_ready");
 		},
 		collectionAdd: function () {
 			this.collectionReset();

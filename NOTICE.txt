@@ -17,3 +17,4 @@ Buzz             - The MIT License - http://opensource.org/licenses/mit-license.
 RequireJS        - The MIT License - http://opensource.org/licenses/mit-license.php
 Backbone.js      - The MIT License - http://opensource.org/licenses/mit-license.php
 bootstrap-switch - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
+dataTables       - BSD license 3-Clause http://opensource.org/licenses/BSD-3-Clause
