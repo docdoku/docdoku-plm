@@ -26,6 +26,7 @@ public class BaselinedPartDTO {
     private String version;
     private int iteration;
     private int lastIteration;
+    private String lastVersion;
 
     public BaselinedPartDTO() {
     }
@@ -68,4 +69,12 @@ public class BaselinedPartDTO {
         this.lastIteration = lastIteration;
     }
 
+
+    public String getLastVersion() {
+        return lastVersion;
+    }
+
+    public void setLastVersion(String lastVersion) {
+        this.lastVersion = lastVersion;
+    }
 }

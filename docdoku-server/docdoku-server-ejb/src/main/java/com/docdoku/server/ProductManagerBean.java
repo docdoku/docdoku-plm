@@ -1341,6 +1341,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()),em);
 
         PartRevision originalPartR = partRevisionDAO.loadPartR(revisionKey);
+        PartMaster partM = originalPartR.getPartMaster();
 
         if(originalPartR.isCheckedOut()){
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException40");
@@ -1350,13 +1351,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException41");
         }
 
-        Version version = new Version(originalPartR.getVersion());
-        version.increase();
-
-        PartRevision partR = new PartRevision(originalPartR.getPartMaster(),version,user);
+        PartRevision partR = partM.createNextRevision(user);
 
         PartIteration lastPartI = originalPartR.getLastIteration();
         PartIteration firstPartI = partR.createNextIteration(user);
+
 
         if(lastPartI != null){
 
@@ -1365,7 +1364,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + version + "/1/"+  fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/"+  fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.addFile(targetFile);
@@ -1390,7 +1389,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 long length = sourceFile.getContentLength();
                 int quality = sourceFile.getQuality();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + version + "/1/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/" + fileName;
                 Geometry targetFile = new Geometry(quality, fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.addGeometry(targetFile);
@@ -1406,7 +1405,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 String fileName = nativeCADFile.getName();
                 long length = nativeCADFile.getContentLength();
                 Date lastModified = nativeCADFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + version + "/1/nativecad/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/nativecad/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.setNativeCADFile(targetFile);

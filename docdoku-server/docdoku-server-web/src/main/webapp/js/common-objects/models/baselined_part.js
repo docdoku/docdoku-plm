@@ -14,6 +14,10 @@ define([],function(){
             return this.get("lastIteration");
         },
 
+        getLastVersion:function(){
+            return this.get("lastVersion");
+        },
+
         getIteration:function(){
             return this.get("iteration");
         },
@@ -21,7 +25,9 @@ define([],function(){
         setIteration:function(iteration){
             this.set("iteration",iteration);
         },
-
+        setVersion:function(version){
+            this.set("version",version);
+        },
         setExcluded:function(excluded){
             this.set("excluded",excluded);
         },

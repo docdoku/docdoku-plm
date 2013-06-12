@@ -176,6 +176,7 @@ public class Tools {
         baselinedPartDTO.setVersion(partI.getPartVersion());
         baselinedPartDTO.setIteration(partI.getIteration());
         baselinedPartDTO.setLastIteration(partI.getPartRevision().getLastIteration().getIteration());
+        baselinedPartDTO.setLastVersion(partI.getPartRevision().getPartMaster().getLastRevision().getVersion());
         return baselinedPartDTO;
     }
 }

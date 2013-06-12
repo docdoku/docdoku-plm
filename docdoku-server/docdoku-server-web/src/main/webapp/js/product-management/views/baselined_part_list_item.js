@@ -11,6 +11,7 @@ define([
 
         events:{
             "change input[name=iteration]":"changeIteration",
+            "change input[name=version]":"changeVersion",
             "change input[name=exclude]":"excludePart"
         },
 
@@ -31,6 +32,11 @@ define([
         changeIteration:function(e){
             if(e.target.value){
                 this.model.setIteration(e.target.value);
+            }
+        },
+        changeVersion:function(e){
+            if(e.target.value){
+                this.model.setVersion(e.target.value);
             }
         },
         excludePart:function(e){
