@@ -358,6 +358,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @Override
+    public void removeACLFromDocumentMaster(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(documentMasterKey.getWorkspaceId());
+
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = documentMasterDAO.getDocMRef(documentMasterKey);
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(documentMasterKey.getWorkspaceId());
+
+        if (docM.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+            ACL acl = docM.getACL();
+            if (acl != null) {
+                new ACLDAO(em).removeACLEntries(acl);
+                docM.setACL(null);
+            }
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
 
 
     @RolesAllowed("users")

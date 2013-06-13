@@ -41,6 +41,10 @@ import java.util.Map;
  */
 @Table(name="ACL")
 @Entity
+@NamedQueries ({
+    @NamedQuery(name="ACL.removeUserEntries", query = "DELETE FROM ACLUserEntry a WHERE a.acl.id = :aclId"),
+    @NamedQuery(name="ACL.removeUserGroupEntries", query = "DELETE FROM ACLUserGroupEntry a WHERE a.acl.id = :aclId")
+})
 public class ACL implements Serializable, Cloneable{
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)

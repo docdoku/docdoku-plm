@@ -861,6 +861,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed("users")
+    @Override
+    public void removeACLFromPartRevision(PartRevisionKey revisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(revisionKey.getPartMaster().getWorkspace());
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()),em);
+        PartRevision partRevision = partRevisionDAO.loadPartR(revisionKey);
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(revisionKey.getPartMaster().getWorkspace());
+
+        if (partRevision.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+            ACL acl = partRevision.getACL();
+            if (acl != null) {
+                new ACLDAO(em).removeACLEntries(acl);
+                partRevision.setACL(null);
+            }
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+
+    }
+
 
     @RolesAllowed("users")
     @Override

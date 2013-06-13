@@ -168,9 +168,10 @@ public class PartsResource {
     @Produces("application/json;charset=UTF-8")
     public Response updateACL(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey, ACLDTO acl) {
         try {
-            if (acl != null) {
 
-                PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+
+            if (acl != null) {
 
                 Map<String,String> userEntries = new HashMap<String,String>();
                 Map<String,String> groupEntries = new HashMap<String,String>();
@@ -185,6 +186,8 @@ public class PartsResource {
 
                 productService.updatePartRevisionACL(workspaceId, revisionKey, userEntries, groupEntries);
 
+            }else{
+                productService.removeACLFromPartRevision(revisionKey);
             }
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
