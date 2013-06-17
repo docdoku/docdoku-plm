@@ -160,7 +160,11 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             attributes.add(mapper.map(attr, InstanceAttributeDTO.class));
         }
 
+
         for (CADInstance instance : usageLink.getCadInstances()) {
+            ArrayList<Integer> copyInstanceIds = new ArrayList<Integer>(instanceIds);
+            if(instance.getId()!=-1)
+                copyInstanceIds.add(instance.getId());
 
             //compute absolutes values
             double atx = tx + getRelativeTxAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
@@ -169,8 +173,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             double arx = rx + instance.getRx();
             double ary = ry + instance.getRy();
             double arz = rz + instance.getRz();
-            instanceIds.add(instance.getId());
-            String id = StringUtils.join(instanceIds.toArray(),"-");
+            String id = StringUtils.join(copyInstanceIds.toArray(),"-");
             
             if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
                 if(getAddComma())
@@ -180,13 +183,13 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 setAddComma(true);
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
-                    ArrayList<Integer> copyInstanceIds = new ArrayList<Integer>(instanceIds);
+                    ArrayList<Integer> copyInstanceIds2 = new ArrayList<Integer>(copyInstanceIds);
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds);
+                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds2);
                     } else if (component.getId() == filteredPath.get(0)) {
                         ArrayList<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds);
+                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds2);
                     }
                 }
             }
