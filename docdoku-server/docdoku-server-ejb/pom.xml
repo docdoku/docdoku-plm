@@ -37,6 +37,18 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-step</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-step</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-kmz</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
@@ -210,6 +222,7 @@
                                 <includes>
                                     <include>org.ow2.docdoku:docdoku-server-ext</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-step</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-all</include>
                                     <include>org.ow2.docdoku:docdoku-server-scorm</include>

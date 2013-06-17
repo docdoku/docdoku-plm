@@ -168,9 +168,10 @@ public class PartsResource {
     @Produces("application/json;charset=UTF-8")
     public Response updateACL(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey, ACLDTO acl) {
         try {
-            if (acl != null) {
 
-                PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+
+            if (acl != null) {
 
                 Map<String,String> userEntries = new HashMap<String,String>();
                 Map<String,String> groupEntries = new HashMap<String,String>();
@@ -185,8 +186,61 @@ public class PartsResource {
 
                 productService.updatePartRevisionACL(workspaceId, revisionKey, userEntries, groupEntries);
 
+            }else{
+                productService.removeACLFromPartRevision(revisionKey);
             }
             return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Path("{partKey}/newVersion")
+    @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
+    public Response createNewVersion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partKey") String partKey, PartCreationDTO partCreationDTO) {
+
+        RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
+        ACLDTO acl = partCreationDTO.getAcl();
+        PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(pWorkspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+        String name = partCreationDTO.getName();
+        String description = partCreationDTO.getDescription();
+        String workflowModelId = partCreationDTO.getWorkflowModelId();
+
+        try {
+
+            ACLUserEntry[] userEntries = null;
+            ACLUserGroupEntry[] userGroupEntries = null;
+            if (acl != null) {
+                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+                int i = 0;
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries[i] = new ACLUserEntry();
+                    userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
+                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+                i = 0;
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    userGroupEntries[i] = new ACLUserGroupEntry();
+                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
+                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+                }
+            }
+
+            Map<String, String> roleMappings = new HashMap<>();
+
+            if (rolesMappingDTO != null) {
+                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
+                    roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+                }
+            }
+
+            PartRevision partR = productService.createVersion(revisionKey, description, workflowModelId, userEntries, userGroupEntries,roleMappings);
+
+            return Response.ok().build();
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

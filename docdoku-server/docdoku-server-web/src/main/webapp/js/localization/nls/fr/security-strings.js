@@ -6,5 +6,6 @@ define({
     GROUPS:"Groupes",
     FORBIDDEN:"Interdit",
     READ_ONLY:"Lecture seule",
-    FULL_ACCESS:"Accès complet"
+    FULL_ACCESS:"Accès complet",
+    USE_ACL:"Utiliser les droits ?"
 });

@@ -19,6 +19,7 @@ define([
 
         initialize: function() {
             _.bindAll(this);
+            this.useACL = false;
         },
 
         render:function(){
@@ -31,6 +32,15 @@ define([
             this.admin = new Admin();
             this.userMemberships = new WorkspaceUserMemberships();
             this.userGroupMemberships = new WorkspaceUserGroupMemberships();
+
+            this.$aclSwitch.bootstrapSwitch();
+            this.$aclSwitch.bootstrapSwitch('setState', this.useACL);
+
+            this.$aclSwitch.on('switch-change', function (e, data) {
+                that.useACL = !that.useACL;
+                that.$usingAcl.toggleClass("hide");
+            });
+
 
             this.admin.fetch({reset:true,success:function(){
 
@@ -47,6 +57,8 @@ define([
         bindDomElements:function(){
             this.$usersAcls = this.$("#users-acl-entries");
             this.$userGroupsAcls = this.$("#groups-acl-entries");
+            this.$usingAcl = this.$(".using-acl");
+            this.$aclSwitch = this.$(".acl-switch");
         }, 
 
         onUserMembershipsReset:function(){
@@ -66,6 +78,9 @@ define([
         },
 
         toList:function(){
+            if(!this.useACL){
+                return null;
+            }
             var dto = {};
             dto.userEntries = {};
             dto.groupEntries = {};

@@ -101,7 +101,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink.setId(-1);
             rootUsageLink.setAmount(1d);
             List<CADInstance> cads = new ArrayList<CADInstance>();
-            cads.add(new CADInstance(0d, 0d, 0d, 0d, 0d, 0d, CADInstance.Positioning.ABSOLUTE));
+            CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d, CADInstance.Positioning.ABSOLUTE);
+            cad.setId(-1);
+            cads.add(cad);
             rootUsageLink.setCadInstances(cads);
             rootUsageLink.setComponent(ci.getDesignItem());
         } else {
@@ -861,6 +863,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed("users")
+    @Override
+    public void removeACLFromPartRevision(PartRevisionKey revisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(revisionKey.getPartMaster().getWorkspace());
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()),em);
+        PartRevision partRevision = partRevisionDAO.loadPartR(revisionKey);
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(revisionKey.getPartMaster().getWorkspace());
+
+        if (partRevision.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+            ACL acl = partRevision.getACL();
+            if (acl != null) {
+                new ACLDAO(em).removeACLEntries(acl);
+                partRevision.setACL(null);
+            }
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+
+    }
+
 
     @RolesAllowed("users")
     @Override
@@ -1330,6 +1353,166 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             BaselinedPart baselinedPartNew = new BaselinedPart(baseline,partIteration,user);
             baseline.addBaselinedPart(baselinedPartNew);
         }
+
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public PartRevision createVersion(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException {
+
+        User user = userManager.checkWorkspaceWriteAccess(revisionKey.getPartMaster().getWorkspace());
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()),em);
+
+        PartRevision originalPartR = partRevisionDAO.loadPartR(revisionKey);
+        PartMaster partM = originalPartR.getPartMaster();
+
+        if(originalPartR.isCheckedOut()){
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException40");
+        }
+
+        if (originalPartR.getNumberOfIterations() == 0) {
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException41");
+        }
+
+        PartRevision partR = partM.createNextRevision(user);
+
+        PartIteration lastPartI = originalPartR.getLastIteration();
+        PartIteration firstPartI = partR.createNextIteration(user);
+
+
+        if(lastPartI != null){
+
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            for (BinaryResource sourceFile : lastPartI.getAttachedFiles()) {
+                String fileName = sourceFile.getName();
+                long length = sourceFile.getContentLength();
+                Date lastModified = sourceFile.getLastModified();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/"+  fileName;
+                BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
+                binDAO.createBinaryResource(targetFile);
+                firstPartI.addFile(targetFile);
+                try {
+                    dataManager.copyData(sourceFile, targetFile);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // copy components
+            List<PartUsageLink> components = new LinkedList<PartUsageLink>();
+            for (PartUsageLink usage : lastPartI.getComponents()) {
+                PartUsageLink newUsage = usage.clone();
+                components.add(newUsage);
+            }
+            firstPartI.setComponents(components);
+
+            // copy geometries
+            for (Geometry sourceFile : lastPartI.getGeometries()) {
+                String fileName = sourceFile.getName();
+                long length = sourceFile.getContentLength();
+                int quality = sourceFile.getQuality();
+                Date lastModified = sourceFile.getLastModified();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/" + fileName;
+                Geometry targetFile = new Geometry(quality, fullName, length, lastModified);
+                binDAO.createBinaryResource(targetFile);
+                firstPartI.addGeometry(targetFile);
+                try {
+                    dataManager.copyData(sourceFile, targetFile);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            BinaryResource nativeCADFile = lastPartI.getNativeCADFile();
+            if (nativeCADFile != null) {
+                String fileName = nativeCADFile.getName();
+                long length = nativeCADFile.getContentLength();
+                Date lastModified = nativeCADFile.getLastModified();
+                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/nativecad/" + fileName;
+                BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
+                binDAO.createBinaryResource(targetFile);
+                firstPartI.setNativeCADFile(targetFile);
+                try {
+                    dataManager.copyData(nativeCADFile, targetFile);
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            for (DocumentLink link : lastPartI.getLinkedDocuments()) {
+                DocumentLink newLink = link.clone();
+                links.add(newLink);
+            }
+            firstPartI.setLinkedDocuments(links);
+
+            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            for (InstanceAttribute attr : lastPartI.getInstanceAttributes().values()) {
+                InstanceAttribute clonedAttribute = attr.clone();
+                //clonedAttribute.setDocument(firstIte);
+                attrs.put(clonedAttribute.getName(), clonedAttribute);
+            }
+            firstPartI.setInstanceAttributes(attrs);
+
+        }
+
+
+        if (pWorkflowModelId != null) {
+
+            UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
+            RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+
+            Map<Role,User> roleUserMap = new HashMap<Role,User>();
+
+            Iterator it = roleMappings.entrySet().iterator();
+
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry)it.next();
+                String roleName = (String) pairs.getKey();
+                String userLogin = (String) pairs.getValue();
+                User worker = userDAO.loadUser(new UserKey(originalPartR.getWorkspaceId(),userLogin));
+                Role role  = roleDAO.loadRole(new RoleKey(originalPartR.getWorkspaceId(),roleName));
+                roleUserMap.put(role,worker);
+            }
+
+            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
+            Workflow workflow = workflowModel.createWorkflow(roleUserMap);
+            partR.setWorkflow(workflow);
+
+            Collection<Task> runningTasks = workflow.getRunningTasks();
+            for (Task runningTask : runningTasks) {
+                runningTask.start();
+            }
+            mailer.sendApproval(runningTasks, partR);
+        }
+
+        partR.setDescription(pDescription);
+
+        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
+            ACL acl = new ACL();
+            if (pACLUserEntries != null) {
+                for (ACLUserEntry entry : pACLUserEntries) {
+                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
+                }
+            }
+
+            if (pACLUserGroupEntries != null) {
+                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
+                }
+            }
+            partR.setACL(acl);
+        }
+        Date now = new Date();
+        partR.setCreationDate(now);
+        partR.setCheckOutUser(user);
+        partR.setCheckOutDate(now);
+        firstPartI.setCreationDate(now);
+
+        partRevisionDAO.createPartR(partR);
+
+        return partR;
 
     }
 

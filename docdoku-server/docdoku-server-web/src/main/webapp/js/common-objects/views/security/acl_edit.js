@@ -30,6 +30,7 @@
 
         initialize: function() {
             _.bindAll(this);
+            this.useACL = false;
             this.acl = this.options.acl;
             this.aclUserEntries = [];
             this.aclUserGroupEntries = [];
@@ -45,29 +46,36 @@
 
         closeModal: function() {
             this.$modal.modal('hide');
+            this.remove();
         },
 
         bindDomElements:function(){
             this.$modal = this.$('#acl_edit_modal');
             this.$usersAcls = this.$("#users-acl-entries");
             this.$userGroupsAcls = this.$("#groups-acl-entries");
+            this.$usingAcl = this.$(".using-acl");
+            this.$aclSwitch = this.$(".acl-switch");
         },
 
         render:function(){
+
+            var that = this ;
 
             this.$el.html(this.template({i18n:i18n, title:this.title}));
 
             this.bindDomElements();
 
-            var that = this ;
-
             this.admin = new Admin();
             this.admin.fetch({reset:true,success:function(){
+
+                that.useACL = (that.acl != null);
+                if(!that.useACL){
+                    that.$usingAcl.addClass("hide");
+                }
 
                 if(that.acl == null){
                     that.onNoAclGiven();
                 }else{
-
                     for(var key in that.acl.userEntries){
                         var view = new ACLItemView({model:new ACLUserEntry({userLogin : key, permission :that.acl.userEntries[key]}), editMode:that.options.editMode  && key != that.admin.getLogin() && key != APP_CONFIG.login}).render();
                         that.$usersAcls.append(view.$el);
@@ -80,6 +88,14 @@
                         that.aclUserGroupEntries.push(view.model);
                     }
                 }
+
+                that.$aclSwitch.bootstrapSwitch();
+                that.$aclSwitch.bootstrapSwitch('setState', that.useACL);
+                that.$aclSwitch.on('switch-change', function (e, data) {
+                    that.useACL = !that.useACL;
+                    that.$usingAcl.toggleClass("hide");
+                });
+
             }});
 
             return this;
@@ -117,8 +133,10 @@
             });
         },
 
-
         toList:function(){
+            if(!this.useACL){
+                return null;
+            }
             var dto = {};
             dto.userEntries = {};
             dto.groupEntries = {};
@@ -132,8 +150,7 @@
         },
 
         onSubmit:function(e){
-            var that = this;
-            this.trigger("acl:update",this.toList());
+            this.trigger("acl:update");
             e.preventDefault();
             e.stopPropagation();
             return false ;

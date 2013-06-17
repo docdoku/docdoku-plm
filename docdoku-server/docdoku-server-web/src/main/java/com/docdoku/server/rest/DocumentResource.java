@@ -533,13 +533,15 @@ public class DocumentResource {
     @Path("acl")
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("docKey") String docKey, ACLDTO acl) {
         try {
-            if (acl != null) {
-                int lastDash = docKey.lastIndexOf('-');
-                String id = docKey.substring(0, lastDash);
-                String version = docKey.substring(lastDash + 1, docKey.length());
-                DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
 
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+            DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
+            if (acl != null) {
                 documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, acl.getUserEntries(), acl.getGroupEntries());
+            }else{
+                documentService.removeACLFromDocumentMaster(documentMasterKey);
             }
             return Response.ok().build();
         } catch (com.docdoku.core.services.ApplicationException ex) {
