@@ -50,6 +50,11 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
 
         ActivityDTO.Type type;
         Integer tasksToComplete = null;
+        Integer relaunchStep = null;
+
+        if(activity.getRelaunchActivity() != null){
+            relaunchStep = activity.getRelaunchActivity().getStep();
+        }
 
         if (activity instanceof SerialActivity) {
             type = ActivityDTO.Type.SERIAL;
@@ -60,7 +65,7 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
             throw new IllegalArgumentException("Activity type not supported");
         }
 
-        return new ActivityDTO(activity.getStep(), tasksDTO, activity.getLifeCycleState(), type, tasksToComplete, activity.isComplete(), activity.isStopped());
+        return new ActivityDTO(activity.getStep(), tasksDTO, activity.getLifeCycleState(), type, tasksToComplete, activity.isComplete(), activity.isStopped(), relaunchStep);
     }
 
     @Override

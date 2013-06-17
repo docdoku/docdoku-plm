@@ -19,13 +19,12 @@
  */
 package com.docdoku.core.workflow;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import javax.persistence.*;
-import javax.persistence.Id;
 
 /**
  * Workflows organize tasks around documents on which they're applied to.  
@@ -41,9 +40,11 @@ public class Workflow implements Serializable, Cloneable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
+
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("step ASC")
     private List<Activity> activities = new LinkedList<Activity>();
+
     private String finalLifeCycleState;
 
     public Workflow(String pFinalLifeCycleState) {

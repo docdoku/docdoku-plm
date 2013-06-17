@@ -19,7 +19,8 @@ define([
             "click button.switch-activity" : "switchActivityAction",
             "click button.delete-activity" : "deleteActivityAction",
             "change input.activity-state":  "lifeCycleStateChanged",
-            "change input.tasksToComplete":  "tasksToCompleteChanged"
+            "change input.tasksToComplete":  "tasksToCompleteChanged",
+            "change select.relaunchActivitySelector":"changeRelaunchActivityStep"
         },
 
         initialize: function () {
@@ -40,6 +41,8 @@ define([
 
             this.model.attributes.taskModels.bind('add', this.addOneTask, this);
             this.model.attributes.taskModels.bind('remove', this.removeOneTask, this);
+
+            this.on("activities-order:changed",this.populateRelaunchActivitySelector);
 
         },
 
@@ -138,6 +141,8 @@ define([
 
             this.addAllTask();
 
+            this.populateRelaunchActivitySelector();
+
             return this;
         },
 
@@ -152,6 +157,8 @@ define([
 
             this.inputTasksToComplete = this.$('input.tasksToComplete');
 
+            this.relaunchActivitySelector = this.$(".relaunchActivitySelector");
+
             this.tasksUL = this.$("ul.task-list");
             this.tasksUL.sortable({
                 handle: "i.icon-reorder",
@@ -165,11 +172,47 @@ define([
             });
         },
 
+        populateRelaunchActivitySelector:function(){
+            var that = this;
+            this.relaunchActivitySelector.empty();
+            this.relaunchActivitySelector.append("<option value='-1'></option>");
+            var stepCount = 0;
+
+            var modelIndex = this.model.collection.indexOf(this.model);
+
+            this.model.collection.each(function(activity){
+                var activityIndex = activity.collection.indexOf(activity);
+                if(activityIndex < modelIndex){
+                    that.relaunchActivitySelector.append("<option value='"+activityIndex+"'>"+activity.get("lifeCycleState")+"</option>");
+                    stepCount ++ ;
+                }
+            });
+
+            if(!stepCount){
+                this.relaunchActivitySelector.hide();
+            }else{
+                this.relaunchActivitySelector.show();
+            }
+
+            if(this.model.get("relaunchStep") != null){
+                this.relaunchActivitySelector.val(this.model.get("relaunchStep"));
+            }
+
+        },
+
         unbindAllEvents: function(){
             _.each(this.subviews, function(subview){
                 subview.unbindAllEvents();
             });
             this.undelegateEvents();
+        },
+
+        changeRelaunchActivityStep:function(e){
+            if(e.target.value == -1){
+                this.model.set("relaunchStep",null);
+            }else{
+                this.model.set("relaunchStep",e.target.value);
+            }
         }
 
     });

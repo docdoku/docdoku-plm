@@ -242,6 +242,10 @@ public class DocumentMasterDAO {
         SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
         DocumentDAO docDAO = new DocumentDAO(em);
         subscriptionDAO.removeAllSubscriptions(pDocM);
+
+        WorkflowDAO workflowDAO = new WorkflowDAO(em);
+        workflowDAO.removeWorkflowConstraints(pDocM);
+
         for(DocumentIteration doc:pDocM.getDocumentIterations())
             docDAO.removeDoc(doc);
 

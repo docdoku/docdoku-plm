@@ -24,6 +24,8 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
+
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -43,13 +45,6 @@ public class WorkflowDAO {
         em.persist(pWf);
         em.flush();
         pWf.setActivities(activities);
-        /*for(Activity activity:activities){
-            List<Task> tasks = activity.getTasks();
-            activity.setTasks(null);
-            em.persist(activity);
-            em.flush();
-            activity.setTasks(tasks);     
-        }*/     
     }
 
     public DocumentMaster getTarget(Workflow pWorkflow) {
@@ -60,5 +55,35 @@ public class WorkflowDAO {
     public PartRevision getPartTarget(Workflow pWorkflow) {
         Query query = em.createQuery("SELECT p FROM PartRevision p WHERE p.workflow = :workflow");
         return (PartRevision) query.setParameter("workflow", pWorkflow).getSingleResult();
+    }
+
+    public void removeWorkflowConstraints(DocumentMaster pDocM) {
+        List<Workflow> workflows = pDocM.getAbortedWorkflows();
+        Workflow workflow = pDocM.getWorkflow();
+        removeWorkflowConstraints(workflows,workflow);
+    }
+
+    public void removeWorkflowConstraints(PartRevision pPartR) {
+        List<Workflow> workflows = pPartR.getAbortedWorkflows();
+        Workflow workflow = pPartR.getWorkflow();
+        removeWorkflowConstraints(workflows,workflow);
+    }
+
+    private void removeWorkflowConstraints(List<Workflow> pWorkflows, Workflow pWorkflow){
+        if(pWorkflows != null){
+            for(Workflow workflow:pWorkflows){
+                for(Activity activity:workflow.getActivities()){
+                    activity.setRelaunchActivity(null);
+                }
+            }
+        }
+        pWorkflows = new ArrayList<Workflow>();
+        if(pWorkflow != null){
+            for(Activity activity:pWorkflow.getActivities()){
+                activity.setRelaunchActivity(null);
+            }
+        }
+        pWorkflow = new Workflow();
+        em.flush();
     }
 }

@@ -22,9 +22,10 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
-import javax.persistence.*;
 
 /**
  * This class is the model used to create instances of 
@@ -130,6 +131,9 @@ public class WorkflowModel implements Serializable, Cloneable {
         for(ActivityModel model:activityModels){
             Activity activity = model.createActivity(roleUserMap);
             activity.setWorkflow(workflow);
+            if(model.getRelaunchActivity()!=null){
+                activity.setRelaunchActivity(activities.get(model.getRelaunchActivity().getStep()));
+            }
             activities.add(activity);
         }
         return workflow;

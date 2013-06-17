@@ -48,6 +48,9 @@ define([
             var activityModel = this.model.attributes.activityModels.at(oldPosition);
             this.model.attributes.activityModels.remove(activityModel, {silent: true});
             this.model.attributes.activityModels.add(activityModel, {silent: true, at: newPosition});
+            _.each(this.subviews,function(subview){
+                subview.trigger("activities-order:changed");
+            })
         },
 
         gotoWorkflows: function() {
@@ -145,9 +148,10 @@ define([
                 tolerance: "pointer",
                 start: function(event, ui) {
                     ui.item.oldPosition = ui.item.index();
+                    console.log("start, index = " + ui.item.oldPosition)
                 },
                 stop: function(event, ui) {
-                    self.activityPositionChanged(ui.item.oldPosition, ui.item.index());
+                    self.activityPositionChanged(ui.item.oldPosition-1, ui.item.index()-1);
                 }
             });
         },
