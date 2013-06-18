@@ -539,7 +539,19 @@ public class DocumentResource {
             String version = docKey.substring(lastDash + 1, docKey.length());
             DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
             if (acl != null) {
-                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, acl.getUserEntries(), acl.getGroupEntries());
+
+                Map<String,String> userEntries = new HashMap<String,String>();
+                Map<String,String> groupEntries = new HashMap<String,String>();
+
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries.put(entry.getKey(), entry.getValue().name());
+                }
+
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    groupEntries.put(entry.getKey(), entry.getValue().name());
+                }
+
+                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, userEntries, groupEntries);
             }else{
                 documentService.removeACLFromDocumentMaster(documentMasterKey);
             }

@@ -304,7 +304,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,ACL.Permission> pACLUserEntries, Map<String,ACL.Permission> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
+    public void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
 
         User user = checkDocumentMasterWriteAccess(docKey);
 
@@ -319,14 +319,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 ACL acl = new ACL();
 
                 if (pACLUserEntries != null) {
-                    for (Map.Entry<String, ACL.Permission> entry : pACLUserEntries.entrySet()) {
-                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),entry.getValue());
+                    for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
+                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
                     }
                 }
 
                 if (pACLUserGroupEntries != null) {
-                    for (Map.Entry<String, ACL.Permission> entry : pACLUserGroupEntries.entrySet()) {
-                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),entry.getValue());
+                    for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
+                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
                     }
                 }
 
@@ -336,7 +336,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }else{
                 if (pACLUserEntries != null) {
                     for (ACLUserEntry entry : docM.getACL().getUserEntries().values()) {
-                        ACL.Permission newPermission = pACLUserEntries.get(entry.getPrincipalLogin());
+                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
                         if(newPermission != null){
                             entry.setPermission(newPermission);
                         }
@@ -345,7 +345,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
                 if (pACLUserGroupEntries != null) {
                     for (ACLUserGroupEntry entry : docM.getACL().getGroupEntries().values()) {
-                        ACL.Permission newPermission = pACLUserGroupEntries.get(entry.getPrincipalId());
+                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
                         if(newPermission != null){
                             entry.setPermission(newPermission);
                         }
