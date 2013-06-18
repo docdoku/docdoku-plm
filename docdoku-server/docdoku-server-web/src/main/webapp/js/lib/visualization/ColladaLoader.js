@@ -3056,8 +3056,11 @@ THREE.ColladaLoader = function () {
 
                 case 'wrapU':
                 case 'wrapV':
-
-                    this.texOpts[ child.nodeName ] = parseInt( child.textContent );
+                    if(child.textContent == "TRUE"){
+                        this.texOpts[ child.nodeName ] = 1;
+                    }else{
+                        this.texOpts[ child.nodeName ] = parseInt( child.textContent );
+                    }
                     break;
 
                 default:
@@ -3146,10 +3149,17 @@ THREE.ColladaLoader = function () {
                             //var surfaceId = this.effect.sampler[samplerId].source;
                             var surfaceId = this.effect.sampler[samplerId] ? this.effect.sampler[samplerId].source : null;
 
-                            if ( surfaceId ) {
+
+                            if ( surfaceId || images[cot.texture]) {
 
                                 var surface = this.effect.surface[surfaceId];
-                                var image = images[surface.init_from];
+                                var image = null;
+                                if(surface){
+                                    image = images[surface.init_from];
+                                }else if(images[cot.texture]){
+                                    image = images[cot.texture];
+                                }
+                                console.log(cot)
 
                                 if (image) {
 
