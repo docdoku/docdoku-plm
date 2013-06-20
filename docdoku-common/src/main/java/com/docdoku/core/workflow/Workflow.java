@@ -21,10 +21,7 @@ package com.docdoku.core.workflow;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Workflows organize tasks around documents on which they're applied to.  
@@ -44,6 +41,9 @@ public class Workflow implements Serializable, Cloneable {
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("step ASC")
     private List<Activity> activities = new LinkedList<Activity>();
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date abortedDate;
 
     private String finalLifeCycleState;
 
@@ -128,6 +128,18 @@ public class Workflow implements Serializable, Cloneable {
 
     public Activity getActivity(int pIndex) {
         return activities.get(pIndex);
+    }
+
+    public void abort() {
+        this.setAbortedDate(new Date());
+    }
+
+    public Date getAbortedDate() {
+        return abortedDate;
+    }
+
+    public void setAbortedDate(Date abortedDate) {
+        this.abortedDate = abortedDate;
     }
 
     /**

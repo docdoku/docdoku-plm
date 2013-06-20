@@ -853,12 +853,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
 
+            // Clone new workflow
+            Workflow relaunchedWorkflow  = workflow.clone();
+            workflowDAO.createWorkflow(relaunchedWorkflow);
+
             // Move aborted workflow in docM list
+            workflow.abort();
             docM.addAbortedWorkflows(workflow);
 
             // Set new workflow on document
-            Workflow relaunchedWorkflow  = workflow.clone();
-            workflowDAO.createWorkflow(relaunchedWorkflow);
             docM.setWorkflow(relaunchedWorkflow);
 
             // Reset new workflow at desired step

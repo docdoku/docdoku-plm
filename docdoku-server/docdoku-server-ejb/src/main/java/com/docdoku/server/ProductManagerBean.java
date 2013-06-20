@@ -1660,12 +1660,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
 
+            // Clone workflow
+            Workflow relaunchedWorkflow  = workflow.clone();
+            workflowDAO.createWorkflow(relaunchedWorkflow);
+
             // Move aborted workflow in docM list
+            workflow.abort();
             partRevision.addAbortedWorkflows(workflow);
 
             // Set new workflow on document
-            Workflow relaunchedWorkflow  = workflow.clone();
-            workflowDAO.createWorkflow(relaunchedWorkflow);
             partRevision.setWorkflow(relaunchedWorkflow);
 
             // Reset new workflow at desired step
