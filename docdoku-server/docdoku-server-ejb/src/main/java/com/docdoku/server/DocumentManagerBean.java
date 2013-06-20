@@ -778,7 +778,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
+    public DocumentMaster approveTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -821,7 +821,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public DocumentMaster reject(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
+    public DocumentMaster rejectTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
             throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1247,7 +1247,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster[] createVersion(DocumentMasterKey pOriginalDocMPK,
+    public DocumentMaster[] createDocumentVersion(DocumentMasterKey pOriginalDocMPK,
             String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String,String> roleMappings) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, CreationException, RoleNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocMPK.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);

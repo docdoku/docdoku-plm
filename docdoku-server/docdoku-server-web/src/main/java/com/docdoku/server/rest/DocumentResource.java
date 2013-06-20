@@ -331,7 +331,7 @@ public class DocumentResource {
                 }
             }
 
-            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
+            DocumentMaster[] docM = documentService.createDocumentVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
