@@ -237,7 +237,7 @@ public class PartsResource {
                 }
             }
 
-            PartRevision partR = productService.createVersion(revisionKey, description, workflowModelId, userEntries, userGroupEntries,roleMappings);
+            PartRevision partR = productService.createPartVersion(revisionKey, description, workflowModelId, userEntries, userGroupEntries,roleMappings);
 
             return Response.ok().build();
 

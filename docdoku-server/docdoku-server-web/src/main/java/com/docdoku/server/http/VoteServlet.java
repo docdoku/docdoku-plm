@@ -24,13 +24,13 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
-import java.io.IOException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
+import java.io.IOException;
 
 
 public class VoteServlet extends HttpServlet {
@@ -61,20 +61,20 @@ public class VoteServlet extends HttpServlet {
             if(entityType.equals("parts")){
 
                 if (action.equals("Approve")) {
-                    productService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    productService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.getRequestDispatcher("/WEB-INF/taskApproved.jsp").forward(pRequest, pResponse);
                 } else if (action.equals("Reject")) {
-                    productService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    productService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.getRequestDispatcher("/WEB-INF/taskRejected.jsp").forward(pRequest, pResponse);
                 }
 
             }else if(entityType.equals("documents")){
 
                 if (action.equals("Approve")) {
-                    documentService.approve(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    documentService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.getRequestDispatcher("/WEB-INF/taskApproved.jsp").forward(pRequest, pResponse);
                 } else if (action.equals("Reject")) {
-                    documentService.reject(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    documentService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.getRequestDispatcher("/WEB-INF/taskRejected.jsp").forward(pRequest, pResponse);
                 }
 
