@@ -183,7 +183,7 @@ define(
 
         initLinkedDocumentsView: function() {
             this.linkedDocumentsView = new LinkedDocumentsView({
-                editMode: true,
+                editMode: this.editMode,
                 documentIteration: this.iteration,
                 collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
             }).render();
