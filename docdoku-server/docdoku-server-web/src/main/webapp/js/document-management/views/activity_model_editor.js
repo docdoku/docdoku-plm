@@ -159,6 +159,8 @@ define([
 
             this.relaunchActivitySelector = this.$(".relaunchActivitySelector");
 
+            this.relaunchActivitySelectorWrapper = this.$(".relaunchActivitySelector-wrapper");
+
             this.tasksUL = this.$("ul.task-list");
             this.tasksUL.sortable({
                 handle: "i.icon-reorder",
@@ -189,9 +191,9 @@ define([
             });
 
             if(!stepCount){
-                this.relaunchActivitySelector.hide();
+                this.relaunchActivitySelectorWrapper.hide();
             }else{
-                this.relaunchActivitySelector.show();
+                this.relaunchActivitySelectorWrapper.show();
             }
 
             if(this.model.get("relaunchStep") != null){

@@ -6,9 +6,12 @@
         <button class="btn delete-activity" title="{{i18n.DELETE_ACTIVITY}}"><i class="icon-remove"></i></button>
         <input class="activity-state" type="text" placeholder="{{i18n.ACTIVITY_STATE_PLACEHOLDER}}"
                value="{{activity.lifeCycleState}}"/>
-        <select class="relaunchActivitySelector"></select>
+        <div class="relaunchActivitySelector-wrapper">
+            <i class="icon-circle-arrow-left" title={{i18n.RELAUCNH_ACTIVITY_SELECTOR}}></i>
+            <select class="relaunchActivitySelector"></select>
+        </div>
     </div>
     <ul class="task-list">
     </ul>
-    <button class="btn add-task" title="{{i18n.ADD_TASK}}"><i class="icon-plus"></i></button>
+    <button class="add-task" title="{{i18n.ADD_TASK}}"><i class="icon-plus"></i></button>
 </div>

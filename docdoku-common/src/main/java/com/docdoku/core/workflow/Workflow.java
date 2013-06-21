@@ -131,6 +131,11 @@ public class Workflow implements Serializable, Cloneable {
     }
 
     public void abort() {
+        for (Activity activity : activities) {
+            for(Task task:activity.getTasks()){
+                task.stop();
+            }
+        }
         this.setAbortedDate(new Date());
     }
 
