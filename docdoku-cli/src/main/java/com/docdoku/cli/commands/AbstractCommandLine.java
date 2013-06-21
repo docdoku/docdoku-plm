@@ -44,6 +44,9 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
+    @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
+    protected boolean jsonParser;
+
     private void promptForUser(){
         Console c = System.console();
         user = c.readLine("Please enter user for '" + host + "': ");

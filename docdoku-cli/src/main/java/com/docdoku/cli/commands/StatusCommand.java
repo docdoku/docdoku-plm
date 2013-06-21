@@ -22,16 +22,28 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.exceptions.StatusException;
+import com.docdoku.cli.helpers.JSONPrinter;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class StatusCommand extends AbstractCommandLine{
@@ -49,13 +61,22 @@ public class StatusCommand extends AbstractCommandLine{
 
     @Override
     public void execImpl() throws Exception {
-        if(partNumber==null || revision==null){
-            loadMetadata();
-        }
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+        try {
+            if(partNumber==null || revision==null){
+                loadMetadata();
+            }
 
-        printMasterStatus(pm);
+            IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+            PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+
+            if (jsonParser) {
+                JSONPrinter.printPartMasterStatus(pm);
+            } else {
+                printMasterStatus(pm);
+            }
+        } catch (StatusException e)  {
+            JSONPrinter.printException(e);
+        }
     }
 
     private void printMasterStatus(PartMaster pm){
@@ -108,7 +129,7 @@ public class StatusCommand extends AbstractCommandLine{
         return b.toString();
     }
 
-    private void loadMetadata() throws IOException {
+    private void loadMetadata() throws IOException, StatusException {
         if(cadFile==null){
             throw new IllegalArgumentException("<partnumber> or <revision> are not specified and no cad file is supplied");
         }
@@ -118,8 +139,14 @@ public class StatusCommand extends AbstractCommandLine{
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            if (jsonParser) {
+                throw new StatusException("File is unversioned");
+            }
+            else {
+                throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            }
         }
+
         revision = new Version(strRevision);
     }
 
