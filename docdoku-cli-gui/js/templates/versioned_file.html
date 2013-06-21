@@ -1,0 +1,43 @@
+<div class="versionedFile">
+    <!--Status icons-->
+    {{#if status.isCheckedOut}}
+    {{#if status.isCheckedOutByMe}}
+    <i class="icon-pencil" title="Checkouted by me"></i>
+    {{else}}
+    <i class="icon-lock" title="Locked"></i>
+    {{/if}}
+    {{else}}
+    <i class="icon-eye-open"></i>
+    {{/if}}
+    <!--Part info-->
+    <div class="partInfo">
+        <div>{{status.partNumber}}</div>
+        <div class="name">{{model.getName}}</div>
+    </div>
+    <!--Checkout info-->
+    <div class="checkoutInfo">
+        {{#if status.isCheckedOut}}
+            {{#if status.isCheckedOutByMe}}
+            <div><i class="icon-calendar" title="Checkout date">{{status.checkoutDateParsed}}</i></div>
+            <div><i class="icon-time" title="Last modif">{{model.getMTimeParsed}}</i></div>
+            {{else}}
+            <div><i class="icon-user" title="Checkouted by">{{status.checkoutUser}}</i></div>
+            <div><i class="icon-calendar" title="Checkout date">{{status.checkoutDateParsed}}</i></div>
+        {{/if}}
+        {{else}}
+            <div><i class="icon-exchange" title="Last syncho">{{model.getMTimeParsed}}</i></div>
+        {{/if}}
+    </div>
+    <!--Action icons-->
+    {{#if status.isCheckedOut}}
+    {{#if status.isCheckedOutByMe}}
+    <i class="icon-signout" title="Checkin"></i>
+    <i class="icon-undo" title="Cancel checkout"></i>
+    {{else}}
+    <i class="icon-refresh" title="Refresh"></i>
+    {{/if}}
+    {{else}}
+    <i class="icon-refresh" title="Refresh"></i>
+    <i class="icon-signin" title="Checkout"></i>
+    {{/if}}
+</div>

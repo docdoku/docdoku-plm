@@ -1,0 +1,61 @@
+<div id="configuration-modal" class="modal modal hide fade">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3>CONFIGURATION</h3>
+    </div>
+    <div class="modal-body">
+        <form id="form-configuration" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label">Host</label>
+                <div class="controls">
+                    <input type="text" id="inputHost" value="{{configuration.getHost}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Port</label>
+                <div class="controls">
+                    <input type="text" id="inputPort" value="{{configuration.getPort}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">User</label>
+                <div class="controls">
+                    <input type="text" id="inputUser" value="{{configuration.getUser}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Password</label>
+                <div class="controls">
+                    <input type="password" id="inputPwd" value="{{configuration.getPwd}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Workspace</label>
+                <div class="controls">
+                    <input type="text" id="inputWorkspace" value="{{configuration.getWorkspace}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Working dir</label>
+                <div class="controls">
+                    <input type="text" id="inputWorkingDir" value="{{configuration.getDirectory}}" readonly required/>
+                    <i class="icon-folder-open"></i>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="modal-footer">
+
+        <button id="save-part" class="btn btn-primary" form="form-configuration">OK</button>
+        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">ANNULER</a>
+
+    </div>
+</div>

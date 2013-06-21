@@ -1,0 +1,63 @@
+<div id="part_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.NEW_PART}}</h3>
+    </div>
+
+    <div class="modal-body">
+
+
+            <form id="part_creation_form" class="form-horizontal">
+
+
+                <div class="tab-pane active" id="tab-main">
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputPartNumber" placeholder="{{i18n.PART_NUMBER}}" required/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartName">{{i18n.PART_NAME}}</label>
+
+                        <div class="controls">
+                            <input type="text" id="inputPartName" placeholder="{{i18n.PART_NAME}}"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartDescription">{{i18n.DESCRIPTION}}</label>
+
+                        <div class="controls">
+                            <textarea id="inputPartDescription" placeholder="{{i18n.DESCRIPTION}}" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputPartStandard">{{i18n.STANDARD_PART}}</label>
+
+                        <div class="controls">
+                            <input type="checkbox" id="inputPartStandard"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane attributes attributes-edit" id="tab-attributes"></div>
+                <div class="tab-pane" id="tab-workflow">
+                    <div id="workflows-list"></div>
+                    <div id="workflows-mapping" class="role-mapping"></div>
+                </div>
+                <div class="tab-pane" id="tab-acl">
+                    <div id="acl-mapping"></div>
+                </div>
+            </form>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        <button class="btn btn-primary" form="part_creation_form">{{i18n.CREATE_PART}}</button>
+    </div>
+</div>
