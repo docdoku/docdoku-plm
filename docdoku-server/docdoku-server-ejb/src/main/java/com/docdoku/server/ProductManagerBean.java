@@ -1671,26 +1671,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             // Set new workflow on document
             partRevision.setWorkflow(relaunchedWorkflow);
 
-            // Reset new workflow at desired step
-            for(Activity a :relaunchedWorkflow.getActivities()){
-                if(a.getStep() >= relaunchActivityStep){
-                    for(Task t : a.getTasks()){
-                        t.setStatus(Task.Status.NOT_STARTED);
-                        t.setSignature(null);
-                        t.setClosureComment(null);
-                        t.setClosureDate(null);
-                        t.setStartDate(null);
-                    }
-                }
-            }
-            // Restart running tasks
-            Collection<Task> runningTasks = relaunchedWorkflow.getRunningTasks();
-            for (Task runningTask : runningTasks) {
-                runningTask.start();
-            }
+            // Reset some properties
+            relaunchedWorkflow.relaunch(relaunchActivityStep);
 
             // Send mails for running tasks
-            mailer.sendApproval(runningTasks, partRevision);
+            mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), partRevision);
 
         }
 

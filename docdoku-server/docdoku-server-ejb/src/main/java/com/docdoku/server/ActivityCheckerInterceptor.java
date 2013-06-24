@@ -24,6 +24,7 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.services.WorkflowNotFoundException;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.workflow.Workflow;
@@ -54,7 +55,10 @@ public class ActivityCheckerInterceptor {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getDocumentTarget(workflow);
+        if(docM == null){
+            throw new WorkflowNotFoundException(new Locale(user.getLanguage()),workflow.getId());
+        }
         DocumentIteration doc = docM.getLastIteration();
         if (em.createNamedQuery("findLogByDocumentAndUserAndEvent").
                 setParameter("userLogin", user.getLogin()).

@@ -22,13 +22,13 @@ package com.docdoku.server.dao;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 public class WorkflowDAO {
 
@@ -47,14 +47,22 @@ public class WorkflowDAO {
         pWf.setActivities(activities);
     }
 
-    public DocumentMaster getTarget(Workflow pWorkflow) {
+    public DocumentMaster getDocumentTarget(Workflow pWorkflow) {
         Query query = em.createQuery("SELECT m FROM DocumentMaster m WHERE m.workflow = :workflow");
-        return (DocumentMaster) query.setParameter("workflow", pWorkflow).getSingleResult();
+        try{
+            return (DocumentMaster) query.setParameter("workflow", pWorkflow).getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
     }
 
     public PartRevision getPartTarget(Workflow pWorkflow) {
         Query query = em.createQuery("SELECT p FROM PartRevision p WHERE p.workflow = :workflow");
-        return (PartRevision) query.setParameter("workflow", pWorkflow).getSingleResult();
+        try{
+            return (PartRevision) query.setParameter("workflow", pWorkflow).getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
     }
 
     public void removeWorkflowConstraints(DocumentMaster pDocM) {

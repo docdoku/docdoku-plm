@@ -158,7 +158,9 @@ public abstract class Activity implements Serializable, Cloneable {
     public abstract boolean isComplete();
 
     public abstract boolean isStopped();
-    
+
+    public abstract void relaunch();
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {

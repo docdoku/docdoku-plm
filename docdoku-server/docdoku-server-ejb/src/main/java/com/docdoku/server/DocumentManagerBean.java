@@ -779,14 +779,17 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @CheckActivity
     @Override
     public DocumentMaster approveTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
-            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getDocumentTarget(workflow);
 
+        if(docM == null){
+            throw new WorkflowNotFoundException(new Locale(user.getLanguage()),workflow.getId());
+        }
 
         if (!task.getWorker().equals(user)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
@@ -822,13 +825,17 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @CheckActivity
     @Override
     public DocumentMaster rejectTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
-            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getDocumentTarget(workflow);
+
+        if(docM == null){
+            throw new WorkflowNotFoundException(new Locale(user.getLanguage()),workflow.getId());
+        }
 
         if (!task.getWorker().equals(user)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
@@ -864,26 +871,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             // Set new workflow on document
             docM.setWorkflow(relaunchedWorkflow);
 
-            // Reset new workflow at desired step
-            for(Activity a :relaunchedWorkflow.getActivities()){
-                if(a.getStep() >= relaunchActivityStep){
-                    for(Task t : a.getTasks()){
-                        t.setStatus(Task.Status.NOT_STARTED);
-                        t.setSignature(null);
-                        t.setClosureComment(null);
-                        t.setClosureDate(null);
-                        t.setStartDate(null);
-                    }
-                }
-            }
-            // Restart running tasks
-            Collection<Task> runningTasks = relaunchedWorkflow.getRunningTasks();
-            for (Task runningTask : runningTasks) {
-                runningTask.start();
-            }
+            // Reset some properties
+            relaunchedWorkflow.relaunch(relaunchActivityStep);
 
             // Send mails for running tasks
-            mailer.sendApproval(runningTasks, docM);
+            mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), docM);
 
         }
 

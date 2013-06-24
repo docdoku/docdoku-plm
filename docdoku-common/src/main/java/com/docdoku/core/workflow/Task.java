@@ -262,6 +262,14 @@ public class Task implements Serializable, Cloneable {
         //because of bug #6277781
         return status.ordinal()==Status.IN_PROGRESS.ordinal();
     }
+
+    public void reset(){
+        setStatus(Task.Status.NOT_STARTED);
+        setSignature(null);
+        setClosureComment(null);
+        setClosureDate(null);
+        setStartDate(null);
+    }
     
     @Override
     public int hashCode() {

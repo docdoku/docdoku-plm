@@ -139,6 +139,21 @@ public class Workflow implements Serializable, Cloneable {
         this.setAbortedDate(new Date());
     }
 
+    public void relaunch(Integer relaunchActivityStep) {
+
+        for(Activity a :activities){
+            if(a.getStep() >= relaunchActivityStep){
+                for(Task t : a.getTasks()){
+                    t.reset();
+                }
+            }
+        }
+
+        Activity currentActivity = activities.get(relaunchActivityStep);
+        currentActivity.relaunch();
+
+    }
+
     public Date getAbortedDate() {
         return abortedDate;
     }
