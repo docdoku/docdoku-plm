@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class WorkflowDTO implements Serializable {
@@ -29,6 +30,7 @@ public class WorkflowDTO implements Serializable {
     private int id;
     private String finalLifeCycleState;
     private List<ActivityDTO> activities;
+    private Date abortedDate;
 
     public WorkflowDTO() {
         activities = new ArrayList<ActivityDTO>();
@@ -57,6 +59,14 @@ public class WorkflowDTO implements Serializable {
     public String getLifeCycleState() {
         ActivityDTO current = getCurrentActivity();
         return current==null?finalLifeCycleState:current.getLifeCycleState();
+    }
+
+    public Date getAbortedDate() {
+        return abortedDate;
+    }
+
+    public void setAbortedDate(Date abortedDate) {
+        this.abortedDate = abortedDate;
     }
 
     public ActivityDTO getCurrentActivity() {

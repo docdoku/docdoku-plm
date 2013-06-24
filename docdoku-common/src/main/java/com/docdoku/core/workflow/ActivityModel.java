@@ -22,11 +22,13 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 
-import java.io.Serializable;
-import java.util.*;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Defines common attributes and behaviors for activities model.
@@ -63,6 +65,22 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
+
+    @ManyToOne(optional = true,fetch=FetchType.EAGER)
+    @JoinTable (
+            name="ACTIVITYMODEL_RELAUNCH",
+            joinColumns={
+                    @JoinColumn(name="ACTIVITYMODEL_STEP", referencedColumnName="STEP"),
+                    @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            },
+            inverseJoinColumns={
+                    @JoinColumn(name="RELAUNCHACTIVITYMODEL_STEP", referencedColumnName="STEP"),
+                    @JoinColumn(name="RELAUNCHWORKFLOWMODEL_ID", referencedColumnName="WORKFLOWMODEL_ID"),
+                    @JoinColumn(name="RELAUNCHWORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            }
+    )
+    private ActivityModel relaunchActivity;
     
     protected String lifeCycleState;
 
@@ -140,7 +158,16 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     public List<TaskModel> getTaskModels() {
         return taskModels;
     }
-    
+
+    @XmlTransient
+    public ActivityModel getRelaunchActivity() {
+        return relaunchActivity;
+    }
+
+    public void setRelaunchActivity(ActivityModel relaunchActivity) {
+        this.relaunchActivity = relaunchActivity;
+    }
+
     /**
      * perform a deep clone operation
      */

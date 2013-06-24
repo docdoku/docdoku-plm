@@ -53,6 +53,11 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
 
         ActivityModelDTO.Type type;
         Integer tasksToComplete = null;
+        Integer relaunchStep = null;
+
+        if(activityModel.getRelaunchActivity() != null){
+            relaunchStep = activityModel.getRelaunchActivity().getStep();
+        }
 
         if (activityModel instanceof SerialActivityModel) {
             type = ActivityModelDTO.Type.SERIAL;
@@ -63,7 +68,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
             throw new IllegalArgumentException("ActivityModel type not supported");
         }
 
-        return new ActivityModelDTO(activityModel.getStep(), taskModelsDTO, activityModel.getLifeCycleState(), type, tasksToComplete);
+        return new ActivityModelDTO(activityModel.getStep(), taskModelsDTO, activityModel.getLifeCycleState(), type, tasksToComplete,relaunchStep);
     }
 
     @Override
@@ -77,21 +82,17 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
         switch (activityModelDTO.getType()){
             case SERIAL:{
                 SerialActivityModel serialActivityModel = new SerialActivityModel();
-
                 serialActivityModel.setStep(activityModelDTO.getStep());
                 serialActivityModel.setTaskModels(taskModels);
                 serialActivityModel.setLifeCycleState(activityModelDTO.getLifeCycleState());
-
                 return serialActivityModel;
             }
             case PARALLEL:{
                 ParallelActivityModel parallelActivityModel = new ParallelActivityModel();
-
                 parallelActivityModel.setStep(activityModelDTO.getStep());
                 parallelActivityModel.setTaskModels(taskModels);
                 parallelActivityModel.setLifeCycleState(activityModelDTO.getLifeCycleState());
                 parallelActivityModel.setTasksToComplete(activityModelDTO.getTasksToComplete());
-
                 return parallelActivityModel;
             }
             default:{

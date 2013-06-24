@@ -109,6 +109,19 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
 
+    @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
+    @JoinTable(name="PART_ABORTED_WORKFLOW",
+        inverseJoinColumns={
+                @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+        },
+        joinColumns={
+                @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+                @JoinColumn(name="PARTMASTER_VERSION", referencedColumnName="VERSION"),
+                @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private List<Workflow> abortedWorkflows;
+
+
     @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
 
@@ -227,6 +240,14 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     public void setACL(ACL acl) {
         this.acl = acl;
+    }
+
+    public List<Workflow> getAbortedWorkflows() {
+        return abortedWorkflows;
+    }
+
+    public void addAbortedWorkflows(Workflow abortedWorkflow) {
+        this.abortedWorkflows.add(abortedWorkflow);
     }
     
     public PartIteration createNextIteration(User pUser){

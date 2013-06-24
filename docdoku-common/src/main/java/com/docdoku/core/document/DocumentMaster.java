@@ -99,7 +99,19 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Workflow workflow;
-    
+
+    @OneToMany(orphanRemoval=true, cascade= CascadeType.ALL, fetch= FetchType.EAGER)
+    @JoinTable(name="DOCUMENT_ABORTED_WORKFLOW",
+        inverseJoinColumns={
+            @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+        },
+        joinColumns={
+            @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="ID"),
+            @JoinColumn(name="DOCUMENTMASTER_VERSION", referencedColumnName="VERSION"),
+            @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private List<Workflow> abortedWorkflows;
+
     @ManyToOne(fetch=FetchType.EAGER)
     private Folder location;
     
@@ -185,7 +197,13 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         this.acl = acl;
     }
 
-    
+    public List<Workflow> getAbortedWorkflows() {
+        return abortedWorkflows;
+    }
+
+    public void addAbortedWorkflows(Workflow abortedWorkflow) {
+        this.abortedWorkflows.add(abortedWorkflow);
+    }
 
     public DocumentMasterKey getKey() {
         return new DocumentMasterKey(workspaceId, id, version);

@@ -44,7 +44,7 @@ import java.util.Map;
 public interface IDocumentManagerWS {
 
 
-    DocumentMaster approveTaskOnDocument(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
+    DocumentMaster approveTaskOnDocument(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException;
 
     DocumentMaster checkInDocument(DocumentMasterKey docMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException;
 
@@ -99,7 +99,7 @@ public interface IDocumentManagerWS {
 
     DocumentMaster moveDocumentMaster(String parentFolder, DocumentMasterKey docMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException;
 
-    DocumentMaster rejectTaskOnDocument(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
+    DocumentMaster rejectTaskOnDocument(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException;
 
     DocumentMaster removeFileFromDocument(String fullName) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException;
 
