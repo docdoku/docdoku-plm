@@ -130,6 +130,7 @@ public class Tools {
 
         if(partRevision.hasWorkflow()){
             partDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
+            partDTO.setWorkflow(mapper.map(partRevision.getWorkflow(),WorkflowDTO.class));
         }
 
         ACL acl = partRevision.getACL();

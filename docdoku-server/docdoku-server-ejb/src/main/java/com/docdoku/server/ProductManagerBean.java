@@ -1650,6 +1650,50 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         task.reject(pComment, partRevision.getLastIteration().getIteration(), pSignature);
+
+        // Relaunch Workflow ?
+        Activity currentActivity = task.getActivity();
+
+        if(currentActivity.isStopped() && currentActivity.getRelaunchActivity() != null){
+
+            WorkflowDAO workflowDAO = new WorkflowDAO(em);
+
+            Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
+
+            // Clone workflow
+            Workflow relaunchedWorkflow  = workflow.clone();
+            workflowDAO.createWorkflow(relaunchedWorkflow);
+
+            // Move aborted workflow in docM list
+            workflow.abort();
+            partRevision.addAbortedWorkflows(workflow);
+
+            // Set new workflow on document
+            partRevision.setWorkflow(relaunchedWorkflow);
+
+            // Reset new workflow at desired step
+            for(Activity a :relaunchedWorkflow.getActivities()){
+                if(a.getStep() >= relaunchActivityStep){
+                    for(Task t : a.getTasks()){
+                        t.setStatus(Task.Status.NOT_STARTED);
+                        t.setSignature(null);
+                        t.setClosureComment(null);
+                        t.setClosureDate(null);
+                        t.setStartDate(null);
+                    }
+                }
+            }
+            // Restart running tasks
+            Collection<Task> runningTasks = relaunchedWorkflow.getRunningTasks();
+            for (Task runningTask : runningTasks) {
+                runningTask.start();
+            }
+
+            // Send mails for running tasks
+            mailer.sendApproval(runningTasks, partRevision);
+
+        }
+
         return partRevision;
 
     }

@@ -66,6 +66,7 @@ public class PartRevisionDAO {
     }
 
     public void removeRevision(PartRevision pPartR){
+        new WorkflowDAO(em).removeWorkflowConstraints(pPartR);
         em.remove(pPartR);
     }
 

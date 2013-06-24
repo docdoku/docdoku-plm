@@ -33,6 +33,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -556,6 +557,31 @@ public class DocumentResource {
                 documentService.removeACLFromDocumentMaster(documentMasterKey);
             }
             return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("aborted-workflows")
+    @Produces("application/json;charset=UTF-8")
+    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
+        try {
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            List<Workflow> abortedWorkflows = docM.getAbortedWorkflows();
+            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<WorkflowDTO>();
+
+            for(Workflow abortedWorkflow:abortedWorkflows){
+                abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
+            }
+
+            return abortedWorkflowsDTO;
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

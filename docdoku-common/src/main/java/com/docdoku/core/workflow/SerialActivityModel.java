@@ -22,10 +22,11 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.*;
 
 /**
  * This class is the model used to create instances
@@ -46,11 +47,11 @@ public class SerialActivityModel extends ActivityModel {
     }
 
     public SerialActivityModel(WorkflowModel pWorkflowModel, int pStep, List<TaskModel> pTaskModels, String pLifeCycleState) {
-        super(pWorkflowModel, pStep, pTaskModels, pLifeCycleState);      
+        super(pWorkflowModel, pStep, pTaskModels, pLifeCycleState);
     }
 
     public SerialActivityModel(WorkflowModel pWorkflowModel, String pLifeCycleState) {
-        this(pWorkflowModel, 0,  new ArrayList<TaskModel>(), pLifeCycleState);      
+        this(pWorkflowModel, 0,  new ArrayList<TaskModel>(), pLifeCycleState);
     }
         
     @Override
