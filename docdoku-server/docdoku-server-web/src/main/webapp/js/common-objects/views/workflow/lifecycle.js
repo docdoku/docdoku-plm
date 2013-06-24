@@ -1,9 +1,10 @@
 define([
     "common-objects/views/workflow/lifecycle_activity",
     "i18n!localization/nls/document-management-strings",
-    "text!common-objects/templates/workflow/lifecycle.html"
+    "text!common-objects/templates/workflow/lifecycle.html",
+    "common-objects/utils/date"
 
-], function(LifecycleActivityView, i18n, template) {
+], function(LifecycleActivityView, i18n, template, Date) {
 
     var LifecycleView = Backbone.View.extend({
 
@@ -39,6 +40,14 @@ define([
             $.ajax({
                 url:this.abortedWorkflowsUrl,
                 success:function(abortedWorkflows){
+
+                    _.each(abortedWorkflows,function(workflow){
+                        workflow.abortedFormattedDate = Date.formatTimestamp(
+                            i18n._DATE_FORMAT,
+                            workflow.abortedDate
+                        );
+                    });
+
                     that.abortedWorkflows = abortedWorkflows;
                     that.$el.html(Mustache.render(template, {i18n: i18n, workflow:that.workflow, abortedWorkflows : abortedWorkflows}));
                     that.bindDomElements();
@@ -57,8 +66,10 @@ define([
             this.$historyContent.toggleClass("hide");
         },
 
-        currentWorkflow:function(){
+        currentWorkflow:function(e){
             this.displayWorkflow(this.workflow);
+            this.$historyContent.find("a.active").removeClass("active");
+            $(e.target).addClass("active");
         },
 
         abortedWorkflow:function(e){
@@ -66,6 +77,8 @@ define([
             var workflowId = $(e.target).data("id");
             var workflow = _.select(that.abortedWorkflows,function(workflow){console.log("compare " + workflow.id + " with " + workflowId);return workflow.id == workflowId})[0];
             if(workflow){
+                this.$historyContent.find("a.active").removeClass("active");
+                $(e.target).addClass("active");
                 this.displayWorkflow(workflow);
             }
         },

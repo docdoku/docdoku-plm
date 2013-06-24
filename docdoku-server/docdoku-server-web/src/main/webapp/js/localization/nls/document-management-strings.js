@@ -144,7 +144,11 @@ define({
         "ACL":                          "ACL",
         "FULL_ACCESS":                  "Full access",
         "READ_ONLY":                    "Read only",
-        "FILTER":                       "Filter"
+        "FILTER":                       "Filter",
+        RELAUCNH_ACTIVITY_SELECTOR:     "Relaunch activity if rejected",
+        WORKFLOW_HISTORY:               "History",
+        CURRENT_WORKFLOW:               "Current workflow"
+
     },
     "fr": true,
     "es": true
