@@ -42,11 +42,31 @@ define([
                 success:function(abortedWorkflows){
 
                     _.each(abortedWorkflows,function(workflow){
+
                         workflow.abortedFormattedDate = Date.formatTimestamp(
                             i18n._DATE_FORMAT,
                             workflow.abortedDate
                         );
                     });
+
+                    // Find last rejected tasks in aborted workflows...
+                    // Last aborted task will replace corresponding task in current workflow
+                    if(abortedWorkflows.length){
+                        for(var i = 0 ; i < that.workflow.activities.length; i++){
+                            if(i >= that.workflow.currentStep){
+                                for(var j = 0 ; j < that.workflow.activities[i].tasks.length; j++){
+                                    if(that.workflow.activities[i].tasks[j].status == "NOT_STARTED"){
+                                        for(var k = abortedWorkflows.length - 1 ; k -- ; k >= 0){
+                                           if(abortedWorkflows[k].activities[i].tasks[j].status == "REJECTED"){
+                                               that.workflow.activities[i].tasks[j] = abortedWorkflows[k].activities[i].tasks[j];
+                                               break;
+                                           }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     that.abortedWorkflows = abortedWorkflows;
                     that.$el.html(Mustache.render(template, {i18n: i18n, workflow:that.workflow, abortedWorkflows : abortedWorkflows}));
