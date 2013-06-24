@@ -95,7 +95,7 @@ define([
         abortedWorkflow:function(e){
             var that = this;
             var workflowId = $(e.target).data("id");
-            var workflow = _.select(that.abortedWorkflows,function(workflow){console.log("compare " + workflow.id + " with " + workflowId);return workflow.id == workflowId})[0];
+            var workflow = _.select(that.abortedWorkflows,function(workflow){return workflow.id == workflowId})[0];
             if(workflow){
                 this.$historyContent.find("a.active").removeClass("active");
                 $(e.target).addClass("active");
