@@ -923,9 +923,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @Override
-    public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layerId);
+    public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException, AccessRightException {
+        Layer layer = new LayerDAO(em).loadLayer(layerId);
+        User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
+        new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layer);
     }
 
     @Override
@@ -1009,8 +1010,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @Override
     public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
         Layer layer = getLayer(pId);
+        User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
         layer.setName(pName);
         return layer;
     }
