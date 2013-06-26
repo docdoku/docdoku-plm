@@ -47,6 +47,8 @@ define([
         this.wireframe = false;
 
         this.loaderManager = null;
+
+        this.projector = new THREE.Projector();
     };
 
     SceneManager.prototype = {
@@ -69,6 +71,7 @@ define([
             this.initGrid();
             this.isLoaded = true;
             this.loaderManager = new LoaderManager();
+            this.$container[0].addEventListener( 'click',  this.onSceneClick , false );
         },
 
         listenXHR: function() {
@@ -338,6 +341,36 @@ define([
             var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
             for (var j = 0; j < numbersOfMeshes; j++) {
                 this.domEventForMarkerCreation.unbind(this.meshesBindedForMarkerCreation[j], 'click');
+            }
+        },
+
+        onSceneClick: function(event) {
+
+            event.preventDefault();
+
+            var vector = new THREE.Vector3(
+                ((event.clientX-this.$container.offset().left) / this.$container[0].offsetWidth ) * 2 - 1,
+                -((event.clientY-this.$container.offset().top) / this.$container[0].offsetHeight ) * 2 + 1,
+                0.5
+            );
+            this.projector.unprojectVector( vector, this.camera );
+
+            var ray = new THREE.Raycaster( this.camera.position,
+                vector.sub( this.camera.position ).normalize() );
+
+            var intersects = ray.intersectObjects( this.scene.children, false );
+
+            if(intersects.length > 0) {
+
+                var intersectInstances = _.select(this.instancesMap, function(instance) {
+                    if(instance.levelGeometry == null) return false;
+                    return instance.levelGeometry.mesh == intersects[0].object;
+                });
+
+                console.log(intersectInstances);
+
+                if(intersectInstances.length)
+                    Backbone.Events.trigger("instance_clicked", intersectInstances[0].partIteration);
             }
         },
 

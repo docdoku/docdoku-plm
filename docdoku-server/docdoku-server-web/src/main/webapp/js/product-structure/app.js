@@ -16,8 +16,9 @@ define(
         "views/baseline_select_view",
         "SceneManager",
         "text!templates/content.html",
-        "i18n!localization/nls/product-structure-strings"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, BaselineSelectView, SceneManager, template, i18n) {
+        "i18n!localization/nls/product-structure-strings",
+        "models/part"
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, BaselineSelectView, SceneManager, template, i18n, Part) {
 
     var AppView = Backbone.View.extend({
 
@@ -92,6 +93,7 @@ define(
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
             this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
+            Backbone.Events.on("instance_clicked", this.onInstanceSelected, this);
         },
 
         bindDomElements:function(){
@@ -221,6 +223,23 @@ define(
             window.config_spec = configSpec;
             Backbone.Events.trigger("refresh_tree");
             sceneManager.clear();
+        },
+
+        onInstanceSelected:function(instance){
+            var partKey = instance.partIterationId.substr(0, instance.partIterationId.lastIndexOf("-"));
+            var part = new Part({partKey:partKey});
+            var self = this;
+            part.fetch({success:function() {
+                console.log(part);
+                if(!self.isInBomMode()){
+                    if(self.partMetadataView == undefined){
+                        self.partMetadataView = new PartMetadataView({model:part}).render();
+                        self.$ControlsContainer.append(self.partMetadataView.$el);
+                    }else{
+                        self.partMetadataView.setModel(part).render();
+                    }
+                }
+            }});
         }
 
     });

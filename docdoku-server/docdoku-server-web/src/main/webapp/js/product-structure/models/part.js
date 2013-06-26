@@ -86,6 +86,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.getIterations().last();
         },
 
+        getIteration: function() {
+            return this.getIterations().last().getIteration();
+        },
+
         getIterations: function() {
             return this.iterations;
         },
@@ -95,6 +99,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         },
 
         getAuthorName:function(){
+            return this.get("author").name;
+        },
+
+        getAuthor:function(){
             return this.get("author").name;
         },
 
