@@ -230,7 +230,6 @@ define(
             var part = new Part({partKey:partKey});
             var self = this;
             part.fetch({success:function() {
-                console.log(part);
                 if(!self.isInBomMode()){
                     if(self.partMetadataView == undefined){
                         self.partMetadataView = new PartMetadataView({model:part}).render();

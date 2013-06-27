@@ -4,13 +4,8 @@ define([
     "views/progress_bar_view",
     "views/blocker_view",
     "LoaderManager"
-], function (
-    MarkerCreateModalView,
-    ProgressBarView,
-    BlockerView,
-    LoaderManager
-) {
-    var SceneManager = function (pOptions) {
+], function(MarkerCreateModalView, ProgressBarView, BlockerView, LoaderManager) {
+    var SceneManager = function(pOptions) {
 
         var options = pOptions || {};
 
@@ -38,7 +33,7 @@ define([
         this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
 
-        this.STATECONTROL = { PLC : 0, TBC : 1};
+        this.STATECONTROL = { PLC: 0, TBC: 1};
         this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
 
@@ -47,6 +42,7 @@ define([
         this.wireframe = false;
 
         this.loaderManager = null;
+        this.currentLayer = null;
 
         this.projector = new THREE.Projector();
     };
@@ -71,7 +67,7 @@ define([
             this.initGrid();
             this.isLoaded = true;
             this.loaderManager = new LoaderManager();
-            this.$container[0].addEventListener( 'click',  this.onSceneClick , false );
+            this.$container[0].addEventListener('click', this.onSceneClick, false);
         },
 
         listenXHR: function() {
@@ -86,7 +82,7 @@ define([
 
             XMLHttpRequest.prototype.open = function() {
 
-                if(arguments[1].indexOf("/files/") === 0) {
+                if (arguments[1].indexOf("/files/") === 0) {
 
                     var totalAdded = false,
                         totalLoaded = 0 ,
@@ -96,13 +92,13 @@ define([
                         xhrCount++;
                     }, false);
 
-                    this.addEventListener("progress", function(pe){
+                    this.addEventListener("progress", function(pe) {
 
-                        if(xhrLength == 0) {
+                        if (xhrLength == 0) {
                             xhrLength = pe.total;
                         }
 
-                        if(totalAdded == false) {
+                        if (totalAdded == false) {
                             pbv.addTotal(xhrLength);
                             totalAdded = true;
                         }
@@ -112,7 +108,7 @@ define([
 
                     }, false);
 
-                    this.addEventListener("loadend", function(){
+                    this.addEventListener("loadend", function() {
                         xhrCount--;
                         setTimeout(function() {
                             pbv.removeXHRData(xhrLength);
@@ -149,7 +145,7 @@ define([
 
         initControls: function() {
 
-            switch(this.stateControl) {
+            switch (this.stateControl) {
                 case this.STATECONTROL.PLC:
                     this.$blocker.show();
                     this.setPointerLockControls();
@@ -165,17 +161,17 @@ define([
         },
 
         setPointerLockControls: function() {
-            if(this.controls != null) {
+            if (this.controls != null) {
                 this.controls.destroyControl();
                 this.controls = null;
             }
 
             var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-            if ( havePointerLock ) {
+            if (havePointerLock) {
                 var self = this;
-                var pointerlockchange = function ( event ) {
-                    if ( document.pointerLockElement === self.$container[0] || document.mozPointerLockElement === self.$container[0] || document.webkitPointerLockElement === self.$container[0] ) {
+                var pointerlockchange = function(event) {
+                    if (document.pointerLockElement === self.$container[0] || document.mozPointerLockElement === self.$container[0] || document.webkitPointerLockElement === self.$container[0]) {
                         self.controls.enabled = true;
                     } else {
                         self.controls.enabled = false;
@@ -183,33 +179,33 @@ define([
                 };
 
                 // Hook pointer lock state change events
-                document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-                document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-                document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+                document.addEventListener('pointerlockchange', pointerlockchange, false);
+                document.addEventListener('mozpointerlockchange', pointerlockchange, false);
+                document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
 
-                this.$container[0].addEventListener( 'dblclick',  this.bindPointerLock , false );
+                this.$container[0].addEventListener('dblclick', this.bindPointerLock, false);
             }
 
             this.controls = new THREE.PointerLockControlsCustom(this.camera, this.$container[0]);
 
             this.controls.moveToPosition(this.defaultCameraPosition);
 
-            this.scene.add( this.controls.getObject() );
+            this.scene.add(this.controls.getObject());
 
             this.stateControl = this.STATECONTROL.PLC;
         },
 
-        bindPointerLock : function ( event ) {
+        bindPointerLock: function(event) {
 
             this.$blocker.hide();
 
             // Ask the browser to lock the pointer
             this.$container[0].requestPointerLock = this.$container[0].requestPointerLock || this.$container[0].mozRequestPointerLock || this.$container[0].webkitRequestPointerLock;
 
-            if ( /Firefox/i.test( navigator.userAgent ) ) {
+            if (/Firefox/i.test(navigator.userAgent)) {
 
-                document.addEventListener( 'fullscreenchange', this.fullscreenchange, false );
-                document.addEventListener( 'mozfullscreenchange', this.fullscreenchange, false );
+                document.addEventListener('fullscreenchange', this.fullscreenchange, false);
+                document.addEventListener('mozfullscreenchange', this.fullscreenchange, false);
 
                 this.$container[0].requestFullscreen = this.$container[0].requestFullscreen || this.$container[0].mozRequestFullscreen || this.$container[0].mozRequestFullScreen || this.$container[0].webkitRequestFullscreen;
 
@@ -221,27 +217,27 @@ define([
         },
 
         // FullScreenChange for the PointerLockControl
-        fullscreenchange : function ( event ) {
+        fullscreenchange: function(event) {
 
-            if ( document.fullscreenElement === this.$container[0] || document.mozFullscreenElement === this.$container[0] || document.mozFullScreenElement === this.$container[0] ) {
+            if (document.fullscreenElement === this.$container[0] || document.mozFullscreenElement === this.$container[0] || document.mozFullScreenElement === this.$container[0]) {
 
-                document.removeEventListener( 'fullscreenchange', this.fullscreenchange );
-                document.removeEventListener( 'mozfullscreenchange', this.fullscreenchange );
+                document.removeEventListener('fullscreenchange', this.fullscreenchange);
+                document.removeEventListener('mozfullscreenchange', this.fullscreenchange);
 
                 this.$container[0].requestPointerLock();
             }
 
         },
 
-        unbindPointerLock : function() {
-            this.$container[0].removeEventListener( 'dblclick', this.bindPointerLock , false );
-            document.removeEventListener( 'fullscreenchange', this.fullscreenchange, false );
-            document.removeEventListener( 'mozfullscreenchange', this.fullscreenchange, false );
+        unbindPointerLock: function() {
+            this.$container[0].removeEventListener('dblclick', this.bindPointerLock, false);
+            document.removeEventListener('fullscreenchange', this.fullscreenchange, false);
+            document.removeEventListener('mozfullscreenchange', this.fullscreenchange, false);
         },
 
         setTrackBallControls: function() {
 
-            if(this.controls != null) {
+            if (this.controls != null) {
                 this.controls.destroyControl();
                 this.controls = null;
             }
@@ -272,7 +268,7 @@ define([
             //this.camera.rotation.set(0, 0 , 0);
 
             // Remove camera from scene and save position
-            if(this.stateControl == this.STATECONTROL.PLC) {
+            if (this.stateControl == this.STATECONTROL.PLC) {
                 this.cameraPosition = this.controls.getPosition();
                 this.unbindPointerLock();
                 this.scene.remove(this.controls.getObject());
@@ -286,7 +282,7 @@ define([
         },
 
         updateLayersManager: function() {
-            if(this.stateControl == this.STATECONTROL.PLC) {
+            if (this.stateControl == this.STATECONTROL.PLC) {
                 this.layerManager.updateCamera(this.controls.getObject(), this.controls);
                 this.layerManager.domEvent._isPLC = true;
             } else {
@@ -296,81 +292,62 @@ define([
         },
 
         startMarkerCreationMode: function(layer) {
+            this.markerCreationMode = true;
+            this.currentLayer = layer;
 
             $("#scene_container").addClass("markersCreationMode");
-
-            var self = this;
-
-            if(self.stateControl == self.STATECONTROL.PLC) {
-                this.domEventForMarkerCreation = new THREEx.DomEvent(this.controls.getObject(), this.$container);
-                this.domEventForMarkerCreation._isPLC = true;
-            } else {
-                this.domEventForMarkerCreation = new THREEx.DomEvent(this.camera, this.$container);
-                this.domEventForMarkerCreation._isPLC = false;
-            }
-
-            var filteredInstances = _.filter(self.instances, function(instance) {
-                return instance.levelGeometry != null &&  instance.levelGeometry.mesh != null;
-            });
-
-            this.meshesBindedForMarkerCreation = _.map(filteredInstances, function(instance) {
-                    return instance.levelGeometry.mesh;
-            });
-
-            var onIntersect = function(intersectPoint) {
-                var mcmv = new MarkerCreateModalView({model:layer, intersectPoint:intersectPoint});
-                $("body").append(mcmv.render().el);
-                mcmv.openModal();
-            };
-
-            var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
-
-            for (var j = 0; j < numbersOfMeshes; j++) {
-                self.domEventForMarkerCreation.bind(this.meshesBindedForMarkerCreation[j], 'click', function(e) {
-                    onIntersect(e.target.intersectPoint);
-                });
-            }
-
         },
 
         stopMarkerCreationMode: function() {
+            this.markerCreationMode = false;
+            this.currentLayer = null;
 
             $("#scene_container").removeClass("markersCreationMode");
-
-            $("#creationMarkersModal .btn-primary").off('click');
-            var numbersOfMeshes = this.meshesBindedForMarkerCreation.length;
-            for (var j = 0; j < numbersOfMeshes; j++) {
-                this.domEventForMarkerCreation.unbind(this.meshesBindedForMarkerCreation[j], 'click');
-            }
         },
 
         onSceneClick: function(event) {
-
             event.preventDefault();
 
             var vector = new THREE.Vector3(
-                ((event.clientX-this.$container.offset().left) / this.$container[0].offsetWidth ) * 2 - 1,
-                -((event.clientY-this.$container.offset().top) / this.$container[0].offsetHeight ) * 2 + 1,
+                ((event.clientX - this.$container.offset().left) / this.$container[0].offsetWidth ) * 2 - 1,
+                -((event.clientY - this.$container.offset().top) / this.$container[0].offsetHeight ) * 2 + 1,
                 0.5
             );
-            this.projector.unprojectVector( vector, this.camera );
 
-            var ray = new THREE.Raycaster( this.camera.position,
-                vector.sub( this.camera.position ).normalize() );
+            if (this.stateControl == this.STATECONTROL.PLC) {
+                this.projector.unprojectVector(vector, this.controls.getObject().children[0].children[0]);
+                var cameraPosition = this.controls.getObject().position;
 
-            var intersects = ray.intersectObjects( this.scene.children, false );
+            } else {
+                this.projector.unprojectVector(vector, this.camera);
+                var cameraPosition = this.camera.position;
+            }
 
-            if(intersects.length > 0) {
+            var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
+
+            var intersects = ray.intersectObjects(this.scene.children, false);
+
+            if (intersects.length > 0) {
 
                 var intersectInstances = _.select(this.instancesMap, function(instance) {
-                    if(instance.levelGeometry == null) return false;
+                    if (instance.levelGeometry == null) return false;
                     return instance.levelGeometry.mesh == intersects[0].object;
                 });
 
-                console.log(intersectInstances);
+                if (intersectInstances.length) {
 
-                if(intersectInstances.length)
-                    Backbone.Events.trigger("instance_clicked", intersectInstances[0].partIteration);
+                    if (this.markerCreationMode) {
+                        // Marker creation
+                        var intersectPoint = intersects[0].point;
+                        var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersectPoint});
+                        $("body").append(mcmv.render().el);
+                        mcmv.openModal();
+
+                    } else {
+                        // Part inspection
+                        Backbone.Events.trigger("instance_clicked", intersectInstances[0].partIteration);
+                    }
+                }
             }
         },
 
@@ -378,7 +355,7 @@ define([
             var self = this;
             require(["LayerManager"], function(LayerManager) {
 
-                if(self.stateControl == self.STATECONTROL.PLC) {
+                if (self.stateControl == self.STATECONTROL.PLC) {
                     self.layerManager = new LayerManager(self.scene, self.controls.getObject(), self.renderer, self.controls, self.$container);
                     self.layerManager.domEvent._isPLC = true;
                 } else {
@@ -415,11 +392,11 @@ define([
             this.scene.add(arrow);
         },
 
-        showStats:function(){
+        showStats: function() {
             this.$stats.show();
         },
 
-        hideStats:function(){
+        hideStats: function() {
             this.$stats.hide();
         },
 
@@ -428,7 +405,7 @@ define([
             $("#scene_container").append(this.stats.domElement);
 
             this.$stats = $(this.stats.domElement);
-            this.$stats.attr('id','statsWin');
+            this.$stats.attr('id', 'statsWin');
             this.$stats.attr('class', 'statsWinMaximized');
 
             this.$statsArrow = $("<i id=\"statsArrow\" class=\"icon-chevron-down\"></i>");
@@ -450,23 +427,23 @@ define([
             var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.$container);
         },
 
-        pause:function(){
+        pause: function() {
             this.isPaused = true;
         },
 
-        resume:function(){
+        resume: function() {
             this.isPaused = false;
             this.animate();
         },
 
-        requestFullScreen:function(){
+        requestFullScreen: function() {
             this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
         },
 
         animate: function() {
             var self = this;
 
-            if(!this.isPaused){
+            if (!this.isPaused) {
 
                 window.requestAnimationFrame(function() {
                     self.animate();
@@ -561,7 +538,7 @@ define([
         initIframeScene: function() {
             if (!_.isUndefined(SCENE_INIT.pathForIframe)) {
                 var self = this;
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path=" + SCENE_INIT.pathForIframe;
+                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path=" + SCENE_INIT.pathForIframe;
                 $.getJSON(instancesUrl, function(instances) {
                     _.each(instances, function(instanceRaw) {
 
@@ -593,41 +570,41 @@ define([
             }
         },
 
-        bind: function ( scope, fn ) {
-            return function () {
-                fn.apply( scope, arguments );
+        bind: function(scope, fn) {
+            return function() {
+                fn.apply(scope, arguments);
             };
         },
 
-        initGrid:function(){
+        initGrid: function() {
 
             var size = 500, step = 25;
             var geometry = new THREE.Geometry();
-            var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } );
-            var color1 = new THREE.Color( 0x444444 ), color2 = new THREE.Color( 0x888888 );
+            var material = new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors });
+            var color1 = new THREE.Color(0x444444), color2 = new THREE.Color(0x888888);
 
-            for ( var i = - size; i <= size; i += step ) {
-                geometry.vertices.push( new THREE.Vector3( -size, 0, i ) );
-                geometry.vertices.push( new THREE.Vector3(  size, 0, i ) );
-                geometry.vertices.push( new THREE.Vector3( i, 0, -size ) );
-                geometry.vertices.push( new THREE.Vector3( i, 0,  size ) );
+            for (var i = -size; i <= size; i += step) {
+                geometry.vertices.push(new THREE.Vector3(-size, 0, i));
+                geometry.vertices.push(new THREE.Vector3(size, 0, i));
+                geometry.vertices.push(new THREE.Vector3(i, 0, -size));
+                geometry.vertices.push(new THREE.Vector3(i, 0, size));
                 var color = i === 0 ? color1 : color2;
-                geometry.colors.push( color, color, color, color );
+                geometry.colors.push(color, color, color, color);
             }
 
-            this.grid = new THREE.Line( geometry, material, THREE.LinePieces );
+            this.grid = new THREE.Line(geometry, material, THREE.LinePieces);
         },
 
-        showGrid:function() {
-            this.scene.add( this.grid );
+        showGrid: function() {
+            this.scene.add(this.grid);
         },
 
-        removeGrid:function() {
-            this.scene.remove( this.grid );
+        removeGrid: function() {
+            this.scene.remove(this.grid);
         },
 
-        updateLevelGeometryValues:function( instanceNumber ){
-            if(instanceNumber < this.maxInstanceDisplayed) {
+        updateLevelGeometryValues: function(instanceNumber) {
+            if (instanceNumber < this.maxInstanceDisplayed) {
                 this.levelGeometryValues[0] = 0.5;
                 this.levelGeometryValues[1] = 0;
             } else {
@@ -636,8 +613,8 @@ define([
             }
         },
 
-        switchWireframe:function( wireframe ) {
-            if(wireframe) {
+        switchWireframe: function(wireframe) {
+            if (wireframe) {
                 // Set wireframe to futures parts
                 this.wireframe = true;
             } else {
@@ -648,9 +625,9 @@ define([
 
             // Set/remove wireframe to current parts
             var self = this;
-            _(this.instances).each(function(instance){
-                if(instance.levelGeometry != null && instance.levelGeometry.mesh != null){
-                    _(instance.levelGeometry.mesh.material.materials).each(function(material){
+            _(this.instances).each(function(instance) {
+                if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
+                    _(instance.levelGeometry.mesh.material.materials).each(function(material) {
                         material.wireframe = self.wireframe;
                     })
                 }
@@ -658,23 +635,23 @@ define([
 
         },
 
-        clear:function(){
-            for(var instance in this.instances){
+        clear: function() {
+            for (var instance in this.instances) {
                 sceneManager.instances[instance].clearMeshAndLevelGeometry();
                 delete this.instancesMap[instance];
             }
-            this.instances=[];
-            this.instancesMap={};
+            this.instances = [];
+            this.instancesMap = {};
 
         }//,
-    /*
-        cleanRootId:function(instance){
-            if(instance.id.match(/^0\-.*//*)){
-                instance.id = instance.id.substr(2,instance.id.length);
-            }
-            return instance;
-        }
-*/
+        /*
+         cleanRootId:function(instance){
+         if(instance.id.match(/^0\-.*//*)){
+         instance.id = instance.id.substr(2,instance.id.length);
+         }
+         return instance;
+         }
+         */
     };
 
     return SceneManager;
