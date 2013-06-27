@@ -270,9 +270,9 @@ public class ProductResource {
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-                ConfigSpec cs ;
+                ConfigSpec cs;
 
-                if(configSpecType == null || configSpecType.equals("latest")){
+                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
                     cs = new LatestConfigSpec();
                 }else{
                     cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));

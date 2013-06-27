@@ -20,8 +20,11 @@
 
 package com.docdoku.core.workflow;
 
-import java.util.*;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <a href="ParallelActivity.html">ParallelActivity</a> is a kind of activity where 
@@ -104,6 +107,13 @@ public class ParallelActivity extends Activity {
             return true;
         else
             return false;
+    }
+
+    @Override
+    public void relaunch(){
+        for(Task t : tasks){
+            t.start();
+        }
     }
 
     

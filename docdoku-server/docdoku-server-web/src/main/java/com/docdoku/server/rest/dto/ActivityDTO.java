@@ -28,6 +28,7 @@ import java.util.List;
 public class ActivityDTO implements Serializable {
 
     private int step;
+    private Integer relaunchStep;
     private List<TaskDTO> tasks;
     private String lifeCycleState;
     private Type type;
@@ -38,8 +39,9 @@ public class ActivityDTO implements Serializable {
         SERIAL, PARALLEL;
     }
 
-    public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped) {
+    public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped, Integer relaunchStep) {
         this.step = step;
+        this.relaunchStep = relaunchStep;
         this.tasks = tasks;
         this.lifeCycleState = lifeCycleState;
         this.type = type;
@@ -100,11 +102,19 @@ public class ActivityDTO implements Serializable {
         this.stopped = stopped;
     }
 
-    public int getStep() {
+    public Integer getStep() {
         return step;
     }
 
-    public void setStep(int step) {
+    public void setStep(Integer step) {
         this.step = step;
+    }
+
+    public Integer getRelaunchStep() {
+        return relaunchStep;
+    }
+
+    public void setRelaunchStep(Integer relaunchStep) {
+        this.relaunchStep = relaunchStep;
     }
 }

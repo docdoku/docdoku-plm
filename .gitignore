@@ -7,3 +7,4 @@ target/
 dist/
 build/
 private/
+app.nw

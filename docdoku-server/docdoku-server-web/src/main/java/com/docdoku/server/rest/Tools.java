@@ -130,6 +130,7 @@ public class Tools {
 
         if(partRevision.hasWorkflow()){
             partDTO.setLifeCycleState(partRevision.getWorkflow().getLifeCycleState());
+            partDTO.setWorkflow(mapper.map(partRevision.getWorkflow(),WorkflowDTO.class));
         }
 
         ACL acl = partRevision.getACL();
@@ -176,6 +177,7 @@ public class Tools {
         baselinedPartDTO.setVersion(partI.getPartVersion());
         baselinedPartDTO.setIteration(partI.getIteration());
         baselinedPartDTO.setLastIteration(partI.getPartRevision().getLastIteration().getIteration());
+        baselinedPartDTO.setLastVersion(partI.getPartRevision().getPartMaster().getLastRevision().getVersion());
         return baselinedPartDTO;
     }
 }

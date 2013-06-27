@@ -7,7 +7,8 @@ define({
         GROUPS:"Groups",
         FORBIDDEN:"Forbidden",
         READ_ONLY:"Read only",
-        FULL_ACCESS:"Full access"
+        FULL_ACCESS:"Full access",
+        USE_ACL:"Use ACL ?"
     },
     "fr": true
 });

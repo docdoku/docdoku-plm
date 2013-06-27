@@ -21,11 +21,14 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.util.Tools;
-import java.io.Serializable;
-import java.util.*;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A base class which represents a group of <a href="Task.html">Task</a> 
@@ -57,8 +60,21 @@ public abstract class Activity implements Serializable, Cloneable {
     @OneToMany(mappedBy="activity", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy(value="num")
     protected List<Task> tasks=new LinkedList<Task>();
-       
-    
+
+    @ManyToOne(optional = true,fetch=FetchType.EAGER)
+    @JoinTable (
+            name="ACTIVITY_RELAUNCH",
+            joinColumns={
+                    @JoinColumn(name="ACTIVITY_STEP", referencedColumnName="STEP"),
+                    @JoinColumn(name="ACTIVITY_WORKFLOW_ID", referencedColumnName="WORKFLOW_ID")
+            },
+            inverseJoinColumns={
+                    @JoinColumn(name="RELAUNCH_STEP", referencedColumnName = "STEP"),
+                    @JoinColumn(name="RELAUNCH_WORKFLOW_ID", referencedColumnName = "WORKFLOW_ID")
+            }
+    )
+    private Activity relaunchActivity;
+
     protected String lifeCycleState;
     
     
@@ -105,6 +121,15 @@ public abstract class Activity implements Serializable, Cloneable {
         return workflow;
     }
 
+    @XmlTransient
+    public Activity getRelaunchActivity() {
+        return relaunchActivity;
+    }
+
+    public void setRelaunchActivity(Activity relaunchActivity) {
+        this.relaunchActivity = relaunchActivity;
+    }
+
     /**
      * perform a deep clone operation
      */
@@ -133,7 +158,9 @@ public abstract class Activity implements Serializable, Cloneable {
     public abstract boolean isComplete();
 
     public abstract boolean isStopped();
-    
+
+    public abstract void relaunch();
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {

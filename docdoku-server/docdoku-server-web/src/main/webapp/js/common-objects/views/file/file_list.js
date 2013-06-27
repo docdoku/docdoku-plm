@@ -113,7 +113,14 @@ define([
                 }
             }, false);
 
-            this.xhr.addEventListener("load", function() {
+            this.xhr.addEventListener("load", function(e) {
+
+                if(e.currentTarget.status != 200){
+                    alert(e.currentTarget.statusText);
+                    self.finished();
+                    return false;
+                }
+
                 self.finished();
                 newFile.isNew = function() {
                     return false;

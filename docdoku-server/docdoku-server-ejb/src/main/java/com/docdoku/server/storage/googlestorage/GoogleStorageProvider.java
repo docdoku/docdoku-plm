@@ -70,8 +70,30 @@ public class GoogleStorageProvider implements StorageProvider {
     public void delData(BinaryResource pBinaryResource) throws StorageException{
         GoogleStorageCloud.delete(getVirtualPath(pBinaryResource));
     }
+
     @Override
     public String getExternalResourceURI(BinaryResource binaryResource) {
-        return "https://storage.cloud.google.com/" + properties.getBucketName() + "/" + binaryResource.getFullName() + "?response-content-disposition=attachment;%20filename=" + binaryResource.getName();
+
+        String baseUrl =  "https://storage.cloud.google.com/" + properties.getBucketName() + "/";
+
+        try {
+            getBinaryResourceInputStream(binaryResource);
+            return baseUrl + getVirtualPath(binaryResource);
+        } catch (FileNotFoundException e) {
+            BinaryResource br = binaryResource;
+            while(br!= null){
+                br = br.getPrevious();
+                try {
+                    getBinaryResourceInputStream(br);
+                    return baseUrl + getVirtualPath(br);
+                } catch (FileNotFoundException e1) {
+                } catch (StorageException e1) {
+                }
+            }
+        } catch (StorageException e) {
+            return null;
+        }
+        return null;
     }
+
 }

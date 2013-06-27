@@ -28,7 +28,7 @@ div#workflow-editor {
   }
 
   div#start, div#end {
-    text-shadow: 0px 0px 2px white;
+    //text-shadow: 0px 0px 2px white;
     margin: 2px 8px;
     border-radius: 4px;
     border: 2px solid #999;
@@ -67,6 +67,7 @@ div#workflow-editor {
     background-color: #999;
     font-size: 20px;
     color: #5A5A5A;
+    border-radius: 4px;
   }
 
   button {
@@ -125,7 +126,6 @@ div#workflow-editor {
             top: 0px;
             right: 0px;
             position: absolute;
-            margin: 2px;
             width: 32px;
             height: 32px;
             color: #5A5A5A;
@@ -142,6 +142,27 @@ div#workflow-editor {
             font-size: 18px;
             font-weight: bold;
           }
+
+          div.relaunchActivitySelector-wrapper{
+            height:32px;
+
+            i{
+              float:left;
+              margin:10px 2px 2px 8px;
+            }
+            select.relaunchActivitySelector{
+              width: 80%;
+              float:left;
+              margin:2px;
+              background:transparent;
+              border: none;
+              outline: none;
+              color:white;
+              option{
+                background: #999;
+              }
+            }
+          }
         }
 
         button.add-task {
@@ -154,6 +175,7 @@ div#workflow-editor {
           height: 38px;
           font-size: 20px;
           color: #25598F;
+          border-radius: 4px;
         }
 
         ul.task-list {
@@ -187,7 +209,7 @@ div#workflow-editor {
                     float: left;
                     color: #25598F;
                     font-size: 17px;
-                    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                    //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
                   }
 
                   input.task-name {
@@ -195,14 +217,14 @@ div#workflow-editor {
                   }
 
                   p.task-name {
+                    min-width: 90px;
                     min-height: 34px;
                     font-weight: bold;
-                    line-height: 17px;
+                    line-height: 32px;
                     overflow: hidden;
                     display: inline-block;
                     cursor: pointer;
-                    max-width: 80px;
-                    text-shadow: 0px 1px black;
+                    //text-shadow: 0px 1px black;
                     box-shadow: none;
                     color: white;
                     padding: 2px 6px 2px 0px;
@@ -232,7 +254,7 @@ div#workflow-editor {
                   color: #25598F;
                   padding: 0;
                   font-size: 15px;
-                  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+                  //text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
                 }
 
                 p.task-name {

@@ -1,0 +1,14 @@
+{
+  "name": "nw-demo",
+  "main": "index.html",
+  "dependencies": {
+    "requirejs": ">=1.0.0"
+  },
+  "window": {
+    "toolbar": true,
+    "position": "center",
+    "width": 800,
+    "height": 600,
+    "resizable": false
+  }
+}

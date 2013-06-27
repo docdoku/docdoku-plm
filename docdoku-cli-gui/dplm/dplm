@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+
+PRG="$0"
+while [ -h "$PRG" ] ; do
+    PRG=`readlink "$PRG"`
+done
+dir=`dirname $PRG`
+
+java -Xmx1024M -classpath $dir/docdoku-cli-jar-with-dependencies.jar com.docdoku.cli.MainCommand $@

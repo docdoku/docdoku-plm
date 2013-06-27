@@ -33,6 +33,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -331,7 +332,7 @@ public class DocumentResource {
                 }
             }
 
-            DocumentMaster[] docM = documentService.createVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
+            DocumentMaster[] docM = documentService.createDocumentVersion(new DocumentMasterKey(pWorkspaceId, pID, pVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries,roleMappings);
             DocumentMasterDTO[] dtos = new DocumentMasterDTO[docM.length];
 
             for (int i = 0; i < docM.length; i++) {
@@ -533,15 +534,54 @@ public class DocumentResource {
     @Path("acl")
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("docKey") String docKey, ACLDTO acl) {
         try {
-            if (acl != null) {
-                int lastDash = docKey.lastIndexOf('-');
-                String id = docKey.substring(0, lastDash);
-                String version = docKey.substring(lastDash + 1, docKey.length());
-                DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
 
-                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, acl.getUserEntries(), acl.getGroupEntries());
+            int lastDash = docKey.lastIndexOf('-');
+            String id = docKey.substring(0, lastDash);
+            String version = docKey.substring(lastDash + 1, docKey.length());
+            DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
+            if (acl != null) {
+
+                Map<String,String> userEntries = new HashMap<String,String>();
+                Map<String,String> groupEntries = new HashMap<String,String>();
+
+                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                    userEntries.put(entry.getKey(), entry.getValue().name());
+                }
+
+                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                    groupEntries.put(entry.getKey(), entry.getValue().name());
+                }
+
+                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, userEntries, groupEntries);
+            }else{
+                documentService.removeACLFromDocumentMaster(documentMasterKey);
             }
             return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("aborted-workflows")
+    @Produces("application/json;charset=UTF-8")
+    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey) {
+
+        int lastDash = docKey.lastIndexOf('-');
+        String id = docKey.substring(0, lastDash);
+        String version = docKey.substring(lastDash + 1, docKey.length());
+
+        try {
+            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
+            List<Workflow> abortedWorkflows = docM.getAbortedWorkflows();
+            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<WorkflowDTO>();
+
+            for(Workflow abortedWorkflow:abortedWorkflows){
+                abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
+            }
+
+            return abortedWorkflowsDTO;
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

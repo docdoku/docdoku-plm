@@ -1,4 +1,14 @@
 <h4>{{i18n.LIFECYCLE_STATE}} : {{workflow.lifeCycleState}}</h4>
+{{#abortedWorkflows.length}}
+    <a class="history">{{i18n.WORKFLOW_HISTORY}}</a>
+    <div class="history-content hide">
+        <a class="currentWorkflow active">{{i18n.CURRENT_WORKFLOW}}</a><br />
+    {{#abortedWorkflows}}
+       <a class="abortedWorkflow" data-id="{{id}}">{{abortedFormattedDate}}</a><br />
+    {{/abortedWorkflows}}
+    </div>
+    <hr />
+{{/abortedWorkflows.length}}
 <div id="lifecycle-activities-wrapper">
     <div id="lifecycle-activities"></div>
 </div>

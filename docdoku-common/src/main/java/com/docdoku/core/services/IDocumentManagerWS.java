@@ -20,24 +20,21 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.*;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.security.ACL;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntityKey;
-import com.docdoku.core.workflow.TaskKey;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.TaskKey;
 
-import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -47,7 +44,7 @@ import java.util.Set;
 public interface IDocumentManagerWS {
 
 
-    DocumentMaster approve(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
+    DocumentMaster approveTaskOnDocument(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException;
 
     DocumentMaster checkInDocument(DocumentMasterKey docMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException;
 
@@ -58,7 +55,7 @@ public interface IDocumentManagerWS {
 
     DocumentMasterTemplate createDocumentMasterTemplate(String workspaceId, String id, String documentType, String mask, InstanceAttributeTemplate[] attributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException;
 
-    DocumentMaster[] createVersion(DocumentMasterKey pOriginalDocMPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] aclUserEntries, ACLUserGroupEntry[] aclUserGroupEntries, Map<String,String> roleMappings) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, RoleNotFoundException;
+    DocumentMaster[] createDocumentVersion(DocumentMasterKey pOriginalDocMPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] aclUserEntries, ACLUserGroupEntry[] aclUserGroupEntries, Map<String, String> roleMappings) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, RoleNotFoundException;
 
     DocumentMasterKey[] deleteFolder(String completePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException;
 
@@ -102,7 +99,7 @@ public interface IDocumentManagerWS {
 
     DocumentMaster moveDocumentMaster(String parentFolder, DocumentMasterKey docMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException;
 
-    DocumentMaster reject(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException;
+    DocumentMaster rejectTaskOnDocument(String workspaceId, TaskKey taskKey, String comment, String signature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException;
 
     DocumentMaster removeFileFromDocument(String fullName) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException;
 
@@ -158,6 +155,9 @@ public interface IDocumentManagerWS {
 
     DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
-    void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,ACL.Permission> userEntries, Map<String,ACL.Permission> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException;
+    void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,String> userEntries, Map<String,String> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException;
+
+    void removeACLFromDocumentMaster(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException;
+
 
 }

@@ -20,8 +20,11 @@
 
 package com.docdoku.core.workflow;
 
-import java.util.*;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * <a href="SerialActivity.html">SerialActivity</a> is an activity where
@@ -77,6 +80,9 @@ public class SerialActivity extends Activity {
         
         return true;
     }
-    
-    
+
+    @Override
+    public void relaunch(){
+        tasks.get(0).start();
+    }
 }

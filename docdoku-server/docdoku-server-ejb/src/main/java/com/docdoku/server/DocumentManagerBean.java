@@ -304,7 +304,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,ACL.Permission> pACLUserEntries, Map<String,ACL.Permission> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
+    public void updateDocumentACL(String pWorkspaceId, DocumentMasterKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
 
         User user = checkDocumentMasterWriteAccess(docKey);
 
@@ -319,14 +319,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 ACL acl = new ACL();
 
                 if (pACLUserEntries != null) {
-                    for (Map.Entry<String, ACL.Permission> entry : pACLUserEntries.entrySet()) {
-                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),entry.getValue());
+                    for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
+                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
                     }
                 }
 
                 if (pACLUserGroupEntries != null) {
-                    for (Map.Entry<String, ACL.Permission> entry : pACLUserGroupEntries.entrySet()) {
-                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),entry.getValue());
+                    for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
+                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
                     }
                 }
 
@@ -336,7 +336,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }else{
                 if (pACLUserEntries != null) {
                     for (ACLUserEntry entry : docM.getACL().getUserEntries().values()) {
-                        ACL.Permission newPermission = pACLUserEntries.get(entry.getPrincipalLogin());
+                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
                         if(newPermission != null){
                             entry.setPermission(newPermission);
                         }
@@ -345,7 +345,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
                 if (pACLUserGroupEntries != null) {
                     for (ACLUserGroupEntry entry : docM.getACL().getGroupEntries().values()) {
-                        ACL.Permission newPermission = pACLUserGroupEntries.get(entry.getPrincipalId());
+                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
                         if(newPermission != null){
                             entry.setPermission(newPermission);
                         }
@@ -358,6 +358,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @Override
+    public void removeACLFromDocumentMaster(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(documentMasterKey.getWorkspaceId());
+
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMaster docM = documentMasterDAO.getDocMRef(documentMasterKey);
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(documentMasterKey.getWorkspaceId());
+
+        if (docM.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+            ACL acl = docM.getACL();
+            if (acl != null) {
+                new ACLDAO(em).removeACLEntries(acl);
+                docM.setACL(null);
+            }
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
 
 
     @RolesAllowed("users")
@@ -759,15 +778,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public DocumentMaster approve(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
-            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster approveTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
+            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getDocumentTarget(workflow);
 
+        if(docM == null){
+            throw new WorkflowNotFoundException(new Locale(user.getLanguage()),workflow.getId());
+        }
 
         if (!task.getWorker().equals(user)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
@@ -802,14 +824,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @CheckActivity
     @Override
-    public DocumentMaster reject(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
-            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
+    public DocumentMaster rejectTaskOnDocument(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature)
+            throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException {
         //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentMaster docM = new WorkflowDAO(em).getTarget(workflow);
+        DocumentMaster docM = new WorkflowDAO(em).getDocumentTarget(workflow);
+
+        if(docM == null){
+            throw new WorkflowNotFoundException(new Locale(user.getLanguage()),workflow.getId());
+        }
 
         if (!task.getWorker().equals(user)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
@@ -824,6 +850,35 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         task.reject(pComment, docM.getLastIteration().getIteration(), pSignature);
+
+        // Relaunch Workflow ?
+        Activity currentActivity = task.getActivity();
+
+        if(currentActivity.isStopped() && currentActivity.getRelaunchActivity() != null){
+
+            WorkflowDAO workflowDAO = new WorkflowDAO(em);
+
+            Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
+
+            // Clone new workflow
+            Workflow relaunchedWorkflow  = workflow.clone();
+            workflowDAO.createWorkflow(relaunchedWorkflow);
+
+            // Move aborted workflow in docM list
+            workflow.abort();
+            docM.addAbortedWorkflows(workflow);
+
+            // Set new workflow on document
+            docM.setWorkflow(relaunchedWorkflow);
+
+            // Reset some properties
+            relaunchedWorkflow.relaunch(relaunchActivityStep);
+
+            // Send mails for running tasks
+            mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), docM);
+
+        }
+
         return docM;
     }
 
@@ -1228,7 +1283,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster[] createVersion(DocumentMasterKey pOriginalDocMPK,
+    public DocumentMaster[] createDocumentVersion(DocumentMasterKey pOriginalDocMPK,
             String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String,String> roleMappings) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterAlreadyExistsException, FileAlreadyExistsException, UserNotFoundException, CreationException, RoleNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocMPK.getWorkspaceId());
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);

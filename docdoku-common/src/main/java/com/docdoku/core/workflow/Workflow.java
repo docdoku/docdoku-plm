@@ -19,13 +19,9 @@
  */
 package com.docdoku.core.workflow;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import javax.persistence.*;
-import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Workflows organize tasks around documents on which they're applied to.  
@@ -41,9 +37,14 @@ public class Workflow implements Serializable, Cloneable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
+
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("step ASC")
     private List<Activity> activities = new LinkedList<Activity>();
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date abortedDate;
+
     private String finalLifeCycleState;
 
     public Workflow(String pFinalLifeCycleState) {
@@ -127,6 +128,38 @@ public class Workflow implements Serializable, Cloneable {
 
     public Activity getActivity(int pIndex) {
         return activities.get(pIndex);
+    }
+
+    public void abort() {
+        for (Activity activity : activities) {
+            for(Task task:activity.getTasks()){
+                task.stop();
+            }
+        }
+        this.setAbortedDate(new Date());
+    }
+
+    public void relaunch(Integer relaunchActivityStep) {
+
+        for(Activity a :activities){
+            if(a.getStep() >= relaunchActivityStep){
+                for(Task t : a.getTasks()){
+                    t.reset();
+                }
+            }
+        }
+
+        Activity currentActivity = activities.get(relaunchActivityStep);
+        currentActivity.relaunch();
+
+    }
+
+    public Date getAbortedDate() {
+        return abortedDate;
+    }
+
+    public void setAbortedDate(Date abortedDate) {
+        this.abortedDate = abortedDate;
     }
 
     /**

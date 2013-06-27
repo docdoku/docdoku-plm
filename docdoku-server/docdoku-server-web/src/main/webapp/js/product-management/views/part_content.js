@@ -4,6 +4,7 @@ define([
     "i18n!localization/nls/product-management-strings",
     "views/part_list",
     "views/part_creation_view",
+    "views/part_new_version",
     "common-objects/views/prompt",
     "common-objects/views/security/acl_edit"
 ], function (
@@ -12,6 +13,7 @@ define([
     i18n,
     PartListView,
     PartCreationView,
+    PartNewVersionView,
     PromptView,
     ACLEditView
     ) {
@@ -28,6 +30,7 @@ define([
             "click button.undocheckout":"undocheckout",
             "click button.checkin":"checkin",
             "click button.edit-acl":"updateACL",
+            "click button.new-version":"newVersion",
             "click button.next-page":"toNextPage",
             "click button.previous-page":"toPreviousPage",
             "click button.first-page":"toFirstPage",
@@ -57,6 +60,7 @@ define([
             this.partListView.on("checkout-group:display", this.changeCheckoutGroupDisplay);
             this.partListView.on("checkout-group:update", this.updateCheckoutButtons);
             this.partListView.on("acl-edit-button:display", this.changeACLButtonDisplay);
+            this.partListView.on("new-version-button:display",this.changeVersionButtonDisplay);
 
             return this;
         },
@@ -68,6 +72,7 @@ define([
             this.undoCheckoutButton = this.$(".undocheckout");
             this.aclButton = this.$(".edit-acl");
             this.checkinButton = this.$(".checkin");
+            this.newVersionButton = this.$(".new-version");
             this.currentPageIndicator =this.$(".current-page");
             this.pageControls =this.$(".page-controls");
         },
@@ -117,6 +122,14 @@ define([
                 this.checkoutGroup.show();
             }else{
                 this.checkoutGroup.hide();
+            }
+        },
+
+        changeVersionButtonDisplay:function(state){
+            if(state){
+                this.newVersionButton.show();
+            }else{
+                this.newVersionButton.hide();
             }
         },
 
@@ -196,6 +209,14 @@ define([
 
             });
 
+        },
+
+        newVersion:function(){
+            $("body").append(
+                new PartNewVersionView({
+                    model: this.partListView.getSelectedPart()
+                }).render().$el
+            );
         },
 
         resetCollection:function(){

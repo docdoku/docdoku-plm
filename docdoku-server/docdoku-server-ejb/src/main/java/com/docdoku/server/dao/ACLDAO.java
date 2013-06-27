@@ -48,4 +48,10 @@ public class ACLDAO {
         acl.setGroupEntries(groupEntries);
         acl.setUserEntries(userEntries);
     }
+
+    public void removeACLEntries(ACL acl){
+        em.createNamedQuery("ACL.removeUserEntries").setParameter("aclId",acl.getId()).executeUpdate();
+        em.createNamedQuery("ACL.removeUserGroupEntries").setParameter("aclId",acl.getId()).executeUpdate();
+        em.flush();
+    }
 }

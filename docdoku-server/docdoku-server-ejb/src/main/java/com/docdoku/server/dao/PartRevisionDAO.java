@@ -23,8 +23,13 @@ package com.docdoku.server.dao;
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.PartRevisionAlreadyExistsException;
 import com.docdoku.core.services.PartRevisionNotFoundException;
+
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +66,7 @@ public class PartRevisionDAO {
     }
 
     public void removeRevision(PartRevision pPartR){
+        new WorkflowDAO(em).removeWorkflowConstraints(pPartR);
         em.remove(pPartR);
     }
 
@@ -98,5 +104,32 @@ public class PartRevisionDAO {
                 .setFirstResult(pStart)
                 .setMaxResults(pMaxResults)
                 .getResultList();
+    }
+
+    public void createPartR(PartRevision partR) throws PartRevisionAlreadyExistsException, CreationException {
+
+        try {
+            if(partR.getWorkflow()!=null){
+                WorkflowDAO workflowDAO = new WorkflowDAO(em);
+                workflowDAO.createWorkflow(partR.getWorkflow());
+            }
+
+            if(partR.getACL()!=null){
+                ACLDAO aclDAO = new ACLDAO(em);
+                aclDAO.createACL(partR.getACL());
+            }
+
+            //the EntityExistsException is thrown only when flush occurs
+            em.persist(partR);
+            em.flush();
+        } catch (EntityExistsException pEEEx) {
+            throw new PartRevisionAlreadyExistsException(mLocale, partR);
+        } catch (PersistenceException pPEx) {
+            //EntityExistsException is case sensitive
+            //whereas MySQL is not thus PersistenceException could be
+            //thrown instead of EntityExistsException
+            throw new CreationException(mLocale);
+        }
+
     }
 }

@@ -237,6 +237,27 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 return this.get("acl").userEntries[APP_CONFIG.login];
             }
             return false;
+        },
+
+        createNewVersion: function(description, workflow, roleMappingList, aclList) {
+
+            var data = {
+                description: description,
+                workflowModelId: workflow ? workflow.get("id") : null,
+                roleMapping:workflow? roleMappingList: null,
+                acl:aclList
+            };
+
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/newVersion",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    this.collection.fetch({reset:true});
+                }
+            });
         }
 
 

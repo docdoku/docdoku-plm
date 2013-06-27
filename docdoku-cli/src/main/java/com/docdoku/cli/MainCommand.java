@@ -60,6 +60,18 @@ public class MainCommand {
                         execCommand(new CheckInCommand(), Arrays.copyOfRange(args, 1, args.length));
                         break;
 
+                    case "directorychooser": case "dc":
+                        execCommand(new DirectoryChooserCommand(), Arrays.copyOfRange(args, 1, args.length));
+                        break;
+
+                    case "create": case "cr":
+                        execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 1, args.length));
+                        break;
+
+                    case "partlist": case "pl":
+                        execCommand(new PartListCommand(), Arrays.copyOfRange(args, 1, args.length));
+                        break;
+
                     case "help": case "?" : case "h":
                         if(args.length>1){
                             execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));

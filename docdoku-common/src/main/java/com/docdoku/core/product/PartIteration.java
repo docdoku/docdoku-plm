@@ -25,16 +25,11 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This class encapsulates the various states of a part whereas its unchanging
@@ -47,7 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name="PARTITERATION")
 @IdClass(com.docdoku.core.product.PartIterationKey.class)
 @Entity
-public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration> {
+public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration>, Cloneable {
     
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
@@ -332,6 +327,41 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
             return mpartVersionComp;
         else
             return iteration-pPart.iteration;
+    }
+
+    /**
+     * perform a deep clone operation
+     */
+    @Override
+    public PartIteration clone() {
+        PartIteration clone = null;
+        try {
+            clone = (PartIteration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        //perform a deep copy
+        clone.attachedFiles = new HashSet<BinaryResource>(attachedFiles);
+
+        Set<DocumentLink> clonedLinks = new HashSet<DocumentLink>();
+        for (DocumentLink link : linkedDocuments) {
+            DocumentLink clonedLink = link.clone();
+            clonedLinks.add(clonedLink);
+        }
+        clone.linkedDocuments = clonedLinks;
+
+        //perform a deep copy
+        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
+        for (InstanceAttribute attribute : instanceAttributes.values()) {
+            InstanceAttribute clonedAttribute = attribute.clone();
+            clonedInstanceAttributes.put(clonedAttribute.getName(), clonedAttribute);
+        }
+        clone.instanceAttributes = clonedInstanceAttributes;
+
+        if (creationDate != null) {
+            clone.creationDate = (Date) creationDate.clone();
+        }
+        return clone;
     }
     
 }

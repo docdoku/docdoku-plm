@@ -23,7 +23,10 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.*;
-import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.ActivityModelDTO;
+import com.docdoku.server.rest.dto.WorkflowModelDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
@@ -32,9 +35,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
-
 import java.util.List;
 
 /**
@@ -136,6 +136,10 @@ public class WorkflowResource {
             ActivityModel[] activityModels = new ActivityModel[activityModelDTOsList.size()];
             for(int i=0; i<activityModelDTOsList.size(); i++){
                 activityModels[i] = mapper.map(activityModelDTOsList.get(i), ActivityModel.class);
+
+                if(activityModelDTOsList.get(i).getRelaunchStep() != null && activityModelDTOsList.get(i).getRelaunchStep() < i){
+                    activityModels[i].setRelaunchActivity(activityModels[activityModelDTOsList.get(i).getRelaunchStep()]);
+                }
 
                 List<TaskModel> taskModelList = activityModels[i].getTaskModels();
                 for(TaskModel taskModel : taskModelList){

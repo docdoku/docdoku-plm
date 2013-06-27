@@ -1,0 +1,173 @@
+#content {
+  float: left;
+  height: 100%;
+  width: 80%;
+
+  #subContent {
+    float: left;
+    height: 92%;
+    width: 100%;
+    margin-top: 1%;
+    overflow-y: auto;
+
+    #localRepoNav {
+
+        height: 40px;
+        line-height: 40px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        box-shadow: 0 0 2px #9c9c9c;
+        background-image : linear-gradient(#F1F1F1, #E9E9E9);
+        &:hover {
+          background-image : linear-gradient(#F6F8EF, #EDEFD5);
+        }
+        cursor: pointer;
+    }
+
+    #localRepo {
+      margin-top: 20px;
+
+      .versionedFile {
+        height: 50px;
+        line-height: 40px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        box-shadow: 0 0 2px #9c9c9c;
+        background-image : linear-gradient(#F1F1F1, #E9E9E9);
+        &:hover {
+          background-image : linear-gradient(#F6F8EF, #EDEFD5);
+        }
+        cursor: pointer;
+
+        .icon-pencil, .icon-eye-open, .icon-lock {
+          float: left;
+          cursor: pointer;
+          margin-top: 15px;
+          margin-right: 15px;
+          margin-left: 15px;
+          opacity: 0.8;
+        }
+
+        .partInfo {
+          display: inline-block;
+          width: 40%;
+          line-height: 20px;
+          overflow: hidden;
+        }
+
+        .noIteration {
+          margin-left: 2px;
+        }
+
+        .checkoutInfo {
+          display: inline-block;
+          width: 28%;
+          line-height: 20px;
+          overflow: hidden;
+        }
+
+        .icon-signin, .icon-signout, .icon-download, .icon-refresh, .icon-undo, .icon-plus {
+          float: right;
+          cursor: pointer;
+          margin-top: 15px;
+          margin-right: 15px;
+          opacity: 0.8;
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        .name {
+          font-style: italic;
+        }
+
+        .spinner {
+          top : 26px;
+          left: 300px;
+        }
+      }
+
+      .unVersionedFile {
+        height: 50px;
+        line-height: 40px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        box-shadow: 0 0 2px #9c9c9c;
+        cursor: pointer;
+
+        .partInfo {
+          margin-left: 42px;
+          display: inline-block;
+          width: 40%;
+          line-height: 20px;
+          overflow: hidden;
+        }
+
+        .icon-plus {
+          float: right;
+          cursor: pointer;
+          margin-top: 15px;
+          margin-right: 15px;
+          opacity: 0.8;
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        .name {
+          font-style: italic;
+        }
+
+        .spinner {
+          top : 26px;
+          left: 300px;
+        }
+      }
+
+      .part {
+        height: 50px;
+        line-height: 40px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        box-shadow: 0 0 2px #9c9c9c;
+        cursor: pointer;
+
+        .partInfo {
+          margin-left: 42px;
+          display: inline-block;
+          width: 40%;
+          line-height: 20px;
+          overflow: hidden;
+        }
+
+        .icon-plus {
+          float: right;
+          cursor: pointer;
+          margin-top: 15px;
+          margin-right: 15px;
+          opacity: 0.8;
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        .name {
+          font-style: italic;
+        }
+
+        .spinner {
+          top : 26px;
+          left: 300px;
+        }
+      }
+    }
+  }
+}
