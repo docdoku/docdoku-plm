@@ -21,6 +21,8 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.product.PartMaster;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
@@ -55,8 +57,7 @@ public abstract class ConfigSpec implements Serializable{
     public void setId(int id) {
         this.id = id;
     }
-    
 
-    
+    public abstract PartMaster filterConfigSpec(PartMaster root, int depth, EntityManager em);
     
 }

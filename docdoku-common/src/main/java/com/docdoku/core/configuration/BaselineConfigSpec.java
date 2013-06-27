@@ -19,10 +19,10 @@
  */
 package com.docdoku.core.configuration;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.docdoku.core.product.*;
+
+import javax.persistence.*;
+import java.util.Collections;
 
 @Table(name="BASELINECONFIGSPEC")
 @Entity
@@ -32,9 +32,7 @@ public class BaselineConfigSpec extends ConfigSpec {
     private Baseline baseline;
 
     public BaselineConfigSpec(){
-
     }
-
 
     public BaselineConfigSpec(Baseline baseline) {
         this.baseline = baseline;
@@ -46,5 +44,53 @@ public class BaselineConfigSpec extends ConfigSpec {
 
     public void setBaseline(Baseline baseline) {
         this.baseline = baseline;
+    }
+
+
+    @Override
+    public PartMaster filterConfigSpec(PartMaster root, int depth, EntityManager em){
+        // int baselineId, String targetPartWorkspaceId, String targetPartNumber
+        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),root.getWorkspaceId(),root.getNumber());
+
+        BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
+
+        PartRevision partR ;
+        PartIteration partI;
+
+        if(baselinedRootPart != null){
+            partR = baselinedRootPart.getTargetPart().getPartRevision();
+            partI = baselinedRootPart.getTargetPart();
+        }else{
+            // the part isn't in baseline, choose the latest version-iteration
+            partR = root.getLastRevision();
+            partI = partR.getLastIteration();
+        }
+
+        if (partI != null) {
+            if (depth != 0) {
+                depth--;
+                for (PartUsageLink usageLink : partI.getComponents()) {
+                    filterConfigSpec(usageLink.getComponent(), depth, em);
+
+                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
+                        filterConfigSpec(subLink.getSubstitute(), 0, em);
+                    }
+                }
+            }
+        }
+
+        for (PartAlternateLink alternateLink : root.getAlternates()) {
+            filterConfigSpec(alternateLink.getAlternate(), 0, em);
+        }
+
+        em.detach(root);
+        if (root.getPartRevisions().size() > 1) {
+            root.getPartRevisions().retainAll(Collections.singleton(partR));
+        }
+        if (partR != null && partR.getNumberOfIterations() > 1) {
+            partR.getPartIterations().retainAll(Collections.singleton(partI));
+        }
+
+        return root;
     }
 }
