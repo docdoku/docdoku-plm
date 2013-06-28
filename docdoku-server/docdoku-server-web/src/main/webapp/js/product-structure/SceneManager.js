@@ -278,6 +278,7 @@ define([
             }
 
             this.initCamera();
+            this.layerManager.updateCamera(this.camera, this.controls);
             this.addLightsToCamera();
         },
 
