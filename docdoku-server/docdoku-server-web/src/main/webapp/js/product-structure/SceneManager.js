@@ -345,7 +345,7 @@ define([
 
                     } else {
                         // Part inspection
-                        Backbone.Events.trigger("instance_clicked", intersectInstances[0].partIteration);
+                        Backbone.Events.trigger("instance:selected", intersectInstances[0].partIteration);
                     }
                 }
             }

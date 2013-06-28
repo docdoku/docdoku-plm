@@ -93,7 +93,7 @@ define(
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
             this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
-            Backbone.Events.on("instance_clicked", this.onInstanceSelected, this);
+            Backbone.Events.on("instance:selected", this.onInstanceSelected, this);
         },
 
         bindDomElements:function(){
@@ -230,6 +230,9 @@ define(
             var part = new Part({partKey:partKey});
             var self = this;
             part.fetch({success:function() {
+                // Search the part in the tree
+                self.searchView.trigger("instance:selected", part.getNumber());
+
                 if(!self.isInBomMode()){
                     if(self.partMetadataView == undefined){
                         self.partMetadataView = new PartMetadataView({model:part}).render();
