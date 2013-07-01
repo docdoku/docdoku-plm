@@ -9,10 +9,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
-import javax.faces.component.html.HtmlOutputText;
 import javax.faces.component.html.HtmlPanelGroup;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +22,7 @@ public class ViewerBean {
     @EJB
     private IDocumentViewerManagerLocal documentViewerService;
 
-    @ManagedProperty(value = "#{docm.lastIteration.attachedFiles}")
+    @ManagedProperty(value = "#{documentMaster.lastIteration.attachedFiles}")
     private Set<BinaryResource> attachedFiles;
 
     public void process() {

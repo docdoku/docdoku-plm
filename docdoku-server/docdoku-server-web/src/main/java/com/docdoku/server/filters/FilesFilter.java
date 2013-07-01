@@ -21,20 +21,40 @@
 package com.docdoku.server.filters;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 
+import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.regex.Pattern;
 
-public class AuthFilter implements Filter {
+public class FilesFilter implements Filter {
+
+    @EJB
+    private IProductManagerLocal productService;
+
+    @EJB
+    private IDocumentManagerLocal documentService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String requestURI = ((HttpServletRequest) request).getRequestURI();
+        String[] pathInfos = Pattern.compile("/").split(requestURI);
+        int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
+        String entityType = URLDecoder.decode(pathInfos[offset - 1], "UTF-8");
+
+
+        String referer = httpRequest.getHeader("Referer");
+
+        System.out.println("Referer = "+referer);
 
         HttpSession sessionHTTP = httpRequest.getSession();
         Account account = (Account) sessionHTTP.getAttribute("account");

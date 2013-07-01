@@ -31,7 +31,15 @@
     </error-page>
     <filter>
         <filter-name>AuthFilter</filter-name>
-        <filter-class>com.docdoku.server.http.AuthFilter</filter-class>
+        <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>PermalinkFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.PermalinkFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>FilesFilter</filter-name>
+        <filter-class>com.docdoku.server.filters.FilesFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
@@ -42,6 +50,15 @@
         <url-pattern>/product-structure/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PermalinkFilter</filter-name>
+        <url-pattern>/documents/*</url-pattern>
+        <url-pattern>/parts/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>FilesFilter</filter-name>
+        <url-pattern>/files/*</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
@@ -154,7 +171,7 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/files/*</url-pattern>
+            <!--<url-pattern>/files/*</url-pattern>-->
             <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>
         </web-resource-collection>

@@ -161,7 +161,7 @@ public class PrivateShareServlet extends HttpServlet {
             DocumentMaster docM = ((SharedDocument) sharedEntity).getDocumentMaster();
             DocumentIteration docI =  docM.getLastIteration();
 
-            pRequest.setAttribute("docm", docM);
+            pRequest.setAttribute("documentMaster", docM);
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
 
             pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
