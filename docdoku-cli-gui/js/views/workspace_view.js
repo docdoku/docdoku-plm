@@ -1,8 +1,8 @@
 define([
-    "models/versioned_file_model",
-    "views/versioned_file_view",
+    "models/remote_versioned_file_model",
+    "views/remote_versioned_file_view",
     "commander"],
-    function(VersionedFileModel, VersionedFileView, Commander) {
+    function(RemoteVersionedFileModel, RemoteVersionedFileView, Commander) {
     var WorkspaceView = Backbone.View.extend({
 
         events: {},
@@ -20,9 +20,11 @@ define([
                 var partMasters = JSON.parse(pPartMarters);
 
                 _.each(partMasters, function (partMaster) {
-                    var versionedFileModel = new VersionedFileModel({partNumber: partMaster.partNumber, name : partMaster.cadFileName, version : partMaster.version, status: partMaster});
-                    var versionedFileView =  new VersionedFileView({model: versionedFileModel}).render();
-                    self.$versionedFiles.append(versionedFileView.$el);
+                    if(!partMaster.isCheckedOut) {
+                        var remoteVersionedFileModel = new RemoteVersionedFileModel({partNumber: partMaster.partNumber, name : partMaster.cadFileName, version : partMaster.version, status: partMaster});
+                        var remoteVersionedFileView =  new RemoteVersionedFileView({model: remoteVersionedFileModel}).render();
+                        self.$versionedFiles.append(remoteVersionedFileView.$el);
+                    }
                 });
             });
         }

@@ -1,0 +1,38 @@
+<!--Status icons-->
+{{#if status.isCheckedOut}}
+{{#if status.isCheckedOutByMe}}
+<i class="icon-pencil" title="Checkouted by me"></i>
+{{else}}
+<i class="icon-lock" title="Locked"></i>
+{{/if}}
+{{else}}
+<i class="icon-eye-open"></i>
+{{/if}}
+<!--Part info-->
+<div class="partInfo">
+    <div class="partNumber">{{status.partNumber}}</div>
+    <div class="name">{{model.getName}}</div>
+</div>
+<!--Checkout info-->
+<div class="checkoutInfo">
+    {{#if status.isCheckedOut}}
+    {{#if status.isCheckedOutByMe}}
+    <div><i class="icon-calendar" title="Checkout date"><span class="checkoutDate">{{status.checkoutDateParsed}}</span></i></div>
+    <div class="icon-time-div"><i class="icon-time" title="Last modif"><span class="lastModif">{{model.getMTimeParsed}}</span></i></div>
+    {{else}}
+    <div class="icon-user-div"><i class="icon-user" title="Checkouted by"><span class="checkoutedBy">{{status.checkoutUser}}</span></i></div>
+    <div><i class="icon-calendar" title="Checkout date"><span class="checkoutDate">{{status.checkoutDateParsed}}</span></i></div>
+    {{/if}}
+    {{/if}}
+</div>
+<!--Action icons-->
+{{#if status.isCheckedOut}}
+{{#if status.isCheckedOutByMe}}
+<i class="icon-signout" title="Checkin"></i>
+<i class="icon-undo" title="Cancel checkout"></i>
+{{else}}
+<i class="icon-refresh" title="Refresh"></i>
+{{/if}}
+{{else}}
+<i class="icon-signin" title="Checkout"></i>
+{{/if}}

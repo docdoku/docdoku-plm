@@ -9,7 +9,7 @@ define(["text!templates/menu.html", "storage", "views/local_dir_view", "views/wo
         },
 
         render:function() {
-            this.$el.html(this.template({}));
+            this.$el.html(this.template({workspace: Storage.getWorkspace()}));
 
             return this;
         },

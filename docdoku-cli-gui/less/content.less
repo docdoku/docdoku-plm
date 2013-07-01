@@ -43,20 +43,54 @@
         }
         cursor: pointer;
 
-        .icon-pencil, .icon-eye-open, .icon-lock {
+        .icon-pencil {
           float: left;
           cursor: pointer;
-          margin-top: 15px;
+          margin-top: 17px;
           margin-right: 15px;
           margin-left: 15px;
           opacity: 0.8;
         }
 
+        .icon-eye-open {
+          float: left;
+          cursor: pointer;
+          margin-top: 17px;
+          margin-right: 15px;
+          margin-left: 13px;
+          opacity: 0.8;
+        }
+
+        .icon-lock {
+          float: left;
+          cursor: pointer;
+          margin-top: 17px;
+          margin-right: 17px;
+          margin-left: 16px;
+          opacity: 0.8;
+        }
+
         .partInfo {
           display: inline-block;
-          width: 40%;
+          width: 55%;
           line-height: 20px;
           overflow: hidden;
+          margin-top: 4px;
+          text-shadow: 0 1px white;
+
+          .partNumber {
+            font-weight: bold;
+            text-overflow : ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+
+          .name {
+            font-style: italic;
+            text-overflow : ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
         }
 
         .noIteration {
@@ -65,9 +99,32 @@
 
         .checkoutInfo {
           display: inline-block;
-          width: 28%;
+          width: 20%;
           line-height: 20px;
           overflow: hidden;
+          font-size: 10px;
+          margin-left: 22px;
+          text-shadow: 0 1px white;
+
+          .icon-time-div, .icon-user-div {
+            margin-left : 1px;
+          }
+
+          .checkoutDate {
+            margin-left: 5px;
+          }
+
+          .lastModif {
+            margin-left: 5px;
+          }
+
+          .checkoutedBy {
+            margin-left: 6px;
+          }
+
+          .lastSynchro {
+            margin-left: 5px;
+          }
         }
 
         .icon-signin, .icon-signout, .icon-download, .icon-refresh, .icon-undo, .icon-plus {
@@ -81,13 +138,20 @@
           }
         }
 
-        .name {
-          font-style: italic;
-        }
-
         .spinner {
           top : 26px;
           left: 300px;
+        }
+
+        &.modified {
+          .lastModif {
+            background: #367CA0;
+            padding: 2px;
+            color: white;
+            font-weight: bold;
+            text-shadow: none;
+            border-radius: 2px;
+          }
         }
       }
 
