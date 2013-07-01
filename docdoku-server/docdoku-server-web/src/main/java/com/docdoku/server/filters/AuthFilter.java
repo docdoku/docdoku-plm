@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.http;
+package com.docdoku.server.filters;
 
 import java.io.*;
 
