@@ -56,6 +56,7 @@ define(
             this.$inputPartNumber = this.$('#inputPartNumber');
             this.$inputPartName = this.$('#inputPartName');
             this.$inputPartDescription = this.$('#inputPartDescription');
+            this.$inputPartStandard = this.$('#inputPartStandard');
         },
 
         bindPartTemplateSelector:function(){
@@ -75,7 +76,8 @@ define(
                 number: this.$inputPartNumber.val(),
                 workspaceId: APP_CONFIG.workspaceId,
                 description: this.$inputPartDescription.val(),
-                name:  this.$inputPartName.val()
+                name:  this.$inputPartName.val(),
+                standardPart: this.$inputPartStandard.is(':checked') ? 1:0
             });
 
             var templateId = this.$inputPartTemplate.val();
