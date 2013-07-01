@@ -1,6 +1,8 @@
-define(["text!templates/versioned_file.html", "views/loader_view",  "commander", "storage"], function(template, Loader, Commander, Storage) {
+define(["text!templates/local_versioned_file.html", "views/loader_view",  "commander", "storage"], function(template, Loader, Commander, Storage) {
 
-    var LocalFileView = Backbone.View.extend({
+    var LocalVersionedFileView = Backbone.View.extend({
+
+        className: "versionedFile",
 
         template: Handlebars.compile(template),
 
@@ -19,13 +21,16 @@ define(["text!templates/versioned_file.html", "views/loader_view",  "commander",
             status.iteration = _.last(status.iterations);
 
             this.$el.html(this.template({model: this.model, status: status}));
-            this.$localFile = this.$(".versionedFile")
+
+            if (status.isCheckedOutByMe && this.model.getMTime() > status.checkoutDate) {
+                this.$el.addClass("modified");
+            }
 
             return this;
         },
 
         loader:function() {
-            this.$localFile.html(new Loader());
+            this.$el.html(new Loader());
         },
 
         isCheckoutByConnectedUser:function(status) {
@@ -35,7 +40,6 @@ define(["text!templates/versioned_file.html", "views/loader_view",  "commander",
         checkin:function() {
             this.loader();
             var self = this;
-            console.log(this.model);
             Commander.checkin(this.model.getPartNumber(), this.model.getVersion(), function() {
                Commander.getStatusForFile(self.model.getFullPath(), function(pStatus) {
                    var status = JSON.parse(pStatus);
@@ -83,5 +87,5 @@ define(["text!templates/versioned_file.html", "views/loader_view",  "commander",
         }
     });
 
-    return LocalFileView;
+    return LocalVersionedFileView;
 });

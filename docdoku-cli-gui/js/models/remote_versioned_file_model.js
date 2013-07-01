@@ -1,5 +1,5 @@
 define([] , function() {
-    var VersionedlFileModel = Backbone.Model.extend({
+    var RemoteVersionedFileModel = Backbone.Model.extend({
 
         initialize:function() {
             _.bindAll(this);
@@ -46,5 +46,5 @@ define([] , function() {
         }
     });
 
-    return VersionedlFileModel;
+    return RemoteVersionedFileModel;
 });

@@ -12,13 +12,6 @@ import org.codehaus.jettison.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: cangac
- * Date: 11/06/13
- * Time: 12:44
- * To change this template use File | Settings | File Templates.
- */
 public class JSONPrinter {
 
     public static JSONObject getJSONPartMasterDescription(PartMaster pm) throws JSONException {
