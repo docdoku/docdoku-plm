@@ -25,10 +25,8 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.DocumentMasterNotFoundException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.PartRevisionNotFoundException;
 
 import javax.ejb.EJB;
 import javax.servlet.*;
@@ -47,57 +45,67 @@ public class PermalinkFilter implements Filter {
     @EJB
     private IDocumentManagerLocal documentService;
 
+    @EJB
+    private GuestProxy guestProxy;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        String requestURI = ((HttpServletRequest) request).getRequestURI();
+        String requestURI = httpRequest.getRequestURI();
         String[] pathInfos = Pattern.compile("/").split(requestURI);
-
         int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
-
-        String entityType = URLDecoder.decode(pathInfos[offset-1], "UTF-8");
-
-        boolean isPublic = false ;
-
-        if(entityType != null){
-            switch (entityType){
-                case "documents" :
-                    DocumentMasterKey docMK  = FilterUtils.getDocumentMasterKey(httpRequest);
-                    try {
-                        DocumentMaster publicDocumentMaster = documentService.getPublicDocumentMaster(docMK);
-                        if(publicDocumentMaster != null && publicDocumentMaster.isPublicShared()){
-                            isPublic = true;
-                            request.setAttribute("publicDocumentMaster",publicDocumentMaster);
-                        }
-                    } catch (DocumentMasterNotFoundException e) {
-                    }
-                    break;
-                case "parts" :
-                    PartRevisionKey partK  = FilterUtils.getPartRevisionKey(httpRequest);
-                    try {
-                        PartRevision publicPartRevision = productService.getPublicPartRevision(partK);
-                        if(publicPartRevision != null && publicPartRevision.isPublicShared()){
-                            isPublic = true;
-                            request.setAttribute("publicPartRevision",publicPartRevision);
-                        }
-                    } catch (PartRevisionNotFoundException e) {
-                    }
-                    break;
-                default : break ;
-            }
-        }
 
         HttpSession sessionHTTP = httpRequest.getSession();
         Account account = (Account) sessionHTTP.getAttribute("account");
 
-        if (account == null && !isPublic) {
-            String qs=httpRequest.getQueryString();
-            String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-            httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
-        } else {
+        if(account == null){
+
+            String entityType = URLDecoder.decode(pathInfos[offset-1], "UTF-8");
+            boolean redirect = false;
+
+            if(entityType != null){
+                switch (entityType){
+                    case "documents" :
+                        try {
+                            String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
+                            String documentMasterId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
+                            String documentMasterVersion = pathInfos[offset+2];
+
+                            DocumentMasterKey docMK  =  new DocumentMasterKey(workspaceId,documentMasterId,documentMasterVersion);
+                            DocumentMaster publicDocumentMaster = guestProxy.getPublicDocumentMaster(docMK);
+                            request.setAttribute("publicDocumentMaster",publicDocumentMaster);
+                        } catch (Exception e) {
+                            redirect = true;
+                        }
+
+                        break;
+                    case "parts" :
+                        try {
+                            String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
+                            String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
+                            String partVersion = pathInfos[offset+2];
+
+                            PartRevisionKey partK  = new PartRevisionKey(workspaceId,partNumber,partVersion);
+                            PartRevision publicPartRevision = guestProxy.getPublicPartRevision(partK);
+                            request.setAttribute("publicPartRevision",publicPartRevision);
+                        } catch (Exception e) {
+                            redirect = true;
+                        }
+                        break;
+                    default : redirect = true; break ;
+                }
+            }
+
+            if(redirect){
+                String qs=httpRequest.getQueryString();
+                String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
+                httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
+            }else{
+                chain.doFilter(request, response);
+            }
+        }else{
             chain.doFilter(request, response);
         }
 

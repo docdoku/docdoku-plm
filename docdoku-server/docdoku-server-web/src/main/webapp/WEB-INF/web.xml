@@ -59,6 +59,7 @@
     <filter-mapping>
         <filter-name>FilesFilter</filter-name>
         <url-pattern>/files/*</url-pattern>
+        <url-pattern>/shared-files/*</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>JnlpDownloadServlet</servlet-name>
@@ -147,6 +148,7 @@
     <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/files/*</url-pattern>
+        <url-pattern>/shared-files/*</url-pattern>
     </servlet-mapping>
 <!--    <servlet>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>

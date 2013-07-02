@@ -73,34 +73,22 @@ public class PrivateShareServlet extends HttpServlet {
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
             // check if expire
-            if(sharedEntity.getExpireDate() != null){
-                if(sharedEntity.getExpireDate().getTime() < new Date().getTime()){
-                    shareService.deleteSharedEntityIfExpired(sharedEntity);
-                    pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
-                    return;
-                }
+            if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+                shareService.deleteSharedEntityIfExpired(sharedEntity);
+                pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                return;
             }
 
             // check shared entity password and provided password
 
             if(sharedEntity.getPassword() != null){
-
                 String providedPassword = (String) pRequest.getParameter("password");
-
-                if(providedPassword != null){
-
-                    if(md5sum(providedPassword).equals(sharedEntity.getPassword())){
-                        handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
-                    }else{
-                        pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
-                    }
-
+                if(providedPassword != null && md5sum(providedPassword).equals(sharedEntity.getPassword())){
+                    handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
                 }else{
                     pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
                 }
-
             }else{
-                // shouldn't arrive
                 handleOnCheckSuccess(pRequest, pResponse, sharedEntity);
             }
 
