@@ -357,6 +357,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
 
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
+            if(partR.getLastIteration().getIteration() <= 1) {
+                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException41");
+            }
             PartIteration partIte = partR.removeLastIteration();
             for (Geometry file : partIte.getGeometries()) {
                 try {

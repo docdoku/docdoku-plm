@@ -1003,6 +1003,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
+            if(docM.getLastIteration().getIteration() <= 1) {
+                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException27");
+            }
             DocumentIteration doc = docM.removeLastIteration();
             for (BinaryResource file : doc.getAttachedFiles()) {
                 try {

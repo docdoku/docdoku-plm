@@ -140,6 +140,9 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 url: this.url() + "/undocheckout",
                 success: function() {
                     this.fetch();
+                },
+                error:function(xhr,status,errorThrown){
+                    alert(xhr.responseText);
                 }
             });
         },
