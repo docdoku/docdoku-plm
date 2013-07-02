@@ -24,11 +24,17 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.sharing.SharedEntity;
+import com.docdoku.core.sharing.SharedPart;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.EJB;
@@ -40,6 +46,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 public class FilesFilter implements Filter {
@@ -52,6 +59,9 @@ public class FilesFilter implements Filter {
 
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+
+    @EJB
+    private IShareManagerLocal shareService;
 
     @EJB
     private GuestProxy guestProxy;
@@ -81,23 +91,18 @@ public class FilesFilter implements Filter {
         String[] pathInfo = Pattern.compile("/").split(requestURI);
 
         String fullName = "";
-
+        String workspaceId = "";
+        String elementType = "";
+        String fileName = "";
+        int iteration = 0;
         BinaryResource binaryResource = null;
         DocumentIteration docI = null;
-
         User user = null;
-
         boolean isSubResource = false;
         boolean needsCacheHeaders = false;
-
         String outputFormat = pRequest.getParameter("output");
-
         boolean isDocumentAndOutputSpecified = outputFormat != null && !outputFormat.isEmpty();
-
         String subResourceVirtualPath = "";
-
-        // Private share file url type = localhost/shared-files/uuid/{iteration}/filename
-        // Non obfuscated file url type = localhost/files/{workspace}/{entityType}/{entityId}/{version}/{iteration}/filename
 
         boolean isPrivateSharedFile = URLDecoder.decode(pathInfo[offset - 1], "UTF-8").equals("shared-files");
 
@@ -105,8 +110,8 @@ public class FilesFilter implements Filter {
 
             try {
 
-                String workspaceId = URLDecoder.decode(pathInfo[offset], "UTF-8");
-                String elementType = URLDecoder.decode(pathInfo[offset + 1], "UTF-8");
+                workspaceId = URLDecoder.decode(pathInfo[offset], "UTF-8");
+                elementType = URLDecoder.decode(pathInfo[offset + 1], "UTF-8");
 
                 if (elementType.equals("documents")) {
 
@@ -114,8 +119,8 @@ public class FilesFilter implements Filter {
 
                     String docMId = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
                     String docMVersion = pathInfo[offset + 3];
-                    int iteration = Integer.parseInt(pathInfo[offset + 4]);
-                    String fileName = URLDecoder.decode(pathInfo[offset + 5], "UTF-8");
+                    iteration = Integer.parseInt(pathInfo[offset + 4]);
+                    fileName = URLDecoder.decode(pathInfo[offset + 5], "UTF-8");
 
                     fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
 
@@ -143,9 +148,8 @@ public class FilesFilter implements Filter {
 
                     String partNumber = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
                     String version = pathInfo[offset + 3];
-                    int iteration = Integer.parseInt(pathInfo[offset + 4]);
+                    iteration = Integer.parseInt(pathInfo[offset + 4]);
 
-                    String fileName;
                     if (pathInfo.length == offset + 7) {
                         fileName = URLDecoder.decode(pathInfo[offset + 6], "UTF-8");
                         String subType = URLDecoder.decode(pathInfo[offset + 5], "UTF-8"); //subType may be nativecad
@@ -165,12 +169,12 @@ public class FilesFilter implements Filter {
                 // We don't serve these files to guests, no changes.
                 else if (elementType.equals("document-templates")) {
                     String templateID = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    String fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
+                    fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
                     fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
                     binaryResource = documentService.getBinaryResource(fullName);
                 } else if (elementType.equals("part-templates")) {
                     String templateID = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    String fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
+                    fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
                     fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
                     binaryResource = documentService.getBinaryResource(fullName);
                 }
@@ -191,17 +195,92 @@ public class FilesFilter implements Filter {
 
             } catch (LoginException pEx) {
                 httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
-                return;
             } catch (Exception pEx){
                 throw new ServletException("Error while downloading the file.", pEx);
             }
 
-        } else { // private shared file
+        } else {  // private shared file
 
+            try {
 
+                String uuid = URLDecoder.decode(pathInfo[offset], "UTF-8");
+                iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
+
+                SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
+                workspaceId = sharedEntity.getWorkspace().getId();
+
+                if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+                    shareService.deleteSharedEntityIfExpired(sharedEntity);
+                    pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                    return;
+                }
+
+                if(sharedEntity instanceof SharedDocument){
+                    DocumentMaster docM = ((SharedDocument) sharedEntity).getDocumentMaster();
+                    docI =  docM.getLastIteration();
+                    String docMId = docM.getId();
+                    String docMVersion = docM.getVersion();
+                    iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
+
+                    fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
+                    fullName = workspaceId + "/" + "documents" + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
+
+                    if(account != null){
+                        binaryResource = documentService.getBinaryResource(fullName);
+                        docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
+                        user = documentService.whoAmI(workspaceId);
+                    }else{
+                        binaryResource = guestProxy.getBinaryResourceForSharedDocument(fullName);
+                        docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);
+                        user = guestProxy.whoAmI();
+                    }
+
+                    if (pathInfo.length > offset + 3) {
+                        String[] pathInfosExtra = Arrays.copyOfRange(pathInfo, offset + 3, pathInfo.length);
+                        isSubResource = true;
+                        subResourceVirtualPath = documentResourceGetterService.getSubResourceVirtualPath(binaryResource, StringUtils.join(pathInfosExtra, '/'));
+                    }
+
+                }else if(sharedEntity instanceof SharedPart){
+                    PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
+
+                    String partNumber = partRevision.getPartNumber();
+                    String version =partRevision.getVersion();
+                    iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
+
+                    if (pathInfo.length == offset + 4) {
+                        fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
+                        String subType = URLDecoder.decode(pathInfo[offset + 2], "UTF-8"); //subType may be nativecad
+                        fullName = workspaceId + "/" + "parts" + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
+                    } else {
+                        fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
+                        fullName = workspaceId + "/" + "parts" + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
+                    }
+                    if(account != null){
+                        binaryResource = productService.getBinaryResource(fullName);
+                    }else{
+                        binaryResource = guestProxy.getBinaryResourceForSharedPart(fullName);
+                    }
+                }
+
+                // Store necessary vars in request for uploadDownloadServlet doGet method
+                pRequest.setAttribute("binaryResource",binaryResource);
+                pRequest.setAttribute("isSubResource",isSubResource);
+                pRequest.setAttribute("isDocumentAndOutputSpecified",isDocumentAndOutputSpecified);
+                pRequest.setAttribute("fullName",fullName);
+                pRequest.setAttribute("outputFormat",outputFormat);
+                pRequest.setAttribute("subResourceVirtualPath",subResourceVirtualPath);
+                pRequest.setAttribute("needsCacheHeaders",needsCacheHeaders);
+                pRequest.setAttribute("user",user);
+                pRequest.setAttribute("docI",docI);
+
+                chain.doFilter(pRequest,pResponse);
+
+            } catch (Exception e) {
+                httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
+            }
 
         }
-
 
     }
 

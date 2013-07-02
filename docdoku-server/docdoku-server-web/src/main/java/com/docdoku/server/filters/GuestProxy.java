@@ -65,4 +65,12 @@ public class GuestProxy{
     public User whoAmI() {
        return new User("en");
     }
+
+    public BinaryResource getBinaryResourceForSharedDocument(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
+        return documentService.getBinaryResource(fullName);
+    }
+
+    public BinaryResource getBinaryResourceForSharedPart(String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException {
+        return productService.getBinaryResource(fullName);
+    }
 }

@@ -269,7 +269,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentMaster getDocumentMaster(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         if(ctx.isCallerInRole("guest-proxy")){
-            return new DocumentMasterDAO(em).loadDocM(pDocMPK);
+            DocumentMaster documentMaster = new DocumentMasterDAO(em).loadDocM(pDocMPK);
+            if(documentMaster.isCheckedOut()){
+                em.detach(documentMaster);
+                documentMaster.removeLastIteration();
+            }
+            return documentMaster;
         }
 
         User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());

@@ -792,7 +792,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
 
         if(ctx.isCallerInRole("guest-proxy")){
-            return new PartRevisionDAO(em).loadPartR(pPartRPK);
+            PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
+            if(partRevision.isCheckedOut()){
+                em.detach(partRevision);
+                partRevision.removeLastIteration();
+            }
+            return partRevision;
         }
 
         User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());

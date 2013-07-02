@@ -25,6 +25,7 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -72,10 +74,15 @@ public class DocumentPermalinkServlet extends HttpServlet {
         }
     }
 
-    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, DocumentMaster documentMaster) throws ServletException, IOException {
+    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, DocumentMaster documentMaster) throws ServletException, IOException, NotAllowedException {
         pRequest.setAttribute("documentMaster", documentMaster);
-        DocumentIteration doc =  documentMaster.getLastIteration();
-        pRequest.setAttribute("attr", new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
+        DocumentIteration docI =  documentMaster.getLastIteration();
+
+        if(docI == null){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException27");
+        }
+
+        pRequest.setAttribute("attr", new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
         pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
     }
 

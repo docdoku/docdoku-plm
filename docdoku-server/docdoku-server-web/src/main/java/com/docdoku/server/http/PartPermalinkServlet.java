@@ -20,11 +20,13 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -34,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -71,10 +74,23 @@ public class PartPermalinkServlet extends HttpServlet {
         }
     }
 
-    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, PartRevision partRevision) throws ServletException, IOException {
-        pRequest.setAttribute("partRevision", partRevision);
+    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, PartRevision partRevision) throws ServletException, IOException, NotAllowedException {
+
         PartIteration partIteration =  partRevision.getLastIteration();
+
+        if(partIteration == null){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException41");
+        }
+
+        String nativeCadFileURI ="";
+        if(partRevision.getLastIteration().getNativeCADFile() != null){
+            BinaryResource binaryResource = partRevision.getLastIteration().getNativeCADFile();
+            nativeCadFileURI =  "/files/" + binaryResource.getFullName();
+        }
+
+        pRequest.setAttribute("partRevision", partRevision);
         pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
+        pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
         pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
     }
 }
