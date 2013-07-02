@@ -53,7 +53,7 @@ import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.util.*;
 
-@DeclareRoles({"users","admin"})
+@DeclareRoles({"users","admin","guest-proxy"})
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IProductManagerWS")
@@ -511,9 +511,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
+        }
+
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
@@ -785,9 +790,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
+            if(partRevision.isCheckedOut()){
+                em.detach(partRevision);
+                partRevision.removeLastIteration();
+            }
+            return partRevision;
+        }
+
         User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevision partR = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(pPartRPK);
 
@@ -796,17 +811,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.removeLastIteration();
         }
         return partR;
-    }
-
-    @Override
-    public PartRevision getPublicPartRevision(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException {
-        PartRevision partR = new PartRevisionDAO(em).loadPartR(pPartRPK);
-
-        if(partR.isPublicShared()){
-            return partR;
-        }else{
-            return null;
-        }
     }
 
     @RolesAllowed("users")

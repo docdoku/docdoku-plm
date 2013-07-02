@@ -51,9 +51,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
-@DeclareRoles({"users","admin"})
+@DeclareRoles({"users","admin","guest-proxy"})
 @Local(IDocumentManagerLocal.class)
 @Stateless(name = "DocumentManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IDocumentManagerWS")
@@ -162,9 +160,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     @LogDocument
-    @RolesAllowed("users")
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
+        }
+
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
@@ -191,7 +194,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users"})
     @Override
     public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         return userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -261,9 +264,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public DocumentMaster getDocumentMaster(DocumentMasterKey pDocMPK) throws WorkspaceNotFoundException, DocumentMasterNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            DocumentMaster documentMaster = new DocumentMasterDAO(em).loadDocM(pDocMPK);
+            if(documentMaster.isCheckedOut()){
+                em.detach(documentMaster);
+                documentMaster.removeLastIteration();
+            }
+            return documentMaster;
+        }
+
         User user = userManager.checkWorkspaceReadAccess(pDocMPK.getWorkspaceId());
         DocumentMaster docM = new DocumentMasterDAO(new Locale(user.getLanguage()), em).loadDocM(pDocMPK);
         String owner = docM.getLocation().getOwner();
@@ -285,18 +298,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     }
 
-    @Override
-    public DocumentMaster getPublicDocumentMaster(DocumentMasterKey pDocMPK) throws DocumentMasterNotFoundException {
-        DocumentMaster docM = new DocumentMasterDAO(em).loadDocM(pDocMPK);
-        if(docM.isPublicShared()){
-            return docM;
-        }else{
-            return null;
-        }
-    }
-
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            return  new DocumentMasterDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
+        }
+
         User user = userManager.checkWorkspaceReadAccess(pBinaryResource.getWorkspaceId());
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()),em);
         return  documentMasterDAO.findDocumentIterationByBinaryResource(pBinaryResource);

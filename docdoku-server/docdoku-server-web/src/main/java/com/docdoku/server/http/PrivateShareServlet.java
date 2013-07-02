@@ -20,15 +20,13 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
-import com.docdoku.core.services.SharedEntityNotFoundException;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
@@ -44,6 +42,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -73,34 +72,22 @@ public class PrivateShareServlet extends HttpServlet {
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
             // check if expire
-            if(sharedEntity.getExpireDate() != null){
-                if(sharedEntity.getExpireDate().getTime() < new Date().getTime()){
-                    shareService.deleteSharedEntityIfExpired(sharedEntity);
-                    pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
-                    return;
-                }
+            if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+                shareService.deleteSharedEntityIfExpired(sharedEntity);
+                pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                return;
             }
 
             // check shared entity password and provided password
 
             if(sharedEntity.getPassword() != null){
-
                 String providedPassword = (String) pRequest.getParameter("password");
-
-                if(providedPassword != null){
-
-                    if(md5sum(providedPassword).equals(sharedEntity.getPassword())){
-                        handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
-                    }else{
-                        pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
-                    }
-
+                if(providedPassword != null && md5sum(providedPassword).equals(sharedEntity.getPassword())){
+                    handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
                 }else{
                     pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
                 }
-
             }else{
-                // shouldn't arrive
                 handleOnCheckSuccess(pRequest, pResponse, sharedEntity);
             }
 
@@ -148,11 +135,11 @@ public class PrivateShareServlet extends HttpServlet {
 
         } catch (Exception pEx) {
             pEx.printStackTrace();
-            throw new ServletException("error while processing th request.", pEx);
+            throw new ServletException("error while processing the request.", pEx);
         }
     }
 
-    private void handleOnCheckSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, SharedEntity sharedEntity) throws ServletException, IOException {
+    private void handleOnCheckSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, SharedEntity sharedEntity) throws ServletException, IOException, NotAllowedException {
 
         pRequest.setAttribute("sharedEntity",sharedEntity);
 
@@ -161,19 +148,34 @@ public class PrivateShareServlet extends HttpServlet {
             DocumentMaster docM = ((SharedDocument) sharedEntity).getDocumentMaster();
             DocumentIteration docI =  docM.getLastIteration();
 
-            pRequest.setAttribute("docm", docM);
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
+            if(docI == null){
+                throw new NotAllowedException(Locale.getDefault(), "NotAllowedException27");
+            }
 
+            pRequest.setAttribute("documentMaster", docM);
+            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
             pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         }else if(sharedEntity instanceof SharedPart){
 
             PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
-            pRequest.setAttribute("partRevision", partRevision);
-
             PartIteration partIteration =  partRevision.getLastIteration();
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
 
+            if(partIteration == null){
+                throw new NotAllowedException(Locale.getDefault(), "NotAllowedException41");
+            }
+
+            String nativeCadFileURI ="";
+
+            if(partIteration.getNativeCADFile() != null){
+                BinaryResource binaryResource = partIteration.getNativeCADFile();
+                String uuid = sharedEntity.getUuid();
+                nativeCadFileURI = "/shared-files/" + uuid +  "/" + binaryResource.getOwnerIteration() + "/nativecad/" + binaryResource.getName();
+            }
+
+            pRequest.setAttribute("partRevision", partRevision);
+            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
+            pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
             pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
         }
 

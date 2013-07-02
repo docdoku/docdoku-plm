@@ -43,11 +43,11 @@ public class MultimediaViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public String renderHtmlForViewer(BinaryResource multimediaResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource multimediaResource, String uuid) throws Exception {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/multimedia_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(multimediaResource));
+        scopes.put("uriResource", ViewerUtils.getURI(multimediaResource,uuid));
         scopes.put("externalUriResource", dataManager.getExternalStorageURI(multimediaResource));
         scopes.put("fileName", multimediaResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());
