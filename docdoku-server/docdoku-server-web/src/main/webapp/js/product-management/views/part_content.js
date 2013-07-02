@@ -135,8 +135,8 @@ define([
 
         updateCheckoutButtons: function(values) {
             this.checkoutButton.prop('disabled', !values.canCheckout);
-            this.undoCheckoutButton.prop('disabled', !values.canUndoAndCheckin);
-            this.checkinButton.prop('disabled', !values.canUndoAndCheckin);
+            this.undoCheckoutButton.prop('disabled', !values.canUndo);
+            this.checkinButton.prop('disabled', !values.canCheckin);
         },
 
         checkin:function(){
