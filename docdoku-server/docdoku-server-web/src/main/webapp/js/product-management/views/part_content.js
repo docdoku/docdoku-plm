@@ -172,7 +172,9 @@ define([
             this.partListView.getSelectedPart().checkout();
         },
         undocheckout:function(){
-            this.partListView.getSelectedPart().undocheckout();
+            if(confirm(i18n["UNDO_CHECKOUT_?"])){
+                this.partListView.getSelectedPart().undocheckout();
+            }
         },
 
         updateACL:function(){

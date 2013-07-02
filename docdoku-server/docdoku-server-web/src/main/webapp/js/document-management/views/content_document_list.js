@@ -124,10 +124,12 @@ define([
         },
 
         actionUndocheckout: function() {
-            this.listView.eachChecked(function(view) {
-                view.model.undocheckout();
-            });
-            return false;
+            if(confirm(i18n["UNDO_CHECKOUT_?"])){
+                this.listView.eachChecked(function(view) {
+                    view.model.undocheckout();
+                });
+                return false;
+            }
         },
 
         actionCheckin: function() {

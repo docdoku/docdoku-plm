@@ -26,7 +26,7 @@ define({
         UNDO_CHECKOUT:"Cancel checkout",
         CHECKIN:"Checkin",
         DELETE_SELECTION:"Delete selection",
-        "DELETE_SELECTION_?":"Delete selection ?",
+        "DELETE_SELECTION_?":"Delete selection?",
         OBJECTS:"Objects",
         PART_TEMPLATES:"Templates",
         REFERENCE:"Reference",
@@ -56,7 +56,8 @@ define({
         TITLE:"Title",
         DESCRIPTION:"Description",
         CANCEL:"Cancel",
-        NAME:"Name"
+        NAME:"Name",
+        "UNDO_CHECKOUT_?":"Undo checkout?"
     },
     "fr": true
 });
