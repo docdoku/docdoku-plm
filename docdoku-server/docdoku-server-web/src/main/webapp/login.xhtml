@@ -69,7 +69,10 @@
                     redirectInput.value=redirectInput.value + window.location.hash;
                 }
             </script>
-            <script src="/js/lib/visualization/Three.js"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three-r58.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js?v=${BUILD_NUMBER}"></script>
             <script src="/js/lib/visualization/Detector.js"></script>
             <script src="/js/lib/visualization/THREEx.KeyboardState.js"></script>
             <script src="/js/admin/login/demoScene.js"></script>

@@ -243,6 +243,7 @@ define([
             }
 
             this.controls = new THREE.TrackballControlsCustom(this.camera, this.$container[0]);
+            this.controls.initDefaultControl();
 
             this.controls.rotateSpeed = 3.0;
             this.controls.zoomSpeed = 10;
