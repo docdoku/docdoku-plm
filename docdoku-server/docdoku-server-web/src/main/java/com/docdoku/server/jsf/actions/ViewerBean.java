@@ -2,6 +2,7 @@ package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDocumentViewerManagerLocal;
+import com.docdoku.core.sharing.SharedEntity;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -9,10 +10,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
-import javax.faces.component.html.HtmlOutputText;
 import javax.faces.component.html.HtmlPanelGroup;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,17 +24,28 @@ public class ViewerBean {
     @EJB
     private IDocumentViewerManagerLocal documentViewerService;
 
-    @ManagedProperty(value = "#{docm.lastIteration.attachedFiles}")
+    @ManagedProperty(value = "#{documentMaster.lastIteration.attachedFiles}")
     private Set<BinaryResource> attachedFiles;
 
     public void process() {
 
-        UIComponent filesContainer = FacesContext.getCurrentInstance().getViewRoot().findComponent("files");
+        FacesContext currentInstance = FacesContext.getCurrentInstance();
+
+        HttpServletRequest request = (HttpServletRequest) currentInstance.getExternalContext().getRequest();
+
+        SharedEntity sharedEntity = null;
+        String uuid = null;
+        if(request.getAttribute("sharedEntity") != null){
+            sharedEntity = (SharedEntity) request.getAttribute("sharedEntity");
+            uuid = sharedEntity.getUuid();
+        }
+
+        UIComponent filesContainer = currentInstance.getViewRoot().findComponent("files");
 
         List<UIComponent> components = new ArrayList<UIComponent>();
 
         for (BinaryResource attachedFile : this.attachedFiles) {
-            String template = documentViewerService.getHtmlForViewer(attachedFile);
+            String template = documentViewerService.getHtmlForViewer(attachedFile,uuid);
 
             if (template != null && !template.isEmpty()) {
                 HtmlPanelGroup fileDiv = new HtmlPanelGroup();

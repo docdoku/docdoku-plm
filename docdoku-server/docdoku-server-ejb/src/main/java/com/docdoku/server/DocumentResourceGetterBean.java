@@ -20,11 +20,11 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -38,15 +38,12 @@ import java.io.InputStream;
 @Stateless(name="DocumentResourceGetterBean")
 public class DocumentResourceGetterBean implements IDocumentResourceGetterManagerLocal {
 
-    @EJB
-    private IDocumentManagerLocal documentService;
-
     @Inject
     @Any
     private Instance<DocumentResourceGetter> documentResourceGetters;
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, User user) throws Exception {
         DocumentResourceGetter selectedDocumentResourceGetter = null;
         for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
             if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
@@ -55,7 +52,7 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
             }
         }
         if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource);
+            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,docI,user);
         }
 
         return null;

@@ -20,8 +20,9 @@
 
 package com.docdoku.core.common;
 
+import javax.persistence.FetchType;
+import javax.persistence.Table;
 import java.io.Serializable;
-import javax.persistence.*;
 
 /**
  * This class represents a user in the context of a specific workspace.
@@ -58,6 +59,10 @@ public class User implements Serializable, Cloneable {
         login = pLogin;
         name = pName;
         email = pEmail;
+        language = pLanguage;
+    }
+
+    public User(String pLanguage){
         language = pLanguage;
     }
 

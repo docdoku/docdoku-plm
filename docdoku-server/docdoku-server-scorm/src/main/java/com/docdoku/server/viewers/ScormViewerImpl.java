@@ -51,14 +51,14 @@ public class ScormViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public String renderHtmlForViewer(BinaryResource scormResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource scormResource, String uuid) throws Exception {
         String manifestVirtualPath = ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST);
         ScormOrganization scormOrganization = new ScormManifestParser(dataManager.getBinarySubResourceInputStream(scormResource, manifestVirtualPath)).parse();
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/scorm_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("organization", scormOrganization);
-        scopes.put("uriResource", ViewerUtils.getURI(scormResource));
+        scopes.put("uriResource", ViewerUtils.getURI(scormResource,uuid));
         scopes.put("externalUriResource", dataManager.getExternalStorageURI(scormResource));
         scopes.put("fileName", scormResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());

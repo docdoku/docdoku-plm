@@ -146,5 +146,6 @@ define({
     "FILTER":                       "Filtrer",
     RELAUCNH_ACTIVITY_SELECTOR:     "Retour à l'activité en cas de rejet",
     WORKFLOW_HISTORY:               "Historique",
-    CURRENT_WORKFLOW:               "Workflow en cours"
+    CURRENT_WORKFLOW:               "Workflow en cours",
+    "UNDO_CHECKOUT_?":              "Annuler la réservation ?"
 });

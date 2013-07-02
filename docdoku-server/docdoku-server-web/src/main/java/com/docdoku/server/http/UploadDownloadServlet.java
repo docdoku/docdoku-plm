@@ -20,13 +20,14 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
 import com.google.common.io.ByteStreams;
-import org.apache.commons.lang.StringUtils;
 
 import javax.activation.FileTypeMap;
 import javax.annotation.Resource;
@@ -40,7 +41,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,73 +79,23 @@ public class UploadDownloadServlet extends HttpServlet {
     private UserTransaction utx;
 
     @Override
-    protected void doGet(HttpServletRequest pRequest,
-                         HttpServletResponse pResponse)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
 
-            String[] pathInfos = UploadDownloadServlet.removeEmptyEntries(pRequest.getRequestURI().split("/"));
-            int offset = pRequest.getContextPath().isEmpty() ? 1 : 2;
+            // Get stored vars in request from FilesFilter
+            BinaryResource binaryResource = (BinaryResource) pRequest.getAttribute("binaryResource");
+            boolean isSubResource = (boolean) pRequest.getAttribute("isSubResource");
+            boolean isDocumentAndOutputSpecified = (boolean) pRequest.getAttribute("isDocumentAndOutputSpecified");
+            boolean needsCacheHeaders = (boolean) pRequest.getAttribute("needsCacheHeaders");
+            String fullName = (String) pRequest.getAttribute("fullName");
+            String outputFormat = (String) pRequest.getAttribute("outputFormat");
+            String subResourceVirtualPath = (String) pRequest.getAttribute("subResourceVirtualPath");
+            User user = (User) pRequest.getAttribute("user");
+            DocumentIteration docI = (DocumentIteration) pRequest.getAttribute("docI");
 
-            String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
-            String elementType = pathInfos[offset + 1];
-            String fullName = null;
-            BinaryResource binaryResource = null;
-            boolean isSubResource = false;
-            boolean isDocumentAndOutputSpecified = false;
-            String outputFormat = null;
-            String subResourceVirtualPath = "";
-
-            if (elementType.equals("documents")) {
-
-                outputFormat = pRequest.getParameter("output");
-
-                if (outputFormat != null && !outputFormat.isEmpty()) {
-                    isDocumentAndOutputSpecified = true;
-                }
-
-                //documents are versioned objects so we can rely on client cache without any risk 
-                setCacheHeaders(86400, pResponse);
-                String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String docMVersion = pathInfos[offset + 3];
-                int iteration = Integer.parseInt(pathInfos[offset + 4]);
-                String fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
-                binaryResource = documentService.getBinaryResource(fullName);
-
-                if (pathInfos.length > offset + 6) {
-                    String[] pathInfosExtra = Arrays.copyOfRange(pathInfos, offset + 6, pathInfos.length);
-                    isSubResource = true;
-                    subResourceVirtualPath = documentResourceGetterService.getSubResourceVirtualPath(binaryResource, StringUtils.join(pathInfosExtra, '/'));
-                }
-
-            } else if (elementType.equals("document-templates")) {
-                String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
-                fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                binaryResource = documentService.getBinaryResource(fullName);
-            } else if (elementType.equals("part-templates")) {
-                String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
-                fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                binaryResource = documentService.getBinaryResource(fullName);
-            } else if (elementType.equals("parts")) {
-                //parts are versioned objects so we can rely on client cache without any risk 
-                setCacheHeaders(86400, pResponse);
-                String partNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String version = pathInfos[offset + 3];
-                int iteration = Integer.parseInt(pathInfos[offset + 4]);
-                String fileName;
-                if (pathInfos.length==offset + 7) {
-                    fileName = URLDecoder.decode(pathInfos[offset + 6], "UTF-8");
-                    String subType = URLDecoder.decode(pathInfos[offset + 5], "UTF-8"); //subType may be nativecad
-                    fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
-                } else {
-                    fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                    fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
-                }
-                binaryResource = productService.getBinaryResource(fullName);
+            if(needsCacheHeaders){
+                setCacheHeaders(86400,pResponse);
             }
 
             //set content type
@@ -175,9 +128,8 @@ public class UploadDownloadServlet extends HttpServlet {
                         binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
 
                     } else {
-
                         if (isDocumentAndOutputSpecified) {
-                            binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
+                            binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource, docI, user);
                         } else {
                             pResponse.setContentLength((int) binaryResource.getContentLength());
                             binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
@@ -187,9 +139,13 @@ public class UploadDownloadServlet extends HttpServlet {
                     httpOut = pResponse.getOutputStream();
                     ByteStreams.copy(binaryContentInputStream, httpOut);
                 } finally {
-                    binaryContentInputStream.close();
-                    httpOut.flush();
-                    httpOut.close();
+                    if(binaryContentInputStream != null){
+                        binaryContentInputStream.close();
+                    }
+                    if(httpOut != null){
+                        httpOut.flush();
+                        httpOut.close();
+                    }
                 }
 
             } else {

@@ -23,15 +23,15 @@ define(
         flyingView:function(){
             sceneManager.$blocker.show();
             sceneManager.updateNewCamera();
-            sceneManager.setPointerLockControls();
             sceneManager.updateLayersManager();
+            sceneManager.setPointerLockControls();
         },
 
         trackingView:function(){
             sceneManager.$blocker.hide();
             sceneManager.updateNewCamera();
-            sceneManager.setTrackBallControls();
             sceneManager.updateLayersManager();
+            sceneManager.setTrackBallControls();
         },
 
         render:function(){

@@ -135,8 +135,8 @@ define([
 
         updateCheckoutButtons: function(values) {
             this.checkoutButton.prop('disabled', !values.canCheckout);
-            this.undoCheckoutButton.prop('disabled', !values.canUndoAndCheckin);
-            this.checkinButton.prop('disabled', !values.canUndoAndCheckin);
+            this.undoCheckoutButton.prop('disabled', !values.canUndo);
+            this.checkinButton.prop('disabled', !values.canCheckin);
         },
 
         checkin:function(){
@@ -172,7 +172,9 @@ define([
             this.partListView.getSelectedPart().checkout();
         },
         undocheckout:function(){
-            this.partListView.getSelectedPart().undocheckout();
+            if(confirm(i18n["UNDO_CHECKOUT_?"])){
+                this.partListView.getSelectedPart().undocheckout();
+            }
         },
 
         updateACL:function(){

@@ -35,7 +35,7 @@
 
 <div id="page">
 
-    <h3>${docm}</h3>
+    <h3>${documentMaster}</h3>
 
     <div id="content">
 
@@ -56,47 +56,47 @@
                         <tbody>
                         <tr>
                             <th scope="row">#{i18nDocument['general.author']}:</th>
-                            <td>${docm.author.name}</td>
+                            <td>${documentMaster.author.name}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.date']}:</th>
                             <td>
-                                <h:outputText value="#{docm.creationDate}">
+                                <h:outputText value="#{documentMaster.creationDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.type']}:</th>
-                            <td>${docm.type}</td>
+                            <td>${documentMaster.type}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.titledoc']}:</th>
-                            <td>${docm.title}</td>
+                            <td>${documentMaster.title}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.checkout_user']}:</th>
-                            <td>${docm.checkOutUser.name}</td>
+                            <td>${documentMaster.checkOutUser.name}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.checkout_date']}:</th>
                             <td>
-                                <h:outputText value="#{docm.checkOutDate}">
+                                <h:outputText value="#{documentMaster.checkOutDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.lifeCycleState']}:</th>
-                            <td>${docm.lifeCycleState}</td>
+                            <td>${documentMaster.lifeCycleState}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.tags']}:</th>
-                            <td>${docm.tags}</td>
+                            <td>${documentMaster.tags}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.description']}:</th>
-                            <td>${docm.description}</td>
+                            <td>${documentMaster.description}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -108,23 +108,23 @@
                         <tbody>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.number']}:</th>
-                            <td>${docm.lastIteration.iteration}</td>
+                            <td>${documentMaster.lastIteration.iteration}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.author']}:</th>
-                            <td>${docm.lastIteration.author.name}</td>
+                            <td>${documentMaster.lastIteration.author.name}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.date']}:</th>
                             <td>
-                                <h:outputText value="#{docm.lastIteration.creationDate}">
+                                <h:outputText value="#{documentMaster.lastIteration.creationDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.iterationNote']}:</th>
-                            <td>${docm.lastIteration.revisionNote}</td>
+                            <td>${documentMaster.lastIteration.revisionNote}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -184,9 +184,9 @@
 
                 <div id="tab-document-links" class="tab-pane">
 
-                    <c:if test="${docm.lastIteration.linkedDocuments.size()!=0}">
+                    <c:if test="${documentMaster.lastIteration.linkedDocuments.size()!=0}">
                         <ul>
-                            <c:forEach var="item" items="${docm.lastIteration.linkedDocuments}">
+                            <c:forEach var="item" items="${documentMaster.lastIteration.linkedDocuments}">
                                 <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li>
                             </c:forEach>
                         </ul>

@@ -20,9 +20,13 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -32,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -44,43 +49,48 @@ public class PartPermalinkServlet extends HttpServlet {
     private IProductManagerLocal productService;
     
     @Override
-    protected void doGet(HttpServletRequest pRequest,
-                         HttpServletResponse pResponse)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-            String login = pRequest.getRemoteUser();
-            String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-            int offset;
-            if(pRequest.getContextPath().equals(""))
-                offset=2;
-            else
-                offset=3;
-            
-            String workspaceId = URLDecoder.decode(pathInfos[offset],"UTF-8");
-            String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
-            String partVersion = pathInfos[offset+2];
+            if(pRequest.getAttribute("publicPartRevision") != null){
+                PartRevision partRevision = (PartRevision) pRequest.getAttribute("publicPartRevision");
+                handleSuccess(pRequest,pResponse,partRevision);
+            }else{
+                HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+                String requestURI = httpRequest.getRequestURI();
+                String[] pathInfos = Pattern.compile("/").split(requestURI);
+                int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
 
+                String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
+                String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
+                String partVersion = pathInfos[offset+2];
 
-
-
-            PartRevision partRevision;
-
-            partRevision = productService.getPublicPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
-
-            if(partRevision == null){
-                partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,partNumber,partVersion));
+                PartRevisionKey partRevisionKey  = new PartRevisionKey(workspaceId,partNumber,partVersion);
+                PartRevision partRevision = productService.getPartRevision(partRevisionKey);
+                handleSuccess(pRequest,pResponse,partRevision);
             }
-
-            pRequest.setAttribute("partRevision", partRevision);
-
-            PartIteration partIteration =  partRevision.getLastIteration();
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
-
-            pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
-
         } catch (Exception pEx) {
             throw new ServletException("Error while fetching your part.", pEx);
         }
+    }
+
+    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, PartRevision partRevision) throws ServletException, IOException, NotAllowedException {
+
+        PartIteration partIteration =  partRevision.getLastIteration();
+
+        if(partIteration == null){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException41");
+        }
+
+        String nativeCadFileURI ="";
+        if(partRevision.getLastIteration().getNativeCADFile() != null){
+            BinaryResource binaryResource = partRevision.getLastIteration().getNativeCADFile();
+            nativeCadFileURI =  "/files/" + binaryResource.getFullName();
+        }
+
+        pRequest.setAttribute("partRevision", partRevision);
+        pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
+        pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
+        pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
     }
 }

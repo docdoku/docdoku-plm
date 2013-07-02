@@ -55,5 +55,6 @@ define({
     TITLE:"Titre",
     DESCRIPTION:"Description",
     CANCEL:"Annuler",
-    NAME:"Nom"
+    NAME:"Nom",
+    "UNDO_CHECKOUT_?":"Annuler la réservation ?"
 });

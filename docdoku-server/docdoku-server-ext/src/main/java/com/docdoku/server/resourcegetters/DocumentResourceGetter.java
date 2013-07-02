@@ -21,12 +21,14 @@
 package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
 
 import java.io.InputStream;
 
 public interface DocumentResourceGetter {
     boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
-    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception;
+    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, User user) throws Exception;
     boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
     String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

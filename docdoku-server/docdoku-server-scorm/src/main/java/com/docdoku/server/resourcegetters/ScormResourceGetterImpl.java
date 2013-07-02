@@ -20,6 +20,8 @@
 package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.StorageException;
 import com.docdoku.server.viewers.utils.ScormUtil;
@@ -39,7 +41,7 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
     }
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, User user) throws Exception {
         return null;
     }
 

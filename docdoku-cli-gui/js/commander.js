@@ -1,10 +1,9 @@
 define(["storage"], function(Storage) {
     var cmd="";
     if(os.type() == "Windows_NT") {
-        console.log("cd " + Storage.getDirectory() + " && " + window.process.cwd() + '\dplm\dplm.bat');
-        var cmd="cd " + Storage.getDirectory() + " && " + window.process.cwd() + '\dplm\dplm.bat';
+        cmd='cd ' + Storage.getDirectory() + ' && ' + window.process.cwd() + '\\dplm\\dplm.bat';
     } else if (os.type() == "Linux" || "Darwin") {
-        cmd += 'sh '+ window.process.cwd() + '/dplm/dplm'
+        cmd = 'cd ' + Storage.getDirectory() + '; ' + 'sh '+ window.process.cwd() + '/dplm/dplm';
     } else {
     }
 
@@ -99,35 +98,6 @@ define(["storage"], function(Storage) {
                 });
         },
 
-        getParams:function() {
-
-            var params = " -h " + Storage.getHost()
-                + " -P " +  Storage.getPort()
-                + " -w " + Storage.getWorkspace()
-                + " -u " + Storage.getUser()
-                + " -p " + Storage.getPwd()
-                + " ";
-
-            return params;
-        },
-
-        getCreatePartParams:function(part, filePath) {
-
-            var params = "-o " + part.getNumber();
-
-            if(part.getName()) {
-                params += " -N " + part.getName();
-            }
-
-            if (part.getDescription()) {
-                params += " -d " + part.getDescription();
-            }
-
-            params += " " + filePath;
-
-            return params;
-        },
-
         getPartMasters:function(callback) {
             var child = exec(cmd + " pl" + this.getParams(),
                 function (error, stdout, stderr) {
@@ -140,10 +110,37 @@ define(["storage"], function(Storage) {
                 });
         },
 
+        getParams:function() {
+            var params = " -h " + Storage.getHost()
+                + " -P " +  Storage.getPort()
+                + " -w " + Storage.getWorkspace()
+                + " -u " + Storage.getUser()
+                + " -p " + Storage.getPwd()
+                + " ";
+
+            return params;
+        },
+
         getParamsForPart: function(partNumber, version) {
             var params = "-o " + partNumber;
 
             params += " -r " + version;
+
+            return params;
+        },
+
+        getCreatePartParams:function(part, filePath) {
+            var params = "-o " + part.getNumber();
+
+            if(part.getName()) {
+                params += " -N " + part.getName();
+            }
+
+            if (part.getDescription()) {
+                params += " -d " + part.getDescription();
+            }
+
+            params += " " + filePath;
 
             return params;
         }

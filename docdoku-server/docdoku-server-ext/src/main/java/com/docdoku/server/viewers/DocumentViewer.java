@@ -24,5 +24,5 @@ import com.docdoku.core.common.BinaryResource;
 
 public interface DocumentViewer {
     boolean canRenderViewerTemplate(BinaryResource binaryResource);
-    String renderHtmlForViewer(BinaryResource binaryResource) throws Exception;
+    String renderHtmlForViewer(BinaryResource binaryResource, String uuid) throws Exception;
 }

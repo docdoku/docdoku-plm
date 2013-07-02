@@ -85,13 +85,14 @@ define([
             if (document.isCheckout()) {
                 this.newVersionButton.prop('disabled', true);
                 if (document.isCheckoutByConnectedUser()) {
-                    this.updateActionsButton(false, true);
+                    var canUndo = document.getLastIteration().get("iteration") > 1;
+                    this.updateActionsButton(false, canUndo, true);
                 } else {
-                    this.updateActionsButton(false, false);
+                    this.updateActionsButton(false, false, false);
                 }
             } else {
                 this.newVersionButton.prop('disabled', false);
-                this.updateActionsButton(true, false);
+                this.updateActionsButton(true, false, false);
             }
 
 
@@ -109,10 +110,10 @@ define([
             this.aclButton.hide();
         },
 
-        updateActionsButton: function(canCheckout, canUndoAndCheckin) {
+        updateActionsButton: function(canCheckout, canUndo, canCheckin) {
             this.checkoutButton.prop('disabled', !canCheckout);
-            this.undoCheckoutButton.prop('disabled', !canUndoAndCheckin);
-            this.checkinButton.prop('disabled', !canUndoAndCheckin);
+            this.undoCheckoutButton.prop('disabled', !canUndo);
+            this.checkinButton.prop('disabled', !canCheckin);
         },
 
         actionCheckout: function() {
@@ -123,10 +124,12 @@ define([
         },
 
         actionUndocheckout: function() {
-            this.listView.eachChecked(function(view) {
-                view.model.undocheckout();
-            });
-            return false;
+            if(confirm(i18n["UNDO_CHECKOUT_?"])){
+                this.listView.eachChecked(function(view) {
+                    view.model.undocheckout();
+                });
+                return false;
+            }
         },
 
         actionCheckin: function() {

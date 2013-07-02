@@ -43,11 +43,11 @@ public class ImageViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public String renderHtmlForViewer(BinaryResource imageResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource imageResource, String uuid) throws Exception {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/image_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(imageResource));
+        scopes.put("uriResource", ViewerUtils.getURI(imageResource,uuid));
         scopes.put("externalUriResource", dataManager.getExternalStorageURI(imageResource));
         scopes.put("fileName", imageResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());

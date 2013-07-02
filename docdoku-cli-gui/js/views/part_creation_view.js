@@ -42,6 +42,7 @@ define(
             });
 
             var self = this;
+            console.log(this.model.getFullPath());
             Commander.createPart(part, this.model.getFullPath(), function() {
                 self.closeModal();
                 self.trigger("part:created");
