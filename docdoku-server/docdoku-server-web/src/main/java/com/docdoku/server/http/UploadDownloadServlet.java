@@ -266,18 +266,6 @@ public class UploadDownloadServlet extends HttpServlet {
         }
     }
 
-    private static String[] removeEmptyEntries(String[] entries) {
-        List<String> elements = new LinkedList<String>(Arrays.asList(entries));
-
-        for (Iterator<String> it = elements.iterator(); it.hasNext(); ) {
-            if (it.next().isEmpty()) {
-                it.remove();
-            }
-        }
-        return elements.toArray(new String[elements.size()]);
-    }
-
-
     private void setLastModifiedHeaders(long lastModified, HttpServletResponse pResponse) {
         DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -286,7 +274,6 @@ public class UploadDownloadServlet extends HttpServlet {
         pResponse.setHeader("Last-Modified", httpDateFormat.format(cal.getTime()));
         pResponse.setHeader("Pragma", "");
     }
-
 
     private void setCacheHeaders(int cacheSeconds, HttpServletResponse pResponse) {
         pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);

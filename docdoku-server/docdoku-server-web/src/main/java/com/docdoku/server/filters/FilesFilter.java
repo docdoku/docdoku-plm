@@ -45,9 +45,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class FilesFilter implements Filter {
 
@@ -85,10 +83,11 @@ public class FilesFilter implements Filter {
         String qs = httpRequest.getQueryString();
         String originURL = httpRequest.getRequestURI() + (qs == null ? "" : "?" + qs);
 
-        int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
+        int offset = httpRequest.getContextPath().equals("") ? 1 : 2;
 
         String requestURI = httpRequest.getRequestURI();
-        String[] pathInfo = Pattern.compile("/").split(requestURI);
+        //remove empty entries because of Three.js that generates url with double /
+        String[] pathInfo = FilesFilter.removeEmptyEntries(requestURI.split("/"));
 
         String fullName = "";
         String workspaceId = "";
@@ -282,6 +281,17 @@ public class FilesFilter implements Filter {
 
         }
 
+    }
+
+    private static String[] removeEmptyEntries(String[] entries) {
+        List<String> elements = new LinkedList<String>(Arrays.asList(entries));
+
+        for (Iterator<String> it = elements.iterator(); it.hasNext(); ) {
+            if (it.next().isEmpty()) {
+                it.remove();
+            }
+        }
+        return elements.toArray(new String[elements.size()]);
     }
 
     @Override
