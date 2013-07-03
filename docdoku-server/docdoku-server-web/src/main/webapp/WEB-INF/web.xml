@@ -147,6 +147,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
+        <url-pattern>/upload/*</url-pattern>
         <url-pattern>/files/*</url-pattern>
         <url-pattern>/shared-files/*</url-pattern>
     </servlet-mapping>
@@ -173,7 +174,7 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <!--<url-pattern>/files/*</url-pattern>-->
+            <url-pattern>/upload/*</url-pattern>
             <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>
         </web-resource-collection>
