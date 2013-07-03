@@ -249,7 +249,11 @@ public class UploadDownloadServlet extends HttpServlet {
             utx.commit();
         } catch (Exception pEx) {
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
-            throw new ServletException("Error while uploading the file.", pEx);
+            if(pEx instanceof NotAllowedException || pEx instanceof AccessRightException){
+                pResponse.sendError(HttpServletResponse.SC_FORBIDDEN,pEx.getMessage());
+            }else{
+                throw new ServletException("Error while uploading the file.", pEx);
+            }
         } finally {
             try {
                 if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
