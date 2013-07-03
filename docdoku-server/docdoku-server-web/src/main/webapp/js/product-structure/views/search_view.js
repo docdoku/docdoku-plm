@@ -64,7 +64,6 @@ define([
         },
 
         onInstanceSelected: function(partNumber) {
-            console.log(partNumber);
             this.search(partNumber);
         },
 

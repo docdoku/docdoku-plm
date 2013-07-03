@@ -249,7 +249,11 @@ public class UploadDownloadServlet extends HttpServlet {
             utx.commit();
         } catch (Exception pEx) {
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
-            throw new ServletException("Error while uploading the file.", pEx);
+            if(pEx instanceof NotAllowedException || pEx instanceof AccessRightException){
+                pResponse.sendError(HttpServletResponse.SC_FORBIDDEN,pEx.getMessage());
+            }else{
+                throw new ServletException("Error while uploading the file.", pEx);
+            }
         } finally {
             try {
                 if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
@@ -262,18 +266,6 @@ public class UploadDownloadServlet extends HttpServlet {
         }
     }
 
-    private static String[] removeEmptyEntries(String[] entries) {
-        List<String> elements = new LinkedList<String>(Arrays.asList(entries));
-
-        for (Iterator<String> it = elements.iterator(); it.hasNext(); ) {
-            if (it.next().isEmpty()) {
-                it.remove();
-            }
-        }
-        return elements.toArray(new String[elements.size()]);
-    }
-
-
     private void setLastModifiedHeaders(long lastModified, HttpServletResponse pResponse) {
         DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -282,7 +274,6 @@ public class UploadDownloadServlet extends HttpServlet {
         pResponse.setHeader("Last-Modified", httpDateFormat.format(cal.getTime()));
         pResponse.setHeader("Pragma", "");
     }
-
 
     private void setCacheHeaders(int cacheSeconds, HttpServletResponse pResponse) {
         pResponse.setHeader("Cache-Control", "max-age=" + cacheSeconds);
