@@ -174,7 +174,6 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/upload/*</url-pattern>
             <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>
         </web-resource-collection>

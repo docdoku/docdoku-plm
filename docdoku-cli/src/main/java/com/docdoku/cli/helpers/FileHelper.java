@@ -187,17 +187,6 @@ public class FileHelper {
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
     }
 
-    public static String getPartUploadURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
-        return serverURL
-                + "/upload/"
-                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
-                + "parts/"
-                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
-                + pPart.getPartRevision().getVersion() + "/"
-                + pPart.getIteration() + "/nativecad/"
-                + URLEncoder.encode(pRemoteFileName, "UTF-8");
-    }
-
     public static boolean confirmOverwrite(String fileName){
         Console c = System.console();
         String response = c.readLine("The file '" + fileName + "' has been modified locally, do you want to overwrite it [y/N]?");
@@ -208,7 +197,7 @@ public class FileHelper {
         String workspace = partIPK.getWorkspaceId();
         String fileName = cadFile.getName();
         System.out.println("Saving part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
-        String digest = uploadFile(cadFile, FileHelper.getPartUploadURL(serverURL, partIPK, fileName));
+        String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
 
         File path = cadFile.getParentFile();
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
