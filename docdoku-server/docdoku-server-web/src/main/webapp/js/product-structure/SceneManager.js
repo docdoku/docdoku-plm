@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global sceneManager,Instance*/
 define([
     "views/marker_create_modal_view",
     "views/progress_bar_view",
@@ -316,13 +316,14 @@ define([
                 0.5
             );
 
+            var cameraPosition;
             if (this.stateControl == this.STATECONTROL.PLC) {
                 this.projector.unprojectVector(vector, this.controls.getObject().children[0].children[0]);
-                var cameraPosition = this.controls.getObject().position;
+                cameraPosition = this.controls.getObject().position;
 
             } else {
                 this.projector.unprojectVector(vector, this.camera);
-                var cameraPosition = this.camera.position;
+                cameraPosition = this.camera.position;
             }
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
@@ -332,8 +333,7 @@ define([
             if (intersects.length > 0) {
 
                 var intersectInstances = _.select(this.instancesMap, function(instance) {
-                    if (instance.levelGeometry == null) return false;
-                    return instance.levelGeometry.mesh == intersects[0].object;
+                    return instance.levelGeometry == null ? false : instance.levelGeometry.mesh == intersects[0].object;
                 });
 
                 if (intersectInstances.length) {
@@ -631,7 +631,7 @@ define([
                 if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
                     _(instance.levelGeometry.mesh.material.materials).each(function(material) {
                         material.wireframe = self.wireframe;
-                    })
+                    });
                 }
             });
 

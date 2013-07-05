@@ -50,7 +50,7 @@ define([
             var that = this;
 			if (confirm(i18n["DELETE_SELECTION_?"])) {
 				this.listView.eachChecked(function (view) {
-                    view.model.destroy({success:function(){that.listView.redraw()}});
+                    view.model.destroy({success:function(){that.listView.redraw();}});
 				});
 			}
 			return false;

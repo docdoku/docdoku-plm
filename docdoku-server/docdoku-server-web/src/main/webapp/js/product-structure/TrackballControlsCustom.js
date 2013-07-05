@@ -165,15 +165,17 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     this.zoomCamera = function () {
 
+        var factor;
+
         if ( _state === STATE.TOUCH_ZOOM ) {
 
-            var factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
+            factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
             _touchZoomDistanceStart = _touchZoomDistanceEnd;
             _eye.multiplyScalar( factor );
 
         } else {
 
-            var factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
+            factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
 
             if ( factor !== 1.0 && factor > 0.0 ) {
 
@@ -304,7 +306,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function keydown( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ) {
+            return;
+        }
 
         window.removeEventListener( 'keydown', keydown );
 
@@ -332,7 +336,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function keyup( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         _state = _prevState;
 
@@ -340,41 +346,11 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     }
 
-    function mousedown( event ) {
-
-        if ( _this.enabled === false ) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        if ( _state === STATE.NONE ) {
-
-            _state = event.button;
-
-        }
-
-        if ( _state === STATE.ROTATE && !_this.noRotate ) {
-
-            _rotateStart = _rotateEnd = _this.getMouseProjectionOnBall( event.clientX, event.clientY );
-
-        } else if ( _state === STATE.ZOOM && !_this.noZoom ) {
-
-            _zoomStart = _zoomEnd = _this.getMouseOnScreen( event.clientX, event.clientY );
-
-        } else if ( _state === STATE.PAN && !_this.noPan ) {
-
-            _panStart = _panEnd = _this.getMouseOnScreen( event.clientX, event.clientY );
-
-        }
-
-        document.addEventListener( 'mousemove', mousemove, false );
-        document.addEventListener( 'mouseup', mouseup, false );
-
-    }
-
     function mousemove( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
@@ -409,6 +385,40 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     }
 
+    function mousedown( event ) {
+
+        if ( _this.enabled === false ){
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if ( _state === STATE.NONE ) {
+
+            _state = event.button;
+
+        }
+
+        if ( _state === STATE.ROTATE && !_this.noRotate ) {
+
+            _rotateStart = _rotateEnd = _this.getMouseProjectionOnBall( event.clientX, event.clientY );
+
+        } else if ( _state === STATE.ZOOM && !_this.noZoom ) {
+
+            _zoomStart = _zoomEnd = _this.getMouseOnScreen( event.clientX, event.clientY );
+
+        } else if ( _state === STATE.PAN && !_this.noPan ) {
+
+            _panStart = _panEnd = _this.getMouseOnScreen( event.clientX, event.clientY );
+
+        }
+
+        document.addEventListener( 'mousemove', mousemove, false );
+        document.addEventListener( 'mouseup', mouseup, false );
+
+    }
+
     function mousewheel( event ) {
 
         if ( _this.enabled === false ) return;
@@ -434,7 +444,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function touchstart( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         switch ( event.touches.length ) {
 
@@ -464,7 +476,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function touchmove( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
@@ -494,7 +508,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function touchend( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         switch ( event.touches.length ) {
 
@@ -546,7 +562,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
         window.addEventListener( 'keydown', keydown, false );
         window.addEventListener( 'keyup', keyup, false );
-    }
+    };
 
     this.initHomepageControl = function() {
         this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
@@ -555,7 +571,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
         this.domElement.addEventListener( 'touchstart', touchstart, false );
         this.domElement.addEventListener( 'touchend', touchend, false );
         this.domElement.addEventListener( 'touchmove', touchmove, false );
-    }
+    };
 
 
 

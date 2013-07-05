@@ -21,7 +21,7 @@ define(
 
         template:Mustache.compile(template),
 
-        initialize:function(arguments, options){
+        initialize:function(){
             this.productId = this.options.productId;
         },
 

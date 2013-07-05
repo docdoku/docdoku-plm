@@ -44,7 +44,7 @@ define([
                 task.parentActivityStep = that.activity.step;
                 task.index = index;
 
-                var lifecycleTaskView = new LifecycleTaskView().setTask(task).setEntityType(that.entityType).render()
+                var lifecycleTaskView = new LifecycleTaskView().setTask(task).setEntityType(that.entityType).render();
 
                 $tasks.append(lifecycleTaskView.$el);
                 lifecycleTaskView.on("task:change",function(){

@@ -165,7 +165,7 @@ define([
             var that = this;
             if (confirm(i18n["DELETE_SELECTION_?"])) {
                 this.listView.eachChecked(function(view) {
-                    view.model.destroy({success:function(){that.listView.redraw()}});
+                    view.model.destroy({success:function(){that.listView.redraw();}});
                 });
             }
             return false;
@@ -256,7 +256,7 @@ define([
                                 that.listView.redraw();
                             },
                             error:function(){
-                                alert("Error on update acl")
+                                alert("Error on update acl");
                             }
                         });
 
@@ -272,7 +272,7 @@ define([
 
         highlightAddedView:function(model){
             this.listView.redraw();
-            var addedView = _.find(this.listView.subViews, function(view){ return view.model == model});
+            var addedView = _.find(this.listView.subViews, function(view){ return view.model == model;});
             if(addedView){
                 addedView.$el.highlightEffect();
             }

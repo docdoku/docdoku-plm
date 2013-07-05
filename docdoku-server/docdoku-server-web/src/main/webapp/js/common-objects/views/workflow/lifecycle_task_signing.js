@@ -21,8 +21,8 @@ define([
         },
 
         initialize: function() {
-            this.moves = new Array();
-            this.pressed;
+            this.moves = [];
+            this.pressed = false;
             this.oppened = false;
             this.signature = null;
         },
@@ -58,7 +58,11 @@ define([
         },
 
         toggleSigningCanvas: function() {
-            this.oppened ? this.closeSigningCanvas() : this.openSigningCanvas();
+            if(this.oppened){
+                this.closeSigningCanvas();
+            }else{
+                this.openSigningCanvas();
+            }
             this.oppened = !this.oppened;
         },
 
@@ -121,15 +125,13 @@ define([
         cancelSigning: function(e) {
             e.stopPropagation();
             e.preventDefault();
-
             this.toggleSigningCanvas();
         },
 
         clearBtnClicked: function(e) {
             e.stopPropagation();
             e.preventDefault();
-
-            this.clearSigning()
+            this.clearSigning();
         },
 
         deleteSignature: function(e) {

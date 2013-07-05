@@ -19,7 +19,7 @@ define([
         initialize: function() {
             this.collection = new ResultPathCollection();
             this.oppened = false;
-            this.on("instance:selected", this.onInstanceSelected)
+            this.on("instance:selected", this.onInstanceSelected);
         },
 
         bindDomElements: function() {
@@ -47,7 +47,7 @@ define([
             return this;
         },
 
-        onSearchSubmit: function () {
+        onSearchSubmit: function (e) {
             var searchString = e.target.children[0].value.trim();
             this.search(searchString);
         },
@@ -68,7 +68,11 @@ define([
         },
 
         toggleHelp: function() {
-            this.oppened ? this.$helpLink.popover('hide') : this.$helpLink.popover('show');
+            if(this.oppened){
+                this.$helpLink.popover('hide')
+            }else{
+                this.$helpLink.popover('show')
+            }
             this.oppened = !this.oppened;
         }
     });
