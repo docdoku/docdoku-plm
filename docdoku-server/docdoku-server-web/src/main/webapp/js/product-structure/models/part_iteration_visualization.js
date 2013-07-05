@@ -1,4 +1,4 @@
-/*global isIpad,LevelGeometry*/
+/*global isIpad,LevelGeometry,sceneManager*/
 define(function() {
 
     var PartIterationVisualization = function(partIterationParams) {

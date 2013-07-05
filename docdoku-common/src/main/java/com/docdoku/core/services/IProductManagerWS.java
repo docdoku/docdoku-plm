@@ -565,12 +565,39 @@ public interface IProductManagerWS{
      */
     List<PartUsageLink> getComponents(PartIterationKey partIPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, NotAllowedException;
 
+
     boolean partMasterExists(PartMasterKey partMasterKey)throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
+    /**
+     * Deletes the specified configuration item. No baseline should have been defined on it.
+     *
+     * @param configurationItemKey
+     * The configuration item to delete
+     *
+     * @throws UserNotFoundException
+     * @throws WorkspaceNotFoundException
+     * @throws AccessRightException
+     * @throws NotAllowedException
+     * @throws UserNotActiveException
+     * @throws ConfigurationItemNotFoundException
+     * @throws LayerNotFoundException
+     * @throws EntityConstraintException
+     */
     void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException, EntityConstraintException;
 
     void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException, AccessRightException;
 
+    /**
+     * Remove the cad file from the part iteration.
+     *
+     * @param partIKey
+     * The id of the part iteration from which the file will be deleted
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartIterationNotFoundException
+     */
     void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
 
     PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException;

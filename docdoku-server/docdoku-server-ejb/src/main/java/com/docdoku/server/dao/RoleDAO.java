@@ -20,11 +20,13 @@
 package com.docdoku.server.dao;
 
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.services.RoleNotFoundException;
 import com.docdoku.core.workflow.Role;
 import com.docdoku.core.workflow.RoleKey;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
 
@@ -78,5 +80,10 @@ public class RoleDAO {
 
     public List<Role> findRolesInUseWorkspace(String pWorkspaceId) {
         return em.createNamedQuery("Role.findRolesInUse").setParameter("workspaceId", pWorkspaceId).getResultList();
+    }
+
+    public void removeUserFromRoles(User pUser) {
+        Query query = em.createQuery("UPDATE Role r SET r.defaultUserMapped = NULL WHERE r.defaultUserMapped = :user");
+        query.setParameter("user", pUser).executeUpdate();
     }
 }

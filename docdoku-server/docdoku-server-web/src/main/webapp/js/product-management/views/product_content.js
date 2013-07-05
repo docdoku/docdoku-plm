@@ -68,7 +68,7 @@ define([
         },
 
         addProductInList:function(product){
-            this.productListView.pushProduct(product)
+            this.productListView.pushProduct(product);
         },
 
         changeDeleteButtonDisplay:function(state){

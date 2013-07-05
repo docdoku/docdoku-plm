@@ -59,7 +59,7 @@ define([
         },
 
         addPartTemplateInList:function(partTemplate){
-            this.partTemplateListView.pushPartTemplate(partTemplate)
+            this.partTemplateListView.pushPartTemplate(partTemplate);
         },
 
         changeDeleteButtonDisplay:function(state){

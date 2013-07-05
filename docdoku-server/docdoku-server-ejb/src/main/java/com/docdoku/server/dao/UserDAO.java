@@ -124,21 +124,17 @@ public class UserDAO {
         removeUserMembership(new WorkspaceUserMembershipKey(pKey.getWorkspaceId(), pKey.getWorkspaceId(), pKey.getLogin()));
         new SubscriptionDAO(em).removeAllSubscriptions(user);
         new UserGroupDAO(mLocale, em).removeUserFromAllGroups(user);
+        new RoleDAO(mLocale,em).removeUserFromRoles(user);
+        new ACLDAO(em).removeAclUserEntries(user);
         List<DocumentMaster> docMs = new FolderDAO(mLocale, em).removeFolder(user.getWorkspaceId() + "/~" + user.getLogin());
         boolean author = isDocMAuthor(user) || isDocAuthor(user) || isDocMTemplateAuthor(user) || isWorkflowModelAuthor(user);
-        boolean involved = isInvolvedInWFModel(user) || isInvolvedInWF(user);
+        boolean involved = isInvolvedInWF(user);
         if (author || involved) {
             throw new NotAllowedException(mLocale, "NotAllowedException8");
         } else {
             em.remove(user);
             return docMs.toArray(new DocumentMaster[docMs.size()]);
         }
-    }
-
-    public boolean isInvolvedInWFModel(User pUser) {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE EXISTS (SELECT t FROM TaskModel t WHERE t.worker = u AND t.worker = :user)");
-        List listUsers = query.setParameter("user", pUser).getResultList();
-        return !listUsers.isEmpty();
     }
 
     public boolean isInvolvedInWF(User pUser) {

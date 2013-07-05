@@ -98,7 +98,7 @@ define([
         },
 
         addPartInList:function(part){
-            this.partListView.pushPart(part)
+            this.partListView.pushPart(part);
         },
 
         changeDeleteButtonDisplay:function(state){

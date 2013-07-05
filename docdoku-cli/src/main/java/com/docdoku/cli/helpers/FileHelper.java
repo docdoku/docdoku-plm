@@ -22,7 +22,6 @@ package com.docdoku.cli.helpers;
 
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;

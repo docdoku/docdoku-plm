@@ -60,7 +60,7 @@ define(
                 require(["views/baseline_edit_view"],function(BaselineEditView){
                     var baselineEditView = new BaselineEditView({model:baseline},{productId:that.model.getId()}).render();
                 });
-            })
+            });
         },
 
         onError: function(model, error) {

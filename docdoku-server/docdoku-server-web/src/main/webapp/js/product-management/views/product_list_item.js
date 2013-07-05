@@ -52,7 +52,7 @@ define([
                 var pdv = new ProductDetailsView({model:that.model});
                 $("body").append(pdv.render().el);
                 pdv.openModal();
-            })
+            });
         }
 
     });

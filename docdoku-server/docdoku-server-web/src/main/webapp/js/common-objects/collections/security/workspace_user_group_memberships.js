@@ -7,7 +7,7 @@ define([
         model: WorkspaceUserGroupMembership,
 
         url:function(){
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/memberships/usergroups"
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/memberships/usergroups";
         }
 
     });

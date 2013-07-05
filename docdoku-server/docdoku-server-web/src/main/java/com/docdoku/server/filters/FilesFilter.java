@@ -28,10 +28,7 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IShareManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
@@ -56,6 +53,9 @@ public class FilesFilter implements Filter {
     private IDocumentManagerLocal documentService;
 
     @EJB
+    private IUserManagerLocal userManager;
+
+    @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
     @EJB
@@ -71,17 +71,43 @@ public class FilesFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
 
+        String qs = httpRequest.getQueryString();
+        String originURL = httpRequest.getRequestURI() + (qs == null ? "" : "?" + qs);
+
+        HttpSession sessionHTTP = httpRequest.getSession();
+        Account account = (Account) sessionHTTP.getAttribute("account");
+
+        // Check headers for Authorization
+        if(account == null){
+
+            sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
+            String authorization = httpRequest.getHeader("Authorization");
+
+            if(authorization != null && !authorization.isEmpty()){
+                String[] splitAuthorization = authorization.split(" ");
+                if(splitAuthorization.length == 2){
+                    byte[] decoded = decoder.decodeBuffer(splitAuthorization[1]);
+                    String credentials = new String(decoded, "US-ASCII");
+                    String[] splitCredentials = credentials.split(":");
+                    String userLogin = splitCredentials[0];
+                    String userPassword = splitCredentials[1];
+                    httpRequest.login(userLogin, userPassword);
+                    try {
+                        account = userManager.getAccount(userLogin);
+                    } catch (AccountNotFoundException e) {
+                        httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
+                        return;
+                    }
+                }
+            }
+
+        }
+
         // don't filter post requests, security will be handled by doPost in uploadDownloadServlet
         if(httpRequest.getMethod().equalsIgnoreCase("POST")){
             chain.doFilter(pRequest,pResponse);
             return;
         }
-
-        HttpSession sessionHTTP = httpRequest.getSession();
-        Account account = (Account) sessionHTTP.getAttribute("account");
-
-        String qs = httpRequest.getQueryString();
-        String originURL = httpRequest.getRequestURI() + (qs == null ? "" : "?" + qs);
 
         int offset = httpRequest.getContextPath().equals("") ? 1 : 2;
 

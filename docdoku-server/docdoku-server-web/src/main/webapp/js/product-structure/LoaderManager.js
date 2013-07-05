@@ -3,7 +3,7 @@ define(function() {
 
     var LoaderManager = function() {
         this.loader = null;
-    }
+    };
 
     LoaderManager.prototype = {
 
@@ -68,7 +68,7 @@ define(function() {
 
             }
         }
-    }
+    };
 
     return LoaderManager;
 
