@@ -373,7 +373,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function mouseup( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
@@ -421,7 +423,9 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
 
     function mousewheel( event ) {
 
-        if ( _this.enabled === false ) return;
+        if ( _this.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
@@ -492,7 +496,7 @@ THREE.TrackballControlsCustom = function ( object, domElement ) {
             case 2:
                 var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
                 var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-                _touchZoomDistanceEnd = Math.sqrt( dx * dx + dy * dy )
+                _touchZoomDistanceEnd = Math.sqrt( dx * dx + dy * dy );
                 break;
 
             case 3:
