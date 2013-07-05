@@ -7,10 +7,15 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.kohsuke.args4j.Option;
 
 import java.util.List;
 
 public class PartListCommand extends AbstractCommandLine {
+
+    @Option(name="-j", aliases = "--jsonparser", usage="return the list of the parts in JSON format")
+    private boolean jsonParser;
+
 
     @Override
     public void execImpl() throws Exception {

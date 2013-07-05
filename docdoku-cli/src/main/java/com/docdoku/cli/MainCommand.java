@@ -112,6 +112,7 @@ public class MainCommand {
         System.err.println("Available commands:");
         System.err.println("   checkin (ci)");
         System.err.println("   checkout (co)");
+        System.err.println("   create (cr)");
         System.err.println("   get");
         System.err.println("   help (?, h)");
         System.err.println("   put");
