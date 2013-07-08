@@ -20,19 +20,12 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.common.User;
 import com.docdoku.core.services.IMailerLocal;
-import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.UUID;
-import java.util.logging.Logger;
+import com.docdoku.core.workflow.Task;
+
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Local;
@@ -40,9 +33,15 @@ import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 /**
  * Session class MailerBean
@@ -209,6 +208,36 @@ public class MailerBean implements IMailerLocal {
             LOGGER.severe("Approval can't be sent.");
             LOGGER.severe(pMEx.getMessage());
         }
+
+    }
+
+    @Asynchronous
+    @Override
+    public void sendWorkspaceDeletionNotification(Account admin, String workspaceId) {
+        try {
+            javax.mail.Message message = new MimeMessage(mailSession);
+            message.setRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(admin.getEmail(),admin.getName()));
+            message.setSubject("Workspace deletion");
+            message.setSentDate(new Date());
+            message.setContent(getWorkspaceDeletionMessage(workspaceId,new Locale(admin.getLanguage())),
+                    "text/html; charset=utf-8");
+            message.setFrom();
+            Transport.send(message);
+        } catch (UnsupportedEncodingException pUEEx) {
+            LOGGER.warning("Mail address format error.");
+            LOGGER.warning(pUEEx.getMessage());
+        } catch (MessagingException pMEx) {
+            LOGGER.severe("Message format error.");
+            LOGGER.severe("Approval can't be sent.");
+            LOGGER.severe(pMEx.getMessage());
+        }
+    }
+
+    private String getWorkspaceDeletionMessage(String workspaceId, Locale pLocale) {
+        Object[] args = {workspaceId};
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("WorkspaceDeletion_text"), args);
 
     }
 

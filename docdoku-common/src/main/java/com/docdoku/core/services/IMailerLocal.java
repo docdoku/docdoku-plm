@@ -24,8 +24,8 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Task;
+
 import java.util.Collection;
-import java.util.Locale;
 
 /**
  *
@@ -42,4 +42,6 @@ public interface IMailerLocal {
     void sendPasswordRecovery(Account account, String passwordRRUuid);
 
     void sendApproval(Collection<Task> runningTasks, PartRevision partRevision);
+
+    void sendWorkspaceDeletionNotification(Account admin, String workspaceId);
 }

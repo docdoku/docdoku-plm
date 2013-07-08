@@ -20,9 +20,10 @@
 package com.docdoku.server;
 
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
-import com.docdoku.core.services.IWorkspaceManagerLocal;
-import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.*;
 import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
@@ -30,11 +31,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -43,8 +43,18 @@ import java.util.logging.Logger;
 @Stateless(name = "WorkspaceManagerBean")
 public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
+    @EJB
+    private IDataManagerLocal dataManager;
+
+    @EJB
+    private IUserManagerLocal userManager;
+
+    @EJB
+    private IMailerLocal mailerManager;
+
     @PersistenceContext
     private EntityManager em;
+
     @Resource
     private SessionContext ctx;
 
@@ -62,4 +72,48 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         return new WorkspaceDAO(new Locale(admin.getLanguage()),em).getDiskUsageForWorkspace(workspaceId);
     }
 
+    @Override
+    @RolesAllowed({"users","admin"})
+    @Asynchronous
+    public void deleteWorkspace(String workspaceId) {
+
+        try{
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
+
+            if(userManager.isCallerInRole("admin") || workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
+               doWorkspaceDeletion(workspace);
+            }else{
+                throw new AccessRightException(new Locale(user.getLanguage()),user);
+            }
+
+        }catch(Exception e){
+            LOGGER.severe("Exception in deleteWorkspace "+e.getMessage());
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+    }
+
+    private void doWorkspaceDeletion(Workspace workspace){
+
+        Account admin = workspace.getAdmin();
+        String workspaceId = workspace.getId();
+
+        try {
+            new WorkspaceDAO(em, dataManager).removeWorkspace(workspace);
+        } catch (IOException e) {
+            LOGGER.severe("IOException while deleting the workspace : "+workspace.getId());
+            LOGGER.severe(e.getMessage());
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (StorageException e) {
+            LOGGER.severe("StorageException while deleting the workspace : "+workspace.getId());
+            LOGGER.severe(e.getMessage());
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+        // todo : Send mail to admin
+        mailerManager.sendWorkspaceDeletionNotification(admin,workspaceId);
+
+    }
 }

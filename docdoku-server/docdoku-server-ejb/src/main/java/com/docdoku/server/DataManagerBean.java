@@ -34,6 +34,7 @@ import javax.ejb.Stateless;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 @DeclareRoles("users")
@@ -147,6 +148,11 @@ public class DataManagerBean implements IDataManagerLocal {
     @Override
     public String getExternalStorageURI(BinaryResource binaryResource) {
         return defaultStorageProvider.getExternalResourceURI(binaryResource);
+    }
+
+    @Override
+    public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
+        defaultStorageProvider.deleteWorkspaceFolder(workspaceId, binaryResourcesInWorkspace);
     }
 
 }
