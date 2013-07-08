@@ -20,6 +20,7 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.product.PartMaster;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -59,5 +60,10 @@ public abstract class EffectivityConfigSpec extends ConfigSpec {
 
     public ConfigurationItem getConfigurationItem() {
         return configurationItem;
+    }
+
+    @Override
+    public PartMaster filterConfigSpec(PartMaster root, int depth, EntityManager em) {
+        return null;
     }
 }
