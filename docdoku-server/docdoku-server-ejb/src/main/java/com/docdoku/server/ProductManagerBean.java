@@ -26,6 +26,7 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceNumberAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.security.ACL;
@@ -889,6 +890,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void setRadiusForPartIteration(PartIterationKey pPartIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+        PartIteration partI = new PartIterationDAO(new Locale(user.getLanguage()), em).loadPartI(pPartIPK);
+        Map<String, InstanceAttribute> instanceAttributes = partI.getInstanceAttributes();
+        InstanceNumberAttribute instanceNumberAttribute = new InstanceNumberAttribute();
+        instanceNumberAttribute.setName("radius");
+        instanceNumberAttribute.setNumberValue(radius);
+        instanceAttributes.put("radius",instanceNumberAttribute);
     }
 
 
