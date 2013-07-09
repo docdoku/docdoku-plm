@@ -28,6 +28,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.InputSupplier;
 
 import javax.activation.FileTypeMap;
 import javax.annotation.Resource;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,6 +51,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024)
@@ -78,8 +81,22 @@ public class UploadDownloadServlet extends HttpServlet {
     @Resource
     private UserTransaction utx;
 
+    private static final int DEFAULT_BUFFER_SIZE = 4096;
+    private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
+
+    @Override
+    protected void doHead(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException{
+        // Process request without content.
+        processRequest(pRequest, pResponse, false);
+    }
+
     @Override
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
+        // Process request with content.
+        processRequest(pRequest, pResponse, true);
+    }
+
+    private void processRequest(HttpServletRequest pRequest, HttpServletResponse pResponse, boolean content) throws ServletException, IOException {
 
         try {
 
@@ -94,11 +111,21 @@ public class UploadDownloadServlet extends HttpServlet {
             User user = (User) pRequest.getAttribute("user");
             DocumentIteration docI = (DocumentIteration) pRequest.getAttribute("docI");
 
-            if(needsCacheHeaders){
-                setCacheHeaders(86400,pResponse);
+            // 404 if no binary resource
+            if(binaryResource == null){
+                pResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
 
-            //set content type
+
+            // Prepare some variables to process the response
+            long lastModified = binaryResource.getLastModified().getTime();
+            long ifModified = pRequest.getDateHeader("If-Modified-Since");
+            long length = binaryResource.getContentLength();
+            String fileName = binaryResource.getName();
+            String eTag = fileName + "_" + length + "_" + lastModified;
+
+            // Set content type
             String contentType = "";
             if (isSubResource) {
                 contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(subResourceVirtualPath);
@@ -110,46 +137,216 @@ public class UploadDownloadServlet extends HttpServlet {
                 }
             }
 
-            pResponse.setContentType(contentType);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
 
-            long lastModified = binaryResource.getLastModified().getTime();
-            long ifModified = pRequest.getDateHeader("If-Modified-Since");
+            // If-None-Match header should contain "*" or ETag. If so, then return 304.
+            String ifNoneMatch = pRequest.getHeader("If-None-Match");
+            if (ifNoneMatch != null && matches(ifNoneMatch, eTag)) {
+                pResponse.setHeader("ETag", eTag);
+                pResponse.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
 
-            if (lastModified > ifModified) {
 
-                setLastModifiedHeaders(lastModified, pResponse);
+            // If-Modified-Since header should be greater than LastModified. If so, then return 304.
+            // This header is ignored if any If-None-Match header is specified.
+            long ifModifiedSince = pRequest.getDateHeader("If-Modified-Since");
+            if (ifNoneMatch == null && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified) {
+                pResponse.setHeader("ETag", eTag); // Required in 304.
+                pResponse.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
 
-                InputStream binaryContentInputStream = null;
-                ServletOutputStream httpOut = null;
 
-                try {
-                    if (isSubResource) {
+            // Validate request headers for resume ----------------------------------------------------
 
-                        binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
+            // If-Match header should contain "*" or ETag. If not, then return 412.
+            String ifMatch = pRequest.getHeader("If-Match");
+            if (ifMatch != null && !matches(ifMatch, eTag)) {
+                pResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return;
+            }
 
-                    } else {
-                        if (isDocumentAndOutputSpecified) {
-                            binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource, docI, user);
-                        } else {
-                            pResponse.setContentLength((int) binaryResource.getContentLength());
-                            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            // If-Unmodified-Since header should be greater than LastModified. If not, then return 412.
+            long ifUnmodifiedSince = pRequest.getDateHeader("If-Unmodified-Since");
+            if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
+                pResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return;
+            }
+
+            // Validate and process range -------------------------------------------------------------
+
+            Range full = new Range(0, length - 1, length);
+            List<Range> ranges = new ArrayList<Range>();
+
+            // Validate and process Range and If-Range headers.
+            String range = pRequest.getHeader("Range");
+            if (range != null) {
+
+                // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
+                if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
+                    pResponse.setHeader("Content-Range", "bytes */" + length); // Required in 416.
+                    pResponse.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                    return;
+                }
+
+                // If-Range header should either match ETag or be greater then LastModified. If not,
+                // then return full file.
+                String ifRange = pRequest.getHeader("If-Range");
+                if (ifRange != null && !ifRange.equals(eTag)) {
+                    try {
+                        long ifRangeTime = pRequest.getDateHeader("If-Range"); // Throws IAE if invalid.
+                        if (ifRangeTime != -1 && ifRangeTime + 1000 < lastModified) {
+                            ranges.add(full);
                         }
-
-                    }
-                    httpOut = pResponse.getOutputStream();
-                    ByteStreams.copy(binaryContentInputStream, httpOut);
-                } finally {
-                    if(binaryContentInputStream != null){
-                        binaryContentInputStream.close();
-                    }
-                    if(httpOut != null){
-                        httpOut.flush();
-                        httpOut.close();
+                    } catch (IllegalArgumentException ignore) {
+                        ranges.add(full);
                     }
                 }
 
+                // If any valid If-Range header, then process each part of byte range.
+                if (ranges.isEmpty()) {
+                    for (String part : range.substring(6).split(",")) {
+                        // Assuming a file with length of 100, the following examples returns bytes at:
+                        // 50-80 (50 to 80), 40- (40 to length=100), -20 (length-20=80 to length=100).
+                        long start = sublong(part, 0, part.indexOf("-"));
+                        long end = sublong(part, part.indexOf("-") + 1, part.length());
+
+                        if (start == -1) {
+                            start = length - end;
+                            end = length - 1;
+                        } else if (end == -1 || end > length - 1) {
+                            end = length - 1;
+                        }
+
+                        // Check if Range is syntactically valid. If not, then return 416.
+                        if (start > end) {
+                            pResponse.setHeader("Content-Range", "bytes */" + length); // Required in 416.
+                            pResponse.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                            return;
+                        }
+
+                        // Add range.
+                        ranges.add(new Range(start, end, length));
+                    }
+                }
+            }
+
+            // Prepare and initialize response --------------------------------------------------------
+
+            boolean acceptsGzip = false;
+            String disposition = "inline";
+
+            // If client accepts gzip for the resource :
+            // We don't gzip geometry files or nativecad, cause we need the content length in the response headers
+            // Should be better if client tell us he doesn't want gzip.
+            String acceptEncoding = pRequest.getHeader("Accept-Encoding");
+            acceptsGzip = acceptEncoding != null && accepts(acceptEncoding, "gzip") && !binaryResource.getOwnerType().equals("parts");
+
+            if (contentType.startsWith("text")) {
+                contentType += ";charset=UTF-8";
+            }
+
+            // Expect for images, determine content disposition. If content type is supported by
+            // the browser, then set to inline, else attachment which will pop a 'save as' dialogue.
+            if (!contentType.startsWith("image")) {
+                String accept = pRequest.getHeader("Accept");
+                disposition = accept != null && accepts(accept, contentType) ? "inline" : "attachment";
+            }
+
+            pResponse.reset();
+            pResponse.setBufferSize(DEFAULT_BUFFER_SIZE);
+            pResponse.setHeader("Content-Disposition", disposition + ";filename=\"" + fileName  + "\"");
+            pResponse.setHeader("Accept-Ranges", "bytes");
+            pResponse.setHeader("ETag", eTag);
+            pResponse.setContentType(contentType);
+            setLastModifiedHeaders(lastModified, pResponse);
+            if(needsCacheHeaders){
+                setCacheHeaders(86400,pResponse);
+            }
+
+
+            // Prepare the input stream  --------------------------------------------------------
+            InputStream binaryContentInputStream = null;
+
+            if (isSubResource) {
+                binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
             } else {
-                pResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                if (isDocumentAndOutputSpecified) {
+                    binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource, docI, user);
+                } else {
+                    binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                }
+            }
+
+            // Send file (or parts) to client  --------------------------------------------------------
+            OutputStream httpOut = pResponse.getOutputStream();
+
+            try{
+
+                if (ranges.isEmpty() || ranges.get(0) == full) {
+                    Range r = full;
+                    pResponse.setContentType(contentType);
+                    pResponse.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
+                    if (content) {
+                        if (acceptsGzip) {
+                            pResponse.setHeader("Content-Encoding", "gzip");
+                            httpOut = new GZIPOutputStream(httpOut, DEFAULT_BUFFER_SIZE);
+                        } else {
+                            pResponse.setContentLength((int) binaryResource.getContentLength());
+                        }
+                        copy(binaryContentInputStream, httpOut, r.start, r.length,length);
+                    }
+
+                } else if (ranges.size() == 1) {
+
+                    Range r = ranges.get(0);
+                    pResponse.setContentType(contentType);
+                    pResponse.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
+                    pResponse.setContentLength((int) r.length);
+                    pResponse.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
+
+                    if (content) {
+                        copy(binaryContentInputStream, httpOut, r.start, r.length,length);
+                    }
+
+                } else {
+
+                    // Return multiple parts of file.
+                    pResponse.setContentType("multipart/byteranges; boundary=" + MULTIPART_BOUNDARY);
+                    pResponse.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
+
+                    if (content) {
+                        // Cast back to ServletOutputStream to get the easy println methods.
+                        ServletOutputStream sos = (ServletOutputStream) httpOut;
+
+                        // Copy multi part range.
+                        for (Range r : ranges) {
+                            // Add multipart boundary and header fields for every range.
+                            sos.println();
+                            sos.println("--" + MULTIPART_BOUNDARY);
+                            sos.println("Content-Type: " + contentType);
+                            sos.println("Content-Range: bytes " + r.start + "-" + r.end + "/" + r.total);
+
+                            // Copy single part range of multi part range.
+                            copy(binaryContentInputStream, httpOut, r.start, r.length,length);
+                        }
+
+                        // End with multipart boundary.
+                        sos.println();
+                        sos.println("--" + MULTIPART_BOUNDARY + "--");
+                    }
+                }
+
+            }
+            finally {
+                close(binaryContentInputStream);
+                if(httpOut  != null){
+                    httpOut.flush();
+                }
+                close(httpOut);
             }
 
         } catch (Exception pEx) {
@@ -157,6 +354,7 @@ public class UploadDownloadServlet extends HttpServlet {
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
             throw new ServletException("Error while downloading the file.", pEx);
         }
+
     }
 
     @Override
@@ -285,8 +483,67 @@ public class UploadDownloadServlet extends HttpServlet {
         pResponse.setHeader("Pragma", "");
     }
 
-    @Override
-    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private static boolean matches(String matchHeader, String toMatch) {
+        String[] matchValues = matchHeader.split("\\s*,\\s*");
+        Arrays.sort(matchValues);
+        return Arrays.binarySearch(matchValues, toMatch) > -1 || Arrays.binarySearch(matchValues, "*") > -1;
+    }
+
+    private static long sublong(String value, int beginIndex, int endIndex) {
+        String substring = value.substring(beginIndex, endIndex);
+        return (substring.length() > 0) ? Long.parseLong(substring) : -1;
+    }
+
+    private static boolean accepts(String acceptHeader, String toAccept) {
+        String[] acceptValues = acceptHeader.split("\\s*(,|;)\\s*");
+        Arrays.sort(acceptValues);
+        return Arrays.binarySearch(acceptValues, toAccept) > -1
+                || Arrays.binarySearch(acceptValues, toAccept.replaceAll("/.*$", "/*")) > -1
+                || Arrays.binarySearch(acceptValues, "*/*") > -1;
+    }
+
+
+    private static void close(Closeable resource) {
+        if (resource != null) {
+            try {
+                resource.close();
+            } catch (IOException ignore) {
+                // Ignore IOException. If you want to handle this anyway, it might be useful to know
+                // that this will generally only be thrown when the client aborted the request.
+            }
+        }
+    }
+
+    private static void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws IOException {
+
+        if(start == 0 && binaryLength == length){
+            ByteStreams.copy(input, output);
+        }else{
+            // Slice the input stream considering offset and length
+            InputStream slicedInputStream = ByteStreams.slice(new InputSupplier<InputStream>() {
+                public InputStream getInput() throws IOException {
+                    return input;
+                }
+            }, start, length).getInput();
+
+            ByteStreams.copy(slicedInputStream, output);
+        }
+    }
+
+    protected class Range {
+
+        long start;
+        long end;
+        long length;
+        long total;
+
+        public Range(long start, long end, long total) {
+            this.start = start;
+            this.end = end;
+            this.length = end - start + 1;
+            this.total = total;
+        }
+
     }
 
 }
