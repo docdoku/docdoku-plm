@@ -67,7 +67,8 @@ define([
             this.initGrid();
             this.isLoaded = true;
             this.loaderManager = new LoaderManager();
-            this.$container[0].addEventListener('click', this.onSceneClick, false);
+            this.bindClickOnScene();
+
         },
 
         listenXHR: function() {
@@ -307,7 +308,33 @@ define([
             $("#scene_container").removeClass("markersCreationMode");
         },
 
-        onSceneClick: function(event) {
+        bindClickOnScene:function(){
+            var self = this;
+            this.isMoving = false;
+
+            this.$container[0].addEventListener('mousedown', function(){
+                self.isMoving = false;
+                self.$container[0].addEventListener('mousemove',self.onSceneMouseMove, false);
+            }, false);
+
+            this.$container[0].addEventListener('mouseup', this.onSceneMouseUp, false);
+
+        },
+
+        onSceneMouseMove:function(){
+            // Only once is sufficient
+            this.$container[0].removeEventListener('mousemove',this.onSceneMouseMove);
+            this.isMoving = true;
+        },
+
+        onSceneMouseUp: function(event) {
+            // Remove anyway
+            this.$container[0].removeEventListener('mousemove',this.onSceneMouseMove);
+
+            if(this.isMoving){
+                return false;
+            }
+
             event.preventDefault();
 
             var vector = new THREE.Vector3(
@@ -337,19 +364,21 @@ define([
                 });
 
                 if (intersectInstances.length) {
-
                     if (this.markerCreationMode) {
                         // Marker creation
                         var intersectPoint = intersects[0].point;
                         var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersectPoint});
                         $("body").append(mcmv.render().el);
                         mcmv.openModal();
-
                     } else {
                         // Part inspection
                         Backbone.Events.trigger("instance:selected", intersectInstances[0].partIteration);
                     }
+                }else{
+                    Backbone.Events.trigger("selection:reset");
                 }
+            }else{
+                Backbone.Events.trigger("selection:reset");
             }
         },
 

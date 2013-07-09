@@ -20,6 +20,7 @@ define([
             this.collection = new ResultPathCollection();
             this.oppened = false;
             this.on("instance:selected", this.onInstanceSelected);
+            this.on("selection:reset", this.onResetSelection);
         },
 
         bindDomElements: function() {
@@ -50,6 +51,8 @@ define([
         onSearchSubmit: function (e) {
             var searchString = e.target.children[0].value.trim();
             this.search(searchString);
+            e.preventDefault();
+            return false;
         },
 
         search: function(partNumber) {
@@ -65,6 +68,10 @@ define([
 
         onInstanceSelected: function(partNumber) {
             this.search(partNumber);
+        },
+
+        onResetSelection:function(){
+            this.collection.reset();
         },
 
         toggleHelp: function() {

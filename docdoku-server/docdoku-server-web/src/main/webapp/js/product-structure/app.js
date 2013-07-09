@@ -94,6 +94,7 @@ define(
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
             this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
             Backbone.Events.on("instance:selected", this.onInstanceSelected, this);
+            Backbone.Events.on("selection:reset", this.onResetSelection, this);
         },
 
         bindDomElements:function(){
@@ -232,7 +233,6 @@ define(
             part.fetch({success:function() {
                 // Search the part in the tree
                 self.searchView.trigger("instance:selected", part.getNumber());
-
                 if(!self.isInBomMode()){
                     if(self.partMetadataView == undefined){
                         self.partMetadataView = new PartMetadataView({model:part}).render();
@@ -242,6 +242,13 @@ define(
                     }
                 }
             }});
+        },
+
+        onResetSelection:function(){
+            this.searchView.trigger("selection:reset");
+            if(!this.isInBomMode() && this.partMetadataView != undefined ){
+                this.partMetadataView.reset();
+            }
         }
 
     });
