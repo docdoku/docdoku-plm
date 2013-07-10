@@ -38,31 +38,29 @@ public class PartSearchQuery implements Serializable{
 
     private String workspaceId;
     private String partNumber;
-    private String title;
+    private String name;
     private String version;
     private String author;
     private String type;
     private Date creationDateFrom;
     private Date creationDateTo;
     private AbstractAttributeQuery[] attributes;
-    private String[] tags;
 
 
     public PartSearchQuery(){
 
     }
 
-    public PartSearchQuery(String workspaceId, String partNumber, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes, String[] tags){
+    public PartSearchQuery(String workspaceId, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes){
         this.workspaceId=workspaceId;
         this.partNumber=partNumber;
-        this.title=title;
+        this.name=name;
         this.version=version;
         this.author=author;
         this.type=type;
         this.creationDateFrom=creationDateFrom;
         this.creationDateTo=creationDateTo;
         this.attributes=attributes;
-        this.tags=tags;
     }
 
     public String getPartNumber() {
@@ -87,14 +85,6 @@ public class PartSearchQuery implements Serializable{
 
     public void setCreationDateTo(Date creationDateTo) {
         this.creationDateTo = creationDateTo;
-    }
-
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public void setType(String type) {
@@ -126,14 +116,6 @@ public class PartSearchQuery implements Serializable{
         return creationDateTo;
     }
 
-    public String[] getTags() {
-        return tags;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
     public String getType() {
         return type;
     }
@@ -144,6 +126,14 @@ public class PartSearchQuery implements Serializable{
 
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})

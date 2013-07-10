@@ -202,7 +202,7 @@ public class DocumentsResource {
     private DocumentMasterDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery){
         try{
 
-            DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseStringQuery(workspaceId, pStringQuery);
+            DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, pStringQuery);
 
             DocumentMaster[] docMs = com.docdoku.core.util.Tools.resetParentReferences(
                     documentService.searchDocumentMasters(documentSearchQuery)

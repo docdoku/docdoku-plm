@@ -32,6 +32,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -276,7 +277,28 @@ public class PartsResource {
     }
 
     @GET
-    @Path("search")
+    @Path("search/{query}")
+    @Produces("application/json;charset=UTF-8")
+    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery) {
+        try{
+
+            PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
+
+            List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
+            List<PartDTO> partDTOs = new ArrayList<PartDTO>();
+
+            for(PartRevision partRevision : partRevisions){
+                partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+            }
+
+            return partDTOs;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("numbers")
     @Produces("application/json;charset=UTF-8")
     public String[] searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
