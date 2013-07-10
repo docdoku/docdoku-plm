@@ -821,17 +821,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
 
         List<PartRevision> fetchedPartRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).searchPartRevisions(pQuery.getWorkspaceId(), pQuery.getPartNumber(), pQuery.getName(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo(), pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null);
+                pQuery.getCreationDateTo(), pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null, pQuery.isStandardPart());
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
         ListIterator<PartRevision> ite = fetchedPartRs.listIterator();
-        docMBlock:
         while (ite.hasNext()) {
             PartRevision partR = ite.next();
 
-            //TODO search should not fetch back private docM
             if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
                 partR = partR.clone();
                 partR.removeLastIteration();

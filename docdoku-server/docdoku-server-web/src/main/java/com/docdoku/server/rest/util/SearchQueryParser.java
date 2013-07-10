@@ -133,6 +133,7 @@ public class SearchQueryParser {
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
         ArrayList<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<PartSearchQuery.AbstractAttributeQuery>();
+        Boolean standardPart = null;
 
         String[] query = pQuery.split("&");
 
@@ -145,12 +146,13 @@ public class SearchQueryParser {
                 switch (filter[0]){
 
                     case "number" : pNumber = filter[1]; break;
-                    case "title" : pName = filter[1]; break;
+                    case "name" : pName = filter[1]; break;
                     case "version" : pVersion = filter[1]; break;
                     case "author" : pAuthor = filter[1]; break;
                     case "type" : pType = filter[1]; break;
                     case "from" : pCreationDateFrom = new Date(Long.valueOf(filter[1])); break;
                     case "to" : pCreationDateTo = new Date(Long.valueOf(filter[1])); break;
+                    case "standardPart" : standardPart = Boolean.valueOf(filter[1]); break;
 
                     case "attributes" :
 
@@ -207,7 +209,7 @@ public class SearchQueryParser {
         PartSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new PartSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
         return  new PartSearchQuery(workspaceId, pNumber, pName, pVersion, pAuthor,
-                pType, pCreationDateFrom, pCreationDateTo, pAttributesArray);
+                pType, pCreationDateFrom, pCreationDateTo, pAttributesArray,standardPart);
 
     }
 

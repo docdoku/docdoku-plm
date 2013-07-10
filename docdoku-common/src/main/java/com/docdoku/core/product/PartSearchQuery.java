@@ -42,6 +42,7 @@ public class PartSearchQuery implements Serializable{
     private String version;
     private String author;
     private String type;
+    private Boolean standardPart;
     private Date creationDateFrom;
     private Date creationDateTo;
     private AbstractAttributeQuery[] attributes;
@@ -51,7 +52,7 @@ public class PartSearchQuery implements Serializable{
 
     }
 
-    public PartSearchQuery(String workspaceId, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes){
+    public PartSearchQuery(String workspaceId, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes, Boolean standardPart){
         this.workspaceId=workspaceId;
         this.partNumber=partNumber;
         this.name=name;
@@ -61,6 +62,7 @@ public class PartSearchQuery implements Serializable{
         this.creationDateFrom=creationDateFrom;
         this.creationDateTo=creationDateTo;
         this.attributes=attributes;
+        this.standardPart=standardPart;
     }
 
     public String getPartNumber() {
@@ -134,6 +136,14 @@ public class PartSearchQuery implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean isStandardPart() {
+        return standardPart;
+    }
+
+    public void setStandardPart(Boolean standardPart) {
+        this.standardPart = standardPart;
     }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})

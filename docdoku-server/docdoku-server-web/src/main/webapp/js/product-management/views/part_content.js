@@ -61,7 +61,6 @@ define([
             var collection;
 
             if(this.query){
-                console.log("this.query is not null, " + this.query)
                 collection = new PartSearchCollection();
                 collection.setQuery(this.query)
             }else{
