@@ -7,7 +7,8 @@ define([
     "views/part_creation_view",
     "views/part_new_version",
     "common-objects/views/prompt",
-    "common-objects/views/security/acl_edit"
+    "common-objects/views/security/acl_edit",
+    "views/advanced_search"
 ], function (
     PartCollection,
     PartSearchCollection,
@@ -17,7 +18,8 @@ define([
     PartCreationView,
     PartNewVersionView,
     PromptView,
-    ACLEditView
+    ACLEditView,
+    AdvancedSearchView
     ) {
     var PartContentView = Backbone.View.extend({
 
@@ -38,7 +40,8 @@ define([
             "click button.first-page":"toFirstPage",
             "click button.last-page":"toLastPage",
             "click button.current-page":"goToPage",
-            "submit #part-search-form":"onQuickSearch"
+            "submit #part-search-form":"onQuickSearch",
+            "click .advanced-search-button":"onAdvancedSearch"
         },
 
         initialize: function () {
@@ -296,6 +299,13 @@ define([
             }
             e.preventDefault();
             return false;
+        },
+
+        onAdvancedSearch:function(){
+            var advancedSearchView = new AdvancedSearchView();
+            $("body").append(advancedSearchView.render().el);
+            advancedSearchView.openModal();
+            advancedSearchView.setRouter(this.router);
         }
 
     });
