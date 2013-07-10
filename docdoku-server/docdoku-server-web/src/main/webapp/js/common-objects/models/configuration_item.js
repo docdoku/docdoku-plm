@@ -44,7 +44,7 @@ define(function() {
             _.each(baselines,function(baseline){
                 that.deleteBaseline(baseline.getId(),{success:function(){},error:function(){
                     errors.push(baseline);
-                }})
+                }});
             });
             return errors;
         },

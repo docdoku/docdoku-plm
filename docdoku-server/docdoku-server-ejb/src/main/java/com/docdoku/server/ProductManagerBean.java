@@ -26,6 +26,7 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceNumberAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.security.ACL;
@@ -110,104 +111,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
         }
 
-        if (configSpec instanceof LatestConfigSpec) {
-            if (depth == null) {
-                filterLatestConfigSpec(rootUsageLink.getComponent(), -1);
-            } else {
-                filterLatestConfigSpec(rootUsageLink.getComponent(), depth);
-            }
-        }else if (configSpec instanceof BaselineConfigSpec){
-            if (depth == null) {
-                filterBaselineConfigSpec(((BaselineConfigSpec) configSpec).getBaseline(), rootUsageLink.getComponent(), -1);
-            } else {
-                filterBaselineConfigSpec(((BaselineConfigSpec) configSpec).getBaseline(), rootUsageLink.getComponent(), depth);
-            }
+        depth = depth == null ? -1 : depth;
+
+        if(configSpec != null){
+            configSpec.filterConfigSpec(rootUsageLink.getComponent(),depth, em);
         }
+
         return rootUsageLink;
     }
 
-    private PartMaster filterLatestConfigSpec(PartMaster root, int depth) {
-        PartRevision partR = root.getLastRevision();
-        PartIteration partI = null;
-
-        if (partR != null) {
-            partI = partR.getLastIteration();
-        }
-
-        if (partI != null) {
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterLatestConfigSpec(usageLink.getComponent(), depth);
-
-                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterLatestConfigSpec(subLink.getSubstitute(), 0);
-                    }
-                }
-            }
-        }
-
-        for (PartAlternateLink alternateLink : root.getAlternates()) {
-            filterLatestConfigSpec(alternateLink.getAlternate(), 0);
-        }
-
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
-        }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
-        }
-
-        return root;
-    }
-
-    private PartMaster filterBaselineConfigSpec(Baseline baseline, PartMaster root, int depth) {
-
-        // int baselineId, String targetPartWorkspaceId, String targetPartNumber
-        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),root.getWorkspaceId(),root.getNumber());
-
-        BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
-
-        PartRevision partR ;
-        PartIteration partI;
-
-        if(baselinedRootPart != null){
-            partR = baselinedRootPart.getTargetPart().getPartRevision();
-            partI = baselinedRootPart.getTargetPart();
-        }else{
-            // the part isn't in baseline, choose the latest version-iteration
-            partR = root.getLastRevision();
-            partI = partR.getLastIteration();
-        }
-
-        if (partI != null) {
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterBaselineConfigSpec(baseline, usageLink.getComponent(), depth);
-
-                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterBaselineConfigSpec(baseline, subLink.getSubstitute(), 0);
-                    }
-                }
-            }
-        }
-
-        for (PartAlternateLink alternateLink : root.getAlternates()) {
-            filterLatestConfigSpec(alternateLink.getAlternate(), 0);
-        }
-
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
-        }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
-        }
-
-        return root;
-    }
 
     @RolesAllowed("users")
     @Override
@@ -889,6 +801,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void setRadiusForPartIteration(PartIterationKey pPartIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+        PartIteration partI = new PartIterationDAO(new Locale(user.getLanguage()), em).loadPartI(pPartIPK);
+        Map<String, InstanceAttribute> instanceAttributes = partI.getInstanceAttributes();
+        InstanceNumberAttribute instanceNumberAttribute = new InstanceNumberAttribute();
+        instanceNumberAttribute.setName("radius");
+        instanceNumberAttribute.setNumberValue(radius);
+        instanceAttributes.put("radius",instanceNumberAttribute);
     }
 
 

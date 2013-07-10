@@ -56,6 +56,10 @@ public class HelpCommand implements CommandLine{
                 cl=new CheckInCommand();
                 break;
 
+            case "create": case "cr":
+                cl=new PartCreationCommand();
+                break;
+
             case "help": case "?" : case "h":
             default:
                 cl=new HelpCommand();

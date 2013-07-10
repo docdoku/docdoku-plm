@@ -76,16 +76,16 @@
                 if(that.acl == null){
                     that.onNoAclGiven();
                 }else{
-                    for(var key in that.acl.userEntries){
-                        var view = new ACLItemView({model:new ACLUserEntry({userLogin : key, permission :that.acl.userEntries[key]}), editMode:that.options.editMode  && key != that.admin.getLogin() && key != APP_CONFIG.login}).render();
-                        that.$usersAcls.append(view.$el);
-                        that.aclUserEntries.push(view.model);
+                    for(var userLogin in that.acl.userEntries){
+                        var userAclView = new ACLItemView({model:new ACLUserEntry({userLogin : userLogin, permission :that.acl.userEntries[userLogin]}), editMode:that.options.editMode  && userLogin != that.admin.getLogin() && userLogin != APP_CONFIG.login}).render();
+                        that.$usersAcls.append(userAclView.$el);
+                        that.aclUserEntries.push(userAclView.model);
                     }
 
-                    for(var key in that.acl.groupEntries){
-                        var view = new ACLItemView({model:new ACLUserGroupEntry({groupId : key, permission :that.acl.groupEntries[key]}), editMode:that.options.editMode}).render();
-                        that.$userGroupsAcls.append(view.$el);
-                        that.aclUserGroupEntries.push(view.model);
+                    for(var groupId in that.acl.groupEntries){
+                        var groupAclView = new ACLItemView({model:new ACLUserGroupEntry({groupId : groupId, permission :that.acl.groupEntries[groupId]}), editMode:that.options.editMode}).render();
+                        that.$userGroupsAcls.append(groupAclView.$el);
+                        that.aclUserGroupEntries.push(groupAclView.model);
                     }
                 }
 

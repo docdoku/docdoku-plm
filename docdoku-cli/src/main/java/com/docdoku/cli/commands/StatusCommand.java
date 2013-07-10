@@ -56,8 +56,13 @@ public class StatusCommand extends AbstractCommandLine{
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to get a status; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
+    @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
+    private boolean jsonParser;
+
     @Argument(metaVar = "[<cadfile>]", index=0, usage = "specify the cad file of the part to get a status")
     private File cadFile;
+
+
 
     @Override
     public void execImpl() throws Exception {

@@ -20,15 +20,10 @@
 
 package com.docdoku.core.common;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 
 /**
  * Class which gathers users in a workspace context.
@@ -102,5 +97,7 @@ public class UserGroup implements Serializable, Cloneable {
         return workspaceId;
     }
 
-    
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 }

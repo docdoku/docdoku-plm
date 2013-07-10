@@ -26,4 +26,5 @@ package com.docdoku.core.services;
  */
 public interface IWorkspaceManagerLocal {
     Long getDiskUsageInWorkspace(String workspaceId) throws UserNotFoundException;
+    void deleteWorkspace(String workspaceId);
 }

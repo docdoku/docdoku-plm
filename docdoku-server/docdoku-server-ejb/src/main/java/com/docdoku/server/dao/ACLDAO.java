@@ -27,6 +27,7 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Map;
 
 public class ACLDAO {
@@ -53,5 +54,11 @@ public class ACLDAO {
         em.createNamedQuery("ACL.removeUserEntries").setParameter("aclId",acl.getId()).executeUpdate();
         em.createNamedQuery("ACL.removeUserGroupEntries").setParameter("aclId",acl.getId()).executeUpdate();
         em.flush();
+    }
+
+    public void removeAclUserEntries(User pUser) {
+        Query query = em.createQuery("DELETE FROM ACLUserEntry a WHERE a.principal = :user");
+        query.setParameter("user", pUser).executeUpdate();
+
     }
 }

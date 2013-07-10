@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global sceneManager,Instance*/
 define(["models/part_iteration_visualization", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIterationVisualization, date, i18n) {
 
     var ComponentModule = {};
