@@ -4,6 +4,8 @@ define(["text!templates/local_unversioned_file.html", "views/part_creation_view"
 
         template: Handlebars.compile(template),
 
+        className: "unversionedFile",
+
         events: {
             "click .icon-plus" : "newPart"
         },

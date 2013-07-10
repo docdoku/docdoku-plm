@@ -21,12 +21,12 @@ define([
             this.$el.html(this.template());
 
             //Create local_versioned_files_view
-            var localVersionedFilesView = new LocalVersionedFilesView();
-            localVersionedFilesView.render();
+            this.localVersionedFilesView = new LocalVersionedFilesView();
+            this.localVersionedFilesView.render();
 
             //Create local_unversioned_files_view
-            var localUnVersionedFilesView = new LocalUnVersionedFilesView();
-            localUnVersionedFilesView.render();
+            this.localUnVersionedFilesView = new LocalUnVersionedFilesView();
+            this.localUnVersionedFilesView.render();
 
             //this.$versionedFiles.empty();
             //this.$unVersionedFiles.empty();
@@ -42,9 +42,9 @@ define([
                                 var status = JSON.parse(pStatus);
 
                                 if (!status.statusError) {
-                                    localVersionedFilesView.addVersionedFile(file,p,status,stat);
+                                    self.localVersionedFilesView.addVersionedFile(file,p,status,stat);
                                 } else {
-                                    var localUnVersionedFileView = localUnVersionedFilesView.addUnversionedFile(file, p, stat);
+                                    var localUnVersionedFileView = self.localUnVersionedFilesView.addUnversionedFile(file, p, stat);
                                     self.addPartCreatedListener(localUnVersionedFileView);
                                 }
                             });
@@ -59,7 +59,7 @@ define([
                 Commander.getStatusForFile(path.join(p, file), function(pStatus) {
                     var status = JSON.parse(pStatus);
                     if (!status.statusError) {
-                        localVersionedFilesView.addVersionedFile(file,p,status,stat);
+                        this.localVersionedFilesView.addVersionedFile(file,p,status,stat);
                         localUnVersionedFileView.remove();
                     } else {}
                 });

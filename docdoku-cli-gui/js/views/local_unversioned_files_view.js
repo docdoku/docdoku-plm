@@ -1,18 +1,18 @@
 define(["text!templates/local_unversioned_files.html",
+        "i18n!localization/nls/global",
         "models/local_unversioned_file_model",
         "views/local_unversioned_file_view"],
-    function(template, LocalUnVersionedFileModel, LocalUnVersionedFileView) {
+    function(template, i18n, LocalUnVersionedFileModel, LocalUnVersionedFileView) {
     var LocalUnversionedFilesView = Backbone.View.extend({
 
         el: 'div#localRepo',
 
         template: Handlebars.compile(template),
 
-        events: {
-        },
+        events: {},
 
         render:function() {
-            this.$el.html(this.template({}));
+            this.$el.append(this.template({i18n:i18n}));
             this.$unversionedFiles = this.$("#unversionedFiles");
             return this;
         },

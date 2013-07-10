@@ -56,6 +56,7 @@ define(["storage"], function(Storage) {
         },
 
         checkin:function(partNumber, version, callback) {
+            console.log(cmd + " ci" + this.getParams() + this.getParamsForPart(partNumber, version));
             var child = exec(cmd + " ci" + this.getParams() + this.getParamsForPart(partNumber, version),
                 function (error, stdout, stderr) {
                     if (error || stderr) {
