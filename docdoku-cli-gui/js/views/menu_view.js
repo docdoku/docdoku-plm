@@ -15,11 +15,17 @@ define(["text!templates/menu.html", "storage", "views/local_dir_view", "views/wo
         },
 
         onClickLocalFiles:function() {
-            var localDirView = new LocalDirView({el: "#localRepo"}).render();
+            if(this.localDirView) {
+                this.localDirView.remove();
+            }
+            this.localDirView = new LocalDirView().render();
         },
 
         onClickDplm:function() {
-            var workspaceView = new WorkspaceView({el : "#localRepo"}).render();
+            if(this.workspaceView) {
+                this.workspaceView.remove();
+            }
+            this.workspaceView = new WorkspaceView().render();
         }
     });
 

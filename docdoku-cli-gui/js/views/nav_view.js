@@ -1,6 +1,8 @@
 define(["text!templates/nav.html", "views/configuration_view"], function(template, ConfigView) {
     var NavView = Backbone.View.extend({
 
+        el: 'div#nav',
+
         template: Handlebars.compile(template),
 
         events: {

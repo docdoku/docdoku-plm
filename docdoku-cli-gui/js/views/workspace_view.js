@@ -1,20 +1,24 @@
 define([
+    "text!templates/workspace.html",
     "models/remote_versioned_file_model",
     "views/remote_versioned_file_view",
     "commander"],
-    function(RemoteVersionedFileModel, RemoteVersionedFileView, Commander) {
+    function(template, RemoteVersionedFileModel, RemoteVersionedFileView, Commander) {
     var WorkspaceView = Backbone.View.extend({
+
+        el:"div#subContent",
+
+        template: Handlebars.compile(template),
 
         events: {},
 
         render:function() {
+
+            this.$el.html(this.template({}));
+
+            this.$workspace = $("#workspace");
+
             var self = this;
-
-            this.$versionedFiles = this.$("#versionedFiles");
-            this.$unVersionedFiles = this.$("#unVersionedFiles");
-
-            this.$versionedFiles.empty();
-            this.$unVersionedFiles.empty();
 
             Commander.getPartMasters(function(pPartMarters) {
                 var partMasters = JSON.parse(pPartMarters);
@@ -23,7 +27,7 @@ define([
                     if(!partMaster.isCheckedOut) {
                         var remoteVersionedFileModel = new RemoteVersionedFileModel({partNumber: partMaster.partNumber, name : partMaster.cadFileName, version : partMaster.version, status: partMaster});
                         var remoteVersionedFileView =  new RemoteVersionedFileView({model: remoteVersionedFileModel}).render();
-                        self.$versionedFiles.append(remoteVersionedFileView.$el);
+                        self.$workspace.append(remoteVersionedFileView.$el);
                     }
                 });
             });

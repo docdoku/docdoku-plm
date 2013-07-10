@@ -6,7 +6,7 @@ define(["text!templates/content.html", "views/nav_view"], function(template, Nav
 
         render:function() {
             this.$el.html(this.template({}));
-            new NavView({el: "#nav"}).render();
+            new NavView().render();
 
             return this;
         }
