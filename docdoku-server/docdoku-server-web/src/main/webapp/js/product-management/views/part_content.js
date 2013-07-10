@@ -1,5 +1,6 @@
 define([
     "common-objects/collections/part_collection",
+    "common-objects/collections/part_search_collection",
     "text!templates/part_content.html",
     "i18n!localization/nls/product-management-strings",
     "views/part_list",
@@ -9,6 +10,7 @@ define([
     "common-objects/views/security/acl_edit"
 ], function (
     PartCollection,
+    PartSearchCollection,
     template,
     i18n,
     PartListView,
@@ -35,12 +37,20 @@ define([
             "click button.previous-page":"toPreviousPage",
             "click button.first-page":"toFirstPage",
             "click button.last-page":"toLastPage",
-            "click button.current-page":"goToPage"
+            "click button.current-page":"goToPage",
+            "submit #part-search-form":"onQuickSearch"
         },
 
         initialize: function () {
             _.bindAll(this);
             Backbone.Events.on("refresh_tree", this.resetCollection);
+            this.query = null;
+            this.router = require("router").getInstance();
+        },
+
+        setQuery:function(query){
+            this.query = query ;
+            return this;
         },
 
         render:function(){
@@ -48,9 +58,19 @@ define([
 
             this.bindDomElements();
 
+            var collection;
+
+            if(this.query){
+                console.log("this.query is not null, " + this.query)
+                collection = new PartSearchCollection();
+                collection.setQuery(this.query)
+            }else{
+                collection = new PartCollection();
+            }
+
             this.partListView = new PartListView({
                 el:this.$("#part_table"),
-                collection:new PartCollection()
+                collection:collection
             }).render();
 
             this.partListView.collection.on("page-count:fetch",this.onPageCountFetched);
@@ -269,9 +289,15 @@ define([
 
         updatePageIndicator:function(){
             this.currentPageIndicator.text(this.partListView.collection.getCurrentPage() + " / " + this.partListView.collection.getPageCount());
+        },
+
+        onQuickSearch: function(e) {
+            if (e.target.children[0].value) {
+                this.router.navigate("parts-search/number=" + e.target.children[0].value, {trigger: true});
+            }
+            e.preventDefault();
+            return false;
         }
-
-
 
     });
 

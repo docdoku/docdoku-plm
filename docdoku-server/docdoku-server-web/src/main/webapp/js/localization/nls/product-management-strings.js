@@ -57,7 +57,11 @@ define({
         DESCRIPTION:"Description",
         CANCEL:"Cancel",
         NAME:"Name",
-        "UNDO_CHECKOUT_?":"Undo checkout?"
+        "UNDO_CHECKOUT_?":"Undo checkout?",
+        QUICK_SEARCH:"Quick search",
+        ADVANCED_SEARCH:"Advanced search",
+        SEARCH:"Search"
+
     },
     "fr": true
 });

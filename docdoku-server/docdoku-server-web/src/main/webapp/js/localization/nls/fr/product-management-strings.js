@@ -56,5 +56,8 @@ define({
     DESCRIPTION:"Description",
     CANCEL:"Annuler",
     NAME:"Nom",
-    "UNDO_CHECKOUT_?":"Annuler la réservation ?"
+    "UNDO_CHECKOUT_?":"Annuler la réservation ?",
+    QUICK_SEARCH:"Recherche rapide",
+    ADVANCED_SEARCH:"Recherche avancée",
+    SEARCH:"Rechercher"
 });
