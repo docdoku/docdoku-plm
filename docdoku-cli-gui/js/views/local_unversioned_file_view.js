@@ -1,6 +1,6 @@
-define(["text!templates/unVersioned_file.html", "views/part_creation_view", "commander", "storage"], function(template, PartCreationView, Commander, Storage) {
+define(["text!templates/local_unversioned_file.html", "views/part_creation_view", "commander", "storage"], function(template, PartCreationView, Commander, Storage) {
 
-    var UnVersionedlFileView = Backbone.View.extend({
+    var LocalUnVersionedlFileView = Backbone.View.extend({
 
         template: Handlebars.compile(template),
 
@@ -25,5 +25,5 @@ define(["text!templates/unVersioned_file.html", "views/part_creation_view", "com
         }
     });
 
-    return UnVersionedlFileView;
+    return LocalUnVersionedlFileView;
 });

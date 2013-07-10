@@ -1,5 +1,5 @@
 define([] , function() {
-    var UnVersionedFileModel = Backbone.Model.extend({
+    var LocalUnVersionedFileModel = Backbone.Model.extend({
 
         initialize:function() {
             _.bindAll(this);
@@ -26,5 +26,5 @@ define([] , function() {
         }
     });
 
-    return UnVersionedFileModel;
+    return LocalUnVersionedFileModel;
 });
