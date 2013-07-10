@@ -60,8 +60,16 @@ define({
         "UNDO_CHECKOUT_?":"Undo checkout?",
         QUICK_SEARCH:"Quick search",
         ADVANCED_SEARCH:"Advanced search",
-        SEARCH:"Search"
-
+        SEARCH:"Search",
+        PART_NUMBER_HELP:"Number of the part",
+        PART_NAME_HELP:"Name of the part",
+        TYPE_HELP:"Type of the part",
+        VERSION_HELP:"Version of the part",
+        AUTHOR_HELP:"Author of the part",
+        APPEND:"Add",
+        STANDARD_PART_ALL:"All",
+        STANDARD_PART_FALSE:"No",
+        STANDARD_PART_TRUE:"Yes"
     },
     "fr": true
 });

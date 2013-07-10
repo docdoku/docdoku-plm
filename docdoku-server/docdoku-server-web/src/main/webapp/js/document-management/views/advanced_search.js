@@ -101,8 +101,10 @@ define(    [
 
         onSubmitForm: function(e) {
             var queryString = this.constructQueryString() ;
-            this.router.navigate("search/"+queryString, {trigger: true});
-            this.closeModal();
+            if(queryString){
+                this.router.navigate("search/"+queryString, {trigger: true});
+                this.closeModal();
+            }
             return false;
         },
 
@@ -143,8 +145,11 @@ define(    [
             var from    = this.$from.val();
             var to      = this.$to.val();
 
-            var queryString = "id="+id;
+            var queryString = "";
 
+            if(id){
+                queryString += "id="+id;
+            }
             if(title){
                 queryString += "&title="+title;
             }

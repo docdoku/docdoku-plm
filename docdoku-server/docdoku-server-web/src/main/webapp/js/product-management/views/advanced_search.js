@@ -101,8 +101,10 @@ define(    [
 
         onSubmitForm: function(e) {
             var queryString = this.constructQueryString() ;
-            this.router.navigate("parts-search/"+queryString, {trigger: true});
-            this.closeModal();
+            if(queryString){
+                this.router.navigate("parts-search/"+queryString, {trigger: true});
+                this.closeModal();
+            }
             return false;
         },
 
@@ -116,7 +118,7 @@ define(    [
             this.$from    = this.$("#search-from");
             this.$to      = this.$("#search-to");
             this.$templatesId = this.$("#template-attributes-helper");
-            this.$standardPart = this.$("#search-standardPart");
+            this.$standardPart = this.$("input[name=search-standardPart]");
         },
 
         changeAttributes:function(e){
@@ -139,9 +141,13 @@ define(    [
             var author  = this.$author.val();
             var from    = this.$from.val();
             var to      = this.$to.val();
-            var isStandardPart = this.$standardPart.is(":checked") ? "true":"false";
-            var queryString = "number="+number;
+            var standardPart = this.$standardPart.filter(':checked').val() == "all" ? null : this.$standardPart.filter(':checked').val() ;
 
+            var queryString = "";
+
+            if(number){
+                queryString += "number="+number;
+            }
             if(name){
                 queryString += "&name="+name;
             }
@@ -160,8 +166,9 @@ define(    [
             if(to){
                 queryString += "&to="+new Date(to).getTime().toString();
             }
-
-            queryString += "&standardPart="+isStandardPart;
+            if(standardPart){
+                queryString += "&standardPart="+standardPart;
+            }
 
             if(this.attributes.length){
                 queryString += "&attributes=";
