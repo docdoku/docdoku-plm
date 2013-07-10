@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.document.DocumentSearchQuery;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -29,7 +29,7 @@ import java.util.Date;
 
 public class SearchQueryParser {
 
-    public static SearchQuery parseStringQuery(String workspaceId , String pQuery){
+    public static DocumentSearchQuery parseStringQuery(String workspaceId , String pQuery){
 
         String pDocMId = null;
         String pTitle = null;
@@ -38,7 +38,7 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
-        ArrayList<SearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<SearchQuery.AbstractAttributeQuery>();
+        ArrayList<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<DocumentSearchQuery.AbstractAttributeQuery>();
         String[] pTags = null;
         String pContent = null;
 
@@ -74,29 +74,29 @@ public class SearchQueryParser {
 
                                 switch(attribute[0]){
                                     case "BOOLEAN" :
-                                        SearchQuery.BooleanAttributeQuery baq = new SearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
+                                        DocumentSearchQuery.BooleanAttributeQuery baq = new DocumentSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
                                         pAttributes.add(baq);
                                         break;
                                     case "DATE" :
-                                        SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
+                                        DocumentSearchQuery.DateAttributeQuery daq = new DocumentSearchQuery.DateAttributeQuery();
                                         daq.setName(attribute[1]);
                                         daq.setFromDate(new Date(Long.valueOf(attribute[2])));
                                         pAttributes.add(daq);
                                         break;
                                     case "TEXT" :
-                                        SearchQuery.TextAttributeQuery taq = new SearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
+                                        DocumentSearchQuery.TextAttributeQuery taq = new DocumentSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
                                         pAttributes.add(taq);
                                         break;
                                     case "NUMBER" :
                                         try {
-                                            SearchQuery.NumberAttributeQuery naq = new SearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
+                                            DocumentSearchQuery.NumberAttributeQuery naq = new DocumentSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
                                             pAttributes.add(naq);
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
                                         break;
                                     case "URL" :
-                                        SearchQuery.URLAttributeQuery uaq = new SearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
+                                        DocumentSearchQuery.URLAttributeQuery uaq = new DocumentSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
                                         pAttributes.add(uaq);
                                         break;
 
@@ -114,9 +114,9 @@ public class SearchQueryParser {
 
         }
 
-        SearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new SearchQuery.AbstractAttributeQuery[pAttributes.size()]);
+        DocumentSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new DocumentSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new SearchQuery(workspaceId, pDocMId, pTitle, pVersion, pAuthor,
+        return  new DocumentSearchQuery(workspaceId, pDocMId, pTitle, pVersion, pAuthor,
                 pType, pCreationDateFrom, pCreationDateTo, pAttributesArray, pTags, pContent);
 
     }

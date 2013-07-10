@@ -26,7 +26,7 @@ import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.search.SearchDialog;
 import com.docdoku.client.ui.search.SearchResultDialog;
 import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.document.DocumentSearchQuery;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 
@@ -62,7 +62,7 @@ public class SearchAction extends ClientAbstractAction {
                     Version version = source.getVersion();
                     User author = source.getAuthor();
                     String[] tags=source.getTags();
-                    SearchQuery.AbstractAttributeQuery[] attrs = source.getInstanceAttributes();
+                    DocumentSearchQuery.AbstractAttributeQuery[] attrs = source.getInstanceAttributes();
                     String content = source.getContent();
                     Date creationDateFrom = source.getCreationDateFrom();
                     Date creationDateTo = source.getCreationDateTo();

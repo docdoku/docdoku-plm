@@ -18,25 +18,26 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.product;
 
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
+
+import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * Wraps data needed to perform a query on documents.
+ * Wraps data needed to perform a query on part revisions.
  * 
- * @author Florent Garin
+ * @author Morgan Guimard
  * @version 2.0, 27/01/10
  * @since   V2.0
  */
-public class SearchQuery implements Serializable{
-    
+public class PartSearchQuery implements Serializable{
+
     private String workspaceId;
-    private String docMId;
+    private String partNumber;
     private String title;
     private String version;
     private String author;
@@ -45,16 +46,15 @@ public class SearchQuery implements Serializable{
     private Date creationDateTo;
     private AbstractAttributeQuery[] attributes;
     private String[] tags;
-    private String content;
 
 
-    public SearchQuery(){
-        
+    public PartSearchQuery(){
+
     }
 
-    public SearchQuery(String workspaceId, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
+    public PartSearchQuery(String workspaceId, String partNumber, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes, String[] tags){
         this.workspaceId=workspaceId;
-        this.docMId=docMId;
+        this.partNumber=partNumber;
         this.title=title;
         this.version=version;
         this.author=author;
@@ -63,9 +63,16 @@ public class SearchQuery implements Serializable{
         this.creationDateTo=creationDateTo;
         this.attributes=attributes;
         this.tags=tags;
-        this.content=content;
     }
-    
+
+    public String getPartNumber() {
+        return partNumber;
+    }
+
+    public void setPartNumber(String partNumber) {
+        this.partNumber = partNumber;
+    }
+
     public void setAttributes(AbstractAttributeQuery[] attributes) {
         this.attributes = attributes;
     }
@@ -74,20 +81,12 @@ public class SearchQuery implements Serializable{
         this.author = author;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public void setCreationDateFrom(Date creationDateFrom) {
         this.creationDateFrom = creationDateFrom;
     }
 
     public void setCreationDateTo(Date creationDateTo) {
         this.creationDateTo = creationDateTo;
-    }
-
-    public void setDocMId(String docMId) {
-        this.docMId = docMId;
     }
 
     public void setTags(String[] tags) {
@@ -119,20 +118,12 @@ public class SearchQuery implements Serializable{
         return author;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     public Date getCreationDateFrom() {
         return creationDateFrom;
     }
 
     public Date getCreationDateTo() {
         return creationDateTo;
-    }
-
-    public String getDocMId() {
-        return docMId;
     }
 
     public String[] getTags() {

@@ -25,13 +25,13 @@ import com.docdoku.client.ui.search.SearchResultDialog;
 import com.docdoku.client.ui.doc.EditLinksPanel;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.document.DocumentMaster;
 
-import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.document.DocumentSearchQuery;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,7 +57,7 @@ public class AddLinkActionListener implements ActionListener {
                     User author = source.getAuthor();
                     String type = source.getDocumentType();
                     String[] tags = source.getTags();
-                    SearchQuery.AbstractAttributeQuery[] attrs = source.getInstanceAttributes();
+                    DocumentSearchQuery.AbstractAttributeQuery[] attrs = source.getInstanceAttributes();
                     String content = source.getContent();
                     Date creationDateFrom = source.getCreationDateFrom();
                     Date creationDateTo = source.getCreationDateTo();
