@@ -50,9 +50,9 @@ public class JSONPrinter {
 
     }
 
-    public static void printException(StatusException e) throws JSONException {
+    public static void printException(Exception e) throws JSONException {
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("statusError", e.getMessage());
+        jsonObj.put("dplmError", e.getMessage());
         System.out.println(jsonObj);
     }
 }

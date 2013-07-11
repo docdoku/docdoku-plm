@@ -32,6 +32,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.PartMasterNotFoundException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -79,7 +80,10 @@ public class StatusCommand extends AbstractCommandLine{
             } else {
                 printMasterStatus(pm);
             }
-        } catch (StatusException e)  {
+//        } catch (StatusException e)  {
+//            JSONPrinter.printException(e);
+//        }
+        } catch (PartMasterNotFoundException e)  {
             JSONPrinter.printException(e);
         }
     }
