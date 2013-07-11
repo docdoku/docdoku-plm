@@ -111,7 +111,7 @@ public interface IDocumentManagerWS {
 
     String generateId(String workspaceId, String docMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, DocumentMasterTemplateNotFoundException;
 
-    DocumentMaster[] searchDocumentMasters(SearchQuery query) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    DocumentMaster[] searchDocumentMasters(DocumentSearchQuery query) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
     void subscribeToIterationChangeEvent(DocumentMasterKey docMPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException;
 

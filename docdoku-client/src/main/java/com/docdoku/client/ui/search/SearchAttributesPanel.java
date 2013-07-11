@@ -30,9 +30,10 @@ import javax.swing.*;
 
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
+import com.docdoku.core.document.DocumentSearchQuery;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.document.SearchQuery;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -139,15 +140,15 @@ public class SearchAttributesPanel extends JPanel {
         createLayout();
     }
 
-    public SearchQuery.AbstractAttributeQuery[] getInstanceAttributes(){
-        List<SearchQuery.AbstractAttributeQuery> attrList = new ArrayList<SearchQuery.AbstractAttributeQuery>();
+    public DocumentSearchQuery.AbstractAttributeQuery[] getInstanceAttributes(){
+        List<DocumentSearchQuery.AbstractAttributeQuery> attrList = new ArrayList<DocumentSearchQuery.AbstractAttributeQuery>();
         for(AttributePanel panel:mAttributePanels){
-            SearchQuery.AbstractAttributeQuery attr=panel.getInstanceAttribute();
+            DocumentSearchQuery.AbstractAttributeQuery attr=panel.getInstanceAttribute();
             if(attr!=null)
                 attrList.add(attr);
              
         }
-        return attrList.toArray(new SearchQuery.AbstractAttributeQuery[attrList.size()]);
+        return attrList.toArray(new DocumentSearchQuery.AbstractAttributeQuery[attrList.size()]);
     }
     
     private void createLayout() {
@@ -239,18 +240,18 @@ public class SearchAttributesPanel extends JPanel {
             });
         }
         
-        public SearchQuery.AbstractAttributeQuery getInstanceAttribute(){
+        public DocumentSearchQuery.AbstractAttributeQuery getInstanceAttribute(){
             String name = mNameText.getText();
             if(name==null || name.equals(""))
                 return null;
             
             InstanceAttributeTemplate.AttributeType attributeType = (InstanceAttributeTemplate.AttributeType)mTypeList.getSelectedItem();
-            SearchQuery.AbstractAttributeQuery attr = null;
+            DocumentSearchQuery.AbstractAttributeQuery attr = null;
             
             switch (attributeType) {
             case TEXT:
                 JTextField componentText = (JTextField) mValueComponent;
-                attr = new SearchQuery.TextAttributeQuery(name,componentText.getText()+"");
+                attr = new DocumentSearchQuery.TextAttributeQuery(name,componentText.getText()+"");
                 break;
             case NUMBER:
                 JFormattedTextField componentNumber = (JFormattedTextField) mValueComponent;
@@ -261,11 +262,11 @@ public class SearchAttributesPanel extends JPanel {
                 } catch (ParseException pEx) {
                     System.err.println(pEx.getMessage());
                 }
-                attr = new SearchQuery.NumberAttributeQuery(name,floatValue);
+                attr = new DocumentSearchQuery.NumberAttributeQuery(name,floatValue);
                 break;
             case BOOLEAN:
                 JCheckBox componentBoolean = (JCheckBox) mValueComponent;
-                attr = new SearchQuery.BooleanAttributeQuery(name,componentBoolean.isSelected());
+                attr = new DocumentSearchQuery.BooleanAttributeQuery(name,componentBoolean.isSelected());
                 break;
             case DATE:
                 DateAttributePanel componentDate = (DateAttributePanel) mValueComponent;
@@ -279,7 +280,7 @@ public class SearchAttributesPanel extends JPanel {
                 if(toValue instanceof Date){
                     dateToValue=(Date)toValue;
                 }
-                attr = new SearchQuery.DateAttributeQuery(name,dateFromValue,dateToValue);
+                attr = new DocumentSearchQuery.DateAttributeQuery(name,dateFromValue,dateToValue);
 
 
                 break;

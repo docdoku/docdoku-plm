@@ -170,8 +170,8 @@ public class DocumentsResource {
     private DocumentMasterDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin){
         try{
 
-            SearchQuery searchQuery = new SearchQuery();
-            searchQuery.setWorkspaceId(workspaceId);
+            DocumentSearchQuery documentSearchQuery = new DocumentSearchQuery();
+            documentSearchQuery.setWorkspaceId(workspaceId);
 
             DocumentMaster[] docMs = documentService.getDocumentMastersWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
 
@@ -202,10 +202,10 @@ public class DocumentsResource {
     private DocumentMasterDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery){
         try{
 
-            SearchQuery searchQuery = SearchQueryParser.parseStringQuery(workspaceId, pStringQuery);
+            DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, pStringQuery);
 
             DocumentMaster[] docMs = com.docdoku.core.util.Tools.resetParentReferences(
-                    documentService.searchDocumentMasters(searchQuery)
+                    documentService.searchDocumentMasters(documentSearchQuery)
             );
 
             DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];

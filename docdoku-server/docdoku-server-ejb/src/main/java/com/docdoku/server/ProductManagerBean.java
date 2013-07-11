@@ -815,6 +815,37 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         instanceAttributes.put("radius",instanceNumberAttribute);
     }
 
+    @RolesAllowed("users")
+    @Override
+    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
+
+        List<PartRevision> fetchedPartRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).searchPartRevisions(pQuery.getWorkspaceId(), pQuery.getPartNumber(), pQuery.getName(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
+                pQuery.getCreationDateTo(), pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null, pQuery.isStandardPart());
+
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+
+        ListIterator<PartRevision> ite = fetchedPartRs.listIterator();
+        while (ite.hasNext()) {
+            PartRevision partR = ite.next();
+
+            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+                partR = partR.clone();
+                partR.removeLastIteration();
+                ite.set(partR);
+            }
+
+            //Check access rights
+            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {
+                ite.remove();
+                continue;
+            }
+        }
+        return new ArrayList<PartRevision>(fetchedPartRs);
+
+    }
+
 
     @RolesAllowed("users")
     @Override

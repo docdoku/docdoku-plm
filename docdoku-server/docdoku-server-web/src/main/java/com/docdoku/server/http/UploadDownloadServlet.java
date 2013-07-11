@@ -256,6 +256,10 @@ public class UploadDownloadServlet extends HttpServlet {
                 disposition = accept != null && accepts(accept, contentType) ? "inline" : "attachment";
             }
 
+            if(!isDocumentAndOutputSpecified && !isSubResource){
+                disposition = "attachment";
+            }
+
             pResponse.reset();
             pResponse.setBufferSize(DEFAULT_BUFFER_SIZE);
             pResponse.setHeader("Content-Disposition", disposition + ";filename=\"" + fileName  + "\"");

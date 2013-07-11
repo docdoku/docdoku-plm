@@ -18,54 +18,61 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.product;
 
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
+
+import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * Wraps data needed to perform a query on documents.
+ * Wraps data needed to perform a query on part revisions.
  * 
- * @author Florent Garin
+ * @author Morgan Guimard
  * @version 2.0, 27/01/10
  * @since   V2.0
  */
-public class SearchQuery implements Serializable{
-    
+public class PartSearchQuery implements Serializable{
+
     private String workspaceId;
-    private String docMId;
-    private String title;
+    private String partNumber;
+    private String name;
     private String version;
     private String author;
     private String type;
+    private Boolean standardPart;
     private Date creationDateFrom;
     private Date creationDateTo;
     private AbstractAttributeQuery[] attributes;
-    private String[] tags;
-    private String content;
 
 
-    public SearchQuery(){
-        
+    public PartSearchQuery(){
+
     }
 
-    public SearchQuery(String workspaceId, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
+    public PartSearchQuery(String workspaceId, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes, Boolean standardPart){
         this.workspaceId=workspaceId;
-        this.docMId=docMId;
-        this.title=title;
+        this.partNumber=partNumber;
+        this.name=name;
         this.version=version;
         this.author=author;
         this.type=type;
         this.creationDateFrom=creationDateFrom;
         this.creationDateTo=creationDateTo;
         this.attributes=attributes;
-        this.tags=tags;
-        this.content=content;
+        this.standardPart=standardPart;
     }
-    
+
+    public String getPartNumber() {
+        return partNumber;
+    }
+
+    public void setPartNumber(String partNumber) {
+        this.partNumber = partNumber;
+    }
+
     public void setAttributes(AbstractAttributeQuery[] attributes) {
         this.attributes = attributes;
     }
@@ -74,28 +81,12 @@ public class SearchQuery implements Serializable{
         this.author = author;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public void setCreationDateFrom(Date creationDateFrom) {
         this.creationDateFrom = creationDateFrom;
     }
 
     public void setCreationDateTo(Date creationDateTo) {
         this.creationDateTo = creationDateTo;
-    }
-
-    public void setDocMId(String docMId) {
-        this.docMId = docMId;
-    }
-
-    public void setTags(String[] tags) {
-        this.tags = tags;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public void setType(String type) {
@@ -119,28 +110,12 @@ public class SearchQuery implements Serializable{
         return author;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     public Date getCreationDateFrom() {
         return creationDateFrom;
     }
 
     public Date getCreationDateTo() {
         return creationDateTo;
-    }
-
-    public String getDocMId() {
-        return docMId;
-    }
-
-    public String[] getTags() {
-        return tags;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getType() {
@@ -153,6 +128,22 @@ public class SearchQuery implements Serializable{
 
     public String getWorkspaceId() {
         return workspaceId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean isStandardPart() {
+        return standardPart;
+    }
+
+    public void setStandardPart(Boolean standardPart) {
+        this.standardPart = standardPart;
     }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})

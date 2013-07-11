@@ -1,12 +1,12 @@
 define(    [
-        "text!templates/search_document_advanced_form.html",
-        "i18n!localization/nls/document-management-strings",
+        "text!templates/search_part_advanced_form.html",
+        "i18n!localization/nls/product-management-strings",
         "common-objects/collections/users",
         "common-objects/views/attributes/attribute_list",
-        "collections/template"
+        "collections/part_templates"
     ],
 
-    function (template, i18n, Users, DocumentAttributeListView, Templates) {
+    function (template, i18n, Users, PartAttributeListView, Templates) {
 
     var AdvancedSearchView = Backbone.View.extend({
 
@@ -36,7 +36,7 @@ define(    [
 
             this.attributes = new Backbone.Collection();
 
-            this.attributesView = new DocumentAttributeListView({
+            this.attributesView = new PartAttributeListView({
                 collection: this.attributes
             });
 
@@ -60,7 +60,7 @@ define(    [
             this.templatesId = [];
             this.templates.fetch({reset:true,success:function(){
                 that.templates.each(function(template){
-                    var type = template.get("documentType");
+                    var type = template.get("partType");
                     if(!_.contains(that.types, type) && type){
                         that.types.push(type);
                         that.$type.append("<option value='"+type+"'>"+type+"</option>");
@@ -102,7 +102,7 @@ define(    [
         onSubmitForm: function(e) {
             var queryString = this.constructQueryString() ;
             if(queryString){
-                this.router.navigate("search/"+queryString, {trigger: true});
+                this.router.navigate("parts-search/"+queryString, {trigger: true});
                 this.closeModal();
             }
             return false;
@@ -110,16 +110,15 @@ define(    [
 
         bindDomElements:function(){
             this.$modal   = this.$('#advanced_search_modal');
-            this.$id      = this.$("#search-id");
-            this.$title   = this.$("#search-title");
+            this.$number      = this.$("#search-number");
+            this.$name   = this.$("#search-name");
             this.$type    = this.$("#search-type");
             this.$version = this.$("#search-version");
             this.$author  = this.$("#search-author");
-            this.$tags    = this.$("#search-tags");
-            this.$content = this.$("#search-content");
             this.$from    = this.$("#search-from");
             this.$to      = this.$("#search-to");
             this.$templatesId = this.$("#template-attributes-helper");
+            this.$standardPart = this.$("input[name=search-standardPart]");
         },
 
         changeAttributes:function(e){
@@ -135,23 +134,22 @@ define(    [
 
         constructQueryString : function(){
 
-            var id      = this.$id.val();
-            var title   = this.$title.val();
+            var number  = this.$number.val();
+            var name    = this.$name.val();
             var type    = this.$type.val();
             var version = this.$version.val();
             var author  = this.$author.val();
-            var tags    = this.$tags.val().replace(/ /g,"");
-            var content = this.$content.val();
             var from    = this.$from.val();
             var to      = this.$to.val();
+            var standardPart = this.$standardPart.filter(':checked').val() == "all" ? null : this.$standardPart.filter(':checked').val() ;
 
             var queryString = "";
 
-            if(id){
-                queryString += "id="+id;
+            if(number){
+                queryString += "number="+number;
             }
-            if(title){
-                queryString += "&title="+title;
+            if(name){
+                queryString += "&name="+name;
             }
             if(type){
                 queryString += "&type="+type;
@@ -162,17 +160,14 @@ define(    [
             if(author){
                 queryString += "&author="+author;
             }
-            if(tags){
-                queryString += "&tags="+tags;
-            }
-            if(content){
-                queryString += "&content="+content;
-            }
             if(from){
                 queryString += "&from="+new Date(from).getTime().toString();
             }
             if(to){
                 queryString += "&to="+new Date(to).getTime().toString();
+            }
+            if(standardPart){
+                queryString += "&standardPart="+standardPart;
             }
 
             if(this.attributes.length){

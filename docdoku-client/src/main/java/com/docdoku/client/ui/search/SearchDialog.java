@@ -22,7 +22,7 @@ package com.docdoku.client.ui.search;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.document.DocumentSearchQuery;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 
@@ -113,7 +113,7 @@ public class SearchDialog extends JDialog implements ActionListener {
         return mSearchPanel.getAuthor();
     }
 
-    public SearchQuery.AbstractAttributeQuery[] getInstanceAttributes(){
+    public DocumentSearchQuery.AbstractAttributeQuery[] getInstanceAttributes(){
         return mSearchAttributesPanel.getInstanceAttributes();
     }
     
