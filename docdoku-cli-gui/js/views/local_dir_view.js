@@ -54,7 +54,7 @@ define([
             });
         },
 
-        addPartCreatedListener:function(localUnVersionedFileView) {
+        addPartCreatedListener:function(localUnVersionedFileView, p, stat) {
             localUnVersionedFileView.on("part:created", function() {
                 Commander.getStatusForFile(path.join(p, file), function(pStatus) {
                     var status = JSON.parse(pStatus);

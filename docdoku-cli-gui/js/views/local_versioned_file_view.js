@@ -52,7 +52,6 @@ define(["text!templates/local_versioned_file.html", "views/loader_view",  "comma
         checkout:function() {
             this.loader();
             var self = this;
-            console.log(this.model);
             Commander.checkout(this.model.getPartNumber(), this.model.getVersion(), function() {
                 Commander.getStatusForPartNumber(self.model.getPartNumber(), self.model.getVersion(), function(pStatus) {
                     var status = JSON.parse(pStatus);

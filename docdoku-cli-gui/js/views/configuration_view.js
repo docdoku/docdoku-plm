@@ -1,4 +1,8 @@
-define(["text!templates/configuration.html", "storage", "commander"], function(template, Storage, Commander) {
+define(["text!templates/configuration.html",
+        "i18n!localization/nls/global",
+        "storage",
+        "commander"],
+    function(template, i18n, Storage, Commander) {
     var ConfigurationView = Backbone.View.extend({
 
         template: Handlebars.compile(template),
@@ -10,7 +14,7 @@ define(["text!templates/configuration.html", "storage", "commander"], function(t
         },
 
         render:function() {
-            this.$el.html(this.template({configuration:Storage}));
+            this.$el.html(this.template({configuration:Storage, i18n:i18n}));
             this.bindDomElements();
 
             return this;
