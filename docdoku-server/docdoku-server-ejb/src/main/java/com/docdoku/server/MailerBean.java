@@ -21,6 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IMailerLocal;
@@ -229,16 +230,102 @@ public class MailerBean implements IMailerLocal {
             LOGGER.warning(pUEEx.getMessage());
         } catch (MessagingException pMEx) {
             LOGGER.severe("Message format error.");
-            LOGGER.severe("Approval can't be sent.");
             LOGGER.severe(pMEx.getMessage());
         }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision) {
+
+        Workspace workspace = partRevision.getPartMaster().getWorkspace();
+        Account admin = workspace.getAdmin();
+        User author = partRevision.getAuthor();
+
+        // Mail both workspace admin and partRevision author
+        sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), partRevision);
+
+        if(!admin.getLogin().equals(author.getLogin())){
+            sendWorkflowRelaunchedNotification(author.getName(),author.getEmail(), author.getLanguage(), workspace.getId(), partRevision);
+        }
+
+    }
+
+    @Asynchronous
+    @Override
+    public void sendDocumentMasterWorkflowRelaunchedNotification(DocumentMaster documentMaster) {
+        Workspace workspace = documentMaster.getWorkspace();
+        Account admin = workspace.getAdmin();
+        User author = documentMaster.getAuthor();
+
+        // Mail both workspace admin and documentMaster author
+        sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), documentMaster);
+
+        if(!admin.getLogin().equals(author.getLogin())){
+            sendWorkflowRelaunchedNotification(author.getName(),author.getEmail(), author.getLanguage(), workspace.getId(), documentMaster);
+        }
+    }
+
+    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision){
+        try {
+            javax.mail.Message message = new MimeMessage(mailSession);
+            message.setRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(userEmail,userName));
+            message.setSubject("Workflow Relaunched");
+            message.setSentDate(new Date());
+            message.setContent(getPartRevisionWorkflowRelaunchedMessage(workspaceId, partRevision.getPartNumber(), partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), new Locale(userLanguage)),
+                    "text/html; charset=utf-8");
+            message.setFrom();
+            Transport.send(message);
+        } catch (UnsupportedEncodingException pUEEx) {
+            LOGGER.warning("Mail address format error.");
+            LOGGER.warning(pUEEx.getMessage());
+        } catch (MessagingException pMEx) {
+            LOGGER.severe("Message format error.");
+            LOGGER.severe("Cannot send workflow relaunched notification.");
+            LOGGER.severe(pMEx.getMessage());
+        }
+    }
+
+
+    private String getPartRevisionWorkflowRelaunchedMessage(String workspaceId, String number, String version, String lifeCycleState, Locale pLocale) {
+        Object[] args = {number+"-"+version,workspaceId,lifeCycleState};
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("PartRevision_workflow_relaunched_text"), args);
+    }
+
+
+    private void sendWorkflowRelaunchedNotification(String userName, String userEmail,  String userLanguage, String workspaceId, DocumentMaster documentMaster){
+        try {
+            javax.mail.Message message = new MimeMessage(mailSession);
+            message.setRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(userEmail,userName));
+            message.setSubject("Workflow Relaunched");
+            message.setSentDate(new Date());
+            message.setContent(getDocumentMasterWorkflowRelaunchedMessage(workspaceId, documentMaster.getId(), documentMaster.getVersion() , documentMaster.getWorkflow().getLifeCycleState(), new Locale(userLanguage)),
+                    "text/html; charset=utf-8");
+            message.setFrom();
+            Transport.send(message);
+        } catch (UnsupportedEncodingException pUEEx) {
+            LOGGER.warning("Mail address format error.");
+            LOGGER.warning(pUEEx.getMessage());
+        } catch (MessagingException pMEx) {
+            LOGGER.severe("Message format error.");
+            LOGGER.severe("Cannot send workflow relaunched notification.");
+            LOGGER.severe(pMEx.getMessage());
+        }
+    }
+
+    private String getDocumentMasterWorkflowRelaunchedMessage(String workspaceId, String docMid, String version, String lifeCycleState, Locale pLocale) {
+        Object[] args = {docMid+"-"+version,workspaceId,lifeCycleState};
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return MessageFormat.format(bundle.getString("DocumentMaster_workflow_relaunched_text"), args);
     }
 
     private String getWorkspaceDeletionMessage(String workspaceId, Locale pLocale) {
         Object[] args = {workspaceId};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("WorkspaceDeletion_text"), args);
-
     }
 
     private String getApprovalRequiredMessage(Task pTask, PartRevision partRevision, Locale pLocale) {

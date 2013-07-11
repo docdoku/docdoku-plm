@@ -886,6 +886,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             // Send mails for running tasks
             mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), docM);
 
+            // Send notification for relaunch
+            mailer.sendDocumentMasterWorkflowRelaunchedNotification(docM);
+
         }
 
         return docM;
