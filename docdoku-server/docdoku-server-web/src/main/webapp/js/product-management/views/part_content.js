@@ -165,8 +165,7 @@ define([
             var self = this;
             var selectedPart = this.partListView.getSelectedPart();
 
-            if(_.isNull(selectedPart.getLastIteration().attributes.iterationNote)) {
-
+            if(!selectedPart.getLastIteration().get("iterationNote")) {
                 var promptView = new PromptView();
                 promptView.setPromptOptions(i18n.ITERATION_NOTE, i18n.ITERATION_NOTE_PROMPT_LABEL, i18n.ITERATION_NOTE_PROMPT_OK, i18n.ITERATION_NOTE_PROMPT_CANCEL);
                 $("body").append(promptView.render().el);
