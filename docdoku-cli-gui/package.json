@@ -1,6 +1,7 @@
 {
   "name": "nw-demo",
   "main": "index.html",
+  "locale":"fr_FR",
   "dependencies": {
     "requirejs": ">=1.0.0"
   },
