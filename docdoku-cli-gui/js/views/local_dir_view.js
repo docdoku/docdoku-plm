@@ -33,10 +33,19 @@ define([
 
             var self = this;
 
-            wrench.readdirRecursiveFull(p, function(error, curFiles) {
+            function removeLoaders() {
+                self.localVersionedFilesView.removeLoader();
+                self.localUnVersionedFilesView.removeLoader();
+            }
 
+            wrench.readdirRecursiveFull(p, function(error, curFiles) {
+                var totalFiles = curFiles.length;
+                if(totalFiles == 0) {
+                    removeLoaders();
+                }
                 _.each(curFiles, function (file) {
                     fs.stat(path.join(p, file), function(err, stat) {
+                        totalFiles--;
                         if(stat.isFile() && file !== ".dplm/index.xml") {
                             Commander.getStatusForFile(path.join(p, file), function(pStatus) {
                                 var status = JSON.parse(pStatus);
@@ -46,6 +55,9 @@ define([
                                 } else {
                                     var localUnVersionedFileView = self.localUnVersionedFilesView.addUnversionedFile(file, p, stat);
                                     self.addPartCreatedListener(localUnVersionedFileView);
+                                }
+                                if(totalFiles <= 0) {
+                                    removeLoaders();
                                 }
                             });
                         }

@@ -21,7 +21,7 @@ define([], function() {
 
         var spinner = new Spinner(opts).spin();
 
-        return spinner.el
+        return $(spinner.el)
     }
 
     return loader;
