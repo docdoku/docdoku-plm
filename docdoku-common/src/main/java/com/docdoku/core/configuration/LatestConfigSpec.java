@@ -21,12 +21,12 @@
 
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Table;
-import java.util.Collections;
 
 /**
  * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
@@ -44,41 +44,9 @@ public class LatestConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public PartMaster filterConfigSpec(PartMaster root, int depth, EntityManager em) {
-        PartRevision partR = root.getLastRevision();
-        PartIteration partI = null;
-
-        if (partR != null) {
-            partI = partR.getLastIteration();
-        }
-
-        if (partI != null) {
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterConfigSpec(usageLink.getComponent(), depth, em);
-
-                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterConfigSpec(subLink.getSubstitute(), 0, em);
-                    }
-                }
-            }
-        }
-
-        for (PartAlternateLink alternateLink : root.getAlternates()) {
-            filterConfigSpec(alternateLink.getAlternate(), 0, em);
-        }
-
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
-        }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
-        }
-
-        return root;
+    public PartIteration filterConfigSpec(PartMaster part) {
+        PartRevision partR = part.getLastRevision();
+        return partR.getLastIteration();
     }
-
 
 }

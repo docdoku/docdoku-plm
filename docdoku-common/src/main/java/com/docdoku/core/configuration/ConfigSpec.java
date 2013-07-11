@@ -21,6 +21,7 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 
 import javax.persistence.*;
@@ -58,6 +59,6 @@ public abstract class ConfigSpec implements Serializable{
         this.id = id;
     }
 
-    public abstract PartMaster filterConfigSpec(PartMaster root, int depth, EntityManager em);
-    
+    public abstract PartIteration filterConfigSpec(PartMaster part);
+
 }

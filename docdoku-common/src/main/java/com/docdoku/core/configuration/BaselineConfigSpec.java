@@ -19,10 +19,13 @@
  */
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
 
-import javax.persistence.*;
-import java.util.Collections;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Table(name="BASELINECONFIGSPEC")
 @Entity
@@ -46,51 +49,15 @@ public class BaselineConfigSpec extends ConfigSpec {
         this.baseline = baseline;
     }
 
-
     @Override
-    public PartMaster filterConfigSpec(PartMaster root, int depth, EntityManager em){
-        // int baselineId, String targetPartWorkspaceId, String targetPartNumber
-        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),root.getWorkspaceId(),root.getNumber());
-
+    public PartIteration filterConfigSpec(PartMaster part) {
+        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),part.getWorkspaceId(),part.getNumber());
         BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
-
-        PartRevision partR ;
-        PartIteration partI;
-
         if(baselinedRootPart != null){
-            partR = baselinedRootPart.getTargetPart().getPartRevision();
-            partI = baselinedRootPart.getTargetPart();
+            return baselinedRootPart.getTargetPart();
         }else{
             // the part isn't in baseline, choose the latest version-iteration
-            partR = root.getLastRevision();
-            partI = partR.getLastIteration();
+            return part.getLastRevision().getLastIteration();
         }
-
-        if (partI != null) {
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterConfigSpec(usageLink.getComponent(), depth, em);
-
-                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterConfigSpec(subLink.getSubstitute(), 0, em);
-                    }
-                }
-            }
-        }
-
-        for (PartAlternateLink alternateLink : root.getAlternates()) {
-            filterConfigSpec(alternateLink.getAlternate(), 0, em);
-        }
-
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
-        }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
-        }
-
-        return root;
     }
 }

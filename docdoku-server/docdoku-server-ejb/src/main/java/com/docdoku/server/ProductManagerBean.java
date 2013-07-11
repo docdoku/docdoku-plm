@@ -114,10 +114,42 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         depth = depth == null ? -1 : depth;
 
         if(configSpec != null){
-            configSpec.filterConfigSpec(rootUsageLink.getComponent(),depth, em);
+            filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);
         }
 
         return rootUsageLink;
+    }
+
+    private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth){
+
+        PartIteration partI = configSpec.filterConfigSpec(partMaster);
+
+        if (partI != null) {
+            if (depth != 0) {
+                depth--;
+                for (PartUsageLink usageLink : partI.getComponents()) {
+                    filterConfigSpec(configSpec, usageLink.getComponent(), depth);
+
+                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
+                        filterConfigSpec(configSpec, subLink.getSubstitute(), 0);
+                    }
+                }
+            }
+        }
+
+        for (PartAlternateLink alternateLink : partMaster.getAlternates()) {
+            filterConfigSpec(configSpec,alternateLink.getAlternate(), 0);
+        }
+
+        em.detach(partMaster);
+
+        if (partMaster.getPartRevisions().size() > 1) {
+            partMaster.getPartRevisions().retainAll(Collections.singleton(partI.getPartRevision()));
+        }
+        if (partI.getPartRevision() != null && partI.getPartRevision().getNumberOfIterations() > 1) {
+            partI.getPartRevision().getPartIterations().retainAll(Collections.singleton(partI));
+        }
+
     }
 
 
