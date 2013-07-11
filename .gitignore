@@ -12,3 +12,5 @@ cp_to_share.sh
 deploy-node-webkit.sh
 update_deploy.sh
 updateJars.sh
+docdoku-cli-jar-with-dependencies.jar
+docdoku-cli.jar
