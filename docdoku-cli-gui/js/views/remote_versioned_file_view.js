@@ -17,13 +17,12 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
             status.iteration = _.last(status.iterations);
 
             this.$el.html(this.template({model: this.model, status: status}));
-            this.$localFile = this.$(".versionedFile");
 
             return this;
         },
 
         loader:function() {
-            this.$localFile.html(new Loader());
+            this.$el.html(new Loader());
         },
 
         isCheckoutByConnectedUser:function(status) {
@@ -37,7 +36,6 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
                 Commander.getStatusForPartNumber(self.model.getPartNumber(), self.model.getVersion(), function(pStatus) {
                     var status = JSON.parse(pStatus);
                     self.model.setStatus(status);
-//                    self.render();
                     self.remove();
                 });
             });
