@@ -69,12 +69,13 @@ public class MailerBean implements IMailerLocal {
 
             for (int i = 0; i < pSubscribers.length; i++) {
                 try {
+                    Locale locale = new Locale(pSubscribers[i].getLanguage());
                     message.addRecipient(javax.mail.Message.RecipientType.TO,
                             new InternetAddress(pSubscribers[i].getEmail(),
                             pSubscribers[i].getName()));
-                    message.setSubject("State notification");
+                    message.setSubject(getStateNotificationSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getStateNotificationMessage(pDocumentMaster, new Locale(pSubscribers[i].getLanguage())),
+                    message.setContent(getStateNotificationMessage(pDocumentMaster,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
@@ -93,6 +94,7 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
+
     @Asynchronous
     @Override
     public void sendIterationNotification(User[] pSubscribers,
@@ -100,13 +102,14 @@ public class MailerBean implements IMailerLocal {
         try {
             for (int i = 0; i < pSubscribers.length; i++) {
                 try {
+                    Locale locale = new Locale(pSubscribers[i].getLanguage());
                     javax.mail.Message message = new MimeMessage(mailSession);
                     message.addRecipient(javax.mail.Message.RecipientType.TO,
                             new InternetAddress(pSubscribers[i].getEmail(),
                             pSubscribers[i].getName()));
-                    message.setSubject("Iteration notification");
+                    message.setSubject(getIterationNotificationSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getIterationNotificationMessage(pDocumentMaster, new Locale(pSubscribers[i].getLanguage())),
+                    message.setContent(getIterationNotificationMessage(pDocumentMaster,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
@@ -132,13 +135,14 @@ public class MailerBean implements IMailerLocal {
         try {
             for (Task task : pRunningTasks) {
                 try {
-                    javax.mail.Message message = new MimeMessage(mailSession);
                     User worker = task.getWorker();
+                    Locale locale = new Locale(worker.getLanguage());
+                    javax.mail.Message message = new MimeMessage(mailSession);
                     message.setRecipient(javax.mail.Message.RecipientType.TO,
                             new InternetAddress(worker.getEmail(), worker.getName()));
-                    message.setSubject("Approval required");
+                    message.setSubject(getApprovalRequiredSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getApprovalRequiredMessage(task, pDocumentMaster, new Locale(worker.getLanguage())),
+                    message.setContent(getApprovalRequiredMessage(task, pDocumentMaster,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
@@ -160,12 +164,13 @@ public class MailerBean implements IMailerLocal {
     @Override
     public void sendPasswordRecovery(Account account, String passwordRRUuid) {
         try {
+            Locale locale = new Locale(account.getLanguage());
             javax.mail.Message message = new MimeMessage(mailSession);
             message.setRecipient(javax.mail.Message.RecipientType.TO,
                     new InternetAddress(account.getEmail(), account.getName()));
-            message.setSubject("Password recovery");
+            message.setSubject(getPasswordRecoverySubject(locale));
             message.setSentDate(new Date());
-            message.setContent(getPasswordRecoveryMessage(account, passwordRRUuid, new Locale(account.getLanguage())),
+            message.setContent(getPasswordRecoveryMessage(account, passwordRRUuid,locale),
                     "text/html; charset=utf-8");
             message.setFrom();
             Transport.send(message);
@@ -181,19 +186,22 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
+
+
     @Asynchronous
     @Override
     public void sendApproval(Collection<Task> pRunningTasks, PartRevision partRevision) {
         try {
             for (Task task : pRunningTasks) {
                 try {
-                    javax.mail.Message message = new MimeMessage(mailSession);
                     User worker = task.getWorker();
+                    Locale locale = new Locale(worker.getLanguage());
+                    javax.mail.Message message = new MimeMessage(mailSession);
                     message.setRecipient(javax.mail.Message.RecipientType.TO,
                             new InternetAddress(worker.getEmail(), worker.getName()));
-                    message.setSubject("Approval required");
+                    message.setSubject(getApprovalRequiredSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getApprovalRequiredMessage(task, partRevision, new Locale(worker.getLanguage())),
+                    message.setContent(getApprovalRequiredMessage(task, partRevision,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
@@ -216,12 +224,13 @@ public class MailerBean implements IMailerLocal {
     @Override
     public void sendWorkspaceDeletionNotification(Account admin, String workspaceId) {
         try {
+            Locale locale = new Locale(admin.getLanguage());
             javax.mail.Message message = new MimeMessage(mailSession);
             message.setRecipient(javax.mail.Message.RecipientType.TO,
                     new InternetAddress(admin.getEmail(),admin.getName()));
-            message.setSubject("Workspace deletion");
+            message.setSubject(getWorkspaceDeletionSubject(locale));
             message.setSentDate(new Date());
-            message.setContent(getWorkspaceDeletionMessage(workspaceId,new Locale(admin.getLanguage())),
+            message.setContent(getWorkspaceDeletionMessage(workspaceId,locale),
                     "text/html; charset=utf-8");
             message.setFrom();
             Transport.send(message);
@@ -268,12 +277,13 @@ public class MailerBean implements IMailerLocal {
 
     private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision){
         try {
+            Locale locale = new Locale(userLanguage);
             javax.mail.Message message = new MimeMessage(mailSession);
             message.setRecipient(javax.mail.Message.RecipientType.TO,
                     new InternetAddress(userEmail,userName));
-            message.setSubject("Workflow Relaunched");
+            message.setSubject(getPartRevisionWorkflowRelaunchedSubject(locale));
             message.setSentDate(new Date());
-            message.setContent(getPartRevisionWorkflowRelaunchedMessage(workspaceId, partRevision.getPartNumber(), partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), new Locale(userLanguage)),
+            message.setContent(getPartRevisionWorkflowRelaunchedMessage(workspaceId, partRevision.getPartNumber(), partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), locale),
                     "text/html; charset=utf-8");
             message.setFrom();
             Transport.send(message);
@@ -297,12 +307,13 @@ public class MailerBean implements IMailerLocal {
 
     private void sendWorkflowRelaunchedNotification(String userName, String userEmail,  String userLanguage, String workspaceId, DocumentMaster documentMaster){
         try {
+            Locale locale = new Locale(userLanguage);
             javax.mail.Message message = new MimeMessage(mailSession);
             message.setRecipient(javax.mail.Message.RecipientType.TO,
                     new InternetAddress(userEmail,userName));
-            message.setSubject("Workflow Relaunched");
+            message.setSubject(getDocumentMasterWorkflowRelaunchedSubject(locale));
             message.setSentDate(new Date());
-            message.setContent(getDocumentMasterWorkflowRelaunchedMessage(workspaceId, documentMaster.getId(), documentMaster.getVersion() , documentMaster.getWorkflow().getLifeCycleState(), new Locale(userLanguage)),
+            message.setContent(getDocumentMasterWorkflowRelaunchedMessage(workspaceId, documentMaster.getId(), documentMaster.getVersion() , documentMaster.getWorkflow().getLifeCycleState(), locale),
                     "text/html; charset=utf-8");
             message.setFrom();
             Transport.send(message);
@@ -385,5 +396,42 @@ public class MailerBean implements IMailerLocal {
         String workspace = pDocM.getWorkspaceId();
         String docMId = pDocM.getId();
         return codebase + "/documents/" + workspace + "/" + docMId + "/" + pDocM.getVersion();
+    }
+
+
+    private String getStateNotificationSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("StateNotification_title");
+    }
+
+    private String getIterationNotificationSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("IterationNotification_title");
+    }
+
+    private String getApprovalRequiredSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("Approval_title");
+    }
+
+    private String getPasswordRecoverySubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("Recovery_title");
+    }
+
+    private String getWorkspaceDeletionSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("WorkspaceDeletion_title");
+    }
+
+    private String getPartRevisionWorkflowRelaunchedSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("PartRevision_workflow_relaunched_title");
+
+    }
+    private String getDocumentMasterWorkflowRelaunchedSubject(Locale pLocale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return bundle.getString("DocumentMaster_workflow_relaunched_title");
+
     }
 }
