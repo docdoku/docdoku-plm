@@ -44,4 +44,8 @@ public interface IMailerLocal {
     void sendApproval(Collection<Task> runningTasks, PartRevision partRevision);
 
     void sendWorkspaceDeletionNotification(Account admin, String workspaceId);
+
+    void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision);
+
+    void sendDocumentMasterWorkflowRelaunchedNotification(DocumentMaster documentMaster);
 }

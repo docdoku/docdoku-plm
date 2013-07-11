@@ -1640,6 +1640,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             // Send mails for running tasks
             mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), partRevision);
 
+            // Send notification for relaunch
+            mailer.sendPartRevisionWorkflowRelaunchedNotification(partRevision);
+
         }
 
         return partRevision;

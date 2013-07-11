@@ -31,6 +31,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -450,6 +451,29 @@ public class PartsResource {
             PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,number,version));
             partRevision.setPublicShared(false);
             return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("{partKey}/aborted-workflows")
+    @Produces("application/json;charset=UTF-8")
+    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            PartRevision partRevision = productService.getPartRevision(revisionKey);
+
+            List<Workflow> abortedWorkflows = partRevision.getAbortedWorkflows();
+            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<WorkflowDTO>();
+
+            for(Workflow abortedWorkflow:abortedWorkflows){
+                abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
+            }
+
+            return abortedWorkflowsDTO;
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
