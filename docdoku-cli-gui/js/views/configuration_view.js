@@ -71,12 +71,12 @@ define(["text!templates/configuration.html",
 
         openDirectoryChooser:function() {
 
+            // Do this stuff once
+            $(this.el).off('click', '#open-directory-chooser');
+
             var self = this ;
-
             var dcv = new DirectoryChooserView({el:this.$directoryChooser}).render();
-
             this.$directoryChooser.removeClass("hide");
-
             dcv.on("directory:chosen",function(folder){
                 self.$inputWorkingDir.val(folder);
             });
