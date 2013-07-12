@@ -22,7 +22,7 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.exceptions.StatusException;
+import com.docdoku.cli.exceptions.DplmException;
 import com.docdoku.cli.helpers.JSONPrinter;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.User;
@@ -32,7 +32,6 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.PartMasterNotFoundException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -80,11 +79,8 @@ public class StatusCommand extends AbstractCommandLine{
             } else {
                 printMasterStatus(pm);
             }
-//        } catch (StatusException e)  {
-//            JSONPrinter.printException(e);
-//        }
-        } catch (PartMasterNotFoundException e)  {
-            JSONPrinter.printException(e);
+        } catch (DplmException de)  {
+            JSONPrinter.printException(de);
         }
     }
 
@@ -138,7 +134,7 @@ public class StatusCommand extends AbstractCommandLine{
         return b.toString();
     }
 
-    private void loadMetadata() throws IOException, StatusException {
+    private void loadMetadata() throws IOException, DplmException {
         if(cadFile==null){
             throw new IllegalArgumentException("<partnumber> or <revision> are not specified and no cad file is supplied");
         }
@@ -149,7 +145,7 @@ public class StatusCommand extends AbstractCommandLine{
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
             if (jsonParser) {
-                throw new StatusException("File is unversioned");
+                throw new DplmException("File is unversioned");
             }
             else {
                 throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");

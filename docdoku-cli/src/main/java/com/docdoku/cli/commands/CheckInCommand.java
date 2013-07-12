@@ -22,7 +22,7 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.exceptions.StatusException;
+import com.docdoku.cli.exceptions.DplmException;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.JSONPrinter;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
@@ -30,7 +30,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.PartMasterNotFoundException;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -55,6 +54,9 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
+    @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
+    private boolean jsonParser;
+
     public void execImpl() throws Exception {
         try {
             if(partNumber==null || revision==null){
@@ -66,6 +68,11 @@ public class CheckInCommand extends AbstractCommandLine{
 
             if(!noUpload){
                 PartRevision pr = productS.getPartRevision(partRPK);
+                if (pr == null) {
+                    if (jsonParser) {
+                        throw new DplmException("Part not founded");
+                    }
+                }
                 PartIteration pi = pr.getLastIteration();
 
                 BinaryResource bin = pi.getNativeCADFile();
@@ -84,8 +91,8 @@ public class CheckInCommand extends AbstractCommandLine{
             PartRevision pr = productS.checkInPart(partRPK);
             PartIteration pi = pr.getLastIteration();
             System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
-        } catch (StatusException se) {
-            JSONPrinter.printException(se);
+        } catch (DplmException de) {
+            JSONPrinter.printException(de);
         }
     }
 

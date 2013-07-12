@@ -1,6 +1,6 @@
 package com.docdoku.cli.helpers;
 
-import com.docdoku.cli.exceptions.StatusException;
+import com.docdoku.cli.exceptions.DplmException;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
@@ -50,9 +50,9 @@ public class JSONPrinter {
 
     }
 
-    public static void printException(Exception e) throws JSONException {
+    public static void printException(DplmException de) throws JSONException {
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("dplmError", e.getMessage());
+        jsonObj.put("dplmError", de.getMessage());
         System.out.println(jsonObj);
     }
 }
