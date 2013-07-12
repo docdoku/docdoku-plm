@@ -45,7 +45,8 @@
                 <label class="control-label">{{i18n.WORKING_DIR}}</label>
                 <div class="controls">
                     <input type="text" id="inputWorkingDir" value="{{configuration.getDirectory}}" readonly required/>
-                    <i class="icon-folder-open"></i>
+                    <i class="icon-folder-open" id="open-directory-chooser"></i>
+                    <div class="hide" id="directory_chooser"></div>
                 </div>
             </div>
 

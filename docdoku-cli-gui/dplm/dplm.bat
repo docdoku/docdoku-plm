@@ -1,6 +1,6 @@
 @ECHO OFF
 rem Enter here the path to the JDK or JRE directory bin
-rem SET JAVA_HOME="C:\Program Files\Java\jdk1.7.0_21\bin"
+rem SET JAVA_HOME="C:\Program Files\Java\jdk1.7.0_21"
 set basedir=%~dp0
 set cp=%basedir%\docdoku-cli-jar-with-dependencies.jar
 
@@ -11,4 +11,4 @@ SET args=
   SHIFT
   GOTO Boucle
 :Fin
-%JAVA_HOME%\java -Xmx1024M -cp %cp% com.docdoku.cli.MainCommand%args%
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %cp% com.docdoku.cli.MainCommand%args%

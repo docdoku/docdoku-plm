@@ -1,8 +1,10 @@
 define(["text!templates/configuration.html",
         "i18n!localization/nls/global",
         "storage",
-        "commander"],
-    function(template, i18n, Storage, Commander) {
+        "commander",
+        "views/directory_chooser_view"
+],
+    function(template, i18n, Storage, Commander, DirectoryChooserView) {
     var ConfigurationView = Backbone.View.extend({
 
         template: Handlebars.compile(template),
@@ -10,7 +12,7 @@ define(["text!templates/configuration.html",
         events: {
             "submit #form-configuration" : "onSubmitForm",
             "hidden #configuration-modal": "onHidden",
-            "click .icon-folder-open" : "openFileChooser"
+            "click #open-directory-chooser" : "openDirectoryChooser"
         },
 
         render:function() {
@@ -28,6 +30,7 @@ define(["text!templates/configuration.html",
             this.$inputPwd = this.$('#inputPwd');
             this.$inputWorkspace = this.$('#inputWorkspace');
             this.$inputWorkingDir = this.$('#inputWorkingDir');
+            this.$directoryChooser = this.$('#directory_chooser');
         },
 
         onSubmitForm:function(e) {
@@ -66,12 +69,18 @@ define(["text!templates/configuration.html",
 
         },
 
-        openFileChooser:function() {
-            var self = this;
-            Commander.chooseDirectory(function(folder) {
-               // Méthode de callback
-               self.$inputWorkingDir.val(folder);
+        openDirectoryChooser:function() {
+
+            var self = this ;
+
+            var dcv = new DirectoryChooserView({el:this.$directoryChooser}).render();
+
+            this.$directoryChooser.removeClass("hide");
+
+            dcv.on("directory:chosen",function(folder){
+                self.$inputWorkingDir.val(folder);
             });
+
         }
     });
 
