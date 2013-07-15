@@ -63,4 +63,5 @@ public interface IUserManagerLocal{
     boolean hasCommonWorkspace(String user1, String user2);
     boolean isCallerInRole(String role);
     UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
+    Workspace[] getWorkspacesWhereCallerIsActive();
 }

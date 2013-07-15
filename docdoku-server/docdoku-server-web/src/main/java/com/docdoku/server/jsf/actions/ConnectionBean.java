@@ -86,7 +86,8 @@ public class ConnectionBean {
         session.setAttribute("administeredWorkspaces", administeredWorkspaces);
 
         Set<Workspace> regularWorkspaces = new HashSet<Workspace>();
-        regularWorkspaces.addAll(Arrays.asList(userManager.getWorkspaces()));
+        Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+        regularWorkspaces.addAll(Arrays.asList(workspaces));
         regularWorkspaces.removeAll(administeredWorkspaces.values());
         session.setAttribute("regularWorkspaces", regularWorkspaces);
 

@@ -105,6 +105,13 @@ public class WorkspaceDAO {
         return result != null ? result.longValue() : 0L;
     }
 
+    public List<Workspace> findWorkspacesWhereUserIsActive(String userLogin){
+        List<Workspace> workspaces = em.createNamedQuery("Workspace.findWorkspacesWhereUserIsActive")
+                .setParameter("userLogin", userLogin)
+                .getResultList();
+        return workspaces;
+    }
+
     public void removeWorkspace(Workspace workspace) throws IOException, StorageException {
 
         String workspaceId = workspace.getId();

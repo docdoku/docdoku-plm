@@ -454,6 +454,14 @@ public class UserManagerBean implements IUserManagerLocal {
         return userGroups.toArray(new UserGroup[userGroups.size()]);
     }
 
+    @RolesAllowed("users")
+    @Override
+    public Workspace[] getWorkspacesWhereCallerIsActive() {
+        String callerLogin = ctx.getCallerPrincipal().getName();
+        List<Workspace> workspaces = new WorkspaceDAO(em).findWorkspacesWhereUserIsActive(callerLogin);
+        return workspaces.toArray(new Workspace[workspaces.size()]);
+    }
+
     private Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
         if (!pWorkspace.getAdmin().equals(account)) {
