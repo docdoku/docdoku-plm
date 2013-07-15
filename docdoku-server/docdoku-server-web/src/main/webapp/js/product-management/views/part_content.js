@@ -65,7 +65,7 @@ define([
 
             if(this.query){
                 collection = new PartSearchCollection();
-                collection.setQuery(this.query)
+                collection.setQuery(this.query);
             }else{
                 collection = new PartCollection();
             }

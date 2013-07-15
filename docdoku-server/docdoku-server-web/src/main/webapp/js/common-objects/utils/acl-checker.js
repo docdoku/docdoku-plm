@@ -57,10 +57,8 @@ define([],function(){
             });
 
             return permission;
-
-
         }
-    }
+    };
 
     return ACLChecker;
 
