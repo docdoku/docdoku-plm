@@ -19,26 +19,15 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.*;
-import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
-import com.docdoku.core.security.WorkspaceUserMembershipKey;
-import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.security.WorkspaceUserGroupMembership;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.common.UserKey;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.UserGroupKey;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.security.PasswordRecoveryRequest;
+import com.docdoku.core.security.*;
+import com.docdoku.core.services.*;
 import com.docdoku.server.dao.*;
 
-import java.util.*;
-import java.util.logging.Logger;
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -46,7 +35,10 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.annotation.security.DeclareRoles;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 @DeclareRoles({"users","admin"})
 @Local(IUserManagerLocal.class)
@@ -443,11 +435,7 @@ public class UserManagerBean implements IUserManagerLocal {
     public boolean hasCommonWorkspace(String userLogin1, String userLogin2) {
 
         if( userLogin1 != null && userLogin2 != null){
-            return ! em.createNamedQuery("findCommonWorkspacesForGivenUsers").
-                    setParameter("userLogin1", userLogin1).
-                    setParameter("userLogin2", userLogin2).
-                    getResultList().
-                    isEmpty();
+            return new UserDAO(em).hasCommonWorkspace(userLogin1,userLogin2);
         }
 
         return false;
@@ -456,6 +444,14 @@ public class UserManagerBean implements IUserManagerLocal {
     @Override
     public boolean isCallerInRole(String role) {
         return ctx.isCallerInRole(role);
+    }
+
+    @RolesAllowed({"users","admin"})
+    @Override
+    public UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException {
+        User user = new UserDAO(em).loadUser(userKey);
+        List<UserGroup> userGroups = new UserGroupDAO(em).getUserGroups(userKey.getWorkspaceId(), user);
+        return userGroups.toArray(new UserGroup[userGroups.size()]);
     }
 
     private Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {

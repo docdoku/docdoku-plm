@@ -20,25 +20,43 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.UserKey;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.UserNotFoundException;
+import org.apache.commons.lang.StringUtils;
+
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class PSServlet extends HttpServlet {
+
+    @EJB
+    private IUserManagerLocal userManager;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
             throws ServletException, IOException {
 
+        HttpSession sessionHTTP = pRequest.getSession();
         String login = pRequest.getRemoteUser();
+
+        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+
         String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
+
         int offset;
         if (pRequest.getContextPath().equals("")) {
             offset = 2;
@@ -69,6 +87,16 @@ public class PSServlet extends HttpServlet {
             
         }
         else {
+            try{
+                UserGroup[] userGroups = userManager.getUserGroupsForUser(new UserKey(workspaceID, login));
+                String[] groups = new String[userGroups.length];
+                for(int i = 0 ; i< userGroups.length;i++){
+                    groups[i] = "\""+userGroups[i].toString()+"\"";
+                }
+                pRequest.setAttribute("groups",StringUtils.join(groups,","));
+            } catch (UserNotFoundException e) {
+            }
+            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID) ? true : false);
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);

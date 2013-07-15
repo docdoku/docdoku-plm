@@ -23,12 +23,8 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.*;
-import javax.annotation.Resource;
+
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
@@ -36,6 +32,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.*;
 
 @ManagedBean(name = "connectionBean")
 @RequestScoped

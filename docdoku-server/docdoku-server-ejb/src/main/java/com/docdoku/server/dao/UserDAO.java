@@ -217,4 +217,13 @@ public class UserDAO {
         return users.toArray(new User[users.size()]);
 
     }
+
+    public boolean hasCommonWorkspace(String userLogin1, String userLogin2){
+        return ! em.createNamedQuery("findCommonWorkspacesForGivenUsers").
+                setParameter("userLogin1", userLogin1).
+                setParameter("userLogin2", userLogin2).
+                getResultList().
+                isEmpty();
+    }
+
 }

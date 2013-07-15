@@ -35,6 +35,9 @@ import java.util.Set;
 @Table(name="USERGROUP")
 @javax.persistence.IdClass(com.docdoku.core.common.UserGroupKey.class)
 @javax.persistence.Entity
+@NamedQueries({
+        @NamedQuery(name="UserGroup.findUserGroups", query="SELECT u FROM UserGroup u WHERE :user member of u.users AND u.workspaceId = :workspaceId")
+})
 public class UserGroup implements Serializable, Cloneable {
 
     @Column(length=50)
@@ -99,5 +102,10 @@ public class UserGroup implements Serializable, Cloneable {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    @Override
+    public String toString() {
+        return getId();
     }
 }

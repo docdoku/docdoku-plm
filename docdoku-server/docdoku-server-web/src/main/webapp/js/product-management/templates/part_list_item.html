@@ -13,10 +13,10 @@
 <td><a class="checkout-user-popover">{{model.getCheckOutUserName}}</a></td>
 <td class="part-acl-info">
     {{#model.isReadOnly}}
-    <i class="icon-lock read-only" title="{{i18n.READ_ONLY}}"></i>
+    <i class="icon-ban-circle read-only" title="{{i18n.READ_ONLY}}"></i>
     {{/model.isReadOnly}}
     {{#model.isFullAccess}}
-    <i class="icon-lock full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    <i class="icon-ban-circle full-access" title="{{i18n.FULL_ACCESS}}"></i>
     {{/model.isFullAccess}}
 </td>
 <td class="part-revision-share">

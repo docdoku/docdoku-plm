@@ -1,4 +1,4 @@
-define(["collections/document_iteration"], function(DocumentIterationList) {
+define(["collections/document_iteration", "common-objects/utils/acl-checker"], function(DocumentIterationList,ACLChecker) {
 
     var Document = Backbone.Model.extend({
 
@@ -288,10 +288,7 @@ define(["collections/document_iteration"], function(DocumentIterationList) {
         },
 
         getACLPermissionForCurrentUser:function(){
-            if(this.get("acl")){
-                return this.get("acl").userEntries[APP_CONFIG.login];
-            }
-            return false;
+            return ACLChecker.getPermission(this.get("acl"));
         }
 
     });

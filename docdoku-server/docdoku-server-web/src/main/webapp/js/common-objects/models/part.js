@@ -1,4 +1,4 @@
-define(["i18n!localization/nls/product-structure-strings","common-objects/utils/date","common-objects/collections/part_iteration_collection"], function(i18n, Date, PartIterationList) {
+define(["i18n!localization/nls/product-structure-strings","common-objects/utils/date","common-objects/collections/part_iteration_collection","common-objects/utils/acl-checker"], function(i18n, Date, PartIterationList,ACLChecker) {
 
     var Part = Backbone.Model.extend({
 
@@ -236,10 +236,7 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         },
 
         getACLPermissionForCurrentUser:function(){
-            if(this.get("acl")){
-                return this.get("acl").userEntries[APP_CONFIG.login];
-            }
-            return false;
+            return ACLChecker.getPermission(this.get("acl"));
         },
 
         createNewVersion: function(description, workflow, roleMappingList, aclList) {

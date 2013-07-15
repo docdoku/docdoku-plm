@@ -15,10 +15,11 @@
         <ui:define name="scripts">
             <script type="text/javascript">   
                 var APP_CONFIG = {
-                        workspaceId: "${workspaceID}",
-                        login: "${login}",
-                        sessionId : "${session.id}",
-                        workspaceAdmin:${workspaceAdmin}
+                    workspaceId: "${workspaceID}",
+                    login: "${login}",
+                    sessionId : "${session.id}",
+                    workspaceAdmin:${workspaceAdmin},
+                    groups: [${groups}]
                 };
                 $(document).ready(function() {
                     require.config({
