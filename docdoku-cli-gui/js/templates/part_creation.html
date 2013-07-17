@@ -13,6 +13,18 @@
                 <div class="tab-pane active" id="tab-main">
 
                     <div class="control-group">
+                        <label class="control-label" for="inputPartNumber">{{i18n.WORKSPACE}}</label>
+
+                        <div class="controls">
+                            <select id="inputWorkspace">
+                                {{#each workspaces}}
+                                    <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
                         <label class="control-label" for="inputPartNumber">{{i18n.PART_NUMBER}}</label>
 
                         <div class="controls">

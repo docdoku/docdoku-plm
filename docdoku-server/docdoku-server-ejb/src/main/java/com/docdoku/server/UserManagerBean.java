@@ -33,6 +33,7 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
@@ -43,7 +44,8 @@ import java.util.logging.Logger;
 @DeclareRoles({"users","admin"})
 @Local(IUserManagerLocal.class)
 @Stateless(name = "UserManagerBean")
-public class UserManagerBean implements IUserManagerLocal {
+@WebService(endpointInterface = "com.docdoku.core.services.IUserManagerWS")
+public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @PersistenceContext
     private EntityManager em;

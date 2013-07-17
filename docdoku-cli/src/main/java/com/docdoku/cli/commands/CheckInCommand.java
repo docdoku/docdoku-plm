@@ -57,6 +57,9 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
     private boolean jsonParser;
 
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
+
     public void execImpl() throws Exception {
         try {
             if(partNumber==null || revision==null){

@@ -34,13 +34,13 @@ define(["text!templates/local_versioned_file.html", "views/loader_view",  "comma
         },
 
         isCheckoutByConnectedUser:function(status) {
-            return status.checkoutUser == Storage.getUser();
+            return status.checkoutUser == APP_GLOBAL.GLOBAL_CONF.user;
         },
 
         checkin:function() {
             this.loader();
             var self = this;
-            Commander.checkin(this.model.getPartNumber(), this.model.getVersion(), function() {
+            Commander.checkin(this.model, function() {
                Commander.getStatusForFile(self.model.getFullPath(), function(pStatus) {
                    var status = JSON.parse(pStatus);
                    self.model.setStatus(status);
@@ -52,8 +52,8 @@ define(["text!templates/local_versioned_file.html", "views/loader_view",  "comma
         checkout:function() {
             this.loader();
             var self = this;
-            Commander.checkout(this.model.getPartNumber(), this.model.getVersion(), function() {
-                Commander.getStatusForPartNumber(self.model.getPartNumber(), self.model.getVersion(), function(pStatus) {
+            Commander.checkout(this.model, function() {
+                Commander.getStatusForPart(self.model, function(pStatus) {
                     var status = JSON.parse(pStatus);
                     self.model.setStatus(status);
                     self.render();
@@ -64,7 +64,7 @@ define(["text!templates/local_versioned_file.html", "views/loader_view",  "comma
         undoCheckout:function() {
             this.loader();
             var self = this;
-            Commander.undoCheckout(this.model.getPartNumber(), this.model.getVersion(), function() {
+            Commander.undoCheckout(this.model, function() {
                 Commander.getStatusForFile(self.model.getFullPath(), function(pStatus) {
                     var status = JSON.parse(pStatus);
                     self.model.setStatus(status);

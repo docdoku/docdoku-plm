@@ -36,7 +36,7 @@ public class MetaDirectoryManager {
     private final static String PART_NUMBER_PROP = "partNumber";
     private final static String REVISION_PROP = "revision";
     private final static String ITERATION_PROP = "iteration";
-
+    private final static String WORKSPACE_PROP = "workspace";
     private final static String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
     private final static String DIGEST_PROP = "digest";
 
@@ -55,8 +55,6 @@ public class MetaDirectoryManager {
             }
         }
     }
-
-
 
     private void saveIndex() throws IOException {
         File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
@@ -91,6 +89,11 @@ public class MetaDirectoryManager {
         saveIndex();
     }
 
+    public void setWorkspace(String filePath, String workspaceId) throws IOException {
+        indexProps.setProperty(filePath + "." + WORKSPACE_PROP, workspaceId+"");
+        saveIndex();
+    }
+
     public void setLastModifiedDate(String filePath, Date lastModifiedDate) throws IOException {
         setLastModifiedDate(filePath, lastModifiedDate.getTime());
     }
@@ -111,6 +114,10 @@ public class MetaDirectoryManager {
 
     public String getPartNumber(String filePath){
         return indexProps.getProperty(filePath + "." + PART_NUMBER_PROP);
+    }
+
+    public String getWorkspace(String filePath){
+        return indexProps.getProperty(filePath + "." + WORKSPACE_PROP);
     }
 
     public String getRevision(String filePath){

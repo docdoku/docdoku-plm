@@ -20,9 +20,8 @@ define(["text!templates/local_unversioned_file.html", "views/part_creation_view"
             var self = this;
             var partCreationView = new PartCreationView({model : this.model});
             $("body").append(partCreationView.render().el);
-            partCreationView.openModal();
-            partCreationView.on("part:created",function() {
-                self.trigger("part:created");
+            partCreationView.on("part:created",function(model) {
+                self.trigger("part:created",model);
             })
         }
     });
