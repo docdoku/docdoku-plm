@@ -4,35 +4,35 @@ define([], function () {
         return '"'+cmd+'"';
     };
 
-    var classPath = window.process.cwd()+"/dplm/docdoku-cli-jar-with-dependencies.jar" ;
+    var classPath = window.process.cwd() + '/dplm/docdoku-cli-jar-with-dependencies.jar' ;
 
     var WindowsCMD = {
         base:function(){
-            return 'cd ' + APP_GLOBAL.CURRENT_PATH + ' && '
-                + '"%JAVA_HOME%\\bin\\java" -Xmx1024M -cp '+classPath+' com.docdoku.cli.MainCommand ';
+            return 'cd "' + APP_GLOBAL.CURRENT_PATH + '" && '
+                + '"%JAVA_HOME%\\bin\\java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.MainCommand ';
         },
         explore:function(path){
-            return "start "+escapeShell(path);
+            return 'start "'+path+'"';
         }
     };
 
     var LinuxCMD = {
         base:function(){
-            return "cd " + APP_GLOBAL.CURRENT_PATH + "; "
-                + "java -Xmx1024M -classpath "+classPath +" com.docdoku.cli.MainCommand ";
+            return 'cd "' + APP_GLOBAL.CURRENT_PATH + '"; '
+                + '"$JAVA_HOME/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.MainCommand ';
         },
         explore:function(path){
-            return "nautilus "+escapeShell(path);
+            return 'nautilus "' + path + '"';
         }
     };
 
     var OsxCMD = {
         base:function(){
-            return "cd " + APP_GLOBAL.CURRENT_PATH + "; "
-                + "java -Xmx1024M -classpath "+classPath +" com.docdoku.cli.MainCommand ";
+            return 'cd "' + APP_GLOBAL.CURRENT_PATH + '"; '
+                + '"$JAVA_HOME/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.MainCommand ';
         },
         explore:function(path){
-            return "open "+escapeShell(path);
+            return 'open "' + path + '"';
         }
     };
 
@@ -42,7 +42,7 @@ define([], function () {
         case "Windows_NT" : _.extend(cmd,WindowsCMD); break;
         case "Linux" : _.extend(cmd,LinuxCMD); break;
         case "Darwin" : _.extend(cmd,OsxCMD); break;
-
+        default :_.extend(cmd,LinuxCMD); break;
     }
 
     _.extend(cmd,{
@@ -63,18 +63,18 @@ define([], function () {
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
                 + " -j "
-                + escapeShell(file)
+                + escapeShell(file);
         },
 
         getStatusForPart: function (part){
             return this.base() + " st"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
-                + " -w " + part.getWorkspace()
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
-                + " -o " + part.getNumber()
-                + " -r " + part.getVersion()
+                + " -w " + escapeShell(part.getWorkspace())
+                + " -o " + escapeShell(part.getNumber())
+                + " -r " + escapeShell(part.getVersion())
                 + " -j";
         },
 
@@ -82,54 +82,54 @@ define([], function () {
             return this.base() + " co"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
-                + " -w " + part.getWorkspace()
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
-                + " -o " + part.getNumber()
-                + " -r " + part.getVersion();
+                + " -w " + escapeShell(part.getWorkspace())
+                + " -o " + escapeShell(part.getNumber())
+                + " -r " + escapeShell(part.getVersion());
         },
 
         checkin:function(part){
             return this.base() + " ci"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
-                + " -w " + part.getWorkspace()
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
-                + " -o " + part.getNumber()
-                + " -r " + part.getVersion();
+                + " -w " + escapeShell(part.getWorkspace())
+                + " -o " + escapeShell(part.getNumber())
+                + " -r " + escapeShell(part.getVersion());
         },
 
         undoCheckout:function(part){
             return this.base() + " uco"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
-                + " -w " + part.getWorkspace()
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
-                + " -o " + part.getNumber()
-                + " -r " + part.getVersion();
+                + " -w " + escapeShell(part.getWorkspace())
+                + " -o " + escapeShell(part.getNumber())
+                + " -r " + escapeShell(part.getVersion());
         },
 
         createPart:function(part, filePath){
 
-            function optionalParams(){
-                var params = "";
+            var optionalParams = function(){
+                var opt = "";
                 if (part.getName()) {
-                    params += " -N " + escapeShell(part.getName());
+                    opt += " -N " + escapeShell(part.getName());
                 }
                 if (part.getDescription()) {
-                    params += " -d " + escapeShell(part.getDescription());
+                    opt += " -d " + escapeShell(part.getDescription().replace(/"/g,"\\\""));
                 }
-                return params;
-            }
+                return opt;
+            };
 
             return this.base() + " cr"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
-                + " -w " + escapeShell(part.getWorkspace())
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -w " + escapeShell(part.getWorkspace())
                 + " -o " + escapeShell(part.getNumber())
                 + optionalParams(part, filePath)
                 + " " + escapeShell(filePath)
@@ -140,9 +140,9 @@ define([], function () {
             return this.base() + " pl"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
-                + " -w " + escapeShell(workspace)
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -w " + escapeShell(workspace);
         }
 
     });
