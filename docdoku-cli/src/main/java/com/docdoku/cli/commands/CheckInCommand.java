@@ -70,7 +70,7 @@ public class CheckInCommand extends AbstractCommandLine{
                 PartRevision pr = productS.getPartRevision(partRPK);
                 if (pr == null) {
                     if (jsonParser) {
-                        throw new DplmException("Part not founded");
+                        throw new DplmException("Part not found");
                     }
                 }
                 PartIteration pi = pr.getLastIteration();
