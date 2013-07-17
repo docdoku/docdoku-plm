@@ -67,6 +67,10 @@ public class MetaDirectoryManager {
         indexProps.storeToXML(out, null);
     }
 
+    public void deletePartEntries(String filePath, String partNumber) throws  IOException {
+        indexProps.getProperty(filePath + "." + DIGEST_PROP);
+    }
+
     public void setPartNumber(String filePath, String partNumber) throws IOException {
         indexProps.setProperty(filePath + "." + PART_NUMBER_PROP, partNumber);
         saveIndex();

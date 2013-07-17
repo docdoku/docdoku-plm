@@ -23,7 +23,7 @@ public class PartListCommand extends AbstractCommandLine {
         List<PartMaster> partMasters = productS.getPartMasters(workspace, 0, 10000);
         JSONArray jsonArray = new JSONArray();
 
-        for(PartMaster partMaster : partMasters) {
+        for(PartMaster partMaster : partMasters) {  
             for(PartRevision partRevision : partMaster.getPartRevisions()) {
                 JSONObject jsonObject = new JSONObject();
                 jsonArray.put(JSONPrinter.getJSONPartMasterDescription(partMaster));
