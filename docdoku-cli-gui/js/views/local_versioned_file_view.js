@@ -22,7 +22,7 @@ define(["text!templates/local_versioned_file.html", "views/loader_view",  "comma
 
             this.$el.html(this.template({model: this.model, status: status}));
 
-            if (status.isCheckedOutByMe && this.model.getMTime() > status.checkoutDate) {
+            if (status.lastModified && this.model.getMTime() > status.lastModified) {
                 this.$el.addClass("modified");
             }
 

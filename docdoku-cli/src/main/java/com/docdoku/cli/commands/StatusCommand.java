@@ -56,6 +56,8 @@ public class StatusCommand extends AbstractCommandLine{
     @Option(name="-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
+    private long lastModified;
+
     @Override
     public void execImpl() throws Exception {
         try {
@@ -67,7 +69,7 @@ public class StatusCommand extends AbstractCommandLine{
             PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
 
             if (jsonParser) {
-                JSONPrinter.printPartMasterStatus(pm);
+                JSONPrinter.printPartMasterStatus(pm,lastModified);
             } else {
                 printMasterStatus(pm);
             }
@@ -135,6 +137,7 @@ public class StatusCommand extends AbstractCommandLine{
         String filePath = cadFile.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         workspace = meta.getWorkspace(filePath);
+        lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null || workspace == null){
             if (jsonParser) {

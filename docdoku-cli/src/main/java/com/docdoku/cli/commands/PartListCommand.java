@@ -29,7 +29,7 @@ public class PartListCommand extends AbstractCommandLine {
         for(PartMaster partMaster : partMasters) {  
             for(PartRevision partRevision : partMaster.getPartRevisions()) {
                 JSONObject jsonObject = new JSONObject();
-                jsonArray.put(JSONPrinter.getJSONPartMasterDescription(partMaster));
+                jsonArray.put(JSONPrinter.getJSONPartMasterDescription(partMaster,0L));
             }
         }
 
