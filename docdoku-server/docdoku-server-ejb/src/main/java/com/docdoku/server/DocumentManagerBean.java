@@ -19,24 +19,23 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.*;
-import com.docdoku.core.document.*;
 import com.docdoku.core.common.*;
-import com.docdoku.core.meta.*;
-import com.docdoku.core.security.*;
-import com.docdoku.core.workflow.*;
+import com.docdoku.core.document.*;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.services.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
+import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
-import java.io.File;
-import java.text.ParseException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
+
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -44,9 +43,13 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.annotation.security.DeclareRoles;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @DeclareRoles("users")
@@ -72,7 +75,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     private DataManager dataManager;
     private final static Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
 
-    @PostConstruct
+
     private void init() {
         dataManager = new DataManagerImpl(new File(vaultPath));
     }
@@ -166,11 +169,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             return dataManager.getDataFile(file);
         }
     }
-
     @RolesAllowed("users")
     @Override
     public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        return userManager.checkWorkspaceReadAccess(pWorkspaceId);
+               return userManager.checkWorkspaceReadAccess(pWorkspaceId);
     }
 
     @RolesAllowed("users")

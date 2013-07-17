@@ -19,45 +19,17 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.services.UserGroupNotFoundException;
-import com.docdoku.core.services.WorkspaceAlreadyExistsException;
-import com.docdoku.core.services.AccountNotFoundException;
-import com.docdoku.core.services.UserAlreadyExistsException;
-import com.docdoku.core.services.AccountAlreadyExistsException;
-import com.docdoku.core.services.UserGroupAlreadyExistsException;
-import com.docdoku.core.services.WorkspaceNotFoundException;
-import com.docdoku.core.services.UserNotFoundException;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.NotAllowedException;
-import com.docdoku.core.services.FolderNotFoundException;
-import com.docdoku.core.services.FolderAlreadyExistsException;
-import com.docdoku.core.services.AccessRightException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
-import com.docdoku.core.security.WorkspaceUserMembershipKey;
-import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.security.WorkspaceUserGroupMembership;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.common.UserKey;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.UserGroupKey;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.security.PasswordRecoveryRequest;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
+import com.docdoku.core.security.*;
+import com.docdoku.core.services.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.vault.DataManager;
 import com.docdoku.server.vault.filesystem.DataManagerImpl;
-import java.io.File;
-import java.util.*;
-import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
+
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -65,7 +37,10 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.annotation.security.DeclareRoles;
+import java.io.File;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 @DeclareRoles("users")
 @Local(IUserManagerLocal.class)
@@ -85,7 +60,7 @@ public class UserManagerBean implements IUserManagerLocal {
     private DataManager dataManager;
     private final static Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
-    @PostConstruct
+
     private void init() {
         dataManager = new DataManagerImpl(new File(vaultPath));
     }
@@ -367,9 +342,9 @@ public class UserManagerBean implements IUserManagerLocal {
         return passwdRR;
     }
 
-    @RolesAllowed("users")
     @Override
     public User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
         String login = ctx.getCallerPrincipal().toString();
         UserDAO userDAO = new UserDAO(em);
         WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));

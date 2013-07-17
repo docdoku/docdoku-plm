@@ -37,7 +37,7 @@ import javax.persistence.Table;
 public class Credential implements java.io.Serializable {
     
     @javax.persistence.Id
-    private String login="";
+    private String login;
     
     private String password;
     
@@ -50,6 +50,7 @@ public class Credential implements java.io.Serializable {
         credential.login = pLogin;
         try {
             credential.password=md5Sum(pClearPassword);
+            System.out.println("credential.password::"+credential.password);
         } catch (NoSuchAlgorithmException pEx) {
             System.err.println(pEx.getMessage());
         }
@@ -68,5 +69,11 @@ public class Credential implements java.io.Serializable {
             }
         }
         return hexString.toString();
+    }
+    public String getLogin(){
+        return login;
+    }
+    public String getPassword(){
+        return password;
     }
 }

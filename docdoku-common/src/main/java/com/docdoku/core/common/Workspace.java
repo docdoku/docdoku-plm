@@ -41,7 +41,7 @@ public class Workspace implements Serializable, Cloneable {
     @Column(length=50)
     @javax.persistence.Id
     private String id="";
-    
+
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Account admin;
     

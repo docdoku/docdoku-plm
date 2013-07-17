@@ -25,5 +25,7 @@
     <module>docdoku-client</module>
     <module>docdoku-server</module>
     <module>docdoku-cli</module>
+    <module>docdocku-arquillian-tests</module>
+
   </modules>
 </project>
