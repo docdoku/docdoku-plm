@@ -2,11 +2,9 @@
 {{#if error}}
     {{i18n.CONFIGURATION_ERROR}}
 {{else}}
-
     <li class="nav-header">{{i18n.THIS_COMPUTER}} <i class="icon-plus add-path" title="{{i18n.NEW_PATH}}"></i></li>
     <li>
         {{#each paths}}
-
             <a class="path-item" href="index.html#path/{{this}}" title="{{this}}">
                 <i class="icon-remove remove-path" data-path="{{this}}" title="{{i18n.REMOVE_PATH}}"></i>
                 <i class="icon-folder-close"></i>
