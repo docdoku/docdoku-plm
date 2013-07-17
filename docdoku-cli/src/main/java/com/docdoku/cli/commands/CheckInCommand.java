@@ -95,7 +95,7 @@ public class CheckInCommand extends AbstractCommandLine{
             PartIteration pi = pr.getLastIteration();
             System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
         } catch (DplmException de) {
-            JSONPrinter.printException(de);
+            JSONPrinter.printException(de.getMessage());
         }
     }
 

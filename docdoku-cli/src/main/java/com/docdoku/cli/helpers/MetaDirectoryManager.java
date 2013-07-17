@@ -128,4 +128,13 @@ public class MetaDirectoryManager {
         return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP,"0"));
     }
 
+    public void deletePartInfo(String filePath) throws IOException {
+        indexProps.remove(filePath + "." + PART_NUMBER_PROP);
+        indexProps.remove(filePath + "." + REVISION_PROP);
+        indexProps.remove(filePath + "." + ITERATION_PROP);
+        indexProps.remove(filePath + "." + LAST_MODIFIED_DATE_PROP);
+        indexProps.remove(filePath + "." + DIGEST_PROP);
+        indexProps.remove(filePath + "." + WORKSPACE_PROP);
+        saveIndex();
+    }
 }

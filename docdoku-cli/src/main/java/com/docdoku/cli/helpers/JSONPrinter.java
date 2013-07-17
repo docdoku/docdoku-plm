@@ -1,6 +1,5 @@
 package com.docdoku.cli.helpers;
 
-import com.docdoku.cli.exceptions.DplmException;
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -53,9 +52,9 @@ public class JSONPrinter {
 
     }
 
-    public static void printException(DplmException de) throws JSONException {
+    public static void printException(String message) throws JSONException {
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("dplmError", de.getMessage());
+        jsonObj.put("dplmError", message);
         System.out.println(jsonObj);
     }
 }

@@ -76,7 +76,7 @@ define([
             localUnVersionedFileView.on("part:created", function(model) {
                 Commander.getStatusForFile(path.join(p, file), function(pStatus) {
                     var status = JSON.parse(pStatus);
-                    if (!status.statusError) {
+                    if (!status.dplmError) {
                         self.localVersionedFilesView.addVersionedFile(file,p,status,stat);
                         localUnVersionedFileView.remove();
                     }

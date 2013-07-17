@@ -31,6 +31,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.PartMasterNotFoundException;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -73,8 +74,12 @@ public class StatusCommand extends AbstractCommandLine{
             } else {
                 printMasterStatus(pm);
             }
+        } catch (PartMasterNotFoundException pmnfe) {
+            JSONPrinter.printException(pmnfe.getMessage());
+            MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
+            meta.deletePartInfo(cadFile.getAbsolutePath());
         } catch (DplmException de)  {
-            JSONPrinter.printException(de);
+            JSONPrinter.printException(de.getMessage());
         }
     }
 
