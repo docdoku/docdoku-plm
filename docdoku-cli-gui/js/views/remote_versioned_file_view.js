@@ -7,7 +7,8 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
         template: Handlebars.compile(template),
 
         events: {
-            "click .icon-signin"    : "checkout"
+            "click .action-checkout"    : "checkout",
+            "click .action-get"    : "get"
         },
 
         render:function() {
@@ -15,7 +16,7 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
             status.checkoutDateParsed = moment(status.checkoutDate).format("YYYY-MM-DD HH:MM:ss");
             status.isCheckedOutByMe = this.isCheckoutByConnectedUser(status);
             status.iteration = _.last(status.iterations);
-
+            status.isCheckedIn=!status.isCheckedOut;
             this.$el.html(this.template({model: this.model, status: status}));
 
             return this;
@@ -42,13 +43,26 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
                         Commander.getStatusForPart(self.model, function(pStatus) {
                             var status = JSON.parse(pStatus);
                             self.model.setStatus(status);
-                            self.remove();
+                            self.render();
                         });
                     });
                 });
             });
-
-
+        },
+        get:function(){
+            var self = this;
+            require(["views/choose_path_view"],function(ChoosePathView){
+                var choosePathView = new ChoosePathView();
+                $("body").append(choosePathView.render().el);
+                choosePathView.openModal();
+                choosePathView.on("path:chosen",function(path){
+                    APP_GLOBAL.CURRENT_PATH = path;
+                    self.loader();
+                    Commander.get(self.model, function() {
+                        self.render();
+                    });
+                });
+            });
         }
     });
 

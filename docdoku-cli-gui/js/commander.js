@@ -111,6 +111,18 @@ define([], function () {
                 + " -r " + escapeShell(part.getVersion());
         },
 
+        get:function(part){
+            return this.base() + " get"
+                + " -h " + APP_GLOBAL.GLOBAL_CONF.host
+                + " -P " + APP_GLOBAL.GLOBAL_CONF.port
+                + " -u " + APP_GLOBAL.GLOBAL_CONF.user
+                + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -R "
+                + " -w " + escapeShell(part.getWorkspace())
+                + " -o " + escapeShell(part.getNumber())
+                + " -r " + escapeShell(part.getVersion());
+        },
+
         createPart:function(part, filePath){
 
             var optionalParams = function(){
@@ -241,12 +253,22 @@ define([], function () {
         getPartMasters: function (workspace,callback) {
             var c = cmd.getPartMasters(workspace);
             console.log("Commander.getPartMasters : " + c);
-            exec(c,function (error, stdout, stderr) {
+            exec(c,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
                 if (error || stderr) {
                     console.log('getPartMasters : exec error' + stderr + " " + error);
                 } else {
                     callback(stdout);
                 }
+            });
+        },
+        get:function(part,callback){
+            var c = cmd.get(part);
+            console.log("Commander.get : " + c);
+            exec(c, function (error, stdout, stderr) {
+                if (error || stderr) {
+                    console.log('get : exec error' + stderr + " " + error);
+                }
+                callback();
             });
         }
     };

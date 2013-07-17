@@ -34,11 +34,9 @@ define([
                 var partMasters = JSON.parse(pPartMasters);
 
                 _.each(partMasters, function (partMaster) {
-                    if(!partMaster.isCheckedOut) {
-                        var remoteVersionedFileModel = new RemoteVersionedFileModel({partNumber: partMaster.partNumber, name : partMaster.cadFileName, version : partMaster.version, status: partMaster});
-                        var remoteVersionedFileView =  new RemoteVersionedFileView({model: remoteVersionedFileModel}).render();
-                        self.$workspace.append(remoteVersionedFileView.$el);
-                    }
+                    var remoteVersionedFileModel = new RemoteVersionedFileModel({partNumber: partMaster.partNumber, name : partMaster.cadFileName, version : partMaster.version, status: partMaster});
+                    var remoteVersionedFileView =  new RemoteVersionedFileView({model: remoteVersionedFileModel}).render();
+                    self.$workspace.append(remoteVersionedFileView.$el);
                 });
             });
         }
