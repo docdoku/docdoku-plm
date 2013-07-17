@@ -25,12 +25,16 @@ define([] , function() {
             return moment(this.getMTime()).format("YYYY-MM-DD HH:MM:ss");
         },
 
-        getPartNumber:function() {
+        getNumber:function() {
             return this.getStatus().partNumber;
         },
 
         getVersion:function() {
             return this.getStatus().version;
+        },
+
+        getWorkspace:function() {
+            return this.getStatus().workspace;
         },
 
         setMTime:function(mTime) {

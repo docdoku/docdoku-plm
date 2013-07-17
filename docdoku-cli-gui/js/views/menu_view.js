@@ -1,38 +1,59 @@
-define(["text!templates/menu.html",
-        "i18n!localization/nls/global",
-        "storage",
-        "views/local_dir_view",
-        "views/workspace_view"],
-    function(template, i18n, Storage, LocalDirView, WorkspaceView) {
+define(["text!templates/menu.html","i18n!localization/nls/global","commander","storage"], function(template, i18n, Commander, Storage) {
+
     var MenuView = Backbone.View.extend({
 
         template: Handlebars.compile(template),
 
         events: {
-          "click #localFiles" : "onClickLocalFiles",
-          "click #dplm" : "onClickDplm"
+            "click .add-path":"addPath",
+            "click .workspace-item":"toggleActives",
+            "click .path-item":"toggleActives",
+            "click i.remove-path":"removePath"
+        },
+
+        initialize:function(){
+            APP_GLOBAL.SIGNALS.on("path:created",this.render,this);
         },
 
         render:function() {
-            this.$el.html(this.template({workspace: Storage.getWorkspace(), i18n:i18n}));
-
-            return this;
+            var self = this ;
+            Commander.getWorkspaces({
+                success:function(workspacesStr){
+                    var workspaces = JSON.parse(workspacesStr);
+                    self.$el.html(self.template({configuration:Storage.getGlobalConf(), paths:Storage.getLocalPaths(),workspaces: workspaces, i18n:i18n}));
+                },
+                error:function(){
+                    self.$el.html(self.template({error:true,i18n:i18n}));
+                }
+            });
         },
 
-        onClickLocalFiles:function() {
-            if(this.localDirView) {
-                this.localDirView.remove();
+        removePath:function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            if(confirm(i18n.REMOVE_PATH + " ?")){
+                var path = $(e.target).data("path");
+                Storage.removePath(path);
+                this.render();
             }
-            this.localDirView = new LocalDirView().render();
         },
 
-        onClickDplm:function() {
-            if(this.workspaceView) {
-                this.workspaceView.remove();
-            }
-            this.workspaceView = new WorkspaceView().render();
+        addPath:function(){
+            require(["views/add_path_view"],function(AddPathView){
+                var addPathView = new AddPathView();
+                $("body").append(addPathView.render().el);
+                addPathView.openModal();
+            });
+        },
+
+        toggleActives:function(e){
+            this.$(".active").removeClass("active");
+            $(e.target).addClass("active");
         }
+
+
     });
 
     return MenuView;
+
 });

@@ -26,19 +26,29 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
         },
 
         isCheckoutByConnectedUser:function(status) {
-            return status.checkoutUser == Storage.getUser();
+            return status.checkoutUser == APP_GLOBAL.GLOBAL_CONF.user;
         },
 
         checkout:function() {
-            this.loader();
             var self = this;
-            Commander.checkout(this.model.getPartNumber(), this.model.getVersion(), function() {
-                Commander.getStatusForPartNumber(self.model.getPartNumber(), self.model.getVersion(), function(pStatus) {
-                    var status = JSON.parse(pStatus);
-                    self.model.setStatus(status);
-                    self.remove();
+            require(["views/choose_path_view"],function(ChoosePathView){
+                var choosePathView = new ChoosePathView();
+                $("body").append(choosePathView.render().el);
+                choosePathView.openModal();
+                choosePathView.on("path:chosen",function(path){
+                    APP_GLOBAL.CURRENT_PATH = path;
+                    self.loader();
+                    Commander.checkout(self.model, function() {
+                        Commander.getStatusForPart(self.model, function(pStatus) {
+                            var status = JSON.parse(pStatus);
+                            self.model.setStatus(status);
+                            self.remove();
+                        });
+                    });
                 });
             });
+
+
         }
     });
 

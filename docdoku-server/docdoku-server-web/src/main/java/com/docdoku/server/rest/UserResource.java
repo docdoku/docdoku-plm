@@ -117,6 +117,7 @@ public class UserResource {
     public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException {
         Workspace workspace = userManager.getWorkspace(workspaceId);
         return mapper.map(workspace.getAdmin(),UserDTO.class);
+
     }
 }
 

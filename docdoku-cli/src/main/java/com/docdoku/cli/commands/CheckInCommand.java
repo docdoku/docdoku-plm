@@ -52,6 +52,9 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
+
     public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();

@@ -9,44 +9,28 @@
             <div class="control-group">
                 <label class="control-label">{{i18n.HOST}}</label>
                 <div class="controls">
-                    <input type="text" id="inputHost" value="{{configuration.getHost}}" required/>
+                    <input type="text" id="inputHost" value="{{configuration.host}}" required/>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label">{{i18n.PORT}}</label>
                 <div class="controls">
-                    <input type="text" id="inputPort" value="{{configuration.getPort}}" required/>
+                    <input type="text" id="inputPort" value="{{configuration.port}}" required/>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label">{{i18n.USER}}</label>
                 <div class="controls">
-                    <input type="text" id="inputUser" value="{{configuration.getUser}}" required/>
+                    <input type="text" id="inputUser" value="{{configuration.user}}" required/>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label">{{i18n.PASSWORD}}</label>
                 <div class="controls">
-                    <input type="password" id="inputPwd" value="{{configuration.getPwd}}" required/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">{{i18n.WORKSPACE}}</label>
-                <div class="controls">
-                    <input type="text" id="inputWorkspace" value="{{configuration.getWorkspace}}" required/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">{{i18n.WORKING_DIR}}</label>
-                <div class="controls">
-                    <input type="text" id="inputWorkingDir" value="{{configuration.getDirectory}}" readonly required/>
-                    <i class="icon-folder-open" id="open-directory-chooser"></i>
-                    <div class="hide" id="directory_chooser"></div>
+                    <input type="password" id="inputPwd" value="{{configuration.password}}" required/>
                 </div>
             </div>
 

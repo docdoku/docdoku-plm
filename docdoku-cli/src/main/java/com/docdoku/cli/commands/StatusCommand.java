@@ -25,30 +25,21 @@ import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.exceptions.StatusException;
 import com.docdoku.cli.helpers.JSONPrinter;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class StatusCommand extends AbstractCommandLine{
-
-
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to get a status ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
@@ -62,7 +53,8 @@ public class StatusCommand extends AbstractCommandLine{
     @Argument(metaVar = "[<cadfile>]", index=0, usage = "specify the cad file of the part to get a status")
     private File cadFile;
 
-
+    @Option(name="-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
 
     @Override
     public void execImpl() throws Exception {
@@ -142,8 +134,9 @@ public class StatusCommand extends AbstractCommandLine{
         MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
         String filePath = cadFile.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
+        workspace = meta.getWorkspace(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(partNumber==null || strRevision==null){
+        if(partNumber==null || strRevision==null || workspace == null){
             if (jsonParser) {
                 throw new StatusException("File is unversioned");
             }

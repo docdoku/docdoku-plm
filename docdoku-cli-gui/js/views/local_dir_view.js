@@ -13,9 +13,14 @@ define([
 
         events: {},
 
+        setPath:function(path){
+            this.path = path;
+            return this;
+        },
+
         render:function() {
 
-            var p = Storage.getDirectory();
+            var p = this.path;
 
             // render view on subContent
             this.$el.html(this.template());
@@ -54,7 +59,7 @@ define([
                                     self.localVersionedFilesView.addVersionedFile(file,p,status,stat);
                                 } else {
                                     var localUnVersionedFileView = self.localUnVersionedFilesView.addUnversionedFile(file, p, stat);
-                                    self.addPartCreatedListener(localUnVersionedFileView);
+                                    self.addPartCreatedListener(localUnVersionedFileView,file, p, stat);
                                 }
                                 if(totalFiles <= 0) {
                                     removeLoaders();
@@ -66,14 +71,15 @@ define([
             });
         },
 
-        addPartCreatedListener:function(localUnVersionedFileView, p, stat) {
-            localUnVersionedFileView.on("part:created", function() {
+        addPartCreatedListener:function(localUnVersionedFileView,file, p, stat) {
+            var self = this ;
+            localUnVersionedFileView.on("part:created", function(model) {
                 Commander.getStatusForFile(path.join(p, file), function(pStatus) {
                     var status = JSON.parse(pStatus);
                     if (!status.statusError) {
-                        this.localVersionedFilesView.addVersionedFile(file,p,status,stat);
+                        self.localVersionedFilesView.addVersionedFile(file,p,status,stat);
                         localUnVersionedFileView.remove();
-                    } else {}
+                    }
                 });
             })
         }

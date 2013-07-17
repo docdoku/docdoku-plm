@@ -2,18 +2,12 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.core.common.Version;
 import com.docdoku.core.product.*;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.util.FileIO;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
-import java.io.IOException;
 
 public class PartCreationCommand extends AbstractCommandLine {
 
@@ -25,6 +19,9 @@ public class PartCreationCommand extends AbstractCommandLine {
 
     @Option(metaVar = "<description>", name = "-d", aliases = "--description", usage = "the description of the part to save")
     private String description;
+
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
 
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;

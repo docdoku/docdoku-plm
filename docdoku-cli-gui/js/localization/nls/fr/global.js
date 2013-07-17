@@ -1,5 +1,6 @@
 define({
     CONFIGURATION:"Configuration",
+    CONFIGURATION_ERROR:"Erreur de configuration",
     HOST:"Hôte",
     PORT:"Port",
     USER:"Utilisateur",
@@ -11,5 +12,11 @@ define({
     THIS_COMPUTER:"ORDINATEUR",
     MY_FILES:" Mes fichiers",
     VERSIONED_FILES:"Fichiers versionnés",
-    UNVERSIONED_FILES:"Fichiers non versionnés"
+    UNVERSIONED_FILES:"Fichiers non versionnés",
+    NEW_PATH:"Nouveau dossier",
+    REMOVE_PATH:"Supprimer des répertoires",
+    CHOOSE_PATH:"Choisir un dossier",
+    SELECT_PATH:"Choisir un dossier",
+    PATH:"Dossier",
+    LOCAL_PATHS:"Dossiers locaux"
 });

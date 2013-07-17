@@ -6,10 +6,23 @@ define(["text!templates/content.html", "views/nav_view"], function(template, Nav
 
         render:function() {
             this.$el.html(this.template({}));
-            new NavView().render();
-
+            this.navView = new NavView().render();
+            this.bindDomElements();
             return this;
+        },
+
+        bindDomElements:function(){
+
+        },
+
+        breadcrumbPath:function(path){
+            this.navView.path(path);
+        },
+
+        breadcrumbWorkspace:function(workspace){
+            this.navView.workspace(workspace);
         }
+
     });
 
     return MainView;
