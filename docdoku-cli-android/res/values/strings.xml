@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DocDokuPLMAndroid</string>
+    <!-- Elements de connection -->
+    <string name="username">Utilisateur:</string>
+    <string name="password">Mot de passe:</string>
+    <string name="connection">Connexion</string>
+    <string name="noConnectionAvailable">Aucune connexion internet disponible</string>
+    <string name="wrongUsernamePassword">Erreur de nom d\'utilisateur ou de mot de passe</string>
+    <!-- Elements fréquemment utiles -->
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="OK">OK</string>
+    <!-- Elements de la barre de titre -->
+    <string name="app_title">DocDokuPLM</string>
+    <!-- Elements du menu -->
+    <string name="workspace">Espace de Travail</string>
+    <string name="documents">Documents</string>
+    <string name="rechercheDocuments">Rechercher</string>
+    <string name="documentsRecemmentConsultes">Récemment Consultés</string>
+    <string name="documentsRecemmentModifies">Récemment Modifiés</string>
+    <string name="documentsReserves">Réservés</string>
+    <string name="articles">Articles</string>
+    <string name="rechercheArticles">Rechercher</string>
+    <string name="articlesRecemmentConsultes">Récemment Consultés</string>
+    <string name="articlesRecemmentModifies">Récemment Modifiés</string>
+    <!-- Elements de la liste de documents -->
+    <string name="chargerPlus">Charger plus de résultats</string>
+    <!-- Elements de recherche de documnent -->
+    <string name="documentSearchPrompt">Recherche de Document</string>
+    <string name="doSearch">Rechercher</string>
+    <!--Elements de modification des notifications sur un document-->
+    <string name="confirmerActiverNotificationIteration">Êtes-vous sûr de vouloir activer les notifications sur les itérations pour sur ce document?</string>
+    <string name="confirmerDesactiverNotificationIteration">Êtes-vous sûr de vouloir desactiver les notifications sur les itérations pour sur ce document?</string>
+    <string name="confirmerActiverNotificationsChangementEtat">Êtes-vous sûr de vouloir activer les notifications sur les changements d\'état pour sur ce document?</string>
+    <string name="confirmerDesactiverNotificationsChangementEtat">Êtes-vous sûr de vouloir desactiver les notifications sur les changements d\'état pour sur ce document?</string>
+    <!-- Elements de la présentation d'un document -->
+    <string name="generalitesDocument">Generalités</string>
+    <string name="fichiersDocument">Fichiers</string>
+    <string name="iterationsDocument">Itérations</string>
+    <string name="attributsDocument">Attributs</string>
+    <string name="liensDocument">Liens</string>
+    <string name="referenceDocument">Référence:</string>
+    <string name="titreDocument">Titre:</string>
+    <string name="auteurDocument">Auteur:</string>
+    <string name="reserveParDocument">Réservé par:</string>
+    <string name="dateReservationDocument">Date de réservation:</string>
+    <string name="dossierDocument">Dossier:</string>
+    <string name="dateCreationDocument">Date de création:</string>
+    <string name="typeDocument">Type:</string>
+    <string name="etatCycleVieDocument">Etat du cycle de vie:</string>
+    <string name="descriptionDocument">Description:</string>
+</resources>
