@@ -14,4 +14,7 @@
     <div class="name">{{#if status.cadFileName}}{{status.cadFileName}}{{else}}No attached file{{/if}}</div>
 </div>
 <!--Action icons-->
-<i class="icon-signin" title="Checkout"></i>
+<i class="icon-download action-get" title="Download"></i>
+{{#if status.isCheckedIn}}
+    <i class="icon-signin action-checkout" title="Checkout"></i>
+{{/if}}

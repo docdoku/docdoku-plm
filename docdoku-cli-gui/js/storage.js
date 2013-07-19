@@ -1,63 +1,87 @@
-define([""], function(){
+define([], function () {
+
+    /*
+    * This class aims to store needed vars in local storage, such as global configuration, and user working
+    * directories.
+    *
+    * */
 
     var STORAGE_KEYS = {
-        HOST:      "host",
-        PORT:      "port",
-        USER:      "user",
-        PWD:       "pwd",
-        WORKSPACE: "workspace",
-        DIRECTORY: "directory"
+        GLOBAL_CONF: "GLOBAL_CONF",
+        LOCAL_PATHS: "LOCAL_PATHS"
     };
 
     var Storage = {
 
-        getHost:function() {
-            return localStorage.getItem(STORAGE_KEYS.HOST);
+        /*
+         * Global conf is an object like
+         *
+         * {host:"hostname",user:"user",password:"password",port:"port"}
+         *
+         */
+        setGlobalConf: function (conf) {
+            localStorage.setItem(STORAGE_KEYS.GLOBAL_CONF, JSON.stringify(conf));
         },
 
-        getPort:function() {
-            return localStorage.getItem(STORAGE_KEYS.PORT);
+        getGlobalConf: function () {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.GLOBAL_CONF));
         },
 
-        getUser:function() {
-            return localStorage.getItem(STORAGE_KEYS.USER);
+        needsGlobalConf:function(){
+            var conf = this.getGlobalConf();
+            return !conf.host || !conf.user || !conf.password || !conf.port;
         },
 
-        getPwd:function() {
-            return localStorage.getItem(STORAGE_KEYS.PWD);
+        /*
+         * Local paths is an array like
+         *
+         * ["/path/to/folder1", "/path/to/folder2", ... ]
+         *
+         */
+
+        setLocalPaths: function (paths) {
+            localStorage.setItem(STORAGE_KEYS.LOCAL_PATHS, JSON.stringify(paths));
         },
 
-        getWorkspace:function() {
-            return localStorage.getItem(STORAGE_KEYS.WORKSPACE);
+        getLocalPaths: function () {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_PATHS));
         },
 
-        getDirectory:function() {
-            return localStorage.getItem(STORAGE_KEYS.DIRECTORY);
-        },
+        /*
+         * Helpers for local paths
+         * */
 
-        setDirectory:function(value) {
-            localStorage.setItem(STORAGE_KEYS.DIRECTORY, value);
-        },
-
-        setConfig:function(host, port, user, pwd, workspace, workingDir) {
-            localStorage.setItem(STORAGE_KEYS.HOST, host);
-            localStorage.setItem(STORAGE_KEYS.PORT, port);
-            localStorage.setItem(STORAGE_KEYS.USER, user);
-            localStorage.setItem(STORAGE_KEYS.PWD, pwd);
-            localStorage.setItem(STORAGE_KEYS.WORKSPACE, workspace);
-            localStorage.setItem(STORAGE_KEYS.DIRECTORY, workingDir);
-        },
-
-        isCompleted:function() {
-            for (var key in STORAGE_KEYS) {
-                if (localStorage.getItem(STORAGE_KEYS[key]) == null) {
-                    return false;
-                }
+        addLocalPath: function (path) {
+            var paths = this.getLocalPaths();
+            if(paths.indexOf(path) === -1){
+                paths.push(path);
+                this.setLocalPaths(paths);
+                return true;
             }
+            return false;
+        },
 
-            return true;
+        removePath: function (path) {
+            var paths = this.getLocalPaths();
+            while (paths.indexOf(path) !== -1) {
+                paths.splice(paths.indexOf(path), 1);
+            }
+            this.setLocalPaths(paths);
+        },
+
+        init:function(){
+            if(this.getLocalPaths() == null){
+                this.setLocalPaths([]);
+            }
+            if(this.getGlobalConf() == null){
+                this.setGlobalConf({});
+            }
         }
+
     };
+
+    // Init for first shot
+    Storage.init();
 
     return Storage;
 });

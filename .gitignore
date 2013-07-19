@@ -14,3 +14,4 @@ update_deploy.sh
 updateJars.sh
 docdoku-cli-jar-with-dependencies.jar
 docdoku-cli.jar
+docdoku-cli-android/out/

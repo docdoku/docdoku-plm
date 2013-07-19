@@ -36,7 +36,7 @@ public class MetaDirectoryManager {
     private final static String PART_NUMBER_PROP = "partNumber";
     private final static String REVISION_PROP = "revision";
     private final static String ITERATION_PROP = "iteration";
-
+    private final static String WORKSPACE_PROP = "workspace";
     private final static String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
     private final static String DIGEST_PROP = "digest";
 
@@ -56,8 +56,6 @@ public class MetaDirectoryManager {
         }
     }
 
-
-
     private void saveIndex() throws IOException {
         File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
         if(!indexFile.exists())
@@ -65,6 +63,10 @@ public class MetaDirectoryManager {
 
         OutputStream out = new BufferedOutputStream(new FileOutputStream(indexFile));
         indexProps.storeToXML(out, null);
+    }
+
+    public void deletePartEntries(String filePath, String partNumber) throws  IOException {
+        indexProps.getProperty(filePath + "." + DIGEST_PROP);
     }
 
     public void setPartNumber(String filePath, String partNumber) throws IOException {
@@ -84,6 +86,11 @@ public class MetaDirectoryManager {
 
     public void setLastModifiedDate(String filePath, long lastModifiedDate) throws IOException {
         indexProps.setProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, lastModifiedDate+"");
+        saveIndex();
+    }
+
+    public void setWorkspace(String filePath, String workspaceId) throws IOException {
+        indexProps.setProperty(filePath + "." + WORKSPACE_PROP, workspaceId+"");
         saveIndex();
     }
 
@@ -109,6 +116,10 @@ public class MetaDirectoryManager {
         return indexProps.getProperty(filePath + "." + PART_NUMBER_PROP);
     }
 
+    public String getWorkspace(String filePath){
+        return indexProps.getProperty(filePath + "." + WORKSPACE_PROP);
+    }
+
     public String getRevision(String filePath){
         return indexProps.getProperty(filePath + "." + REVISION_PROP);
     }
@@ -117,4 +128,13 @@ public class MetaDirectoryManager {
         return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP,"0"));
     }
 
+    public void deletePartInfo(String filePath) throws IOException {
+        indexProps.remove(filePath + "." + PART_NUMBER_PROP);
+        indexProps.remove(filePath + "." + REVISION_PROP);
+        indexProps.remove(filePath + "." + ITERATION_PROP);
+        indexProps.remove(filePath + "." + LAST_MODIFIED_DATE_PROP);
+        indexProps.remove(filePath + "." + DIGEST_PROP);
+        indexProps.remove(filePath + "." + WORKSPACE_PROP);
+        saveIndex();
+    }
 }

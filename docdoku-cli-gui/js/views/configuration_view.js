@@ -1,24 +1,17 @@
-define(["text!templates/configuration.html",
-        "i18n!localization/nls/global",
-        "storage",
-        "commander",
-        "views/directory_chooser_view"
-],
-    function(template, i18n, Storage, Commander, DirectoryChooserView) {
+define(["text!templates/configuration.html","i18n!localization/nls/global","storage"],function(template, i18n, Storage) {
+
     var ConfigurationView = Backbone.View.extend({
 
         template: Handlebars.compile(template),
 
         events: {
             "submit #form-configuration" : "onSubmitForm",
-            "hidden #configuration-modal": "onHidden",
-            "click #open-directory-chooser" : "openDirectoryChooser"
+            "hidden #configuration-modal": "onHidden"
         },
 
         render:function() {
-            this.$el.html(this.template({configuration:Storage, i18n:i18n}));
+            this.$el.html(this.template({configuration:Storage.getGlobalConf(), i18n:i18n}));
             this.bindDomElements();
-
             return this;
         },
 
@@ -28,9 +21,6 @@ define(["text!templates/configuration.html",
             this.$inputPort = this.$('#inputPort');
             this.$inputUser = this.$('#inputUser');
             this.$inputPwd = this.$('#inputPwd');
-            this.$inputWorkspace = this.$('#inputWorkspace');
-            this.$inputWorkingDir = this.$('#inputWorkingDir');
-            this.$directoryChooser = this.$('#directory_chooser');
         },
 
         onSubmitForm:function(e) {
@@ -38,18 +28,14 @@ define(["text!templates/configuration.html",
             var inputPort = this.$inputPort.val();
             var inputUser = this.$inputUser.val();
             var inputPwd = this.$inputPwd.val();
-            var inputWorkspace = this.$inputWorkspace.val();
-            var inputWorkingDir = this.$inputWorkingDir.val();
 
-            Storage.setConfig(inputHost, inputPort, inputUser, inputPwd, inputWorkspace, inputWorkingDir);
+            Storage.setGlobalConf({host:inputHost,port:inputPort,user:inputUser,password:inputPwd});
             this.closeModal();
 
-            // Evènement pour les autres vues : si la conf change
-            this.trigger("config:changed");
+            APP_GLOBAL.SIGNALS.trigger("configuration:changed");
 
             e.stopPropagation();
             e.preventDefault();
-
             return false;
         },
 
@@ -63,25 +49,8 @@ define(["text!templates/configuration.html",
 
         onHidden: function() {
             this.remove();
-        },
-
-        persist:function() {
-
-        },
-
-        openDirectoryChooser:function() {
-
-            // Do this stuff once
-            $(this.el).off('click', '#open-directory-chooser');
-
-            var self = this ;
-            var dcv = new DirectoryChooserView({el:this.$directoryChooser}).render();
-            this.$directoryChooser.removeClass("hide");
-            dcv.on("directory:chosen",function(folder){
-                self.$inputWorkingDir.val(folder);
-            });
-
         }
+
     });
 
     return ConfigurationView;

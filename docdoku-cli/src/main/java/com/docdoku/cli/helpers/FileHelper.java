@@ -229,13 +229,11 @@ public class FileHelper {
 
     private void saveMetadata(MetaDirectoryManager meta, PartIterationKey partIPK, String digest, File localFile) throws IOException {
         String filePath=localFile.getAbsolutePath();
-
         meta.setDigest(filePath,digest);
-
         meta.setPartNumber(filePath,partIPK.getPartMasterNumber());
+        meta.setWorkspace(filePath,partIPK.getWorkspaceId());
         meta.setRevision(filePath,partIPK.getPartRevision().getVersion());
         meta.setIteration(filePath,partIPK.getIteration());
-
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 }

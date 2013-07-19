@@ -13,6 +13,9 @@ import java.util.List;
 
 public class PartListCommand extends AbstractCommandLine {
 
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
+
     @Option(name="-j", aliases = "--jsonparser", usage="return the list of the parts in JSON format")
     private boolean jsonParser;
 
@@ -23,10 +26,10 @@ public class PartListCommand extends AbstractCommandLine {
         List<PartMaster> partMasters = productS.getPartMasters(workspace, 0, 10000);
         JSONArray jsonArray = new JSONArray();
 
-        for(PartMaster partMaster : partMasters) {
+        for(PartMaster partMaster : partMasters) {  
             for(PartRevision partRevision : partMaster.getPartRevisions()) {
                 JSONObject jsonObject = new JSONObject();
-                jsonArray.put(JSONPrinter.getJSONPartMasterDescription(partMaster));
+                jsonArray.put(JSONPrinter.getJSONPartMasterDescription(partMaster,0L));
             }
         }
 

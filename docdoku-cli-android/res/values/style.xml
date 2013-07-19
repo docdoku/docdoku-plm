@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.NoTitleBar" >
+        <item name="android:background">@color/background</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <!--Title bar faded color style-->
+    <style name="TitleBar" parent="android:Theme.NoTitleBar">
+        <item name="android:background">@drawable/title_bar</item>
+    </style>
+    <!--Text styles for menus-->
+    <style name="BigTitle" parent="android:Theme.NoTitleBar">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">26sp</item>
+    </style>
+    <style name="MediumTitle" parent="android:Theme.NoTitleBar">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <!-- Side menu style -->
+    <style name="MenuItem" parent="android:Theme.NoTitleBar">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <!--Colored tiles for metro style menus-->
+    <style name="GreenTile" parent="android:Theme.NoTitleBar">
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">@drawable/green_rectangle</item>
+    </style>
+    <style name="RedTile" parent="android:Theme.NoTitleBar">
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">@drawable/red_rectangle</item>
+    </style>
+    <style name="YellowTile" parent="android:Theme.NoTitleBar">
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">@drawable/yellow_rectangle</item>
+    </style>
+</resources>

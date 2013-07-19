@@ -25,17 +25,14 @@ import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.*;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import javax.security.auth.login.LoginException;
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -60,6 +57,8 @@ public class GetCommand extends AbstractCommandLine{
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
 
     private IProductManagerWS productS;
 
