@@ -96,7 +96,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         if (userToAdd == null) {
             Account userAccount = new AccountDAO(em).loadAccount(pLogin);
             userToAdd = new User(workspace, userAccount.getLogin(), userAccount.getName(), userAccount.getEmail(), userAccount.getLanguage());
-            System.out.println(" User::::::::::"+userToAdd.getLogin());
             userDAO.createUser(userToAdd);
         }
         userDAO.addUserMembership(workspace, userToAdd);
@@ -226,8 +225,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
             WorkspaceUserMembership ms = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
             if (ms != null) {
                 ms.setReadOnly(pReadOnly);
-                System.out.println("READ ONLY !!!");
-            }
+                            }
         }
     }
 

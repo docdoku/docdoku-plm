@@ -1,6 +1,7 @@
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.Credential;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -43,6 +44,7 @@ public class LoginTest {
     private UserTransaction utx;
 
     static final int COUNT = 3;
+
     @Deployment
     public static Archive<?> createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "test3.war")
@@ -78,12 +80,9 @@ public class LoginTest {
     }
 
 
-
-
-
     @Before
     public void preparePersistenceTest() throws Exception {
-      //  System.setProperty("java.security.auth.login.config", "/Users/asmaechadid/Developer/PLM/docdoku-plm/docdocku-arquillian-tests/src/test/java/login.conf");
+        //  System.setProperty("java.security.auth.login.config", "/Users/asmaechadid/Developer/PLM/docdoku-plm/docdocku-arquillian-tests/src/test/java/login.conf");
         clearData();
         insertData();
         startTransaction();
@@ -112,46 +111,22 @@ public class LoginTest {
 
         System.out.println("Inserting records...");
 
-        for (int i=1;i<= COUNT;i++)
-        {
-          Account account=  new Account("user"+i,"user"+i,"user"+i+"@docdoku.com","FR",new Date()) ;
-          Workspace workspace = new Workspace("w"+i,account,"",Workspace.VaultType.DEMO,false) ;
-          User user = new User(workspace,"user"+i,"user"+i,"user"+i+"@docdoku.com","en");
-          em.persist( Credential.createCredential(user.getLogin(), "password"));
-          em.persist(new UserGroupMapping(user.getLogin()));
-          em.persist(account);
-          em.persist(workspace);
-          em.persist(user);
+        for (int i = 1; i <= COUNT; i++) {
+            Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
+            Workspace workspace = new Workspace("w" + i, account, "", Workspace.VaultType.DEMO, false);
+            User user = new User(workspace, "user" + i, "user" + i, "user" + i + "@docdoku.com", "en");
+            em.persist(Credential.createCredential(user.getLogin(), "password"));
+            em.persist(new UserGroupMapping(user.getLogin()));
+            em.persist(account);
+            em.persist(workspace);
+            em.persist(user);
         }
 
-        Workspace workspace= new Workspace();
+        Workspace workspace = new Workspace();
         workspace.setId("w5");
-        User user = new User(workspace,"user1") ;
+        User user = new User(workspace, "user1");
         em.persist(workspace);
         em.persist(user);
-       /* Account admin = new Account("user1","user1","user1"+"@docdoku.com","FR",new Date());
-        Account account2 = new Account("user2","user2","user2"+"@docdoku.com","FR",new Date());
-        Workspace workspace = new Workspace("w1",admin,"", Workspace.VaultType.DEMO,false);
-        Workspace workspace2 = new Workspace("w2",account2,"", Workspace.VaultType.DEMO,false);
-         User user = new User(workspace,"user1");
-         User user2 = new User(workspace2,"user2");
-         user.setEmail("user1@gmail.com");
-         user.setLanguage("fr");
-         user.setName("user1 name");
-        user2.setEmail("user2@gmail.com");
-        user2.setLanguage("fr");
-        user2.setName("user2");
-        workspace.setId("w1");
-        workspace2.setId("w2");
-        em.persist(admin);
-        em.persist(account2);
-        em.persist(workspace);
-        em.persist(workspace2);
-        em.persist(user);
-        em.persist(user2);
-
-        em.persist(new UserGroupMapping(user.getLogin())); */
-
         utx.commit();
         // clear the persistence context (first-level cache)
         em.clear();
@@ -168,33 +143,63 @@ public class LoginTest {
     }
 
     //@Test
-    public void workspaceAccess(){
+    public void workspaceAccess() {
         try {
             testBean.workspaceReadOnlyAccess();
         } catch (Exception e) {
-            if(e instanceof AccessRightException)
+            if (e instanceof AccessRightException)
                 Assert.assertFalse(true);
         }
     }
 
-  //  @Test
-    public void groupAccess(){
+    //  @Test
+    public void groupAndUserAccess() {
         try {
-            testBean.UserAndGroupAccess(true,false);
+            testBean.UserAndGroupAccess(true, false);
         } catch (Exception e) {
-            if(e instanceof AccessRightException)
+            if (e instanceof AccessRightException)
                 Assert.assertTrue(true);
         }
     }
-    @Test
-    public void UserInSeveralGroups(){
+
+
+    public void UserInSeveralGroups() {
         try {
-            testBean.UserInSeveralGroups(true,true);
+            testBean.UserInSeveralGroups(null, null);
         } catch (Exception e) {
-            if(e instanceof AccessRightException)
+
+            if (e instanceof AccessRightException)
+                Assert.assertFalse(true);
+            else if (e instanceof UserNotActiveException)
                 Assert.assertFalse(true);
         }
     }
+    @Test
+    public void UserAndACLOnSpecificEntity(){
+        try {
+            testBean.UserAndACLOnSpecificEntity(true, ACL.Permission.FULL_ACCESS);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            if (e instanceof AccessRightException)
+                Assert.assertFalse(true);
+            else if (e instanceof UserNotActiveException)
+                Assert.assertFalse(true);
+        }
+    }
+
+    //@Test
+    public void UserGrpAndACLOnSpecificEntity(){
+        try {
+            testBean.UserGrpAndACLOnSpecificEntity(true, ACL.Permission.FULL_ACCESS);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            if (e instanceof AccessRightException)
+                Assert.assertFalse(true);
+            else if (e instanceof UserNotActiveException)
+                Assert.assertFalse(true);
+        }
+    }
+
 
     public void findAllPersistedObjectUsingJpqlQuery() {
 
@@ -219,12 +224,13 @@ public class LoginTest {
         Assert.assertEquals(COUNT, retrievedAccounts.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (Account account : retrievedAccounts) {
-            System.out.println("* " + account);
+            System.out.println("Account: " + account);
             retrievedAccountLogins.add(account.getLogin());
         }
     }
+
     private static void assertContainsAllWorkspaces(Collection<Workspace> retrievedWorkspaces) {
-        Assert.assertEquals(COUNT,+1, retrievedWorkspaces.size());
+        Assert.assertEquals(COUNT, +1, retrievedWorkspaces.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (Workspace workspace : retrievedWorkspaces) {
             System.out.println("Workspace : " + workspace);
@@ -239,6 +245,7 @@ public class LoginTest {
             retrievedAccountLogins.add(credential.toString());
         }
     }
+
     private static void assertContainsAllUsers(Collection<User> retrievedUsers) {
         Assert.assertEquals(COUNT, retrievedUsers.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
