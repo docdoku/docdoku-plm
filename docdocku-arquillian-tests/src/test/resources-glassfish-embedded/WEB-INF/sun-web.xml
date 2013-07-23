@@ -6,7 +6,6 @@
     <security-role-mapping>
         <role-name>users</role-name>
         <group-name>users</group-name>
-
     </security-role-mapping>
     <security-role-mapping>
         <role-name>admin</role-name>

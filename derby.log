@@ -1,0 +1,10 @@
+----------------------------------------------------------------
+Tue Jul 23 18:22:12 CEST 2013:
+Amorçage de Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077) : instance a816c00e-0140-0c56-877a-000014e265e8 
+dans le répertoire de base de données memory:/Users/asmaechadid/Developer/PLM/docdoku-plm/DocDokuPLMPool  avec le chargeur de classe sun.misc.Launcher$AppClassLoader@224577f9
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_17-b02
+user.dir=/Users/asmaechadid/Developer/PLM/docdoku-plm
+derby.system.home=null
+Chargeur de classe de la base de données démarré - derby.database.classpath=''

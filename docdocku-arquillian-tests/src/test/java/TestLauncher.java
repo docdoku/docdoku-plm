@@ -1,10 +1,6 @@
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.Credential;
-import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.security.WorkspaceUserMembership;
+import com.docdoku.core.common.*;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.*;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,7 +27,7 @@ import java.util.*;
  */
 
 @RunWith(Arquillian.class)
-public class LoginTest {
+public class TestLauncher {
 
 
     @EJB
@@ -43,11 +39,11 @@ public class LoginTest {
     @Inject
     private UserTransaction utx;
 
-    static final int COUNT = 3;
+    static final int COUNT = 5;
 
     @Deployment
     public static Archive<?> createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test3.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
                 .addPackage(Account.class.getPackage())
                 .addPackage(Workspace.class.getPackage())
                 .addPackage(Credential.class.getPackage())
@@ -56,7 +52,6 @@ public class LoginTest {
                         Account.class,
                         Workspace.class,
                         TestEJBBean.class,
-                        ITestBean.class,
                         IUserManagerLocal.class,
                         UserManagerBean.class,
                         IMailerLocal.class,
@@ -82,7 +77,6 @@ public class LoginTest {
 
     @Before
     public void preparePersistenceTest() throws Exception {
-        //  System.setProperty("java.security.auth.login.config", "/Users/asmaechadid/Developer/PLM/docdoku-plm/docdocku-arquillian-tests/src/test/java/login.conf");
         clearData();
         insertData();
         startTransaction();
@@ -91,29 +85,21 @@ public class LoginTest {
     private void clearData() throws Exception {
         utx.begin();
         em.joinTransaction();
-        System.out.println("Dumping old records...");
-
 
         em.createQuery("delete from Credential ").executeUpdate();
         em.createQuery("delete from UserGroupMapping ").executeUpdate();
         em.createQuery("delete from Workspace ").executeUpdate();
         em.createQuery("delete from User ").executeUpdate();
-
         em.createQuery("delete from Account").executeUpdate();
-
-
         utx.commit();
     }
 
     private void insertData() throws Exception {
         utx.begin();
         em.joinTransaction();
-
-        System.out.println("Inserting records...");
-
         for (int i = 1; i <= COUNT; i++) {
             Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
-            Workspace workspace = new Workspace("w" + i, account, "", Workspace.VaultType.DEMO, false);
+            Workspace workspace = new Workspace("workspace" + i, account, "", Workspace.VaultType.DEMO, false);
             User user = new User(workspace, "user" + i, "user" + i, "user" + i + "@docdoku.com", "en");
             em.persist(Credential.createCredential(user.getLogin(), "password"));
             em.persist(new UserGroupMapping(user.getLogin()));
@@ -121,14 +107,7 @@ public class LoginTest {
             em.persist(workspace);
             em.persist(user);
         }
-
-        Workspace workspace = new Workspace();
-        workspace.setId("w5");
-        User user = new User(workspace, "user1");
-        em.persist(workspace);
-        em.persist(user);
         utx.commit();
-        // clear the persistence context (first-level cache)
         em.clear();
     }
 
@@ -142,64 +121,92 @@ public class LoginTest {
         utx.commit();
     }
 
-    //@Test
-    public void workspaceAccess() {
-        try {
-            testBean.workspaceReadOnlyAccess();
-        } catch (Exception e) {
-            if (e instanceof AccessRightException)
-                Assert.assertFalse(true);
-        }
-    }
-
-    //  @Test
-    public void groupAndUserAccess() {
-        try {
-            testBean.UserAndGroupAccess(true, false);
-        } catch (Exception e) {
-            if (e instanceof AccessRightException)
-                Assert.assertTrue(true);
-        }
-    }
-
-
-    public void UserInSeveralGroups() {
-        try {
-            testBean.UserInSeveralGroups(null, null);
-        } catch (Exception e) {
-
-            if (e instanceof AccessRightException)
-                Assert.assertFalse(true);
-            else if (e instanceof UserNotActiveException)
-                Assert.assertFalse(true);
-        }
-    }
     @Test
-    public void UserAndACLOnSpecificEntity(){
+    public void launchTests() {
+
+        String[] users = new String[1];
+        String[] groups = new String[1];
+        users[0] = "user2";
+        groups[0] = "group1";
+
         try {
-            testBean.UserAndACLOnSpecificEntity(true, ACL.Permission.FULL_ACCESS);
+            testBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
+            testBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
+            testBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
+            testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
+            testBean.testGrantingUserAccessInWorkspace("user1", users, "TEST_WORKSPACE", false);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Assert.assertFalse(true);
+        }
+
+        try {
+            testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
+
+        } catch (Exception e) {
             if (e instanceof AccessRightException)
                 Assert.assertFalse(true);
-            else if (e instanceof UserNotActiveException)
-                Assert.assertFalse(true);
         }
-    }
 
-    //@Test
-    public void UserGrpAndACLOnSpecificEntity(){
         try {
-            testBean.UserGrpAndACLOnSpecificEntity(true, ACL.Permission.FULL_ACCESS);
+            testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
+            testBean.testGrantingUserGroupAccessInWorkspace("user1", groups, "TEST_WORKSPACE", true);
+            testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
+            testBean.testAddingUserInWorkspace("user1", "user3", "TEST_WORKSPACE");
+            users[0] = "user3";
+            testBean.testGrantingUserAccessInWorkspace("user1", users, "TEST_WORKSPACE", false);
+            testBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT3", null, null);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             if (e instanceof AccessRightException)
                 Assert.assertFalse(true);
-            else if (e instanceof UserNotActiveException)
+        }
+
+        try {
+            testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
+            groups[0] = "group2";
+            testBean.testGrantingUserGroupAccessInWorkspace("user1", groups, "TEST_WORKSPACE", false);
+
+            groups[0] = "group1";
+            testBean.testGrantingUserGroupAccessInWorkspace("user1", groups, "TEST_WORKSPACE", true);
+
+            testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
+            testBean.testAddingUserInGroup("user1", "group2", "TEST_WORKSPACE", "user3");
+
+            testBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT4", null, null);
+
+        } catch (Exception e) {
+            if (e instanceof AccessRightException)
                 Assert.assertFalse(true);
         }
-    }
 
+        try {
+            testBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
+            users[0] = "user4";
+            testBean.testGrantingUserAccessInWorkspace("user1", users, "TEST_WORKSPACE", true);
+            User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
+            ACLUserEntry[] aclUserEntries = new ACLUserEntry[1];
+            aclUserEntries[0] = new ACLUserEntry(new ACL(), user, ACL.Permission.FULL_ACCESS);
+
+            testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user4");
+            UserGroup userGroup = em.find(UserGroup.class, new UserGroupKey("TEST_WORKSPACE", "group1"));
+            ACLUserGroupEntry[] aclUserGroupEntries = new ACLUserGroupEntry[1];
+            aclUserGroupEntries[0] = new ACLUserGroupEntry(new ACL(), userGroup, ACL.Permission.FULL_ACCESS);
+
+            testBean.testDocumentCreation("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
+
+        } catch (Exception e) {
+            if (e instanceof AccessRightException)
+                Assert.assertFalse(true);
+        }
+
+        try {
+            testBean.testDocumentCheckIn("user1", new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5", "A"));
+            testBean.testDocumentCheckOut("user4", new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5", "A"));
+        } catch (Exception e) {
+            if (e instanceof AccessRightException)
+                Assert.assertFalse(true);
+        }
+
+    }
 
     public void findAllPersistedObjectUsingJpqlQuery() {
 
@@ -224,16 +231,16 @@ public class LoginTest {
         Assert.assertEquals(COUNT, retrievedAccounts.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (Account account : retrievedAccounts) {
-            System.out.println("Account: " + account);
+            System.out.println("DB Account: " + account);
             retrievedAccountLogins.add(account.getLogin());
         }
     }
 
     private static void assertContainsAllWorkspaces(Collection<Workspace> retrievedWorkspaces) {
-        Assert.assertEquals(COUNT, +1, retrievedWorkspaces.size());
+        Assert.assertEquals(COUNT, retrievedWorkspaces.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (Workspace workspace : retrievedWorkspaces) {
-            System.out.println("Workspace : " + workspace);
+            System.out.println("DB Workspace : " + workspace);
             retrievedAccountLogins.add(workspace.getId());
         }
     }
@@ -250,6 +257,7 @@ public class LoginTest {
         Assert.assertEquals(COUNT, retrievedUsers.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (User user : retrievedUsers) {
+            System.out.println("DB User" + user);
             retrievedAccountLogins.add(user.getLogin());
         }
         Assert.assertTrue(retrievedAccountLogins.contains("user1"));

@@ -7,35 +7,7 @@
             </module>
         </application>
     </system-applications>
-    <applications>
-        <!--application location="${com.sun.aas.instanceRootURI}/applications/docdoku-server-ear/" name="docdoku-server-ear" object-type="user">
-            <property name="appLocation" value="${com.sun.aas.instanceRootURI}/applications/__internal/docdoku-server-ear/docdoku-server-ear.ear"></property>
-            <property name="org.glassfish.ejb.container.application_unique_id" value="89882554558513152"></property>
-            <property name="isComposite" value="true"></property>
-            <property name="defaultAppName" value="docdoku-server-ear"></property>
-            <engine sniffer="ear"></engine>
-            <module name="docdoku-server-ejb.jar">
-                <property name="org.glassfish.persistence.processor_type.DocDoku-PU" value="JPA"></property>
-                <property name="org.glassfish.persistence.resource_jndi_name_property.DocDoku-PU" value="jdbc/docdokuPU"></property>
-                <property name="org.glassfish.persistence.drop_table_value_property.DocDoku-PU" value="false"></property>
-                <property name="org.glassfish.persistence.create_jdbc_file_name_property.DocDoku-PU" value="docdoku-server-ear_docdoku-server-ejb_DocDoku-PU_createDDL.jdbc"></property>
-                <property name="org.glassfish.persistence.drop_jdbc_file_name_property.DocDoku-PU" value="docdoku-server-ear_docdoku-server-ejb_DocDoku-PU_dropDDL.jdbc"></property>
-                <property name="org.glassfish.persistence.create_table_value_property.DocDoku-PU" value="true"></property>
-                <property name="org.glassfish.persistence.app_name_property" value="docdoku-server-ear"></property>
-                <engine sniffer="ejb"></engine>
-                <engine sniffer="security"></engine>
-                <engine sniffer="webservices"></engine>
-                <engine sniffer="jpa"></engine>
-                <engine sniffer="weld"></engine>
-            </module>
-            <module name="docdoku-server-web.war">
-                <engine sniffer="ejb"></engine>
-                <engine sniffer="security"></engine>
-                <engine sniffer="webservices"></engine>
-                <engine sniffer="web"></engine>
-            </module>
-        </application!-->
-    </applications>
+    <applications/>
     <resources>
         <jdbc-resource pool-name="__TimerPool" jndi-name="jdbc/__TimerPool" object-type="system-admin"></jdbc-resource>
         <jdbc-connection-pool datasource-classname="org.apache.derby.jdbc.EmbeddedXADataSource" res-type="javax.sql.XADataSource" name="__TimerPool">
