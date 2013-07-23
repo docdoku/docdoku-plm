@@ -88,9 +88,15 @@ public class PartPermalinkServlet extends HttpServlet {
             nativeCadFileURI =  "/files/" + binaryResource.getFullName();
         }
 
+        String geometryFileURI = "";
+        if(partRevision.getLastIteration().getGeometries().size()>0){
+            geometryFileURI = "/files/"+partRevision.getLastIteration().getGeometries().get(0).getFullName();
+        }
+
         pRequest.setAttribute("partRevision", partRevision);
         pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
         pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
+        pRequest.setAttribute("geometryFileURI",geometryFileURI);
         pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
     }
 }

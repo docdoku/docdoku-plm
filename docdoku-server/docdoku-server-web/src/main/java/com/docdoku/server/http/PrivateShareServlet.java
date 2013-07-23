@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.*;
@@ -166,16 +167,23 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             String nativeCadFileURI ="";
+            String uuid = sharedEntity.getUuid();
 
             if(partIteration.getNativeCADFile() != null){
                 BinaryResource binaryResource = partIteration.getNativeCADFile();
-                String uuid = sharedEntity.getUuid();
                 nativeCadFileURI = "/shared-files/" + uuid +  "/" + binaryResource.getOwnerIteration() + "/nativecad/" + binaryResource.getName();
+            }
+
+            String geometryFileURI = "";
+            if(partRevision.getLastIteration().getGeometries().size()>0){
+                Geometry geometry = partRevision.getLastIteration().getGeometries().get(0);
+                geometryFileURI ="/shared-files/" + uuid +  "/" + geometry.getOwnerIteration() + "/" + geometry.getName();
             }
 
             pRequest.setAttribute("partRevision", partRevision);
             pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
             pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
+            pRequest.setAttribute("geometryFileURI",geometryFileURI);
             pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
         }
 

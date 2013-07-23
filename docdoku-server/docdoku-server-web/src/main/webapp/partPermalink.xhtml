@@ -12,13 +12,23 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <title>#{i18nPart['title']}</title>
 
-    <link rel="Shortcut Icon" type="image/ico" href="#{request.contextPath}/images/favicon.ico"/>
-    <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/permalink/style.less"/>
-    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.min.css"/>
+    <link rel="Shortcut Icon" type="image/ico" href="#{request.contextPath}/images/favicon.ico?v=${BUILD_NUMBER}"/>
+    <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/permalink/style.less?v=${BUILD_NUMBER}"/>
+    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.min.css?v=${BUILD_NUMBER}"/>
 
-    <script type="text/javascript" src="#{request.contextPath}/js/lib/less-1.3.3.min.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/js/lib/bootstrap-2.2.2.min.js"></script>
+    <script type="text/javascript" src="#{request.contextPath}/js/lib/less-1.3.3.min.js?v=${BUILD_NUMBER}"></script>
+    <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery-1.8.2.min.js?v=${BUILD_NUMBER}"></script>
+    <script type="text/javascript" src="#{request.contextPath}/js/lib/bootstrap-2.2.2.min.js?v=${BUILD_NUMBER}"></script>
+
+    <c:if test="${!geometryFileURI.isEmpty()}">
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/underscore-1.4.2.min.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/require/require.min-2.1.2.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three-r58.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/ColladaLoader.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/STLLoader.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
+    </c:if>
 
 </head>
 <body>
@@ -172,6 +182,34 @@
                         <c:if test="${partRevision.lastIteration.nativeCADFile!=null}">
                             <a href="${nativeCadFileURI}">${partRevision.lastIteration.nativeCADFile.name}</a>
                         </c:if>
+
+                        <c:if test="${!geometryFileURI.isEmpty()}">
+                            <div id="permalink-cad-rendering"></div>
+                            <script type="text/javascript">
+
+                                $(document).ready(function () {
+                                    var PartGeometryPath = "${geometryFileURI}";
+                                    var $content = $("#content");
+                                    var padding = 34;
+                                    var width = $content.width() - 34;
+                                    var height = 600;
+
+                                    console.log("Document is ready to process cad rendering");
+                                    require.config({
+                                        baseUrl: "${request.contextPath}/js/product-structure",
+                                        paths: {
+                                            "require": "../lib/require/require.min-2.1.2"
+                                        },
+                                        urlArgs:"v=${BUILD_NUMBER}"
+                                    });
+                                    require(["permalink_cad_rendering"],function(Renderer){
+                                        new Renderer("#permalink-cad-rendering",PartGeometryPath, width, height).init();
+                                    });
+                                });
+                            </script>
+
+                        </c:if>
+
                     </div>
 
                     <div id="tab-part-links" class="tab-pane">
