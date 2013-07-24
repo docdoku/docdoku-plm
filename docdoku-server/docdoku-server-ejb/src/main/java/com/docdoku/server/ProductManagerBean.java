@@ -26,6 +26,7 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceNumberAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.security.ACL;
@@ -53,7 +54,7 @@ import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.util.*;
 
-@DeclareRoles({"users","admin"})
+@DeclareRoles({"users","admin","guest-proxy"})
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IProductManagerWS")
@@ -110,104 +111,47 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
         }
 
-        if (configSpec instanceof LatestConfigSpec) {
-            if (depth == null) {
-                filterLatestConfigSpec(rootUsageLink.getComponent(), -1);
-            } else {
-                filterLatestConfigSpec(rootUsageLink.getComponent(), depth);
-            }
-        }else if (configSpec instanceof BaselineConfigSpec){
-            if (depth == null) {
-                filterBaselineConfigSpec(((BaselineConfigSpec) configSpec).getBaseline(), rootUsageLink.getComponent(), -1);
-            } else {
-                filterBaselineConfigSpec(((BaselineConfigSpec) configSpec).getBaseline(), rootUsageLink.getComponent(), depth);
-            }
+        depth = depth == null ? -1 : depth;
+
+        if(configSpec != null){
+            filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);
         }
+
         return rootUsageLink;
     }
 
-    private PartMaster filterLatestConfigSpec(PartMaster root, int depth) {
-        PartRevision partR = root.getLastRevision();
-        PartIteration partI = null;
+    private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth){
 
-        if (partR != null) {
-            partI = partR.getLastIteration();
-        }
+        PartIteration partI = configSpec.filterConfigSpec(partMaster);
 
         if (partI != null) {
             if (depth != 0) {
                 depth--;
                 for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterLatestConfigSpec(usageLink.getComponent(), depth);
+                    filterConfigSpec(configSpec, usageLink.getComponent(), depth);
 
                     for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterLatestConfigSpec(subLink.getSubstitute(), 0);
+                        filterConfigSpec(configSpec, subLink.getSubstitute(), 0);
                     }
                 }
             }
         }
 
-        for (PartAlternateLink alternateLink : root.getAlternates()) {
-            filterLatestConfigSpec(alternateLink.getAlternate(), 0);
+        for (PartAlternateLink alternateLink : partMaster.getAlternates()) {
+            filterConfigSpec(configSpec,alternateLink.getAlternate(), 0);
         }
 
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
+        em.detach(partMaster);
+
+        if (partMaster.getPartRevisions().size() > 1) {
+            partMaster.getPartRevisions().retainAll(Collections.singleton(partI.getPartRevision()));
         }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
+        if (partI.getPartRevision() != null && partI.getPartRevision().getNumberOfIterations() > 1) {
+            partI.getPartRevision().getPartIterations().retainAll(Collections.singleton(partI));
         }
 
-        return root;
     }
 
-    private PartMaster filterBaselineConfigSpec(Baseline baseline, PartMaster root, int depth) {
-
-        // int baselineId, String targetPartWorkspaceId, String targetPartNumber
-        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),root.getWorkspaceId(),root.getNumber());
-
-        BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
-
-        PartRevision partR ;
-        PartIteration partI;
-
-        if(baselinedRootPart != null){
-            partR = baselinedRootPart.getTargetPart().getPartRevision();
-            partI = baselinedRootPart.getTargetPart();
-        }else{
-            // the part isn't in baseline, choose the latest version-iteration
-            partR = root.getLastRevision();
-            partI = partR.getLastIteration();
-        }
-
-        if (partI != null) {
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterBaselineConfigSpec(baseline, usageLink.getComponent(), depth);
-
-                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterBaselineConfigSpec(baseline, subLink.getSubstitute(), 0);
-                    }
-                }
-            }
-        }
-
-        for (PartAlternateLink alternateLink : root.getAlternates()) {
-            filterLatestConfigSpec(alternateLink.getAlternate(), 0);
-        }
-
-        em.detach(root);
-        if (root.getPartRevisions().size() > 1) {
-            root.getPartRevisions().retainAll(Collections.singleton(partR));
-        }
-        if (partR != null && partR.getNumberOfIterations() > 1) {
-            partR.getPartIterations().retainAll(Collections.singleton(partI));
-        }
-
-        return root;
-    }
 
     @RolesAllowed("users")
     @Override
@@ -357,6 +301,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
 
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
+            if(partR.getLastIteration().getIteration() <= 1) {
+                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException41");
+            }
             PartIteration partIte = partR.removeLastIteration();
             for (Geometry file : partIte.getGeometries()) {
                 try {
@@ -508,9 +455,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
+        }
+
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
@@ -782,9 +734,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","guest-proxy"})
     @Override
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+
+        if(ctx.isCallerInRole("guest-proxy")){
+            PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
+            if(partRevision.isCheckedOut()){
+                em.detach(partRevision);
+                partRevision.removeLastIteration();
+            }
+            return partRevision;
+        }
+
         User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevision partR = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(pPartRPK);
 
@@ -793,17 +755,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.removeLastIteration();
         }
         return partR;
-    }
-
-    @Override
-    public PartRevision getPublicPartRevision(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException {
-        PartRevision partR = new PartRevisionDAO(em).loadPartR(pPartRPK);
-
-        if(partR.isPublicShared()){
-            return partR;
-        }else{
-            return null;
-        }
     }
 
     @RolesAllowed("users")
@@ -884,6 +835,49 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed("users")
+    @Override
+    public void setRadiusForPartIteration(PartIterationKey pPartIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+        PartIteration partI = new PartIterationDAO(new Locale(user.getLanguage()), em).loadPartI(pPartIPK);
+        Map<String, InstanceAttribute> instanceAttributes = partI.getInstanceAttributes();
+        InstanceNumberAttribute instanceNumberAttribute = new InstanceNumberAttribute();
+        instanceNumberAttribute.setName("radius");
+        instanceNumberAttribute.setNumberValue(radius);
+        instanceAttributes.put("radius",instanceNumberAttribute);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
+
+        List<PartRevision> fetchedPartRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).searchPartRevisions(pQuery.getWorkspaceId(), pQuery.getPartNumber(), pQuery.getName(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
+                pQuery.getCreationDateTo(), pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null, pQuery.isStandardPart());
+
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+
+        ListIterator<PartRevision> ite = fetchedPartRs.listIterator();
+        while (ite.hasNext()) {
+            PartRevision partR = ite.next();
+
+            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+                partR = partR.clone();
+                partR.removeLastIteration();
+                ite.set(partR);
+            }
+
+            //Check access rights
+            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {
+                ite.remove();
+                continue;
+            }
+        }
+        return new ArrayList<PartRevision>(fetchedPartRs);
+
+    }
+
 
     @RolesAllowed("users")
     @Override
@@ -923,9 +917,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @Override
-    public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layerId);
+    public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException, AccessRightException {
+        Layer layer = new LayerDAO(em).loadLayer(layerId);
+        User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
+        new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layer);
     }
 
     @Override
@@ -1009,8 +1004,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @Override
     public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
         Layer layer = getLayer(pId);
+        User user = userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
         layer.setName(pName);
         return layer;
     }
@@ -1650,6 +1645,38 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         task.reject(pComment, partRevision.getLastIteration().getIteration(), pSignature);
+
+        // Relaunch Workflow ?
+        Activity currentActivity = task.getActivity();
+
+        if(currentActivity.isStopped() && currentActivity.getRelaunchActivity() != null){
+
+            WorkflowDAO workflowDAO = new WorkflowDAO(em);
+
+            Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
+
+            // Clone workflow
+            Workflow relaunchedWorkflow  = workflow.clone();
+            workflowDAO.createWorkflow(relaunchedWorkflow);
+
+            // Move aborted workflow in docM list
+            workflow.abort();
+            partRevision.addAbortedWorkflows(workflow);
+
+            // Set new workflow on document
+            partRevision.setWorkflow(relaunchedWorkflow);
+
+            // Reset some properties
+            relaunchedWorkflow.relaunch(relaunchActivityStep);
+
+            // Send mails for running tasks
+            mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), partRevision);
+
+            // Send notification for relaunch
+            mailer.sendPartRevisionWorkflowRelaunchedNotification(partRevision);
+
+        }
+
         return partRevision;
 
     }

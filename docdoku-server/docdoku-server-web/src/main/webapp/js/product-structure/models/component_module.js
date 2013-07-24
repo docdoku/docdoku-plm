@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global sceneManager,Instance*/
 define(["models/part_iteration_visualization", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIterationVisualization, date, i18n) {
 
     var ComponentModule = {};
@@ -160,6 +160,9 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
                         sceneManager.removeInstanceFromScene(instanceRaw.id);
                     }
                 });
+
+                //update the levels geometry with the number of instances
+                sceneManager.updateLevelGeometryValues(sceneManager.instances.length);
             });
         },
 

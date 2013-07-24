@@ -50,15 +50,15 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     private Instance<DocumentViewer> documentViewers;
 
     @Override
-    public String getHtmlForViewer(BinaryResource binaryResource) {
+    public String getHtmlForViewer(BinaryResource binaryResource, String uuid) {
         String template = "";
         DocumentViewer documentViewerSelected = selectViewerForTemplate(binaryResource);
 
         try {
             if (documentViewerSelected != null) {
-                template = documentViewerSelected.renderHtmlForViewer(binaryResource);
+                template = documentViewerSelected.renderHtmlForViewer(binaryResource,uuid);
             }else{
-                template = getDefaultTemplate(binaryResource);
+                template = getDefaultTemplate(binaryResource,uuid);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,11 +79,11 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
         return selectedDocumentViewer;
     }
 
-    private String getDefaultTemplate(BinaryResource binaryResource) throws IOException {
+    private String getDefaultTemplate(BinaryResource binaryResource,String uuid) throws IOException {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/default_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(binaryResource));
+        scopes.put("uriResource", ViewerUtils.getURI(binaryResource,uuid));
         scopes.put("externalUriResource", dataManager.getExternalStorageURI(binaryResource));
         scopes.put("fileName", binaryResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());

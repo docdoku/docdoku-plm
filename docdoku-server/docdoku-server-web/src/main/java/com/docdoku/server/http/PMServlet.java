@@ -20,8 +20,14 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.UserGroup;
+import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.UserNotFoundException;
+import org.apache.commons.lang.StringUtils;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +42,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class PMServlet extends HttpServlet {
+
+    @EJB
+    private IUserManagerLocal userManager;
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -76,6 +85,15 @@ public class PMServlet extends HttpServlet {
             }
         }
         else {
+            try{
+                UserGroup[] userGroups = userManager.getUserGroupsForUser(new UserKey(workspaceID, login));
+                String[] groups = new String[userGroups.length];
+                for(int i = 0 ; i< userGroups.length;i++){
+                    groups[i] = "\""+userGroups[i].toString()+"\"";
+                }
+                pRequest.setAttribute("groups", StringUtils.join(groups, ","));
+            } catch (UserNotFoundException e) {
+            }
             pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID) ? true : false);
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
             pRequest.setAttribute("workspaceID", workspaceID);

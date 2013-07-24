@@ -8,7 +8,7 @@ define([
         },
 
         key:function(){
-            return this.getUserLogin()
+            return this.getUserLogin();
         },
 
         name:function(){

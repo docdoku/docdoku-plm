@@ -7,7 +7,7 @@ define([
         model: WorkspaceUserMembership,
 
         url:function(){
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/memberships/users"
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/memberships/users";
         }
 
     });

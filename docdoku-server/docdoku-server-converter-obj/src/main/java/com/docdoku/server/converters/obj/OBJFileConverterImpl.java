@@ -26,17 +26,13 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.PartThreeJs;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+import com.google.gson.Gson;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Properties;
 
 
@@ -67,6 +63,7 @@ public class OBJFileConverterImpl implements CADConverter{
         File tmpDir = Files.createTempDir();
         File tmpCadFile;
         File tmpJSFile = new File(tmpDir, woExName+".js");
+        File tmpJSFileForRadius = new File(tmpDir, woExName+".radius.js");
         File tmpBINFile = new File(tmpDir, woExName + ".bin");
         File jsFile = null;
         try {
@@ -114,6 +111,21 @@ public class OBJFileConverterImpl implements CADConverter{
                     jsOutputStream.close();
                 }
 
+                try{
+                    // Calculate Radius for current obj
+                    String[] argsRadius = {pythonInterpreter, script.getAbsolutePath(), "-i", tmpCadFile.getAbsolutePath(), "-o", tmpJSFileForRadius.getAbsolutePath()};
+                    ProcessBuilder pbRadius = new ProcessBuilder(argsRadius);
+                    Process procRadius = pbRadius.start();
+                    procRadius.waitFor();
+                    int exitCodeRadius = procRadius.exitValue();
+                    if (exitCodeRadius==0) {
+                        PartThreeJs partThreeJs = new Gson().fromJson(new FileReader(tmpJSFileForRadius), PartThreeJs.class);
+                        Float radius = partThreeJs.getRadius();
+                        productService.setRadiusForPartIteration(partIPK,radius);
+                    }
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }
             }
             return jsFile;
         } finally {

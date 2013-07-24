@@ -20,14 +20,10 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.security.WorkspaceUserGroupMembership;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.UserGroupKey;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.security.PasswordRecoveryRequest;
+import com.docdoku.core.security.WorkspaceUserGroupMembership;
+import com.docdoku.core.security.WorkspaceUserMembership;
 
 
 /**
@@ -55,7 +51,7 @@ public interface IUserManagerLocal{
     void passivateUserGroups(String pWorkspaceId, String[] pGroupIds) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
     Workspace[] getAdministratedWorkspaces() throws AccountNotFoundException;
     Workspace[] getWorkspaces();
-    Workspace getWorkspace(String pWorkspaceId);   
+    Workspace getWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException;
     WorkspaceUserMembership[] getWorkspaceUserMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     WorkspaceUserGroupMembership[] getWorkspaceUserGroupMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
     UserGroup[] getUserGroups(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
@@ -66,4 +62,6 @@ public interface IUserManagerLocal{
     User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
     boolean hasCommonWorkspace(String user1, String user2);
     boolean isCallerInRole(String role);
+    UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
+    Workspace[] getWorkspacesWhereCallerIsActive();
 }

@@ -23,6 +23,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.product.PartSearchQuery;
 import com.docdoku.core.services.CreationException;
 import com.docdoku.core.services.PartRevisionAlreadyExistsException;
 import com.docdoku.core.services.PartRevisionNotFoundException;
@@ -31,6 +32,8 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +42,7 @@ public class PartRevisionDAO {
 
     private EntityManager em;
     private Locale mLocale;
+    private final static int MAX_RESULTS = 500;
 
     public PartRevisionDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
@@ -50,7 +54,7 @@ public class PartRevisionDAO {
         mLocale = Locale.getDefault();
     }
 
-    
+
     public PartRevision loadPartR(PartRevisionKey pKey) throws PartRevisionNotFoundException {
         PartRevision partR = em.find(PartRevision.class, pKey);
         if (partR == null) {
@@ -59,13 +63,14 @@ public class PartRevisionDAO {
             return partR;
         }
     }
-    
-    
-    public void updateRevision(PartRevision pPartR){
+
+
+    public void updateRevision(PartRevision pPartR) {
         em.merge(pPartR);
     }
 
-    public void removeRevision(PartRevision pPartR){
+    public void removeRevision(PartRevision pPartR) {
+        new WorkflowDAO(em).removeWorkflowConstraints(pPartR);
         em.remove(pPartR);
     }
 
@@ -76,7 +81,7 @@ public class PartRevisionDAO {
     }
 
     public int getPartRevisionCount(String pWorkspaceId) {
-        return ((Number)em.createNamedQuery("PartRevision.countByWorkspace")
+        return ((Number) em.createNamedQuery("PartRevision.countByWorkspace")
                 .setParameter("workspaceId", pWorkspaceId)
                 .getSingleResult()).intValue();
     }
@@ -89,8 +94,8 @@ public class PartRevisionDAO {
                 .getResultList();
     }
 
-    public int getPartRevisionCountFiltered(User caller,String workspaceId){
-        return ((Number)em.createNamedQuery("PartRevision.countByWorkspace.filterUserACLEntry")
+    public int getPartRevisionCountFiltered(User caller, String workspaceId) {
+        return ((Number) em.createNamedQuery("PartRevision.countByWorkspace.filterUserACLEntry")
                 .setParameter("workspaceId", workspaceId)
                 .setParameter("user", caller)
                 .getSingleResult()).intValue();
@@ -99,7 +104,7 @@ public class PartRevisionDAO {
     public List<PartRevision> getPartRevisionsFiltered(User caller, String pWorkspaceId, int pStart, int pMaxResults) {
         return em.createNamedQuery("PartRevision.findByWorkspace.filterUserACLEntry", PartRevision.class)
                 .setParameter("workspaceId", pWorkspaceId)
-                .setParameter("user",caller)
+                .setParameter("user", caller)
                 .setFirstResult(pStart)
                 .setMaxResults(pMaxResults)
                 .getResultList();
@@ -108,12 +113,12 @@ public class PartRevisionDAO {
     public void createPartR(PartRevision partR) throws PartRevisionAlreadyExistsException, CreationException {
 
         try {
-            if(partR.getWorkflow()!=null){
+            if (partR.getWorkflow() != null) {
                 WorkflowDAO workflowDAO = new WorkflowDAO(em);
                 workflowDAO.createWorkflow(partR.getWorkflow());
             }
 
-            if(partR.getACL()!=null){
+            if (partR.getACL() != null) {
                 ACLDAO aclDAO = new ACLDAO(em);
                 aclDAO.createACL(partR.getACL());
             }
@@ -130,5 +135,117 @@ public class PartRevisionDAO {
             throw new CreationException(mLocale);
         }
 
+    }
+
+    public List<PartRevision> searchPartRevisions(String pWorkspaceId, String pNumber, String pName, String pVersion, String pAuthor, String pType, Date pCreationDateFrom, Date pCreationDateTo, List<PartSearchQuery.AbstractAttributeQuery> pAttrs, Boolean standardPart) {
+
+        StringBuilder queryStr = new StringBuilder();
+        queryStr.append("SELECT DISTINCT p FROM PartRevision p ");
+
+        if (pAttrs != null && pAttrs.size() > 0) {
+            queryStr.append("JOIN p.partIterations i ");
+        }
+
+        queryStr.append("WHERE p.partMaster.workspace.id = :workspaceId ");
+        if (pAttrs != null && pAttrs.size() > 0) {
+            queryStr.append("AND i.iteration = (SELECT MAX(i2.iteration) FROM PartRevision p2 JOIN p2.partIterations i2 WHERE p2=p) ");
+            int i = 0;
+            for (PartSearchQuery.AbstractAttributeQuery attr : pAttrs) {
+                queryStr.append("AND EXISTS (");
+                if (attr instanceof PartSearchQuery.DateAttributeQuery) {
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceDateAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".dateValue BETWEEN :attrLValue").append(i).append(" AND :attrUValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
+                } else if (attr instanceof PartSearchQuery.TextAttributeQuery) {
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceTextAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".textValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
+                } else if (attr instanceof PartSearchQuery.NumberAttributeQuery) {
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceNumberAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE ABS(attr").append(i).append(".numberValue - :attrValue").append(i).append(" ) < 0.0001");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
+                } else if (attr instanceof PartSearchQuery.BooleanAttributeQuery) {
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceBooleanAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".booleanValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
+                } else if (attr instanceof PartSearchQuery.URLAttributeQuery) {
+                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceURLAttribute attr").append(i).append(" ");
+                    queryStr.append("WHERE attr").append(i).append(".urlValue  = :attrValue").append(i).append(" ");
+                    queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
+                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
+                }
+                queryStr.append(") ");
+            }
+
+        }
+        queryStr.append("AND p.partMaster.number LIKE :number ");
+        queryStr.append("AND p.version LIKE :version ");
+        queryStr.append("AND p.partMaster.name LIKE :name ");
+
+        if(pType != null)
+            queryStr.append("AND p.partMaster.type LIKE :type ");
+
+        if (standardPart != null)
+            queryStr.append("AND p.partMaster.standardPart = :standardPart ");
+
+        if (pAuthor != null)
+            queryStr.append("AND p.author.login = :author ");
+
+        queryStr.append("AND p.creationDate BETWEEN :lowerDate AND :upperDate ");
+        queryStr.append("ORDER BY p.partMaster.number, p.version");
+
+        TypedQuery<PartRevision> query = em.createQuery(queryStr.toString(), PartRevision.class);
+        query.setParameter("workspaceId", pWorkspaceId);
+        query.setParameter("number", pNumber == null ? "%" : "%" + pNumber + "%");
+        query.setParameter("version", pVersion == null ? "%" : "%" + pVersion + "%");
+        query.setParameter("name", pName == null ? "%" : "%" + pName + "%");
+
+        if(pType != null)
+            query.setParameter("type","%" + pType + "%");
+
+        if (standardPart != null)
+            query.setParameter("standardPart", standardPart);
+
+        if (pAuthor != null)
+            query.setParameter("author", pAuthor);
+
+        if (pAttrs != null && pAttrs.size() > 0) {
+            int i = 0;
+            for (PartSearchQuery.AbstractAttributeQuery attr : pAttrs) {
+                if (attr instanceof PartSearchQuery.TextAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((PartSearchQuery.TextAttributeQuery) attr).getTextValue());
+                } else if (attr instanceof PartSearchQuery.URLAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((PartSearchQuery.URLAttributeQuery) attr).getUrlValue());
+                } else if (attr instanceof PartSearchQuery.NumberAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((PartSearchQuery.NumberAttributeQuery) attr).getNumberValue());
+                } else if (attr instanceof PartSearchQuery.BooleanAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((PartSearchQuery.BooleanAttributeQuery) attr).isBooleanValue());
+                } else if (attr instanceof PartSearchQuery.DateAttributeQuery) {
+                    query.setParameter("attrLValue" + i, ((PartSearchQuery.DateAttributeQuery) attr).getFromDate());
+                    query.setParameter("attrUValue" + i, ((PartSearchQuery.DateAttributeQuery) attr).getToDate());
+                }
+                query.setParameter("attrName" + (i++), attr.getName());
+            }
+        }
+
+        query.setParameter("lowerDate", pCreationDateFrom == null ? new Date(0) : pCreationDateFrom);
+        if (pCreationDateTo != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(pCreationDateTo);
+            cal.set(Calendar.HOUR_OF_DAY, 24);
+            cal.set(Calendar.MINUTE, 0);
+
+            pCreationDateTo = cal.getTime();
+        } else
+            pCreationDateTo = new Date();
+
+        query.setParameter("upperDate", pCreationDateTo);
+
+        query.setMaxResults(MAX_RESULTS);
+        return query.getResultList();
     }
 }

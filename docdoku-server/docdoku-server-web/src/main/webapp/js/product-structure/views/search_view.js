@@ -11,7 +11,7 @@ define([
         template: Mustache.compile(template),
 
         events: {
-            "submit form#nav_list_search": "search",
+            "submit form#nav_list_search": "onSearchSubmit",
             "click #nav_list_search_mini_icon i": "toggleHelp",
             "click .popover" : "toggleHelp"
         },
@@ -19,6 +19,8 @@ define([
         initialize: function() {
             this.collection = new ResultPathCollection();
             this.oppened = false;
+            this.on("instance:selected", this.onInstanceSelected);
+            this.on("selection:reset", this.onResetSelection);
         },
 
         bindDomElements: function() {
@@ -46,12 +48,16 @@ define([
             return this;
         },
 
-        search: function(e) {
-
+        onSearchSubmit: function (e) {
             var searchString = e.target.children[0].value.trim();
+            this.search(searchString);
+            e.preventDefault();
+            return false;
+        },
 
-            if (searchString.length > 0) {
-                this.collection.searchString = searchString;
+        search: function(partNumber) {
+            if (partNumber.length > 0) {
+                this.collection.searchString = partNumber;
                 this.collection.fetch({reset:true});
             } else {
                 this.collection.reset();
@@ -60,11 +66,22 @@ define([
             return false;
         },
 
+        onInstanceSelected: function(partNumber) {
+            this.search(partNumber);
+        },
+
+        onResetSelection:function(){
+            this.collection.reset();
+        },
+
         toggleHelp: function() {
-            this.oppened ? this.$helpLink.popover('hide') : this.$helpLink.popover('show');
+            if(this.oppened){
+                this.$helpLink.popover('hide');
+            }else{
+                this.$helpLink.popover('show');
+            }
             this.oppened = !this.oppened;
         }
-
     });
 
     return SearchView;

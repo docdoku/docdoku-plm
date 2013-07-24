@@ -42,6 +42,9 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to undo check out; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
+
     @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to undo check out or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 

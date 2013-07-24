@@ -20,10 +20,7 @@
 package com.docdoku.cli;
 
 
-import com.docdoku.core.services.IDocumentManagerWS;
-import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.IWorkflowManagerWS;
+import com.docdoku.core.services.*;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.MTOMFeature;
@@ -45,6 +42,7 @@ public class ScriptingTools {
     private final static String DOCUMENT_WSDL_LOCATION = "/services/document?wsdl";
     private final static String PRODUCT_WSDL_LOCATION = "/services/product?wsdl";
     private final static String WORKFLOW_WSDL_LOCATION = "/services/workflow?wsdl";
+    private final static String USER_WSDL_LOCATION = "/services/user?wsdl";
     private final static String FILE_MANAGER_WSDL_LOCATION = "/services/UploadDownload?wsdl";
 
     static {
@@ -95,6 +93,16 @@ public class ScriptingTools {
         context.put(BindingProvider.USERNAME_PROPERTY, login);
         context.put(BindingProvider.PASSWORD_PROPERTY, password);
         return proxy;
+    }
+
+
+    public static IUserManagerWS createUserManagerService(URL url, String login, String password) throws MalformedURLException {
+        UserService service = new UserService(new URL(url, USER_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "UserManagerBeanService"));
+        IUserManagerWS port = service.getPort(IUserManagerWS.class);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+
+        return port;
     }
 
 }

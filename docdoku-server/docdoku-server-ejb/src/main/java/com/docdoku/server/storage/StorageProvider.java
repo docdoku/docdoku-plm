@@ -26,6 +26,7 @@ import com.docdoku.core.services.StorageException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public interface StorageProvider {
     InputStream getBinaryResourceInputStream(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException;
@@ -33,4 +34,5 @@ public interface StorageProvider {
     void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException;
     void delData(BinaryResource pBinaryResource) throws StorageException;
     String getExternalResourceURI(BinaryResource binaryResource);
+    public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
 }

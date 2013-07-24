@@ -59,7 +59,7 @@ define([
             require(["views/part_template_edit_view"],function(PartTemplateEditView){
                 var partTemplateEditView = new PartTemplateEditView({model:that.model}).render();
                 partTemplateEditView.show();
-            })
+            });
         }
 
     });

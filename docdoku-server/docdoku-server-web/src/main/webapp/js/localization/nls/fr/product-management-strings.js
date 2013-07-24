@@ -55,5 +55,18 @@ define({
     TITLE:"Titre",
     DESCRIPTION:"Description",
     CANCEL:"Annuler",
-    NAME:"Nom"
+    NAME:"Nom",
+    "UNDO_CHECKOUT_?":"Annuler la réservation ?",
+    QUICK_SEARCH:"Recherche rapide",
+    ADVANCED_SEARCH:"Recherche avancée",
+    SEARCH:"Rechercher",
+    PART_NUMBER_HELP:"Numéro de l'article",
+    PART_NAME_HELP:"Nom de l'article",
+    TYPE_HELP:"Type de l'article",
+    VERSION_HELP:"Version de l'article",
+    AUTHOR_HELP:"Auteur de l'article",
+    APPEND:"Ajouter",
+    STANDARD_PART_ALL:"Tous",
+    STANDARD_PART_FALSE:"Non",
+    STANDARD_PART_TRUE:"Oui"
 });

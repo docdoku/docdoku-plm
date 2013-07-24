@@ -24,6 +24,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.server.rest.dto.UserDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -113,9 +114,10 @@ public class UserResource {
     @GET
     @Path("admin")
     @Produces("application/json;charset=UTF-8")
-    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId) {
+    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException {
         Workspace workspace = userManager.getWorkspace(workspaceId);
         return mapper.map(workspace.getAdmin(),UserDTO.class);
+
     }
 }
 

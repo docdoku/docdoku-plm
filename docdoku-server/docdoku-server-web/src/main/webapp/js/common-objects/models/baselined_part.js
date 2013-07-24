@@ -38,4 +38,4 @@ define([],function(){
     });
 
     return BaselinedPart;
-})
+});

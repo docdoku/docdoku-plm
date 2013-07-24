@@ -24,59 +24,77 @@ import com.docdoku.cli.commands.*;
 import com.docdoku.core.common.Version;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+
 import java.util.*;
 
 
 public class MainCommand {
 
+    public static void main(String[] args) {
 
+        try {
+            switch (args[0]) {
+                case "status":
+                case "stat":
+                case "st":
+                    execCommand(new StatusCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
 
+                case "get":
+                    execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
 
-        public static void main(String[] args) {
+                case "put":
+                    execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
 
-            try {
-                switch(args[0]){
-                    case "status": case "stat": case "st":
-                        execCommand(new StatusCommand(), Arrays.copyOfRange(args, 1, args.length));
+                case "checkout":
+                case "co":
+                    execCommand(new CheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
+                case "undocheckout":
+                case "uco":
+                    execCommand(new UndoCheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
+                case "checkin":
+                case "ci":
+                    execCommand(new CheckInCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
+                case "create":
+                case "cr":
+                    execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
+                case "partlist":
+                case "pl":
+                    execCommand(new PartListCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
+                case "workspaces":
+                case "wl" :
+                    execCommand(new WorkspacesCommand(),Arrays.copyOfRange(args, 1, args.length));
+                    break;
+                case "help":
+                case "?":
+                case "h":
+                    if (args.length > 1) {
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
                         break;
-
-                    case "get":
-                        execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
-
-                    case "put":
-                        execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
-
-                    case "checkout": case "co":
-                        execCommand(new CheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
-
-                    case "undocheckout": case "uco":
-                        execCommand(new UndoCheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
-
-                    case "checkin": case "ci":
-                        execCommand(new CheckInCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
-
-                    case "help": case "?" : case "h":
-                        if(args.length>1){
-                            execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                            break;
-                        }
-                    default:
-                        printUsage();
-                }
-
-            } catch (Exception e) {
-                printUsage();
+                    }
+                default:
+                    printUsage();
             }
+
+        } catch (Exception e) {
+            printUsage();
         }
+    }
 
 
-
-    private static void execCommand(CommandLine cl, String[] args){
+    private static void execCommand(CommandLine cl, String[] args) {
         CmdLineParser.registerHandler(Version.class, VersionOptionHandler.class);
         CmdLineParser parser = new CmdLineParser(cl);
         try {
@@ -85,7 +103,7 @@ public class MainCommand {
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
-        }catch (Exception e) {
+        } catch (Exception e) {
             //e.printStackTrace();
             System.err.println(e.getMessage());
         }
@@ -100,6 +118,7 @@ public class MainCommand {
         System.err.println("Available commands:");
         System.err.println("   checkin (ci)");
         System.err.println("   checkout (co)");
+        System.err.println("   create (cr)");
         System.err.println("   get");
         System.err.println("   help (?, h)");
         System.err.println("   put");

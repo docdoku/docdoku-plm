@@ -21,7 +21,9 @@
 
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -41,6 +43,10 @@ public class LatestConfigSpec extends ConfigSpec {
     public LatestConfigSpec() {
     }
 
-    
-    
+    @Override
+    public PartIteration filterConfigSpec(PartMaster part) {
+        PartRevision partR = part.getLastRevision();
+        return partR.getLastIteration();
+    }
+
 }

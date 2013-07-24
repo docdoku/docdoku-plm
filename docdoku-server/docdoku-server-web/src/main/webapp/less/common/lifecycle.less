@@ -1,10 +1,16 @@
 #tab-iteration-lifecycle {
 
+  .history-content{
+    a:not(.active){
+      color:#333;
+    }
+  }
+
   #lifecycle-activities-wrapper {
 
-    width: 100%;
-    height: 340px;
-    overflow: auto;
+    //width: 100%;
+    //height: 340px;
+    //overflow: auto;
 
     #lifecycle-activities {
 
@@ -41,7 +47,7 @@
               border: 1px dashed #aaaaaa;
             }
             &.in_progress {
-              border: 1px dashed #5bb75b;
+              border: 2px dashed #5bb75b;
             }
             &.approved {
               border: 1px solid #5bb75b;
@@ -53,7 +59,6 @@
             h5 {
               margin: 0;
               i{
-                float:right;
                 cursor: pointer;
                 margin: 0 0 0 5px;
                 opacity: 0.5;

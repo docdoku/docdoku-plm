@@ -59,7 +59,7 @@ define([
             this.$userGroupsAcls = this.$("#groups-acl-entries");
             this.$usingAcl = this.$(".using-acl");
             this.$aclSwitch = this.$(".acl-switch");
-        }, 
+        },
 
         onUserMembershipsReset:function(){
             var that = this ;

@@ -32,13 +32,11 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.Serializable;
-
-import java.sql.Array;
-import java.util.*;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
+import java.util.*;
 
 @ManagedBean(name = "adminStateBean")
 @SessionScoped
@@ -250,7 +248,7 @@ public class AdminStateBean implements Serializable {
 
 
 
-    public Workspace getCurrentWorkspace() {
+    public Workspace getCurrentWorkspace() throws WorkspaceNotFoundException {
         return userManager.getWorkspace(selectedWorkspace); 
     }
     

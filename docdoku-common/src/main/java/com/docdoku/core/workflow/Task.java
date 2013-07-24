@@ -22,10 +22,11 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.util.Tools;
-import java.io.Serializable;
-import java.util.Date;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <a href="Task.html">Task</a> is the smallest unit of work in a workflow.
@@ -235,6 +236,12 @@ public class Task implements Serializable, Cloneable {
             status=Status.IN_PROGRESS;
         }
     }
+
+    public void stop(){
+        if(isInProgress()){
+            status = Status.NOT_STARTED;
+        }
+    }
     
     public boolean isNotStarted(){
         //because of bug #6277781
@@ -254,6 +261,14 @@ public class Task implements Serializable, Cloneable {
     public boolean isInProgress(){
         //because of bug #6277781
         return status.ordinal()==Status.IN_PROGRESS.ordinal();
+    }
+
+    public void reset(){
+        setStatus(Task.Status.NOT_STARTED);
+        setSignature(null);
+        setClosureComment(null);
+        setClosureDate(null);
+        setStartDate(null);
     }
     
     @Override

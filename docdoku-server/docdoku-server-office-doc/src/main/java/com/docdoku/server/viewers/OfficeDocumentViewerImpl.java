@@ -43,11 +43,11 @@ public class OfficeDocumentViewerImpl implements DocumentViewer {
     }
 
     @Override
-    public String renderHtmlForViewer(BinaryResource docResource) throws Exception {
+    public String renderHtmlForViewer(BinaryResource docResource, String uuid) throws Exception {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/document_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(docResource));
+        scopes.put("uriResource", ViewerUtils.getURI(docResource,uuid));
         scopes.put("externalUriResource", dataManager.getExternalStorageURI(docResource));
         scopes.put("fileName", docResource.getName());
         scopes.put("thisId", UUID.randomUUID().toString());

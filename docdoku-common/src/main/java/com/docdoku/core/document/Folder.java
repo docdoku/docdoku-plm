@@ -20,10 +20,10 @@
 
 package com.docdoku.core.document;
 
-import java.io.Serializable;
-import java.util.Stack;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Stack;
 
 /**
  * The <a href="Folder.html">Folder</a>
@@ -160,7 +160,11 @@ public class Folder implements Serializable, Comparable<Folder> {
         int index = completePath.lastIndexOf('/');
         return completePath.substring(index + 1);
     }
-    
+
+    public String getRoutePath() {
+        int index = completePath.indexOf('/');
+        return completePath.substring(index + 1).toString().replaceAll("/",":");
+    }
     
     public static Folder createRootFolder(String pWorkspaceId) {
         return new Folder(pWorkspaceId);

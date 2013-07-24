@@ -25,6 +25,7 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -49,32 +51,39 @@ public class DocumentPermalinkServlet extends HttpServlet {
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-            String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-            int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
-            
-            String workspaceId = URLDecoder.decode(pathInfos[offset],"UTF-8");
-            String docMId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
-            String docMVersion = pathInfos[offset+2];
+            if(pRequest.getAttribute("publicDocumentMaster") != null){
+                DocumentMaster documentMaster = (DocumentMaster) pRequest.getAttribute("publicDocumentMaster");
+                handleSuccess(pRequest,pResponse,documentMaster);
+            }else{
+                HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+                String requestURI = httpRequest.getRequestURI();
+                String[] pathInfos = Pattern.compile("/").split(requestURI);
+                int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
 
-            DocumentMaster docM;
+                String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
+                String documentMasterId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
+                String documentMasterVersion = pathInfos[offset+2];
 
-            docM = documentService.getPublicDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
-
-            if(docM == null){
-                docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, docMId, docMVersion));
+                DocumentMasterKey documentMasterKey  =  new DocumentMasterKey(workspaceId,documentMasterId,documentMasterVersion);
+                DocumentMaster documentMaster = documentService.getDocumentMaster(documentMasterKey);
+                handleSuccess(pRequest,pResponse,documentMaster);
             }
-
-            pRequest.setAttribute("docm", docM);
-
-            DocumentIteration doc =  docM.getLastIteration();
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(doc.getInstanceAttributes().values()));
-
-            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
-
-        } catch (Exception pEx) {
+        }  catch (Exception pEx) {
             pEx.printStackTrace();
             throw new ServletException("error while fetching your document.", pEx);
         }
+    }
+
+    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, DocumentMaster documentMaster) throws ServletException, IOException, NotAllowedException {
+        pRequest.setAttribute("documentMaster", documentMaster);
+        DocumentIteration docI =  documentMaster.getLastIteration();
+
+        if(docI == null){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException27");
+        }
+
+        pRequest.setAttribute("attr", new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
+        pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
     }
 
 }

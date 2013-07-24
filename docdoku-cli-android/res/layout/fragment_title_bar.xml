@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TitleBar">
+
+    <ImageButton
+            android:id="@+id/menuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:padding="10dp"
+            android:layout_margin="2dp"
+            android:background="@drawable/white_border_rectangle"
+            android:src="@android:drawable/ic_menu_more"/>
+
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_toRightOf="@+id/menuButton"
+        android:layout_toLeftOf="@+id/searchButton"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:background="@color/transparent">
+
+        <!-- Add logo here-->
+
+        <TextView
+                android:id="@+id/appTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/BigTitle"
+                android:text="@string/app_title"/>
+
+    </LinearLayout>
+
+
+    <Spinner
+            android:id="@+id/settingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/menuButton"
+            android:padding="10dp"
+            android:spinnerMode="dropdown"
+            android:background="@drawable/white_border_rectangle"
+            android:entries="@array/settingsArray"/>
+
+    <ImageButton
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/settingsButton"
+            android:layout_alignBottom="@+id/menuButton"
+            android:padding="10dp"
+            android:layout_margin="2dp"
+            android:background="@drawable/white_border_rectangle"
+            android:src="@android:drawable/ic_menu_search"/>
+
+</RelativeLayout>

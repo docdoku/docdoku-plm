@@ -43,7 +43,9 @@ define([
             this.domEvent = new THREEx.DomEvent(camera, this.container);
 
             this.layersCollection.each(function(layer) {
-                layer._addAllMarkersToScene();
+                if(layer.get('shown')){
+                    layer._addAllMarkersToScene();
+                }
             });
         },
 

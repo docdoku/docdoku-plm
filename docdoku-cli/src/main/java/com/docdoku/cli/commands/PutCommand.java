@@ -24,16 +24,16 @@ import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
 
 public class PutCommand extends AbstractCommandLine{
 
@@ -43,6 +43,9 @@ public class PutCommand extends AbstractCommandLine{
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to save; if not specified choose the part corresponding to the cad file if it has already been imported")
     private String partNumber;
+
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
 
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;

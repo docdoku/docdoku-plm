@@ -34,7 +34,7 @@ define(
         bindTypeahead: function() {
             this.$inputPartNumber.typeahead({
                 source: function(query, process) {
-                    $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/search?q=' + query, function(data) {
+                    $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function(data) {
                         process(data);
                     });
                 }

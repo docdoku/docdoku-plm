@@ -119,12 +119,13 @@ define([
 
                 if (checkedViews[0].model.isCheckout()) {
                     if (checkedViews[0].model.isCheckoutByConnectedUser()) {
-                        this.trigger("checkout-group:update",{canCheckout:false, canUndoAndCheckin:true});
+                        var canUndo = checkedViews[0].model.getLastIteration().get("iteration") > 1;
+                        this.trigger("checkout-group:update",{canCheckout:false, canUndo:canUndo, canCheckin:true});
                     } else {
-                        this.trigger("checkout-group:update",{canCheckout:false, canUndoAndCheckin:false});
+                        this.trigger("checkout-group:update",{canCheckout:false, canUndo:false, canCheckin:false});
                     }
                 } else {
-                    this.trigger("checkout-group:update",{canCheckout:true, canUndoAndCheckin:false});
+                    this.trigger("checkout-group:update",{canCheckout:true, canUndo:false, canCheckin:false});
                 }
 
             }else {

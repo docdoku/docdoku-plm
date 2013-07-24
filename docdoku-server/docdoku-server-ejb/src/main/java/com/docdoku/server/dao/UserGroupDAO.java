@@ -145,4 +145,11 @@ public class UserGroupDAO {
             throw new CreationException(mLocale);
         }
     }
+
+    public List<UserGroup> getUserGroups(String workspaceId, User user) {
+        return em.createNamedQuery("UserGroup.findUserGroups").
+                setParameter("workspaceId", workspaceId).
+                setParameter("user", user).
+                getResultList();
+    }
 }

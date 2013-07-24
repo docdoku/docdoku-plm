@@ -18,7 +18,7 @@ window.onload = function() {
 
     function addModelToScene( geometry )
     {
-        var material = new THREE.MeshFaceMaterial();
+        var material = new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, overdraw: true } );
         model = new THREE.Mesh( geometry, material );
         model.scale.set(1,1,1);
         model.position.set(0, 0, 0);
@@ -32,7 +32,7 @@ window.onload = function() {
         scene = new THREE.Scene();
 
         // CAMERA
-        var SCREEN_WIDTH = 318, SCREEN_HEIGHT = 276;
+        var SCREEN_WIDTH = 490, SCREEN_HEIGHT = 276;
         var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
         camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
         scene.add(camera);
@@ -47,7 +47,8 @@ window.onload = function() {
         container.appendChild( renderer.domElement );
 
         // CONTROLS
-        controls = new THREE.TrackballControls( camera, info_panel );
+        controls = new THREE.TrackballControlsCustom( camera, info_panel );
+        controls.initHomepageControl();
 
         // LIGHT
         var light = new THREE.PointLight(0xffffff);
@@ -59,6 +60,9 @@ window.onload = function() {
 
         // SKYBOX/FOG
         scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+
+        // RESIZER
+        THREEx.WindowResize(renderer, camera, $('div#demo-scene'));
 
         var binaryLoader = new THREE.BinaryLoader();
         binaryLoader.load("/images/pba.js", addModelToScene);

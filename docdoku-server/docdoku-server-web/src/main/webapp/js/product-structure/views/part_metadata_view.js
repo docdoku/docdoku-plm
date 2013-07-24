@@ -23,7 +23,9 @@ define (["text!templates/part_meta_data.html","i18n!localization/nls/product-str
         },
 
         render: function() {
-            this.$el.html(this.template({model:this.model, i18n:i18n}));
+            var permalink = this.model.getPermalink ? this.model.getPermalink() : ("/parts/" + APP_CONFIG.workspaceId + "/" + this.model.getNumber() + "/" + this.model.getVersion());
+
+            this.$el.html(this.template({model:this.model, i18n:i18n, permalink:permalink}));
             return this;
         },
 
@@ -31,6 +33,10 @@ define (["text!templates/part_meta_data.html","i18n!localization/nls/product-str
             if(this.model.getAuthorLogin() != APP_CONFIG.login) {
                 Backbone.Events.trigger("NewChatSession",{remoteUser:this.model.getAuthorLogin(),context:this.model.getNumber()});
             }
+        },
+
+        reset:function(){
+            this.$el.empty();
         }
         
     });

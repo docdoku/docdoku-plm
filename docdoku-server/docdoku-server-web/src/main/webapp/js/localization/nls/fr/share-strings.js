@@ -3,7 +3,7 @@ define({
     CLOSE:"Fermer",
     SHARED_DOCUMENTS_TITLE:"Publier le document",
     SHARED_PARTS_TITLE:"Publier l'article",
-    PUBLIC_ACCESS_TITLE:"Accès publique au permalien",
+    PUBLIC_ACCESS_TITLE:"Accès public au permalien",
     PRIVATE_SHARE_TITLE:"Accès privé",
     GENERATED_URL:"Lien généré",
     PASSWORD:"Mot de passe",

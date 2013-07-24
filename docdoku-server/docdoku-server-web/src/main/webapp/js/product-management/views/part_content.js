@@ -1,21 +1,25 @@
 define([
     "common-objects/collections/part_collection",
+    "common-objects/collections/part_search_collection",
     "text!templates/part_content.html",
     "i18n!localization/nls/product-management-strings",
     "views/part_list",
     "views/part_creation_view",
     "views/part_new_version",
     "common-objects/views/prompt",
-    "common-objects/views/security/acl_edit"
+    "common-objects/views/security/acl_edit",
+    "views/advanced_search"
 ], function (
     PartCollection,
+    PartSearchCollection,
     template,
     i18n,
     PartListView,
     PartCreationView,
     PartNewVersionView,
     PromptView,
-    ACLEditView
+    ACLEditView,
+    AdvancedSearchView
     ) {
     var PartContentView = Backbone.View.extend({
 
@@ -35,12 +39,21 @@ define([
             "click button.previous-page":"toPreviousPage",
             "click button.first-page":"toFirstPage",
             "click button.last-page":"toLastPage",
-            "click button.current-page":"goToPage"
+            "click button.current-page":"goToPage",
+            "submit #part-search-form":"onQuickSearch",
+            "click .advanced-search-button":"onAdvancedSearch"
         },
 
         initialize: function () {
             _.bindAll(this);
             Backbone.Events.on("refresh_tree", this.resetCollection);
+            this.query = null;
+            this.router = require("router").getInstance();
+        },
+
+        setQuery:function(query){
+            this.query = query ;
+            return this;
         },
 
         render:function(){
@@ -48,9 +61,18 @@ define([
 
             this.bindDomElements();
 
+            var collection;
+
+            if(this.query){
+                collection = new PartSearchCollection();
+                collection.setQuery(this.query);
+            }else{
+                collection = new PartCollection();
+            }
+
             this.partListView = new PartListView({
                 el:this.$("#part_table"),
-                collection:new PartCollection()
+                collection:collection
             }).render();
 
             this.partListView.collection.on("page-count:fetch",this.onPageCountFetched);
@@ -98,7 +120,7 @@ define([
         },
 
         addPartInList:function(part){
-            this.partListView.pushPart(part)
+            this.partListView.pushPart(part);
         },
 
         changeDeleteButtonDisplay:function(state){
@@ -135,16 +157,15 @@ define([
 
         updateCheckoutButtons: function(values) {
             this.checkoutButton.prop('disabled', !values.canCheckout);
-            this.undoCheckoutButton.prop('disabled', !values.canUndoAndCheckin);
-            this.checkinButton.prop('disabled', !values.canUndoAndCheckin);
+            this.undoCheckoutButton.prop('disabled', !values.canUndo);
+            this.checkinButton.prop('disabled', !values.canCheckin);
         },
 
         checkin:function(){
             var self = this;
             var selectedPart = this.partListView.getSelectedPart();
 
-            if(_.isNull(selectedPart.getLastIteration().attributes.iterationNote)) {
-
+            if(!selectedPart.getLastIteration().get("iterationNote")) {
                 var promptView = new PromptView();
                 promptView.setPromptOptions(i18n.ITERATION_NOTE, i18n.ITERATION_NOTE_PROMPT_LABEL, i18n.ITERATION_NOTE_PROMPT_OK, i18n.ITERATION_NOTE_PROMPT_CANCEL);
                 $("body").append(promptView.render().el);
@@ -172,7 +193,9 @@ define([
             this.partListView.getSelectedPart().checkout();
         },
         undocheckout:function(){
-            this.partListView.getSelectedPart().undocheckout();
+            if(confirm(i18n["UNDO_CHECKOUT_?"])){
+                this.partListView.getSelectedPart().undocheckout();
+            }
         },
 
         updateACL:function(){
@@ -267,9 +290,22 @@ define([
 
         updatePageIndicator:function(){
             this.currentPageIndicator.text(this.partListView.collection.getCurrentPage() + " / " + this.partListView.collection.getPageCount());
+        },
+
+        onQuickSearch: function(e) {
+            if (e.target.children[0].value) {
+                this.router.navigate("parts-search/number=" + e.target.children[0].value, {trigger: true});
+            }
+            e.preventDefault();
+            return false;
+        },
+
+        onAdvancedSearch:function(){
+            var advancedSearchView = new AdvancedSearchView();
+            $("body").append(advancedSearchView.render().el);
+            advancedSearchView.openModal();
+            advancedSearchView.setRouter(this.router);
         }
-
-
 
     });
 

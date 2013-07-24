@@ -22,10 +22,16 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.exceptions.DplmException;
+import com.docdoku.cli.helpers.JSONPrinter;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.PartMasterNotFoundException;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -36,26 +42,45 @@ import java.util.Locale;
 
 public class StatusCommand extends AbstractCommandLine{
 
-
-
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to get a status ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to get a status; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
+    @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
+    private boolean jsonParser;
+
     @Argument(metaVar = "[<cadfile>]", index=0, usage = "specify the cad file of the part to get a status")
     private File cadFile;
 
+    @Option(name="-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
+
+    private long lastModified;
+
     @Override
     public void execImpl() throws Exception {
-        if(partNumber==null || revision==null){
-            loadMetadata();
-        }
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+        try {
+            if(partNumber==null || revision==null){
+                loadMetadata();
+            }
 
-        printMasterStatus(pm);
+            IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+            PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+
+            if (jsonParser) {
+                JSONPrinter.printPartMasterStatus(pm,lastModified);
+            } else {
+                printMasterStatus(pm);
+            }
+        } catch (PartMasterNotFoundException pmnfe) {
+            JSONPrinter.printException(pmnfe.getMessage());
+            MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
+            meta.deletePartInfo(cadFile.getAbsolutePath());
+        } catch (DplmException de)  {
+            JSONPrinter.printException(de.getMessage());
+        }
     }
 
     private void printMasterStatus(PartMaster pm){
@@ -108,7 +133,7 @@ public class StatusCommand extends AbstractCommandLine{
         return b.toString();
     }
 
-    private void loadMetadata() throws IOException {
+    private void loadMetadata() throws IOException, DplmException {
         if(cadFile==null){
             throw new IllegalArgumentException("<partnumber> or <revision> are not specified and no cad file is supplied");
         }
@@ -116,10 +141,18 @@ public class StatusCommand extends AbstractCommandLine{
         MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
         String filePath = cadFile.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
+        workspace = meta.getWorkspace(filePath);
+        lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+        if(partNumber==null || strRevision==null || workspace == null){
+            if (jsonParser) {
+                throw new DplmException("File is unversioned");
+            }
+            else {
+                throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            }
         }
+
         revision = new Version(strRevision);
     }
 

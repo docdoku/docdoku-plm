@@ -31,7 +31,9 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -276,7 +278,28 @@ public class PartsResource {
     }
 
     @GET
-    @Path("search")
+    @Path("search/{query}")
+    @Produces("application/json;charset=UTF-8")
+    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery) {
+        try{
+
+            PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
+
+            List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
+            List<PartDTO> partDTOs = new ArrayList<PartDTO>();
+
+            for(PartRevision partRevision : partRevisions){
+                partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+            }
+
+            return partDTOs;
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("numbers")
     @Produces("application/json;charset=UTF-8")
     public String[] searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
@@ -428,6 +451,29 @@ public class PartsResource {
             PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,number,version));
             partRevision.setPublicShared(false);
             return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("{partKey}/aborted-workflows")
+    @Produces("application/json;charset=UTF-8")
+    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("partKey") String partKey) {
+
+        try {
+            PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
+            PartRevision partRevision = productService.getPartRevision(revisionKey);
+
+            List<Workflow> abortedWorkflows = partRevision.getAbortedWorkflows();
+            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<WorkflowDTO>();
+
+            for(Workflow abortedWorkflow:abortedWorkflows){
+                abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
+            }
+
+            return abortedWorkflowsDTO;
+
         } catch (com.docdoku.core.services.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

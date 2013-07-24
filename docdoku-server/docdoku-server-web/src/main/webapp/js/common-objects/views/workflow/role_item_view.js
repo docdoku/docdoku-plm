@@ -41,7 +41,7 @@ define(
                 this.options.userList.each(function(user){
                     var selected = "";
                     if(self.model.getMappedUserLogin() == user.get("login")){
-                        selected = " selected"
+                        selected = " selected";
                     }
                     self.$select.append("<option value='"+user.get("login")+"'"+selected +">"+user.get("name")+"</option>");
                 });

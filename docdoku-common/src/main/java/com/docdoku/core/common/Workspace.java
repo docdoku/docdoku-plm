@@ -21,10 +21,8 @@
 package com.docdoku.core.common;
 
 
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.Table;
 
 /**
  * The context in which documents, workflow models, parts, products, templates and all
@@ -36,6 +34,9 @@ import javax.persistence.Table;
  */
 @Table(name="WORKSPACE")
 @javax.persistence.Entity
+@NamedQueries({
+        @NamedQuery(name="Workspace.findWorkspacesWhereUserIsActive", query="SELECT w FROM Workspace w WHERE EXISTS (SELECT u.workspace FROM WorkspaceUserMembership u WHERE u.workspace = w AND u.member.login = :userLogin) OR EXISTS (SELECT g FROM WorkspaceUserGroupMembership g WHERE g.workspace = w AND EXISTS (SELECT gr FROM UserGroup gr, User us WHERE us.workspace = gr.workspace AND g.workspace = gr.workspace AND us.login = :userLogin AND us member of gr.users)) ")
+})
 public class Workspace implements Serializable, Cloneable {
 
     @Column(length=50)

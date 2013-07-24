@@ -19,6 +19,9 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -32,9 +35,7 @@ public class BaselineConfigSpec extends ConfigSpec {
     private Baseline baseline;
 
     public BaselineConfigSpec(){
-
     }
-
 
     public BaselineConfigSpec(Baseline baseline) {
         this.baseline = baseline;
@@ -46,5 +47,17 @@ public class BaselineConfigSpec extends ConfigSpec {
 
     public void setBaseline(Baseline baseline) {
         this.baseline = baseline;
+    }
+
+    @Override
+    public PartIteration filterConfigSpec(PartMaster part) {
+        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),part.getWorkspaceId(),part.getNumber());
+        BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
+        if(baselinedRootPart != null){
+            return baselinedRootPart.getTargetPart();
+        }else{
+            // the part isn't in baseline, choose the latest version-iteration
+            return part.getLastRevision().getLastIteration();
+        }
     }
 }

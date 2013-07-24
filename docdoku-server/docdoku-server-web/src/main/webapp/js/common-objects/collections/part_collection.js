@@ -15,7 +15,7 @@ define([
             this.pageCount = 0;
             this.resultsPerPage = 20;
 
-            this.urlBase = "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts?start="
+            this.urlBase = "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts?start=";
 
             if(start){
                 this.currentPage=start;

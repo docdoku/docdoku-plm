@@ -143,5 +143,9 @@ define({
     "ACL":                          "Droits",
     "FULL_ACCESS":                  "Accès complet",
     "READ_ONLY":                    "Lecture seule",
-    "FILTER":                       "Filtrer"
+    "FILTER":                       "Filtrer",
+    RELAUCNH_ACTIVITY_SELECTOR:     "Retour à l'activité en cas de rejet",
+    WORKFLOW_HISTORY:               "Historique",
+    CURRENT_WORKFLOW:               "Workflow en cours",
+    "UNDO_CHECKOUT_?":              "Annuler la réservation ?"
 });

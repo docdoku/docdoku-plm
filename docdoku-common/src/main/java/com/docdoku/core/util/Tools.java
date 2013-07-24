@@ -19,17 +19,14 @@
  */
 package com.docdoku.core.util;
 
-import com.docdoku.core.document.*;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.workflow.TaskModel;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.Workflow;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.workflow.*;
+
+import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.util.regex.Pattern;
-import javax.swing.text.MaskFormatter;
 
 /**
  *
@@ -134,7 +131,7 @@ public class Tools {
     public static String unAccent(String s) {
         String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(temp).replaceAll("");
+        return pattern.matcher(temp).replaceAll("").replaceAll("\\p{javaSpaceChar}", "_");
     }
 
     public static String increaseId(String id, String mask) throws ParseException {

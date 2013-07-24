@@ -16,6 +16,7 @@ define([
                 "products":"products",
                 "parts":"parts",
                 "part-templates":"partsTemplate",
+                "parts-search/:query":"search",
                 "":	"defaults"
             },
 
@@ -27,6 +28,10 @@ define([
             parts:function(){
                 this.defaults();
                 PartNavView.getInstance().showContent();
+            },
+
+            search:function(query){
+                PartNavView.getInstance().showContent(query);
             },
 
             partsTemplate:function(){

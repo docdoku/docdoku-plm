@@ -22,7 +22,9 @@ package com.docdoku.cli.commands;
 
 
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.exceptions.DplmException;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.JSONPrinter;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
@@ -52,34 +54,49 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
+    @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
+    private boolean jsonParser;
+
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    protected String workspace;
+
     public void execImpl() throws Exception {
-        if(partNumber==null || revision==null){
-            loadMetadata();
-        }
+        try {
+            if(partNumber==null || revision==null){
+                loadMetadata();
+            }
 
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
+            IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+            PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
 
-        if(!noUpload){
-            PartRevision pr = productS.getPartRevision(partRPK);
-            PartIteration pi = pr.getLastIteration();
+            if(!noUpload){
+                PartRevision pr = productS.getPartRevision(partRPK);
+                if (pr == null) {
+                    if (jsonParser) {
+                        throw new DplmException("Part not found");
+                    }
+                }
+                PartIteration pi = pr.getLastIteration();
 
-            BinaryResource bin = pi.getNativeCADFile();
-            if(bin!=null){
-                String fileName =  bin.getName();
-                File localFile = new File(path,fileName);
-                if(localFile.exists()){
-                    PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
-                    FileHelper fh = new FileHelper(user,password);
-                    fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
-                    localFile.setWritable(false);
+                BinaryResource bin = pi.getNativeCADFile();
+                if(bin!=null){
+                    String fileName =  bin.getName();
+                    File localFile = new File(path,fileName);
+                    if(localFile.exists()){
+                        PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
+                        FileHelper fh = new FileHelper(user,password);
+                        fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
+                        localFile.setWritable(false);
+                    }
                 }
             }
-        }
 
-        PartRevision pr = productS.checkInPart(partRPK);
-        PartIteration pi = pr.getLastIteration();
-        System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+            PartRevision pr = productS.checkInPart(partRPK);
+            PartIteration pi = pr.getLastIteration();
+            System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+        } catch (DplmException de) {
+            JSONPrinter.printException(de.getMessage());
+        }
     }
 
     private void loadMetadata() throws IOException {

@@ -28,14 +28,15 @@ define([
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 
-        showContent: function () {
+        showContent: function (query) {
             this.setActive();
 
             if(this.partContentView){
                 this.partContentView.undelegateEvents();
             }
 
-            this.partContentView = new PartContentView().render();
+            this.partContentView = new PartContentView().setQuery(query).render();
+
         }
 
     });

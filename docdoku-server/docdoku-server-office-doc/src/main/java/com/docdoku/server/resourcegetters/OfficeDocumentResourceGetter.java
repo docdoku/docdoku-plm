@@ -54,7 +54,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
     }
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, User user) throws Exception {
 
         String extension = FileIO.getExtension(binaryResource.getName());
 
@@ -87,11 +87,8 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
         }
 
         if(binaryResource.getOwnerType().equals("documents")){
-            DocumentIteration docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-            User user = documentService.whoAmI(docI.getWorkspaceId());
-            Locale locale = new Locale(user.getLanguage());
             if(docI != null){
-                return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, locale);
+                return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, new Locale(user.getLanguage()));
             }
         }
 

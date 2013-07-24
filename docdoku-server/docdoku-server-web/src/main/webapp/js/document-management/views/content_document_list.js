@@ -85,13 +85,14 @@ define([
             if (document.isCheckout()) {
                 this.newVersionButton.prop('disabled', true);
                 if (document.isCheckoutByConnectedUser()) {
-                    this.updateActionsButton(false, true);
+                    var canUndo = document.getLastIteration().get("iteration") > 1;
+                    this.updateActionsButton(false, canUndo, true);
                 } else {
-                    this.updateActionsButton(false, false);
+                    this.updateActionsButton(false, false, false);
                 }
             } else {
                 this.newVersionButton.prop('disabled', false);
-                this.updateActionsButton(true, false);
+                this.updateActionsButton(true, false, false);
             }
 
 
@@ -109,10 +110,10 @@ define([
             this.aclButton.hide();
         },
 
-        updateActionsButton: function(canCheckout, canUndoAndCheckin) {
+        updateActionsButton: function(canCheckout, canUndo, canCheckin) {
             this.checkoutButton.prop('disabled', !canCheckout);
-            this.undoCheckoutButton.prop('disabled', !canUndoAndCheckin);
-            this.checkinButton.prop('disabled', !canUndoAndCheckin);
+            this.undoCheckoutButton.prop('disabled', !canUndo);
+            this.checkinButton.prop('disabled', !canCheckin);
         },
 
         actionCheckout: function() {
@@ -123,16 +124,18 @@ define([
         },
 
         actionUndocheckout: function() {
-            this.listView.eachChecked(function(view) {
-                view.model.undocheckout();
-            });
-            return false;
+            if(confirm(i18n["UNDO_CHECKOUT_?"])){
+                this.listView.eachChecked(function(view) {
+                    view.model.undocheckout();
+                });
+                return false;
+            }
         },
 
         actionCheckin: function() {
             var self = this;
             this.listView.eachChecked(function(view) {
-                if (_.isNull(view.model.getLastIteration().attributes.revisionNote)) {
+                if (!view.model.getLastIteration().get("iterationNote")) {
                     var promptView = new PromptView();
                     promptView.setPromptOptions(i18n.REVISION_NOTE, i18n.REVISION_NOTE_PROMPT_LABEL, i18n.REVISION_NOTE_PROMPT_OK, i18n.REVISION_NOTE_PROMPT_CANCEL);
                     $("body").append(promptView.render().el);
@@ -162,7 +165,7 @@ define([
             var that = this;
             if (confirm(i18n["DELETE_SELECTION_?"])) {
                 this.listView.eachChecked(function(view) {
-                    view.model.destroy({success:function(){that.listView.redraw()}});
+                    view.model.destroy({success:function(){that.listView.redraw();}});
                 });
             }
             return false;
@@ -253,7 +256,7 @@ define([
                                 that.listView.redraw();
                             },
                             error:function(){
-                                alert("Error on update acl")
+                                alert("Error on update acl");
                             }
                         });
 
@@ -269,7 +272,7 @@ define([
 
         highlightAddedView:function(model){
             this.listView.redraw();
-            var addedView = _.find(this.listView.subViews, function(view){ return view.model == model});
+            var addedView = _.find(this.listView.subViews, function(view){ return view.model == model;});
             if(addedView){
                 addedView.$el.highlightEffect();
             }

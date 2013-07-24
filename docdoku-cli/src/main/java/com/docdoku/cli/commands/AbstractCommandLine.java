@@ -41,9 +41,6 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="user for login")
     protected String user;
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
-    protected String workspace;
-
     private void promptForUser(){
         Console c = System.console();
         user = c.readLine("Please enter user for '" + host + "': ");

@@ -19,16 +19,11 @@
  */
 package com.docdoku.client.data;
 
+import com.docdoku.core.document.*;
 import com.docdoku.core.services.IUploadDownloadWS;
 import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.TagKey;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -46,8 +41,7 @@ import javax.swing.*;
 import java.util.*;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.document.SearchQuery;
+import com.docdoku.core.document.DocumentSearchQuery;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
@@ -882,11 +876,11 @@ public class MainModel {
 
     public DocumentMaster[] searchDocMs(String pDocMId, String pTitle,
             Version pVersion, User pAuthor, String pType, Date pCreationDateFrom,
-            Date pCreationDateTo, SearchQuery.AbstractAttributeQuery[] pAttributes, String[] pTags, String pContent) throws Exception {
+            Date pCreationDateTo, DocumentSearchQuery.AbstractAttributeQuery[] pAttributes, String[] pTags, String pContent) throws Exception {
         DocumentMaster[] docMs = null;
         try {
             System.out.println("Searching for document master " + pDocMId + " version " + pVersion + " title " + pTitle + " author " + pAuthor + " creation date between " + pCreationDateFrom + " and " + pCreationDateTo + " tags " + pTags + " content " + pContent);
-            docMs = Tools.resetParentReferences(mDocumentService.searchDocumentMasters(new SearchQuery(getWorkspace().getId(), pDocMId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
+            docMs = Tools.resetParentReferences(mDocumentService.searchDocumentMasters(new DocumentSearchQuery(getWorkspace().getId(), pDocMId, pTitle, pVersion == null ? null : pVersion.toString(), pAuthor == null ? null : pAuthor.getLogin(),
                     pType, pCreationDateFrom, pCreationDateTo, pAttributes, pTags, pContent)));
             //TODO cache docMs ?
         } catch (WebServiceException pWSEx) {

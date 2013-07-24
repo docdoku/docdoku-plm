@@ -139,7 +139,7 @@ define([
                         view.model.destroy({success:function(){
                             that.removePartTemplate(view.model);
                         },error:function(model,err){
-                            alert(err.responseText)
+                            alert(err.responseText);
                         }});
                     }
                 });
