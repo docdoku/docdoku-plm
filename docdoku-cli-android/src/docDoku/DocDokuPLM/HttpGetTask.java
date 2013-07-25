@@ -10,30 +10,38 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: martindevillers
+ * Date: 22/07/13
+ * To change this template use File | Settings | File Templates.
+ */
 public class HttpGetTask extends AsyncTask<String, Void, String>{
 
-    private static String baseUrl;
-    private static byte[] id;
-    private ServerConnection serverConnection;
+    public static String baseUrl;
+    public static byte[] id;
+    private HttpGetListener httpGetListener;
 
     public static final String CONNECTION_ERROR = "Connection Error";
+    public static final String URL_ERROR = "Url error";
 
-    public HttpGetTask(ServerConnection serverConnection){
+    public HttpGetTask(HttpGetListener httpGetListener){
         super();
-        this.serverConnection = serverConnection;
+        this.httpGetListener = httpGetListener;
     }
 
-    public HttpGetTask(String url, String username, String password, ServerConnection serverConnection) throws UnsupportedEncodingException {
+    public HttpGetTask(String url, String username, String password, HttpGetListener httpGetListener) throws UnsupportedEncodingException {
         super();
         baseUrl = url;
         id = Base64.encode((username + ":" + password).getBytes("ISO-8859-1"), Base64.DEFAULT);
-        this.serverConnection = serverConnection;
+        this.httpGetListener = httpGetListener;
     }
 
     @Override
     protected String doInBackground(String... strings) {
         String result = CONNECTION_ERROR;
         String pURL = baseUrl + strings[0];
+        Log.i("docDoku.DocDokuPLM","Sending HttpGet request to url: " + pURL);
 
         try {
             URL url = new URL(pURL);
@@ -57,6 +65,7 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
             conn.disconnect();
         } catch (MalformedURLException e) {
             Log.e("docDoku.DocDokuPLM","ERROR: MalformedURLException");
+            result = URL_ERROR;
             e.printStackTrace();
         } catch (ProtocolException e) {
             Log.e("docDoku.DocDokuPLM","ERROR: ProtocolException");
@@ -76,7 +85,7 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
     @Override
     protected void onPostExecute(String result){
         super.onPostExecute(result);
-        serverConnection.onConnectionResult(result);
+        httpGetListener.onHttpGetResult(result);
     }
 
     private String inputStreamToString(InputStream in) throws IOException {

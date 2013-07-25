@@ -13,6 +13,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: martindevillers
+ * Date: 22/07/13
+ * To change this template use File | Settings | File Templates.
+ */
 public class DocumentArrayAdapter extends ArrayAdapter<Document>{
 
     private Context context;
@@ -29,7 +35,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document>{
         View view;
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = layoutInflater.inflate(R.layout.adapter_document, null);
+        view = layoutInflater.inflate(R.layout.adapter_document_v1, null);
 
         final Document document = documents.get(position);
 
@@ -49,7 +55,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document>{
             @Override
             public void onClick(View view) {
                 if (document.iterationNotificationEnabled()){
-                    showDialog(R.string.confirmerDesactiverNotificationIteration, new DialogInterface.OnClickListener() {
+                    showDialog(R.string.confirmUnsubscribeToIterationChangeNotification, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
                             //désactiver les notifications d'itérations
                             document.setIterationNotification(false);
@@ -58,7 +64,7 @@ public class DocumentArrayAdapter extends ArrayAdapter<Document>{
                     });
                 }
                 else{
-                    showDialog(R.string.confirmerActiverNotificationIteration, new DialogInterface.OnClickListener() {
+                    showDialog(R.string.confirmSubscribeToIterationChangeNotification, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
                             //activer les notifications d'itérations
                             document.setIterationNotification(true);

@@ -1,6 +1,5 @@
 package docDoku.DocDokuPLM;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,8 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
-import java.util.ArrayList;
-
+/**
+ * Created with IntelliJ IDEA.
+ * User: martindevillers
+ * Date: 22/07/13
+ * To change this template use File | Settings | File Templates.
+ */
 public class DocumentDetailFragment extends Fragment {
 
     private LinearLayout layout;
@@ -20,8 +23,8 @@ public class DocumentDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view;
-        view = inflater.inflate(R.layout.fragment_document_detail, null);
-        layout = (LinearLayout) view.findViewById(R.id.linearLayout);
+        view = inflater.inflate(R.layout.fragment_detail_list, null);
+        layout = (LinearLayout) view.findViewById(R.id.content);
 
         this.inflater = inflater;
 
@@ -39,7 +42,7 @@ public class DocumentDetailFragment extends Fragment {
     public void addNameValueRows(){
         if (nameValues.length % 2 == 0){
             for (int i=0; i<nameValues.length; i+=2){
-                View row = inflater.inflate(R.layout.document_detail_row, null);
+                View row = inflater.inflate(R.layout.detail_row, null);
                 TextView fieldName = (TextView) row.findViewById(R.id.fieldName);
                 fieldName.setText(nameValues[i]);
                 TextView fieldValue = (TextView) row.findViewById(R.id.fieldValue);

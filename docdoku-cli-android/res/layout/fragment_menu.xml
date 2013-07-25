@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
+        android:layout_width="wrap_content"
+        android:background="@color/background">
 
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
 
@@ -14,7 +17,6 @@
                 android:id="@+id/workspace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 style="@style/MenuItem"
                 android:text="@string/workspace"/>
 
@@ -86,20 +88,20 @@
                 android:text="@string/documentsRecemmentConsultes"/>
 
         <TextView
-                android:id="@+id/documentsRecemmentModifies"
+                android:id="@+id/allDocuments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/documentsRecemmentModifies"/>
+                android:text="@string/allDocuments"/>
 
         <TextView
-                android:id="@+id/documnetsReserves"
+                android:id="@+id/checkedOutDocuments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/documentsReserves"/>
+                android:text="@string/checkedOutDocuments"/>
 
         <TextView
                 android:id="@+id/line"
@@ -151,12 +153,12 @@
                 android:text="@string/articlesRecemmentConsultes"/>
 
         <TextView
-                android:id="@+id/articlesRecemmentModifies"
+                android:id="@+id/allParts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/articlesRecemmentModifies"/>
+                android:text="@string/allParts"/>
 
     </LinearLayout>
 

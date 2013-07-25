@@ -5,47 +5,100 @@
                                         android:layout_height="match_parent">
 
     <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
 
-        <fragment class="docDoku.DocDokuPLM.TitleBarFragment"
-                  android:id="@+id/titleBar"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"/>
-
-        <TextView android:id="@+id/documentSearchPrompt"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_below="@id/titleBar"
-                  style="@style/MediumTitle"
-                  android:layout_marginTop="20dp"
-                  android:layout_marginLeft="20dp"
-                  android:text="@string/documentSearchPrompt"/>
-
-        <EditText android:id="@+id/searchContent"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_below="@+id/documentSearchPrompt"
-                  android:background="@color/lightGrey"
-                  style="@style/MediumTitle"/>
-
-        <ImageButton android:id="@+id/advancedSearch"
+        <Button android:id="@+id/doSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
-                android:layout_below="@+id/searchContent"
-                android:layout_alignParentLeft="true"
-                android:src="@android:drawable/ic_menu_add"/>
+                android:textSize="20dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/doSearch"/>
 
-        <Button android:id="@+id/doSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:textSize="20dp"
-            android:layout_below="@+id/searchContent"
-            android:layout_alignParentRight="true"
-            android:text="@string/doSearch"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/doSearch">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/docReference"
+                        android:paddingTop="15dp"/>
+
+                <EditText
+                        android:id="@+id/docReference"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/docTitle"
+                        android:paddingTop="15dp"/>
+
+                <EditText
+                        android:id="@+id/docTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/docVersion"
+                        android:paddingTop="15dp"/>
+
+                <EditText
+                        android:id="@+id/docVersion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/docAuthor"
+                        android:paddingTop="15dp"/>
+
+                <Button
+                        android:id="@+id/docAuthor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                        android:text=""/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/docCreationDateMin"
+                        android:paddingTop="15dp"/>
+
+                <Button
+                        android:id="@+id/docCreationDateMin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=""/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/docCreationDateMax"
+                        android:paddingTop="15dp"/>
+
+                <Button
+                        android:id="@+id/docCreationDateMax"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text=""/>
+
+                </LinearLayout>
+
+        </ScrollView>
 
     </RelativeLayout>
 

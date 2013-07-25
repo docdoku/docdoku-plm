@@ -14,6 +14,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: martindevillers
+ * Date: 22/07/13
+ * To change this template use File | Settings | File Templates.
+ */
 public class MenuFragment extends Fragment {
 
     public static final String WORKSPACE_PREFERENCE = "workspace";
@@ -60,30 +66,52 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        View.OnClickListener docClickListener = new View.OnClickListener() {
+        TextView docRecemmentConsultes = (TextView) view.findViewById(R.id.documentsRecemmentConsultes);
+        docRecemmentConsultes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), DocumentListActivity.class);
+                intent.putExtra(DocumentListActivity.LIST_MODE_EXTRA,DocumentListActivity.RECENTLY_VIEWED_DOCUMENTS_LIST);
                 startActivity(intent);
             }
-        };
-
-        TextView docRecemmentConsultes = (TextView) view.findViewById(R.id.documentsRecemmentConsultes);
-        docRecemmentConsultes.setOnClickListener(docClickListener);
-        TextView docRecemmentModifies = (TextView) view.findViewById(R.id.documentsRecemmentModifies);
-        docRecemmentModifies.setOnClickListener(docClickListener);
-
-        View.OnClickListener artClickListener = new View.OnClickListener() {
+        });
+        TextView allDocuments = (TextView) view.findViewById(R.id.allDocuments);
+        allDocuments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ArticleListActivity.class);
+                Intent intent = new Intent(getActivity(), DocumentListActivity.class);
+                intent.putExtra(DocumentListActivity.LIST_MODE_EXTRA,DocumentListActivity.ALL_DOCUMENTS_LIST);
                 startActivity(intent);
             }
-        };
+        });
+        TextView checkedOutDocuments = (TextView) view.findViewById(R.id.checkedOutDocuments);
+        checkedOutDocuments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), DocumentListActivity.class);
+                intent.putExtra(DocumentListActivity.LIST_MODE_EXTRA,DocumentListActivity.CHECKED_OUT_DOCUMENTS_LIST);
+                startActivity(intent);
+            }
+        });
+
         TextView artRecemmentConsultes = (TextView) view.findViewById(R.id.articlesRecemmentConsultes);
-        artRecemmentConsultes.setOnClickListener(artClickListener);
-        TextView artRecemmentModifies = (TextView) view.findViewById(R.id.articlesRecemmentModifies);
-        artRecemmentModifies.setOnClickListener(artClickListener);
+        artRecemmentConsultes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PartListActivity.class);
+                intent.putExtra(PartListActivity.LIST_MODE_EXTRA,PartListActivity.RECENTLY_VIEWED_LIST);
+                startActivity(intent);
+            }
+        });
+        TextView allParts = (TextView) view.findViewById(R.id.allParts);
+        allParts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PartListActivity.class);
+                intent.putExtra(PartListActivity.LIST_MODE_EXTRA, PartListActivity.ALL_PARTS_LIST);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -103,5 +131,9 @@ public class MenuFragment extends Fragment {
 
     public static void setWorkspaces(String[] setWorkspaces){
         workspaces = setWorkspaces;
+    }
+
+    public static String getCurrentWorkspace(){
+        return WORKSPACE;
     }
 }

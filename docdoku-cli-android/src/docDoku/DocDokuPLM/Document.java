@@ -2,17 +2,24 @@ package docDoku.DocDokuPLM;
 
 import java.io.Serializable;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: martindevillers
+ * Date: 22/07/13
+ * To change this template use File | Settings | File Templates.
+ */
 public class Document implements Serializable{
 
     private String reference;
-    private String dossier;
-    private String auteur;
-    private String dateCreation;
+    private String folder;
+    private String author;
+    private String creationDate;
     private String type;
-    private String titre;
-    private String reservePar;
+    private String title;
+    private String checkOutUserName;
+    private String checkOutUserLogin;
     private String dateReservation;
-    private String etatDuCycleDeVie;
+    private String lifeCycleState;
     private String description;
     private String[] fichiers;
 
@@ -25,15 +32,21 @@ public class Document implements Serializable{
         stateChangeNotification = false;
     }
 
-    public void updateContent(String dossier, String auteur, String dateCreation, String type, String titre, String reservePar, String dateReservation, String etatDuCycleDeVie, String description){
-        this.dossier = dossier;
-        this.auteur = auteur;
-        this.dateCreation = dateCreation;
+    public void setCheckOutUserName(String checkOutUserName){
+        this.checkOutUserName = checkOutUserName;
+    }
+
+    public void setCheckOutUserLogin(String checkOutUserLogin){
+        this.checkOutUserLogin = checkOutUserLogin;
+    }
+
+    public void setDocumentDetails(String folder, String author, String creationDate, String type, String title, String lifeCycleState, String description){
+        this.folder = folder;
+        this.author = author;
+        this.creationDate = creationDate;
         this.type = type;
-        this.titre = titre;
-        this.reservePar = reservePar;
-        this.dateReservation = dateReservation;
-        this.etatDuCycleDeVie = etatDuCycleDeVie;
+        this.title = title;
+        this.lifeCycleState = lifeCycleState;
         this.description = description;
     }
 
@@ -46,11 +59,15 @@ public class Document implements Serializable{
     }
 
     public String getAuthor(){
-        return auteur;
+        return author;
     }
 
-    public String getReservedBy(){
-        return reservePar;
+    public String getCheckOutUserName(){
+        return checkOutUserName;
+    }
+
+    public String getCheckOutUserLogin(){
+        return checkOutUserLogin;
     }
 
     public String getReservationDate(){
@@ -58,7 +75,7 @@ public class Document implements Serializable{
     }
 
     public String getTitle(){
-        return titre;
+        return title;
     }
 
     public boolean iterationNotificationEnabled(){
@@ -77,24 +94,31 @@ public class Document implements Serializable{
         stateChangeNotification = set;
     }
 
-    public String getDossier(){
-        return dossier;
+    public String getFolder(){
+        return folder;
     }
 
-    public String getDateCreation(){
-        return dateCreation;
+    public String getCreationDate(){
+        return creationDate;
     }
 
     public String getType(){
         return type;
     }
 
-    public String getEtatDuCycleDeVie(){
-        return etatDuCycleDeVie;
+    public String getLifeCycleState(){
+        return lifeCycleState;
     }
 
     public String getDescription(){
         return description;
     }
 
+    public boolean getIterationNotification(){
+        return iterationNotification;
+    }
+
+    public boolean getStateChangeNotification(){
+        return stateChangeNotification;
+    }
 }

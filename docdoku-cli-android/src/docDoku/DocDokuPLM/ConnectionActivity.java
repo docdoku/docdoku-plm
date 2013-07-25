@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -20,10 +21,17 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 
-public class ConnectionActivity extends Activity implements  ServerConnection{
+/**
+ * Created with IntelliJ IDEA.
+ * User: martindevillers
+ * Date: 22/07/13
+ * To change this template use File | Settings | File Templates.
+ */
+public class ConnectionActivity extends Activity implements HttpGetListener {
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
+    private static final String SERVER_URL = "server url";
     private static final String AUTO_CONNECT = "auto_connect";
     public static final String ERASE_ID = "erase_id";
 
@@ -32,9 +40,11 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
     private ProgressDialog progressDialog;
     private String username;
     private String password;
+    private String serverUrl;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_connection);
 
         rememberId = (CheckBox) findViewById(R.id.rememberID);
@@ -46,13 +56,13 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
             eraseID();
         }
 
+        startConnection();
         if (preferences.getBoolean(AUTO_CONNECT, false)){
             username = preferences.getString(USERNAME, "");
             password = preferences.getString(PASSWORD, "");
-            connect(username, password);
-        }
-        else{
-            startConnection();
+            serverUrl = preferences.getString(SERVER_URL, "");
+
+            connect(username, password, serverUrl);
         }
     }
 
@@ -61,31 +71,25 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
         //BACK BUTTON DISABLED
     }
 
-    private void connect(String username, String password){
+    private void connect(String username, String password, String serverUrl){
         if (checkInternetConnection()){
             try {
+                String apiUrl = checkUrlFormat(serverUrl);
                 Log.i("docDoku.DocDokuPLM", "Attempting to connect to server for identification");
                 Log.i("docDoku.DocDokuPLM", "Showing progress dialog");
                 progressDialog = ProgressDialog.show(this, "Connecting to server", "", false, false);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                //LocalHost
-                //AsyncTask serverIdentification = new HttpGetTask("http://10.0.2.2:8080/",username,password,this).execute("faces/login.xhtml");
-                AsyncTask serverIdentification = new HttpGetTask("http://192.168.0.11:8080/api/",username,password,this).execute("accounts/workspaces");
-                //Distant host
-                //AsyncTask serverIdentification = new HttpGetTask("http://docdokuplm.net/",username,password,this).execute("api/");
-                //Log.i("docDoku.DocDokuPLM","Workspace array: " + workspaceArray.toString());
-                //AsyncTask getWorkspace = new HttpGetTask(this).execute("/workspaces/workspaceDemo2/folders/");
+                new HttpGetTask(apiUrl,username,password,this).execute("accounts/workspaces");
             } catch (UnsupportedEncodingException e) {
                 Log.e("docDoku.DocDokuPLM","Error encoding id for server connection");
                 e.printStackTrace();
             }
-            //MenuFragment.setWorkspaces(new String[]{"Workspace1", "Workspace2", "Workspace3", "Workspace4", "Workspace5"});
         }
         else {
             Log.i("docDoku.DocDokuPLM", "No internet connection available");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getResources().getString(R.string.noConnectionAvailable));
-            builder.setNegativeButton(getResources().getString(R.string.OK), null);
+            builder.setMessage(R.string.noConnectionAvailable);
+            builder.setNegativeButton(R.string.OK, null);
             builder.create().show();
         }
     }
@@ -110,7 +114,8 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
             public void onClick(View view) {
                 username = ((EditText) findViewById(R.id.usernameField)).getText().toString();
                 password = ((EditText) findViewById(R.id.passwordField)).getText().toString();
-                connect(username,password);
+                serverUrl = ((EditText) findViewById(R.id.urlField)).getText().toString();
+                connect(username,password,serverUrl);
             }
         });
     }
@@ -119,6 +124,15 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
         Intent intent = new Intent(ConnectionActivity.this, DocumentListActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private String checkUrlFormat(String url){
+        String finalUrl = url;
+        if (url.length()>0 && !(url.substring(url.length()-1).equals("/"))){
+            finalUrl += "/";
+        }
+        finalUrl += "api/";
+        return finalUrl;
     }
 
     public void eraseID(){
@@ -131,7 +145,7 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
     }
 
     @Override
-    public void onConnectionResult(String result) {
+    public void onHttpGetResult(String result) {
         if (progressDialog != null && progressDialog.isShowing()){
             progressDialog.dismiss(); Log.i("docDoku.DocDokuPLM", "Dismissing connection dialog");
         }
@@ -144,7 +158,14 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
             builder.setNegativeButton(getResources().getString(R.string.OK), null);
             builder.create().show();
         }
+        else if (result.equals(HttpGetTask.URL_ERROR)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getResources().getString(R.string.serverUrlError));
+            builder.setNegativeButton(getResources().getString(R.string.OK), null);
+            builder.create().show();
+        }
         else{
+            ActionBarActivity.currentUserLogin = username;
             try{
                 JSONArray workspaceJSON = new JSONArray(result);
                 int numWorkspaces = workspaceJSON.length();
@@ -165,6 +186,7 @@ public class ConnectionActivity extends Activity implements  ServerConnection{
                 editor.putBoolean(AUTO_CONNECT, true);
                 editor.putString(USERNAME, username);
                 editor.putString(PASSWORD, password);
+                editor.putString(SERVER_URL, serverUrl);
                 editor.commit();
             }
             endConnectionActivity();

@@ -1,44 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp">
 
-    <TextView
-        android:id="@+id/reference"
-        style="@style/MediumTitle"
+    <RelativeLayout
+        android:id="@+id/contentLink"
         android:layout_width="match_parent"
-        android:layout_toLeftOf="@+id/notifyIteration"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_marginRight="10dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:gravity="center_vertical"
-        android:text="Reference"/>
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/notifyStateChange">
 
-    <ImageButton
-            android:id="@+id/notifyIteration"
+        <TextView
+                android:id="@+id/reference"
+                style="@style/MediumTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:text="Reference"/>
+
+        <ImageView
+                android:id="@+id/reservedDocument"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/reference"
+                android:layout_centerVertical="true"
+                android:src="@android:drawable/ic_lock_lock"/>
+
+        <TextView
+                android:id="@+id/reservedBy"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reservé par"
+                android:layout_toRightOf="@+id/reservedDocument"
+                android:layout_alignTop="@+id/reservedDocument"
+                android:layout_alignBottom="@+id/reservedDocument"
+                android:gravity="center_vertical"/>
+
+    </RelativeLayout>
+
+    <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/notifyStateChange"
-            android:layout_alignParentTop="true"
-            android:padding="5dp"
-            android:background="@color/transparent"
-            android:src="@android:drawable/ic_menu_rotate"/>
-
-    <ImageButton
             android:id="@+id/notifyStateChange"
+            android:drawableRight="@drawable/iteration_notification"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"/>
+
+    <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableRight="@drawable/state_change_notification"
+            android:id="@+id/notifyIteration"
             android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:padding="5dp"
-            android:background="@color/transparent"
-            android:src="@android:drawable/ic_menu_revert"/>
+            android:layout_below="@+id/notifyStateChange"/>
 
 
 </RelativeLayout>
