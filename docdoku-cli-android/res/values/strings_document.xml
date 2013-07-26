@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Document attributes -->
+    <string name="documentReference">Référence:</string>
+    <string name="documentTitle">Titre:</string>
+    <string name="documentAuthor">Auteur:</string>
+    <string name="documentVersion">Version:</string>
+
+    <!-- Subscribe/Usubscribe to document notifications-->
+    <string name="confirmSubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les itérations sur ce document?</string>
+    <string name="confirmUnsubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les itérations sur ce document?</string>
+    <string name="confirmSubscribeToStateChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les changements d\'état sur ce document?</string>
+    <string name="confirmUnsubscribeToStateChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les changements d\'état sur ce document?</string>
+
+    <!-- Checkin/Checkout document -->
+    <string name="documentCheckIn">Libérer</string>
+    <string name="documentCheckOut">Réserver</string>
+    <string name="documentCheckOutConfirm">Réserver le document?</string>
+    <string name="documentCheckInConfirm">Libérer le document?</string>
+    <string name="documentDoCheckIn">Libérer</string>
+    <string name="documentCancelCheckOut">Annuler la réservation</string>
+
+    <!-- Search documents -->
+    <string name="documentSearchPrompt">Recherche de Document</string>
+    <string name="documentSearchStart">Rechercher</string>
+    <string name="searchDocumentById">Chercher la référence d\'un document</string>
+    <string name="documentPickAuthor">Choisissez un utilisateur</string>
+    <string name="documentCreationDateMin">Créé après le:</string>
+    <string name="documentCreationDateMax">Créé avant le:</string>
+
+</resources>

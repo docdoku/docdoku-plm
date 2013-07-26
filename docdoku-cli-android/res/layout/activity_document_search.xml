@@ -15,7 +15,7 @@
                 android:padding="15dp"
                 android:textSize="20dp"
                 android:layout_alignParentRight="true"
-                android:text="@string/doSearch"/>
+                android:text="@string/documentSearchStart"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -24,13 +24,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/docReference"
+                        android:text="@string/documentReference"
                         android:paddingTop="15dp"/>
 
                 <EditText
@@ -41,7 +41,7 @@
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/docTitle"
+                        android:text="@string/documentTitle"
                         android:paddingTop="15dp"/>
 
                 <EditText
@@ -52,7 +52,7 @@
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/docVersion"
+                        android:text="@string/documentVersion"
                         android:paddingTop="15dp"/>
 
                 <EditText
@@ -63,7 +63,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/docAuthor"
+                    android:text="@string/documentAuthor"
                         android:paddingTop="15dp"/>
 
                 <Button
@@ -75,7 +75,7 @@
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/docCreationDateMin"
+                        android:text="@string/documentCreationDateMin"
                         android:paddingTop="15dp"/>
 
                 <Button
@@ -87,7 +87,7 @@
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/docCreationDateMax"
+                        android:text="@string/documentCreationDateMax"
                         android:paddingTop="15dp"/>
 
                 <Button
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-        <fragment class="docDoku.DocDokuPLM.MenuFragment"
+        <fragment class="com.docdoku.android.plm.client.MenuFragment"
                   android:id="@+id/menu"
                   android:layout_width="wrap_content"
                   android:layout_height="match_parent"/>

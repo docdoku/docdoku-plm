@@ -24,7 +24,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/number"
                 android:layout_centerVertical="true"
-                android:src="@android:drawable/ic_lock_lock"/>
+                android:src="@drawable/checked_out_other_user"/>
 
         <TextView
                 android:id="@+id/reservedBy"

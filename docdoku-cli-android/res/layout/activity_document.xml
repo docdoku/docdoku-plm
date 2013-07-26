@@ -61,12 +61,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/notifyStateChange"
-                            android:drawableRight="@android:drawable/ic_menu_revert"/>
+                            android:drawableRight="@drawable/state_change_notification"/>
 
                     <CheckBox
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@android:drawable/ic_menu_rotate"
+                            android:drawableRight="@drawable/iteration_notification"
                             android:id="@+id/notifyIteration"/>
 
                 </LinearLayout>
@@ -90,7 +90,7 @@
                         android:id="@+id/checkOutUser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bob Smith"/>
+                        android:text="Mr. M"/>
 
                 <Button
                         android:id="@+id/checkInOutButton"
@@ -105,8 +105,7 @@
         <android.support.v4.view.ViewPager
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_height="match_parent">
 
             <android.support.v4.view.PagerTabStrip
                     android:id="@+id/pager_title_strip"
@@ -127,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-        <fragment class="docDoku.DocDokuPLM.MenuFragment"
+        <fragment class="com.docdoku.android.plm.client.MenuFragment"
                   android:id="@+id/menu"
                   android:layout_width="wrap_content"
                   android:layout_height="match_parent"/>
