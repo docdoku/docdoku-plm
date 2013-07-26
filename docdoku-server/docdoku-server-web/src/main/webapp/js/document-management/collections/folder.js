@@ -5,7 +5,20 @@ define([
 ) {
     //TODO : rename the file to FolderList
 	var FolderList = Backbone.Collection.extend({
-		model: Folder,
+
+        model: Folder,
+
+        className:"FolderList",
+
+        url:function(){
+            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/folders";
+            if (this.parent) {
+                return baseUrl + "/" + this.parent.get("id") + "/folders";
+            } else {
+                return  baseUrl;
+            }
+        },
+
 		parse: function(data) {
 			if (!this.parent) {
 				// inject the user home folder
@@ -35,14 +48,6 @@ define([
 			return (nameA < nameB) ? -1 : 1;
 		}
 	});
-	FolderList.prototype.__defineGetter__("url", function () {
-		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/folders";
-		if (this.parent) {
-			return baseUrl + "/" + this.parent.get("id") + "/folders";
-		} else {
-			return  baseUrl;
-		}
-	});
-    FolderList.className="FolderList";
+
 	return FolderList;
 });
