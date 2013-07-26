@@ -1,101 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">DocDokuPLM</string>
-    <!-- Connection and Disconnection strings -->
+    <string name="app_title">DocDokuPLM</string>
+
+    <!-- Connection/Disconnection strings -->
     <string name="url">Url du serveur:</string>
     <string name="urlPrompt">http://docdokuplm.net/</string>
-    <string name="username">Utilisateur:</string>
+    <string name="login">Utilisateur:</string>
     <string name="password">Mot de passe:</string>
-    <string name="connection">Connexion</string>
-    <string name="noConnectionAvailable">Aucune connexion internet disponible</string>
+    <string name="autoConnect">Connection Automatique</string>
     <string name="wrongUsernamePassword">Erreur de nom d\'utilisateur ou de mot de passe</string>
-    <string name="serverUrlError">Erreur dans l\'url du serveur</string>
     <string name="confirmDisconnect">Êtes vous sûr de vouloir vous déconnecter?</string>
-    <!-- Elements fréquemment utiles -->
+
+    <!-- Useful strings -->
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="OK">OK</string>
     <string name="simpleDateFormat">dd/MM/yyyy</string>
     <string name="fullDateFormat">dd/MM/yyyy kk:mm:ss</string>
+
+    <!-- Network interaction -->
+    <string name="connection">Connexion</string>
+    <string name="noConnectionAvailable">Aucune connexion internet disponible</string>
     <string name="connectionError">Erreur de connexion</string>
-    <!-- Elements de la barre de titre -->
-    <string name="app_title">DocDokuPLM</string>
-    <!-- Elements du menu -->
-    <string name="workspace">Espace de Travail</string>
-    <string name="documents">Documents</string>
-    <string name="rechercheDocuments">Rechercher</string>
-    <string name="documentsRecemmentConsultes">Récemment Consultés</string>
-    <string name="allDocuments">Tous</string>
-    <string name="checkedOutDocuments">Réservés</string>
-    <string name="articles">Articles</string>
-    <string name="rechercheArticles">Rechercher</string>
-    <string name="articlesRecemmentConsultes">Récemment Consultés</string>
-    <string name="allParts">Tous</string>
-    <!-- Elements de la liste de documents -->
-    <string name="chargerPlus">Charger plus de résultats</string>
-    <!-- Elements de recherche de document -->
-    <string name="documentSearchPrompt">Recherche de Document</string>
-    <string name="doSearch">Rechercher</string>
-    <string name="searchDocumentById">Chercher la référence d\'un document</string>
-    <string name="docReference">Référence:</string>
-    <string name="docTitle">Titre:</string>
-    <string name="docVersion">Version:</string>
-    <string name="docAuthor">Auteur:</string>
-    <string name="docPickAuthor">Choisissez un utilisateur</string>
-    <string name="docCreationDateMin">Créé après le:</string>
-    <string name="docCreationDateMax">Créé avant le:</string>
+    <string name="serverUrlError">Erreur dans l\'url du serveur</string>
     <string name="loading">Chargement en cours, veuillez patienter.
         \n Si le chargement est trop long, veuillez effectuer une recherche.</string>
-    <!--Elements de modification des notifications sur un document-->
-    <string name="confirmSubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les itérations pour sur ce document?</string>
-    <string name="confirmUnsubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les itérations pour sur ce document?</string>
-    <string name="confirmerActiverNotificationsChangementEtat">Êtes-vous sûr de vouloir activer les notifications sur les changements d\'état pour sur ce document?</string>
-    <string name="confirmerDesactiverNotificationsChangementEtat">Êtes-vous sûr de vouloir desactiver les notifications sur les changements d\'état pour sur ce document?</string>
-    <!-- Elements de la présentation d'un document -->
-    <string name="generalitesDocument">Generalités</string>
-    <string name="fichiersDocument">Fichiers</string>
-    <string name="iterationsDocument">Itérations</string>
-    <string name="attributsDocument">Attributs</string>
-    <string name="liensDocument">Liens</string>
-    <string name="documentReference">Référence: </string>
-    <string name="titreDocument">Titre: </string>
-    <string name="documentAuthor">Auteur: </string>
-    <string name="reserveParDocument">Réservé par: </string>
-    <string name="dateReservationDocument">Date de réservation: </string>
-    <string name="dossierDocument">Dossier: </string>
-    <string name="dateCreationDocument">Date de création: </string>
-    <string name="typeDocument">Type: </string>
-    <string name="etatCycleVieDocument">Etat du cycle de vie: </string>
-    <string name="descriptionDocument">Description: </string>
-    <string name="documentCheckIn">Libérer</string>
-    <string name="documentCheckOut">Réserver</string>
-    <string name="documentCheckOutConfirm">Réserver le document?</string>
-    <string name="documentCheckInConfirm">Libérer le document?</string>
-    <string name="documentDoCheckIn">Libérer</string>
-    <string name="documentCancelCheckOut">Annuler la réservation</string>
-    <!-- Elements for presenting parts -->
-    <string name="partKey">Clé</string>
-    <string name="partAuthor">Auteur</string>
-    <string name="partCheckOut">Réserver</string>
-    <string name="partCheckIn">Libérer</string>
-    <string-array name="partGeneralInformationFieldNames">
-        <item>Numéro: </item>
-        <item>Nom: </item>
-        <item>Article standard: </item>
-        <item>Version: </item>
-        <item>Auteur: </item>
-        <item>Date de création: </item>
-        <item>Etat du cycle de vie: </item>
-        <item>Réservé par: </item>
-        <item>Date de réservation: </item>
-        <item>Description: </item>
-    </string-array>
-    <string name="partNumber">Numéro</string>
-    <string name="partName">Nom</string>
-    <string name="standardPart">Article standard</string>
-    <string name="partVersion">Version</string>
-    <string name="partLifecycleState">Etat du cycle de vie</string>
-    <string name="partCheckOutUser">Réservé par</string>
-    <string name="partCheckOutDate">Date de réservation</string>
-    <string name="partDescription">Description</string>
+
+    <!-- Menu -->
+    <string name="workspace">Espace de Travail</string>
+    <string name="documents">Documents</string>
+    <string name="documentSearch">Rechercher</string>
+    <string name="documentHistory">Récemment Consultés</string>
+    <string name="allDocuments">Tous</string>
+    <string name="checkedOutDocuments">Réservés</string>
+    <string name="parts">Articles</string>
+    <string name="partSearch">Rechercher</string>
+    <string name="partHistory">Récemment Consultés</string>
+    <string name="allParts">Tous</string>
+
+    <!-- Title bars -->
+    <string name="search">Rechercher</string>
+    <string name="users">Utilisateurs</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="sendEmail">Envoyer eMail</string>
+
 </resources>

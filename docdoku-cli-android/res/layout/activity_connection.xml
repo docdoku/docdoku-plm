@@ -18,20 +18,22 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="textUri"/>
 
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         style="@style/BigTitle"
-        android:text="@string/username"/>
+        android:text="@string/login"/>
 
     <EditText
             android:id="@+id/usernameField"
             android:layout_width="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="textVisiblePassword"/>
 
     <TextView
             android:layout_height="wrap_content"
@@ -57,7 +59,7 @@
     <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Connection Automatique"
+            android:text="@string/autoConnect"
             android:id="@+id/rememberID"/>
 
 </LinearLayout>

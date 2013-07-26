@@ -7,7 +7,7 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:paddingTop="30dp"
             android:paddingBottom="30dp"
             android:paddingLeft="10dp"
@@ -25,26 +25,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-            <!-- Test radiobuttons
-            <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Workspace1"/>
-
-            <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Workspace2"/> -->
-
         </RadioGroup>
 
         <TextView
-                android:id="@+id/line"
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_marginTop="5dp"
                 android:paddingTop="5dip"
                 android:gravity="center_horizontal"
-                android:layout_below="@+id/connect_help"
                 android:layout_width="match_parent"
                 android:layout_height="3dp" />
 
@@ -68,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:padding="2dp"
                     android:background="@color/transparent"
-                    android:src="@android:drawable/ic_menu_search"/>
+                    android:src="@drawable/search"/>
 
             <TextView
                     android:id="@+id/rechercherDocuments"
@@ -76,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     style="@style/MenuItem"
-                    android:text="@string/rechercheDocuments"/>
+                    android:text="@string/documentSearch"/>
         </LinearLayout>
 
         <TextView
@@ -85,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/documentsRecemmentConsultes"/>
+                android:text="@string/documentHistory"/>
 
         <TextView
                 android:id="@+id/allDocuments"
@@ -104,12 +91,10 @@
                 android:text="@string/checkedOutDocuments"/>
 
         <TextView
-                android:id="@+id/line"
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_marginTop="5dp"
                 android:paddingTop="5dip"
                 android:gravity="center_horizontal"
-                android:layout_below="@+id/connect_help"
                 android:layout_width="match_parent"
                 android:layout_height="3dp" />
 
@@ -118,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/MenuItem"
-                android:text="@string/articles"/>
+                android:text="@string/parts"/>
 
         <LinearLayout
                 android:id="@+id/articleSearch"
@@ -133,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:padding="2dp"
                     android:background="@color/transparent"
-                    android:src="@android:drawable/ic_menu_search"/>
+                    android:src="@drawable/search"/>
 
             <TextView
                     android:id="@+id/rechercherArticles"
@@ -141,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     style="@style/MenuItem"
-                    android:text="@string/rechercheArticles"/>
+                    android:text="@string/partSearch"/>
         </LinearLayout>
 
         <TextView
@@ -150,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/articlesRecemmentConsultes"/>
+                android:text="@string/partHistory"/>
 
         <TextView
                 android:id="@+id/allParts"

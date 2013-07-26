@@ -30,8 +30,7 @@
         <ListView
                 android:id="@+id/elementList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/titleBar"/>
+                android:layout_height="match_parent"/>
 
     </LinearLayout>
 
@@ -40,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <fragment class="docDoku.DocDokuPLM.MenuFragment"
+            <fragment class="com.docdoku.android.plm.client.MenuFragment"
                       android:id="@+id/menu"
                       android:layout_width="wrap_content"
                       android:layout_height="match_parent"/>
