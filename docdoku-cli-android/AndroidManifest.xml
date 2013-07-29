@@ -25,7 +25,7 @@
         </activity>
         <activity android:name="com.docdoku.android.plm.client.DocumentListActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name="com.docdoku.android.plm.client.DocumentActivity"
+        <activity android:name=".DocumentActivity1"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name="com.docdoku.android.plm.client.DocumentSearchActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
@@ -35,5 +35,6 @@
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name="com.docdoku.android.plm.client.PartActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".DocumentActivity"/>
     </application>
 </manifest>

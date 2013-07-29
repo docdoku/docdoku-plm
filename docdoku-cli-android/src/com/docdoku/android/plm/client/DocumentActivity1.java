@@ -2,7 +2,6 @@ package com.docdoku.android.plm.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v4.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +24,14 @@ import java.io.File;
  *
  * @author: Martin Devillers
  */
-public class DocumentActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
+public class DocumentActivity1 extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
 
     public static final String DOCUMENT_EXTRA = "document";
 
     private Document document;
+
+    static final int NUM_PAGES = 5;
+    private ViewPager pager;
 
     private Button checkInOutButton;
     private TextView checkOutUser;
@@ -37,7 +41,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_document);
+        setContentView(R.layout.activity_document1);
 
         Intent intent = getIntent();
         document = (Document) intent.getSerializableExtra(DOCUMENT_EXTRA);
@@ -69,24 +73,10 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             setDocumentCheckedIn();
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment[] pages = new Fragment[5];
-        pages[0] = new DocumentPageFragment(getResources().getStringArray(R.array.documentGeneralInformationFieldNames), document.getDocumentDetails(), R.string.documentGeneralInformation);
-        String[] files = document.getFiles();
-        if (files != null){
-            pages[1] =  new DocumentFilePageFragment(files, this, R.string.documentFiles);
-        }
-        else{
-            pages[1] = new DocumentPageFragment(new String[0], new String[0], R.string.documentFiles);
-        }
-        pages[2] = new DocumentPageFragment(new String[0], document.getLinkedDocuments(), R.string.documentLinks);
-        pages[3] = new DocumentPageFragment(getResources().getStringArray(R.array.docuemntIterationFieldNames), document.getLastRevision(), R.string.documentIteration);
-        pages[4] = new DocumentPageFragment(document.getAttributeNames(), document.getAttributeValues(), R.string.documentAttributes);
-        for (int i = 0; i<pages.length; i++){
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.list, pages[i]);
-            fragmentTransaction.commit();
-        }
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(new DocumentPagerAdapter(getSupportFragmentManager(), this));
+
+        pager.setCurrentItem(intent.getIntExtra("page", 0));
     }
 
     private void setDocumentCheckedIn(){
@@ -164,30 +154,84 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         }
     }
 
+    private class DocumentPagerAdapter extends FragmentPagerAdapter{
+
+        HttpGetDownloadFileListener httpGetDownloadFileListener;
+
+        public DocumentPagerAdapter(FragmentManager fm, HttpGetDownloadFileListener httpGetDownloadFileListener) {
+            super(fm);
+            this.httpGetDownloadFileListener = httpGetDownloadFileListener;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position){
+                case 0:
+                    return new DocumentPageFragment(getResources().getStringArray(R.array.documentGeneralInformationFieldNames), document.getDocumentDetails());
+                case 1:
+                    return new DocumentPageFragment(new String[0], new String[0]);
+                case 2:
+                    return new DocumentPageFragment(new String[0], new String[0]);
+                    //return new DocumentPageFragment(part.getAttributeNames(), part.getAttributeValues());
+                case 3:
+                    String[] files = document.getFiles();
+                    if (files != null){
+                        return new DocumentFilePageFragment(files, httpGetDownloadFileListener);
+                    }
+                    return new DocumentPageFragment(new String[0], new String[0]);
+                case 4:
+                    return new DocumentPageFragment(new String[0], new String[0]);
+                case 5:
+                    return new DocumentPageFragment(new String[0], new String[0]);
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position){
+            switch (position){
+                case 0:
+                    return "Général";
+                case 1:
+                    return "Itération";
+                case 2:
+                    return "Attributs";
+                case 3:
+                    return "Fichiers";
+                case 4:
+                    return "Liens";
+            }
+            return "";
+        }
+    }
+
     private class DocumentPageFragment extends Fragment{
 
         private String[] names;
         private String[] values;
-        private int title;
 
-        public DocumentPageFragment(String[] names, String[] values, int title){
+        public DocumentPageFragment(String[] names, String[] values){
             this.names = names;
             this.values = values;
-            this.title = title;
         }
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
             ViewGroup pageView;
-            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page, null);
-            TextView titleField = (TextView) pageView.findViewById(R.id.page_title);
-            titleField.setText(title);
+            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page1, null);
             ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
 
             if (names.length != values.length){
-                names = new String[values.length];
+                Log.e("docdoku.DocDokuPLM","ERROR: Not the same number of names as values");
             }
-            for (int i = 0; i< names.length; i++){
-                addNameValueRow(inflater,content, names[i],values[i]);
+            else{
+                for (int i = 0; i< names.length; i++){
+                    addNameValueRow(inflater,content, names[i],values[i]);
+                }
             }
 
             return pageView;
@@ -206,21 +250,17 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
     private class DocumentFilePageFragment extends Fragment{
 
         private String[] files;
-        private HttpGetDownloadFileListener httpGetDownloadFileListener;
-        private int title;
+        HttpGetDownloadFileListener httpGetDownloadFileListener;
 
-        public DocumentFilePageFragment(String[] files, HttpGetDownloadFileListener httpGetDownloadFileListener, int title){
+        public DocumentFilePageFragment(String[] files, HttpGetDownloadFileListener httpGetDownloadFileListener){
             this.files = files;
             this.httpGetDownloadFileListener = httpGetDownloadFileListener;
-            this.title = title;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
             ViewGroup pageView;
-            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page, null);
-            TextView titleField = (TextView) pageView.findViewById(R.id.page_title);
-            titleField.setText(title);
+            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page1, null);
             ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
 
             for (int i = 0; i<files.length; i++){

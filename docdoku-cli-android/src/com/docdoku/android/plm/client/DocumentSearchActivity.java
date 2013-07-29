@@ -45,7 +45,7 @@ import java.util.Calendar;
  *
  * @author: Martin Devillers
  */
-public class DocumentSearchActivity extends ActionBarActivity implements HttpGetListener {
+public class DocumentSearchActivity extends SimpleActionBarActivity implements HttpGetListener {
 
     private EditText docReference, docTitle, docVersion;
     private Button docAuthor, docMinCreationDate, docMaxCreationDate;

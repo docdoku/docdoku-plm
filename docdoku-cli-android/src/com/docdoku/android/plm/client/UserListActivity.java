@@ -37,7 +37,7 @@ import java.util.ArrayList;
  *
  * @author: Martin Devillers
  */
-public class UserListActivity extends ActionBarActivity implements HttpGetListener {
+public class UserListActivity extends SearchActionBarActivity implements HttpGetListener {
 
     private ListView userListView;
 

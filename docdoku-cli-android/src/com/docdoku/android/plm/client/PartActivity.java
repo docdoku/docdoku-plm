@@ -38,7 +38,7 @@ import android.widget.TextView;
  *
  * @author: Martin Devillers
  */
-public class PartActivity extends ActionBarActivity {
+public class PartActivity extends SimpleActionBarActivity {
 
     public static final String PART_EXTRA = "part";
 
@@ -146,7 +146,7 @@ public class PartActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
             ViewGroup pageView;
-            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page, null);
+            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page1, null);
             ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
 
             if (names.length != values.length){

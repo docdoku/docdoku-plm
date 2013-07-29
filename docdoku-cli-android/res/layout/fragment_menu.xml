@@ -96,7 +96,7 @@
                 android:paddingTop="5dip"
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="3dp" />
+                android:layout_height="5dp" />
 
         <TextView
                 android:id="@+id/articles"

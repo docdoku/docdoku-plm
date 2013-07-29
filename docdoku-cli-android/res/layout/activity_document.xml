@@ -5,121 +5,118 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent">
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+    <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
         <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_margin="10dp"
-                    android:paddingRight="20dp"
-                    android:gravity="center_vertical"
-                    android:layout_weight="1">
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:text="@string/documentReference"/>
-
-                <TextView
-                        android:id="@+id/documentReference"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        style="@style/MediumTitle"
-                        android:text="0001"/>
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:text="@string/documentAuthor"/>
-
-                <TextView
-                        android:id="@+id/documentAuthor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        style="@style/MediumTitle"
-                        android:text="Mr M."/>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                 <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_margin="10dp"
+                        android:paddingRight="20dp"
+                        android:gravity="center_vertical"
+                        android:layout_weight="1">
 
-                    <CheckBox
+                    <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/notifyStateChange"
-                            android:drawableRight="@drawable/state_change_notification"/>
+                            android:layout_gravity="left"
+                            android:text="@string/documentReference"/>
 
-                    <CheckBox
+                    <TextView
+                            android:id="@+id/documentReference"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@drawable/iteration_notification"
-                            android:id="@+id/notifyIteration"/>
+                            android:layout_gravity="center_horizontal"
+                            style="@style/MediumTitle"
+                            android:text="0001"/>
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:text="@string/documentAuthor"/>
+
+                    <TextView
+                            android:id="@+id/documentAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            style="@style/MediumTitle"
+                            android:text="Mr M."/>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <CheckBox
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/notifyStateChange"
+                                android:drawableRight="@drawable/state_change_notification"/>
+
+                        <CheckBox
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableRight="@drawable/iteration_notification"
+                                android:id="@+id/notifyIteration"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_weight="2">
+
+                    <ImageView
+                            android:id="@+id/checkOutLogo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/checked_in"/>
+
+                    <TextView
+                            android:id="@+id/checkOutUser"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mr. M"/>
+
+                    <Button
+                            android:id="@+id/checkInOutButton"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:text="@string/partCheckOut"/>
 
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
+                    android:id="@+id/list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_weight="2">
-
-                <ImageView
-                        android:id="@+id/checkOutLogo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/checked_in"/>
-
-                <TextView
-                        android:id="@+id/checkOutUser"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mr. M"/>
-
-                <Button
-                        android:id="@+id/checkInOutButton"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:text="@string/partCheckOut"/>
+                    android:orientation="vertical">
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            <android.support.v4.view.PagerTabStrip
-                    android:id="@+id/pager_title_strip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:background="#33b5e5"
-                    android:textColor="#fff"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp" />
-
-        </android.support.v4.view.ViewPager>
-
-    </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
             android:layout_gravity="left"

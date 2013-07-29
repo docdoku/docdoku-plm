@@ -36,7 +36,7 @@ import android.view.MenuItem;
  *
  * @author: Martin Devillers
  */
-public abstract class ActionBarActivity extends FragmentActivity {
+public abstract class SearchActionBarActivity extends FragmentActivity {
 
     protected static String currentUserLogin;
 
@@ -51,7 +51,7 @@ public abstract class ActionBarActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.title_bar, menu);
+        inflater.inflate(R.menu.search_title_bar, menu);
         ActionBar actionBar = getActionBar();
         actionBar.setIcon(R.drawable.menu);
         actionBar.setHomeButtonEnabled(true);

@@ -179,7 +179,8 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
             builder.create().show();
         }
         else{
-            ActionBarActivity.currentUserLogin = username;
+            SearchActionBarActivity.currentUserLogin = username;
+            SimpleActionBarActivity.currentUserLogin = username;
             try{
                 JSONArray workspaceJSON = new JSONArray(result);
                 int numWorkspaces = workspaceJSON.length();

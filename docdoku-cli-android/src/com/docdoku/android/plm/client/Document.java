@@ -20,6 +20,9 @@
 
 package com.docdoku.android.plm.client;
 
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -29,17 +32,24 @@ import java.io.Serializable;
 public class Document implements Serializable{
 
     private String reference;
-    private String folder;
+    private String path;
     private String author;
     private String creationDate;
     private String type;
     private String title;
     private String checkOutUserName;
     private String checkOutUserLogin;
-    private String dateReservation;
+    private String checkOutDate;
     private String lifeCycleState;
     private String description;
     private String[] files;
+    private String[] linkedDocuments;
+    private int revisionNumber;
+    private String revisionNote;
+    private String revisionDate;
+    private String revisionAuthor;
+    private String[] attributeNames;
+    private String[] attributeValues;
 
     private boolean iterationNotification;
     private boolean stateChangeNotification;
@@ -58,8 +68,8 @@ public class Document implements Serializable{
         this.checkOutUserLogin = checkOutUserLogin;
     }
 
-    public void setDocumentDetails(String folder, String author, String creationDate, String type, String title, String lifeCycleState, String description){
-        this.folder = folder;
+    public void setDocumentDetails(String path, String author, String creationDate, String type, String title, String lifeCycleState, String description){
+        this.path = path;
         this.author = author;
         this.creationDate = creationDate;
         this.type = type;
@@ -68,8 +78,63 @@ public class Document implements Serializable{
         this.description = description;
     }
 
+    public String[] getDocumentDetails(){
+        String[] values = new String[10];
+        values[0] = path.substring(path.lastIndexOf("/")+1,path.length());
+        values[1] = reference;
+        values[2] = author;
+        values[3] = creationDate;
+        values[4] = type;
+        values[5] = title;
+        values[6] = checkOutUserName;
+        values[7] = checkOutDate;
+        if (lifeCycleState.equals(JSONObject.NULL.toString())){
+            values[8] = "";
+        }
+        else{
+            values[8] = lifeCycleState;
+        }
+        values[9] = description;
+        return values;
+    }
+
     public void setFiles(String[] files){
         this.files = files;
+    }
+
+    public void setLastRevision(int revisionNumber, String revisionNote, String revisionAuthor, String revisionDate){
+        this.revisionNumber = revisionNumber;
+        this.revisionAuthor = revisionAuthor;
+        this.revisionDate = revisionDate;
+        this.revisionNote = revisionNote;
+    }
+
+    public String[] getLastRevision(){
+        String[] result = new String[4];
+        result[0] = reference + revisionNumber;
+        result[1] = revisionNote;
+        result[2] = revisionDate;
+        result[3] = revisionAuthor;
+        return result;
+    }
+
+    public void setAttributes(String[] attributeNames, String[] attributeValues){
+        this.attributeNames = attributeNames;
+        this.attributeValues = attributeValues;
+    }
+
+    public String[] getAttributeNames(){
+        if (attributeNames == null){
+            return new String[0];
+        }
+        return attributeNames;
+    }
+
+    public String[] getAttributeValues(){
+        if (attributeValues == null){
+            return new String[0];
+        }
+        return attributeValues;
     }
 
     public String getReference(){
@@ -88,48 +153,23 @@ public class Document implements Serializable{
         return checkOutUserLogin;
     }
 
-    public String getReservationDate(){
-        return dateReservation;
-    }
-
-    public String getTitle(){
-        return title;
-    }
-
-    public boolean iterationNotificationEnabled(){
-        return iterationNotification;
-    }
-
     public void setIterationNotification(boolean set){
         iterationNotification = set;
-    }
-
-    public boolean stateChangeNotificationEnabled(){
-        return stateChangeNotification;
     }
 
     public void setStateChangeNotification(boolean set){
         stateChangeNotification = set;
     }
 
-    public String getFolder(){
-        return folder;
+    public void setLinkedDocuments(String[] linkedDocuments){
+        this.linkedDocuments = linkedDocuments;
     }
 
-    public String getCreationDate(){
-        return creationDate;
-    }
-
-    public String getType(){
-        return type;
-    }
-
-    public String getLifeCycleState(){
-        return lifeCycleState;
-    }
-
-    public String getDescription(){
-        return description;
+    public String[] getLinkedDocuments(){
+        if (linkedDocuments == null){
+            return new String[0];
+        }
+        return linkedDocuments;
     }
 
     public boolean getIterationNotification(){
@@ -141,6 +181,9 @@ public class Document implements Serializable{
     }
 
     public String[] getFiles(){
+        if (files == null){
+            return new String[0];
+        }
         return files;
     }
 }

@@ -22,7 +22,6 @@ package com.docdoku.android.plm.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -42,7 +41,7 @@ import java.util.Date;
  *
  * @author: Martin Devillers
  */
-public class DocumentListActivity extends ActionBarActivity implements HttpGetListener {
+public class DocumentListActivity extends SearchActionBarActivity implements HttpGetListener {
 
     public static final String LIST_MODE_EXTRA = "list mode";
     public static final String SEARCH_QUERY_EXTRA = "search query";
@@ -138,9 +137,9 @@ public class DocumentListActivity extends ActionBarActivity implements HttpGetLi
     }
 
     private Document updateDocumentFromJSON(JSONObject documentJSON, Document document) throws JSONException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.fullDateFormat));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         document.setDocumentDetails(
-                null,
+                documentJSON.getString("path"),
                 documentJSON.getJSONObject("author").getString("name"),
                 dateFormat.format(new Date(Long.valueOf(documentJSON.getString("creationDate")))),
                 documentJSON.getString("type"),
@@ -157,6 +156,25 @@ public class DocumentListActivity extends ActionBarActivity implements HttpGetLi
                 Log.i("com.docdoku.android.plm.client", "File found: " + files[i]);
             }
             document.setFiles(files);
+            JSONArray linkedDocuments = ((JSONObject) lastIteration).getJSONArray("linkedDocuments");
+            String[] documents = new String[linkedDocuments.length()];
+            for (int i = 0; i<documents.length; i++){
+                documents[i] = linkedDocuments.getJSONObject(i).getString("documentMasterId") + "-" + linkedDocuments.getJSONObject(i).getString("documentMasterVersion");
+            }
+            document.setLinkedDocuments(documents);
+            document.setLastRevision(((JSONObject) lastIteration).getInt("iteration"),
+                    ((JSONObject) lastIteration).getString("revisionNote"),
+                    ((JSONObject) lastIteration).getJSONObject("author").getString("name"),
+                    dateFormat.format(new Date(Long.valueOf(((JSONObject) lastIteration).getString("creationDate")))));
+            JSONArray attributes = ((JSONObject) lastIteration).getJSONArray("instanceAttributes");
+            String[] attributeNames = new String[attributes.length()];
+            String[] attributeValues = new String[attributeNames.length];
+            for (int i = 0; i<attributeNames.length; i++){
+                JSONObject attribute = attributes.getJSONObject(i);
+                attributeNames[i] = attribute.getString("name");
+                attributeValues[i] = attribute.getString("value");
+            }
+            document.setAttributes(attributeNames, attributeValues);
         }
         return document;
     }

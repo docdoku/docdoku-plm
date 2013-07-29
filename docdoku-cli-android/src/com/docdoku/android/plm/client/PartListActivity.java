@@ -42,7 +42,7 @@ import java.util.*;
  *
  * @author: Martin Devillers
  */
-public class PartListActivity extends ActionBarActivity implements HttpGetListener {
+public class PartListActivity extends SearchActionBarActivity implements HttpGetListener {
 
     public static final String  LIST_MODE_EXTRA = "list mode";
     public static final int ALL_PARTS_LIST = 0;

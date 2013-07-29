@@ -6,6 +6,31 @@
     <string name="documentTitle">Titre:</string>
     <string name="documentAuthor">Auteur:</string>
     <string name="documentVersion">Version:</string>
+    <string-array name="documentGeneralInformationFieldNames">
+        <item>Dossier</item>
+        <item>Référence</item>
+        <item>Auteur</item>
+        <item>Date de création</item>
+        <item>Type</item>
+        <item>Titre</item>
+        <item>Réservé par</item>
+        <item>Date de réservation</item>
+        <item>Etat du cycle de vie</item>
+        <item>Description</item>
+    </string-array>
+    <string-array name="docuemntIterationFieldNames">
+        <item>Référence</item>
+        <item>Note de révision</item>
+        <item>Date de modification</item>
+        <item>Auteur</item>
+    </string-array>
+
+    <!-- Document pages -->
+    <string name="documentGeneralInformation">Général</string>
+    <string name="documentFiles">Fichiers</string>
+    <string name="documentLinks">Liens</string>
+    <string name="documentIteration">Itération</string>
+    <string name="documentAttributes">Attributs</string>
 
     <!-- Subscribe/Usubscribe to document notifications-->
     <string name="confirmSubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les itérations sur ce document?</string>
