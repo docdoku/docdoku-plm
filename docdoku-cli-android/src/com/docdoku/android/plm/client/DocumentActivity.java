@@ -2,9 +2,12 @@ package com.docdoku.android.plm.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,16 +17,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.webkit.MimeTypeMap;
+import android.widget.*;
+
+import java.io.File;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class DocumentActivity extends ActionBarActivity implements HttpPutListener {
+public class DocumentActivity extends ActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
 
     public static final String DOCUMENT_EXTRA = "document";
 
@@ -36,6 +39,7 @@ public class DocumentActivity extends ActionBarActivity implements HttpPutListen
     private TextView checkOutUser;
     private ImageView checkOutLogo;
     private boolean checkedIn;
+    private ProgressDialog fileDownloadProgressDialog;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +76,7 @@ public class DocumentActivity extends ActionBarActivity implements HttpPutListen
         }
 
         pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(new DocumentPagerAdapter(getSupportFragmentManager()));
+        pager.setAdapter(new DocumentPagerAdapter(getSupportFragmentManager(), this));
 
         pager.setCurrentItem(intent.getIntExtra("page", 0));
     }
@@ -154,8 +158,11 @@ public class DocumentActivity extends ActionBarActivity implements HttpPutListen
 
     private class DocumentPagerAdapter extends FragmentPagerAdapter{
 
-        public DocumentPagerAdapter(FragmentManager fm) {
+        HttpGetDownloadFileListener httpGetDownloadFileListener;
+
+        public DocumentPagerAdapter(FragmentManager fm, HttpGetDownloadFileListener httpGetDownloadFileListener) {
             super(fm);
+            this.httpGetDownloadFileListener = httpGetDownloadFileListener;
         }
 
         @Override
@@ -172,7 +179,7 @@ public class DocumentActivity extends ActionBarActivity implements HttpPutListen
                 case 3:
                     String[] files = document.getFiles();
                     if (files != null){
-                        return new DocumentFilePageFragment(files);
+                        return new DocumentFilePageFragment(files, httpGetDownloadFileListener);
                     }
                     return new DocumentPageFragment(new String[0], new String[0]);
                 case 4:
@@ -246,9 +253,11 @@ public class DocumentActivity extends ActionBarActivity implements HttpPutListen
     private class DocumentFilePageFragment extends Fragment{
 
         private String[] files;
+        HttpGetDownloadFileListener httpGetDownloadFileListener;
 
-        public DocumentFilePageFragment(String[] files){
+        public DocumentFilePageFragment(String[] files, HttpGetDownloadFileListener httpGetDownloadFileListener){
             this.files = files;
+            this.httpGetDownloadFileListener = httpGetDownloadFileListener;
         }
 
         @Override
@@ -268,13 +277,47 @@ public class DocumentActivity extends ActionBarActivity implements HttpPutListen
                     @Override
                     public void onClick(View view) {
                         Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
-                        new HttpGetDownloadFileTask().execute("files/" + fileUrl, fileName);
+                        new HttpGetDownloadFileTask(httpGetDownloadFileListener).execute("files/" + fileUrl, fileName);
                     }
                 });
             }
 
             return pageView;
         }
+    }
+
+    @Override
+    public void onFileDownloadStart() {
+        fileDownloadProgressDialog = new ProgressDialog(this);
+        fileDownloadProgressDialog.setTitle(R.string.downloadingFile);
+        fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        fileDownloadProgressDialog.show();
+    }
+
+    @Override
+    public void onFileDownloaded(boolean result, String path) {
+        fileDownloadProgressDialog.dismiss();
+        if (result){
+            Intent intent = new Intent();
+            intent.setAction(android.content.Intent.ACTION_VIEW);
+            File file = new File(path);
+
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            String ext=file.getName().substring(file.getName().indexOf(".")+1);
+            String type = mime.getMimeTypeFromExtension(ext);
+
+            intent.setDataAndType(Uri.fromFile(file),type);
+
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+        }
+        else{
+            Toast.makeText(this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        fileDownloadProgressDialog.setProgress(progress);
     }
 
 }

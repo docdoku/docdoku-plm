@@ -16,3 +16,4 @@ docdoku-cli-jar-with-dependencies.jar
 docdoku-cli.jar
 docdoku-cli-android/out/
 classes/
+docdoku-cli-android/gen/

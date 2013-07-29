@@ -34,18 +34,23 @@ import java.net.URL;
  *
  * @author: Martin Devillers
  */
-public class HttpGetDownloadFileTask extends AsyncTask <String, Void, Void> {
+public class HttpGetDownloadFileTask extends AsyncTask <String, Integer, Boolean> {
 
     private byte[] id;
     private String baseUrl;
 
-    public HttpGetDownloadFileTask(){
+    HttpGetDownloadFileListener httpGetDownloadFileListener;
+    private String fileSavePath;
+
+    public HttpGetDownloadFileTask(HttpGetDownloadFileListener httpGetDownloadFileListener){
         id = HttpGetTask.id;
         baseUrl = HttpGetTask.baseUrl;
+        this.httpGetDownloadFileListener = httpGetDownloadFileListener;
     }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected Boolean doInBackground(String... strings) {
+        boolean result = false;
         HttpURLConnection conn = null;
         String pURL = baseUrl + strings[0];
         String filename = strings[1];
@@ -53,7 +58,8 @@ public class HttpGetDownloadFileTask extends AsyncTask <String, Void, Void> {
             URL url = new URL(pURL);
             Log.i("com.docdoku.android.plm.client", "Sending HttpGet request to download file at url: " + pURL);
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
-            Log.i("com.docdoku.android.plm.client", "Path to which file is being saved: " + file.getAbsolutePath());
+            fileSavePath = file.getAbsolutePath();
+            Log.i("com.docdoku.android.plm.client", "Path to which file is being saved: " + fileSavePath);
             FileOutputStream outputStream = new FileOutputStream(file);
 
             conn = (HttpURLConnection) url.openConnection();
@@ -70,15 +76,16 @@ public class HttpGetDownloadFileTask extends AsyncTask <String, Void, Void> {
             int downloadedSize = 0;
             byte[] buffer = new byte[1024];
             int bufferLength = 0;
+            int responseCode = conn.getResponseCode();
             while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
                 outputStream.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
 
-                //updateProgress(downloadedSize, totalSize);
-
+                publishProgress(downloadedSize, totalSize);
             }
             outputStream.close();
             inputStream.close();
+            result = (responseCode == 200);
         } catch (UnsupportedEncodingException e) {
             Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -94,6 +101,30 @@ public class HttpGetDownloadFileTask extends AsyncTask <String, Void, Void> {
         }
         if(conn!=null)
             conn.disconnect();
-        return null;
+        return result;
+    }
+
+    @Override
+    public void onProgressUpdate(Integer... values){
+        float progress = values[0];
+        float size = values[1];
+        float advancement = progress/size * 100;
+        if (httpGetDownloadFileListener != null){
+            httpGetDownloadFileListener.onProgressUpdate((int) advancement);
+        }
+    }
+
+    @Override
+    public void onPostExecute(Boolean result){
+        if (httpGetDownloadFileListener != null){
+            httpGetDownloadFileListener.onFileDownloaded(result, fileSavePath);
+        }
+    }
+
+    @Override
+    public void onPreExecute(){
+        if (httpGetDownloadFileListener != null){
+            httpGetDownloadFileListener.onFileDownloadStart();
+        }
     }
 }
