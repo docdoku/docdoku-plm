@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +37,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -49,9 +52,13 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
     public static final int RECENTLY_VIEWED_DOCUMENTS_LIST = 1;
     public static final int CHECKED_OUT_DOCUMENTS_LIST = 2;
     public static final int SEARCH_RESULTS_LIST = 3;
+    private static final String HISTORY_SIZE = "Document history size";
+    private static final String DOCUMENT_HISTORY_PREFERENCE = "documents";
+    private static final int MAX_DOCUMENTS_IN_HISTORY = 15;
 
-    ListView documentListView;
-    AsyncTask documentQueryTask;
+    private ListView documentListView;
+    private AsyncTask documentQueryTask;
+    private LinkedHashSet<String> documentReferenceHistory;
     private View loading;
 
     @Override
@@ -64,6 +71,8 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
         documentListView = (ListView) findViewById(R.id.elementList);
         loading = findViewById(R.id.loading);
 
+        getDocumentHistory();
+
         Intent intent = getIntent();
         int listType = intent.getIntExtra(LIST_MODE_EXTRA, 0);
         switch(listType){
@@ -72,6 +81,16 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
                 break;
             case RECENTLY_VIEWED_DOCUMENTS_LIST:
                 ((ViewGroup) loading.getParent()).removeView(loading);
+                loading = null;
+                ArrayList<Document> documentArray= new ArrayList<Document>();
+                DocumentAdapter adapter = new DocumentAdapter(documentArray, this);
+                Iterator<String> iterator = documentReferenceHistory.iterator();
+                while (iterator.hasNext()){
+                    Document document = new Document(iterator.next());
+                    documentArray.add(document);
+                    getDocumentInformation(document);
+                }
+                documentListView.setAdapter(adapter);
                 break;
             case CHECKED_OUT_DOCUMENTS_LIST:
                 new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/checkedouts/" + getCurrentUserLogin() + "/documents/");
@@ -97,7 +116,9 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
 
             @Override
             public boolean onQueryTextChange(String s) {
-                documentQueryTask.cancel(true);
+                if (documentQueryTask != null){
+                    documentQueryTask.cancel(true);
+                }
                 documentQueryTask = new HttpGetTask(httpGetListener).execute("api/workspaces/" + getCurrentWorkspace() + "/search/id=" + s + "/documents/");
                 Log.i("com.docdoku.android.plm.client", "Document search query changed to: " + s);
                 return false;
@@ -120,11 +141,6 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
                 Document doc = new Document(docJSON.getString("id"));
                 doc.setStateChangeNotification(docJSON.getBoolean("stateSubscription"));
                 doc.setIterationNotification(docJSON.getBoolean("iterationSubscription"));
-                Object reservedBy = docJSON.get("checkOutUser");
-                if (reservedBy != JSONObject.NULL){
-                    doc.setCheckOutUserName(((JSONObject) reservedBy).getString("name"));
-                    doc.setCheckOutUserLogin(((JSONObject) reservedBy).getString("login"));
-                }
                 updateDocumentFromJSON(docJSON,doc);
                 docsArray.add(doc);
             }
@@ -138,6 +154,14 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
 
     private Document updateDocumentFromJSON(JSONObject documentJSON, Document document) throws JSONException {
         SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        Object checkOutUser = documentJSON.get("checkOutUser");
+        if (checkOutUser != JSONObject.NULL){
+            document.setCheckOut(
+                    ((JSONObject) checkOutUser).getString("name"),
+                    ((JSONObject) checkOutUser).getString("login"),
+                    dateFormat.format(new Date(Long.valueOf(documentJSON.getString("checkOutDate"))))
+            );
+        }
         document.setDocumentDetails(
                 documentJSON.getString("path"),
                 documentJSON.getJSONObject("author").getString("name"),
@@ -177,6 +201,51 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
             document.setAttributes(attributeNames, attributeValues);
         }
         return document;
+    }
+
+    private void getDocumentHistory(){
+        documentReferenceHistory = new LinkedHashSet<String>();
+        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + DOCUMENT_HISTORY_PREFERENCE, MODE_PRIVATE);
+        int numDocumentsInHistory = preferences.getInt(HISTORY_SIZE, 0);
+        for (int i = 0; i<numDocumentsInHistory; i++){
+            Log.i("com.docdoku.android.plm.client","Retreiving document reference at position " + i + ": " + preferences.getString(Integer.toString(i),""));
+            documentReferenceHistory.add(preferences.getString(Integer.toString(i), ""));
+        }
+    }
+
+    private synchronized void getDocumentInformation(final Document document){
+        new HttpGetTask(new HttpGetListener() {
+            @Override
+            public void onHttpGetResult(String result) {
+                try {
+                    JSONObject partJSON = new JSONObject(result);
+                    updateDocumentFromJSON(partJSON, document);
+                } catch (JSONException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference());
+    }
+
+    private void updatePartHistory(String reference){
+        Log.i("com.docdoku.android.plm.client", "Adding document " + reference +" to history");
+        documentReferenceHistory.add(reference);
+        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + DOCUMENT_HISTORY_PREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        Iterator<String> iterator = documentReferenceHistory.iterator();
+        while (documentReferenceHistory.size() > MAX_DOCUMENTS_IN_HISTORY){
+            iterator.next();
+            iterator.remove();
+        }
+        editor.putInt(HISTORY_SIZE, documentReferenceHistory.size());
+        int i = documentReferenceHistory.size()-1;
+        while (iterator.hasNext()){
+            String next = iterator.next();
+            Log.i("com.docdoku.android.plm.client", "Storing document reference " + next + " in preferences at position " + i);
+            editor.putString(Integer.toString(i), next);
+            i--;
+        }
+        editor.commit();
     }
 
     private class DocumentAdapter extends BaseAdapter {
@@ -230,6 +299,7 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
             contentLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    updatePartHistory(doc.getReference());
                     Intent intent = new Intent(getBaseContext(), DocumentActivity.class);
                     intent.putExtra(DocumentActivity.DOCUMENT_EXTRA, doc);
                     startActivity(intent);

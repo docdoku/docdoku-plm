@@ -19,6 +19,8 @@ import android.webkit.MimeTypeMap;
 import android.widget.*;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -84,7 +86,9 @@ public class DocumentActivity1 extends SimpleActionBarActivity implements HttpPu
         checkOutLogo.setImageResource(R.drawable.checked_in);
         checkInOutButton.setText(R.string.documentCheckOut);
         checkOutUser.setText(null);
-        document.setCheckOutUserLogin(null);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        document.setCheckOut(null, null, simpleDateFormat.format(c));
         final Activity activity = this;
         final HttpPutListener httpPutListener = this;
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +113,9 @@ public class DocumentActivity1 extends SimpleActionBarActivity implements HttpPu
         checkOutLogo.setImageResource(R.drawable.checked_out_current_user);
         checkInOutButton.setText(R.string.documentCheckIn);
         checkOutUser.setText(getCurrentUserLogin());
-        document.setCheckOutUserLogin(getCurrentUserLogin());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        document.setCheckOut(getCurrentUserLogin(), getCurrentUserLogin(), simpleDateFormat.format(c));
         final Activity activity = this;
         final HttpPutListener httpPutListener = this;
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
