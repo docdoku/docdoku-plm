@@ -147,5 +147,7 @@ define({
     RELAUCNH_ACTIVITY_SELECTOR:     "Retour à l'activité en cas de rejet",
     WORKFLOW_HISTORY:               "Historique",
     CURRENT_WORKFLOW:               "Workflow en cours",
-    "UNDO_CHECKOUT_?":              "Annuler la réservation ?"
+    "UNDO_CHECKOUT_?":              "Annuler la réservation ?",
+    ALL_TASKS:                      "Toutes",
+    TASKS_IN_PROGRESS:              "En cours"
 });

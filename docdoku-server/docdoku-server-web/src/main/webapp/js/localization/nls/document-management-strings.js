@@ -147,7 +147,9 @@ define({
         "FILTER":                       "Filter",
         RELAUCNH_ACTIVITY_SELECTOR:     "Relaunch activity if rejected",
         WORKFLOW_HISTORY:               "History",
-        CURRENT_WORKFLOW:               "Current workflow"
+        CURRENT_WORKFLOW:               "Current workflow",
+        ALL_TASKS:                      "All",
+        TASKS_IN_PROGRESS:              "In progress"
 
     },
     "fr": true,

@@ -23,10 +23,10 @@ define([
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 
-        showContent: function (query) {
+        showContent: function (filter) {
             this.setActive();
             this.addSubView(
-                new TaskDocumentListView()
+                new TaskDocumentListView({filter:filter})
             ).render();
         }
     });

@@ -367,6 +367,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @RolesAllowed("users")
     @Override
     public void removeACLFromDocumentMaster(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
 
@@ -442,6 +443,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return  new SubscriptionDAO(em).isUserIterationChangeEventSubscribedForGivenDocument(user, docM);
     }
 
+    @RolesAllowed("users")
     @Override
     public DocumentMaster[] getDocumentMastersWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -449,6 +451,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
+    @RolesAllowed("users")
+    @Override
+    public DocumentMaster[] getDocumentMastersWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocWithOpenedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
+    }
+
+    @RolesAllowed("users")
     @Override
     public DocumentMaster[] getDocumentMastersWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -590,6 +601,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         new TagDAO(userLocale, em).removeTag(pKey);
     }
 
+    @RolesAllowed("users")
     @Override
     public void createTag(String pWorkspaceId, String pLabel) throws WorkspaceNotFoundException, AccessRightException, CreationException, TagAlreadyExistsException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);

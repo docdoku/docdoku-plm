@@ -260,6 +260,11 @@ public class DocumentMasterDAO {
                 setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
     }
 
+    public List<DocumentMaster> findDocWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
+        return em.createNamedQuery("findDocumentMastersWithOpenedTasksForGivenUser").
+                setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
+    }
+
     public List<DocumentMaster> findDocMsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
         return em.createNamedQuery("findDocumentMastersWithReference").
                 setParameter("workspaceId", pWorkspaceId).setParameter("id", "%" + reference + "%").setMaxResults(maxResults).getResultList();
