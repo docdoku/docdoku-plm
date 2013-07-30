@@ -31,7 +31,8 @@ function (
             "workflow-model-editor/:workflowModelId":  "workflowModelEditor",
             "workflow-model-editor":  "workflowModelEditorNew",
 			"checkedouts":		"checkedouts",
-			"tasks":			"tasks",
+			"tasks":	        "tasks",
+			"tasks/:filter":	"tasks",
 			"search/:query":	"search",
 			"":					"defaults"
 		},
@@ -89,9 +90,9 @@ function (
 			this.defaults();
 			CheckedoutNavView.getInstance().showContent();
 		},
-		tasks: function() {
+		tasks: function(filter) {
 			this.defaults();
-            TaskNavView.getInstance().showContent();
+            TaskNavView.getInstance().showContent(filter);
 		},
         search: function(query) {
             this.defaults();

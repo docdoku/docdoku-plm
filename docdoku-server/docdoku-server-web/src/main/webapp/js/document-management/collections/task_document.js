@@ -9,9 +9,16 @@ define([
 
         className:"TaskDocumentList",
 
+        setFilterStatus:function(status){
+            this.filterStatus = status;
+        },
+
         url: function() {
-            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tasks";
-            return baseUrl + "/"+  APP_CONFIG.login +"/documents/";
+            var url = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tasks/"+  APP_CONFIG.login +"/documents/";
+            if(this.filterStatus){
+                url += "?filter="+this.filterStatus;
+            }
+            return url;
         },
 
         comparator: function(document) {

@@ -21,12 +21,16 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentSearchQuery;
+import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.workflow.Task;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
 import com.docdoku.server.rest.util.SearchQueryParser;
@@ -74,7 +78,7 @@ public class DocumentsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser) {
+    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter) {
 
         if(checkoutUser != null){
             return getDocumentsCheckedOutByUser(workspaceId);
@@ -86,7 +90,7 @@ public class DocumentsResource {
             return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId,tagId);
         }
         else if(assignedUserLogin !=null){
-            return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin);
+            return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin, filter);
         }
         else {
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
@@ -167,13 +171,23 @@ public class DocumentsResource {
         }
     }
 
-    private DocumentMasterDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin){
+    private DocumentMasterDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin, String filter){
         try{
+            DocumentMaster[] docMs ;
 
-            DocumentSearchQuery documentSearchQuery = new DocumentSearchQuery();
-            documentSearchQuery.setWorkspaceId(workspaceId);
-
-            DocumentMaster[] docMs = documentService.getDocumentMastersWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+            if(filter == null){
+                docMs = documentService.getDocumentMastersWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+            }
+            else{
+                switch (filter){
+                    case "in_progress":
+                        docMs = documentService.getDocumentMastersWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
+                        break;
+                    default :
+                        docMs = documentService.getDocumentMastersWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+                        break;
+                }
+            }
 
             ArrayList<DocumentMasterDTO> docMsDTOs = new ArrayList<DocumentMasterDTO>();
 
