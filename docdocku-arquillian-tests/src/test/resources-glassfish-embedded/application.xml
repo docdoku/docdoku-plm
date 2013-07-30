@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://java.sun.com/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="6"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
+    <application-name>test-app</application-name>
+
+    <module>
+        <ejb>docdocku-arquillian-tests/src/test/common.jar</ejb>
+    </module>
+
+    <module>
+        <web> <web-uri>test.war</web-uri> <context-root>/test</context-root> </web>
+    </module>
+</application>

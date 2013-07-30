@@ -29,7 +29,6 @@ import java.util.*;
 @RunWith(Arquillian.class)
 public class TestLauncher {
 
-
     @EJB
     private TestEJBBean testBean;
 
@@ -141,7 +140,6 @@ public class TestLauncher {
 
         try {
             testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
-
         } catch (Exception e) {
             if (e instanceof AccessRightException)
                 Assert.assertFalse(true);
@@ -215,7 +213,7 @@ public class TestLauncher {
         String fetchingAllCredentialsInJpql = "select c from Credential c ";
         String fetchingAllWorkspaceInJpql = "select w from Workspace w ";
 
-        System.out.println("Selecting (using JPQL)...");
+
         List<Account> accounts = em.createQuery(fetchingAllAccountsInJpql, Account.class).getResultList();
         List<User> users = em.createQuery(fetchingAllUsersInJpql, User.class).getResultList();
         List<Credential> credentials = em.createQuery(fetchingAllCredentialsInJpql, Credential.class).getResultList();
@@ -231,7 +229,6 @@ public class TestLauncher {
         Assert.assertEquals(COUNT, retrievedAccounts.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (Account account : retrievedAccounts) {
-            System.out.println("DB Account: " + account);
             retrievedAccountLogins.add(account.getLogin());
         }
     }
@@ -240,7 +237,6 @@ public class TestLauncher {
         Assert.assertEquals(COUNT, retrievedWorkspaces.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (Workspace workspace : retrievedWorkspaces) {
-            System.out.println("DB Workspace : " + workspace);
             retrievedAccountLogins.add(workspace.getId());
         }
     }
@@ -257,7 +253,6 @@ public class TestLauncher {
         Assert.assertEquals(COUNT, retrievedUsers.size());
         final Set<String> retrievedAccountLogins = new HashSet<String>();
         for (User user : retrievedUsers) {
-            System.out.println("DB User" + user);
             retrievedAccountLogins.add(user.getLogin());
         }
         Assert.assertTrue(retrievedAccountLogins.contains("user1"));
