@@ -225,7 +225,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
             WorkspaceUserMembership ms = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
             if (ms != null) {
                 ms.setReadOnly(pReadOnly);
-            }
+                            }
         }
     }
 

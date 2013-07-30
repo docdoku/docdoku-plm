@@ -154,4 +154,5 @@ public interface IDocumentManagerLocal {
 
     void removeACLFromDocumentMaster(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException;
 
+    String dummy();
 }
