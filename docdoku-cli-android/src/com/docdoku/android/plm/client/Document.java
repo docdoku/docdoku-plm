@@ -22,7 +22,6 @@ package com.docdoku.android.plm.client;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -60,12 +59,11 @@ public class Document implements Serializable{
         stateChangeNotification = false;
     }
 
-    public void setCheckOutUserName(String checkOutUserName){
+    public void setCheckOut(String checkOutUserName, String checkOutUserLogin, String checkOutDate){
         this.checkOutUserName = checkOutUserName;
-    }
-
-    public void setCheckOutUserLogin(String checkOutUserLogin){
         this.checkOutUserLogin = checkOutUserLogin;
+        this.checkOutDate = checkOutDate;
+
     }
 
     public void setDocumentDetails(String path, String author, String creationDate, String type, String title, String lifeCycleState, String description){
@@ -111,7 +109,7 @@ public class Document implements Serializable{
 
     public String[] getLastRevision(){
         String[] result = new String[4];
-        result[0] = reference + revisionNumber;
+        result[0] = reference + "-" + revisionNumber;
         result[1] = revisionNote;
         result[2] = revisionDate;
         result[3] = revisionAuthor;
@@ -185,5 +183,9 @@ public class Document implements Serializable{
             return new String[0];
         }
         return files;
+    }
+
+    public int getRevisionNumber() {
+        return revisionNumber;
     }
 }

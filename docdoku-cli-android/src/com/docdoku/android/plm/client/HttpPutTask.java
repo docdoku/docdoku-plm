@@ -51,7 +51,7 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
     protected Boolean doInBackground(String... strings) {
         Boolean result = false;
         String pURL = baseUrl + strings[0];
-        Log.i("docDoku.DocDokuPLM", "Sending HttpPut request to url: " + pURL);
+        Log.i("com.docdoku.android.plm.client", "Sending HttpPut request to url: " + pURL);
 
         try {
             URL url = new URL(pURL);
@@ -66,24 +66,24 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
 
             conn.disconnect();
 
-            Log.i("docDoku.DocDokuPLM","Response code: " + responseCode);
+            Log.i("com.docdoku.android.plm.client","Response code: " + responseCode);
             if (responseCode == 200){
                 result = true;
             }
 
         } catch (MalformedURLException e) {
-            Log.e("docDoku.DocDokuPLM","ERROR: MalformedURLException");
+            Log.e("com.docdoku.android.plm.client","ERROR: MalformedURLException");
             e.printStackTrace();
         } catch (ProtocolException e) {
-            Log.e("docDoku.DocDokuPLM","ERROR: ProtocolException");
+            Log.e("com.docdoku.android.plm.client","ERROR: ProtocolException");
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
-            Log.e("docDoku.DocDokuPLM", "ERROR: UnsupportedEncodingException");
+            Log.e("com.docdoku.android.plm.client", "ERROR: UnsupportedEncodingException");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("docDoku.DocDokuPLM","ERROR: IOException");
+            Log.e("com.docdoku.android.plm.client","ERROR: IOException");
             e.printStackTrace();
-            Log.e("docDoku.DocDokuPLM", "Exception message: " + e.getMessage());
+            Log.e("com.docdoku.android.plm.client", "Exception message: " + e.getMessage());
         }
         return result;
     }

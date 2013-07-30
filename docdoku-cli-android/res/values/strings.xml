@@ -17,6 +17,7 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="OK">OK</string>
+    <string name="cancel">Annuler</string>
     <string name="simpleDateFormat">dd/MM/yyyy</string>
     <string name="fullDateFormat">dd/MM/yyyy kk:mm:ss</string>
 

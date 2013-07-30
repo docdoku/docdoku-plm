@@ -1,7 +1,32 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.android.plm.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -18,6 +43,11 @@ import android.webkit.MimeTypeMap;
 import android.widget.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -26,6 +56,8 @@ import java.io.File;
 public class DocumentActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
 
     public static final String DOCUMENT_EXTRA = "document";
+    private static final String FRAGMENT_TAG_GENERAL_INFORMATION = "general information page";
+    private static final String FRAGMENT_TAG_FILES = "files page";
 
     private Document document;
 
@@ -34,6 +66,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
     private ImageView checkOutLogo;
     private boolean checkedIn;
     private ProgressDialog fileDownloadProgressDialog;
+    private String pictureSavePath;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +117,14 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         pages[4] = new DocumentPageFragment(document.getAttributeNames(), document.getAttributeValues(), R.string.documentAttributes);
         for (int i = 0; i<pages.length; i++){
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.list, pages[i]);
+            switch (i){
+                case 0:
+                    fragmentTransaction.add(R.id.list, pages[i], FRAGMENT_TAG_GENERAL_INFORMATION);
+                    break;
+                case 2:
+                    fragmentTransaction.add(R.id.list, pages[i], FRAGMENT_TAG_FILES);
+                default: fragmentTransaction.add(R.id.list, pages[i]);
+            }
             fragmentTransaction.commit();
         }
     }
@@ -94,7 +134,9 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         checkOutLogo.setImageResource(R.drawable.checked_in);
         checkInOutButton.setText(R.string.documentCheckOut);
         checkOutUser.setText(null);
-        document.setCheckOutUserLogin(null);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        document.setCheckOut(null, null, simpleDateFormat.format(c.getTime()));
         final Activity activity = this;
         final HttpPutListener httpPutListener = this;
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +147,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(httpPutListener).execute("workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference() + "/checkout/");
+                        new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference() + "/checkout/");
                     }
                 });
                 builder.setNegativeButton(R.string.no, null);
@@ -119,7 +161,9 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         checkOutLogo.setImageResource(R.drawable.checked_out_current_user);
         checkInOutButton.setText(R.string.documentCheckIn);
         checkOutUser.setText(getCurrentUserLogin());
-        document.setCheckOutUserLogin(getCurrentUserLogin());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        document.setCheckOut(getCurrentUserLogin(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
         final Activity activity = this;
         final HttpPutListener httpPutListener = this;
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
@@ -130,13 +174,13 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 builder.setPositiveButton(R.string.documentDoCheckIn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(httpPutListener).execute("workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference() + "/checkin/");
+                        new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference() + "/checkin/");
                     }
                 });
                 builder.setNeutralButton(R.string.documentCancelCheckOut, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(httpPutListener).execute("workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference() + "/undocheckout/");
+                        new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference() + "/undocheckout/");
                     }
                 });
                 builder.setNegativeButton(R.string.no, null);
@@ -223,6 +267,28 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             titleField.setText(title);
             ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
 
+            if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
+                View uploadRow = inflater.inflate(R.layout.row_upload_element, null);
+                pageView.addView(uploadRow);
+                ImageButton takePicture = (ImageButton) uploadRow.findViewById(R.id.takePicture);
+                takePicture.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        String timeStamp = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
+                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "DocDokuPLM" + timeStamp +".jpg");
+                        try {
+                            file.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                        pictureSavePath = file.getAbsolutePath();
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                        startActivityForResult(intent, 0);
+                    }
+                });
+            }
+
             for (int i = 0; i<files.length; i++){
                 View row = inflater.inflate(R.layout.row_dowloadable_element, null);
                 TextView fileNameField = (TextView) row.findViewById(R.id.fileName);
@@ -275,6 +341,37 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
     @Override
     public void onProgressUpdate(int progress) {
         fileDownloadProgressDialog.setProgress(progress);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == RESULT_OK){
+            Toast.makeText(this, "Image saved to " + pictureSavePath, Toast.LENGTH_LONG).show();
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
+            Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
+            ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
+            dialogBuilder.setView(dialogView);
+            dialogBuilder.setCancelable(false);
+            final Context context = this;
+            dialogBuilder.setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
+                    if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
+                    String docReference = document.getReference();
+                    String docId = docReference.substring(0, docReference.lastIndexOf("-"));
+                    String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
+                    new HttpPostUploadFileTask(context).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getRevisionNumber() + "/" + fileName + ".png",pictureSavePath);
+                }
+            });
+            dialogBuilder.setNegativeButton(R.string.cancel, null);
+            dialogBuilder.create().show();
+        } else if (resultCode == RESULT_CANCELED) {
+            // User cancelled the image capture
+        } else {
+            // Image capture failed, advise user
+        }
     }
 
 }

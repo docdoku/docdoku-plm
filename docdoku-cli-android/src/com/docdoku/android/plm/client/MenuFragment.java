@@ -117,7 +117,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), PartListActivity.class);
-                intent.putExtra(PartListActivity.LIST_MODE_EXTRA,PartListActivity.RECENTLY_VIEWED_LIST);
+                intent.putExtra(PartListActivity.LIST_MODE_EXTRA,PartListActivity.RECENTLY_VIEWED_PARTS_LIST);
                 startActivity(intent);
             }
         });

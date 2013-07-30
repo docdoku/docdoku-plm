@@ -35,6 +35,7 @@
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name="com.docdoku.android.plm.client.PartActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".DocumentActivity"/>
+        <activity android:name=".DocumentActivity"
+                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
     </application>
 </manifest>

@@ -46,8 +46,9 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
 
     public static final String  LIST_MODE_EXTRA = "list mode";
     public static final int ALL_PARTS_LIST = 0;
-    public static final int RECENTLY_VIEWED_LIST = 1;
+    public static final int RECENTLY_VIEWED_PARTS_LIST = 1;
     private static final String HISTORY_SIZE = "Part history size";
+    private static final String PART_HISTORY_PREFERENCE = "part history";
     private static final int MAX_PARTS_IN_HISTORY = 15;
 
     private ListView partListView;
@@ -69,7 +70,7 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
             case ALL_PARTS_LIST:
                 new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/");
                 break;
-            case RECENTLY_VIEWED_LIST:
+            case RECENTLY_VIEWED_PARTS_LIST:
                 ((ViewGroup) loading.getParent()).removeView(loading);
                 ArrayList<Part> partArray= new ArrayList<Part>();
                 PartAdapter adapter = new PartAdapter(partArray);
@@ -140,18 +141,18 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
 
     private void getPartHistory(){
         partKeyHistory = new LinkedHashSet<String>();
-        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace(), MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + PART_HISTORY_PREFERENCE, MODE_PRIVATE);
         int numPartsInHistory = preferences.getInt(HISTORY_SIZE, 0);
         for (int i = 0; i<numPartsInHistory; i++){
-            Log.i("docdoku.DocDokuPLM","Retreiving key at position " + i + ": " + preferences.getString(Integer.toString(i),""));
+            Log.i("com.docdoku.android.plm.client","Retreiving key at position " + i + ": " + preferences.getString(Integer.toString(i),""));
             partKeyHistory.add(preferences.getString(Integer.toString(i), ""));
         }
     }
 
     private void updatePartHistory(String key){
-        Log.i("docdoku.DocDokuPLM", "Adding part " + key +" to history");
+        Log.i("com.docdoku.android.plm.client", "Adding part " + key +" to history");
         partKeyHistory.add(key);
-        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace(), MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + PART_HISTORY_PREFERENCE, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         Iterator<String> iterator = partKeyHistory.iterator();
         while (partKeyHistory.size() > MAX_PARTS_IN_HISTORY){
@@ -162,7 +163,7 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
         int i = partKeyHistory.size()-1;
         while (iterator.hasNext()){
             String next = iterator.next();
-            Log.i("docdoku.DocDokuPLM", "Storing key " + next + " in preferences at position " + i);
+            Log.i("com.docdoku.android.plm.client", "Storing key " + next + " in preferences at position " + i);
             editor.putString(Integer.toString(i), next);
             i--;
         }
