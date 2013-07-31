@@ -46,11 +46,11 @@ import java.io.UnsupportedEncodingException;
  */
 public class ConnectionActivity extends Activity implements HttpGetListener {
 
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
-    private static final String SERVER_URL = "server url";
-    private static final String AUTO_CONNECT = "auto_connect";
-    public static final String ERASE_ID = "erase_id";
+    private static final String PREFERENCE_USERNAME = "username";
+    private static final String PREFERENCE_PASSWORD = "password";
+    private static final String PREFERENCE_SERVER_URL = "server url";
+    private static final String PREFERENCE_AUTO_CONNECT = "auto_connect";
+    public static final String INTENT_ERASE_ID = "erase_id";
 
     private CheckBox rememberId;
     private SharedPreferences preferences;
@@ -66,16 +66,16 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         preferences = getPreferences(MODE_PRIVATE);
 
         Intent intent = getIntent();
-        boolean eraseID = intent.getBooleanExtra(ERASE_ID, false);
-        if (eraseID){
-            eraseID();
+        boolean eraseData = intent.getBooleanExtra(INTENT_ERASE_ID, false);
+        if (eraseData){
+            eraseData();
         }
 
         startConnection();
-        if (preferences.getBoolean(AUTO_CONNECT, false)){
-            username = preferences.getString(USERNAME, "");
-            password = preferences.getString(PASSWORD, "");
-            serverUrl = preferences.getString(SERVER_URL, "");
+        if (preferences.getBoolean(PREFERENCE_AUTO_CONNECT, false)){
+            username = preferences.getString(PREFERENCE_USERNAME, "");
+            password = preferences.getString(PREFERENCE_PASSWORD, "");
+            serverUrl = preferences.getString(PREFERENCE_SERVER_URL, "");
 
             connect(username, password, serverUrl);
         }
@@ -149,12 +149,10 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         return finalUrl;
     }
 
-    public void eraseID(){
+    public void eraseData(){
         SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(AUTO_CONNECT, false);
-        editor.putString(USERNAME, "");
-        editor.putString(PASSWORD, "");
+        editor.clear();
         editor.commit();
     }
 
@@ -198,10 +196,10 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
             if (rememberId.isChecked()){
                 Log.i("docDoku.DocDokuPLM", "Enregistrement des identifiants pour: " + username);
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(AUTO_CONNECT, true);
-                editor.putString(USERNAME, username);
-                editor.putString(PASSWORD, password);
-                editor.putString(SERVER_URL, serverUrl);
+                editor.putBoolean(PREFERENCE_AUTO_CONNECT, true);
+                editor.putString(PREFERENCE_USERNAME, username);
+                editor.putString(PREFERENCE_PASSWORD, password);
+                editor.putString(PREFERENCE_SERVER_URL, serverUrl);
                 editor.commit();
             }
             endConnectionActivity();

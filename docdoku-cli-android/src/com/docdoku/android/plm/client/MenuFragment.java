@@ -29,7 +29,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -40,27 +39,33 @@ import android.widget.TextView;
  */
 public class MenuFragment extends Fragment {
 
-    public static final String WORKSPACE_PREFERENCE = "workspace";
+    public static final String PREFERENCE_WORKSPACE = "workspace";
     private static String[] workspaces;
     private static String WORKSPACE;
+    public static boolean workspaceChanged = false;
 
     private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.fragment_menu, container);
-
+        workspaceChanged = false;
         RadioGroup workspace = (RadioGroup) view.findViewById(R.id.workspaceRadioGroup);
         if (workspaces != null){
             if (WORKSPACE == null){
                 SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                WORKSPACE = preferences.getString(WORKSPACE_PREFERENCE,"");
-                Log.i("docDoku.DocDokuPLM", "Loading workspace from last session: " + WORKSPACE);
+                WORKSPACE = preferences.getString(PREFERENCE_WORKSPACE,"");
+                if (WORKSPACE.equals("")){
+                    try {WORKSPACE = workspaces[0];} catch (ArrayIndexOutOfBoundsException e){Log.i("com.docdoku.android.plm.client","No Workspace downloaded");}
+                }
+                else{
+                    Log.i("com.docdoku.android.plm.client", "Loading workspace from last session: " + WORKSPACE);
+                }
             }
             addWorkspaces(workspaces, workspace);
         }
         else{
-            Log.e("docDoku.DocDokuPLM","ERROR: No workspaces downloaded");
+            Log.e("com.docdoku.android.plm.client","ERROR: No workspaces downloaded");
         }
 
         workspace.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -70,12 +75,13 @@ public class MenuFragment extends Fragment {
                 SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 WORKSPACE = selectedWorkspace.getText().toString();
-                editor.putString(WORKSPACE_PREFERENCE, WORKSPACE);
+                editor.putString(PREFERENCE_WORKSPACE, WORKSPACE);
                 editor.commit();
+                workspaceChanged = true;
             }
         });
 
-        LinearLayout documentSearch = (LinearLayout) view.findViewById(R.id.documentSearch);
+        View documentSearch = view.findViewById(R.id.documentSearch);
         documentSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +90,7 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        TextView docRecemmentConsultes = (TextView) view.findViewById(R.id.documentsRecemmentConsultes);
+        TextView docRecemmentConsultes = (TextView) view.findViewById(R.id.recentlyViewedDocuments);
         docRecemmentConsultes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,12 +118,12 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        TextView artRecemmentConsultes = (TextView) view.findViewById(R.id.articlesRecemmentConsultes);
+        TextView artRecemmentConsultes = (TextView) view.findViewById(R.id.recentlyViewedParts);
         artRecemmentConsultes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), PartListActivity.class);
-                intent.putExtra(PartListActivity.LIST_MODE_EXTRA,PartListActivity.RECENTLY_VIEWED_PARTS_LIST);
+                Intent intent = new Intent(getActivity(), PartListActivity1.class);
+                intent.putExtra(PartListActivity1.LIST_MODE_EXTRA, PartListActivity1.RECENTLY_VIEWED_PARTS_LIST);
                 startActivity(intent);
             }
         });
@@ -126,7 +132,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), PartListActivity.class);
-                intent.putExtra(PartListActivity.LIST_MODE_EXTRA, PartListActivity.ALL_PARTS_LIST);
+                intent.putExtra(PartListActivity1.LIST_MODE_EXTRA, PartListActivity1.ALL_PARTS_LIST);
                 startActivity(intent);
             }
         });

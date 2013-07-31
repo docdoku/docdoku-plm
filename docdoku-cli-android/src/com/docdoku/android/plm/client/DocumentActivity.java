@@ -56,8 +56,6 @@ import java.util.Date;
 public class DocumentActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
 
     public static final String DOCUMENT_EXTRA = "document";
-    private static final String FRAGMENT_TAG_GENERAL_INFORMATION = "general information page";
-    private static final String FRAGMENT_TAG_FILES = "files page";
 
     private Document document;
 
@@ -117,14 +115,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         pages[4] = new DocumentPageFragment(document.getAttributeNames(), document.getAttributeValues(), R.string.documentAttributes);
         for (int i = 0; i<pages.length; i++){
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            switch (i){
-                case 0:
-                    fragmentTransaction.add(R.id.list, pages[i], FRAGMENT_TAG_GENERAL_INFORMATION);
-                    break;
-                case 2:
-                    fragmentTransaction.add(R.id.list, pages[i], FRAGMENT_TAG_FILES);
-                default: fragmentTransaction.add(R.id.list, pages[i]);
-            }
+            fragmentTransaction.add(R.id.list, pages[i]);
             fragmentTransaction.commit();
         }
     }

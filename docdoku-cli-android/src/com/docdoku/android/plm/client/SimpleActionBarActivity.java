@@ -27,10 +27,7 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.*;
 
 /**
  *
@@ -46,6 +43,35 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
 
     protected String getCurrentUserLogin(){
         return currentUserLogin;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                if (MenuFragment.workspaceChanged){
+                    restartActivity();
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
     }
 
     @Override
@@ -83,7 +109,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(getApplicationContext(), ConnectionActivity.class);
-                        intent.putExtra(ConnectionActivity.ERASE_ID, true);
+                        intent.putExtra(ConnectionActivity.INTENT_ERASE_ID, true);
                         startActivity(intent);
                     }
                 });
@@ -94,5 +120,11 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    public void restartActivity(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

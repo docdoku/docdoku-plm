@@ -20,40 +20,36 @@
 
 package com.docdoku.android.plm.client;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.support.v4.app.LoaderManager;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class PartListActivity extends SearchActionBarActivity implements HttpGetListener {
+public class PartListActivity extends SearchActionBarActivity implements HttpGetListener, LoaderManager.LoaderCallbacks<List<Part>> {
 
-    public static final String  LIST_MODE_EXTRA = "list mode";
-    public static final int ALL_PARTS_LIST = 0;
-    public static final int RECENTLY_VIEWED_PARTS_LIST = 1;
-    private static final String HISTORY_SIZE = "Part history size";
-    private static final String PART_HISTORY_PREFERENCE = "part history";
-    private static final int MAX_PARTS_IN_HISTORY = 15;
-
-    private ListView partListView;
-    private LinkedHashSet<String> partKeyHistory;
     private View loading;
+    private ArrayList<Part> partsArray;
+    private PartAdapter partAdapter;
+    private ListView partListView;
+    View footerProgressBar;
+    private final static int PART_LOADER_ID_BASE = 100;
+    private int numPartsAvailable;
+    private int numPagesDownloaded;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,127 +57,76 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
 
         partListView = (ListView) findViewById(R.id.elementList);
         loading = findViewById(R.id.loading);
+        ((ViewGroup) loading.getParent()).removeView(loading);
 
-        getPartHistory();
+        footerProgressBar = new ProgressBar(this);
+        partListView.addFooterView(footerProgressBar);
 
-        Intent intent = getIntent();
-        int listCode = intent.getIntExtra(LIST_MODE_EXTRA, ALL_PARTS_LIST);
-        switch (listCode){
-            case ALL_PARTS_LIST:
-                new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/");
-                break;
-            case RECENTLY_VIEWED_PARTS_LIST:
-                ((ViewGroup) loading.getParent()).removeView(loading);
-                ArrayList<Part> partArray= new ArrayList<Part>();
-                PartAdapter adapter = new PartAdapter(partArray);
-                Iterator<String> iterator = partKeyHistory.iterator();
-                while (iterator.hasNext()){
-                    Part part = new Part(iterator.next());
-                    partArray.add(part);
-                    getPartInformation(part);
+        partsArray = new ArrayList<Part>();
+        partAdapter = new PartAdapter(partsArray);
+        partListView.setAdapter(partAdapter);
+
+
+        numPartsAvailable = 0;
+        numPagesDownloaded = 0;
+        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/count");
+
+        final LoaderManager.LoaderCallbacks<List<Part>> loaderCallbacks = this;
+        partListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount == totalItemCount && partAdapter.getCount() < numPartsAvailable){
+                        Log.i("com.docdoku.android.plm.client", "Loading more parts");
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("page", numPagesDownloaded);
+                        bundle.putString("workspace", getCurrentWorkspace());
+                        getSupportLoaderManager().initLoader(PART_LOADER_ID_BASE + numPagesDownloaded, bundle, loaderCallbacks);
                 }
-                partListView.setAdapter(adapter);
-                break;
+            }
+        });
+
+    }
+
+    @Override
+    public Loader<List<Part>> onCreateLoader(int i, Bundle bundle) {
+        return new PartLoader(this, bundle.getInt("page"), bundle.getString("workspace"));  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Part>> partLoader, List<Part> parts) {
+        partsArray.addAll(parts);
+        partAdapter.notifyDataSetChanged();
+        numPagesDownloaded++;
+
+        if (partAdapter.getCount() == numPartsAvailable){
+            partListView.removeFooterView(footerProgressBar);
         }
     }
 
     @Override
+    public void onLoaderReset(Loader<List<Part>> partLoader) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public void onHttpGetResult(String result) {
-        if (loading !=null){
-            ((ViewGroup) loading.getParent()).removeView(loading);
-            loading = null;
-        }
-        ArrayList<Part> partsArray = new ArrayList<Part>();
-        try {
-            JSONArray partsJSON = new JSONArray(result);
-            for (int i=0; i<partsJSON.length(); i++){
-                JSONObject partJSON = partsJSON.getJSONObject(i);
-                Part part = new Part(partJSON.getString("partKey"));
-                partsArray.add(updatePartFromJSON(partJSON,part));
-            }
-            partListView.setAdapter(new PartAdapter(partsArray));
-        } catch (JSONException e) {
-            Log.e("docdoku.DocDokuPLM", "Error handling json of workspace's parts");
+        try{
+            result = result.substring(0, result.length() - 1);
+            numPartsAvailable = Integer.parseInt(result);
+            Bundle bundle = new Bundle();
+            bundle.putInt("page", 0);
+            bundle.putString("workspace", getCurrentWorkspace());
+            getSupportLoaderManager().initLoader(PART_LOADER_ID_BASE + 0, bundle, this);
+        } catch (NumberFormatException e) {
+            Log.e("com.docdoku.android.plm.client", "NumberFormatException: didn't correctly download number of pages of parts");
+            Log.e("com.docdoku.android.plm.client", "Number of pages result: " + result);
             e.printStackTrace();
-            Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
         }
-    }
-
-    private Part updatePartFromJSON(JSONObject partJSON, Part part) throws JSONException {
-        Object reservedBy = partJSON.get("checkOutUser");
-        SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.fullDateFormat));
-        if (!reservedBy.equals(JSONObject.NULL)){
-            part.setCheckOutInformation(
-                    ((JSONObject) reservedBy).getString("name"),
-                    ((JSONObject) reservedBy).getString("login"),
-                    dateFormat.format(new Date(Long.valueOf(partJSON.getString("checkOutDate"))))
-            );
-        }
-        part.setPartDetails(
-                partJSON.getString("number"),
-                partJSON.getString("version"),
-                partJSON.getString("name"),
-                partJSON.getJSONObject("author").getString("name"),
-                dateFormat.format(new Date(Long.valueOf(partJSON.getString("creationDate")))),
-                partJSON.getString("description"),
-                partJSON.getString("workflow"),
-                partJSON.getString("lifeCycleState"),
-                partJSON.getBoolean("standardPart"),
-                partJSON.getString("workspaceId"),
-                partJSON.getBoolean("publicShared")
-        );
-        JSONArray iterationsArray = partJSON.getJSONArray("partIterations");
-        JSONArray attributes = iterationsArray.getJSONObject(iterationsArray.length()-1).getJSONArray("instanceAttributes");
-        for (int i = 0; i<attributes.length(); i++){
-            JSONObject attribute = attributes.getJSONObject(i);
-            part.addAttribute(attribute.getString("name"),attribute.getString("value"));
-        }
-        return part;
-    }
-
-    private void getPartHistory(){
-        partKeyHistory = new LinkedHashSet<String>();
-        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + PART_HISTORY_PREFERENCE, MODE_PRIVATE);
-        int numPartsInHistory = preferences.getInt(HISTORY_SIZE, 0);
-        for (int i = 0; i<numPartsInHistory; i++){
-            Log.i("com.docdoku.android.plm.client","Retreiving key at position " + i + ": " + preferences.getString(Integer.toString(i),""));
-            partKeyHistory.add(preferences.getString(Integer.toString(i), ""));
-        }
-    }
-
-    private void updatePartHistory(String key){
-        Log.i("com.docdoku.android.plm.client", "Adding part " + key +" to history");
-        partKeyHistory.add(key);
-        SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + PART_HISTORY_PREFERENCE, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        Iterator<String> iterator = partKeyHistory.iterator();
-        while (partKeyHistory.size() > MAX_PARTS_IN_HISTORY){
-            iterator.next();
-            iterator.remove();
-        }
-        editor.putInt(HISTORY_SIZE, partKeyHistory.size());
-        int i = partKeyHistory.size()-1;
-        while (iterator.hasNext()){
-            String next = iterator.next();
-            Log.i("com.docdoku.android.plm.client", "Storing key " + next + " in preferences at position " + i);
-            editor.putString(Integer.toString(i), next);
-            i--;
-        }
-        editor.commit();
-    }
-
-    private synchronized void getPartInformation(final Part part){
-        new HttpGetTask(new HttpGetListener() {
-            @Override
-            public void onHttpGetResult(String result) {
-                try {
-                    JSONObject partJSON = new JSONObject(result);
-                    updatePartFromJSON(partJSON, part);
-                } catch (JSONException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-            }
-        }).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/" + part.getKey());
     }
 
     private class PartAdapter extends BaseAdapter{
@@ -229,16 +174,68 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
                 reservedBy.setText("");
                 reservedPart.setImageResource(R.drawable.checked_in);
             }
-            partRowView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    updatePartHistory(part.getKey());
-                    Intent intent = new Intent(PartListActivity.this, PartActivity.class);
-                    intent.putExtra(PartActivity.PART_EXTRA,part);
-                    startActivity(intent);
-                }
-            });
             return partRowView;
+        }
+    }
+
+    private static class PartLoader extends Loader<List<Part>> implements HttpGetListener{
+
+        private int startIndex;
+        private String workspace;
+        private AsyncTask asyncTask;
+
+        public PartLoader(Context context, int page, String workspace) {
+            super(context);
+            startIndex = page*20;
+            this.workspace = workspace;
+        }
+
+        @Override
+        protected void onStartLoading (){
+            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts?start=" +  startIndex);
+        }
+
+        @Override
+        protected void onStopLoading (){
+            if (asyncTask != null){
+                asyncTask.cancel(false);
+            }
+        }
+
+        @Override
+        protected void onReset (){
+            if (asyncTask != null){
+                asyncTask.cancel(false);
+            }
+            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts?start=" +  startIndex);
+        }
+
+        @Override
+        protected void onForceLoad (){
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        protected void onAbandon (){
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onHttpGetResult(String result) {
+            List<Part> partList= new ArrayList<Part>();
+            try {
+                JSONArray partsJSON = new JSONArray(result);
+                for (int i=0; i<partsJSON.length(); i++){
+                    JSONObject partJSON = partsJSON.getJSONObject(i);
+                    Part part = new Part(partJSON.getString("partKey"));
+                    partList.add(part);
+                }
+            }catch (JSONException e){
+                Log.e("docdoku.DocDokuPLM", "Error handling json of workspace's parts");
+                e.printStackTrace();
+                Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+            }
+            deliverResult(partList);
         }
     }
 }

@@ -86,7 +86,7 @@ public class Document implements Serializable{
         values[5] = title;
         values[6] = checkOutUserName;
         values[7] = checkOutDate;
-        if (lifeCycleState.equals(JSONObject.NULL.toString())){
+        if (JSONObject.NULL.toString().equals(lifeCycleState)){
             values[8] = "";
         }
         else{
@@ -104,7 +104,12 @@ public class Document implements Serializable{
         this.revisionNumber = revisionNumber;
         this.revisionAuthor = revisionAuthor;
         this.revisionDate = revisionDate;
-        this.revisionNote = revisionNote;
+        if (JSONObject.NULL.toString().equals(revisionNote)){
+            this.revisionNote = "";
+        }
+        else{
+            this.revisionNote = revisionNote;
+        }
     }
 
     public String[] getLastRevision(){

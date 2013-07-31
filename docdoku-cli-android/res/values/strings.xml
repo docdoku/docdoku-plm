@@ -11,13 +11,16 @@
     <string name="password">Mot de passe:</string>
     <string name="autoConnect">Connection Automatique</string>
     <string name="wrongUsernamePassword">Erreur de nom d\'utilisateur ou de mot de passe</string>
-    <string name="confirmDisconnect">Êtes vous sûr de vouloir vous déconnecter?</string>
+    <string name="confirmDisconnect">Êtes vous sûr de vouloir vous déconnecter?
+        \n Toutes les données de navigation seront effacées</string>
 
     <!-- Useful strings -->
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="OK">OK</string>
     <string name="cancel">Annuler</string>
+    <string name="True">Vrai</string>
+    <string name="False">Faux</string>
     <string name="simpleDateFormat">dd/MM/yyyy</string>
     <string name="fullDateFormat">dd/MM/yyyy kk:mm:ss</string>
 

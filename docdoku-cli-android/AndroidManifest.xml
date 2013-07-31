@@ -29,7 +29,9 @@
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name="com.docdoku.android.plm.client.DocumentSearchActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name="com.docdoku.android.plm.client.PartListActivity"
+        <activity android:name=".PartListActivity"
+                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".PartListActivity1"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name="com.docdoku.android.plm.client.UserListActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>

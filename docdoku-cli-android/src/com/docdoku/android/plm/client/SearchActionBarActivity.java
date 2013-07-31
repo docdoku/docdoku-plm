@@ -27,26 +27,13 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.*;
 
 /**
  *
  * @author: Martin Devillers
  */
-public abstract class SearchActionBarActivity extends FragmentActivity {
-
-    protected static String currentUserLogin;
-
-    protected String getCurrentWorkspace(){
-        return MenuFragment.getCurrentWorkspace();
-    }
-
-    protected String getCurrentUserLogin(){
-        return currentUserLogin;
-    }
+public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,43 +43,5 @@ public abstract class SearchActionBarActivity extends FragmentActivity {
         actionBar.setIcon(R.drawable.menu);
         actionBar.setHomeButtonEnabled(true);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Log.i("com.docdoku.android.plm.client", "Menu drawer button clicked");
-                DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-                if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
-                    drawerLayout.closeDrawer(Gravity.LEFT);
-                }
-                else{
-                    drawerLayout.openDrawer(Gravity.LEFT);
-                }
-                return true;
-            case R.id.menu_users:
-                Intent intent = new Intent(this, UserListActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.menu_logout:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getResources().getString(R.string.confirmDisconnect));
-                builder.setNegativeButton(getResources().getString(R.string.no), null);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(getApplicationContext(), ConnectionActivity.class);
-                        intent.putExtra(ConnectionActivity.ERASE_ID, true);
-                        startActivity(intent);
-                    }
-                });
-                builder.create().show();
-                return true;
-            default:
-                Log.i("com.docdoku.android.plm.client", "Could not identify title bar button click");
-                return super.onOptionsItemSelected(item);
-        }
-
     }
 }

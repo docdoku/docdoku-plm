@@ -72,11 +72,11 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
             int responseCode = conn.getResponseCode();
             Log.i("com.docdoku.android.plm.client","Response code: " + responseCode);
             if (responseCode == 200){
-                Log.i("docDoku.DocDokuPLM", "Response headers: " + conn.getHeaderFields());
-                Log.i("docDoku.DocDokuPLM", "Response message: " + conn.getResponseMessage());
+                Log.i("com.docdoku.android.plm.client", "Response headers: " + conn.getHeaderFields());
+                Log.i("com.docdoku.android.plm.client", "Response message: " + conn.getResponseMessage());
                 InputStream in = (InputStream) conn.getContent();
                 result = inputStreamToString(in);
-                Log.i("docDoku.DocDokuPLM", "Response content: " + result);
+                Log.i("com.docdoku.android.plm.client", "Response content: " + result);
                 in.close();
             }
 

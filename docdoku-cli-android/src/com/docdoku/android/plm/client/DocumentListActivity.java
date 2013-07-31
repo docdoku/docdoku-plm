@@ -171,8 +171,9 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
                 documentJSON.getString("lifeCycleState"),
                 documentJSON.getString("description")
         );
-        Object lastIteration = documentJSON.get("lastIteration");
-        if (!lastIteration.equals(JSONObject.NULL)){
+        Object lastIteration = null;
+        try {lastIteration = documentJSON.get("lastIteration");} catch(JSONException e){}
+        if (lastIteration != null){
             JSONArray attachedFiles = ((JSONObject) lastIteration).getJSONArray("attachedFiles");
             String[] files = new String[attachedFiles.length()];
             for (int i = 0; i<files.length; i++){
@@ -196,7 +197,16 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
             for (int i = 0; i<attributeNames.length; i++){
                 JSONObject attribute = attributes.getJSONObject(i);
                 attributeNames[i] = attribute.getString("name");
-                attributeValues[i] = attribute.getString("value");
+                String attributeType = attribute.getString("type");
+                if (attributeType.equals("DATE") && !attribute.getString("value").equals("")){
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+                    attributeValues[i] = simpleDateFormat.format(new Date(Long.valueOf(attribute.getString("value"))));
+                }else if(attributeType.equals("BOOLEAN")){
+                    if (attribute.getString("value").equals("true")) attributeValues[i] = getResources().getString(R.string.True);
+                    else attributeValues[i] = getResources().getString(R.string.False);
+                }else{
+                    attributeValues[i] = attribute.getString("value");
+                }
             }
             document.setAttributes(attributeNames, attributeValues);
         }
@@ -227,7 +237,7 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
         }).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getReference());
     }
 
-    private void updatePartHistory(String reference){
+    private void updateDocumentHistory(String reference){
         Log.i("com.docdoku.android.plm.client", "Adding document " + reference +" to history");
         documentReferenceHistory.add(reference);
         SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + DOCUMENT_HISTORY_PREFERENCE, MODE_PRIVATE);
@@ -299,7 +309,7 @@ public class DocumentListActivity extends SearchActionBarActivity implements Htt
             contentLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    updatePartHistory(doc.getReference());
+                    updateDocumentHistory(doc.getReference());
                     Intent intent = new Intent(getBaseContext(), DocumentActivity.class);
                     intent.putExtra(DocumentActivity.DOCUMENT_EXTRA, doc);
                     startActivity(intent);

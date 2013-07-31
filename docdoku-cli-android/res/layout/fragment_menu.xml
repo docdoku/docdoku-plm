@@ -42,37 +42,23 @@
                 style="@style/MenuItem"
                 android:text="@string/documents"/>
 
-        <LinearLayout
+        <TextView
                 android:id="@+id/documentSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:orientation="horizontal">
-
-            <ImageButton
-                    android:id="@+id/documentSearchButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:background="@color/transparent"
-                    android:src="@drawable/search"/>
-
-            <TextView
-                    android:id="@+id/rechercherDocuments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    style="@style/MenuItem"
-                    android:text="@string/documentSearch"/>
-        </LinearLayout>
+                style="@style/MenuItem"
+                android:text="@string/documentSearch"
+                android:drawableLeft="@drawable/search"/>
 
         <TextView
-                android:id="@+id/documentsRecemmentConsultes"
+                android:id="@+id/recentlyViewedDocuments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/documentHistory"/>
+                android:text="@string/documentHistory"
+                android:drawableLeft="@drawable/history"/>
 
         <TextView
                 android:id="@+id/allDocuments"
@@ -80,7 +66,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/allDocuments"/>
+                android:text="@string/allDocuments"
+                android:drawableLeft="@drawable/all_elements"/>
 
         <TextView
                 android:id="@+id/checkedOutDocuments"
@@ -88,7 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/checkedOutDocuments"/>
+                android:text="@string/checkedOutDocuments"
+                android:drawableLeft="@drawable/checked_out_current_user"/>
 
         <TextView
                 style="?android:attr/listSeparatorTextViewStyle"
@@ -105,37 +93,23 @@
                 style="@style/MenuItem"
                 android:text="@string/parts"/>
 
-        <LinearLayout
+        <TextView
                 android:id="@+id/articleSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:orientation="horizontal">
-
-            <ImageButton
-                    android:id="@+id/articleSearchButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:background="@color/transparent"
-                    android:src="@drawable/search"/>
-
-            <TextView
-                    android:id="@+id/rechercherArticles"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    style="@style/MenuItem"
-                    android:text="@string/partSearch"/>
-        </LinearLayout>
+                style="@style/MenuItem"
+                android:text="@string/partSearch"
+                android:drawableLeft="@drawable/search"/>
 
         <TextView
-                android:id="@+id/articlesRecemmentConsultes"
+                android:id="@+id/recentlyViewedParts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/partHistory"/>
+                android:text="@string/partHistory"
+                android:drawableLeft="@drawable/history"/>
 
         <TextView
                 android:id="@+id/allParts"
@@ -143,7 +117,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
-                android:text="@string/allParts"/>
+                android:text="@string/allParts"
+                android:drawableLeft="@drawable/all_elements"/>
 
     </LinearLayout>
 

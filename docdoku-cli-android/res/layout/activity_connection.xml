@@ -15,6 +15,7 @@
     <EditText
             android:id="@+id/urlField"
             android:hint="@string/urlPrompt"
+            android:text="@string/urlPrompt"
             android:layout_width="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
