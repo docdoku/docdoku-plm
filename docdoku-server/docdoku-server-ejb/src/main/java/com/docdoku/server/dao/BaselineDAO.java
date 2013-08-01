@@ -23,6 +23,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.BaselinedPartKey;
+import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -82,5 +83,11 @@ public class BaselineDAO {
             it.remove();
         }
         em.flush();
+    }
+
+    public List<Baseline> findBaselineWherePartRevisionHasIterations(PartRevision partRevision) {
+        return em.createNamedQuery("BaselinedPart.getBaselinesForPartRevision", Baseline.class)
+                .setParameter("partRevision", partRevision)
+                .getResultList();
     }
 }
