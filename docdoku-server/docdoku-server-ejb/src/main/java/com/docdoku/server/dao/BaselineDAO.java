@@ -90,4 +90,14 @@ public class BaselineDAO {
                 .setParameter("partRevision", partRevision)
                 .getResultList();
     }
+
+    public Baseline findBaselineById(int baselineId) {
+        try{
+            return em.createNamedQuery("Baseline.findByBaselineId", Baseline.class)
+                    .setParameter("baselineId", baselineId)
+                    .getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
+    }
 }

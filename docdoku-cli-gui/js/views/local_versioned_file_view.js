@@ -52,7 +52,7 @@ define(["text!templates/local_versioned_file.html", "views/loader_view",  "comma
         checkout:function() {
             this.loader();
             var self = this;
-            Commander.checkout(this.model, function() {
+            Commander.checkout(this.model,{}, function() {
                 Commander.getStatusForPart(self.model, function(pStatus) {
                     var status = JSON.parse(pStatus);
                     self.model.setStatus(status);

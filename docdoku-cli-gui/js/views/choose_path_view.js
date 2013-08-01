@@ -9,10 +9,15 @@ define(["text!templates/choose_path.html","i18n!localization/nls/global", "views
             "hidden #choose-path-modal": "onHidden"
         },
 
+        setBaselines:function(baselines){
+            this.baselines = baselines
+            return this;
+        },
+
         render:function() {
             var self = this;
 
-            this.$el.html(this.template({paths:Storage.getLocalPaths(),i18n:i18n}));
+            this.$el.html(this.template({baselines:this.baselines,paths:Storage.getLocalPaths(),i18n:i18n}));
             this.bindDomElements();
 
             this.dcv = new DirectoryChooserView({el:this.$(".directory-chooser")}).render();
@@ -35,17 +40,29 @@ define(["text!templates/choose_path.html","i18n!localization/nls/global", "views
             this.$modal = this.$('#choose-path-modal');
             this.$path = this.$('select#path');
             this.$newpath = this.$('#new-path');
+            this.$force = this.$('#force');
+            this.$recursive = this.$('#recursive');
+            this.$baseline = this.$('#baseline');
         },
 
         onSubmitForm:function(e) {
             var path = this.$path.val() || this.$newpath.val();
+
+            var options = {
+                path:path,
+                force:this.$force.is(":checked"),
+                recursive:this.$recursive.is(":checked"),
+                baseline:this.$baseline.val()
+            };
+
             if(path){
-                this.trigger("path:chosen",path);
                 if(Storage.addLocalPath(path)){
                     APP_GLOBAL.SIGNALS.trigger("path:created");
                 }
+                this.trigger("path:chosen",options);
                 this.closeModal();
             }
+
             e.stopPropagation();
             e.preventDefault();
             return false;

@@ -1344,6 +1344,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public Baseline getBaselineById(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.findBaselineById(baselineId);
+        Workspace workspace = baseline.getConfigurationItem().getWorkspace();
+        User user = userManager.checkWorkspaceReadAccess(workspace.getId());
+        return baseline;
+    }
+
+    @RolesAllowed("users")
+    @Override
     public void updateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         BaselineDAO baselineDAO = new BaselineDAO(em);

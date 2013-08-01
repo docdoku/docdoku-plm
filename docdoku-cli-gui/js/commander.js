@@ -78,7 +78,22 @@ define([], function () {
                 + " -j";
         },
 
-        checkout:function(part){
+        checkout:function(part, options){
+
+            var optionalParams = function(){
+                var opt = "";
+                if (options.recursive) {
+                    opt += " -R ";
+                }
+                if (options.force) {
+                    opt += " -f ";
+                }
+                if(options.baseline){
+                    opt += " -b " + escapeShell(options.baseline)
+                }
+                return opt;
+            };
+
             return this.base() + " co"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
@@ -86,7 +101,8 @@ define([], function () {
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
                 + " -w " + escapeShell(part.getWorkspace())
                 + " -o " + escapeShell(part.getNumber())
-                + " -r " + escapeShell(part.getVersion());
+                + " -r " + escapeShell(part.getVersion())
+                + optionalParams();
         },
 
         checkin:function(part){
@@ -111,7 +127,22 @@ define([], function () {
                 + " -r " + escapeShell(part.getVersion());
         },
 
-        get:function(part){
+        get:function(part,options){
+
+            var optionalParams = function(){
+                var opt = "";
+                if (options.recursive) {
+                    opt += " -R ";
+                }
+                if (options.force) {
+                    opt += " -f ";
+                }
+                if(options.baseline){
+                    opt += " -b " + escapeShell(options.baseline)
+                }
+                return opt;
+            };
+
             return this.base() + " get"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
@@ -120,7 +151,8 @@ define([], function () {
                 + " -R "
                 + " -w " + escapeShell(part.getWorkspace())
                 + " -o " + escapeShell(part.getNumber())
-                + " -r " + escapeShell(part.getVersion());
+                + " -r " + escapeShell(part.getVersion())
+                +optionalParams();
         },
 
         createPart:function(part, filePath){
@@ -143,7 +175,7 @@ define([], function () {
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
                 + " -w " + escapeShell(part.getWorkspace())
                 + " -o " + escapeShell(part.getNumber())
-                + optionalParams(part, filePath)
+                + optionalParams()
                 + " " + escapeShell(filePath)
 
         },
@@ -155,6 +187,17 @@ define([], function () {
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
                 + " -w " + escapeShell(workspace);
+        },
+
+        getBaselines:function(part){
+            return this.base() + " bl"
+                + " -h " + APP_GLOBAL.GLOBAL_CONF.host
+                + " -P " + APP_GLOBAL.GLOBAL_CONF.port
+                + " -u " + APP_GLOBAL.GLOBAL_CONF.user
+                + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -w " + escapeShell(part.getWorkspace())
+                + " -o " + escapeShell(part.getNumber())
+                + " -r " + escapeShell(part.getVersion());
         }
 
     });
@@ -203,8 +246,8 @@ define([], function () {
             });
         },
 
-        checkout: function (part, callback) {
-            var c = cmd.checkout(part);
+        checkout: function (part, options, callback) {
+            var c = cmd.checkout(part,options);
             console.log("Commander.checkout : " + c);
             exec(c,function (error, stdout, stderr) {
                 if (error || stderr) {
@@ -261,14 +304,25 @@ define([], function () {
                 }
             });
         },
-        get:function(part,callback){
-            var c = cmd.get(part);
+        get:function(part,options,callback){
+            var c = cmd.get(part,options);
             console.log("Commander.get : " + c);
             exec(c, function (error, stdout, stderr) {
                 if (error || stderr) {
                     console.log('get : exec error' + stderr + " " + error);
                 }
                 callback();
+            });
+        },
+        getBaselines:function(part,callback){
+            var c = cmd.getBaselines(part);
+            console.log("Commander.getBaselines : " + c);
+            exec(c, function (error, stdout, stderr) {
+                console.log(stdout);
+                if (error || stderr) {
+                    console.log('getBaselines : exec error' + stderr + " " + error);
+                }
+                callback(stdout);
             });
         }
     };
