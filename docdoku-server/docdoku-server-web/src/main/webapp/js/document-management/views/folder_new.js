@@ -19,6 +19,7 @@ define([
 				this.collection.create({
 					name: name
 				}, {
+                    url:this.collection.url(),
 					success: this.success,
 					error: this.error
 				});
@@ -35,9 +36,11 @@ define([
 					type: "error",
 					message: error.responseText
 				});
+                this.collection.remove([model]);
 			} else {
 				console.error(error);
 			}
+            this.collection.remove([model]);
 		}
 	});
 	return FolderNewView;
