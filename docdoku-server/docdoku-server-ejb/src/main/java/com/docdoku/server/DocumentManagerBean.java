@@ -389,15 +389,32 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     @Override
-    public String dummy() {
+    public DocumentMaster[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        boolean role = ctx.isCallerInRole("users") ;
-        System.out.println("MY ROLE IS USER = "+String.valueOf(role));
-        System.out.println("hi my name is = "+ctx.getCallerPrincipal().toString());
-        System.out.println("dummmmmy");
-        return "dsfjsdfsdf";
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).getDocumentsMasterFiltered(user, workspaceId, start, pMaxResults);
+        ListIterator<DocumentMaster> ite = docMs.listIterator();
+
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
+
+        while (ite.hasNext()) {
+            DocumentMaster docM = ite.next();
+
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
+                ite.set(docM);
+            }
+
+        }
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
+    @Override
+    public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        return new DocumentMasterDAO(new Locale(user.getLanguage()), em).getDocumentsMasterCountFiltered(user, workspaceId);
+    }
 
     @RolesAllowed("users")
     @Override

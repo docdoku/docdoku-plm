@@ -47,7 +47,9 @@ import javax.persistence.*;
         @NamedQuery(name="findDocumentMastersWithAssignedTasksForGivenUser", query="SELECT d FROM DocumentMaster d, Task t WHERE t.activity.workflow = d.workflow AND  d.workflow IS NOT NULL AND t.worker.login = :assignedUserLogin AND d.workspace.id = :workspaceId"),
         @NamedQuery(name="findDocumentMastersWithOpenedTasksForGivenUser", query="SELECT d FROM DocumentMaster d, Task t WHERE t.activity.workflow = d.workflow AND  d.workflow IS NOT NULL AND t.worker.login = :assignedUserLogin AND d.workspace.id = :workspaceId AND t.status = com.docdoku.core.workflow.Task.Status.IN_PROGRESS"),
         @NamedQuery(name="findDocumentMastersWithReference", query="SELECT d FROM DocumentMaster d WHERE d.id LIKE :id AND d.workspace.id = :workspaceId"),
-        @NamedQuery(name="countDocumentMastersInWorkspace", query="SELECT COUNT(d) FROM DocumentMaster d WHERE d.workspace.id = :workspaceId")
+        @NamedQuery(name="countDocumentMastersInWorkspace", query="SELECT COUNT(d) FROM DocumentMaster d WHERE d.workspace.id = :workspaceId"),
+        @NamedQuery(name="DocumentMaster.findByWorkspace.filterUserACLEntry", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId and (dm.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dm.acl)) AND dm.location.completePath NOT LIKE :excludedFolders ORDER BY dm.id ASC"),
+        @NamedQuery(name="DocumentMaster.countByWorkspace.filterUserACLEntry", query="SELECT count(dm) FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId and (dm.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dm.acl)) AND dm.location.completePath NOT LIKE :excludedFolders")
 })
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
     
