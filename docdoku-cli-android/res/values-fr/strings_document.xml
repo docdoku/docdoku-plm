@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Document attributes -->
+    <string name="documentIdentification">Identifiant</string>
+    <string name="documentTitle">Titre</string>
+    <string name="documentAuthor">Auteur</string>
+    <string name="documentVersion">Version</string>
+
+    <string-array name="documentGeneralInformationFieldNames">
+        <item>Dossier</item>
+        <item>Référence</item>
+        <item>Auteur</item>
+        <item>Date de création</item>
+        <item>Type</item>
+        <item>Titre</item>
+        <item>Réservé par</item>
+        <item>Date de réservation</item>
+        <item>Etat du cycle de vie</item>
+        <item>Description</item>
+    </string-array>
+    <string-array name="documentIterationFieldNames">
+        <item>Référence</item>
+        <item>Note de révision</item>
+        <item>Date de modification</item>
+        <item>Auteur</item>
+    </string-array>
+
+    <!-- Document pages -->
+    <string name="documentGeneralInformation">Général</string>
+    <string name="documentFiles">Fichiers</string>
+    <string name="documentLinks">Liens</string>
+    <string name="documentIteration">Itération</string>
+    <string name="documentAttributes">Attributs</string>
+
+    <!-- Subscribe/Usubscribe to document notifications-->
+    <string name="confirmSubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les itérations sur ce document?</string>
+    <string name="confirmUnsubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les itérations sur ce document?</string>
+    <string name="confirmSubscribeToStateChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les changements d\'état sur ce document?</string>
+    <string name="confirmUnsubscribeToStateChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les changements d\'état sur ce document?</string>
+
+    <!-- Checkin/Checkout document -->
+    <string name="documentCheckIn">Libérer</string>
+    <string name="documentCheckOut">Réserver</string>
+    <string name="documentCheckOutConfirm">Réserver le document?</string>
+    <string name="documentCheckInConfirm">Libérer le document?</string>
+    <string name="documentDoCheckIn">Libérer</string>
+    <string name="documentCancelCheckOut">Annuler la réservation</string>
+    <string name="documentLocked">Réservé</string>
+
+    <!-- Search documents -->
+    <string name="documentSearchPrompt">Recherche de Document</string>
+    <string name="documentSearchStart">Rechercher</string>
+    <string name="searchDocumentById">Chercher la référence d\'un document</string>
+    <string name="documentPickAuthor">Choisissez un utilisateur</string>
+    <string name="documentCreationDateMin">Créé après le</string>
+    <string name="documentCreationDateMax">Créé avant le</string>
+
+    <!-- Upload image -->
+    <string name="confirmImageUpload">Ajouter l\'image au document?</string>
+    <string name="chooseImageFileName">Nom de l\'image</string>
+    <string name="uploadImage">Charger l\'image</string>
+    <string name="uploadSuccess">Image chargée avec succès</string>
+    <string name="uploadFail">Echec du chargement de l\'image</string>
+
+</resources>

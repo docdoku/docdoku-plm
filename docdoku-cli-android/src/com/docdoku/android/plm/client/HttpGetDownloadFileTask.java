@@ -56,7 +56,7 @@ public class HttpGetDownloadFileTask extends AsyncTask <String, Integer, Boolean
         String filename = strings[1];
         try {
             URL url = new URL(pURL);
-            Log.i("com.docdoku.android.plm.client", "Sending HttpGet request to download file at url: " + pURL);
+            Log.i("com.docdoku.android.plm.client", "Sending HttpGet request to download_light file at url: " + pURL);
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
             fileSavePath = file.getAbsolutePath();
             Log.i("com.docdoku.android.plm.client", "Path to which file is being saved: " + fileSavePath);
@@ -87,16 +87,16 @@ public class HttpGetDownloadFileTask extends AsyncTask <String, Integer, Boolean
             inputStream.close();
             result = (responseCode == 200);
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException in file download");
+            Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException in file download_light");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (ProtocolException e) {
-            Log.e("com.docdoku.android.plm.client","ProtocolException in file download");
+            Log.e("com.docdoku.android.plm.client","ProtocolException in file download_light");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (MalformedURLException e) {
-            Log.e("com.docdoku.android.plm.client","MalformedURLException in file download");
+            Log.e("com.docdoku.android.plm.client","MalformedURLException in file download_light");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client","IOException in file download");
+            Log.e("com.docdoku.android.plm.client","IOException in file download_light");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         if(conn!=null)

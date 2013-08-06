@@ -20,121 +20,45 @@
 
 package com.docdoku.android.plm.client;
 
-import android.support.v4.app.LoaderManager;
-import android.content.Context;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.*;
+import java.util.List;
 
 /**
- *
- * @author: Martin Devillers
+ * @author: martindevillers
  */
-public class PartListActivity extends SearchActionBarActivity implements HttpGetListener, LoaderManager.LoaderCallbacks<List<Part>> {
+public abstract class PartListActivity extends SearchActionBarActivity  {
 
-    private View loading;
-    private ArrayList<Part> partsArray;
-    private PartAdapter partAdapter;
-    private ListView partListView;
-    View footerProgressBar;
-    private final static int PART_LOADER_ID_BASE = 100;
-    private int numPartsAvailable;
-    private int numPagesDownloaded;
+    private static final String PREFERENCE_PART_HISTORY = "part history_light";
 
+    protected NavigationHistory navigationHistory;
+    protected List<Part> partsArray;
+    protected PartAdapter partAdapter;
+    protected ListView partListView;
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_list);
 
-        partListView = (ListView) findViewById(R.id.elementList);
-        loading = findViewById(R.id.loading);
+        View loading = findViewById(R.id.loading);
         ((ViewGroup) loading.getParent()).removeView(loading);
 
-        footerProgressBar = new ProgressBar(this);
-        partListView.addFooterView(footerProgressBar);
-
-        partsArray = new ArrayList<Part>();
-        partAdapter = new PartAdapter(partsArray);
-        partListView.setAdapter(partAdapter);
-
-
-        numPartsAvailable = 0;
-        numPagesDownloaded = 0;
-        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/count");
-
-        final LoaderManager.LoaderCallbacks<List<Part>> loaderCallbacks = this;
-        partListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount == totalItemCount && partAdapter.getCount() < numPartsAvailable){
-                        Log.i("com.docdoku.android.plm.client", "Loading more parts");
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("page", numPagesDownloaded);
-                        bundle.putString("workspace", getCurrentWorkspace());
-                        getSupportLoaderManager().initLoader(PART_LOADER_ID_BASE + numPagesDownloaded, bundle, loaderCallbacks);
-                }
-            }
-        });
-
+        partListView = (ListView) findViewById(R.id.elementList);
+        navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_PART_HISTORY, MODE_PRIVATE));
     }
 
-    @Override
-    public Loader<List<Part>> onCreateLoader(int i, Bundle bundle) {
-        return new PartLoader(this, bundle.getInt("page"), bundle.getString("workspace"));  //To change body of implemented methods use File | Settings | File Templates.
-    }
+    protected class PartAdapter extends BaseAdapter {
 
-    @Override
-    public void onLoadFinished(Loader<List<Part>> partLoader, List<Part> parts) {
-        partsArray.addAll(parts);
-        partAdapter.notifyDataSetChanged();
-        numPagesDownloaded++;
-
-        if (partAdapter.getCount() == numPartsAvailable){
-            partListView.removeFooterView(footerProgressBar);
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Part>> partLoader) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onHttpGetResult(String result) {
-        try{
-            result = result.substring(0, result.length() - 1);
-            numPartsAvailable = Integer.parseInt(result);
-            Bundle bundle = new Bundle();
-            bundle.putInt("page", 0);
-            bundle.putString("workspace", getCurrentWorkspace());
-            getSupportLoaderManager().initLoader(PART_LOADER_ID_BASE + 0, bundle, this);
-        } catch (NumberFormatException e) {
-            Log.e("com.docdoku.android.plm.client", "NumberFormatException: didn't correctly download number of pages of parts");
-            Log.e("com.docdoku.android.plm.client", "Number of pages result: " + result);
-            e.printStackTrace();
-        }
-    }
-
-    private class PartAdapter extends BaseAdapter{
-
-        private ArrayList<Part> parts;
+        private List<Part> parts;
         private final LayoutInflater inflater;
 
-        public PartAdapter(ArrayList<Part> parts){
+        public PartAdapter(List<Part> parts){
             this.parts = parts;
             inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         }
@@ -157,85 +81,38 @@ public class PartListActivity extends SearchActionBarActivity implements HttpGet
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View partRowView = inflater.inflate(R.layout.adapter_part, null);
-            final Part part = parts.get(i);
-            TextView reference = (TextView) partRowView.findViewById(R.id.number);
-            reference.setText(part.getKey());
-            TextView reservedBy = (TextView) partRowView.findViewById(R.id.reservedBy);
-            ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.reservedPart);
-            String reservedByName = part.getCheckOutUserName();
-            if (reservedByName != null){
-                String reservedByLogin = part.getCheckOutUserLogin();
-                if (reservedByLogin.equals(getCurrentUserLogin())){
-                    reservedPart.setImageResource(R.drawable.checked_out_current_user);
+            try{
+                final Part part = parts.get(i);
+                TextView reference = (TextView) partRowView.findViewById(R.id.number);
+                reference.setText(part.getKey());
+                TextView reservedBy = (TextView) partRowView.findViewById(R.id.checkOutUser);
+                ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.reservedPart);
+                String reservedByName = part.getCheckOutUserName();
+                if (reservedByName != null){
+                    String reservedByLogin = part.getCheckOutUserLogin();
+                    if (reservedByLogin.equals(getCurrentUserLogin())){
+                        reservedPart.setImageResource(R.drawable.checked_out_current_user_light);
+                    }
+                    reservedBy.setText(reservedByName);
                 }
-                reservedBy.setText(reservedByName);
+                else{
+                    reservedBy.setText("");
+                    reservedPart.setImageResource(R.drawable.checked_in_light);
+                }
+                partRowView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        navigationHistory.add(part.getKey());
+                        Intent intent = new Intent(PartListActivity.this, PartActivity.class);
+                        intent.putExtra(PartActivity.PART_EXTRA,part);
+                        startActivity(intent);
+                    }
+                });
+            } catch (NullPointerException e){
+                partRowView = new ProgressBar(PartListActivity.this);
             }
-            else{
-                reservedBy.setText("");
-                reservedPart.setImageResource(R.drawable.checked_in);
-            }
+
             return partRowView;
-        }
-    }
-
-    private static class PartLoader extends Loader<List<Part>> implements HttpGetListener{
-
-        private int startIndex;
-        private String workspace;
-        private AsyncTask asyncTask;
-
-        public PartLoader(Context context, int page, String workspace) {
-            super(context);
-            startIndex = page*20;
-            this.workspace = workspace;
-        }
-
-        @Override
-        protected void onStartLoading (){
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts?start=" +  startIndex);
-        }
-
-        @Override
-        protected void onStopLoading (){
-            if (asyncTask != null){
-                asyncTask.cancel(false);
-            }
-        }
-
-        @Override
-        protected void onReset (){
-            if (asyncTask != null){
-                asyncTask.cancel(false);
-            }
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts?start=" +  startIndex);
-        }
-
-        @Override
-        protected void onForceLoad (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        protected void onAbandon (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public void onHttpGetResult(String result) {
-            List<Part> partList= new ArrayList<Part>();
-            try {
-                JSONArray partsJSON = new JSONArray(result);
-                for (int i=0; i<partsJSON.length(); i++){
-                    JSONObject partJSON = partsJSON.getJSONObject(i);
-                    Part part = new Part(partJSON.getString("partKey"));
-                    partList.add(part);
-                }
-            }catch (JSONException e){
-                Log.e("docdoku.DocDokuPLM", "Error handling json of workspace's parts");
-                e.printStackTrace();
-                Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
-            }
-            deliverResult(partList);
         }
     }
 }

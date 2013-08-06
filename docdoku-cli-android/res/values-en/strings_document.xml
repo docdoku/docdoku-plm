@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Document attributes -->
+    <string name="documentIdentification">Document Id</string>
+    <string name="documentTitle">Title</string>
+    <string name="documentAuthor">Author</string>
+    <string name="documentVersion">Version</string>
+    <string-array name="documentGeneralInformationFieldNames">
+        <item>Folder</item>
+        <item>Reference</item>
+        <item>Author</item>
+        <item>Creation date</item>
+        <item>Type</item>
+        <item>Title</item>
+        <item>Checked out by</item>
+        <item>Check out date</item>
+        <item>Lifecycle state</item>
+        <item>Description</item>
+    </string-array>
+    <string-array name="documentIterationFieldNames">
+        <item>Reference</item>
+        <item>Revision note</item>
+        <item>Modification date</item>
+        <item>Author</item>
+    </string-array>
+
+    <!-- Document pages -->
+    <string name="documentGeneralInformation">General</string>
+    <string name="documentFiles">Files</string>
+    <string name="documentLinks">Links</string>
+    <string name="documentIteration">Iteration</string>
+    <string name="documentAttributes">Attributes</string>
+
+    <!-- Subscribe/Usubscribe to document notifications-->
+    <string name="confirmSubscribeToIterationChangeNotification">Are you sure you want to activate iteration notifications on this document?</string>
+    <string name="confirmUnsubscribeToIterationChangeNotification">Are you sure you want to deactivate iteration notifications on this document?</string>
+    <string name="confirmSubscribeToStateChangeNotification">Are you sure you want to activate state change notifications on this document?</string>
+    <string name="confirmUnsubscribeToStateChangeNotification">Are you sure you want to deactivate state change notifications on this document?</string>
+
+    <!-- Checkin/Checkout document -->
+    <string name="documentCheckIn">Check in</string>
+    <string name="documentCheckOut">Check out</string>
+    <string name="documentCheckOutConfirm">Check out this document?</string>
+    <string name="documentCheckInConfirm">Check in this document?</string>
+    <string name="documentDoCheckIn">Check in</string>
+    <string name="documentCancelCheckOut">Undo check out</string>
+    <string name="documentLocked">Checked Out</string>
+
+    <!-- Search documents -->
+    <string name="documentSearchPrompt">Search documents</string>
+    <string name="documentSearchStart">Search</string>
+    <string name="searchDocumentById">Search documents by Id</string>
+    <string name="documentPickAuthor">Pick a user</string>
+    <string name="documentCreationDateMin">Creation date after</string>
+    <string name="documentCreationDateMax">Creation date before</string>
+
+    <!-- Upload image -->
+    <string name="confirmImageUpload">Add this picture to the document?</string>
+    <string name="chooseImageFileName">Picture name</string>
+    <string name="uploadImage">Upload picture</string>
+    <string name="uploadSuccess">Picture upload successful</string>
+    <string name="uploadFail">Picture upload failed</string>
+
+</resources>

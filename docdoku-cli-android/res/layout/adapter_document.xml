@@ -15,54 +15,74 @@
         android:layout_marginRight="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/notifyStateChange">
+        android:layout_toLeftOf="@+id/notifyStateChangeLayout">
 
         <TextView
-                android:id="@+id/reference"
+                android:id="@+id/identification"
                 style="@style/MediumTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:text="Reference"/>
+                android:text="docId"/>
 
         <ImageView
-                android:id="@+id/reservedDocument"
+                android:id="@+id/checkedInOutImage"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/reference"
+                android:layout_below="@+id/identification"
                 android:layout_centerVertical="true"
                 android:src="@android:drawable/ic_lock_lock"/>
 
         <TextView
-                android:id="@+id/reservedBy"
+                android:id="@+id/checkOutUser"
                 style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reservé par"
-                android:layout_toRightOf="@+id/reservedDocument"
-                android:layout_alignTop="@+id/reservedDocument"
-                android:layout_alignBottom="@+id/reservedDocument"
+                android:text="checkOutUser"
+                android:layout_toRightOf="@+id/checkedInOutImage"
+                android:layout_alignTop="@+id/checkedInOutImage"
+                android:layout_alignBottom="@+id/checkedInOutImage"
                 android:gravity="center_vertical"/>
 
     </RelativeLayout>
 
-    <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/notifyStateChange"
-            android:drawableRight="@drawable/iteration_notification"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"/>
+    <LinearLayout
+        android:id="@+id/notifyStateChangeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <CheckBox
+        <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="" android:textOn=""
+                android:id="@+id/notifyStateChange"
+                android:drawableRight="@drawable/iteration_notification"/>
+
+    </LinearLayout>
+
+    <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableRight="@drawable/state_change_notification"
-            android:id="@+id/notifyIteration"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/notifyStateChange"/>
+            android:layout_below="@+id/notifyStateChangeLayout"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+        <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="" android:textOn=""
+                android:drawableRight="@drawable/state_change_notification"
+                android:id="@+id/notifyIteration"/>
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>

@@ -65,7 +65,7 @@ public class PartActivity extends SimpleActionBarActivity {
         Button checkInOutButton = (Button) findViewById(R.id.checkInOutButton);
         if (part.getCheckOutUserLogin() != null){
             if (getCurrentUserLogin().equals(part.getCheckOutUserLogin())){
-                checkOutLogo.setImageResource(R.drawable.checked_out_current_user);
+                checkOutLogo.setImageResource(R.drawable.checked_out_current_user_light);
                 checkInOutButton.setText(R.string.partCheckIn);
                 checkInOutButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -75,7 +75,7 @@ public class PartActivity extends SimpleActionBarActivity {
                 });
             }
             else{
-                checkOutLogo.setImageResource(R.drawable.checked_out_other_user);
+                checkOutLogo.setImageResource(R.drawable.checked_out_other_user_light);
                 checkInOutButton.setVisibility(View.GONE);
             }
         }
@@ -146,7 +146,7 @@ public class PartActivity extends SimpleActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
             ViewGroup pageView;
-            pageView = (ViewGroup) inflater.inflate(R.layout.fragment_document_page1, null);
+            pageView = (ViewGroup) inflater.inflate(R.layout.adapter_document_detail_header, null);
             ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
 
             if (names.length != values.length){

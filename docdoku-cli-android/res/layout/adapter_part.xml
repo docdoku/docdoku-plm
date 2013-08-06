@@ -24,10 +24,10 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/number"
                 android:layout_centerVertical="true"
-                android:src="@drawable/checked_out_other_user"/>
+                android:src="@drawable/checked_out_other_user_light"/>
 
         <TextView
-                android:id="@+id/reservedBy"
+                android:id="@+id/checkOutUser"
                 style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

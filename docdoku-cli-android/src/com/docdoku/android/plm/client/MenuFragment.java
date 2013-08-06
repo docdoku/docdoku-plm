@@ -42,7 +42,7 @@ public class MenuFragment extends Fragment {
     public static final String PREFERENCE_WORKSPACE = "workspace";
     private static String[] workspaces;
     private static String WORKSPACE;
-    public static boolean workspaceChanged = false;
+    protected static boolean workspaceChanged = false;
 
     private View view;
 
@@ -89,13 +89,11 @@ public class MenuFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        TextView docRecemmentConsultes = (TextView) view.findViewById(R.id.recentlyViewedDocuments);
-        docRecemmentConsultes.setOnClickListener(new View.OnClickListener() {
+        TextView recentlyViewedDocuments = (TextView) view.findViewById(R.id.recentlyViewedDocuments);
+        recentlyViewedDocuments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), DocumentListActivity.class);
-                intent.putExtra(DocumentListActivity.LIST_MODE_EXTRA,DocumentListActivity.RECENTLY_VIEWED_DOCUMENTS_LIST);
+                Intent intent = new Intent(getActivity(), DocumentHistoryListActivity.class);
                 startActivity(intent);
             }
         });
@@ -103,8 +101,8 @@ public class MenuFragment extends Fragment {
         allDocuments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), DocumentListActivity.class);
-                intent.putExtra(DocumentListActivity.LIST_MODE_EXTRA,DocumentListActivity.ALL_DOCUMENTS_LIST);
+                Intent intent = new Intent(getActivity(), DocumentCompleteListActivity.class);
+                intent.putExtra(DocumentCompleteListActivity.LIST_MODE_EXTRA, DocumentCompleteListActivity.ALL_DOCUMENTS_LIST);
                 startActivity(intent);
             }
         });
@@ -112,18 +110,25 @@ public class MenuFragment extends Fragment {
         checkedOutDocuments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), DocumentListActivity.class);
-                intent.putExtra(DocumentListActivity.LIST_MODE_EXTRA,DocumentListActivity.CHECKED_OUT_DOCUMENTS_LIST);
+                Intent intent = new Intent(getActivity(), DocumentCompleteListActivity.class);
+                intent.putExtra(DocumentCompleteListActivity.LIST_MODE_EXTRA, DocumentCompleteListActivity.CHECKED_OUT_DOCUMENTS_LIST);
                 startActivity(intent);
             }
         });
 
-        TextView artRecemmentConsultes = (TextView) view.findViewById(R.id.recentlyViewedParts);
-        artRecemmentConsultes.setOnClickListener(new View.OnClickListener() {
+        TextView partSearch = (TextView) view.findViewById(R.id.partSearch);
+        partSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), PartListActivity1.class);
-                intent.putExtra(PartListActivity1.LIST_MODE_EXTRA, PartListActivity1.RECENTLY_VIEWED_PARTS_LIST);
+                Intent intent = new Intent(getActivity(), PartSearchActivity.class);
+                startActivity(intent);
+            }
+        });
+        TextView recentlyViewedParts = (TextView) view.findViewById(R.id.recentlyViewedParts);
+        recentlyViewedParts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PartHistoryListActivity.class);
                 startActivity(intent);
             }
         });
@@ -131,8 +136,7 @@ public class MenuFragment extends Fragment {
         allParts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), PartListActivity.class);
-                intent.putExtra(PartListActivity1.LIST_MODE_EXTRA, PartListActivity1.ALL_PARTS_LIST);
+                Intent intent = new Intent(getActivity(), PartCompleteListActivity.class);
                 startActivity(intent);
             }
         });
@@ -146,6 +150,7 @@ public class MenuFragment extends Fragment {
             RadioButton radioButton;
             radioButton = new RadioButton(getActivity());
             radioButton.setText(workspaces[i]);
+            radioButton.setTextColor(R.color.darkGrey);
             radioGroup.addView(radioButton);
             if (workspaces[i].equals(WORKSPACE)){
                 radioGroup.check(radioButton.getId());

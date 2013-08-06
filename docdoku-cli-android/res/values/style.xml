@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Holo" >
-        <!--item name="android:background">@color/background</item-->
+    <style name="AppThemeBase" parent="android:Theme.Holo.Light" >
         <item name="android:textSize">20sp</item>
         <item name="android:windowBackground">@color/background</item>
+        <item name="android:textColor">@color/lightGrey</item>
     </style>
-    <!--Title bar faded color style-->
-    <style name="TitleBar" parent="AppTheme">
-        <item name="android:background">@drawable/title_bar</item>
+    <style name="AppTheme" parent="AppThemeBase">
+        <item name="android:dialogTheme">@style/AppTheme.Dialog</item>
+        <item name="android:alertDialogStyle">@style/AppTheme.Dialog</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.Dialog</item>
+        <item name="android:dialogPreferenceStyle">@android:style/Theme.Holo.Light.Dialog</item>
+        <item name="android:buttonStyle">@android:style/Widget.Holo.Button</item>
+        <item name="android:buttonStyleToggle">@android:style/Widget.Holo.Button.Toggle</item>
+        <item name="android:editTextStyle">@android:style/Widget.Holo.EditText</item>
+    </style>
+    <style name="AppTheme.Dialog" parent="android:Theme.Holo.Light.Dialog">
+        <item name = "android:textColor">@color/darkGrey</item>
     </style>
     <!--Text styles-->
     <style name="BigTitle" parent="AppTheme">
@@ -25,22 +33,23 @@
         <item name="android:textSize">18sp</item>
     </style>
     <!-- Side menu style -->
-    <style name="MenuItem" parent="AppTheme">
-        <item name="android:background">@color/transparent</item>
+    <style name="Menu" parent="android:Theme.Holo.Light.Dialog">
+        <item name="android:background">@android:drawable/dialog_holo_light_frame</item>
+    </style>
+    <style name="MenuTitle" parent="Menu">
+        <item name="android:background">@color/lightBlue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:textSize">26sp</item>
+    </style>
+    <style name="MenuItem" parent="Menu">
         <item name="android:padding">10dp</item>
+        <item name="android:background">@color/transparent</item>
         <item name="android:textSize">22sp</item>
-    </style>
-    <!--Colored tiles for metro style menus-->
-    <style name="GreenTile" parent="AppTheme">
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:background">@drawable/green_rectangle</item>
-    </style>
-    <style name="RedTile" parent="AppTheme">
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:background">@drawable/red_rectangle</item>
-    </style>
-    <style name="YellowTile" parent="AppTheme">
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:background">@drawable/yellow_rectangle</item>
+        <item name="android:textColor">@color/darkGrey</item>
     </style>
 </resources>

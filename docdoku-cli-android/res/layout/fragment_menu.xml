@@ -2,123 +2,96 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:background="@color/background">
+        style="@style/Menu">
 
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="30dp"
+            style="@style/Menu"
+            android:paddingTop="20dp"
             android:paddingBottom="30dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
 
         <TextView
-                android:id="@+id/workspace"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/MenuItem"
+                style="@style/MenuTitle"
                 android:text="@string/workspace"/>
 
         <RadioGroup
                 android:id="@+id/workspaceRadioGroup"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="@style/MenuItem">
 
         </RadioGroup>
 
         <TextView
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:layout_marginTop="5dp"
-                android:paddingTop="5dip"
-                android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="3dp" />
-
-        <TextView
-                android:id="@+id/documents"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/MenuItem"
+                style="@style/MenuTitle"
                 android:text="@string/documents"/>
 
         <TextView
                 android:id="@+id/documentSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/documentSearch"
-                android:drawableLeft="@drawable/search"/>
+                android:drawableLeft="@drawable/search_dark"/>
 
         <TextView
                 android:id="@+id/recentlyViewedDocuments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/documentHistory"
-                android:drawableLeft="@drawable/history"/>
+                android:drawableLeft="@drawable/history_dark"/>
 
         <TextView
                 android:id="@+id/allDocuments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/allDocuments"
-                android:drawableLeft="@drawable/all_elements"/>
+                android:drawableLeft="@drawable/all_elements_dark"/>
 
         <TextView
                 android:id="@+id/checkedOutDocuments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/checkedOutDocuments"
-                android:drawableLeft="@drawable/checked_out_current_user"/>
+                android:drawableLeft="@drawable/checked_out_current_user_dark"/>
 
         <TextView
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:layout_marginTop="5dp"
-                android:paddingTop="5dip"
-                android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
-
-        <TextView
-                android:id="@+id/articles"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/MenuItem"
+                style="@style/MenuTitle"
                 android:text="@string/parts"/>
 
         <TextView
-                android:id="@+id/articleSearch"
+                android:id="@+id/partSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/partSearch"
-                android:drawableLeft="@drawable/search"/>
+                android:drawableLeft="@drawable/search_dark"/>
 
         <TextView
                 android:id="@+id/recentlyViewedParts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/partHistory"
-                android:drawableLeft="@drawable/history"/>
+                android:drawableLeft="@drawable/history_dark"/>
 
         <TextView
                 android:id="@+id/allParts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 style="@style/MenuItem"
                 android:text="@string/allParts"
-                android:drawableLeft="@drawable/all_elements"/>
+                android:drawableLeft="@drawable/all_elements_dark"/>
 
     </LinearLayout>
 

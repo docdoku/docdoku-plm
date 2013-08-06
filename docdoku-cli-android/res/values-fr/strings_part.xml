@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Part attributes -->
+    <string name="partKey">Clé</string>
+    <string name="partAuthor">Auteur</string>
+    <string name="partTitle">Titre</string>
+    <string name="partVersion">Version</string>
+    <string name="partCheckOut">Réserver</string>
+    <string name="partCheckIn">Libérer</string>
+
+    <string-array name="partGeneralInformationFieldNames">
+        <item>Numéro</item>
+        <item>Nom</item>
+        <item>Article standard</item>
+        <item>Version</item>
+        <item>Auteur</item>
+        <item>Date de création</item>
+        <item>Etat du cycle de vie</item>
+        <item>Réservé par</item>
+        <item>Date de réservation</item>
+        <item>Description</item>
+    </string-array>
+
+    <!-- Search parts -->
+    <string name="partSearchPrompt">Recherche d\'articles</string>
+    <string name="partSearchStart">Rechercher</string>
+    <string name="searchPartId">Chercher le numéro d\'un article</string>
+    <string name="partPickAuthor">Choisissez un utilisateur</string>
+    <string name="partCreationDateMin">Créé après le:</string>
+    <string name="partCreationDateMax">Créé avant le:</string>
+
+</resources>

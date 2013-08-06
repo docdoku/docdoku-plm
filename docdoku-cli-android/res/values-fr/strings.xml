@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DocDokuPLM</string>
+    <string name="app_title">DocDokuPLM</string>
+
+    <!-- Connection/Disconnection strings -->
+    <string name="url">Url du serveur:</string>
+    <string name="urlPrompt">http://docdokuplm.net/</string>
+    <string name="login">Utilisateur:</string>
+    <string name="password">Mot de passe:</string>
+    <string name="autoConnect">Connection Automatique</string>
+    <string name="wrongUsernamePassword">Erreur de nom d\'utilisateur ou de mot de passe</string>
+    <string name="confirmDisconnect">Êtes vous sûr de vouloir vous déconnecter?
+        \n Toutes les données de navigation seront effacées</string>
+
+    <!-- Useful strings -->
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="OK">OK</string>
+    <string name="cancel">Annuler</string>
+    <string name="True">Vrai</string>
+    <string name="False">Faux</string>
+    <string name="error">!Erreur!</string>
+    <string name="simpleDateFormat">dd/MM/yyyy</string>
+    <string name="fullDateFormat">dd/MM/yyyy kk:mm:ss</string>
+
+    <!-- Network interaction -->
+    <string name="connection">Connexion</string>
+    <string name="connectingToServer">Connexion au serveur en cours</string>
+    <string name="noConnectionAvailable">Aucune connexion internet disponible</string>
+    <string name="connectionError">Erreur de connexion</string>
+    <string name="serverUrlError">Erreur dans l\'url du serveur</string>
+    <string name="loading">Chargement en cours, veuillez patienter.
+        \n Si le chargement est trop long, veuillez effectuer une recherche pour résuire le nombre de résultats.</string>
+    <string name="downloadingFile">Téléchargement du fichier en cours...</string>
+    <string name="fileDownloadFail">Echec du téléchargement du fichier</string>
+    <string name="chooseHowToOpenFile">Choisir avec quel programme ouvrir le fichier</string>
+
+    <!-- Menu -->
+    <string name="workspace">Espace de Travail</string>
+    <string name="documents">Documents</string>
+    <string name="documentSearch">Rechercher</string>
+    <string name="documentHistory">Récemment Consultés</string>
+    <string name="allDocuments">Tous</string>
+    <string name="checkedOutDocuments">Réservés</string>
+    <string name="parts">Articles</string>
+    <string name="partSearch">Rechercher</string>
+    <string name="partHistory">Récemment Consultés</string>
+    <string name="allParts">Tous</string>
+
+    <!-- Activity labels for action bar -->
+    <string name="allDocumentListTitle">Tous les documents</string>
+    <string name="allPartsListTitle">Tous les articles</string>
+    <string name="documentHistoryListTitle">Historique des documents</string>
+    <string name="partHistoryListTitle">Historique des articles</string>
+    <string name="usersActivityTitle">Utilisateurs</string>
+    <string name="checkedOutDocumentsActivityTitle">Documents réservés</string>
+
+    <!-- Title bars -->
+    <string name="search">Rechercher</string>
+    <string name="users">Utilisateurs</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="sendEmail">Envoyer eMail</string>
+
+</resources>
