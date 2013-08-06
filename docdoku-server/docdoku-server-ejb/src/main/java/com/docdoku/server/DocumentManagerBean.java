@@ -388,17 +388,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
-    @Override
-    public String dummy() {
-
-        boolean role = ctx.isCallerInRole("users") ;
-        System.out.println("MY ROLE IS USER = "+String.valueOf(role));
-        System.out.println("hi my name is = "+ctx.getCallerPrincipal().toString());
-        System.out.println("dummmmmy");
-        return "dsfjsdfsdf";
-    }
-
-
     @RolesAllowed("users")
     @Override
     public DocumentMaster[] getCheckedOutDocumentMasters(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
