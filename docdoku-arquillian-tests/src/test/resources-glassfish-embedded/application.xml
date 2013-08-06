@@ -6,7 +6,7 @@
     <application-name>test-app</application-name>
 
     <module>
-        <ejb>docdocku-arquillian-tests/src/test/common.jar</ejb>
+        <ejb>docdoku-arquillian-tests/src/test/common.jar</ejb>
     </module>
 
     <module>

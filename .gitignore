@@ -17,3 +17,4 @@ docdoku-cli.jar
 docdoku-cli-android/out/
 classes/
 docdoku-cli-android/gen/
+derby.log

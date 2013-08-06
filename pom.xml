@@ -34,7 +34,7 @@
         <module>docdoku-client</module>
         <module>docdoku-server</module>
         <module>docdoku-cli</module>
-        <module>docdocku-arquillian-tests</module>
+        <module>docdoku-arquillian-tests</module>
     </modules>
     <build>
         <plugins>

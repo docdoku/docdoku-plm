@@ -7,13 +7,13 @@
 
     <container qualifier="glassfish-embedded" default="true">
         <configuration>
-            <property name="configurationXml">docdocku-arquillian-tests/src/test/resources-glassfish-embedded/domain.xml</property>
+            <property name="configurationXml">docdoku-arquillian-tests/src/test/resources-glassfish-embedded/domain.xml</property>
 
             <property name="resourcesXml">
-                docdocku-arquillian-tests/src/test/resources-glassfish-embedded/glassfish-resources.xml
+                docdoku-arquillian-tests/src/test/resources-glassfish-embedded/glassfish-resources.xml
             </property>
             <engine>
-                <property name="deploymentExportPath">docdocku-arquillian-tests/target/deployments</property>
+                <property name="deploymentExportPath">docdoku-arquillian-tests/target/deployments</property>
             </engine>
 
         </configuration>

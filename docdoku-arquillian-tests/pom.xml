@@ -7,10 +7,12 @@
         <groupId>org.ow2.docdoku</groupId>
         <version>2.0-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>docdocku-arquillian-tests</artifactId>
+    <artifactId>docdoku-arquillian-tests</artifactId>
     <packaging>ear</packaging>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -25,7 +27,6 @@
 
     <dependencies>
 
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -38,7 +39,6 @@
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
@@ -59,7 +59,6 @@
             <artifactId>arquillian-openejb-embedded-3.1</artifactId>
             <version>1.0.0.Alpha5</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -90,6 +89,7 @@
             <url>http://repository.jboss.org/nexus/content/groups/public</url>
         </repository>
     </repositories>
+
     <build>
 
         <testResources>
@@ -101,9 +101,7 @@
             </testResource>
         </testResources>
 
-
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -113,8 +111,6 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-
-
         </plugins>
     </build>
 </project>
