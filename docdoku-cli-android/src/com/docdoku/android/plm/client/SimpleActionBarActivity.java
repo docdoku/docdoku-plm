@@ -79,7 +79,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.simple_title_bar, menu);
         ActionBar actionBar = getActionBar();
-        actionBar.setIcon(R.drawable.menu);
+        actionBar.setIcon(R.drawable.menu_dark);
         actionBar.setHomeButtonEnabled(true);
         return true;
     }

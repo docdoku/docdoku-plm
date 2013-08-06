@@ -20,13 +20,9 @@
 
 package com.docdoku.android.plm.client;
 
-import android.support.v4.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +35,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -51,8 +46,10 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
     public static final String  LIST_MODE_EXTRA = "list mode";
     public static final int ALL_PARTS_LIST = 0;
     public static final int RECENTLY_VIEWED_PARTS_LIST = 1;
-    private static final String HISTORY_SIZE = "Part history size";
-    private static final String PART_HISTORY_PREFERENCE = "part history";
+    public static final int PART_SEARCH = 2;
+    public static final String SEARCH_QUERY_EXTRA = "search_light query";
+    private static final String HISTORY_SIZE = "Part history_light size";
+    private static final String PART_HISTORY_PREFERENCE = "part history_light";
     private static final int MAX_PARTS_IN_HISTORY = 15;
 
     private ListView partListView;
@@ -86,6 +83,9 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
                 }
                 partListView.setAdapter(adapter);
                 break;
+            case PART_SEARCH:
+                new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/search_light/" + intent.getStringExtra(SEARCH_QUERY_EXTRA));
+                break;
         }
     }
 
@@ -101,7 +101,7 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
             for (int i=0; i<partsJSON.length(); i++){
                 JSONObject partJSON = partsJSON.getJSONObject(i);
                 Part part = new Part(partJSON.getString("partKey"));
-                partsArray.add(updatePartFromJSON(partJSON,part));
+                partsArray.add(part.updateFromJSON(partJSON, getResources()));
             }
             partListView.setAdapter(new PartAdapter(partsArray));
         } catch (JSONException e) {
@@ -109,38 +109,6 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
             e.printStackTrace();
             Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
         }
-    }
-
-    private Part updatePartFromJSON(JSONObject partJSON, Part part) throws JSONException {
-        Object reservedBy = partJSON.get("checkOutUser");
-        SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.fullDateFormat));
-        if (!reservedBy.equals(JSONObject.NULL)){
-            part.setCheckOutInformation(
-                    ((JSONObject) reservedBy).getString("name"),
-                    ((JSONObject) reservedBy).getString("login"),
-                    dateFormat.format(new Date(Long.valueOf(partJSON.getString("checkOutDate"))))
-            );
-        }
-        part.setPartDetails(
-                partJSON.getString("number"),
-                partJSON.getString("version"),
-                partJSON.getString("name"),
-                partJSON.getJSONObject("author").getString("name"),
-                dateFormat.format(new Date(Long.valueOf(partJSON.getString("creationDate")))),
-                partJSON.getString("description"),
-                partJSON.getString("workflow"),
-                partJSON.getString("lifeCycleState"),
-                partJSON.getBoolean("standardPart"),
-                partJSON.getString("workspaceId"),
-                partJSON.getBoolean("publicShared")
-        );
-        JSONArray iterationsArray = partJSON.getJSONArray("partIterations");
-        JSONArray attributes = iterationsArray.getJSONObject(iterationsArray.length()-1).getJSONArray("instanceAttributes");
-        for (int i = 0; i<attributes.length(); i++){
-            JSONObject attribute = attributes.getJSONObject(i);
-            part.addAttribute(attribute.getString("name"),attribute.getString("value"));
-        }
-        return part;
     }
 
     private void getPartHistory(){
@@ -154,7 +122,8 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
     }
 
     private void updatePartHistory(String key){
-        Log.i("com.docdoku.android.plm.client", "Adding part " + key +" to history");
+        Log.i("com.docdoku.android.plm.client", "Adding part " + key +" to history_light");
+        if (partKeyHistory.contains(key)) partKeyHistory.remove(key);
         partKeyHistory.add(key);
         SharedPreferences preferences = getSharedPreferences(getCurrentWorkspace() + PART_HISTORY_PREFERENCE, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -180,7 +149,7 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
             public void onHttpGetResult(String result) {
                 try {
                     JSONObject partJSON = new JSONObject(result);
-                    updatePartFromJSON(partJSON, part);
+                    part.updateFromJSON(partJSON, getResources());
                 } catch (JSONException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
@@ -219,19 +188,19 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
             final Part part = parts.get(i);
             TextView reference = (TextView) partRowView.findViewById(R.id.number);
             reference.setText(part.getKey());
-            TextView reservedBy = (TextView) partRowView.findViewById(R.id.reservedBy);
+            TextView reservedBy = (TextView) partRowView.findViewById(R.id.checkOutUser);
             ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.reservedPart);
             String reservedByName = part.getCheckOutUserName();
             if (reservedByName != null){
                 String reservedByLogin = part.getCheckOutUserLogin();
                 if (reservedByLogin.equals(getCurrentUserLogin())){
-                    reservedPart.setImageResource(R.drawable.checked_out_current_user);
+                    reservedPart.setImageResource(R.drawable.checked_out_current_user_light);
                 }
                 reservedBy.setText(reservedByName);
             }
             else{
                 reservedBy.setText("");
-                reservedPart.setImageResource(R.drawable.checked_in);
+                reservedPart.setImageResource(R.drawable.checked_in_light);
             }
             partRowView.setOnClickListener(new View.OnClickListener() {
                 @Override

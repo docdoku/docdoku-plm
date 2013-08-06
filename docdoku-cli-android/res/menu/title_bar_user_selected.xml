@@ -2,6 +2,6 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/send_emails"
-          android:icon="@drawable/email_new"
+          android:icon="@drawable/email_new_dark"
           android:title="@string/sendEmail"/>
 </menu>

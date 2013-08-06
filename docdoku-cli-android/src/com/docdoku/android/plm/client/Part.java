@@ -20,14 +20,24 @@
 
 package com.docdoku.android.plm.client;
 
+import android.content.res.Resources;
+import android.util.Log;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class Part implements Serializable{
+public class Part extends Element implements Serializable{
+
+    private static final String JSON_KEY_PART_ITERATIONS = "partIterations";
 
     private String key;
     private String number;
@@ -36,36 +46,68 @@ public class Part implements Serializable{
     private String authorName;
     private String creationDate;
     private String description;
-    private String checkOutUserName;
-    private String chekOutUserId;
-    private String chekOutDate;
     private String workflow;
     private String lifecycleState;
     private boolean standardPart;
     private String workspaceId;
     private boolean publicShared;
-    private ArrayList<Attribute> attributes;
 
     public Part(String key){
         this.key = key;
-        attributes = new ArrayList<Attribute>();
     }
 
-    public void setCheckOutInformation(String checkOutUserName, String checkOutUserId, String checkOutDate){
-        this.checkOutUserName = checkOutUserName;
-        this.chekOutUserId = checkOutUserId;
-        this.chekOutDate = checkOutDate;
+    public String[] getGeneralInformationValues(){
+        String[] generalInformationValues = new String[10];
+        generalInformationValues[0] = number;
+        generalInformationValues[1] = name;
+        generalInformationValues[2] = Boolean.toString(standardPart);
+        generalInformationValues[3] = version;
+        generalInformationValues[4] = authorName;
+        generalInformationValues[5] = creationDate;
+        generalInformationValues[6] = lifecycleState;
+        generalInformationValues[7] = checkOutUserName;
+        generalInformationValues[8] = checkOutDate;
+        generalInformationValues[9] = description;
+        return generalInformationValues;
     }
 
-    public void setCheckOutUserName(String checkOutUserName){
-        this.checkOutUserName = checkOutUserName;
+    public String getCheckOutUserName(){
+        return checkOutUserName;
     }
 
-    public void setChekOutUserId(String chekOutUserId){
-        this.chekOutUserId = chekOutUserId;
+    public String getCheckOutUserLogin(){
+        return checkOutUserLogin;
     }
 
-    public void setPartDetails(String number, String version, String name, String authorName, String creationDate, String description, String workflow, String lifecycleState, boolean standardPart, String workspaceId, boolean publicShared){
+    public String getKey(){
+        return key;
+    }
+
+    public String getAuthorName(){
+        return authorName;
+    }
+
+    @Override
+    public Part updateFromJSON(JSONObject partJSON, Resources resources) throws JSONException {
+        updateElementFromJSON(partJSON, resources);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(resources.getString(R.string.fullDateFormat));
+        setPartDetails(
+                partJSON.getString("number"),
+                partJSON.getString("version"),
+                partJSON.getString("name"),
+                partJSON.getJSONObject("author").getString("name"),
+                dateFormat.format(new Date(Long.valueOf(partJSON.getString("creationDate")))),
+                partJSON.getString("description"),
+                partJSON.getString("workflow"),
+                partJSON.getString("lifeCycleState"),
+                partJSON.getBoolean("standardPart"),
+                partJSON.getString("workspaceId"),
+                partJSON.getBoolean("publicShared")
+        );
+        return this;
+    }
+
+    private void setPartDetails(String number, String version, String name, String authorName, String creationDate, String description, String workflow, String lifecycleState, boolean standardPart, String workspaceId, boolean publicShared){
         this.number = number;
         this.version = version;
         this.name = name;
@@ -79,64 +121,12 @@ public class Part implements Serializable{
         this.publicShared = publicShared;
     }
 
-    public void addAttribute(String name, String value){
-        attributes.add(new Attribute(name,value));
-    }
+    /**
+     * The following methods provide the keys to read the part attributes in the JSONObject received from the server
+     */
 
-    public String[] getGeneralInformationValues(){
-        String[] generalInformationValues = new String[10];
-        generalInformationValues[0] = number;
-        generalInformationValues[1] = name;
-        generalInformationValues[2] = Boolean.toString(standardPart);
-        generalInformationValues[3] = version;
-        generalInformationValues[4] = authorName;
-        generalInformationValues[5] = creationDate;
-        generalInformationValues[6] = lifecycleState;
-        generalInformationValues[7] = checkOutUserName;
-        generalInformationValues[8] = chekOutDate;
-        generalInformationValues[9] = description;
-        return generalInformationValues;
-    }
-
-    public String getCheckOutUserName(){
-        return checkOutUserName;
-    }
-
-    public String getCheckOutUserLogin(){
-        return chekOutUserId;
-    }
-
-    public String getKey(){
-        return key;
-    }
-
-    public String getAuthorName(){
-        return authorName;
-    }
-
-    public String[] getAttributeNames(){
-        String[] attributeNames = new String[attributes.size()];
-        for (int i = 0; i<attributeNames.length; i++){
-            attributeNames[i] = attributes.get(i).attributeName;
-        }
-        return attributeNames;
-    }
-    public String[] getAttributeValues(){
-        String[] attributeValues = new String[attributes.size()];
-        for (int i = 0; i<attributeValues.length; i++){
-            attributeValues[i] = attributes.get(i).attributeValue;
-        }
-        return attributeValues;
-    }
-
-    public class Attribute implements Serializable{
-
-        public String attributeName;
-        public String attributeValue;
-
-        public Attribute(String name, String value){
-            attributeName = name;
-            attributeValue = value;
-        }
+    @Override
+    protected String getIterationsJSONKey() {
+        return JSON_KEY_PART_ITERATIONS;
     }
 }

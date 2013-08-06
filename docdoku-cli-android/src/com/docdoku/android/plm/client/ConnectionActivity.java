@@ -92,7 +92,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
                 String checkedUrl = checkUrlFormat(serverUrl);
                 Log.i("docDoku.DocDokuPLM", "Attempting to connect to server for identification");
                 Log.i("docDoku.DocDokuPLM", "Showing progress dialog");
-                progressDialog = ProgressDialog.show(this, "Connecting to server", "", false, false);
+                progressDialog = ProgressDialog.show(this, getResources().getString(R.string.connectingToServer), null, false, false);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 new HttpGetTask(checkedUrl,username,password,this).execute("api/accounts/workspaces");
             } catch (UnsupportedEncodingException e) {
@@ -136,7 +136,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
     }
 
     private void endConnectionActivity(){
-        Intent intent = new Intent(ConnectionActivity.this, DocumentListActivity.class);
+        Intent intent = new Intent(ConnectionActivity.this, DocumentCompleteListActivity.class);
         startActivity(intent);
         finish();
     }

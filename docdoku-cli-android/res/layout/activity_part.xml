@@ -65,7 +65,7 @@
                     android:id="@+id/checkOutLogo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/checked_in"/>
+                    android:src="@drawable/checked_in_light"/>
 
                 <TextView
                     android:id="@+id/checkOutUser"

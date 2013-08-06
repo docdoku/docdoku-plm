@@ -11,6 +11,6 @@
     <ImageButton android:id="@+id/takePicture"
                android:layout_height="wrap_content"
                android:layout_width="wrap_content"
-               android:src="@drawable/take_picture"/>
+               android:src="@drawable/take_picture_light"/>
 
 </LinearLayout>

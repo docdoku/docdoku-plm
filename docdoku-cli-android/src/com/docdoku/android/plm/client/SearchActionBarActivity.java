@@ -21,12 +21,6 @@
 package com.docdoku.android.plm.client;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.*;
 
 /**
@@ -40,7 +34,7 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_title_bar, menu);
         ActionBar actionBar = getActionBar();
-        actionBar.setIcon(R.drawable.menu);
+        actionBar.setIcon(R.drawable.menu_dark);
         actionBar.setHomeButtonEnabled(true);
         return true;
     }

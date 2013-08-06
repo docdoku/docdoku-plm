@@ -23,21 +23,33 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.docdoku.android.plm.client.DocumentListActivity"
-                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".DocumentActivity1"
+        <activity android:name=".DocumentCompleteListActivity"
+                  android:label="@string/allDocumentListTitle"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name="com.docdoku.android.plm.client.DocumentSearchActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".PartListActivity"
+        <activity android:name=".PartCompleteListActivity"
+                  android:label="@string/allPartsListTitle"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".PartListActivity1"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name="com.docdoku.android.plm.client.UserListActivity"
+        <activity android:name=".UserListActivity"
+                  android:label="@string/usersActivityTitle"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name="com.docdoku.android.plm.client.PartActivity"
+        <activity android:name=".PartActivity"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".DocumentActivity"
+                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".PartHistoryListActivity"
+                  android:label="@string/partHistoryListTitle"
+                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".PartSearchActivity"
+                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".DocumentHistoryListActivity"
+                  android:label="@string/documentHistoryListTitle"
+                  android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".DocumentCheckedOutListActivity"
+                  android:label="@string/checkedOutDocumentsActivityTitle"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
     </application>
 </manifest>
