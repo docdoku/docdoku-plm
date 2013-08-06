@@ -309,4 +309,28 @@ public class DocumentMasterDAO {
             return null;
         }
     }
+
+    public List<DocumentMaster> getDocumentsMasterFiltered(User user, String workspaceId, int start, int pMaxResults) {
+
+        String excludedFolders = workspaceId + "/~%";
+
+        return em.createNamedQuery("DocumentMaster.findByWorkspace.filterUserACLEntry", DocumentMaster.class)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("user", user)
+                .setParameter("excludedFolders", excludedFolders)
+                .setFirstResult(start)
+                .setMaxResults(pMaxResults)
+                .getResultList();
+    }
+
+    public int getDocumentsMasterCountFiltered(User user, String workspaceId) {
+
+        String excludedFolders = workspaceId + "/~%";
+
+        return ((Number) em.createNamedQuery("DocumentMaster.countByWorkspace.filterUserACLEntry")
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("user", user)
+                .setParameter("excludedFolders", excludedFolders)
+                .getSingleResult()).intValue();
+    }
 }

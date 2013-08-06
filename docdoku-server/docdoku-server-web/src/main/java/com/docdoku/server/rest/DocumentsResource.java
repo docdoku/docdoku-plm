@@ -78,7 +78,7 @@ public class DocumentsResource {
 
     @GET
     @Produces("application/json;charset=UTF-8")
-    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter) {
+    public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter , @QueryParam("start") int start) {
 
         if(checkoutUser != null){
             return getDocumentsCheckedOutByUser(workspaceId);
@@ -92,10 +92,48 @@ public class DocumentsResource {
         else if(assignedUserLogin !=null){
             return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin, filter);
         }
-        else {
+        else if(folderId != null){
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
+        }else{
+            return getDocumentsInWorkspace(workspaceId, start);
         }
 
+    }
+
+    @GET
+    @Path("count")
+    @Produces("application/json;charset=UTF-8")
+    public int getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId) {
+        try {
+            return documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId));
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    private DocumentMasterDTO[] getDocumentsInWorkspace(String workspaceId, int start) {
+        int maxResult = 20;
+        try {
+            DocumentMaster[] docMs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
+            DocumentMasterDTO[] docMsDTOs = new DocumentMasterDTO[docMs.length];
+
+            for (int i = 0; i < docMs.length; i++) {
+                docMsDTOs[i] = mapper.map(docMs[i], DocumentMasterDTO.class);
+                docMsDTOs[i].setPath(docMs[i].getLocation().getCompletePath());
+                docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
+                docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
+                ACL acl = docMs[i].getACL();
+                if(acl != null){
+                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
+                }
+            }
+
+            return docMsDTOs;
+
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
     private DocumentMasterDTO[] getDocumentsCheckedOutByUser(String workspaceId) {
