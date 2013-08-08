@@ -35,10 +35,16 @@ import android.view.*;
  */
 public abstract class SimpleActionBarActivity extends FragmentActivity {
 
+    private static final String URL_API = "api/workspaces/";
+
     protected static String currentUserLogin;
 
     protected String getCurrentWorkspace(){
         return MenuFragment.getCurrentWorkspace();
+    }
+
+    protected String getUrlWorkspaceApi(){
+        return URL_API + getCurrentWorkspace();
     }
 
     protected String getCurrentUserLogin(){
@@ -77,7 +83,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.simple_title_bar, menu);
+        inflater.inflate(R.menu.action_bar_simple, menu);
         ActionBar actionBar = getActionBar();
         actionBar.setIcon(R.drawable.menu_dark);
         actionBar.setHomeButtonEnabled(true);

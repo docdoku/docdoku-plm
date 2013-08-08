@@ -162,7 +162,7 @@ public class PartActivity extends SimpleActionBarActivity {
         }
 
         private void addNameValueRow(LayoutInflater inflater, ViewGroup content, String name, String value){
-            View row = inflater.inflate(R.layout.row_name_value_pair, null);
+            View row = inflater.inflate(R.layout.adapter_name_value_pair, null);
             TextView fieldName = (TextView) row.findViewById(R.id.fieldName);
             fieldName.setText(name);
             TextView fieldValue = (TextView) row.findViewById(R.id.fieldValue);

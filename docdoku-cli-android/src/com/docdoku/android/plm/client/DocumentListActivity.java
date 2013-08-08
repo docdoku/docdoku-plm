@@ -20,8 +20,6 @@
 
 package com.docdoku.android.plm.client;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +27,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +48,9 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
     protected DocumentAdapter documentAdapter;
     protected ListView documentListView;
 
+    private List<Document> documentSearchResultArray;
+    private DocumentAdapter documentSearchResultAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -55,6 +62,46 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         documentListView = (ListView) findViewById(R.id.elementList);
         Log.i("com.docdoku.android.plm.client", "Loading navigation history from preference path: " + getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
+    }
+
+    /**
+     * SearchActionBarActivity methods
+     */
+    @Override
+    protected int getSearchQueryHintId() {
+        return R.string.searchDocumentById;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void executeSearch(String query) {
+        if (query.length()>0){
+            documentSearchResultArray = new ArrayList<Document>();
+            documentSearchResultAdapter = new DocumentAdapter(documentSearchResultArray);
+            documentListView.setAdapter(documentSearchResultAdapter);
+            HttpGetListener httpGetListener = new HttpGetListener() {
+                @Override
+                public void onHttpGetResult(String result) {
+                    try {
+                        JSONArray partsJSON = new JSONArray(result);
+                        for (int i=0; i<partsJSON.length(); i++){
+                            JSONObject partJSON = partsJSON.getJSONObject(i);
+                            Document part = new Document(partJSON.getString("id"));
+                            part.updateFromJSON(partJSON, getResources());
+                            documentSearchResultArray.add(part);
+                        }
+                        documentSearchResultAdapter.notifyDataSetChanged();
+                    }catch (JSONException e){
+                        Log.e("com.docdoku.android.plm.client", "Error handling json array of workspace's documents");
+                        e.printStackTrace();
+                        Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+                    }
+                }
+            };
+            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/search/id=" + query + "/documents");
+        }
+        else{
+            documentListView.setAdapter(documentAdapter);
+        }
     }
 
     protected class DocumentAdapter extends BaseAdapter {
@@ -90,113 +137,35 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 documentRowView = inflater.inflate(R.layout.adapter_document, null);
                 TextView identification = (TextView) documentRowView.findViewById(R.id.identification);
                 identification.setText(doc.getIdentification());
-                TextView checkOutUser = (TextView) documentRowView.findViewById(R.id.checkOutUser);
                 ImageView checkedInOutImage = (ImageView) documentRowView.findViewById(R.id.checkedInOutImage);
+                //TextView checkOutUser = (TextView) documentRowView.findViewById(R.id.checkOutUser);
                 String checkOutUserName = doc.getCheckOutUserName();
                 if (checkOutUserName != null){
                     String checkOutUserLogin = doc.getCheckOutUserLogin();
                     if (checkOutUserLogin.equals(getCurrentUserLogin())){
                         checkedInOutImage.setImageResource(R.drawable.checked_out_current_user_light);
                     }
-                    checkOutUser.setText(checkOutUserName);
+                    //checkOutUser.setText(checkOutUserName);
                 }
                 else{
-                    checkOutUser.setText("");
+                    //checkOutUser.setText("");
                     checkedInOutImage.setImageResource(R.drawable.checked_in_light);
                 }
-                View contentLink = documentRowView.findViewById(R.id.contentLink);
-                contentLink.setOnClickListener(new View.OnClickListener() {
+                TextView numAttachedFiles = (TextView) documentRowView.findViewById(R.id.numAttachedFiles);
+                numAttachedFiles.setText(" " + doc.getNumberOfFiles());
+                documentRowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         navigationHistory.add(doc.getIdentification());
-                        Intent intent = new Intent(getBaseContext(), DocumentActivity.class);
-                        intent.putExtra(DocumentActivity.DOCUMENT_EXTRA, doc);
+                        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
+                        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, doc);
                         startActivity(intent);
                     }
                 });
-                final CompoundButton notifyStateChange = (CompoundButton) documentRowView.findViewById(R.id.notifyStateChange);
-                notifyStateChange.setChecked(doc.getStateChangeNotification());
-                notifyStateChange.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final boolean b = notifyStateChange.isChecked();
-                        HttpPutListener httpPutListener = new HttpPutListener() {
-                            @Override
-                            public void onHttpPutResult(boolean result) {
-                                doc.setStateChangeNotification(b);
-                            }
-                        };
-                        if (b) {
-                            subscriptionChangeRequested(R.string.confirmSubscribeToStateChangeNotification,
-                                    doc,
-                                    "stateChange/subscribe",
-                                    notifyStateChange,
-                                    b,
-                                    httpPutListener);
-                        } else {
-                            subscriptionChangeRequested(R.string.confirmUnsubscribeToStateChangeNotification,
-                                    doc,
-                                    "stateChange/unsubscribe",
-                                    notifyStateChange,
-                                    b,
-                                    httpPutListener);
-
-                        }
-                    }
-                });
-                final CompoundButton notifyIteration = (CompoundButton) documentRowView.findViewById(R.id.notifyIteration);
-                notifyIteration.setChecked(doc.getIterationNotification());
-                notifyIteration.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final boolean b = notifyIteration.isChecked();
-                        HttpPutListener httpPutListener = new HttpPutListener() {
-                            @Override
-                            public void onHttpPutResult(boolean result) {
-                                doc.setIterationNotification(b);
-                            }
-                        };
-                        if (b) {
-                            subscriptionChangeRequested(R.string.confirmSubscribeToIterationChangeNotification,
-                                    doc,
-                                    "iterationChange/subscribe",
-                                    notifyIteration,
-                                    b,
-                                    httpPutListener);
-                        } else {
-                            subscriptionChangeRequested(R.string.confirmUnsubscribeToIterationChangeNotification,
-                                    doc,
-                                    "iterationChange/unsubscribe",
-                                    notifyIteration,
-                                    b,
-                                    httpPutListener);
-
-                        }
-                    }
-                });
-            } else {
+                } else {
                 documentRowView = new ProgressBar(DocumentListActivity.this);
             }
             return documentRowView;
-        }
-
-        private void subscriptionChangeRequested(int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
-            AlertDialog.Builder builder = new AlertDialog.Builder(DocumentListActivity.this);
-            builder.setMessage(messageId);
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
-                    new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
-                }
-            });
-            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    compoundButton.setChecked(!compoundButtonState);
-                }
-            });
-            builder.create().show();
         }
     }
 }

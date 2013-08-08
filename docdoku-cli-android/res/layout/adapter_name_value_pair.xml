@@ -5,14 +5,13 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_margin="10dp"
-              android:paddingTop="20dp">
+              android:padding="10dp">
 
     <TextView
             android:id="@+id/fieldName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:layout_marginRight="5dp"
             android:layout_weight="2"/>
 
     <TextView

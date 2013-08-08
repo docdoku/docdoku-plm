@@ -18,20 +18,16 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.network;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
+import com.docdoku.android.plm.network.listeners.HttpPostUploadFileListener;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author: martindevillers
@@ -43,13 +39,14 @@ public class HttpPostUploadFileTask extends AsyncTask<String, Void, Boolean>{
 
     private byte[] id;
     private String baseUrl;
+    private String fileName;
 
-    private Context context;
+    private HttpPostUploadFileListener listener;
     
-    public HttpPostUploadFileTask(Context context){
+    public HttpPostUploadFileTask(HttpPostUploadFileListener listener){
         id = HttpGetTask.id;
         baseUrl = HttpGetTask.baseUrl;
-        this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -57,7 +54,8 @@ public class HttpPostUploadFileTask extends AsyncTask<String, Void, Boolean>{
         boolean result = false;
         HttpURLConnection conn = null;
         try{
-            String pUrl = baseUrl + strings[0];
+            fileName = strings[0];
+            String pUrl = baseUrl + fileName;
             String filePath = strings[1];
 
             URL url = new URL(pUrl);
@@ -67,15 +65,16 @@ public class HttpPostUploadFileTask extends AsyncTask<String, Void, Boolean>{
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
-            conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
 
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "--------------------" + Long.toString(System.currentTimeMillis(), 16);
             byte[] header = (twoHyphens + boundary + lineEnd + "Content-Disposition: form-data; name=\"upload\";" + " filename=\"" + file + "\"" + lineEnd + lineEnd).getBytes("ISO-8859-1");
             byte[] footer = (lineEnd + twoHyphens + boundary + twoHyphens + lineEnd).getBytes("ISO-8859-1");
+
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
             long len = header.length + file.length() + footer.length;
@@ -86,8 +85,7 @@ public class HttpPostUploadFileTask extends AsyncTask<String, Void, Boolean>{
 
             byte[] data = new byte[CHUNK_SIZE];
             int length;
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            //InputStream in = new (pLocalFile.length(), new DigestInputStream(new BufferedInputStream(new FileInputStream(file), BUFFER_CAPACITY),md));
+
             FileInputStream fileInputStream = new FileInputStream(file);
             while ((length = fileInputStream.read(data)) != -1) {
                 out.write(data, 0, length);
@@ -111,8 +109,8 @@ public class HttpPostUploadFileTask extends AsyncTask<String, Void, Boolean>{
             Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException: failed to upload file");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (NoSuchAlgorithmException e) {
+            Log.e("com.docdoku.android.plm.client","IOException: failed to upload file");
+            Log.e("com.docdoku.android.plm.client","IOException message: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return result;
@@ -120,12 +118,7 @@ public class HttpPostUploadFileTask extends AsyncTask<String, Void, Boolean>{
 
     @Override
     public void onPostExecute(Boolean result){
-        if (result){
-            Toast.makeText(context.getApplicationContext(), R.string.uploadSuccess, Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(context.getApplicationContext(), R.string.uploadFail, Toast.LENGTH_LONG).show();
-        }
+        listener.onUploadResult(result, fileName);
     }
 
 }

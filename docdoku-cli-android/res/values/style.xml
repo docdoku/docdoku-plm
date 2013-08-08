@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppThemeBase" parent="android:Theme.Holo.Light" >
+    <style name="Theme.AppTheme" parent="android:Theme.Holo" >
         <item name="android:textSize">20sp</item>
         <item name="android:windowBackground">@color/background</item>
         <item name="android:textColor">@color/lightGrey</item>
+        <item name="android:alertDialogStyle">@style/Dialog</item>
+        <item name="android:actionBarStyle">@style/Theme.AppTheme.ActionBar</item>
     </style>
-    <style name="AppTheme" parent="AppThemeBase">
-        <item name="android:dialogTheme">@style/AppTheme.Dialog</item>
-        <item name="android:alertDialogStyle">@style/AppTheme.Dialog</item>
-        <item name="android:alertDialogTheme">@style/AppTheme.Dialog</item>
-        <item name="android:dialogPreferenceStyle">@android:style/Theme.Holo.Light.Dialog</item>
-        <item name="android:buttonStyle">@android:style/Widget.Holo.Button</item>
-        <item name="android:buttonStyleToggle">@android:style/Widget.Holo.Button.Toggle</item>
-        <item name="android:editTextStyle">@android:style/Widget.Holo.EditText</item>
+    <style name="Theme.AppTheme.ActionBar" parent="android:Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/light_background</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:titleTextStyle">@style/Theme.AppTheme.ActionBar.TitleTextStyle</item>
     </style>
-    <style name="AppTheme.Dialog" parent="android:Theme.Holo.Light.Dialog">
+    <style name="Theme.AppTheme.ActionBar.TitleTextStyle">
+        <item name="android:textColor">@color/darkGrey</item>
+    </style>
+    <style name="Dialog" parent="android:Theme.Holo.Light.Dialog">
         <item name = "android:textColor">@color/darkGrey</item>
     </style>
     <!--Text styles-->
-    <style name="BigTitle" parent="AppTheme">
+    <style name="BigTitle" parent="Theme.AppTheme">
         <item name="android:background">@color/transparent</item>
         <item name="android:padding">4dp</item>
         <item name="android:textSize">26sp</item>
     </style>
-    <style name="MediumTitle" parent="AppTheme">
+    <style name="MediumTitle" parent="Theme.AppTheme">
         <item name="android:background">@color/transparent</item>
         <item name="android:padding">4dp</item>
         <item name="android:textSize">24sp</item>
     </style>
-    <style name="SmallText" parent="AppTheme">
+    <style name="SmallText" parent="Theme.AppTheme">
         <item name="android:background">@color/transparent</item>
         <item name="android:textSize">18sp</item>
     </style>
@@ -52,4 +53,5 @@
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/darkGrey</item>
     </style>
+
 </resources>

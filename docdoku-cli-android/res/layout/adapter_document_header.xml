@@ -11,81 +11,50 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/buttons"
             android:orientation="vertical"
-            android:layout_margin="10dp"
-            android:paddingRight="20dp"
             android:layout_gravity="center">
 
         <TextView
                 android:id="@+id/documentIdentification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="left"
                 style="@style/MediumTitle"
                 android:layout_marginTop="2dp"
                 android:text="@string/error"/>
 
-        <!--TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                style="@style/SmallText"
-                android:text="@string/documentAuthor"/>
-
-        <TextView
-                android:id="@+id/documentAuthor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                style="@style/MediumTitle"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:text="@string/error"/-->
-
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/buttons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:orientation="vertical">
-
         <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/buttons"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_weight="1">
+                android:orientation="horizontal">
 
             <ToggleButton
-                    android:layout_width="wrap_content"
+                    android:id="@+id/notifyIteration"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textOff="" android:textOn=""
-                    android:id="@+id/notifyStateChange"
-                    android:drawableRight="@drawable/iteration_notification"/>
-
-            <ToggleButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOff="" android:textOn=""
-                    android:drawableRight="@drawable/state_change_notification"
-                    android:id="@+id/notifyIteration"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:textOff="@string/documentIterationButton" android:textOn="@string/documentIterationButton"
+                    android:textSize="14sp"
+                    android:drawableTop="@drawable/iteration_notification"/>
 
             <Button
                     android:id="@+id/checkInOutButton"
-                    android:drawableLeft="@drawable/error"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/error"
+                    android:textSize="14sp"
                     android:text="@string/partCheckOut"/>
+
+
+            <ToggleButton
+                    android:id="@+id/notifyStateChange"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textOff="@string/documentStateChangeButton" android:textOn="@string/documentStateChangeButton"
+                    android:textSize="14sp"
+                    android:drawableTop="@drawable/state_change_notification"/>
 
         </LinearLayout>
 

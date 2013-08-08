@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +23,7 @@ import java.util.Calendar;
 /**
  * @author: martindevillers
  */
-public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetListener{
+public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetListener {
 
     protected Button author, minCreationDate, maxCreationDate;
 
@@ -34,7 +36,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users_light/");
+        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
 
         author = (Button) findViewById(R.id.author);
         author.setOnClickListener(new View.OnClickListener() {
@@ -79,11 +81,11 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
             JSONArray usersJSON = new JSONArray(result);
             for (int i=0; i<usersJSON.length(); i++){
                 JSONObject userJSON = usersJSON.getJSONObject(i);
-                User user = new User(userJSON.getString("name"),userJSON.getString("email_light"),userJSON.getString("login"));
+                User user = new User(userJSON.getString("name"),userJSON.getString("email"),userJSON.getString("login"));
                 users.add(user);
             }
         } catch (JSONException e) {
-            Log.e("com.docdoku.android.plm.client", "Error handling json of workspace's users_light");
+            Log.e("com.docdoku.android.plm.client", "Error handling json of workspace's users");
             e.printStackTrace();
         }
     }

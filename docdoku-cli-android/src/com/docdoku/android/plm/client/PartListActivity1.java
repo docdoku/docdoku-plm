@@ -31,6 +31,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +43,7 @@ import java.util.*;
  *
  * @author: Martin Devillers
  */
-public class PartListActivity1 extends SearchActionBarActivity implements HttpGetListener{
+public class PartListActivity1 extends SearchActionBarActivity implements HttpGetListener {
 
     public static final String  LIST_MODE_EXTRA = "list mode";
     public static final int ALL_PARTS_LIST = 0;
@@ -213,5 +215,18 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
             });
             return partRowView;
         }
+    }
+
+    /**
+     * SearchActionBarActivity methods
+     */
+    @Override
+    protected int getSearchQueryHintId() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void executeSearch(String query) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

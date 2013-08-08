@@ -2,7 +2,7 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="rectangle">
-    <gradient android:startColor="@color/background" android:endColor="@color/background"/>
+    <gradient android:startColor="@color/transparent"/>
     <stroke android:width="1px"
-            android:color="@color/transparentWhite" />
+            android:color="@color/veryTransparentWhite" />
 </shape>

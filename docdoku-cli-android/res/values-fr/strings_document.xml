@@ -7,6 +7,11 @@
     <string name="documentAuthor">Auteur</string>
     <string name="documentVersion">Version</string>
 
+    <string name="documentNumberOfAttachedFiles">Fichiers: </string>
+    <string name="documentNoAttachedFiles">Aucun fichier joint</string>
+    <string name="documentNoLinkedDocuments">Aucun lien vers des documents</string>
+    <string name="documentNoAttributes">Aucun attribut</string>
+
     <string-array name="documentGeneralInformationFieldNames">
         <item>Dossier</item>
         <item>Référence</item>
@@ -34,6 +39,8 @@
     <string name="documentAttributes">Attributs</string>
 
     <!-- Subscribe/Usubscribe to document notifications-->
+    <string name="documentStateChangeButton">\iEtats</string>
+    <string name="documentIterationButton">\iItérations</string>
     <string name="confirmSubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les itérations sur ce document?</string>
     <string name="confirmUnsubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les itérations sur ce document?</string>
     <string name="confirmSubscribeToStateChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les changements d\'état sur ce document?</string>
@@ -46,7 +53,10 @@
     <string name="documentCheckInConfirm">Libérer le document?</string>
     <string name="documentDoCheckIn">Libérer</string>
     <string name="documentCancelCheckOut">Annuler la réservation</string>
+    <string name="documentIterationNotePrompt">Entrez une note de révision si vous le souhaitez pour libérer le document: </string>
     <string name="documentLocked">Réservé</string>
+    <string name="documentSuccessfullyCheckedIn">Document liberé avec succès</string>
+    <string name="documentSuccessfullyCheckedOut">Document réservé avec succès</string>
 
     <!-- Search documents -->
     <string name="documentSearchPrompt">Recherche de Document</string>

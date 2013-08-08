@@ -21,14 +21,11 @@
 package com.docdoku.android.plm.client;
 
 import android.content.res.Resources;
-import android.util.Log;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -37,19 +34,16 @@ import java.util.Date;
  */
 public class Part extends Element implements Serializable{
 
+    private static final String JSON_KEY_PART_NAME = "name";
     private static final String JSON_KEY_PART_ITERATIONS = "partIterations";
+    private static final String JSON_KEY_PART_ITERATION_NOTE = "iterationNote";
 
     private String key;
     private String number;
     private String version;
-    private String name;
-    private String authorName;
-    private String creationDate;
-    private String description;
     private String workflow;
     private String lifecycleState;
     private boolean standardPart;
-    private String workspaceId;
     private boolean publicShared;
 
     public Part(String key){
@@ -79,6 +73,11 @@ public class Part extends Element implements Serializable{
         return checkOutUserLogin;
     }
 
+    @Override
+    protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public String getKey(){
         return key;
     }
@@ -90,43 +89,41 @@ public class Part extends Element implements Serializable{
     @Override
     public Part updateFromJSON(JSONObject partJSON, Resources resources) throws JSONException {
         updateElementFromJSON(partJSON, resources);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(resources.getString(R.string.fullDateFormat));
         setPartDetails(
                 partJSON.getString("number"),
                 partJSON.getString("version"),
-                partJSON.getString("name"),
-                partJSON.getJSONObject("author").getString("name"),
-                dateFormat.format(new Date(Long.valueOf(partJSON.getString("creationDate")))),
-                partJSON.getString("description"),
                 partJSON.getString("workflow"),
                 partJSON.getString("lifeCycleState"),
                 partJSON.getBoolean("standardPart"),
-                partJSON.getString("workspaceId"),
                 partJSON.getBoolean("publicShared")
         );
         return this;
     }
 
-    private void setPartDetails(String number, String version, String name, String authorName, String creationDate, String description, String workflow, String lifecycleState, boolean standardPart, String workspaceId, boolean publicShared){
+    private void setPartDetails(String number, String version, String workflow, String lifecycleState, boolean standardPart, boolean publicShared){
         this.number = number;
         this.version = version;
-        this.name = name;
-        this.authorName = authorName;
-        this.creationDate = creationDate;
-        this.description = description;
         this.workflow = workflow;
         this.lifecycleState = lifecycleState;
         this.standardPart = standardPart;
-        this.workspaceId = workspaceId;
         this.publicShared = publicShared;
     }
 
     /**
      * The following methods provide the keys to read the part attributes in the JSONObject received from the server
      */
-
     @Override
     protected String getIterationsJSONKey() {
         return JSON_KEY_PART_ITERATIONS;
+    }
+
+    @Override
+    protected String getIterationNoteJSONKey() {
+        return JSON_KEY_PART_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected String getNameJSONKey() {
+        return JSON_KEY_PART_NAME;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

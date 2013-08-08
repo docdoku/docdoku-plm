@@ -5,19 +5,10 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent">
 
-
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
-
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:src="@color/lightBlue"
-                android:layout_marginBottom="2dp"/>
 
             <ExpandableListView
                     android:id="@+id/list"
@@ -25,8 +16,9 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:groupIndicator="@null"
+                    android:childDivider="@color/transparent"
+                    android:dividerHeight="4dp"
                     android:indicatorLeft="16dp">
-
             </ExpandableListView>
 
         </LinearLayout>

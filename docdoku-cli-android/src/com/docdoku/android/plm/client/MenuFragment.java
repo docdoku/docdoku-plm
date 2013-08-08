@@ -102,7 +102,6 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), DocumentCompleteListActivity.class);
-                intent.putExtra(DocumentCompleteListActivity.LIST_MODE_EXTRA, DocumentCompleteListActivity.ALL_DOCUMENTS_LIST);
                 startActivity(intent);
             }
         });
@@ -110,8 +109,8 @@ public class MenuFragment extends Fragment {
         checkedOutDocuments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), DocumentCompleteListActivity.class);
-                intent.putExtra(DocumentCompleteListActivity.LIST_MODE_EXTRA, DocumentCompleteListActivity.CHECKED_OUT_DOCUMENTS_LIST);
+                Intent intent = new Intent(getActivity(), DocumentCheckedOutListActivity.class);
+                intent.putExtra(DocumentCheckedOutListActivity.LIST_MODE_EXTRA, DocumentCheckedOutListActivity.CHECKED_OUT_DOCUMENTS_LIST);
                 startActivity(intent);
             }
         });

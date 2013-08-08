@@ -20,101 +20,178 @@
 
 package com.docdoku.android.plm.client;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.*;
 import android.widget.*;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class DocumentCompleteListActivity extends DocumentListActivity implements HttpGetListener, LoaderManager.LoaderCallbacks<Document> {
+public class DocumentCompleteListActivity extends DocumentListActivity implements HttpGetListener, LoaderManager.LoaderCallbacks<List<Document>> {
 
     private static final int LOADER_ID_ALL_DOCUMENTS = 400;
 
-
-    private AsyncTask documentQueryTask;
-    private View loading;
+    private int numDocumentsAvailable;
+    private ProgressBar footerProgressBar;
+    private int numPagesDownloaded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        footerProgressBar = new ProgressBar(this);
+        documentListView.addFooterView(footerProgressBar);
 
-    }
+        documentArray = new ArrayList<Document>();
+        documentAdapter = new DocumentAdapter(documentArray);
+        documentListView.setAdapter(documentAdapter);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.documentSearchPrompt));
-        final HttpGetListener httpGetListener = this;
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        numDocumentsAvailable = 0;
+        numPagesDownloaded = 0;
+
+        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/count");
+
+        documentListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                Log.i("com.docdoku.android.plm.client", "Document search query launched: " + s);
-                return false;
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                if (documentQueryTask != null){
-                    documentQueryTask.cancel(true);
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount == totalItemCount && documentAdapter.getCount() < numDocumentsAvailable) {
+                    Log.i("com.docdoku.android.plm.client", "Loading more parts. Next page: " + numPagesDownloaded);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("page", numPagesDownloaded);
+                    bundle.putString("workspace", getCurrentWorkspace());
+                    getSupportLoaderManager().initLoader(LOADER_ID_ALL_DOCUMENTS + numPagesDownloaded, bundle, DocumentCompleteListActivity.this);
                 }
-                documentQueryTask = new HttpGetTask(httpGetListener).execute("api/workspaces/" + getCurrentWorkspace() + "/search/id=" + s + "/documents/");
-                Log.i("com.docdoku.android.plm.client", "Document search query changed to: " + s);
-                return false;
             }
         });
-        return true;
     }
 
     @Override
     public void onHttpGetResult(String result) {
-        if (loading !=null){
-            ((ViewGroup) loading.getParent()).removeView(loading);
-            loading = null;
-        }
-        ArrayList<Document> docsArray = new ArrayList<Document>();
-        try {
-            JSONArray docsJSON = new JSONArray(result);
-            for (int i=0; i<docsJSON.length(); i++){
-                JSONObject docJSON = docsJSON.getJSONObject(i);
-                Document doc = new Document(docJSON.getString("id"));
-                doc.setStateChangeNotification(docJSON.getBoolean("stateSubscription"));
-                doc.setIterationNotification(docJSON.getBoolean("iterationSubscription"));
-                doc.updateFromJSON(docJSON, getResources());
-                docsArray.add(doc);
-            }
-            documentListView.setAdapter(new DocumentAdapter(docsArray));
-        } catch (JSONException e) {
-            Log.e("com.docdoku.android.plm.client", "Error handling json of workspace's documents");
+        try{
+            result = result.substring(0, result.length() - 1);
+            numDocumentsAvailable = Integer.parseInt(result);
+            Bundle bundle = new Bundle();
+            bundle.putInt("page", 0);
+            bundle.putString("workspace", getCurrentWorkspace());
+            Log.i("com.docdoku.android.plm.client", "Loading first part page");
+            getSupportLoaderManager().initLoader(LOADER_ID_ALL_DOCUMENTS + 0, bundle, this);
+        } catch (NumberFormatException e) {
+            Log.e("com.docdoku.android.plm.client", "NumberFormatException: didn't correctly download number of pages of documents");
+            Log.e("com.docdoku.android.plm.client", "Number of pages result: " + result);
             e.printStackTrace();
-            Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+        }
+    }
+
+    /**
+     * LoaderManager.LoaderCallbacks methods
+     */
+    @Override
+    public Loader<List<Document>> onCreateLoader(int id, Bundle bundle) {
+        return new DocumentLoaderByPage(this, bundle.getInt("page"), bundle.getString("workspace"));
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Document>> loader, List<Document> data) {
+        documentArray.addAll(data);
+        documentAdapter.notifyDataSetChanged();
+        numPagesDownloaded++;
+
+        Log.i("com.docdoku.android.plm.client", "Finished loading a page. \nNumber of parts available: " + numDocumentsAvailable + "; \nNumber of parts downloaded: " + documentAdapter.getCount());
+        if (documentAdapter.getCount() == numDocumentsAvailable){
+            documentListView.removeFooterView(footerProgressBar);
         }
     }
 
     @Override
-    public Loader<Document> onCreateLoader(int id, Bundle args) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Document> loader, Document data) {
+    public void onLoaderReset(Loader<List<Document>> loader) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public void onLoaderReset(Loader<Document> loader) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    private static class DocumentLoaderByPage extends Loader<List<Document>> implements HttpGetListener {
+
+        private int startIndex;
+        private String workspace;
+        private AsyncTask asyncTask;
+        private List<Document> downloadedParts;
+
+        public DocumentLoaderByPage(Context context, int page, String workspace) {
+            super(context);
+            startIndex = page*20;
+            downloadedParts = new ArrayList<Document>();
+            this.workspace = workspace;
+        }
+
+        @Override
+        protected void onStartLoading (){
+            Log.i("com.docdoku.android.plm.client", "Starting DocumentLoader load for page " + startIndex/20);
+            if (downloadedParts.size() == 0){
+                asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" +  startIndex);
+            } else {
+                deliverResult(downloadedParts);
+            }
+        }
+
+        @Override
+        protected void onStopLoading (){
+            if (asyncTask != null){
+                asyncTask.cancel(false);
+            }
+        }
+
+        @Override
+        protected void onReset (){
+            Log.i("com.docdoku.android.plm.client", "Restarting DocumentLoader load for page " + startIndex/20);
+            downloadedParts = new ArrayList<Document>();
+            if (asyncTask != null){
+                asyncTask.cancel(false);
+            }
+            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" +  startIndex);
+        }
+
+        @Override
+        protected void onForceLoad (){
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        protected void onAbandon (){
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public void onHttpGetResult(String result) {
+            try {
+                JSONArray partsJSON = new JSONArray(result);
+                for (int i=0; i<partsJSON.length(); i++){
+                    JSONObject partJSON = partsJSON.getJSONObject(i);
+                    Document part = new Document(partJSON.getString("id"));
+                    part.updateFromJSON(partJSON, getContext().getResources());
+                    downloadedParts.add(part);
+                }
+            }catch (JSONException e){
+                Log.e("com.docdoku.android.plm.client", "Error handling json array of workspace's documents");
+                e.printStackTrace();
+                Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+            }
+            deliverResult(downloadedParts);
+        }
     }
 }

@@ -25,7 +25,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
-import android.widget.*;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +52,7 @@ public class DocumentCheckedOutListActivity extends DocumentListActivity impleme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i("com.docdoku.android.plm.client", "DocumentCompleteListActivity starting");
+        Log.i("com.docdoku.android.plm.client", "DocumentCheckedOutListActivity starting");
 
         Intent intent = getIntent();
         int listType = intent.getIntExtra(LIST_MODE_EXTRA, 0);
@@ -66,32 +67,6 @@ public class DocumentCheckedOutListActivity extends DocumentListActivity impleme
                 new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/search/" + intent.getStringExtra(SEARCH_QUERY_EXTRA) + "/documents/");
                 break;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.documentSearchPrompt));
-        final HttpGetListener httpGetListener = this;
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                Log.i("com.docdoku.android.plm.client", "Document search query launched: " + s);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                if (documentQueryTask != null){
-                    documentQueryTask.cancel(true);
-                }
-                documentQueryTask = new HttpGetTask(httpGetListener).execute("api/workspaces/" + getCurrentWorkspace() + "/search/id=" + s + "/documents/");
-                Log.i("com.docdoku.android.plm.client", "Document search query changed to: " + s);
-                return false;
-            }
-        });
-        return true;
     }
 
     @Override

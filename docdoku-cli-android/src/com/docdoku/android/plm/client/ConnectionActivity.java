@@ -24,10 +24,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +37,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -56,6 +60,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
     private SharedPreferences preferences;
     private ProgressDialog progressDialog;
     private String username, password, serverUrl;
+    private AsyncTask connectionTask;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,22 +91,38 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         //BACK BUTTON DISABLED
     }
 
-    private void connect(String username, String password, String serverUrl){
+    private void connect(final String username, final String password, String serverUrl){
         if (checkInternetConnection()){
-            try {
-                String checkedUrl = checkUrlFormat(serverUrl);
-                Log.i("docDoku.DocDokuPLM", "Attempting to connect to server for identification");
-                Log.i("docDoku.DocDokuPLM", "Showing progress dialog");
-                progressDialog = ProgressDialog.show(this, getResources().getString(R.string.connectingToServer), null, false, false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                new HttpGetTask(checkedUrl,username,password,this).execute("api/accounts/workspaces");
-            } catch (UnsupportedEncodingException e) {
-                Log.e("docDoku.DocDokuPLM","Error encoding id for server connection");
-                e.printStackTrace();
-            }
-        }
-        else {
-            Log.i("docDoku.DocDokuPLM", "No internet connection available");
+            final String checkedUrl = checkUrlFormat(serverUrl);
+            Log.i("com.docdoku.android.plm.client", "Showing progress dialog");
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setMessage(getResources().getString(R.string.connectingToServer));
+            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (connectionTask != null){
+                        connectionTask.cancel(true);
+                    }
+                }
+            });
+            progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    Log.i("com.docdoku.android.plm.client", "Progress dialog shown");
+                    try {
+                        Log.i("com.docdoku.android.plm.client", "Attempting to connect to server for identification");
+                        connectionTask = new HttpGetTask(checkedUrl, username, password, ConnectionActivity.this).execute("api/accounts/workspaces");
+                    } catch (UnsupportedEncodingException e) {
+                        Log.e("com.docdoku.android.plm.client","Error encoding id for server connection");
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+            });
+            progressDialog.show();
+        } else {
+            Log.i("com.docdoku.android.plm.client", "No internet connection available");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.noConnectionAvailable);
             builder.setNegativeButton(R.string.OK, null);
@@ -113,11 +134,11 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         if (info != null){
-            Log.i("docDoku.DocDokuPLM", "Connected to network with type code: " + info.getType());
+            Log.i("com.docdoku.android.plm.client", "Connected to network with type code: " + info.getType());
             return info.isConnected();
         }
         else{
-            Log.i("docDoku.DocDokuPLM", "Not connected to any data network");
+            Log.i("com.docdoku.android.plm.client", "Not connected to any data network");
             return false;
         }
     }
@@ -159,24 +180,17 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
     @Override
     public void onHttpGetResult(String result) {
         if (progressDialog != null && progressDialog.isShowing()){
-            progressDialog.dismiss(); Log.i("docDoku.DocDokuPLM", "Dismissing connection dialog");
+            progressDialog.dismiss(); Log.i("com.docdoku.android.plm.client", "Dismissing connection dialog");
+        }else{
+            Log.i("com.docdoku.android.plm.client", "Connection dialog not showing on request result");
         }
-        else{
-            Log.i("docDoku.DocDokuPLM", "Connection dialog not showing");
-        }
-        if (result.equals(HttpGetTask.CONNECTION_ERROR)){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getResources().getString(R.string.wrongUsernamePassword));
-            builder.setNegativeButton(getResources().getString(R.string.OK), null);
-            builder.create().show();
-        }
-        else if (result.equals(HttpGetTask.URL_ERROR)){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getResources().getString(R.string.serverUrlError));
-            builder.setNegativeButton(getResources().getString(R.string.OK), null);
-            builder.create().show();
-        }
-        else{
+        if(result == null || result.equals(HttpGetTask.ERROR_UNKNOWN) || result.equals(HttpGetTask.ERROR_HTTP_BAD_REQUEST)){
+            createErrorDialog(R.string.connectionError);
+        }else if (result.equals(HttpGetTask.ERROR_HTTP_UNAUTHORIZED)){
+            createErrorDialog(R.string.wrongUsernamePassword);
+        }else if (result.equals(HttpGetTask.ERROR_URL)){
+            createErrorDialog(R.string.serverUrlError);
+        }else{
             SearchActionBarActivity.currentUserLogin = username;
             SimpleActionBarActivity.currentUserLogin = username;
             try{
@@ -185,16 +199,15 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
                 String[] workspaceArray = new String[numWorkspaces];
                 for (int i=0; i<numWorkspaces; i++){
                     workspaceArray[i] = workspaceJSON.getJSONObject(i).getString("id");
-                    Log.i("docDoku.DocDokuPLM", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
+                    Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
                 MenuFragment.setWorkspaces(workspaceArray);
-            }
-            catch (JSONException e) {
-                Log.e("docDoku.DocDokuPLM","Error creating JSONArray from String result");
+            }catch (JSONException e) {
+                Log.e("com.docdoku.android.plm.client","Error creating workspace JSONArray from String result");
                 e.printStackTrace();
             }
             if (rememberId.isChecked()){
-                Log.i("docDoku.DocDokuPLM", "Enregistrement des identifiants pour: " + username);
+                Log.i("com.docdoku.android.plm.client", "Saving in memory user identification for: " + username);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(PREFERENCE_AUTO_CONNECT, true);
                 editor.putString(PREFERENCE_USERNAME, username);
@@ -204,6 +217,12 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
             }
             endConnectionActivity();
         }
+    }
 
+    private void createErrorDialog(int messageId){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(messageId);
+        builder.setNegativeButton(getResources().getString(R.string.OK), null);
+        builder.create().show();
     }
 }

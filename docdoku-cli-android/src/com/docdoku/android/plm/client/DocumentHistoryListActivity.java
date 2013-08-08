@@ -26,6 +26,8 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +62,10 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
         Log.i("com.docdoku.android.plm.client", "Document history_light list size : " + documentArray.size());
     }
 
+    /**
+     * LoaderManager.LoaderCallbacks methods
+     */
+
     @Override
     public Loader<Document> onCreateLoader(int id, Bundle bundle) {
         Log.i("com.docdoku.android.plm.client", "Querying information for part in history_light at position " + (id - LOADER_ID_RECENT_DOCUMENTS) + " with reference " + bundle.getString("partKey"));
@@ -83,7 +89,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetListener{
+    private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetListener {
 
         private String elementId;
         private String workspace;

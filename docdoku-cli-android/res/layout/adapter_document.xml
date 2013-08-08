@@ -12,77 +12,67 @@
         android:id="@+id/contentLink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
+        android:layout_margin="10dp"
+        android:padding="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/notifyStateChangeLayout">
 
         <TextView
                 android:id="@+id/identification"
-                style="@style/MediumTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/expand"
                 android:layout_alignParentLeft="true"
-                android:text="docId"/>
-
-        <ImageView
-                android:id="@+id/checkedInOutImage"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/identification"
-                android:layout_centerVertical="true"
-                android:src="@android:drawable/ic_lock_lock"/>
+                android:layout_marginLeft="35dp"
+                android:text="docId"
+                android:ellipsize="middle"
+                android:singleLine="true"/>
 
         <TextView
-                android:id="@+id/checkOutUser"
+                android:id="@+id/numAttachedFilesTitle"
                 style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="checkOutUser"
-                android:layout_toRightOf="@+id/checkedInOutImage"
-                android:layout_alignTop="@+id/checkedInOutImage"
-                android:layout_alignBottom="@+id/checkedInOutImage"
-                android:gravity="center_vertical"/>
+                android:layout_below="@+id/identification"
+                android:text="@string/documentNumberOfAttachedFiles"/>
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/numAttachedFiles"
+            style="@style/SmallText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/identification"
+            android:layout_toRightOf="@+id/numAttachedFilesTitle"
+            android:text="#files"/>
 
-    <LinearLayout
-        android:id="@+id/notifyStateChangeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="" android:textOn=""
-                android:id="@+id/notifyStateChange"
-                android:drawableRight="@drawable/iteration_notification"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+        <ImageView
+            android:id="@+id/expand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/notifyStateChangeLayout"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_centerVertical="true"
+            android:src="@drawable/element_expand"/>
 
-        <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="" android:textOn=""
-                android:drawableRight="@drawable/state_change_notification"
-                android:id="@+id/notifyIteration"/>
+    </RelativeLayout>
 
-    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/white_transparent_line"/>
 
-
+    <ImageView
+            android:id="@+id/checkedInOutImage"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/white_border_rectangle"
+            android:src="@drawable/checked_out_other_user_light"/>
 
 </RelativeLayout>

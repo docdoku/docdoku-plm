@@ -14,4 +14,8 @@
     <color name="white">#fff</color>
     <color name="lightBlue">#33b5e5</color>
     <color name="darkGrey">#666</color>
+    <color name="light_background">#fff3f3f3</color>
+    <color name="transparentWhite">#aaffffff</color>
+    <color name="veryTransparentWhite">#55ffffff</color>
+
 </resources>

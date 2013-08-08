@@ -21,7 +21,10 @@
 package com.docdoku.android.plm.client;
 
 import android.app.ActionBar;
+import android.util.Log;
 import android.view.*;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 /**
  *
@@ -32,10 +35,40 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_title_bar, menu);
+        inflater.inflate(R.menu.action_bar_search, menu);
         ActionBar actionBar = getActionBar();
         actionBar.setIcon(R.drawable.menu_dark);
         actionBar.setHomeButtonEnabled(true);
+
+        final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
+        int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
+        searchTextView.setHintTextColor(getResources().getColor(R.color.darkGrey));
+        searchTextView.setTextColor(R.color.darkGrey);
+
+        int queryHintId = getSearchQueryHintId();
+        if (queryHintId != 0){
+            searchView.setQueryHint(getResources().getString(queryHintId));
+        }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.i("com.docdoku.android.plm.client", "Search query submitted: " + s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.i("com.docdoku.android.plm.client", "Document search query changed to: " + s);
+                executeSearch(s);
+                return false;
+            }
+        });
         return true;
     }
+
+    protected abstract int getSearchQueryHintId();
+
+    protected abstract void executeSearch(String query);
 }

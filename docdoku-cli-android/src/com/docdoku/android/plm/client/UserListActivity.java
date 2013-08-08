@@ -27,6 +27,8 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.*;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +58,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             @Override
             public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                 MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.title_bar_user_selected, menu);
+                inflater.inflate(R.menu.action_bar_user_selected, menu);
                 return true;
             }
 
@@ -161,6 +163,19 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             });
             return userRowView;
         }
+    }
+
+    /**
+     * SearchActionBarActivity methods
+     */
+    @Override
+    protected int getSearchQueryHintId() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected void executeSearch(String query) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
 

@@ -36,14 +36,36 @@ import java.util.Date;
  */
 public class Document extends Element implements Serializable{
 
-    private static final String JSON_KEY_PART_ITERATIONS = "documentIterations";
+    private static final String JSON_KEY_DOCUMENT_NAME = "title";
+    private static final String JSON_KEY_DOCUMENT_ITERATIONS = "documentIterations";
+    private static final String JSON_KEY_DOCUMENT_ITERATION_NOTE = "revisionNote";
+    private static final String JSON_KEY_DOCUMENT_ATTACHED_FILES = "attachedFiles";
 
     private String identification, reference;
-    private String path, author, creationDate, type, title, lifeCycleState, description;
-    private int revisionNumber;
-    private String revisionNote, revisionDate, revisionAuthor;
+    private String path, type, lifeCycleState;
+    private String[] files;
 
     private boolean iterationNotification, stateChangeNotification;
+
+
+    public int getNumberOfFiles(){
+        if (files == null){
+            return 0;
+        }
+        return files.length;
+    }
+
+    public String getFileName(int i){
+        try{
+            return files[i].substring(files[i].lastIndexOf("/")+1);
+        } catch (IndexOutOfBoundsException e){
+            return files[i];
+        }
+    }
+
+    public String getFile(int i){
+        return files[i];
+    }
 
     public Document(String identification){
         this.identification = identification;
@@ -56,10 +78,10 @@ public class Document extends Element implements Serializable{
         String[] values = new String[10];
         values[0] = path.substring(path.lastIndexOf("/")+1,path.length());
         values[1] = reference;
-        values[2] = author;
+        values[2] = authorName;
         values[3] = creationDate;
         values[4] = type;
-        values[5] = title;
+        values[5] = name;
         values[6] = checkOutUserName;
         values[7] = checkOutDate;
         if (JSONObject.NULL.toString().equals(lifeCycleState)){
@@ -71,12 +93,12 @@ public class Document extends Element implements Serializable{
         return values;
     }
 
-    public String[] getLastRevision(){
+    public String[] getLastIteration(){
         String[] result = new String[4];
-        result[0] = identification + "-" + revisionNumber;
-        result[1] = revisionNote;
-        result[2] = revisionDate;
-        result[3] = revisionAuthor;
+        result[0] = identification + "-" + iterationNumber;
+        result[1] = iterationNote;
+        result[2] = iterationDate;
+        result[3] = iterationAuthor;
         return result;
     }
 
@@ -85,7 +107,7 @@ public class Document extends Element implements Serializable{
     }
 
     public String getAuthor(){
-        return author;
+        return authorName;
     }
 
     public void setIterationNotification(boolean set){
@@ -111,53 +133,57 @@ public class Document extends Element implements Serializable{
         return files;
     }
 
-    public int getRevisionNumber() {
-        return revisionNumber;
+    public int getIterationNumber() {
+        return iterationNumber;
     }
 
     public Document updateFromJSON(JSONObject documentJSON, Resources resources) throws JSONException {
         updateElementFromJSON(documentJSON, resources);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(resources.getString(R.string.simpleDateFormat));
         setDocumentDetails(
                 documentJSON.getString("path"),
-                documentJSON.getJSONObject("author").getString("name"),
-                dateFormat.format(new Date(Long.valueOf(documentJSON.getString("creationDate")))),
                 documentJSON.getString("type"),
-                documentJSON.getString("title"),
-                documentJSON.getString("lifeCycleState"),
-                documentJSON.getString("description")
+                documentJSON.getString("lifeCycleState")
         );
         return this;
     }
 
-    private void setDocumentDetails(String path, String author, String creationDate, String type, String title, String lifeCycleState, String description){
-        this.path = path;
-        this.author = author;
-        this.creationDate = creationDate;
-        this.type = type;
-        this.title = title;
-        this.lifeCycleState = lifeCycleState;
-        this.description = description;
+    @Override
+    protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException{
+        JSONArray attachedFiles = lastIteration.getJSONArray(JSON_KEY_DOCUMENT_ATTACHED_FILES);
+        String[] files = new String[attachedFiles.length()];
+        for (int i = 0; i<files.length; i++){
+            files[i] = attachedFiles.getString(i);
+            Log.i("com.docdoku.android.plm.client", "File found: " + files[i]);
+        }
+        setFiles(files);
     }
 
-    private void setLastRevision(int revisionNumber, String revisionNote, String revisionAuthor, String revisionDate){
-        this.revisionNumber = revisionNumber;
-        this.revisionAuthor = revisionAuthor;
-        this.revisionDate = revisionDate;
-        if (JSONObject.NULL.toString().equals(revisionNote)){
-            this.revisionNote = "";
-        }
-        else{
-            this.revisionNote = revisionNote;
-        }
+    private void setFiles(String[] files){
+        this.files = files;
+    }
+
+    private void setDocumentDetails(String path, String type, String lifeCycleState){
+        this.path = path;
+        this.type = type;
+        this.lifeCycleState = lifeCycleState;
     }
 
     /**
-     * The following methods provide the keys to read the part attributes in the JSONObject received from the server
+     * The following methods provide the keys to read the document attributes in the JSONObject received from the server
      */
 
     @Override
     protected String getIterationsJSONKey() {
-        return JSON_KEY_PART_ITERATIONS;
+        return JSON_KEY_DOCUMENT_ITERATIONS;
+    }
+
+    @Override
+    protected String getIterationNoteJSONKey() {
+        return JSON_KEY_DOCUMENT_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected String getNameJSONKey() {
+        return JSON_KEY_DOCUMENT_NAME;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

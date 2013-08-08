@@ -18,11 +18,12 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.network;
 
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -40,8 +41,10 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
     public static byte[] id;
     private HttpGetListener httpGetListener;
 
-    public static final String CONNECTION_ERROR = "Connection Error";
-    public static final String URL_ERROR = "Url error";
+    public static final String ERROR_UNKNOWN = "Connection Error";
+    public static final String ERROR_URL = "Url error";
+    public static final String ERROR_HTTP_BAD_REQUEST = "Http Bad request";
+    public static final String ERROR_HTTP_UNAUTHORIZED = "Http unauthorized";
 
     public HttpGetTask(HttpGetListener httpGetListener){
         super();
@@ -57,8 +60,7 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
 
     @Override
     protected String doInBackground(String... strings) {
-        String result = CONNECTION_ERROR;
-
+        String result = ERROR_UNKNOWN;
         try {
             String pURL = baseUrl + strings[0];
             Log.i("com.docdoku.android.plm.client","Sending HttpGet request to url: " + pURL);
@@ -78,12 +80,14 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
                 result = inputStreamToString(in);
                 Log.i("com.docdoku.android.plm.client", "Response content: " + result);
                 in.close();
+            }else{
+                analyzeHttpErrorCode(responseCode);
             }
 
             conn.disconnect();
         } catch (MalformedURLException e) {
             Log.e("com.docdoku.android.plm.client","ERROR: MalformedURLException");
-            result = URL_ERROR;
+            result = ERROR_URL;
             e.printStackTrace();
         } catch (ProtocolException e) {
             Log.e("com.docdoku.android.plm.client","ERROR: ProtocolException");
@@ -136,4 +140,11 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
         return string;
     }
 
+    private String analyzeHttpErrorCode(int errorCode){
+        switch (errorCode){
+            case 400: return ERROR_HTTP_BAD_REQUEST;
+            case 401: return ERROR_HTTP_UNAUTHORIZED;
+        }
+        return ERROR_UNKNOWN;
+    }
 }

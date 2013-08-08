@@ -18,11 +18,12 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.network;
 
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import com.docdoku.android.plm.network.listeners.HttpGetDownloadFileListener;
 
 import java.io.*;
 import java.net.HttpURLConnection;

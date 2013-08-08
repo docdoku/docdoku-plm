@@ -20,9 +20,7 @@
 
 package com.docdoku.android.plm.client;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -32,13 +30,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
+import com.docdoku.android.plm.network.*;
+import com.docdoku.android.plm.network.listeners.HttpGetDownloadFileListener;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import com.docdoku.android.plm.network.listeners.HttpPostUploadFileListener;
+import com.docdoku.android.plm.network.listeners.HttpPutListener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,9 +53,9 @@ import java.util.Date;
  *
  * @author: Martin Devillers
  */
-public class DocumentActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
+public class DocumentActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener, HttpPostUploadFileListener {
 
-    public static final String DOCUMENT_EXTRA = "document";
+    public static final String EXTRA_DOCUMENT = "document";
 
     private final int NUM_PAGES = 6;
     private final int NUM_GENERAL_INFORMATION_FIELDS = 10;
@@ -70,52 +73,29 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         setContentView(R.layout.activity_document);
 
         Intent intent = getIntent();
-        document = (Document) intent.getSerializableExtra(DOCUMENT_EXTRA);
+        document = (Document) intent.getSerializableExtra(EXTRA_DOCUMENT);
+
+        Log.i("com.docdoku.android.plm.client", "starting activity for document with id: " + document.getIdentification());
 
         ExpandableListView expandableListView = (ExpandableListView) findViewById(R.id.list);
         expandableListView.setAdapter(new DetailsList());
         expandableListView.expandGroup(1);
-
-        /*
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment[] pages = new Fragment[5];
-        pages[0] = new DocumentPageFragment(getResources().getStringArray(R.array.documentGeneralInformationFieldNames), document.getDocumentDetails(), R.string.documentGeneralInformation);
-        String[] files = document.getFiles();
-        if (files != null){
-            pages[1] =  new DocumentFilePageFragment(files, this, R.string.documentFiles);
-        }
-        else{
-            pages[1] = new DocumentPageFragment(new String[0], new String[0], R.string.documentFiles);
-        }
-        pages[2] = new DocumentPageFragment(new String[0], document.getLinkedDocuments(), R.string.documentLinks);
-        pages[3] = new DocumentPageFragment(getResources().getStringArray(R.array.documentIterationFieldNames), document.getLastRevision(), R.string.documentIteration);
-        pages[4] = new DocumentPageFragment(document.getAttributeNames(), document.getAttributeValues(), R.string.documentAttributes);
-        for (int i = 0; i<pages.length; i++){
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.list, pages[i]);
-            fragmentTransaction.commit();
-        }
-        */
     }
 
     private void setDocumentCheckedIn(){
         checkedIn = true;
         checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_in_light, 0, 0);
         checkInOutButton.setText(R.string.documentCheckOut);
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         document.setCheckOutInformation(null, null, null);
-        final Activity activity = this;
-        final HttpPutListener httpPutListener = this;
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage(R.string.documentCheckOutConfirm);
+                AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
+                builder.setTitle(R.string.documentCheckOutConfirm);
                 builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkout/");
+                        new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkout/");
                     }
                 });
                 builder.setNegativeButton(R.string.no, null);
@@ -131,23 +111,43 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         Calendar c = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         document.setCheckOutInformation(getCurrentUserLogin(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
-        final Activity activity = this;
-        final HttpPutListener httpPutListener = this;
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage(R.string.documentCheckInConfirm);
+                AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
+                builder.setTitle(R.string.documentCheckInConfirm);
+                builder.setMessage(R.string.documentIterationNotePrompt);
+                final EditText iterationNoteField = new EditText(DocumentActivity.this);
+                builder.setView(iterationNoteField);
                 builder.setPositiveButton(R.string.documentDoCheckIn, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
+                        final String iterationNote = iterationNoteField.getText().toString();
+                        if (iterationNote.length()>0){
+                            Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
+                            HttpPutListener httpPutListener = new HttpPutListener() {
+                                @Override
+                                public void onHttpPutResult(boolean result) {
+                                    if (result){
+                                        Log.i("com.docdoku.android.plm", "Checking out documnent after successfully uploading iteration");
+                                        new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
+                                    } else{
+                                        DocumentActivity.this.onHttpPutResult(false);
+                                    }
+                                }
+                            };
+                            //TODO correctly send iteration note
+                            new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/iterations/" + (document.getIterationNumber() + 1), document.getLastIterationJSONWithUpdateNote(iterationNote).toString());
+                            }else {
+                            Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
+                            new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
+                        }
                     }
                 });
                 builder.setNeutralButton(R.string.documentCancelCheckOut, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/undocheckout/");
+                        new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/undocheckout/");
                     }
                 });
                 builder.setNegativeButton(R.string.no, null);
@@ -158,13 +158,15 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
 
     @Override
     public void onHttpPutResult(boolean result) {
-        Log.i("docDoku.DocDokuPLM", "Result of checkin/checkout: " + result);
+        Log.i("com.docdoku.android.plm.client", "Result of checkin/checkout: " + result);
         if (result){
             if (checkedIn){
                 setDocumentCheckedOutByCurrentUser();
+                Toast.makeText(this, R.string.documentSuccessfullyCheckedOut, Toast.LENGTH_SHORT).show();
             }
             else{
                 setDocumentCheckedIn();
+                Toast.makeText(this, R.string.documentSuccessfullyCheckedIn, Toast.LENGTH_SHORT).show();
             }
         }
         else{
@@ -175,6 +177,109 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         }
     }
 
+    /**
+     * HttpGetDownloadListener methods
+     */
+    @Override
+    public void onFileDownloadStart() {
+        fileDownloadProgressDialog = new ProgressDialog(this);
+        fileDownloadProgressDialog.setTitle(R.string.downloadingFile);
+        fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        fileDownloadProgressDialog.show();
+    }
+
+    @Override
+    public void onFileDownloaded(boolean result, String path) {
+        fileDownloadProgressDialog.dismiss();
+        if (result){
+            Intent intent = new Intent();
+            intent.setAction(android.content.Intent.ACTION_VIEW);
+            File file = new File(path);
+
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            String ext=file.getName().substring(file.getName().indexOf(".")+1);
+            String type = mime.getMimeTypeFromExtension(ext);
+
+            intent.setDataAndType(Uri.fromFile(file),type);
+
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+        }
+        else{
+            Toast.makeText(this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        fileDownloadProgressDialog.setProgress(progress);
+    }
+
+    /**
+     * HttpPostUploadFileListener method
+     */
+    @Override
+    public void onUploadResult(boolean result, final String fileName) {
+        if (result){
+            Toast.makeText(this, R.string.uploadSuccess, Toast.LENGTH_SHORT).show();
+        }
+        else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Echec du chargement de l'image");
+            builder.setNegativeButton("Annuler", null);
+            builder.setPositiveButton("Réessayer", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {String docReference = document.getIdentification();
+                    String docId = docReference.substring(0, docReference.lastIndexOf("-"));
+                    String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
+                    new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png",pictureSavePath);
+                }
+            });
+            builder.create().show();
+        }
+    }
+
+    /**
+     * Result of taking a picture or video
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == RESULT_OK){
+            Toast.makeText(this, "Image saved to " + pictureSavePath, Toast.LENGTH_LONG).show();
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
+            Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
+            ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
+            dialogBuilder.setView(dialogView);
+            dialogBuilder.setCancelable(false);
+            dialogBuilder.setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
+                    if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
+                    String docReference = document.getIdentification();
+                    String docId = docReference.substring(0, docReference.lastIndexOf("-"));
+                    String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
+                    new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png",pictureSavePath);
+                }
+            });
+            dialogBuilder.setNegativeButton(R.string.cancel, null);
+            dialogBuilder.create().show();
+        } else if (resultCode == RESULT_CANCELED) {
+            // User cancelled the image capture
+        } else {
+            // Image capture failed, advise user
+        }
+    }
+
+    /**
+     * Adapter for the expandable list view
+     * Group 0: Header with tile of document and important buttons
+     * Group 1: General information about the documnet
+     * Group 2: Linked files
+     * Group 3: Linked documents
+     * Group 4: Information about the last iteration
+     * Group 5: Attributes
+     */
     private class DetailsList extends BaseExpandableListAdapter {
 
         @Override
@@ -187,10 +292,15 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             switch (i){
                 case 0: return 0;
                 case 1: return NUM_GENERAL_INFORMATION_FIELDS;
-                case 2: return document.getNumberOfFiles();
-                case 3: return 0;
+                case 2:
+                    if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
+                        return Math.max(2,document.getNumberOfFiles() + 1);
+                    } else {
+                        return Math.max(1, document.getNumberOfFiles());
+                    }
+                case 3: return Math.max(1, document.getNumberOfLinkedDocuments());
                 case 4: return NUM_REVISION_FIELDS;
-                case 5: return 0;
+                case 5: return Math.max(1, document.getNumberOfAttributes());
             }
             return 0;  //To change body of implemented methods use File | Settings | File Templates.
         }
@@ -230,30 +340,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             TextView title = (TextView) pageView.findViewById(R.id.page_title);
             switch (i){
                 case 0:
-                    ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null);
-                    TextView documentReference = (TextView) header.findViewById(R.id.documentIdentification);
-                    documentReference.setText(document.getIdentification());
-
-                    ToggleButton notifyIteration = (ToggleButton) header.findViewById(R.id.notifyIteration);
-                    notifyIteration.setChecked(document.getIterationNotification());
-                    ToggleButton notifyStateChange = (ToggleButton) header.findViewById(R.id.notifyStateChange);
-                    notifyStateChange.setChecked(document.getStateChangeNotification());
-
-                    checkInOutButton = (Button) header.findViewById(R.id.checkInOutButton);
-                    if (document.getCheckOutUserLogin() != null){
-                        if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
-                            setDocumentCheckedOutByCurrentUser();
-                        }
-                        else{
-                            checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);
-                            checkInOutButton.setClickable(false);
-                            checkInOutButton.setText(R.string.documentLocked);
-                        }
-                    }
-                    else{
-                        setDocumentCheckedIn();
-                    }
-                    return header;
+                    return createHeaderView();
                 case 1:
                     title.setText(R.string.documentGeneralInformation);
                     break;
@@ -274,31 +361,41 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         }
 
         @Override
-        public View getChildView(int i, int i2, boolean b, View view, ViewGroup viewGroup) {
+        public View getChildView(int i, final int i2, boolean b, View view, ViewGroup viewGroup) {
             View rowView = null;
             switch (i){
                 case 1: //Document general information
-                    rowView = getLayoutInflater().inflate(R.layout.row_name_value_pair, null);
                     String[] fieldNames = getResources().getStringArray(R.array.documentGeneralInformationFieldNames);
                     String[] fieldValues = document.getDocumentDetails();
-                    ((TextView) rowView.findViewById(R.id.fieldName)).setText(fieldNames[i2]);
-                    ((TextView) rowView.findViewById(R.id.fieldValue)).setText(fieldValues[i2]);
+                    rowView = createNameValuePairRowView(fieldNames[i2], fieldValues[i2]);
                     break;
                 case 2: // Document attached files
-                    rowView = getLayoutInflater().inflate(R.layout.row_dowloadable_element, null);
-                    TextView fileNameField = (TextView) rowView.findViewById(R.id.fileName);
-                    fileNameField.setText(document.getFile(i2));
+                    if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
+                        if (i2 == 0){
+                            rowView = createUploadFileRowView();
+                        } else {
+                            rowView = createFileRowView(i2 - 1);
+                        }
+                    } else {
+                        rowView = createFileRowView(i2);
+                    }
                     break;
                 case 3: // Linked documents
+                    rowView = createLinkedDocumentRowView(i2);
                     break;
                 case 4: // Last document revision
-                    rowView = getLayoutInflater().inflate(R.layout.row_name_value_pair, null);
                     fieldNames = getResources().getStringArray(R.array.documentIterationFieldNames);
-                    fieldValues = document.getLastRevision();
-                    ((TextView) rowView.findViewById(R.id.fieldName)).setText(fieldNames[i2]);
-                    ((TextView) rowView.findViewById(R.id.fieldValue)).setText(fieldValues[i2]);
+                    fieldValues = document.getLastIteration();
+                    rowView = createNameValuePairRowView(fieldNames[i2], fieldValues[i2]);
                     break;
                 case 5: //Document attributes
+                    try{
+                        Element.Attribute attribute = document.getAttribute(i2);
+                        rowView = createNameValuePairRowView(attribute.getName(), attribute.getValue());
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        rowView = createNoContentFoundRowView(R.string.documentNoAttributes);
+                    }
+
                     break;
             }
             return rowView;  //To change body of implemented methods use File | Settings | File Templates.
@@ -310,171 +407,205 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         }
     }
 
-    private class DocumentPageFragment extends Fragment{
-
-        private String[] names;
-        private String[] values;
-        private int title;
-
-        public DocumentPageFragment(String[] names, String[] values, int title){
-            this.names = names;
-            this.values = values;
-            this.title = title;
-        }
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-            ViewGroup pageView;
-            pageView = (ViewGroup) inflater.inflate(R.layout.adapter_document_detail_header, null);
-            TextView titleField = (TextView) pageView.findViewById(R.id.page_title);
-            titleField.setText(title);
-            ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
-
-            if (names.length != values.length){
-                names = new String[values.length];
-            }
-            for (int i = 0; i< names.length; i++){
-                addNameValueRow(inflater,content, names[i],values[i]);
-            }
-
-            return pageView;
-        }
-
-        private void addNameValueRow(LayoutInflater inflater, ViewGroup content, String name, String value){
-            View row = inflater.inflate(R.layout.row_name_value_pair, null);
-            TextView fieldName = (TextView) row.findViewById(R.id.fieldName);
-            fieldName.setText(name);
-            TextView fieldValue = (TextView) row.findViewById(R.id.fieldValue);
-            fieldValue.setText(value);
-            content.addView(row);
-        }
+    private View createNameValuePairRowView(String name, String value){
+        View rowView = getLayoutInflater().inflate(R.layout.adapter_name_value_pair, null);
+        ((TextView) rowView.findViewById(R.id.fieldName)).setText(name);
+        ((TextView) rowView.findViewById(R.id.fieldValue)).setText(value);
+        return rowView;
     }
 
-    private class DocumentFilePageFragment extends Fragment{
-
-        private String[] files;
-        private HttpGetDownloadFileListener httpGetDownloadFileListener;
-        private int title;
-
-        public DocumentFilePageFragment(String[] files, HttpGetDownloadFileListener httpGetDownloadFileListener, int title){
-            this.files = files;
-            this.httpGetDownloadFileListener = httpGetDownloadFileListener;
-            this.title = title;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-            ViewGroup pageView;
-            pageView = (ViewGroup) inflater.inflate(R.layout.adapter_document_detail_header, null);
-            TextView titleField = (TextView) pageView.findViewById(R.id.page_title);
-            titleField.setText(title);
-            ViewGroup content = (ViewGroup) pageView.findViewById(R.id.content);
-
-            if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
-                View uploadRow = inflater.inflate(R.layout.row_upload_element, null);
-                pageView.addView(uploadRow);
-                ImageButton takePicture = (ImageButton) uploadRow.findViewById(R.id.takePicture);
-                takePicture.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        String timeStamp = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
-                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "DocDokuPLM" + timeStamp +".jpg");
-                        try {
-                            file.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        }
-                        pictureSavePath = file.getAbsolutePath();
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                        startActivityForResult(intent, 0);
-                    }
-                });
-            }
-
-            for (int i = 0; i<files.length; i++){
-                View row = inflater.inflate(R.layout.row_dowloadable_element, null);
-                TextView fileNameField = (TextView) row.findViewById(R.id.fileName);
-                final String fileUrl = files[i];
-                final String fileName = fileUrl.substring(fileUrl.lastIndexOf('/')+1, fileUrl.length());
-                fileNameField.setText(fileName);
-                content.addView(row);
-                row.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
-                        new HttpGetDownloadFileTask(httpGetDownloadFileListener).execute("files/" + fileUrl, fileName);
-                    }
-                });
-            }
-
-            return pageView;
-        }
-    }
-
-    @Override
-    public void onFileDownloadStart() {
-        fileDownloadProgressDialog = new ProgressDialog(this);
-        fileDownloadProgressDialog.setTitle(R.string.downloadingFile);
-        fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        fileDownloadProgressDialog.show();
-    }
-
-    @Override
-    public void onFileDownloaded(boolean result, String path) {
-        fileDownloadProgressDialog.dismiss();
-        if (result){
-            Intent intent = new Intent();
-            intent.setAction(android.content.Intent.ACTION_VIEW);
-            File file = new File(path);
-
-            MimeTypeMap mime = MimeTypeMap.getSingleton();
-            String ext=file.getName().substring(file.getName().indexOf(".")+1);
-            String type = mime.getMimeTypeFromExtension(ext);
-
-            intent.setDataAndType(Uri.fromFile(file),type);
-
-            startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
-        }
-        else{
-            Toast.makeText(this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onProgressUpdate(int progress) {
-        fileDownloadProgressDialog.setProgress(progress);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (resultCode == RESULT_OK){
-            Toast.makeText(this, "Image saved to " + pictureSavePath, Toast.LENGTH_LONG).show();
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
-            Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
-            ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
-            dialogBuilder.setView(dialogView);
-            dialogBuilder.setCancelable(false);
-            final Context context = this;
-            dialogBuilder.setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
+    private View createLinkedDocumentRowView(int i2){
+        try{
+            ViewGroup rowView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_simple, null);
+            TextView docView = (TextView) rowView.findViewById(R.id.docId);
+            final String linkedDocument = document.getLinkedDocument(i2);
+            docView.setText(linkedDocument);
+            rowView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
-                    if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
-                    String docReference = document.getIdentification();
-                    String docId = docReference.substring(0, docReference.lastIndexOf("-"));
-                    String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
-                    new HttpPostUploadFileTask(context).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getRevisionNumber() + "/" + fileName + ".png",pictureSavePath);
+                public void onClick(View view) {
+                    Log.i("com.docdoku.android.plm.client", "Following link from document " + document.getIdentification()
+                            + "to document " + linkedDocument);
+                    HttpGetListener httpGetListener = new HttpGetListener() {
+                        @Override
+                        public void onHttpGetResult(String result) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                Document document1 = new Document(jsonObject.getString("id"));
+                                document1.updateFromJSON(jsonObject, getResources());
+                                Intent intent = new Intent(DocumentActivity.this, DocumentActivity.class);
+                                intent.putExtra(EXTRA_DOCUMENT, document1);
+                                startActivity(intent);
+                            } catch (JSONException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                        }
+                    };
+                    new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/documents/" + linkedDocument);
                 }
             });
-            dialogBuilder.setNegativeButton(R.string.cancel, null);
-            dialogBuilder.create().show();
-        } else if (resultCode == RESULT_CANCELED) {
-            // User cancelled the image capture
-        } else {
-            // Image capture failed, advise user
+            return rowView;
+        }catch (ArrayIndexOutOfBoundsException e){
+            return createNoContentFoundRowView(R.string.documentNoLinkedDocuments);
         }
     }
 
+    private View createUploadFileRowView(){
+        View rowView =  getLayoutInflater().inflate(R.layout.adapter_upload_file, null);
+        ImageButton takePicture = (ImageButton) rowView.findViewById(R.id.takePicture);
+        takePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                String timeStamp = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "DocDokuPLM" + timeStamp +".jpg");
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                pictureSavePath = file.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                startActivityForResult(intent, 0);
+            }
+        });
+        return rowView;
+    }
+
+    private View createFileRowView(final int position){
+        try{
+            View rowView = getLayoutInflater().inflate(R.layout.adapter_dowloadable_file, null);
+            TextView fileNameField = (TextView) rowView.findViewById(R.id.fileName);
+            final String fileName = document.getFileName(position);
+            fileNameField.setText(document.getFileName(position));
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String fileUrl = document.getFile(position);
+                    Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
+                    new HttpGetDownloadFileTask(DocumentActivity.this).execute("files/" + fileUrl, fileName);
+                }
+            });
+            return rowView;
+        }catch (ArrayIndexOutOfBoundsException e){
+            return createNoContentFoundRowView(R.string.documentNoAttachedFiles);
+        }
+    }
+
+    private View createNoContentFoundRowView(int messageId){
+        View rowView = getLayoutInflater().inflate(R.layout.adapter_message, null);
+        TextView message = (TextView) rowView.findViewById(R.id.message);
+        message.setText(messageId);
+        return rowView;
+    }
+
+    private View createHeaderView(){
+        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null);
+        TextView documentReference = (TextView) header.findViewById(R.id.documentIdentification);
+        documentReference.setText(document.getIdentification());
+
+        ToggleButton notifyIteration = (ToggleButton) header.findViewById(R.id.notifyIteration);
+        setNotifyIterationNotification(notifyIteration);
+        ToggleButton notifyStateChange = (ToggleButton) header.findViewById(R.id.notifyStateChange);
+        setNotifyStateChangeNotification(notifyStateChange);
+
+        checkInOutButton = (Button) header.findViewById(R.id.checkInOutButton);
+        if (document.getCheckOutUserLogin() != null){
+            if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
+                setDocumentCheckedOutByCurrentUser();
+            }
+            else{
+                checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);
+                checkInOutButton.setClickable(false);
+                checkInOutButton.setText(R.string.documentLocked);
+            }
+        }
+        else{
+            setDocumentCheckedIn();
+        }
+        return header;
+    }
+
+    private void setNotifyStateChangeNotification(final CompoundButton notifyStateChange){
+        notifyStateChange.setChecked(document.getStateChangeNotification());
+        notifyStateChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final boolean b = notifyStateChange.isChecked();
+                HttpPutListener httpPutListener = new HttpPutListener() {
+                    @Override
+                    public void onHttpPutResult(boolean result) {
+                        document.setStateChangeNotification(b);
+                    }
+                };
+                if (b) {
+                    subscriptionChangeRequested(R.string.confirmSubscribeToStateChangeNotification,
+                            document,
+                            "stateChange/subscribe",
+                            notifyStateChange,
+                            b,
+                            httpPutListener);
+                } else {
+                    subscriptionChangeRequested(R.string.confirmUnsubscribeToStateChangeNotification,
+                            document,
+                            "stateChange/unsubscribe",
+                            notifyStateChange,
+                            b,
+                            httpPutListener);
+
+                }
+            }
+        });
+    }
+
+    private void setNotifyIterationNotification(final CompoundButton notifyIteration){
+        notifyIteration.setChecked(document.getIterationNotification());
+        notifyIteration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final boolean b = notifyIteration.isChecked();
+                HttpPutListener httpPutListener = new HttpPutListener() {
+                    @Override
+                    public void onHttpPutResult(boolean result) {
+                        document.setIterationNotification(b);
+                    }
+                };
+                if (b) {
+                    subscriptionChangeRequested(R.string.confirmSubscribeToIterationChangeNotification,
+                            document,
+                            "iterationChange/subscribe",
+                            notifyIteration,
+                            b,
+                            httpPutListener);
+                } else {
+                    subscriptionChangeRequested(R.string.confirmUnsubscribeToIterationChangeNotification,
+                            document,
+                            "iterationChange/unsubscribe",
+                            notifyIteration,
+                            b,
+                            httpPutListener);
+
+                }
+            }
+        });
+    }
+
+    private void subscriptionChangeRequested(int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
+        builder.setMessage(messageId);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
+                new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                compoundButton.setChecked(!compoundButtonState);
+            }
+        });
+        builder.create().show();
+    }
 }
 

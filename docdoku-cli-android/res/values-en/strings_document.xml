@@ -6,6 +6,12 @@
     <string name="documentTitle">Title</string>
     <string name="documentAuthor">Author</string>
     <string name="documentVersion">Version</string>
+
+    <string name="documentNumberOfAttachedFiles">Files: </string>
+    <string name="documentNoAttachedFiles">No attached files</string>
+    <string name="documentNoLinkedDocuments">No linked documents</string>
+    <string name="documentNoAttributes">No attributes</string>
+
     <string-array name="documentGeneralInformationFieldNames">
         <item>Folder</item>
         <item>Reference</item>
@@ -29,10 +35,12 @@
     <string name="documentGeneralInformation">General</string>
     <string name="documentFiles">Files</string>
     <string name="documentLinks">Links</string>
-    <string name="documentIteration">Iteration</string>
-    <string name="documentAttributes">Attributes</string>
+    <string name="documentIteration">\iIteration</string>
+    <string name="documentAttributes">\iAttributes</string>
 
     <!-- Subscribe/Usubscribe to document notifications-->
+    <string name="documentStateChangeButton">States</string>
+    <string name="documentIterationButton">Iterations</string>
     <string name="confirmSubscribeToIterationChangeNotification">Are you sure you want to activate iteration notifications on this document?</string>
     <string name="confirmUnsubscribeToIterationChangeNotification">Are you sure you want to deactivate iteration notifications on this document?</string>
     <string name="confirmSubscribeToStateChangeNotification">Are you sure you want to activate state change notifications on this document?</string>
@@ -45,7 +53,10 @@
     <string name="documentCheckInConfirm">Check in this document?</string>
     <string name="documentDoCheckIn">Check in</string>
     <string name="documentCancelCheckOut">Undo check out</string>
+    <string name="documentIterationNotePrompt">You may enter the revision note if you wish for the check in: </string>
     <string name="documentLocked">Checked Out</string>
+    <string name="documentSuccessfullyCheckedIn">Document successfully checked in</string>
+    <string name="documentSuccessfullyCheckedOut">Document successfully checked out</string>
 
     <!-- Search documents -->
     <string name="documentSearchPrompt">Search documents</string>

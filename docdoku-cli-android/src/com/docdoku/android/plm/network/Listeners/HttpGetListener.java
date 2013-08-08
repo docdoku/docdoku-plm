@@ -18,14 +18,13 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.network.listeners;
 
 /**
- * @author: martindevillers
+ *
+ * @author: Martin Devillers
  */
-public interface HttpGetDownloadFileListener {
+public interface HttpGetListener {
 
-    public void onFileDownloadStart();
-    public void onFileDownloaded(boolean result, String path);
-    public void onProgressUpdate(int progress);
+    void onHttpGetResult(String result);
 }

@@ -18,10 +18,13 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.network;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import com.docdoku.android.plm.network.listeners.HttpPutListener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -34,6 +37,10 @@ import java.net.URL;
  * @author: Martin Devillers
  */
 public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
+
+    private final static int CHUNK_SIZE = 1024*8;
+    private final static int BUFFER_CAPACITY = 1024*32;
+
     private static String baseUrl;
     private static byte[] id;
     private HttpPutListener httpPutListener;
@@ -58,11 +65,42 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
-            conn.setRequestProperty("Content-Type","application/json;charset=UTF-8");
+            conn.setRequestProperty("Content-Type","application/json");
+            byte[] messageBytes = null;
+            try{
+                String message = strings[1];
+                try {
+                    JSONObject object = new JSONObject(message);
+                } catch (JSONException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                messageBytes = message.getBytes();
+                Log.i("com.docdoku.android.plm", "Message found attached to put request: " + message);
+                //conn.setRequestProperty("Content-Length", Integer.toString(message.getBytes().length));
+                conn.setFixedLengthStreamingMode(messageBytes.length);
+                conn.setDoOutput(true);
+                conn.setUseCaches(false);
+                conn.setAllowUserInteraction(true);
+                conn.setRequestProperty("Connection", "keep-alive");
+            }catch (ArrayIndexOutOfBoundsException e){
+                Log.i("com.docdoku.android.plm", "No message attached to HttpPut request");
+            }
             conn.setRequestMethod("PUT");
             conn.connect();
 
+            if (messageBytes != null){
+                OutputStream out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_CAPACITY);
+                InputStream inputStream = new ByteArrayInputStream(messageBytes);
+                byte[] data = new byte[CHUNK_SIZE];
+                int length;
+                while ((length = inputStream.read(data)) != -1) {
+                    out.write(data, 0, length);
+                }
+                out.flush();
+            }
+
             int responseCode = conn.getResponseCode();
+            Log.i("com.docdoku.android.plm","Response message: " + conn.getResponseMessage());
 
             conn.disconnect();
 
@@ -81,7 +119,7 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
             Log.e("com.docdoku.android.plm.client", "ERROR: UnsupportedEncodingException");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client","ERROR: IOException");
+            Log.e("com.docdoku.android.plm.client", "ERROR: IOException");
             e.printStackTrace();
             Log.e("com.docdoku.android.plm.client", "Exception message: " + e.getMessage());
         }
