@@ -7,6 +7,8 @@
     <string name="documentAuthor">Auteur</string>
     <string name="documentVersion">Version</string>
 
+    <string name="documentIterationPhrase">Modifié %1$s par %2$s</string>
+
     <string name="documentNumberOfAttachedFiles">Fichiers: </string>
     <string name="documentNoAttachedFiles">Aucun fichier joint</string>
     <string name="documentNoLinkedDocuments">Aucun lien vers des documents</string>
@@ -45,6 +47,10 @@
     <string name="confirmUnsubscribeToIterationChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les itérations sur ce document?</string>
     <string name="confirmSubscribeToStateChangeNotification">Êtes-vous sûr de vouloir activer les notifications sur les changements d\'état sur ce document?</string>
     <string name="confirmUnsubscribeToStateChangeNotification">Êtes-vous sûr de vouloir desactiver les notifications sur les changements d\'état sur ce document?</string>
+    <string name="documentIterationChangeNotificationSuccessfullyActivated">Notifications sur les itérations activées</string>
+    <string name="documentIterationChangeNotificationSuccessfullyDeactivated">Notifications sur les itérations desactivées</string>
+    <string name="documentStateChangeNotificationSuccessfullyActivated">Notifications sur les changements d\'état activées</string>
+    <string name="documentStateChangeNotificationSuccessfullyDeactivated">Notifications sur les changements d\'état desactivées</string>
 
     <!-- Checkin/Checkout document -->
     <string name="documentCheckIn">Libérer</string>

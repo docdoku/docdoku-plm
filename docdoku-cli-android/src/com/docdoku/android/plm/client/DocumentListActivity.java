@@ -22,6 +22,7 @@ package com.docdoku.android.plm.client;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -152,7 +156,26 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     checkedInOutImage.setImageResource(R.drawable.checked_in_light);
                 }
                 TextView numAttachedFiles = (TextView) documentRowView.findViewById(R.id.numAttachedFiles);
-                numAttachedFiles.setText(" " + doc.getNumberOfFiles());
+                int docNumAttachedFiles = doc.getNumberOfFiles();
+                if (docNumAttachedFiles == 0){
+                    ((ViewGroup) numAttachedFiles.getParent()).removeView(numAttachedFiles);
+                }else{
+                    numAttachedFiles.setText(" " + docNumAttachedFiles);
+                }
+                TextView iterationNumber = (TextView) documentRowView.findViewById(R.id.iterationNumber);
+                iterationNumber.setText("" + doc.getIterationNumber());
+                TextView lastIteration = (TextView) documentRowView.findViewById(R.id.lastIteration);
+                try {
+                    lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(doc.getLastIterationDate()), doc.getLastIterationAuthorName())));
+                } catch (ParseException e) {
+                    ((ViewGroup) lastIteration.getParent()).removeView(lastIteration);
+                    Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (ParseException)" + doc.getIdentification());
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }catch(NullPointerException e){
+                    ((ViewGroup) lastIteration.getParent()).removeView(lastIteration);
+                    Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
                 documentRowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -168,5 +191,23 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
             }
             return documentRowView;
         }
+    }
+
+    protected String simplifyDate(String dateString) throws ParseException, NullPointerException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        Calendar date = Calendar.getInstance();
+        date.setTime(simpleDateFormat.parse(dateString));
+        Calendar currentTime = Calendar.getInstance();
+        if (currentTime.get(Calendar.YEAR) == date.get(Calendar.YEAR)){
+            int dayDifference = currentTime.get(Calendar.DAY_OF_YEAR) - date.get(Calendar.DAY_OF_YEAR);
+            if (dayDifference == 0){
+                return getResources().getString(R.string.today);
+            }
+            if (dayDifference == 1){
+                return getResources().getString(R.string.yesterday);
+            }
+        }
+        String timeDifference = DateUtils.getRelativeTimeSpanString(this, date.getTimeInMillis(), true).toString();
+        return timeDifference;
     }
 }

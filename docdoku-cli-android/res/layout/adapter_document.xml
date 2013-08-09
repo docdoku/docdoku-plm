@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="1px"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp">
@@ -12,40 +12,36 @@
         android:id="@+id/contentLink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="10dp"
-        android:layout_alignParentTop="true"
+        android:padding="5dp"
+        android:layout_below="@+id/checkedInOutImage"
         android:layout_alignParentLeft="true"
         android:background="@drawable/clickable_item_background">
 
-        <TextView
-                android:id="@+id/identification"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/expand"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="35dp"
-                android:text="docId"
-                android:ellipsize="middle"
-                android:singleLine="true"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/expand">
 
-        <TextView
-                android:id="@+id/numAttachedFilesTitle"
+            <TextView
+                    android:id="@+id/identification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/expand"
+                    android:layout_alignParentLeft="true"
+                    android:text="docId"
+                    android:ellipsize="middle"
+                    android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/lastIteration"
                 style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/identification"
-                android:text="@string/documentNumberOfAttachedFiles"/>
+                android:text="iteration info"/>
 
-        <TextView
-            android:id="@+id/numAttachedFiles"
-            style="@style/SmallText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/identification"
-            android:layout_toRightOf="@+id/numAttachedFilesTitle"
-            android:text="#files"/>
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/expand"
@@ -61,7 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1px"
+        android:textSize="14sp"
         android:background="@drawable/white_transparent_line"/>
 
     <ImageView
@@ -72,7 +69,36 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
+            android:padding="2px"
             android:background="@drawable/white_border_rectangle"
             android:src="@drawable/checked_out_other_user_light"/>
+
+    <TextView
+        android:id="@+id/iterationNumber"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/checkedInOutImage"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:padding="2px"
+        android:background="@drawable/white_border_rectangle"
+        android:drawableLeft="@drawable/iteration_notification_off_light"
+        android:gravity="center_vertical"
+        android:text="0"/>
+
+    <TextView
+        android:id="@+id/numAttachedFiles"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="15dp"
+        android:padding="2px"
+        android:background="@drawable/white_border_rectangle"
+        android:drawableLeft="@drawable/attached_file_light"
+        android:gravity="center_vertical"
+        android:text="0"/>
 
 </RelativeLayout>

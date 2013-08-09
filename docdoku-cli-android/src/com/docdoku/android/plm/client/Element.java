@@ -121,13 +121,20 @@ public abstract class Element implements Serializable{
     public JSONObject getLastIterationJSONWithUpdateNote(String note){
         try{
             JSONObject lastIteration = new JSONObject(lastIterationString);
-            lastIteration.put(JSON_KEY_ITERATION_NUMBER, iterationNumber + 1);
             lastIteration.put(getIterationNoteJSONKey(), note);
             return lastIteration;
         } catch (JSONException e){
             Log.e("com.docdoku.android.plm", "Failed to update iteration JSON object");
         }
         return null;
+    }
+
+    public String getLastIterationAuthorName(){
+        return iterationAuthor;
+    }
+
+    public String getLastIterationDate(){
+        return iterationDate;
     }
 
     protected Element updateElementFromJSON(JSONObject elementJSON, Resources resources) throws JSONException{

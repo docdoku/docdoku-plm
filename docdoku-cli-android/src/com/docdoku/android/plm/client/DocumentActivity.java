@@ -137,7 +137,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                                 }
                             };
                             //TODO correctly send iteration note
-                            new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/iterations/" + (document.getIterationNumber() + 1), document.getLastIterationJSONWithUpdateNote(iterationNote).toString());
+                            new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/iterations/" + document.getIterationNumber(), document.getLastIterationJSONWithUpdateNote(iterationNote).toString());
                             }else {
                             Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
                             new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
@@ -539,6 +539,11 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 HttpPutListener httpPutListener = new HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result) {
+                        if (b){
+                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                        }
                         document.setStateChangeNotification(b);
                     }
                 };
@@ -571,6 +576,11 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 HttpPutListener httpPutListener = new HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result) {
+                        if (b){
+                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                        }
                         document.setIterationNotification(b);
                     }
                 };

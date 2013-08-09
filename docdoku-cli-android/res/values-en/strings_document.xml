@@ -7,6 +7,8 @@
     <string name="documentAuthor">Author</string>
     <string name="documentVersion">Version</string>
 
+    <string name="documentIterationPhrase">Modified %1$s by %2$s</string>
+
     <string name="documentNumberOfAttachedFiles">Files: </string>
     <string name="documentNoAttachedFiles">No attached files</string>
     <string name="documentNoLinkedDocuments">No linked documents</string>
@@ -45,6 +47,10 @@
     <string name="confirmUnsubscribeToIterationChangeNotification">Are you sure you want to deactivate iteration notifications on this document?</string>
     <string name="confirmSubscribeToStateChangeNotification">Are you sure you want to activate state change notifications on this document?</string>
     <string name="confirmUnsubscribeToStateChangeNotification">Are you sure you want to deactivate state change notifications on this document?</string>
+    <string name="documentIterationChangeNotificationSuccessfullyActivated">Iteration notifications activated</string>
+    <string name="documentIterationChangeNotificationSuccessfullyDeactivated">Iteration notifications deactivated</string>
+    <string name="documentStateChangeNotificationSuccessfullyActivated">State change notifications activated</string>
+    <string name="documentStateChangeNotificationSuccessfullyDeactivated">State change notifications deactivated</string>
 
     <!-- Checkin/Checkout document -->
     <string name="documentCheckIn">Check in</string>

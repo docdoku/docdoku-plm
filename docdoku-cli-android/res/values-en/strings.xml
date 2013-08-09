@@ -24,6 +24,8 @@
     <string name="error">!Error!</string>
     <string name="simpleDateFormat">MM/dd/yyyy</string>
     <string name="fullDateFormat">MM/dd/yyyy kk:mm:ss</string>
+    <string name="today">today</string>
+    <string name="yesterday">yesterday</string>
 
     <!-- Network interaction -->
     <string name="connection">Connection</string>

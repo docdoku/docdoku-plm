@@ -255,6 +255,7 @@ public class DocumentResource {
 
     @PUT
     @Consumes("application/json;charset=UTF-8")
+    @Produces("application/json;charset=UTF-8")
     @Path("/iterations/{docIteration}")
     public DocumentIterationDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("docKey") String docKey, @PathParam("docIteration") String docIteration, DocumentIterationDTO data) {
         try {
