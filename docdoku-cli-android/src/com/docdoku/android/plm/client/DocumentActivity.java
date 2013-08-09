@@ -271,6 +271,11 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         }
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * Adapter for the expandable list view
      * Group 0: Header with tile of document and important buttons

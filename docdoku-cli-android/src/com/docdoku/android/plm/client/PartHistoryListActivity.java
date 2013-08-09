@@ -98,6 +98,11 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return R.id.recentlyViewedParts;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private static class PartLoaderByPart extends Loader<Part> implements HttpGetListener {
 
         private String elementId;

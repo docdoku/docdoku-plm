@@ -54,6 +54,8 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     @Override
     public void onResume(){
         super.onResume();
+        MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
+        menuFragment.setCurrentActivity(getActivityButtonId());
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -133,4 +135,6 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         finish();
         startActivity(intent);
     }
+
+    protected abstract int getActivityButtonId();
 }

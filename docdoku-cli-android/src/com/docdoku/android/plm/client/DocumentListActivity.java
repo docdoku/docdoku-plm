@@ -131,7 +131,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
-            View documentRowView;
+            final View documentRowView;
             final Document doc = documents.get(i);
             if (doc != null){
                 documentRowView = inflater.inflate(R.layout.adapter_document, null);
@@ -156,6 +156,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 documentRowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        documentRowView.setBackgroundResource(R.drawable.clickable_item_background);
                         navigationHistory.add(doc.getIdentification());
                         Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
                         intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, doc);

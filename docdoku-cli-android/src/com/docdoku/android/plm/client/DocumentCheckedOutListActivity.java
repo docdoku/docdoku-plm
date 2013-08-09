@@ -93,4 +93,9 @@ public class DocumentCheckedOutListActivity extends DocumentListActivity impleme
             Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
         }
     }
+
+    @Override
+    protected int getActivityButtonId() {
+        return R.id.checkedOutDocuments;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

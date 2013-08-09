@@ -16,7 +16,7 @@
         android:padding="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/notifyStateChangeLayout">
+        android:background="@drawable/clickable_item_background">
 
         <TextView
                 android:id="@+id/identification"

@@ -120,6 +120,11 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class UserArrayAdapter extends BaseAdapter {
 
         private ArrayList<User> users;

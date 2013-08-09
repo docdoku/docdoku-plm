@@ -125,6 +125,11 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return R.id.allDocuments;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private static class DocumentLoaderByPage extends Loader<List<Document>> implements HttpGetListener {
 
         private int startIndex;

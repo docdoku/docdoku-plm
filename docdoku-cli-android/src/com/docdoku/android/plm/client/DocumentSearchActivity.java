@@ -73,4 +73,9 @@ public class DocumentSearchActivity extends SearchActivity {
             }
         });
     }
+
+    @Override
+    protected int getActivityButtonId() {
+        return R.id.documentSearch;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

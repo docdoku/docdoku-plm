@@ -135,6 +135,11 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return R.id.allParts;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private static class PartLoaderByPage extends Loader<List<Part>> implements HttpGetListener {
 
         private int startIndex;

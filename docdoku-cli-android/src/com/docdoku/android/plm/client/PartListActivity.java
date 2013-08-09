@@ -99,9 +99,11 @@ public abstract class PartListActivity extends SearchActionBarActivity  {
                     reservedBy.setText("");
                     reservedPart.setImageResource(R.drawable.checked_in_light);
                 }
+                final View finalPartRowView = partRowView;
                 partRowView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        finalPartRowView.setBackgroundResource(R.drawable.clickable_item_background);
                         navigationHistory.add(part.getKey());
                         Intent intent = new Intent(PartListActivity.this, PartActivity.class);
                         intent.putExtra(PartActivity.PART_EXTRA,part);

@@ -159,6 +159,11 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
         }).execute("api/workspaces/" + getCurrentWorkspace() + "/parts/" + part.getKey());
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class PartAdapter extends BaseAdapter{
 
         private ArrayList<Part> parts;

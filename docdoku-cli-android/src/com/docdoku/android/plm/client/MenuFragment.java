@@ -164,4 +164,13 @@ public class MenuFragment extends Fragment {
     public static String getCurrentWorkspace(){
         return WORKSPACE;
     }
+
+    public void setCurrentActivity(int buttonId){
+        View activityView = view.findViewById(buttonId);
+        if (activityView != null){
+            activityView.setSelected(true);
+        }else{
+            Log.i("com.docdoku.android.plm","Current activity did not provide a correct button id. Id provided: " + buttonId);
+        }
+    }
 }

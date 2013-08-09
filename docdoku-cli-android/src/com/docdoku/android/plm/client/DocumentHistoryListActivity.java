@@ -89,6 +89,11 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    protected int getActivityButtonId() {
+        return R.id.recentlyViewedDocuments;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetListener {
 
         private String elementId;
