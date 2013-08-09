@@ -9,7 +9,7 @@ define(function() {
 
         parseFile: function ( filename, texturePath, computeVertexNormals, callback ) {
 
-            var extension = filename.substr(filename.lastIndexOf('.') + 1);
+            var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
             switch ( extension ) {
                 case 'dae':
