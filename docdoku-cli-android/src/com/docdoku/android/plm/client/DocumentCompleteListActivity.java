@@ -26,6 +26,8 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
@@ -51,6 +53,9 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        View loading = findViewById(R.id.loading);
+        ((ViewGroup) loading.getParent()).removeView(loading);
 
         footerProgressBar = new ProgressBar(this);
         documentListView.addFooterView(footerProgressBar);

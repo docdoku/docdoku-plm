@@ -26,6 +26,8 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONException;
@@ -43,6 +45,9 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        View loading = findViewById(R.id.loading);
+        ((ViewGroup) loading.getParent()).removeView(loading);
 
         Log.i("com.docdoku.android.plm.client", "navigation history_light size: " + navigationHistory.getSize());
         documentArray= new ArrayList<Document>();

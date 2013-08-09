@@ -54,6 +54,8 @@ public class DocumentCheckedOutListActivity extends DocumentListActivity impleme
 
         Log.i("com.docdoku.android.plm.client", "DocumentCheckedOutListActivity starting");
 
+        loading = findViewById(R.id.loading);
+
         Intent intent = getIntent();
         int listType = intent.getIntExtra(LIST_MODE_EXTRA, 0);
         switch(listType){

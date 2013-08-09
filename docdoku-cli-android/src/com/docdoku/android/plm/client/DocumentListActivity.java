@@ -60,9 +60,6 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_list);
 
-        View loading = findViewById(R.id.loading);
-        ((ViewGroup) loading.getParent()).removeView(loading);
-
         documentListView = (ListView) findViewById(R.id.elementList);
         Log.i("com.docdoku.android.plm.client", "Loading navigation history from preference path: " + getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));

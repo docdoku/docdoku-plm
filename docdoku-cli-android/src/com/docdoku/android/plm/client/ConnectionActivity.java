@@ -201,7 +201,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
                     workspaceArray[i] = workspaceJSON.getJSONObject(i).getString("id");
                     Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
-                MenuFragment.setWorkspaces(workspaceArray);
+                MenuFragment.setDOWNLOADED_WORKSPACES(workspaceArray);
             }catch (JSONException e) {
                 Log.e("com.docdoku.android.plm.client","Error creating workspace JSONArray from String result");
                 e.printStackTrace();

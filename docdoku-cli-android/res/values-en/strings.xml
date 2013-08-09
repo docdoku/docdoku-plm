@@ -33,8 +33,7 @@
     <string name="noConnectionAvailable">Not internet connection available</string>
     <string name="connectionError">Connection error</string>
     <string name="serverUrlError">Url error: server not responding</string>
-    <string name="loading">Loading, please wait.
-        \n If the loading takes too long, do a search to limit the results.</string>
+    <string name="loading">Loading, please wait...</string>
     <string name="downloadingFile">Downloading file...</string>
     <string name="fileDownloadFail">File download failiure</string>
     <string name="chooseHowToOpenFile">Choose which application to use to open file</string>
