@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +33,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.SimpleActionBarActivity;
 
 /**
  *

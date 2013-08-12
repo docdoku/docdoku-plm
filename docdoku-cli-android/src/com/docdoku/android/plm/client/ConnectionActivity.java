@@ -37,6 +37,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;

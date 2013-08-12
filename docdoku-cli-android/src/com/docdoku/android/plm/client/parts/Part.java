@@ -18,15 +18,14 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.parts;
 
 import android.content.res.Resources;
+import com.docdoku.android.plm.client.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *

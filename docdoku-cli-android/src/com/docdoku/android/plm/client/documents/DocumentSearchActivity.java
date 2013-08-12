@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.documents;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,40 +26,35 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.SearchActivity;
 
 /**
- * @author: martindevillers
+ *
+ * @author: Martin Devillers
  */
-public class PartSearchActivity extends SearchActivity {
+public class DocumentSearchActivity extends SearchActivity {
 
-    private EditText partKey, partTitle, partVersion;
+    private EditText docReference, docTitle, docVersion;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TextView idTitle = (TextView) findViewById(R.id.idTitle); idTitle.setText(R.string.partKey);
-        TextView titleTitle = (TextView) findViewById(R.id.titleTitle); titleTitle.setText(R.string.partTitle);
-        TextView versionTitle = (TextView) findViewById(R.id.versionTitle); versionTitle.setText(R.string.partVersion);
-        TextView authorTitle = (TextView) findViewById(R.id.authorTitle); authorTitle.setText(R.string.partAuthor);
-        TextView creationDateMinTitle = (TextView) findViewById(R.id.creationDateMinTitle); creationDateMinTitle.setText(R.string.partCreationDateMin);
-        TextView creationDateMaxTitle = (TextView) findViewById(R.id.creationDateMaxTitle); creationDateMaxTitle.setText(R.string.partCreationDateMax);
+        docReference = (EditText) findViewById(R.id.id);
+        docTitle = (EditText) findViewById(R.id.title);
+        docVersion = (EditText) findViewById(R.id.version);
 
-        partKey = (EditText) findViewById(R.id.id);
-        partTitle = (EditText) findViewById(R.id.title);
-        partVersion = (EditText) findViewById(R.id.version);
-
-        Button doSearch = (Button) findViewById(R.id.doSearch); doSearch.setText(R.string.partSearchStart);
+        Button doSearch = (Button) findViewById(R.id.doSearch);
         doSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String searchQuery = "";
-                String reference = partKey.getText().toString();
-                searchQuery +="number="+reference;
-                String title = partTitle.getText().toString();
-                searchQuery +="&name="+title;
-                String versions = partVersion.getText().toString();
+                String reference = docReference.getText().toString();
+                searchQuery +="id="+reference;
+                String title = docTitle.getText().toString();
+                searchQuery +="&title="+title;
+                String versions = docVersion.getText().toString();
                 searchQuery += "&version="+versions;
                 if (selectedUser != null){
                     searchQuery += "&author="+selectedUser.getLogin();
@@ -72,10 +67,10 @@ public class PartSearchActivity extends SearchActivity {
                     String maxDateString = Long.toString(maxDate.getTimeInMillis());
                     searchQuery += "&to="+ maxDateString;
                 }
-                Log.i("docDoku.DocDokuPLM", "Part search_light query: " + searchQuery);
-                Intent intent = new Intent(PartSearchActivity.this, PartListActivity1.class);
-                intent.putExtra(PartListActivity1.LIST_MODE_EXTRA,PartListActivity1.PART_SEARCH);
-                intent.putExtra(PartListActivity1.SEARCH_QUERY_EXTRA, searchQuery);
+                Log.i("com.docdoku.android.plm.client", "Document search query: " + searchQuery);
+                Intent intent = new Intent(DocumentSearchActivity.this, DocumentSimpleListActivity.class);
+                intent.putExtra(DocumentSimpleListActivity.LIST_MODE_EXTRA, DocumentSimpleListActivity.SEARCH_RESULTS_LIST);
+                intent.putExtra(DocumentSimpleListActivity.SEARCH_QUERY_EXTRA, searchQuery);
                 startActivity(intent);
             }
         });
@@ -83,6 +78,6 @@ public class PartSearchActivity extends SearchActivity {
 
     @Override
     protected int getActivityButtonId() {
-        return R.id.partSearch;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.documentSearch;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

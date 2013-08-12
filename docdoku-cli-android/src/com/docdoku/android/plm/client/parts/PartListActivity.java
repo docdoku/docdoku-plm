@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,13 +26,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.docdoku.android.plm.client.NavigationHistory;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.SearchActionBarActivity;
 
 import java.util.List;
 
 /**
  * @author: martindevillers
  */
-public abstract class PartListActivity extends SearchActionBarActivity  {
+public abstract class PartListActivity extends SearchActionBarActivity {
 
     private static final String PREFERENCE_PART_HISTORY = "part history_light";
 

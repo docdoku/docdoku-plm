@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.documents;
 
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
@@ -35,6 +35,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
+import com.docdoku.android.plm.client.Element;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.SimpleActionBarActivity;
 import com.docdoku.android.plm.network.*;
 import com.docdoku.android.plm.network.listeners.HttpGetDownloadFileListener;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;

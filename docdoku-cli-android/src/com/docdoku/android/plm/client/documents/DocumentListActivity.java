@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.documents;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +28,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.docdoku.android.plm.client.NavigationHistory;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.SearchActionBarActivity;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;

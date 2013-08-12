@@ -18,18 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.documents;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.HttpGetTask;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import org.json.JSONArray;
@@ -113,14 +112,6 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
             View rowView = getLayoutInflater().inflate(R.layout.adapter_folder, null);
             TextView folderName = (TextView) rowView.findViewById(R.id.folderName);
             folderName.setText(folder.getName());
-            /*rowView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(DocumentFoldersActivity.this, DocumentFoldersActivity.class);
-                    intent.putExtra(INTENT_KEY_FOLDER, folder.getId());
-                    startActivity(intent);
-                }
-            });*/
             return rowView;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }

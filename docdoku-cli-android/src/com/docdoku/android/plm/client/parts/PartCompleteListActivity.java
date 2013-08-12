@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.parts;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -28,6 +28,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;

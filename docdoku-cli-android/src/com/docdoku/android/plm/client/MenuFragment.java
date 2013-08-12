@@ -34,6 +34,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import com.docdoku.android.plm.client.documents.*;
+import com.docdoku.android.plm.client.parts.PartCompleteListActivity;
+import com.docdoku.android.plm.client.parts.PartHistoryListActivity;
+import com.docdoku.android.plm.client.parts.PartSearchActivity;
 
 import java.util.Arrays;
 import java.util.HashSet;

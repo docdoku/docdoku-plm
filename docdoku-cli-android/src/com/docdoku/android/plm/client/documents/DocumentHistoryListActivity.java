@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.documents;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONException;
@@ -37,18 +38,19 @@ import java.util.Iterator;
 /**
  * @author: martindevillers
  */
-public class PartHistoryListActivity extends PartListActivity implements LoaderManager.LoaderCallbacks<Part> {
+public class DocumentHistoryListActivity extends DocumentListActivity implements LoaderManager.LoaderCallbacks<Document>{
 
-    private static final int LOADER_ID_RECENT_PARTS = 200;
+    private static final int LOADER_ID_RECENT_DOCUMENTS = 300;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        removeLoadingView();
+
         Log.i("com.docdoku.android.plm.client", "navigation history_light size: " + navigationHistory.getSize());
-        partsArray= new ArrayList<Part>();
-        partAdapter = new PartAdapter(partsArray);
-        partListView.setAdapter(partAdapter);
+        documentArray= new ArrayList<Document>();
+        documentAdapter = new DocumentAdapter(documentArray);
+        documentListView.setAdapter(documentAdapter);
 
         Iterator<String> iterator = navigationHistory.getKeyIterator();
         int i = 0;
@@ -56,60 +58,52 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
             Bundle bundle = new Bundle();
             bundle.putString("partKey", iterator.next());
             bundle.putString("workspace", getCurrentWorkspace());
-            partsArray.add(null);
-            getSupportLoaderManager().initLoader(LOADER_ID_RECENT_PARTS + i, bundle, this);
+            documentArray.add(null);
+            getSupportLoaderManager().initLoader(LOADER_ID_RECENT_DOCUMENTS + i, bundle, this);
             i++;
         }
-        Log.i("com.docdoku.android.plm.client", "Part history_light list size : " + partsArray.size());
+        Log.i("com.docdoku.android.plm.client", "Document history_light list size : " + documentArray.size());
     }
 
-/**
- * LoaderManager.LoaderCallbacks Methods
- */
+    /**
+     * LoaderManager.LoaderCallbacks methods
+     */
 
     @Override
-    public Loader<Part> onCreateLoader(int id, Bundle bundle) {
-        Log.i("com.docdoku.android.plm.client", "Querying information for part in history_light at position " + (id - LOADER_ID_RECENT_PARTS) + " with reference " + bundle.getString("partKey"));
-        return new PartLoaderByPart(this, bundle.getString("partKey"), bundle.getString("workspace"));
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Part> loader, Part part) {
-        Log.i("com.docdoku.android.plm.client", "Received information for part in history_light at position " + (loader.getId() - LOADER_ID_RECENT_PARTS) + " with reference " + part.getKey());
-        partsArray.set(loader.getId() - LOADER_ID_RECENT_PARTS, part);
-        partAdapter.notifyDataSetChanged();
+    public Loader<Document> onCreateLoader(int id, Bundle bundle) {
+        Log.i("com.docdoku.android.plm.client", "Querying information for part in history_light at position " + (id - LOADER_ID_RECENT_DOCUMENTS) + " with reference " + bundle.getString("partKey"));
+        return new DocumentLoaderByDocument(this, bundle.getString("partKey"), bundle.getString("workspace"));
     }
 
     @Override
-    public void onLoaderReset(Loader<Part> loader) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void onLoadFinished(Loader<Document> loader, Document document) {
+        try{
+            Log.i("com.docdoku.android.plm.client", "Received information for part in history_light at position " + (loader.getId() - LOADER_ID_RECENT_DOCUMENTS) + " with reference " + document.getIdentification());
+            documentArray.set(loader.getId() - LOADER_ID_RECENT_DOCUMENTS, document);
+            documentAdapter.notifyDataSetChanged();
+        } catch (NullPointerException e){
+            e.printStackTrace();
+            Log.i("com.docdoku.android.plm.client", "Load of a document in history_light failed");
+        }
     }
 
-/**
- * SearchActionBarActivity methods
- */
     @Override
-    protected int getSearchQueryHintId() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void executeSearch(String query) {
+    public void onLoaderReset(Loader<Document> loader) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     protected int getActivityButtonId() {
-        return R.id.recentlyViewedParts;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.recentlyViewedDocuments;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private static class PartLoaderByPart extends Loader<Part> implements HttpGetListener {
+    private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetListener {
 
         private String elementId;
         private String workspace;
         private AsyncTask asyncTask;
 
-        public PartLoaderByPart(Context context, String elementId, String workspace) {
+        public DocumentLoaderByDocument(Context context, String elementId, String workspace) {
             super(context);
             this.elementId = elementId;
             this.workspace = workspace;
@@ -117,7 +111,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
 
         @Override
         protected void onStartLoading (){
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts/" +  elementId);
+            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents/" +  elementId);
         }
 
         @Override
@@ -132,7 +126,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
             if (asyncTask != null){
                 asyncTask.cancel(false);
             }
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts/" +  elementId);
+            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents/" +  elementId);
         }
 
         @Override
@@ -147,17 +141,17 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
 
         @Override
         public void onHttpGetResult(String result) {
-            Part part = null;
+            Document document = null;
             try {
-                JSONObject partJSON = new JSONObject(result);
-                part = new Part(partJSON.getString("partKey"));
-                part.updateFromJSON(partJSON, getContext().getResources());
+                JSONObject documentJSON = new JSONObject(result);
+                document = new Document(documentJSON.getString("id"));
+                document.updateFromJSON(documentJSON, getContext().getResources());
             }catch (JSONException e){
-                Log.e("docdoku.DocDokuPLM", "Error handling json object of a part");
+                Log.e("docdoku.DocDokuPLM", "Error handling json object of a document");
                 e.printStackTrace();
                 Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
             }
-            deliverResult(part);
+            deliverResult(document);
         }
     }
 }
