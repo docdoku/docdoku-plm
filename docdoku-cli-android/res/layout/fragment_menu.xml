@@ -52,6 +52,13 @@
                 android:drawableLeft="@drawable/all_elements_dark"/>
 
         <TextView
+                android:id="@+id/documentFolders"
+                android:layout_height="wrap_content"
+                style="@style/MenuItem"
+                android:text="@string/documentFolders"
+                android:drawableLeft="@drawable/folders_dark"/>
+
+        <TextView
                 android:id="@+id/checkedOutDocuments"
                 android:layout_height="wrap_content"
                 style="@style/MenuItem"
@@ -83,6 +90,12 @@
                 style="@style/MenuItem"
                 android:text="@string/allParts"
                 android:drawableLeft="@drawable/all_elements_dark"/>
+
+        <TextView
+            android:layout_height="1px"
+            style="@style/MenuItem"
+            android:clickable="false"
+            android:text="@string/emptyMenuItem"/>
 
     </LinearLayout>
 

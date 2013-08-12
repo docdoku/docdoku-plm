@@ -39,7 +39,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/identification"
-                android:text="iteration info"/>
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/expand"
+                android:text="iteration info"
+                android:ellipsize="start"
+                android:singleLine="true"/>
 
         </RelativeLayout>
 

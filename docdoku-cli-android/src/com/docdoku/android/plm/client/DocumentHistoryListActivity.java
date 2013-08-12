@@ -46,8 +46,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View loading = findViewById(R.id.loading);
-        ((ViewGroup) loading.getParent()).removeView(loading);
+        removeLoadingView();
 
         Log.i("com.docdoku.android.plm.client", "navigation history_light size: " + navigationHistory.getSize());
         documentArray= new ArrayList<Document>();

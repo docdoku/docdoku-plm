@@ -66,9 +66,9 @@ public class DocumentSearchActivity extends SearchActivity {
                     searchQuery += "&to="+ maxDateString;
                 }
                 Log.i("com.docdoku.android.plm.client", "Document search query: " + searchQuery);
-                Intent intent = new Intent(DocumentSearchActivity.this, DocumentCheckedOutListActivity.class);
-                intent.putExtra(DocumentCheckedOutListActivity.LIST_MODE_EXTRA, DocumentCheckedOutListActivity.SEARCH_RESULTS_LIST);
-                intent.putExtra(DocumentCheckedOutListActivity.SEARCH_QUERY_EXTRA, searchQuery);
+                Intent intent = new Intent(DocumentSearchActivity.this, DocumentSimpleListActivity.class);
+                intent.putExtra(DocumentSimpleListActivity.LIST_MODE_EXTRA, DocumentSimpleListActivity.SEARCH_RESULTS_LIST);
+                intent.putExtra(DocumentSimpleListActivity.SEARCH_QUERY_EXTRA, searchQuery);
                 startActivity(intent);
             }
         });

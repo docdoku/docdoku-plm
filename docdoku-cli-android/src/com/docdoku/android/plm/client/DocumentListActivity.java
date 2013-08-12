@@ -65,6 +65,13 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
     }
 
+    protected void removeLoadingView(){
+        View loading = findViewById(R.id.loading);
+        if (loading != null){
+            ((ViewGroup) loading.getParent()).removeView(loading);
+        }
+    }
+
     /**
      * SearchActionBarActivity methods
      */
@@ -139,17 +146,14 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 TextView identification = (TextView) documentRowView.findViewById(R.id.identification);
                 identification.setText(doc.getIdentification());
                 ImageView checkedInOutImage = (ImageView) documentRowView.findViewById(R.id.checkedInOutImage);
-                //TextView checkOutUser = (TextView) documentRowView.findViewById(R.id.checkOutUser);
                 String checkOutUserName = doc.getCheckOutUserName();
                 if (checkOutUserName != null){
                     String checkOutUserLogin = doc.getCheckOutUserLogin();
                     if (checkOutUserLogin.equals(getCurrentUserLogin())){
                         checkedInOutImage.setImageResource(R.drawable.checked_out_current_user_light);
                     }
-                    //checkOutUser.setText(checkOutUserName);
                 }
                 else{
-                    //checkOutUser.setText("");
                     checkedInOutImage.setImageResource(R.drawable.checked_in_light);
                 }
                 TextView numAttachedFiles = (TextView) documentRowView.findViewById(R.id.numAttachedFiles);
@@ -165,11 +169,11 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 try {
                     lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(doc.getLastIterationDate()), doc.getLastIterationAuthorName())));
                 } catch (ParseException e) {
-                    ((ViewGroup) lastIteration.getParent()).removeView(lastIteration);
+                    lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (ParseException)" + doc.getIdentification());
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }catch(NullPointerException e){
-                    ((ViewGroup) lastIteration.getParent()).removeView(lastIteration);
+                    lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }

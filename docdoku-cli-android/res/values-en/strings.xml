@@ -42,12 +42,13 @@
     <string name="workspace">Workspace</string>
     <string name="documents">Documents</string>
     <string name="documentSearch">Search</string>
-    <string name="documentHistory">Recently viewed</string>
+    <string name="documentHistory">History</string>
     <string name="allDocuments">All</string>
     <string name="checkedOutDocuments">Checked out by me</string>
+    <string name="documentFolders">Folders</string>
     <string name="parts">Parts</string>
     <string name="partSearch">Search</string>
-    <string name="partHistory">Recently viewed</string>
+    <string name="partHistory">History</string>
     <string name="allParts">All</string>
 
     <!-- Activity labels for action bar -->

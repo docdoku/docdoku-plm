@@ -107,6 +107,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.recentlyViewedDocuments).setOnClickListener(this);
         view.findViewById(R.id.allDocuments).setOnClickListener(this);
         view.findViewById(R.id.checkedOutDocuments).setOnClickListener(this);
+        view.findViewById(R.id.documentFolders).setOnClickListener(this);
 
         view.findViewById(R.id.partSearch).setOnClickListener(this);
         view.findViewById(R.id.recentlyViewedParts).setOnClickListener(this);
@@ -207,9 +208,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             case R.id.allDocuments:
                 intent = new Intent(getActivity(), DocumentCompleteListActivity.class);
                 break;
+            case R.id.documentFolders:
+                intent = new Intent(getActivity(), DocumentFoldersActivity.class);
+                break;
             case R.id.checkedOutDocuments:
-                intent = new Intent(getActivity(), DocumentCheckedOutListActivity.class);
-                intent.putExtra(DocumentCheckedOutListActivity.LIST_MODE_EXTRA, DocumentCheckedOutListActivity.CHECKED_OUT_DOCUMENTS_LIST);
+                intent = new Intent(getActivity(), DocumentSimpleListActivity.class);
+                intent.putExtra(DocumentSimpleListActivity.LIST_MODE_EXTRA, DocumentSimpleListActivity.CHECKED_OUT_DOCUMENTS_LIST);
                 break;
             case R.id.partSearch:
                 intent = new Intent(getActivity(), PartSearchActivity.class);

@@ -42,13 +42,15 @@
     <string name="workspace">Espace de Travail</string>
     <string name="documents">Documents</string>
     <string name="documentSearch">Rechercher</string>
-    <string name="documentHistory">Récemment Consultés</string>
+    <string name="documentHistory">Historique</string>
     <string name="allDocuments">Tous</string>
     <string name="checkedOutDocuments">Réservés</string>
+    <string name="documentFolders">Dossiers</string>
     <string name="parts">Articles</string>
     <string name="partSearch">Rechercher</string>
-    <string name="partHistory">Récemment Consultés</string>
+    <string name="partHistory">Historique</string>
     <string name="allParts">Tous</string>
+    <string name="emptyMenuItem">........................................</string>
 
     <!-- Activity labels for action bar -->
     <string name="allDocumentListTitle">Tous les documents</string>
