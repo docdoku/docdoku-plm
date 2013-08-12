@@ -54,7 +54,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     @Override
     public void onResume(){
         super.onResume();
-        MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
+        final MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
         menuFragment.setCurrentActivity(getActivityButtonId());
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
@@ -70,7 +70,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                if (MenuFragment.workspaceChanged){
+                if (menuFragment.workspaceChanged){
                     restartActivity();
                 }
             }
@@ -117,7 +117,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(getApplicationContext(), ConnectionActivity.class);
-                        intent.putExtra(ConnectionActivity.INTENT_ERASE_ID, true);
+                        intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
                         startActivity(intent);
                     }
                 });

@@ -67,7 +67,7 @@
     <!-- Search documents -->
     <string name="documentSearchPrompt">Search documents</string>
     <string name="documentSearchStart">Search</string>
-    <string name="searchDocumentById">Search documents by Id</string>
+    <string name="documentSearchById">Document Id</string>
     <string name="documentPickAuthor">Pick a user</string>
     <string name="documentCreationDateMin">Creation date after</string>
     <string name="documentCreationDateMax">Creation date before</string>

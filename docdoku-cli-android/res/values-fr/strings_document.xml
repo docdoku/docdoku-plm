@@ -67,7 +67,7 @@
     <!-- Search documents -->
     <string name="documentSearchPrompt">Recherche de Document</string>
     <string name="documentSearchStart">Rechercher</string>
-    <string name="searchDocumentById">Chercher la référence d\'un document</string>
+    <string name="documentSearchById">Référence de document</string>
     <string name="documentPickAuthor">Choisissez un utilisateur</string>
     <string name="documentCreationDateMin">Créé après le</string>
     <string name="documentCreationDateMax">Créé avant le</string>

@@ -70,7 +70,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
      */
     @Override
     protected int getSearchQueryHintId() {
-        return R.string.searchDocumentById;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.string.documentSearchById;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

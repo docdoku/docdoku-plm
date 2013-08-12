@@ -50,11 +50,11 @@ import java.io.UnsupportedEncodingException;
  */
 public class ConnectionActivity extends Activity implements HttpGetListener {
 
-    private static final String PREFERENCE_USERNAME = "username";
-    private static final String PREFERENCE_PASSWORD = "password";
-    private static final String PREFERENCE_SERVER_URL = "server url";
-    private static final String PREFERENCE_AUTO_CONNECT = "auto_connect";
-    public static final String INTENT_ERASE_ID = "erase_id";
+    private static final String PREFERENCE_KEY_USERNAME = "username";
+    private static final String PREFERENCE_KEY_PASSWORD = "password";
+    private static final String PREFERENCE_KEY_SERVER_URL = "server url";
+    private static final String PREFERENCE_KEY_AUTO_CONNECT = "auto_connect";
+    public static final String INTENT_KEY_ERASE_ID = "erase_id";
 
     private CheckBox rememberId;
     private SharedPreferences preferences;
@@ -71,16 +71,16 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         preferences = getPreferences(MODE_PRIVATE);
 
         Intent intent = getIntent();
-        boolean eraseData = intent.getBooleanExtra(INTENT_ERASE_ID, false);
+        boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
         if (eraseData){
             eraseData();
         }
 
         startConnection();
-        if (preferences.getBoolean(PREFERENCE_AUTO_CONNECT, false)){
-            username = preferences.getString(PREFERENCE_USERNAME, "");
-            password = preferences.getString(PREFERENCE_PASSWORD, "");
-            serverUrl = preferences.getString(PREFERENCE_SERVER_URL, "");
+        if (preferences.getBoolean(PREFERENCE_KEY_AUTO_CONNECT, false)){
+            username = preferences.getString(PREFERENCE_KEY_USERNAME, ""); ((EditText) findViewById(R.id.usernameField)).setText(username);
+            password = preferences.getString(PREFERENCE_KEY_PASSWORD, ""); ((EditText) findViewById(R.id.passwordField)).setText(password);
+            serverUrl = preferences.getString(PREFERENCE_KEY_SERVER_URL, ""); ((EditText) findViewById(R.id.urlField)).setText(serverUrl);
 
             connect(username, password, serverUrl);
         }
@@ -201,7 +201,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
                     workspaceArray[i] = workspaceJSON.getJSONObject(i).getString("id");
                     Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
-                MenuFragment.setDOWNLOADED_WORKSPACES(workspaceArray);
+                MenuFragment.setDOWNLOADED_WORKSPACES(workspaceArray, preferences);
             }catch (JSONException e) {
                 Log.e("com.docdoku.android.plm.client","Error creating workspace JSONArray from String result");
                 e.printStackTrace();
@@ -209,10 +209,10 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
             if (rememberId.isChecked()){
                 Log.i("com.docdoku.android.plm.client", "Saving in memory user identification for: " + username);
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(PREFERENCE_AUTO_CONNECT, true);
-                editor.putString(PREFERENCE_USERNAME, username);
-                editor.putString(PREFERENCE_PASSWORD, password);
-                editor.putString(PREFERENCE_SERVER_URL, serverUrl);
+                editor.putBoolean(PREFERENCE_KEY_AUTO_CONNECT, true);
+                editor.putString(PREFERENCE_KEY_USERNAME, username);
+                editor.putString(PREFERENCE_KEY_PASSWORD, password);
+                editor.putString(PREFERENCE_KEY_SERVER_URL, serverUrl);
                 editor.commit();
             }
             endConnectionActivity();
