@@ -20,40 +20,30 @@
 
 package com.docdoku.android.plm.network;
 
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.net.*;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class HttpGetTask extends AsyncTask<String, Void, String>{
+public class HttpGetTask extends HttpTask<String, Void, String>{
 
-    public static String baseUrl;
-    public static byte[] id;
     private HttpGetListener httpGetListener;
-
-    public static final String ERROR_UNKNOWN = "Connection Error";
-    public static final String ERROR_URL = "Url error";
-    public static final String ERROR_HTTP_BAD_REQUEST = "Http Bad request";
-    public static final String ERROR_HTTP_UNAUTHORIZED = "Http unauthorized";
 
     public HttpGetTask(HttpGetListener httpGetListener){
         super();
         this.httpGetListener = httpGetListener;
     }
 
-    public HttpGetTask(String url, String username, String password, HttpGetListener httpGetListener) throws UnsupportedEncodingException {
+    public HttpGetTask(String host, int port, String username, String password, HttpGetListener httpGetListener) throws UnsupportedEncodingException {
         super();
-        baseUrl = url;
+        this.host = host;
+        this.port = port;
         id = Base64.encode((username + ":" + password).getBytes("ISO-8859-1"), Base64.DEFAULT);
         this.httpGetListener = httpGetListener;
     }
@@ -62,9 +52,8 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
     protected String doInBackground(String... strings) {
         String result = ERROR_UNKNOWN;
         try {
-            String pURL = baseUrl + strings[0];
-            Log.i("com.docdoku.android.plm.client","Sending HttpGet request to url: " + pURL);
-            URL url = new URL(pURL);
+            URL url = createURL(strings[0]);
+            Log.i("com.docdoku.android.plm.client","Sending HttpGet request to url: " + url);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -102,6 +91,9 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
         } catch (ArrayIndexOutOfBoundsException e){
             Log.e("com.docdoku.android.plm.client", "ERROR: No Url provided for the Get query");
             e.printStackTrace();
+        } catch (URISyntaxException e) {
+            Log.e("com.docdoku.android.plm", "URISyntaxException message: " + e.getMessage());
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
         return result;
@@ -113,38 +105,5 @@ public class HttpGetTask extends AsyncTask<String, Void, String>{
         if (httpGetListener != null){
             httpGetListener.onHttpGetResult(result);
         }
-    }
-
-    private String inputStreamToString(InputStream in) throws IOException {
-        String string;
-        InputStreamReader reader = new InputStreamReader(in);
-        BufferedReader bf = new BufferedReader(reader);
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            while ((line = bf.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        string = sb.toString();
-        reader.close();
-        bf.close();
-        return string;
-    }
-
-    private String analyzeHttpErrorCode(int errorCode){
-        switch (errorCode){
-            case 400: return ERROR_HTTP_BAD_REQUEST;
-            case 401: return ERROR_HTTP_UNAUTHORIZED;
-        }
-        return ERROR_UNKNOWN;
     }
 }

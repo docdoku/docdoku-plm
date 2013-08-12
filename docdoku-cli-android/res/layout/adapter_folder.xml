@@ -12,6 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
+        android:drawablePadding="3dp"
         android:drawableLeft="@drawable/folders_light"/>
 
     <ImageView
@@ -19,6 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/element_expand"/>
+        android:src="@drawable/expand_folder_light"/>
 
 </RelativeLayout>

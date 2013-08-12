@@ -27,19 +27,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.net.*;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
+public class HttpPutTask extends HttpTask<String, Void, Boolean> {
 
-    private final static int CHUNK_SIZE = 1024*8;
-    private final static int BUFFER_CAPACITY = 1024*32;
 
     private static String baseUrl;
     private static byte[] id;
@@ -47,21 +42,16 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
 
     public HttpPutTask(HttpPutListener httpPutListener) {
         super();
-        if (baseUrl == null){
-            this.baseUrl = HttpGetTask.baseUrl;
-            this.id = HttpGetTask.id;
-        }
         this.httpPutListener = httpPutListener;
     }
 
     @Override
     protected Boolean doInBackground(String... strings) {
         Boolean result = false;
-        String pURL = baseUrl + strings[0];
-        Log.i("com.docdoku.android.plm.client", "Sending HttpPut request to url: " + pURL);
 
         try {
-            URL url = new URL(pURL);
+            URL url = createURL(strings[0]);
+            Log.i("com.docdoku.android.plm.client", "Sending HttpPut request to url: " + url);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
@@ -88,16 +78,7 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
             conn.setRequestMethod("PUT");
             conn.connect();
 
-            if (messageBytes != null){
-                OutputStream out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_CAPACITY);
-                InputStream inputStream = new ByteArrayInputStream(messageBytes);
-                byte[] data = new byte[CHUNK_SIZE];
-                int length;
-                while ((length = inputStream.read(data)) != -1) {
-                    out.write(data, 0, length);
-                }
-                out.flush();
-            }
+            writeBytesToConnection(conn, messageBytes);
 
             int responseCode = conn.getResponseCode();
             Log.i("com.docdoku.android.plm","Response message: " + conn.getResponseMessage());
@@ -122,6 +103,8 @@ public class HttpPutTask extends AsyncTask<String, Void, Boolean> {
             Log.e("com.docdoku.android.plm.client", "ERROR: IOException");
             e.printStackTrace();
             Log.e("com.docdoku.android.plm.client", "Exception message: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return result;
     }

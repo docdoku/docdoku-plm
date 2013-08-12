@@ -93,7 +93,8 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
 
     private void connect(final String username, final String password, String serverUrl){
         if (checkInternetConnection()){
-            final String checkedUrl = checkUrlFormat(serverUrl);
+            final String host = extractHostFromUrl(serverUrl);
+            final int port = extractPortFromUrl(serverUrl);
             Log.i("com.docdoku.android.plm.client", "Showing progress dialog");
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -113,7 +114,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
                     Log.i("com.docdoku.android.plm.client", "Progress dialog shown");
                     try {
                         Log.i("com.docdoku.android.plm.client", "Attempting to connect to server for identification");
-                        connectionTask = new HttpGetTask(checkedUrl, username, password, ConnectionActivity.this).execute("api/accounts/workspaces");
+                        connectionTask = new HttpGetTask(host, port, username, password, ConnectionActivity.this).execute("/api/accounts/workspaces");
                     } catch (UnsupportedEncodingException e) {
                         Log.e("com.docdoku.android.plm.client","Error encoding id for server connection");
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -162,12 +163,34 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         finish();
     }
 
-    private String checkUrlFormat(String url){
+    private String extractHostFromUrl(String url){
         String finalUrl = url;
-        if (url.length()>0 && !(url.substring(url.length()-1).equals("/"))){
-            finalUrl += "/";
+        if (finalUrl.substring(0,7).equals("http://")){
+            finalUrl = finalUrl.substring(7, finalUrl.length());
+        }
+        int semicolonIndex = finalUrl.indexOf(':');
+        if (semicolonIndex != -1){
+            finalUrl = finalUrl.substring(0, semicolonIndex);
+        }
+        if (finalUrl.charAt(finalUrl.length()-1) == '/'){
+            finalUrl = finalUrl.substring(0, finalUrl.length()-1);
         }
         return finalUrl;
+    }
+
+    private int extractPortFromUrl(String url){
+        String finalUrl = url;
+        if (finalUrl.substring(0,7).equals("http://")){
+            finalUrl = finalUrl.substring(7, finalUrl.length());
+        }
+        int semicolonIndex = finalUrl.indexOf(':');
+        if (semicolonIndex != -1){
+            String portString = finalUrl.substring(semicolonIndex+1);
+            int port = Integer.parseInt(portString);
+            Log.i("com.docdoku.android.plm", "Extracted port from Url: " + port);
+            return Integer.parseInt(portString);
+        }
+        return -1;
     }
 
     public void eraseData(){

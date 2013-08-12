@@ -21,10 +21,12 @@
 package com.docdoku.android.plm.client;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -32,18 +34,28 @@ import com.docdoku.android.plm.network.HttpGetTask;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author: martindevillers
  */
 public class DocumentFoldersActivity extends DocumentListActivity implements HttpGetListener{
 
-    private String[] folders;
+    private static final String INTENT_KEY_FOLDER = "folder";
+
+    private Folder[] folders;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new HttpGetTask(this).execute(getUrlWorkspaceApi() + "/folders/");
+        Intent intent = getIntent();
+        String folder = intent.getStringExtra(INTENT_KEY_FOLDER);
+
+        if (folder == null){
+            new HttpGetTask(this).execute(getUrlWorkspaceApi() + "/folders/");
+        } else {
+            new HttpGetTask(this).execute(getUrlWorkspaceApi() + "/folders/" + folder + "/folders/");
+        }
     }
 
     @Override
@@ -55,16 +67,26 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
     public void onHttpGetResult(String result) {
         try {
             JSONArray foldersArray = new JSONArray(result);
-            folders = new String[foldersArray.length()];
+            folders = new Folder[foldersArray.length()];
             for (int i = 0; i<foldersArray.length(); i++){
-                folders[i] = foldersArray.getJSONObject(i).getString("name");
+                JSONObject folderObject = foldersArray.getJSONObject(i);
+                folders[i] = new Folder(folderObject.getString("name"),folderObject.getString("id"));
             }
         } catch (JSONException e) {
             Log.e("com.docdoku.android.plm", "JSONException: could not read downloaded folder names");
+            folders = new Folder[0];
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         FolderAdapter adapter = new FolderAdapter();
         documentListView.setAdapter(adapter);
+        documentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(DocumentFoldersActivity.this, DocumentFoldersActivity.class);
+                intent.putExtra(INTENT_KEY_FOLDER, folders[i].getId());
+                startActivity(intent);
+            }
+        });
         removeLoadingView();
     }
 
@@ -87,10 +109,38 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
+            final Folder folder = folders[i];
             View rowView = getLayoutInflater().inflate(R.layout.adapter_folder, null);
             TextView folderName = (TextView) rowView.findViewById(R.id.folderName);
-            folderName.setText(folders[i]);
+            folderName.setText(folder.getName());
+            /*rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(DocumentFoldersActivity.this, DocumentFoldersActivity.class);
+                    intent.putExtra(INTENT_KEY_FOLDER, folder.getId());
+                    startActivity(intent);
+                }
+            });*/
             return rowView;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    }
+
+    private class Folder{
+
+        private String name;
+        private String id;
+
+        public Folder(String name, String id){
+            this.name = name;
+            this.id = id;
+        }
+
+        public String getName(){
+            return name;
+        }
+
+        private String getId() {
+            return id;
         }
     }
 }
