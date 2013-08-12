@@ -134,8 +134,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             }
         }
         if (DOWNLOADED_WORKSPACES.length == 0){
-            ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
-            Log.e("com.docdoku.android.plm.client","ERROR: No workspaces downloaded");
+            if (expandRadioButtons != null){
+                ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
+                Log.e("com.docdoku.android.plm.client","ERROR: No workspaces downloaded");
+            }
             return false;
         }
         return true;

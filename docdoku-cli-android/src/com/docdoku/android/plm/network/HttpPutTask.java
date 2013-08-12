@@ -35,9 +35,6 @@ import java.net.*;
  */
 public class HttpPutTask extends HttpTask<String, Void, Boolean> {
 
-
-    private static String baseUrl;
-    private static byte[] id;
     private HttpPutListener httpPutListener;
 
     public HttpPutTask(HttpPutListener httpPutListener) {
@@ -59,11 +56,6 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
             byte[] messageBytes = null;
             try{
                 String message = strings[1];
-                try {
-                    JSONObject object = new JSONObject(message);
-                } catch (JSONException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
                 messageBytes = message.getBytes();
                 Log.i("com.docdoku.android.plm", "Message found attached to put request: " + message);
                 //conn.setRequestProperty("Content-Length", Integer.toString(message.getBytes().length));
@@ -78,7 +70,9 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
             conn.setRequestMethod("PUT");
             conn.connect();
 
-            writeBytesToConnection(conn, messageBytes);
+            if (messageBytes != null){
+                writeBytesToConnection(conn, messageBytes);
+            }
 
             int responseCode = conn.getResponseCode();
             Log.i("com.docdoku.android.plm","Response message: " + conn.getResponseMessage());

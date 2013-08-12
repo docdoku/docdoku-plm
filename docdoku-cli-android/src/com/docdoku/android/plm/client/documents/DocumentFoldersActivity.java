@@ -113,7 +113,7 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
             }
         };
         if (currentFolderId == null){
-            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/documents/");
+            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/folders/" + getCurrentWorkspace() + "/documents/");
         } else {
             new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/folders/" + currentFolderId + "/documents/");
         }
