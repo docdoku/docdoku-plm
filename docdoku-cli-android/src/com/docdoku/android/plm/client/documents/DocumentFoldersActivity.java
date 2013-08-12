@@ -25,15 +25,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.widget.*;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.HttpGetTask;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author: martindevillers
@@ -43,17 +45,19 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
     private static final String INTENT_KEY_FOLDER = "folder";
 
     private Folder[] folders;
+    private String currentFolderId;
+    private FolderAdapter adapter;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String folder = intent.getStringExtra(INTENT_KEY_FOLDER);
+        currentFolderId = intent.getStringExtra(INTENT_KEY_FOLDER);
 
-        if (folder == null){
+        if (currentFolderId == null){
             new HttpGetTask(this).execute(getUrlWorkspaceApi() + "/folders/");
         } else {
-            new HttpGetTask(this).execute(getUrlWorkspaceApi() + "/folders/" + folder + "/folders/");
+            new HttpGetTask(this).execute(getUrlWorkspaceApi() + "/folders/" + currentFolderId + "/folders/");
         }
     }
 
@@ -76,7 +80,9 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
             folders = new Folder[0];
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        FolderAdapter adapter = new FolderAdapter();
+        adapter = new FolderAdapter(new ArrayList<Document>());
+        final ProgressBar progressBar = new ProgressBar(this);
+        documentListView.addFooterView(progressBar);
         documentListView.setAdapter(adapter);
         documentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,19 +92,52 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
                 startActivity(intent);
             }
         });
+        HttpGetListener httpGetListener = new HttpGetListener() {
+            @Override
+            public void onHttpGetResult(String result) {
+                try {
+                    JSONArray documentArray = new JSONArray(result);
+                    ArrayList<Document> documents = new ArrayList<Document>();
+                    for (int i = 0; i<documentArray.length(); i++){
+                        JSONObject documentJSON = documentArray.getJSONObject(i);
+                        Document document = new Document(documentJSON.getString("id"));
+                        document.updateFromJSON(documentJSON, getResources());
+                        documents.add(document);
+                    }
+                    adapter.addDocuments(documents);
+                    adapter.notifyDataSetChanged();
+                    documentListView.removeFooterView(progressBar);
+                } catch (JSONException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        };
+        if (currentFolderId == null){
+            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/documents/");
+        } else {
+            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/folders/" + currentFolderId + "/documents/");
+        }
         removeLoadingView();
     }
 
-    private class FolderAdapter extends BaseAdapter{
+    private class FolderAdapter extends DocumentAdapter{
+
+        public FolderAdapter(List<Document> documents) {
+            super(documents);
+        }
 
         @Override
         public int getCount() {
-            return folders.length;  //To change body of implemented methods use File | Settings | File Templates.
+            return folders.length + documents.size();  //To change body of implemented methods use File | Settings | File Templates.
         }
 
         @Override
         public Object getItem(int i) {
-            return folders[i];  //To change body of implemented methods use File | Settings | File Templates.
+            if (i<folders.length){
+                return folders[i];
+            } else {
+                return super.getItem(i-folders.length);
+            }
         }
 
         @Override
@@ -108,11 +147,19 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            final Folder folder = folders[i];
-            View rowView = getLayoutInflater().inflate(R.layout.adapter_folder, null);
-            TextView folderName = (TextView) rowView.findViewById(R.id.folderName);
-            folderName.setText(folder.getName());
-            return rowView;  //To change body of implemented methods use File | Settings | File Templates.
+            if (i<folders.length){
+                final Folder folder = folders[i];
+                View rowView = getLayoutInflater().inflate(R.layout.adapter_folder, null);
+                TextView folderName = (TextView) rowView.findViewById(R.id.folderName);
+                folderName.setText(folder.getName());
+                return rowView;  //To change body of implemented methods use File | Settings | File Templates.
+            } else{
+                return super.getView(i-folders.length, view, viewGroup);
+            }
+        }
+
+        private void addDocuments(List<Document> documents){
+            this.documents = documents;
         }
     }
 

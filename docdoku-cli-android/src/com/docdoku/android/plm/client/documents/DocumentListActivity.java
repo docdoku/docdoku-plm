@@ -117,7 +117,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
     protected class DocumentAdapter extends BaseAdapter {
 
-        private List<Document> documents;
+        protected List<Document> documents;
         private LayoutInflater inflater;
 
         public DocumentAdapter(List<Document> documents){

@@ -24,7 +24,8 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
     protected static byte[] id;
 
     protected URL createURL(String path) throws URISyntaxException, MalformedURLException {
-        URI uri = new URI(path);
+        String uriPath = path.replace(" ", "%20");
+        URI uri = new URI(uriPath);
         String ASCIIPath = uri.toASCIIString();
         Log.i("com.docdoku.android.plm", "Parameters for Http connection: " +
                 "\n Host: " + host +
