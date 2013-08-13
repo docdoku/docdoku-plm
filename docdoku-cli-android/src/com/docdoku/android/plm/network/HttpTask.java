@@ -1,5 +1,6 @@
 package com.docdoku.android.plm.network;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -22,6 +23,15 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
     protected static String host;
     protected static int port;
     protected static byte[] id;
+
+    protected HttpTask(){
+        if (id == null || host == null){
+            Log.e("com.docdoku.android.plm", "Server connection information is missing.");
+            //TODO recuperate server connection information
+        }else{
+            Log.i("com.docdoku.android.plm", "All the server connection information is correctly available");
+        }
+    }
 
     protected URL createURL(String path) throws URISyntaxException, MalformedURLException {
         String uriPath = path.replace(" ", "%20");

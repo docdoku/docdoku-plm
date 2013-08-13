@@ -55,9 +55,6 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View loading = findViewById(R.id.loading);
-        ((ViewGroup) loading.getParent()).removeView(loading);
-
         footerProgressBar = new ProgressBar(this);
         documentListView.addFooterView(footerProgressBar);
 
@@ -94,6 +91,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         try{
             result = result.substring(0, result.length() - 1);
             numDocumentsAvailable = Integer.parseInt(result);
+            removeLoadingView();
             Bundle bundle = new Bundle();
             bundle.putInt("page", 0);
             bundle.putString("workspace", getCurrentWorkspace());

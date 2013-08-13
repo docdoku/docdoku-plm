@@ -93,6 +93,7 @@
 
         <TextView
             android:layout_height="1px"
+            android:layout_width="wrap_content"
             style="@style/MenuItem"
             android:clickable="false"
             android:text="@string/emptyMenuItem"/>

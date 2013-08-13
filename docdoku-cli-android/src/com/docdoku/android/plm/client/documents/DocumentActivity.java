@@ -93,18 +93,22 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
-                builder.setTitle(R.string.documentCheckOutConfirm);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkout/");
-                    }
-                });
-                builder.setNegativeButton(R.string.no, null);
-                builder.create().show();
+                checkOutDocument();
             }
         });
+    }
+
+    private void checkOutDocument(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
+        builder.setTitle(R.string.documentCheckOutConfirm);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkout/");
+            }
+        });
+        builder.setNegativeButton(R.string.no, null);
+        builder.create().show();
     }
 
     public void setDocumentCheckedOutByCurrentUser(){
@@ -117,55 +121,64 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
-                builder.setTitle(R.string.documentCheckInConfirm);
-                builder.setMessage(R.string.documentIterationNotePrompt);
-                final EditText iterationNoteField = new EditText(DocumentActivity.this);
-                builder.setView(iterationNoteField);
-                builder.setPositiveButton(R.string.documentDoCheckIn, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        final String iterationNote = iterationNoteField.getText().toString();
-                        if (iterationNote.length()>0){
-                            Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
-                            HttpPutListener httpPutListener = new HttpPutListener() {
-                                @Override
-                                public void onHttpPutResult(boolean result) {
-                                    if (result){
-                                        Log.i("com.docdoku.android.plm", "Checking out documnent after successfully uploading iteration");
-                                        new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
-                                    } else{
-                                        DocumentActivity.this.onHttpPutResult(false);
-                                    }
-                                }
-                            };
-                            //TODO correctly send iteration note
-                            new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/iterations/" + document.getIterationNumber(), document.getLastIterationJSONWithUpdateNote(iterationNote).toString());
-                            }else {
-                            Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
-                            new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
-                        }
-                    }
-                });
-                builder.setNeutralButton(R.string.documentCancelCheckOut, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/undocheckout/");
-                    }
-                });
-                builder.setNegativeButton(R.string.no, null);
-                builder.create().show();
+                checkInDocument();
             }
         });
     }
 
+    private void checkInDocument(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
+        builder.setTitle(R.string.documentCheckInConfirm);
+        builder.setMessage(R.string.documentIterationNotePrompt);
+        final EditText iterationNoteField = new EditText(DocumentActivity.this);
+        builder.setView(iterationNoteField);
+        builder.setPositiveButton(R.string.documentDoCheckIn, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String iterationNote = iterationNoteField.getText().toString();
+                if (iterationNote.length()>0){
+                    Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
+                    HttpPutListener httpPutListener = new HttpPutListener() {
+                        @Override
+                        public void onHttpPutResult(boolean result, String responseContent) {
+                            if (result){
+                                Log.i("com.docdoku.android.plm", "Checking out document after successfully uploading iteration");
+                                new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
+                            } else{
+                                DocumentActivity.this.onHttpPutResult(false, "");
+                            }
+                        }
+                    };
+                    new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/iterations/" + document.getIterationNumber(), document.getLastIterationJSONWithUpdateNote(iterationNote).toString());
+                }else {
+                    Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
+                    new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/checkin/");
+                }
+            }
+        });
+        builder.setNeutralButton(R.string.documentCancelCheckOut, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                new HttpPutTask(DocumentActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/undocheckout/");
+            }
+        });
+        builder.setNegativeButton(R.string.no, null);
+        builder.create().show();
+    }
+
     @Override
-    public void onHttpPutResult(boolean result) {
+    public void onHttpPutResult(boolean result, String responseContent) {
         Log.i("com.docdoku.android.plm.client", "Result of checkin/checkout: " + result);
         if (result){
             if (checkedIn){
                 setDocumentCheckedOutByCurrentUser();
                 Toast.makeText(this, R.string.documentSuccessfullyCheckedOut, Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject responseJSON = new JSONObject(responseContent);
+                    document.updateFromJSON(responseJSON, getResources());
+                } catch (JSONException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             }
             else{
                 setDocumentCheckedIn();
@@ -282,7 +295,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
     /**
      * Adapter for the expandable list view
      * Group 0: Header with tile of document and important buttons
-     * Group 1: General information about the documnet
+     * Group 1: General information about the document
      * Group 2: Linked files
      * Group 3: Linked documents
      * Group 4: Information about the last iteration
@@ -402,6 +415,8 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                         rowView = createNameValuePairRowView(attribute.getName(), attribute.getValue());
                     }catch (ArrayIndexOutOfBoundsException e){
                         rowView = createNoContentFoundRowView(R.string.documentNoAttributes);
+                    }catch (NullPointerException e){
+                        rowView = createNoContentFoundRowView(R.string.documentNoAttributes);
                     }
 
                     break;
@@ -454,6 +469,8 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             return rowView;
         }catch (ArrayIndexOutOfBoundsException e){
             return createNoContentFoundRowView(R.string.documentNoLinkedDocuments);
+        }catch (NullPointerException e){
+            return createNoContentFoundRowView(R.string.documentNoLinkedDocuments);
         }
     }
 
@@ -496,6 +513,8 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             return rowView;
         }catch (ArrayIndexOutOfBoundsException e){
             return createNoContentFoundRowView(R.string.documentNoAttachedFiles);
+        }catch (NullPointerException e){
+            return  createNoContentFoundRowView(R.string.documentNoAttachedFiles);
         }
     }
 
@@ -541,7 +560,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 final boolean b = notifyStateChange.isChecked();
                 HttpPutListener httpPutListener = new HttpPutListener() {
                     @Override
-                    public void onHttpPutResult(boolean result) {
+                    public void onHttpPutResult(boolean result, String responseContent) {
                         if (b){
                             Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
                         } else {
@@ -578,7 +597,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 final boolean b = notifyIteration.isChecked();
                 HttpPutListener httpPutListener = new HttpPutListener() {
                     @Override
-                    public void onHttpPutResult(boolean result) {
+                    public void onHttpPutResult(boolean result, String responseContent) {
                         if (b){
                             Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
                         } else {

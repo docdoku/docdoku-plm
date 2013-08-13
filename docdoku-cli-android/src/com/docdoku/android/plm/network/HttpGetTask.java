@@ -41,7 +41,6 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
     }
 
     public HttpGetTask(String host, int port, String username, String password, HttpGetListener httpGetListener) throws UnsupportedEncodingException {
-        super();
         this.host = host;
         this.port = port;
         id = Base64.encode((username + ":" + password).getBytes("ISO-8859-1"), Base64.DEFAULT);
