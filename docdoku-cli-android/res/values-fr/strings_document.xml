@@ -72,11 +72,14 @@
     <string name="documentCreationDateMin">Créé après le</string>
     <string name="documentCreationDateMax">Créé avant le</string>
 
-    <!-- Upload image -->
+    <!-- Upload file -->
     <string name="confirmImageUpload">Ajouter l\'image au document?</string>
     <string name="chooseImageFileName">Nom de l\'image</string>
     <string name="uploadImage">Charger l\'image</string>
     <string name="uploadSuccess">Image chargée avec succès</string>
-    <string name="uploadFail">Echec du chargement de l\'image</string>
+    <string name="imageUploadFail">Echec du chargement de l\'image</string>
+    <string name="mediaError">Erreur média</string>
+    <string name="imageSavedIn">Image enregistrée dans </string>
+    <string name="videoSavedIn">Vidéo enregistrée dans </string>
 
 </resources>

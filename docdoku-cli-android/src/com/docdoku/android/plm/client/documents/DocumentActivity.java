@@ -56,13 +56,16 @@ import java.util.Date;
  *
  * @author: Martin Devillers
  */
-public class DocumentActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener, HttpPostUploadFileListener {
+public class DocumentActivity extends SimpleActionBarActivity
+        implements HttpPutListener, HttpGetDownloadFileListener, HttpPostUploadFileListener {
 
     public static final String EXTRA_DOCUMENT = "document";
 
-    private final int NUM_PAGES = 6;
-    private final int NUM_GENERAL_INFORMATION_FIELDS = 10;
-    private final int NUM_REVISION_FIELDS = 4;
+    private static final int INTENT_CODE_ACTIVITY_PICTURE = 0;
+    private static final int INTENT_CODE_ACTIVITY_VIDEO = 1;
+    private static final int NUM_PAGES = 6;
+    private static final int NUM_GENERAL_INFORMATION_FIELDS = 10;
+    private static final int NUM_REVISION_FIELDS = 4;
 
     private Document document;
 
@@ -85,6 +88,17 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         expandableListView.expandGroup(1);
     }
 
+    /**
+     * Methods to do document checkins/checkouts
+     *
+     * setDocumentCheckedIn
+     * checkOutDocument
+     * setDocumentCheckedOut
+     * checkInDocument
+     * setNotifyStateChangeNotification
+     * setNotifyIterationNotification
+     * subscriptionChangeRequested
+     */
     private void setDocumentCheckedIn(){
         checkedIn = true;
         checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_in_light, 0, 0);
@@ -166,6 +180,103 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         builder.create().show();
     }
 
+    private void setNotifyStateChangeNotification(final CompoundButton notifyStateChange){
+        notifyStateChange.setChecked(document.getStateChangeNotification());
+        notifyStateChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final boolean b = notifyStateChange.isChecked();
+                HttpPutListener httpPutListener = new HttpPutListener() {
+                    @Override
+                    public void onHttpPutResult(boolean result, String responseContent) {
+                        if (b) {
+                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                        }
+                        document.setStateChangeNotification(b);
+                    }
+                };
+                if (b) {
+                    subscriptionChangeRequested(R.string.confirmSubscribeToStateChangeNotification,
+                            document,
+                            "stateChange/subscribe",
+                            notifyStateChange,
+                            b,
+                            httpPutListener);
+                } else {
+                    subscriptionChangeRequested(R.string.confirmUnsubscribeToStateChangeNotification,
+                            document,
+                            "stateChange/unsubscribe",
+                            notifyStateChange,
+                            b,
+                            httpPutListener);
+
+                }
+            }
+        });
+    }
+
+    private void setNotifyIterationNotification(final CompoundButton notifyIteration){
+        notifyIteration.setChecked(document.getIterationNotification());
+        notifyIteration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final boolean b = notifyIteration.isChecked();
+                HttpPutListener httpPutListener = new HttpPutListener() {
+                    @Override
+                    public void onHttpPutResult(boolean result, String responseContent) {
+                        if (b){
+                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                        }
+                        document.setIterationNotification(b);
+                    }
+                };
+                if (b) {
+                    subscriptionChangeRequested(R.string.confirmSubscribeToIterationChangeNotification,
+                            document,
+                            "iterationChange/subscribe",
+                            notifyIteration,
+                            b,
+                            httpPutListener);
+                } else {
+                    subscriptionChangeRequested(R.string.confirmUnsubscribeToIterationChangeNotification,
+                            document,
+                            "iterationChange/unsubscribe",
+                            notifyIteration,
+                            b,
+                            httpPutListener);
+
+                }
+            }
+        });
+    }
+
+    private void subscriptionChangeRequested(int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
+        builder.setMessage(messageId);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
+                new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                compoundButton.setChecked(!compoundButtonState);
+            }
+        });
+        builder.create().show();
+    }
+
+    /**
+     * HttpPutListener method:
+     * @Override onHttpPutResult
+     */
     @Override
     public void onHttpPutResult(boolean result, String responseContent) {
         Log.i("com.docdoku.android.plm.client", "Result of checkin/checkout: " + result);
@@ -194,7 +305,10 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
     }
 
     /**
-     * HttpGetDownloadListener methods
+     * HttpGetDownloadListener methods :
+     * @Override onFileDownloadStart
+     * @Override onFileDownloaded
+     * @Override onFileDownloadStart
      */
     @Override
     public void onFileDownloadStart() {
@@ -232,6 +346,7 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
 
     /**
      * HttpPostUploadFileListener method
+     * @Override onUploadResult
      */
     @Override
     public void onUploadResult(boolean result, final String fileName) {
@@ -256,37 +371,49 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
 
     /**
      * Result of taking a picture or video
+     * @Override onActivityResult
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK){
-            Toast.makeText(this, "Image saved to " + pictureSavePath, Toast.LENGTH_LONG).show();
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
-            Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
-            ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
-            dialogBuilder.setView(dialogView);
-            dialogBuilder.setCancelable(false);
-            dialogBuilder.setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
-                    if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
-                    String docReference = document.getIdentification();
-                    String docId = docReference.substring(0, docReference.lastIndexOf("-"));
-                    String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
-                    new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png",pictureSavePath);
-                }
-            });
-            dialogBuilder.setNegativeButton(R.string.cancel, null);
-            dialogBuilder.create().show();
+            switch (requestCode){
+                case INTENT_CODE_ACTIVITY_PICTURE:
+                    Toast.makeText(this, getResources().getString(R.string.imageSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                    final View dialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
+                    Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
+                    ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
+                    dialogBuilder.setView(dialogView);
+                    dialogBuilder.setCancelable(false);
+                    dialogBuilder.setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
+                            if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
+                            String docReference = document.getIdentification();
+                            String docId = docReference.substring(0, docReference.lastIndexOf("-"));
+                            String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
+                            new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png",pictureSavePath);
+                        }
+                    });
+                    dialogBuilder.setNegativeButton(R.string.cancel, null);
+                    dialogBuilder.create().show();
+                    break;
+                case INTENT_CODE_ACTIVITY_VIDEO:
+                    Toast.makeText(this, getResources().getString(R.string.videoSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
+                    break;
+            }
         } else if (resultCode == RESULT_CANCELED) {
             // User cancelled the image capture
         } else {
-            // Image capture failed, advise user
+            Toast.makeText(this, R.string.mediaError, Toast.LENGTH_LONG).show();
         }
     }
 
+    /**
+     * Returns the id of the menu button leading to this activity
+     * @Override getActivityButtonId
+     */
     @Override
     protected int getActivityButtonId() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
@@ -430,6 +557,16 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
         }
     }
 
+    /**
+     * @return View
+     * Create Views for the rows in each group. Methods:
+     *
+     * createNameValuePairRowView //Row presenting an attribute's name and value
+     * createLinkedDocumentRowView //Row linking to another document
+     * createUploadFileRowView //Row with buttons to upload files
+     * createFileRowView //Row linking to a file download
+     * createNoContentFoundRowView //Row indicating that no content is available for group
+     */
     private View createNameValuePairRowView(String name, String value){
         View rowView = getLayoutInflater().inflate(R.layout.adapter_name_value_pair, null);
         ((TextView) rowView.findViewById(R.id.fieldName)).setText(name);
@@ -490,7 +627,24 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
                 }
                 pictureSavePath = file.getAbsolutePath();
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, INTENT_CODE_ACTIVITY_PICTURE);
+            }
+        });
+        ImageButton takeVideo = (ImageButton) rowView.findViewById(R.id.takeVideo);
+        takeVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                String timeStamp = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "DocDokuPLM" + timeStamp +".jpg");
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                pictureSavePath = file.getAbsolutePath();
+                //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file)); //File path causes crash for videos
+                startActivityForResult(intent, INTENT_CODE_ACTIVITY_VIDEO);
             }
         });
         return rowView;
@@ -550,99 +704,6 @@ public class DocumentActivity extends SimpleActionBarActivity implements HttpPut
             setDocumentCheckedIn();
         }
         return header;
-    }
-
-    private void setNotifyStateChangeNotification(final CompoundButton notifyStateChange){
-        notifyStateChange.setChecked(document.getStateChangeNotification());
-        notifyStateChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final boolean b = notifyStateChange.isChecked();
-                HttpPutListener httpPutListener = new HttpPutListener() {
-                    @Override
-                    public void onHttpPutResult(boolean result, String responseContent) {
-                        if (b){
-                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
-                        }
-                        document.setStateChangeNotification(b);
-                    }
-                };
-                if (b) {
-                    subscriptionChangeRequested(R.string.confirmSubscribeToStateChangeNotification,
-                            document,
-                            "stateChange/subscribe",
-                            notifyStateChange,
-                            b,
-                            httpPutListener);
-                } else {
-                    subscriptionChangeRequested(R.string.confirmUnsubscribeToStateChangeNotification,
-                            document,
-                            "stateChange/unsubscribe",
-                            notifyStateChange,
-                            b,
-                            httpPutListener);
-
-                }
-            }
-        });
-    }
-
-    private void setNotifyIterationNotification(final CompoundButton notifyIteration){
-        notifyIteration.setChecked(document.getIterationNotification());
-        notifyIteration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final boolean b = notifyIteration.isChecked();
-                HttpPutListener httpPutListener = new HttpPutListener() {
-                    @Override
-                    public void onHttpPutResult(boolean result, String responseContent) {
-                        if (b){
-                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
-                        }
-                        document.setIterationNotification(b);
-                    }
-                };
-                if (b) {
-                    subscriptionChangeRequested(R.string.confirmSubscribeToIterationChangeNotification,
-                            document,
-                            "iterationChange/subscribe",
-                            notifyIteration,
-                            b,
-                            httpPutListener);
-                } else {
-                    subscriptionChangeRequested(R.string.confirmUnsubscribeToIterationChangeNotification,
-                            document,
-                            "iterationChange/unsubscribe",
-                            notifyIteration,
-                            b,
-                            httpPutListener);
-
-                }
-            }
-        });
-    }
-
-    private void subscriptionChangeRequested(int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
-        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
-        builder.setMessage(messageId);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
-                new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                compoundButton.setChecked(!compoundButtonState);
-            }
-        });
-        builder.create().show();
     }
 }
 
