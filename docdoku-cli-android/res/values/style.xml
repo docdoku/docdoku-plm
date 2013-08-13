@@ -52,7 +52,8 @@
         <item name="android:background">@drawable/clickable_item_background</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/menu_item_selectable_text</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:drawablePadding">5dp</item>
     </style>
     <style name="MenuRadioButton" parent="MenuItem">
         <item name="android:background">@color/transparent</item>

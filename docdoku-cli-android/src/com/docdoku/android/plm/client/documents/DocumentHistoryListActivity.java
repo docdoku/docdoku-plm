@@ -40,14 +40,12 @@ import java.util.Iterator;
  */
 public class DocumentHistoryListActivity extends DocumentListActivity implements LoaderManager.LoaderCallbacks<Document>{
 
-    private static final int LOADER_ID_RECENT_DOCUMENTS = 300;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         removeLoadingView();
 
-        Log.i("com.docdoku.android.plm.client", "navigation history_light size: " + navigationHistory.getSize());
+        Log.i("com.docdoku.android.plm.client", "navigation history size: " + navigationHistory.getSize());
         documentArray= new ArrayList<Document>();
         documentAdapter = new DocumentAdapter(documentArray);
         documentListView.setAdapter(documentAdapter);
@@ -59,10 +57,10 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
             bundle.putString("partKey", iterator.next());
             bundle.putString("workspace", getCurrentWorkspace());
             documentArray.add(null);
-            getSupportLoaderManager().initLoader(LOADER_ID_RECENT_DOCUMENTS + i, bundle, this);
+            getSupportLoaderManager().initLoader(i, bundle, this);
             i++;
         }
-        Log.i("com.docdoku.android.plm.client", "Document history_light list size : " + documentArray.size());
+        Log.i("com.docdoku.android.plm.client", "Document history list size : " + documentArray.size());
     }
 
     /**
@@ -71,19 +69,19 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
 
     @Override
     public Loader<Document> onCreateLoader(int id, Bundle bundle) {
-        Log.i("com.docdoku.android.plm.client", "Querying information for part in history_light at position " + (id - LOADER_ID_RECENT_DOCUMENTS) + " with reference " + bundle.getString("partKey"));
+        Log.i("com.docdoku.android.plm.client", "Querying information for part in history at position " + id + " with reference " + bundle.getString("partKey"));
         return new DocumentLoaderByDocument(this, bundle.getString("partKey"), bundle.getString("workspace"));
     }
 
     @Override
     public void onLoadFinished(Loader<Document> loader, Document document) {
         try{
-            Log.i("com.docdoku.android.plm.client", "Received information for part in history_light at position " + (loader.getId() - LOADER_ID_RECENT_DOCUMENTS) + " with reference " + document.getIdentification());
-            documentArray.set(loader.getId() - LOADER_ID_RECENT_DOCUMENTS, document);
+            Log.i("com.docdoku.android.plm.client", "Received information for part in history at position " + loader.getId() + " with reference " + document.getIdentification());
+            documentArray.set(loader.getId(), document);
             documentAdapter.notifyDataSetChanged();
         } catch (NullPointerException e){
             e.printStackTrace();
-            Log.i("com.docdoku.android.plm.client", "Load of a document in history_light failed");
+            Log.i("com.docdoku.android.plm.client", "Load of a document in history failed");
         }
     }
 

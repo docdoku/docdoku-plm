@@ -20,11 +20,8 @@
 
 package com.docdoku.android.plm.network;
 
-import android.os.AsyncTask;
 import android.util.Log;
 import com.docdoku.android.plm.network.listeners.HttpPutListener;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.*;
 import java.net.*;
@@ -36,6 +33,7 @@ import java.net.*;
 public class HttpPutTask extends HttpTask<String, Void, Boolean> {
 
     private HttpPutListener httpPutListener;
+    private String responseString;
 
     public HttpPutTask(HttpPutListener httpPutListener) {
         super();
@@ -75,14 +73,20 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
             }
 
             int responseCode = conn.getResponseCode();
+            Log.i("com.docdoku.android.plm.client","Response code: " + responseCode);
+            if (responseCode == 200){
+                Log.i("com.docdoku.android.plm.client", "Response headers: " + conn.getHeaderFields());
+                Log.i("com.docdoku.android.plm.client", "Response message: " + conn.getResponseMessage());
+                InputStream in = (InputStream) conn.getContent();
+                responseString = inputStreamToString(in);
+                Log.i("com.docdoku.android.plm.client", "Response content: " + result);
+                in.close();
+                result = true;
+            }
+
             Log.i("com.docdoku.android.plm","Response message: " + conn.getResponseMessage());
 
             conn.disconnect();
-
-            Log.i("com.docdoku.android.plm.client","Response code: " + responseCode);
-            if (responseCode == 200){
-                result = true;
-            }
 
         } catch (MalformedURLException e) {
             Log.e("com.docdoku.android.plm.client","ERROR: MalformedURLException");
@@ -107,7 +111,8 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
     protected void onPostExecute(Boolean result){
         super.onPostExecute(result);
         if (httpPutListener != null){
-            httpPutListener.onHttpPutResult(result);
+            httpPutListener.onHttpPutResult(result, responseString);
+            Log.i("com.docdoku.android.plm", "HttpPut response string: " + responseString);
         }
     }
 }

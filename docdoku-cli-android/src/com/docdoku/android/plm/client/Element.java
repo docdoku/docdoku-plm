@@ -63,7 +63,7 @@ public abstract class Element implements Serializable{
     protected String checkOutUserName, checkOutUserLogin, checkOutDate;
     protected int iterationNumber;
     protected String iterationNote, iterationAuthor, iterationDate;
-    protected String lastIterationString;
+    protected String lastIterationJSONString;
 
     public abstract Element updateFromJSON(JSONObject elementJSON, Resources resources) throws JSONException;
 
@@ -120,7 +120,7 @@ public abstract class Element implements Serializable{
 
     public JSONObject getLastIterationJSONWithUpdateNote(String note){
         try{
-            JSONObject lastIteration = new JSONObject(lastIterationString);
+            JSONObject lastIteration = new JSONObject(lastIterationJSONString);
             lastIteration.put(getIterationNoteJSONKey(), note);
             return lastIteration;
         } catch (JSONException e){
@@ -191,7 +191,7 @@ public abstract class Element implements Serializable{
                 attributes[i] = new Attribute(attribute.getString(JSON_KEY_ATTRIBUTE_NAME), attribute.getString(JSON_KEY_ATTRIBUTE_VALUE));
             }
             setAttributes(attributes);
-            lastIterationString = lastIteration.toString();
+            lastIterationJSONString = lastIteration.toString();
         }
         return this;
     }

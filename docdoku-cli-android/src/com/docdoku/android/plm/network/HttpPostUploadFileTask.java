@@ -43,6 +43,7 @@ public class HttpPostUploadFileTask extends HttpTask<String, Void, Boolean>{
     private HttpPostUploadFileListener listener;
     
     public HttpPostUploadFileTask(HttpPostUploadFileListener listener){
+        super();
         this.listener = listener;
     }
 

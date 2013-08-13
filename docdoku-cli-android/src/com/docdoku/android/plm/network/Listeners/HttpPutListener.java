@@ -25,5 +25,5 @@ package com.docdoku.android.plm.network.listeners;
  * @author: Martin Devillers
  */
 public interface HttpPutListener {
-    public void onHttpPutResult(boolean result);
+    public void onHttpPutResult(boolean result, String responseContent);
 }
