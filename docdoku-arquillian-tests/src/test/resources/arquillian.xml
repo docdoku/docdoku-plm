@@ -4,20 +4,14 @@
             xsi:schemaLocation="
         http://jboss.org/schema/arquillian
         http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-
+    
+    <engine>
+        <property name="deploymentExportPath">target/arquillian</property>
+    </engine>
     <container qualifier="glassfish-embedded" default="true">
         <configuration>
-            <property name="configurationXml">docdoku-arquillian-tests/src/test/resources-glassfish-embedded/domain.xml</property>
-
-            <property name="resourcesXml">
-                docdoku-arquillian-tests/src/test/resources-glassfish-embedded/glassfish-resources.xml
-            </property>
-            <engine>
-                <property name="deploymentExportPath">docdoku-arquillian-tests/target/deployments</property>
-            </engine>
-
+            <property name="configurationXml">src/test/resources-glassfish-embedded/domain.xml</property>
         </configuration>
-
     </container>
 
 </arquillian>
