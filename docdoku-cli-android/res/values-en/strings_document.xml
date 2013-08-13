@@ -77,6 +77,9 @@
     <string name="chooseImageFileName">Picture name</string>
     <string name="uploadImage">Upload picture</string>
     <string name="uploadSuccess">Picture upload successful</string>
-    <string name="uploadFail">Picture upload failed</string>
+    <string name="imageUploadFail">Picture upload failed</string>
+    <string name="mediaError">Media Error</string>
+    <string name="imageSavedIn">Image saved in </string>
+    <string name="videoSavedIn">Video saved in </string>
 
 </resources>
