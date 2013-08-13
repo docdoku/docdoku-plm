@@ -658,9 +658,11 @@ define([
             var self = this;
             _(this.instances).each(function(instance) {
                 if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
-                    _(instance.levelGeometry.mesh.material.materials).each(function(material) {
-                        material.wireframe = self.wireframe;
-                    });
+                    if(instance.levelGeometry.mesh.material){
+                        _(instance.levelGeometry.mesh.material.materials).each(function(material) {
+                            material.wireframe = self.wireframe;
+                        });
+                    }
                 }
             });
 

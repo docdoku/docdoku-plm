@@ -30,7 +30,10 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -63,6 +66,8 @@ public class CatiaFileConverterImpl implements CADConverter{
         File tmpCadFile;
         File tmpDAEFile = new File(tmpDir, woExName+".dae");
         File daeFile = null;
+
+
 
         try {
             String crossManagerWrapper = CONF.getProperty("crossManagerWrapper");
@@ -119,6 +124,6 @@ public class CatiaFileConverterImpl implements CADConverter{
 
     @Override
     public boolean canConvertToJSON(String cadFileExtension) {
-        return Arrays.asList("catpart", "catproduct","cgr").contains(cadFileExtension);
+        return Arrays.asList("catpart").contains(cadFileExtension);
     }
 }
