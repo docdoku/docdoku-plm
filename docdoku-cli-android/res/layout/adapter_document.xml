@@ -29,6 +29,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_toLeftOf="@+id/expand"
                     android:layout_alignParentLeft="true"
+                    android:textStyle="bold"
                     android:text="docId"
                     android:ellipsize="middle"
                     android:singleLine="true"/>
@@ -42,6 +43,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/expand"
                 android:text="iteration info"
+                android:textSize="16sp"
+                android:textColor="@color/transparentWhite"
                 android:ellipsize="start"
                 android:singleLine="true"/>
 

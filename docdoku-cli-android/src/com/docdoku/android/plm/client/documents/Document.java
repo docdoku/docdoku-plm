@@ -92,6 +92,7 @@ public class Document extends Element implements Serializable{
         return values;
     }
 
+    @Override
     public String[] getLastIteration(){
         String[] result = new String[4];
         result[0] = identification + "-" + iterationNumber;
@@ -123,17 +124,6 @@ public class Document extends Element implements Serializable{
 
     public boolean getStateChangeNotification(){
         return stateChangeNotification;
-    }
-
-    public String[] getFiles(){
-        if (files == null){
-            return new String[0];
-        }
-        return files;
-    }
-
-    public int getIterationNumber() {
-        return iterationNumber;
     }
 
     public Document updateFromJSON(JSONObject documentJSON, Resources resources) throws JSONException {
@@ -179,6 +169,11 @@ public class Document extends Element implements Serializable{
     @Override
     protected String getIterationNoteJSONKey() {
         return JSON_KEY_DOCUMENT_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected String getUrlPath() {
+        return "/documents/" + getIdentification();
     }
 
     @Override

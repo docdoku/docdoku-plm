@@ -78,9 +78,11 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
                 Log.i("com.docdoku.android.plm.client", "Response headers: " + conn.getHeaderFields());
                 Log.i("com.docdoku.android.plm.client", "Response message: " + conn.getResponseMessage());
                 InputStream in = (InputStream) conn.getContent();
-                responseString = inputStreamToString(in);
-                Log.i("com.docdoku.android.plm.client", "Response content: " + result);
-                in.close();
+                if (in != null){
+                    responseString = inputStreamToString(in);
+                    in.close();
+                    Log.i("com.docdoku.android.plm.client", "Response content: " + result);
+                }
                 result = true;
             }
 

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Part pages -->
+    <string name="partGeneralInformation">Général</string>
+    <string name="partCADFile">Fichier CAD</string>
+    <string name="partAssembly">Assemblage</string>
+    <string name="partLinks">Liens</string>
+    <string name="partIteration">Itération</string>
+    <string name="partAttributes">Attributs</string>
+
     <!-- Part attributes -->
     <string name="partKey">Clé</string>
     <string name="partAuthor">Auteur</string>
@@ -8,6 +16,12 @@
     <string name="partVersion">Version</string>
     <string name="partCheckOut">Réserver</string>
     <string name="partCheckIn">Libérer</string>
+
+    <!-- No content found for part attribute -->
+    <string name="partNoCADFile">Aucun fichier CAD</string>
+    <string name="partNoLinkedDocuments">Aucun lien vers des documents</string>
+    <string name="partNoAttributes">Aucun attribut</string>
+    <string name="partNoComponents">Aucun composant</string>
 
     <string-array name="partGeneralInformationFieldNames">
         <item>Numéro</item>

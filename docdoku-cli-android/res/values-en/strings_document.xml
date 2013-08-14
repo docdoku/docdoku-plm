@@ -26,19 +26,13 @@
         <item>Lifecycle state</item>
         <item>Description</item>
     </string-array>
-    <string-array name="documentIterationFieldNames">
-        <item>Reference</item>
-        <item>Revision note</item>
-        <item>Modification date</item>
-        <item>Author</item>
-    </string-array>
 
     <!-- Document pages -->
     <string name="documentGeneralInformation">General</string>
     <string name="documentFiles">Files</string>
-    <string name="documentLinks">Links</string>
-    <string name="documentIteration">\iIteration</string>
-    <string name="documentAttributes">\iAttributes</string>
+    <string name="documentLinks">Linked documents</string>
+    <string name="documentIteration">Iteration</string>
+    <string name="documentAttributes">Attributes</string>
 
     <!-- Subscribe/Usubscribe to document notifications-->
     <string name="documentStateChangeButton">States</string>
@@ -51,18 +45,6 @@
     <string name="documentIterationChangeNotificationSuccessfullyDeactivated">Iteration notifications deactivated</string>
     <string name="documentStateChangeNotificationSuccessfullyActivated">State change notifications activated</string>
     <string name="documentStateChangeNotificationSuccessfullyDeactivated">State change notifications deactivated</string>
-
-    <!-- Checkin/Checkout document -->
-    <string name="documentCheckIn">Check in</string>
-    <string name="documentCheckOut">Check out</string>
-    <string name="documentCheckOutConfirm">Check out this document?</string>
-    <string name="documentCheckInConfirm">Check in this document?</string>
-    <string name="documentDoCheckIn">Check in</string>
-    <string name="documentCancelCheckOut">Undo check out</string>
-    <string name="documentIterationNotePrompt">You may enter the revision note if you wish for the check in: </string>
-    <string name="documentLocked">Checked Out</string>
-    <string name="documentSuccessfullyCheckedIn">Document successfully checked in</string>
-    <string name="documentSuccessfullyCheckedOut">Document successfully checked out</string>
 
     <!-- Search documents -->
     <string name="documentSearchPrompt">Search documents</string>

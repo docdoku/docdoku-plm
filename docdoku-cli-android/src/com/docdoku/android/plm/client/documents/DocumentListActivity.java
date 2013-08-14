@@ -174,11 +174,9 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 } catch (ParseException e) {
                     lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (ParseException)" + doc.getIdentification());
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }catch(NullPointerException e){
                     lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
                 documentRowView.setOnClickListener(new View.OnClickListener() {
                     @Override

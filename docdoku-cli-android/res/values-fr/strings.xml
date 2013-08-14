@@ -66,4 +66,24 @@
     <string name="logout">Se déconnecter</string>
     <string name="sendEmail">Envoyer eMail</string>
 
+    <!-- Checkin/Checkout -->
+    <string name="checkin">Libérer</string>
+    <string name="checkOut">Réserver</string>
+    <string name="checkOutConfirm">Réserver?</string>
+    <string name="checkInConfirm">Libérer?</string>
+    <string name="doCheckIn">Libérer</string>
+    <string name="cancelCheckOut">Annuler la réservation</string>
+    <string name="iterationNotePrompt">Entrez une note de révision si vous le souhaitez: </string>
+    <string name="locked">Réservé</string>
+    <string name="checkInSuccessful">Libération réussi</string>
+    <string name="checkOutSuccessful">Réservation réussie</string>
+
+    <!-- Last iteration information -->
+    <string-array name="documentIterationFieldNames">
+        <item>Référence</item>
+        <item>Note de révision</item>
+        <item>Date de modification</item>
+        <item>Auteur</item>
+    </string-array>
+
 </resources>

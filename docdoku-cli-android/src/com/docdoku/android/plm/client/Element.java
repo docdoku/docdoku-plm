@@ -75,6 +75,10 @@ public abstract class Element implements Serializable{
         return checkOutUserLogin;
     }
 
+    public int getIterationNumber() {
+        return iterationNumber;
+    }
+
     public int getNumberOfAttributes(){
         if (attributes != null){
             return attributes.length;
@@ -232,6 +236,8 @@ public abstract class Element implements Serializable{
     protected abstract String getNameJSONKey();
     protected abstract String getIterationsJSONKey();
     protected abstract String getIterationNoteJSONKey();
+    protected abstract String getUrlPath();
+    protected abstract String[] getLastIteration();
 
     public class Attribute implements Serializable {
 

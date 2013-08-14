@@ -26,8 +26,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;

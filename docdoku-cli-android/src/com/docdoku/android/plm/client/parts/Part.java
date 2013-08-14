@@ -21,7 +21,9 @@
 package com.docdoku.android.plm.client.parts;
 
 import android.content.res.Resources;
+import android.util.Log;
 import com.docdoku.android.plm.client.Element;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,14 +38,19 @@ public class Part extends Element implements Serializable{
     private static final String JSON_KEY_PART_NAME = "name";
     private static final String JSON_KEY_PART_ITERATIONS = "partIterations";
     private static final String JSON_KEY_PART_ITERATION_NOTE = "iterationNote";
+    private static final String JSON_KEY_PART_CAD_FILE = "nativeCADFile";
+    private static final String JSON_KEY_COMPONENT_ARRAY = "components";
+    private static final String JSON_KEY_COMPONENT_INFORMATION = "component";
+    private static final String JSON_KEY_COMPONENT_NUMBER = "number";
+    private static final String JSON_KEY_COMPONENT_AMOUNT = "amount";
 
-    private String key;
-    private String number;
-    private String version;
+    private String key, number, version;
+    private String nativeCADFile;
     private String workflow;
     private String lifecycleState;
     private boolean standardPart;
     private boolean publicShared;
+    private Component[] components;
 
     public Part(String key){
         this.key = key;
@@ -72,17 +79,56 @@ public class Part extends Element implements Serializable{
         return checkOutUserLogin;
     }
 
+    public String getCADFileName(){
+        try{
+            return nativeCADFile.substring(nativeCADFile.lastIndexOf("/") + 1);
+        } catch (IndexOutOfBoundsException e){
+            return nativeCADFile;
+        }
+    }
+
+    public String getCADFileUrl(){
+        return nativeCADFile;
+    }
+
+    public int getNumComponents(){
+        return components.length;
+    }
+
+    public Component getComponent(int i){
+        return components[i];
+    }
+
+    @Override
+    public String[] getLastIteration(){
+        String[] result = new String[4];
+        result[0] = key + "-" + iterationNumber;
+        result[1] = iterationNote;
+        result[2] = iterationDate;
+        result[3] = iterationAuthor;
+        return result;
+    }
+
     @Override
     protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Object CADFile = lastIteration.get(JSON_KEY_PART_CAD_FILE);
+        if (JSONObject.NULL.equals(CADFile)){
+            nativeCADFile = null;
+        }else{
+            nativeCADFile = (String) CADFile;
+            Log.i("com.docdoku.android.plm", "CAD file downloaded: " + nativeCADFile);
+        }
+        JSONArray componentArray = lastIteration.getJSONArray(JSON_KEY_COMPONENT_ARRAY);
+        components = new Component[componentArray.length()];
+        for (int i = 0; i<components.length; i++){
+            JSONObject component = componentArray.getJSONObject(i);
+            JSONObject componentInformation = component.getJSONObject(JSON_KEY_COMPONENT_INFORMATION);
+            components[i] = new Component(componentInformation.getString(JSON_KEY_COMPONENT_NUMBER), component.getInt(JSON_KEY_COMPONENT_AMOUNT));
+        }
     }
 
     public String getKey(){
         return key;
-    }
-
-    public String getAuthorName(){
-        return authorName;
     }
 
     @Override
@@ -122,7 +168,30 @@ public class Part extends Element implements Serializable{
     }
 
     @Override
+    protected String getUrlPath() {
+        return "/parts/" + getKey();
+    }
+
+    @Override
     protected String getNameJSONKey() {
-        return JSON_KEY_PART_NAME;  //To change body of implemented methods use File | Settings | File Templates.
+        return JSON_KEY_PART_NAME;
+    }
+
+    public class Component implements Serializable{
+        private String number;
+        private int amount;
+
+        public Component(String number, int amount){
+            this.number = number;
+            this.amount = amount;
+        }
+
+        public String getNumber(){
+            return number;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
     }
 }
