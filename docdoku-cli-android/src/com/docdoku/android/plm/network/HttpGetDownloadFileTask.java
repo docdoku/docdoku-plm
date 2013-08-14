@@ -80,16 +80,17 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
             inputStream.close();
             result = (responseCode == 200);
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException in file download_light");
+            Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (ProtocolException e) {
-            Log.e("com.docdoku.android.plm.client","ProtocolException in file download_light");
+            Log.e("com.docdoku.android.plm.client","ProtocolException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (MalformedURLException e) {
-            Log.e("com.docdoku.android.plm.client","MalformedURLException in file download_light");
+            Log.e("com.docdoku.android.plm.client","MalformedURLException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client","IOException in file download_light");
+            Log.e("com.docdoku.android.plm.client","IOException in file download");
+            Log.e("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (URISyntaxException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

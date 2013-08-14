@@ -65,4 +65,24 @@
     <string name="logout">Log out</string>
     <string name="sendEmail">Send eMail</string>
 
+    <!-- Checkin/Checkout -->
+    <string name="checkin">Check in</string>
+    <string name="checkOut">Check out</string>
+    <string name="checkOutConfirm">Check out?</string>
+    <string name="checkInConfirm">Check in?</string>
+    <string name="doCheckIn">Check in</string>
+    <string name="cancelCheckOut">Undo check out</string>
+    <string name="iterationNotePrompt">You may enter the revision note if you wish for the check in: </string>
+    <string name="locked">Checked Out</string>
+    <string name="checkInSuccessful">Checkin successful</string>
+    <string name="checkOutSuccessful">Checkout successful</string>
+
+    <!-- Last iteration information -->
+    <string-array name="iterationFieldNames">
+        <item>Reference</item>
+        <item>Revision note</item>
+        <item>Modification date</item>
+        <item>Author</item>
+    </string-array>
+
 </resources>

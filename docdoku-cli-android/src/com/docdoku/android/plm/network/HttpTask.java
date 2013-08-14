@@ -44,7 +44,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
         if (port == -1){
             return new URL("http", host, ASCIIPath);
         }
-        return new URL("http", "192.168.0.12", port, ASCIIPath);
+        return new URL("http", host, port, ASCIIPath);
     }
 
     protected String analyzeHttpErrorCode(int errorCode){

@@ -26,12 +26,6 @@
         <item>Etat du cycle de vie</item>
         <item>Description</item>
     </string-array>
-    <string-array name="documentIterationFieldNames">
-        <item>Référence</item>
-        <item>Note de révision</item>
-        <item>Date de modification</item>
-        <item>Auteur</item>
-    </string-array>
 
     <!-- Document pages -->
     <string name="documentGeneralInformation">Général</string>
@@ -51,18 +45,6 @@
     <string name="documentIterationChangeNotificationSuccessfullyDeactivated">Notifications sur les itérations desactivées</string>
     <string name="documentStateChangeNotificationSuccessfullyActivated">Notifications sur les changements d\'état activées</string>
     <string name="documentStateChangeNotificationSuccessfullyDeactivated">Notifications sur les changements d\'état desactivées</string>
-
-    <!-- Checkin/Checkout document -->
-    <string name="documentCheckIn">Libérer</string>
-    <string name="documentCheckOut">Réserver</string>
-    <string name="documentCheckOutConfirm">Réserver le document?</string>
-    <string name="documentCheckInConfirm">Libérer le document?</string>
-    <string name="documentDoCheckIn">Libérer</string>
-    <string name="documentCancelCheckOut">Annuler la réservation</string>
-    <string name="documentIterationNotePrompt">Entrez une note de révision si vous le souhaitez pour libérer le document: </string>
-    <string name="documentLocked">Réservé</string>
-    <string name="documentSuccessfullyCheckedIn">Document liberé avec succès</string>
-    <string name="documentSuccessfullyCheckedOut">Document réservé avec succès</string>
 
     <!-- Search documents -->
     <string name="documentSearchPrompt">Recherche de Document</string>
