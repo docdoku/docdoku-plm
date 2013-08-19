@@ -33,6 +33,15 @@
         <item name="android:background">@color/transparent</item>
         <item name="android:textSize">18sp</item>
     </style>
+    <!-- Indicators with image, shown in document and part lists -->
+    <style name="Indicator" parent="Theme.AppTheme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:adjustViewBounds">false</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+    </style>
     <!-- Side menu style -->
     <style name="Menu" parent="android:Theme.Holo.Light.Dialog">
         <item name="android:background">@android:drawable/dialog_holo_light_frame</item>

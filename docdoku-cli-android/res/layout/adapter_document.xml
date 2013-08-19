@@ -70,42 +70,59 @@
 
     <ImageView
             android:id="@+id/checkedInOutImage"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
             android:padding="2px"
             android:background="@drawable/white_border_rectangle"
-            android:src="@drawable/checked_out_other_user_light"/>
+            android:src="@drawable/checked_out_other_user_light"
+            android:layout_alignParentStart="true"
+            style="@style/Indicator"/>
 
-    <TextView
-        android:id="@+id/iterationNumber"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_toRightOf="@+id/checkedInOutImage"
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="15dp"
         android:padding="2px"
         android:background="@drawable/white_border_rectangle"
-        android:drawableLeft="@drawable/iteration_notification_off_light"
-        android:gravity="center_vertical"
-        android:text="0"/>
+        style="@style/Indicator">
 
-    <TextView
-        android:id="@+id/numAttachedFiles"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:src="@drawable/iteration_notification_off_light"
+            style="@style/Indicator"/>
+
+        <TextView
+                android:id="@+id/iterationNumber"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:text="0"
+                style="@style/Indicator"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/attachedFilesIndicator"
+        android:orientation="horizontal"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
         android:layout_marginRight="15dp"
         android:padding="2px"
         android:background="@drawable/white_border_rectangle"
-        android:drawableLeft="@drawable/attached_file_light"
-        android:gravity="center_vertical"
-        android:text="0"/>
+        style="@style/Indicator">
+
+        <ImageView
+                android:src="@drawable/attached_file_light"
+                style="@style/Indicator"/>
+
+        <TextView
+                android:id="@+id/numAttachedFiles"
+                android:text="0"
+                style="@style/Indicator"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
