@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp">
+
+        <TextView
+                android:id="@+id/number"
+                style="@style/MediumTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:text="Reference"/>
+
+         <ImageView
+                android:id="@+id/reservedPart"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/number"
+                android:layout_centerVertical="true"
+                android:src="@drawable/checked_out_other_user_light"/>
+
+        <TextView
+                android:id="@+id/checkOutUser"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reservé par"
+                android:layout_toRightOf="@+id/reservedPart"
+                android:layout_alignTop="@+id/reservedPart"
+                android:layout_alignBottom="@+id/reservedPart"
+                android:gravity="center_vertical"/>
+
+</RelativeLayout>
