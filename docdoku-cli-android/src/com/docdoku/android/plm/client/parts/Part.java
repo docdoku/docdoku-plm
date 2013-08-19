@@ -92,6 +92,7 @@ public class Part extends Element implements Serializable{
     }
 
     public int getNumComponents(){
+        Log.i("com.docdoku.android.plm", "Number of components found: " + components.length);
         return components.length;
     }
 

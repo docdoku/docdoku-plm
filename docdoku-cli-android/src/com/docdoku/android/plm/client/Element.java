@@ -180,7 +180,9 @@ public abstract class Element implements Serializable{
                 String attributeType = attribute.getString(JSON_KEY_ATTRIBUTE_TYPE);
                 String attributeName = attribute.getString(JSON_KEY_ATTRIBUTE_NAME);
                 String attributeValue = attribute.getString(JSON_KEY_ATTRIBUTE_VALUE);
+                Log.i("com.docdoku.android.plm", "Attribute found. \nType: " + attributeType + "\nName: " + attributeName + "\nRaw value: " + attributeValue);
                 if (attributeType.equals(ATTRIBUTE_DATE) && !attributeValue.equals("")){
+                    Log.i("com.docdoku.android.plm", "Attribute identified as date type");
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(resources.getString(R.string.simpleDateFormat));
                     attributes[i] = new Attribute(attributeName, simpleDateFormat.format(new Date(Long.valueOf(attributeValue))));
                 }else if(attributeType.equals(ATTRIBUTE_BOOLEAN)){
@@ -192,7 +194,6 @@ public abstract class Element implements Serializable{
                 }else{
                     attributes[i] = new Attribute(attributeName, attributeValue);
                 }
-                attributes[i] = new Attribute(attribute.getString(JSON_KEY_ATTRIBUTE_NAME), attribute.getString(JSON_KEY_ATTRIBUTE_VALUE));
             }
             setAttributes(attributes);
             lastIterationJSONString = lastIteration.toString();
