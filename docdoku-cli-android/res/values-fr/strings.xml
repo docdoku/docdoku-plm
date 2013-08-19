@@ -79,7 +79,7 @@
     <string name="checkOutSuccessful">Réservation réussie</string>
 
     <!-- Last iteration information -->
-    <string-array name="documentIterationFieldNames">
+    <string-array name="iterationFieldNames">
         <item>Référence</item>
         <item>Note de révision</item>
         <item>Date de modification</item>
