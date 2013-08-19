@@ -133,10 +133,10 @@ public class PartActivity extends ElementActivity {
             switch (i){
                 case 0: return NUM_GENERAL_INFORMATION_FIELDS;
                 case 1: return 1;
-                case 2: return part.getNumComponents();
-                case 3: return part.getNumberOfLinkedDocuments();
+                case 2: return Math.min(part.getNumComponents(), 1);
+                case 3: return Math.min(part.getNumberOfLinkedDocuments(), 1);
                 case 4: return NUM_REVISION_FIELDS;
-                case 5: return part.getNumberOfAttributes();
+                case 5: return Math.min(part.getNumberOfAttributes(), 1);
             }
             return 0;
         }
