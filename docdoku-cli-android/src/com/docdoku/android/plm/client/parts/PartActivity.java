@@ -133,10 +133,10 @@ public class PartActivity extends ElementActivity {
             switch (i){
                 case 0: return NUM_GENERAL_INFORMATION_FIELDS;
                 case 1: return 1;
-                case 2: return Math.min(part.getNumComponents(), 1);
-                case 3: return Math.min(part.getNumberOfLinkedDocuments(), 1);
+                case 2: return Math.max(part.getNumComponents(), 1);
+                case 3: return Math.max(part.getNumberOfLinkedDocuments(), 1);
                 case 4: return NUM_REVISION_FIELDS;
-                case 5: return Math.min(part.getNumberOfAttributes(), 1);
+                case 5: return Math.max(part.getNumberOfAttributes(), 1);
             }
             return 0;
         }
@@ -216,7 +216,7 @@ public class PartActivity extends ElementActivity {
                 case 2: //Components
                     try{
                         Part.Component component = part.getComponent(i2);
-                        rowView = createNameValuePairRowView("(" + component.getAmount() + ")", component.getNumber());
+                        rowView = createComponentRowView(component.getAmount(), component.getNumber());
                     }catch (NullPointerException e){
                         return createNoContentFoundRowView(R.string.partNoComponents);
                     }catch (ArrayIndexOutOfBoundsException e){
@@ -256,6 +256,13 @@ public class PartActivity extends ElementActivity {
         public boolean isChildSelectable(int i, int i2) {
             return false;  //To change body of implemented methods use File | Settings | File Templates.
         }
+    }
+
+    private View createComponentRowView(int quantity, String name){
+        View rowView = getLayoutInflater().inflate(R.layout.adapter_component, null);
+        ((TextView) rowView.findViewById(R.id.componentQuantity)).setText("x" + quantity);
+        ((TextView) rowView.findViewById(R.id.componentName)).setText(name);
+        return rowView;
     }
 
     /*

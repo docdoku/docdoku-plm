@@ -86,9 +86,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_simple, menu);
-        ActionBar actionBar = getActionBar();
-        actionBar.setIcon(R.drawable.menu_dark);
-        actionBar.setHomeButtonEnabled(true);
+        setHomeIcon();
         return true;
     }
 
@@ -128,6 +126,12 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    protected void setHomeIcon(){
+        ActionBar actionBar = getActionBar();
+        actionBar.setIcon(R.drawable.navigation_drawer);
+        actionBar.setHomeButtonEnabled(true);
     }
 
     public void restartActivity(){
