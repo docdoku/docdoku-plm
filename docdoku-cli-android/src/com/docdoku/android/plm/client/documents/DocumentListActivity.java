@@ -159,11 +159,12 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 else{
                     checkedInOutImage.setImageResource(R.drawable.checked_in_light);
                 }
-                TextView numAttachedFiles = (TextView) documentRowView.findViewById(R.id.numAttachedFiles);
                 int docNumAttachedFiles = doc.getNumberOfFiles();
                 if (docNumAttachedFiles == 0){
+                    View numAttachedFiles = documentRowView.findViewById(R.id.attachedFilesIndicator);
                     ((ViewGroup) numAttachedFiles.getParent()).removeView(numAttachedFiles);
                 }else{
+                    TextView numAttachedFiles = (TextView) documentRowView.findViewById(R.id.numAttachedFiles);
                     numAttachedFiles.setText(" " + docNumAttachedFiles);
                 }
                 TextView iterationNumber = (TextView) documentRowView.findViewById(R.id.iterationNumber);
