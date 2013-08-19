@@ -193,7 +193,7 @@ public class PartListActivity1 extends SearchActionBarActivity implements HttpGe
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View partRowView = inflater.inflate(R.layout.adapter_part, null);
+            View partRowView = inflater.inflate(R.layout.adapter_part1, null);
             final Part part = parts.get(i);
             TextView reference = (TextView) partRowView.findViewById(R.id.number);
             reference.setText(part.getKey());

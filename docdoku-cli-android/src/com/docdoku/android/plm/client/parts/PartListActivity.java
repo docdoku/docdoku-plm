@@ -22,6 +22,7 @@ package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,9 @@ import com.docdoku.android.plm.client.NavigationHistory;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -37,7 +41,7 @@ import java.util.List;
  */
 public abstract class PartListActivity extends SearchActionBarActivity {
 
-    private static final String PREFERENCE_PART_HISTORY = "part history_light";
+    private static final String PREFERENCE_PART_HISTORY = "part history";
 
     protected NavigationHistory navigationHistory;
     protected List<Part> partsArray;
@@ -54,12 +58,22 @@ public abstract class PartListActivity extends SearchActionBarActivity {
 
         partListView = (ListView) findViewById(R.id.elementList);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_PART_HISTORY, MODE_PRIVATE));
+        partListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Part part = partsArray.get(i);
+                navigationHistory.add(part.getKey());
+                Intent intent = new Intent(PartListActivity.this, PartActivity.class);
+                intent.putExtra(PartActivity.PART_EXTRA,part);
+                startActivity(intent);
+            }
+        });
     }
 
     protected class PartAdapter extends BaseAdapter {
 
         private List<Part> parts;
-        private final LayoutInflater inflater;
+        private LayoutInflater inflater;
 
         public PartAdapter(List<Part> parts){
             this.parts = parts;
@@ -83,41 +97,51 @@ public abstract class PartListActivity extends SearchActionBarActivity {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View partRowView = inflater.inflate(R.layout.adapter_part, null);
+            final View partRowView;
             final Part part = parts.get(i);
             if (part != null){
-                TextView reference = (TextView) partRowView.findViewById(R.id.number);
+                partRowView = inflater.inflate(R.layout.adapter_part, null);
+                TextView reference = (TextView) partRowView.findViewById(R.id.identification);
                 reference.setText(part.getKey());
-                TextView reservedBy = (TextView) partRowView.findViewById(R.id.checkOutUser);
-                ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.reservedPart);
+                ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.checkedInOutImage);
                 String reservedByName = part.getCheckOutUserName();
                 if (reservedByName != null){
                     String reservedByLogin = part.getCheckOutUserLogin();
                     if (reservedByLogin.equals(getCurrentUserLogin())){
                         reservedPart.setImageResource(R.drawable.checked_out_current_user_light);
                     }
-                    reservedBy.setText(reservedByName);
                 }
                 else{
-                    reservedBy.setText("");
                     reservedPart.setImageResource(R.drawable.checked_in_light);
                 }
-                final View finalPartRowView = partRowView;
-                partRowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        finalPartRowView.setBackgroundResource(R.drawable.clickable_item_background);
-                        navigationHistory.add(part.getKey());
-                        Intent intent = new Intent(PartListActivity.this, PartActivity.class);
-                        intent.putExtra(PartActivity.PART_EXTRA,part);
-                        startActivity(intent);
-                    }
-                });
+                TextView lastIteration = (TextView) partRowView.findViewById(R.id.lastIteration);
+                try {
+                    lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(part.getLastIterationDate()), part.getLastIterationAuthorName())));
+                } catch (ParseException e) {
+                    lastIteration.setText("");
+                }
             } else{
                 partRowView = new ProgressBar(PartListActivity.this);
             }
-
             return partRowView;
         }
+    }
+
+    protected String simplifyDate(String dateString) throws ParseException, NullPointerException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        Calendar date = Calendar.getInstance();
+        date.setTime(simpleDateFormat.parse(dateString));
+        Calendar currentTime = Calendar.getInstance();
+        if (currentTime.get(Calendar.YEAR) == date.get(Calendar.YEAR)){
+            int dayDifference = currentTime.get(Calendar.DAY_OF_YEAR) - date.get(Calendar.DAY_OF_YEAR);
+            if (dayDifference == 0){
+                return getResources().getString(R.string.today);
+            }
+            if (dayDifference == 1){
+                return getResources().getString(R.string.yesterday);
+            }
+        }
+        String timeDifference = DateUtils.getRelativeTimeSpanString(this, date.getTimeInMillis(), true).toString();
+        return timeDifference;
     }
 }
