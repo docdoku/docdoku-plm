@@ -20,6 +20,12 @@
 
 package com.docdoku.android.plm.client;
 
+import android.provider.ContactsContract;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  *
  * @author: Martin Devillers
@@ -30,10 +36,27 @@ public class User {
     private String login;
     private String email;
 
+    private boolean existsOnPhone;
+    private ArrayList<PhoneNumber> phoneNumbers;
+
     public User(String name, String email, String login){
         this.name = name;
         this.email = email;
         this.login = login;
+        existsOnPhone = false;
+        phoneNumbers = new ArrayList<PhoneNumber>();
+    }
+
+    public boolean existsOnPhone(){
+        return existsOnPhone;
+    }
+
+    public void setExistsOnPhone(boolean existsOnPhone){
+        this.existsOnPhone = existsOnPhone;
+    }
+
+    public void addPhoneNumber(String number, String type){
+        phoneNumbers.add(new PhoneNumber(number, type));
     }
 
     public String getName(){
@@ -46,5 +69,45 @@ public class User {
 
     public String getLogin(){
         return login;
+    }
+
+    public String getPhoneNumber(){
+        Iterator<PhoneNumber> iterator = phoneNumbers.iterator();
+        while (iterator.hasNext()){
+            PhoneNumber phoneNumber = iterator.next();
+            if (phoneNumber.type.toString().equals(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)){
+                Log.i("com.docdoku.android.plm", "Found mobile number for contact " + name);
+                return phoneNumber.getNumber();
+            }
+        }
+        try{
+            return phoneNumbers.get(0).getNumber();
+        }catch (IndexOutOfBoundsException e){
+            Log.i("com.docdoku.android.plm", "No phone number found for a contact on phone");
+            return "";
+        }
+    }
+
+    public String[] getPhoneNumbers(){
+        String[] phoneNumbersArray = new String[phoneNumbers.size()];
+        for (int i = 0; i<phoneNumbersArray.length; i++){
+            phoneNumbersArray[i] = phoneNumbers.get(i).number;
+        }
+        return phoneNumbersArray;
+    }
+
+    public class PhoneNumber{
+
+        private String number;
+        private String type;
+
+        public PhoneNumber(String number, String type){
+            this.number = number;
+            this.type = type;
+        }
+
+        public String getNumber(){
+            return number;
+        }
     }
 }

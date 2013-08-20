@@ -65,6 +65,9 @@
     <string name="users">Utilisateurs</string>
     <string name="logout">Se déconnecter</string>
     <string name="sendEmail">Envoyer eMail</string>
+    <string name="call">Appeler</string>
+    <string name="sendSMS">Envoyer SMS</string>
+    <string name="createContact">Créer contact</string>
 
     <!-- Checkin/Checkout -->
     <string name="checkin">Libérer</string>
@@ -84,6 +87,14 @@
         <item>Note de révision</item>
         <item>Date de modification</item>
         <item>Auteur</item>
+    </string-array>
+
+    <!-- Users -->
+    <string name="userChooseNumber">Choisir le numéro à appeler</string>
+    <string name="userCancelCall">Annuler</string>
+    <string-array name="userAddContactOptions">
+        <item>Créer un nouveau contact</item>
+        <item>Ajouter l\'adresse email à un contact existant</item>
     </string-array>
 
 </resources>
