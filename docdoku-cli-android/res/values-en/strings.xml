@@ -64,6 +64,9 @@
     <string name="users">Users</string>
     <string name="logout">Log out</string>
     <string name="sendEmail">Send eMail</string>
+    <string name="call">Call</string>
+    <string name="sendSMS">Send SMS</string>
+    <string name="createContact">Create contact</string>
 
     <!-- Checkin/Checkout -->
     <string name="checkin">Check in</string>
@@ -83,6 +86,14 @@
         <item>Revision note</item>
         <item>Modification date</item>
         <item>Author</item>
+    </string-array>
+
+    <!-- Users -->
+    <string name="userChooseNumber">Choose the number to call</string>
+    <string name="userCancelCall">Cancel</string>
+    <string-array name="userAddContactOptions">
+        <item>Create new contact</item>
+        <item>Add email to existing contact</item>
     </string-array>
 
 </resources>

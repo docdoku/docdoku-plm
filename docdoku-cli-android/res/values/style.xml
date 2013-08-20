@@ -9,7 +9,6 @@
     </style>
     <style name="Theme.AppTheme.ActionBar" parent="android:Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/light_background</item>
-        <item name="android:layout_margin">2dp</item>
         <item name="android:titleTextStyle">@style/Theme.AppTheme.ActionBar.TitleTextStyle</item>
     </style>
     <style name="Theme.AppTheme.ActionBar.TitleTextStyle">
