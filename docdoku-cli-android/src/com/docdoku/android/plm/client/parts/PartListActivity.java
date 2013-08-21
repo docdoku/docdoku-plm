@@ -117,7 +117,9 @@ public abstract class PartListActivity extends SearchActionBarActivity {
                 TextView lastIteration = (TextView) partRowView.findViewById(R.id.lastIteration);
                 try {
                     lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(part.getLastIterationDate()), part.getLastIterationAuthorName())));
-                } catch (ParseException e) {
+                }catch (ParseException e) {
+                    lastIteration.setText("");
+                }catch (NullPointerException e){
                     lastIteration.setText("");
                 }
             } else{
