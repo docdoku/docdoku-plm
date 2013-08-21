@@ -21,8 +21,10 @@
 package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +32,16 @@ import android.widget.*;
 import com.docdoku.android.plm.client.NavigationHistory;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
+import com.docdoku.android.plm.client.documents.Document;
+import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.listeners.HttpGetListener;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -47,6 +56,10 @@ public abstract class PartListActivity extends SearchActionBarActivity {
     protected List<Part> partsArray;
     protected PartAdapter partAdapter;
     protected ListView partListView;
+
+    private AsyncTask searchTask;
+    private List<Part> partSearchResultArray;
+    private PartAdapter partSearchResultAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -145,5 +158,48 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         }
         String timeDifference = DateUtils.getRelativeTimeSpanString(this, date.getTimeInMillis(), true).toString();
         return timeDifference;
+    }
+
+    /**
+     * SearchActionBarActivity methods
+     */
+    @Override
+    protected int getSearchQueryHintId() {
+        return R.string.partSearchByKey;
+    }
+
+    @Override
+    protected void executeSearch(String query) {
+        if (searchTask != null){
+            searchTask.cancel(true);
+        }
+        if (query.length()>0){
+            partSearchResultArray = new ArrayList<Part>();
+            partSearchResultAdapter = new PartAdapter(partSearchResultArray);
+            partListView.setAdapter(partSearchResultAdapter);
+            HttpGetListener httpGetListener = new HttpGetListener() {
+                @Override
+                public void onHttpGetResult(String result) {
+                    try {
+                        JSONArray partsJSON = new JSONArray(result);
+                        for (int i=0; i<partsJSON.length(); i++){
+                            JSONObject partJSON = partsJSON.getJSONObject(i);
+                            Part part = new Part(partJSON.getString("partKey"));
+                            part.updateFromJSON(partJSON, getResources());
+                            partSearchResultArray.add(part);
+                        }
+                        partSearchResultAdapter.notifyDataSetChanged();
+                    }catch (JSONException e){
+                        Log.e("com.docdoku.android.plm.client", "Error handling json array of workspace's parts");
+                        e.printStackTrace();
+                        Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+                    }
+                }
+            };
+            searchTask = new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/parts/search/number=" + query);
+        }
+        else{
+            partListView.setAdapter(partAdapter);
+        }
     }
 }

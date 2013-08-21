@@ -21,6 +21,7 @@
 package com.docdoku.android.plm.client.documents;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -55,6 +56,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
     protected BaseAdapter documentAdapter;
     protected ListView documentListView;
 
+    private AsyncTask searchTask;
     private List<Document> documentSearchResultArray;
     private DocumentAdapter documentSearchResultAdapter;
 
@@ -99,6 +101,9 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
     @Override
     protected void executeSearch(String query) {
+        if (searchTask != null){
+            searchTask.cancel(true);
+        }
         if (query.length()>0){
             documentSearchResultArray = new ArrayList<Document>();
             documentSearchResultAdapter = new DocumentAdapter(documentSearchResultArray);
@@ -107,12 +112,12 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 @Override
                 public void onHttpGetResult(String result) {
                     try {
-                        JSONArray partsJSON = new JSONArray(result);
-                        for (int i=0; i<partsJSON.length(); i++){
-                            JSONObject partJSON = partsJSON.getJSONObject(i);
-                            Document part = new Document(partJSON.getString("id"));
-                            part.updateFromJSON(partJSON, getResources());
-                            documentSearchResultArray.add(part);
+                        JSONArray documentJSONArray = new JSONArray(result);
+                        for (int i=0; i<documentJSONArray.length(); i++){
+                            JSONObject documentJSON = documentJSONArray.getJSONObject(i);
+                            Document document = new Document(documentJSON.getString("id"));
+                            document.updateFromJSON(documentJSON, getResources());
+                            documentSearchResultArray.add(document);
                         }
                         documentSearchResultAdapter.notifyDataSetChanged();
                     }catch (JSONException e){
@@ -122,7 +127,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     }
                 }
             };
-            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/search/id=" + query + "/documents");
+            searchTask = new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/search/id=" + query + "/documents");
         }
         else{
             documentListView.setAdapter(documentAdapter);

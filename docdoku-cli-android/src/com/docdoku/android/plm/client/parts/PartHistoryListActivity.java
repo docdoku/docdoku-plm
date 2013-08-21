@@ -86,19 +86,6 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-/**
- * SearchActionBarActivity methods
- */
-    @Override
-    protected int getSearchQueryHintId() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void executeSearch(String query) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     @Override
     protected int getActivityButtonId() {
         return R.id.recentlyViewedParts;  //To change body of implemented methods use File | Settings | File Templates.
