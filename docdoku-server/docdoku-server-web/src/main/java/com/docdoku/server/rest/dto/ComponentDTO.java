@@ -33,7 +33,7 @@ public class ComponentDTO implements Serializable{
     private String author;
     private String authorLogin;
     private String number;
-    private String name;
+    private String name = "";
     private String version;
     private int iteration;
     private String description;
