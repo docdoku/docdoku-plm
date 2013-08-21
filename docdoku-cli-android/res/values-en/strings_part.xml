@@ -37,6 +37,7 @@
     </string-array>
 
     <!-- Search parts -->
+    <string name="partSearchByKey">Part reference</string>
     <string name="partSearchPrompt">Search parts</string>
     <string name="partSearchStart">Search</string>
     <string name="searchPartId">Search part reference number</string>

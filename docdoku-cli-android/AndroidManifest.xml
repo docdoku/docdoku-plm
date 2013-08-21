@@ -37,18 +37,22 @@
                   android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".parts.PartListActivity1"
+                  android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".UserListActivity"
                   android:label="@string/users"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".parts.PartActivity"
+                  android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".documents.DocumentActivity"
+                  android:label="@string/documents"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".parts.PartHistoryListActivity"
                   android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".parts.PartSearchActivity"
+                  android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".documents.DocumentHistoryListActivity"
                   android:label="@string/documents"

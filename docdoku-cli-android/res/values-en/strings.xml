@@ -89,6 +89,7 @@
     </string-array>
 
     <!-- Users -->
+    <string name="userSendEmail">Send email</string>
     <string name="userChooseNumber">Choose the number to call</string>
     <string name="userCancelCall">Cancel</string>
     <string-array name="userAddContactOptions">

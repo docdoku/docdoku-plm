@@ -90,6 +90,7 @@
     </string-array>
 
     <!-- Users -->
+    <string name="userSendEmail">Envoyer email</string>
     <string name="userChooseNumber">Choisir le numéro à appeler</string>
     <string name="userCancelCall">Annuler</string>
     <string-array name="userAddContactOptions">

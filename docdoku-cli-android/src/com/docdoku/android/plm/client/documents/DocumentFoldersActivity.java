@@ -45,7 +45,6 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
 
     private Folder[] folders;
     private String currentFolderId;
-    private FolderAdapter adapter;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,32 +78,37 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
             folders = new Folder[0];
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        adapter = new FolderAdapter(new ArrayList<Document>());
+        documentAdapter = new FolderAdapter(new ArrayList<Document>());
         final ProgressBar progressBar = new ProgressBar(this);
         documentListView.addFooterView(progressBar);
-        documentListView.setAdapter(adapter);
+        documentListView.setAdapter(documentAdapter);
         documentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(DocumentFoldersActivity.this, DocumentFoldersActivity.class);
-                intent.putExtra(INTENT_KEY_FOLDER, folders[i].getId());
-                startActivity(intent);
+                Object object = documentListView.getAdapter().getItem(i);
+                if (!object.getClass().equals(Document.class)){
+                    Intent intent = new Intent(DocumentFoldersActivity.this, DocumentFoldersActivity.class);
+                    intent.putExtra(INTENT_KEY_FOLDER, folders[i].getId());
+                    startActivity(intent);
+                }else{
+                    onDocumentClick((Document) documentListView.getAdapter().getItem(i));
+                }
             }
         });
         HttpGetListener httpGetListener = new HttpGetListener() {
             @Override
             public void onHttpGetResult(String result) {
                 try {
-                    JSONArray documentArray = new JSONArray(result);
+                    JSONArray documentJSONArray = new JSONArray(result);
                     ArrayList<Document> documents = new ArrayList<Document>();
-                    for (int i = 0; i<documentArray.length(); i++){
-                        JSONObject documentJSON = documentArray.getJSONObject(i);
+                    for (int i = 0; i<documentJSONArray.length(); i++){
+                        JSONObject documentJSON = documentJSONArray.getJSONObject(i);
                         Document document = new Document(documentJSON.getString("id"));
                         document.updateFromJSON(documentJSON, getResources());
                         documents.add(document);
                     }
-                    adapter.addDocuments(documents);
-                    adapter.notifyDataSetChanged();
+                    ((FolderAdapter) documentAdapter).addDocuments(documents);
+                    documentAdapter.notifyDataSetChanged();
                     documentListView.removeFooterView(progressBar);
                 } catch (JSONException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

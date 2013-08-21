@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:layout_below="@+id/checkedInOutImage"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/clickable_item_background">
+        android:layout_alignParentLeft="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -60,13 +59,18 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="1px"
-        android:textSize="14sp"
-        android:background="@drawable/white_transparent_line"/>
+    <View
+            android:id="@+id/opaquePadding"
+            android:layout_height="10dp"
+            android:layout_width="match_parent"
+            android:background="@color/background"
+            android:layout_alignParentTop="true"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_below="@+id/opaquePadding"
+            android:background="@color/veryTransparentWhite"/>
 
     <ImageView
             android:id="@+id/checkedInOutImage"
@@ -75,7 +79,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
             android:padding="2px"
-            android:background="@drawable/white_border_rectangle"
+            android:background="@drawable/indicator_background"
             android:src="@drawable/checked_out_other_user_light"
             android:layout_alignParentStart="true"
             style="@style/Indicator"/>
@@ -87,7 +91,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="15dp"
         android:padding="2px"
-        android:background="@drawable/white_border_rectangle"
+        android:background="@drawable/indicator_background"
         style="@style/Indicator">
 
         <ImageView
@@ -111,7 +115,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="15dp"
         android:padding="2px"
-        android:background="@drawable/white_border_rectangle"
+        android:background="@drawable/indicator_background"
         style="@style/Indicator">
 
         <ImageView

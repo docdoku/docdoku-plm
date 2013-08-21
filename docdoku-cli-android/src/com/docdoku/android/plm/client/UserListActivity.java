@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -46,6 +47,7 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
 
     private static final int INTENT_CODE_CONTACT_PICKER = 100;
 
+    private ArrayList<User> userArray;
     private UserArrayAdapter userArrayAdapter;
     private ListView userListView;
     private User linkedContact;
@@ -142,7 +144,7 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
                         String[] checkedEmailsArray = getSelectedUsersEmail();
                         intent.putExtra(Intent.EXTRA_EMAIL, checkedEmailsArray);
                         intent.putExtra(Intent.EXTRA_SUBJECT, getCurrentWorkspace() + "//");
-                        startActivity(Intent.createChooser(intent, "Send Email"));
+                        startActivity(Intent.createChooser(intent, getResources().getString(R.string.userSendEmail)));
                         return true;
                     case R.id.call:
                         User selectedUser = getSelectedUser();
@@ -317,7 +319,7 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
     public void onHttpGetResult(String result) {
         View loading = findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
-        ArrayList<User> userArray = new ArrayList<User>();
+        userArray = new ArrayList<User>();
         try {
             JSONArray usersJSON = new JSONArray(result);
             for (int i=0; i<usersJSON.length(); i++){
@@ -415,13 +417,31 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
 
     @Override
     protected void executeSearch(String query) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (query.length()>0){
+            Log.i("com.docdoku.android.plm", "User seach query: " + query);
+            ArrayList<User> searchResultUsers =  searchUsers(query);
+            UserArrayAdapter searchResultAdapter = new UserArrayAdapter(searchResultUsers);
+            userListView.setAdapter(searchResultAdapter);
+        }else{
+            userListView.setAdapter(userArrayAdapter);
+        }
+    }
+
+    private ArrayList<User> searchUsers(String query){
+        ArrayList<User> searchResult = new ArrayList<User>();
+        Iterator<User> iterator = userArray.iterator();
+        while (iterator.hasNext()){
+            User user = iterator.next();
+            if (user.getName().toLowerCase().contains(query.toLowerCase())){
+                searchResult.add(user);
+            }
+        }
+        return searchResult;
     }
 
     @Override
     protected int getActivityButtonId() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
-
 }
 

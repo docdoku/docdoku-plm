@@ -21,6 +21,7 @@
 package com.docdoku.android.plm.client.documents;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -52,9 +53,10 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
     protected NavigationHistory navigationHistory;
     protected List<Document> documentArray;
-    protected DocumentAdapter documentAdapter;
+    protected BaseAdapter documentAdapter;
     protected ListView documentListView;
 
+    private AsyncTask searchTask;
     private List<Document> documentSearchResultArray;
     private DocumentAdapter documentSearchResultAdapter;
 
@@ -66,6 +68,13 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         documentListView = (ListView) findViewById(R.id.elementList);
         Log.i("com.docdoku.android.plm.client", "Loading navigation history from preference path: " + getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
+
+        documentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                onDocumentClick((Document) documentListView.getAdapter().getItem(i));
+            }
+        });
     }
 
     protected void removeLoadingView(){
@@ -73,6 +82,13 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         if (loading != null){
             ((ViewGroup) loading.getParent()).removeView(loading);
         }
+    }
+
+    protected void onDocumentClick(Document document){
+        navigationHistory.add(document.getIdentification());
+        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
+        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+        startActivity(intent);
     }
 
     /**
@@ -85,6 +101,9 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
     @Override
     protected void executeSearch(String query) {
+        if (searchTask != null){
+            searchTask.cancel(true);
+        }
         if (query.length()>0){
             documentSearchResultArray = new ArrayList<Document>();
             documentSearchResultAdapter = new DocumentAdapter(documentSearchResultArray);
@@ -93,12 +112,12 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                 @Override
                 public void onHttpGetResult(String result) {
                     try {
-                        JSONArray partsJSON = new JSONArray(result);
-                        for (int i=0; i<partsJSON.length(); i++){
-                            JSONObject partJSON = partsJSON.getJSONObject(i);
-                            Document part = new Document(partJSON.getString("id"));
-                            part.updateFromJSON(partJSON, getResources());
-                            documentSearchResultArray.add(part);
+                        JSONArray documentJSONArray = new JSONArray(result);
+                        for (int i=0; i<documentJSONArray.length(); i++){
+                            JSONObject documentJSON = documentJSONArray.getJSONObject(i);
+                            Document document = new Document(documentJSON.getString("id"));
+                            document.updateFromJSON(documentJSON, getResources());
+                            documentSearchResultArray.add(document);
                         }
                         documentSearchResultAdapter.notifyDataSetChanged();
                     }catch (JSONException e){
@@ -108,7 +127,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     }
                 }
             };
-            new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/search/id=" + query + "/documents");
+            searchTask = new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/search/id=" + query + "/documents");
         }
         else{
             documentListView.setAdapter(documentAdapter);
@@ -179,16 +198,6 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
                 }
-                documentRowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        documentRowView.setBackgroundResource(R.drawable.clickable_item_background);
-                        navigationHistory.add(doc.getIdentification());
-                        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
-                        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, doc);
-                        startActivity(intent);
-                    }
-                });
                 } else {
                 documentRowView = new ProgressBar(DocumentListActivity.this);
             }
