@@ -52,7 +52,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
     protected NavigationHistory navigationHistory;
     protected List<Document> documentArray;
-    protected DocumentAdapter documentAdapter;
+    protected BaseAdapter documentAdapter;
     protected ListView documentListView;
 
     private List<Document> documentSearchResultArray;
@@ -66,6 +66,13 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         documentListView = (ListView) findViewById(R.id.elementList);
         Log.i("com.docdoku.android.plm.client", "Loading navigation history from preference path: " + getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
+
+        documentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                onDocumentClick((Document) documentListView.getAdapter().getItem(i));
+            }
+        });
     }
 
     protected void removeLoadingView(){
@@ -73,6 +80,13 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         if (loading != null){
             ((ViewGroup) loading.getParent()).removeView(loading);
         }
+    }
+
+    protected void onDocumentClick(Document document){
+        navigationHistory.add(document.getIdentification());
+        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
+        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+        startActivity(intent);
     }
 
     /**
@@ -179,16 +193,6 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
                 }
-                documentRowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        documentRowView.setBackgroundResource(R.drawable.clickable_item_background);
-                        navigationHistory.add(doc.getIdentification());
-                        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
-                        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, doc);
-                        startActivity(intent);
-                    }
-                });
                 } else {
                 documentRowView = new ProgressBar(DocumentListActivity.this);
             }
