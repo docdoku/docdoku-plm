@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.ViewGroup;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
@@ -45,6 +46,8 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        ((ViewGroup) loading.getParent()).removeView(loading);
 
         Log.i("com.docdoku.android.plm.client", "navigation history_light size: " + navigationHistory.getSize());
         partsArray= new ArrayList<Part>();

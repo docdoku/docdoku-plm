@@ -36,7 +36,7 @@
         <activity android:name=".parts.PartCompleteListActivity"
                   android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".parts.PartListActivity1"
+        <activity android:name=".parts.PartSimpleListActivity"
                   android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".UserListActivity"

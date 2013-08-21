@@ -75,9 +75,9 @@ public class PartSearchActivity extends SearchActivity {
                     searchQuery += "&to="+ maxDateString;
                 }
                 Log.i("docDoku.DocDokuPLM", "Part search_light query: " + searchQuery);
-                Intent intent = new Intent(PartSearchActivity.this, PartListActivity1.class);
-                intent.putExtra(PartListActivity1.LIST_MODE_EXTRA,PartListActivity1.PART_SEARCH);
-                intent.putExtra(PartListActivity1.SEARCH_QUERY_EXTRA, searchQuery);
+                Intent intent = new Intent(PartSearchActivity.this, PartSimpleListActivity.class);
+                intent.putExtra(PartSimpleListActivity.LIST_MODE_EXTRA, PartSimpleListActivity.PART_SEARCH);
+                intent.putExtra(PartSimpleListActivity.SEARCH_QUERY_EXTRA, searchQuery);
                 startActivity(intent);
             }
         });

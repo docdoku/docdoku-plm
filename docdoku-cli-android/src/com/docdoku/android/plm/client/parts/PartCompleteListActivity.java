@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
@@ -52,6 +53,8 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("com.docdoku.android.plm.client", "Creating PartCompleteListActivity");
+
+        ((ViewGroup) loading.getParent()).removeView(loading);
 
         footerProgressBar = new ProgressBar(this);
         partListView.addFooterView(footerProgressBar);

@@ -56,6 +56,7 @@ public abstract class PartListActivity extends SearchActionBarActivity {
     protected List<Part> partsArray;
     protected PartAdapter partAdapter;
     protected ListView partListView;
+    protected View loading;
 
     private AsyncTask searchTask;
     private List<Part> partSearchResultArray;
@@ -66,15 +67,14 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_list);
 
-        View loading = findViewById(R.id.loading);
-        ((ViewGroup) loading.getParent()).removeView(loading);
+        loading = findViewById(R.id.loading);
 
         partListView = (ListView) findViewById(R.id.elementList);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_PART_HISTORY, MODE_PRIVATE));
         partListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Part part = partsArray.get(i);
+                Part part = (Part) partListView.getAdapter().getItem(i);
                 navigationHistory.add(part.getKey());
                 Intent intent = new Intent(PartListActivity.this, PartActivity.class);
                 intent.putExtra(PartActivity.PART_EXTRA,part);
