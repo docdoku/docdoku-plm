@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    style="@style/MediumTitle"
+                    style="@style/Theme.AppTheme.MediumTitle"
                     android:text="0001"/>
 
                 <TextView
@@ -49,7 +49,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        style="@style/MediumTitle"
+                        style="@style/Theme.AppTheme.MediumTitle"
                         android:text="Mr M."/>
 
             </LinearLayout>

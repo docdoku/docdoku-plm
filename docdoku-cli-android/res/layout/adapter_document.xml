@@ -35,7 +35,7 @@
 
             <TextView
                 android:id="@+id/lastIteration"
-                style="@style/SmallText"
+                style="@style/Theme.AppTheme.SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/identification"
@@ -82,7 +82,7 @@
             android:background="@drawable/indicator_background"
             android:src="@drawable/checked_out_other_user_light"
             android:layout_alignParentStart="true"
-            style="@style/Indicator"/>
+            style="@style/Theme.AppTheme.Indicator"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -92,18 +92,18 @@
         android:layout_marginLeft="15dp"
         android:padding="2px"
         android:background="@drawable/indicator_background"
-        style="@style/Indicator">
+        style="@style/Theme.AppTheme.Indicator">
 
         <ImageView
             android:src="@drawable/iteration_notification_off_light"
-            style="@style/Indicator"/>
+            style="@style/Theme.AppTheme.Indicator"/>
 
         <TextView
                 android:id="@+id/iterationNumber"
                 android:layout_width="wrap_content"
                 android:gravity="center"
                 android:text="0"
-                style="@style/Indicator"/>
+                style="@style/Theme.AppTheme.Indicator"/>
 
     </LinearLayout>
 
@@ -116,16 +116,16 @@
         android:layout_marginRight="15dp"
         android:padding="2px"
         android:background="@drawable/indicator_background"
-        style="@style/Indicator">
+        style="@style/Theme.AppTheme.Indicator">
 
         <ImageView
                 android:src="@drawable/attached_file_light"
-                style="@style/Indicator"/>
+                style="@style/Theme.AppTheme.Indicator"/>
 
         <TextView
                 android:id="@+id/numAttachedFiles"
                 android:text="0"
-                style="@style/Indicator"/>
+                style="@style/Theme.AppTheme.Indicator"/>
 
     </LinearLayout>
 

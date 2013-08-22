@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        style="@style/BigTitle"
+        style="@style/Theme.AppTheme.BigTitle"
         android:text="Username"/>
 
     <CheckBox

@@ -9,7 +9,7 @@
     <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            style="@style/BigTitle"
+            style="@style/Theme.AppTheme.BigTitle"
             android:text="@string/url"/>
 
     <EditText
@@ -25,7 +25,7 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        style="@style/BigTitle"
+        style="@style/Theme.AppTheme.BigTitle"
         android:text="@string/login"/>
 
     <EditText
@@ -39,7 +39,7 @@
     <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            style="@style/BigTitle"
+            style="@style/Theme.AppTheme.BigTitle"
             android:text="@string/password"/>
 
     <EditText
