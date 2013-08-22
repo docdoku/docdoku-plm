@@ -21,6 +21,7 @@
 package com.docdoku.android.plm.client.documents;
 
 import android.app.AlertDialog;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -29,6 +30,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +57,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
     private static final int INTENT_CODE_ACTIVITY_PICTURE = 0;
     private static final int INTENT_CODE_ACTIVITY_VIDEO = 1;
+    private static final int INTENT_CODE_ACTIVITY_FILE_CHOOSER = 2;
     private static final int NUM_PAGES = 5;
     private static final int NUM_GENERAL_INFORMATION_FIELDS = 10;
     private static final int NUM_REVISION_FIELDS = 4;
@@ -219,10 +222,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
                             if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
-                            String docReference = document.getIdentification();
-                            String docId = docReference.substring(0, docReference.lastIndexOf("-"));
-                            String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
-                            new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png",pictureSavePath);
+                            startUploadingFile(fileName + ".png", pictureSavePath);
                         }
                     });
                     dialogBuilder.setNegativeButton(R.string.cancel, null);
@@ -231,12 +231,38 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 case INTENT_CODE_ACTIVITY_VIDEO:
                     Toast.makeText(this, getResources().getString(R.string.videoSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
                     break;
+                case INTENT_CODE_ACTIVITY_FILE_CHOOSER:
+                    Uri uri = data.getData();
+                    String path = getRealPathFromURI(uri);
+                    String fileName  = path.substring(path.lastIndexOf("/")+1);
+                    if (fileName.length() == 0){
+                        fileName = "AndroidFile";
+                    }
+                    Log.i("com.docdoku.android.plm", "Uploading file named " + fileName + " from path: " + path);
+                    startUploadingFile(fileName, path);
+                    break;
             }
         } else if (resultCode == RESULT_CANCELED) {
             // User cancelled the image capture
         } else {
             Toast.makeText(this, R.string.mediaError, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void startUploadingFile(String fileName, String filePath){
+        String docReference = document.getIdentification();
+        String docId = docReference.substring(0, docReference.lastIndexOf("-"));
+        String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
+        new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName,filePath);
+    }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(this, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     /**
@@ -423,7 +449,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 }
             }
         });
-        ImageButton takeVideo = (ImageButton) rowView.findViewById(R.id.takeVideo);
+        /*ImageButton takeVideo = (ImageButton) rowView.findViewById(R.id.takeVideo);
         takeVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -438,6 +464,22 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 pictureSavePath = file.getAbsolutePath();
                 //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file)); //File path causes crash for videos
                 startActivityForResult(intent, INTENT_CODE_ACTIVITY_VIDEO);
+            }
+        });*/
+        ImageButton uploadFile = (ImageButton) rowView.findViewById(R.id.uploadFile);
+        uploadFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                try {
+                    startActivityForResult(
+                            Intent.createChooser(intent, "Select a File to Upload"),INTENT_CODE_ACTIVITY_FILE_CHOOSER);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(DocumentActivity.this, "Please install a File Manager.",Toast.LENGTH_LONG).show();
+                }
             }
         });
         return rowView;
