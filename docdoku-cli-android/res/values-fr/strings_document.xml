@@ -55,6 +55,7 @@
     <string name="documentCreationDateMax">Créé avant le</string>
 
     <!-- Upload file -->
+    <string name="documentPictureDirectoryFail">Echec dans l\'accès au répertoire des images</string>
     <string name="confirmImageUpload">Ajouter l\'image au document?</string>
     <string name="chooseImageFileName">Nom de l\'image</string>
     <string name="uploadImage">Charger l\'image</string>

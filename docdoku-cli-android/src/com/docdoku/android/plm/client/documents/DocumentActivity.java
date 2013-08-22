@@ -410,12 +410,17 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "DocDokuPLM" + timeStamp +".jpg");
                 try {
                     file.createNewFile();
+                    pictureSavePath = file.getAbsolutePath();
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(intent, INTENT_CODE_ACTIVITY_PICTURE);
                 } catch (IOException e) {
+                    Toast.makeText(DocumentActivity.this, R.string.documentPictureDirectoryFail, Toast.LENGTH_LONG).show();
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    Log.e("com.docdoku.android.plm", "IOException when creating file." +
+                            "\nError message: " + e.getMessage() +
+                            "\nError cause: " + e.getCause() +
+                            "\nFile path" + file.getAbsolutePath());
                 }
-                pictureSavePath = file.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                startActivityForResult(intent, INTENT_CODE_ACTIVITY_PICTURE);
             }
         });
         ImageButton takeVideo = (ImageButton) rowView.findViewById(R.id.takeVideo);
