@@ -337,7 +337,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             ViewGroup pageView;
             pageView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_detail_header, null);
             if (b){
-                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse);
+                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse_light);
             }
             TextView title = (TextView) pageView.findViewById(R.id.page_title);
             switch (i){

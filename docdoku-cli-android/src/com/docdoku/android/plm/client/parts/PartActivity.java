@@ -28,7 +28,6 @@ import android.widget.*;
 import com.docdoku.android.plm.client.Element;
 import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.client.parts.Part;
 
 /**
  *
@@ -171,7 +170,7 @@ public class PartActivity extends ElementActivity {
             ViewGroup pageView;
             pageView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_detail_header, null);
             if (b){
-                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse);
+                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse_light);
             }
             TextView title = (TextView) pageView.findViewById(R.id.page_title);
             switch (i){

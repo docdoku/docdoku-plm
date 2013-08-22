@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/group_expand"/>
+        android:src="@drawable/group_expand_light"/>
 
     <TextView android:id="@+id/page_title"
               android:text="Page Title"

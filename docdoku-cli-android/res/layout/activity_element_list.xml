@@ -31,7 +31,7 @@
                 android:id="@+id/elementList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:listSelector="@drawable/clickable_listview_item_background"
+                android:listSelector="@drawable/selector_listview_background"
                 android:divider="@null"/>
 
     </LinearLayout>

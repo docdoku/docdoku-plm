@@ -35,14 +35,14 @@
                     android:layout_weight="1"
                     android:textOff="@string/documentIterationButton" android:textOn="@string/documentIterationButton"
                     android:textSize="14sp"
-                    android:drawableTop="@drawable/iteration_notification"/>
+                    android:drawableTop="@drawable/selector_notification_iteration"/>
 
             <Button
                     android:id="@+id/checkInOutButton"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:drawableTop="@drawable/error"
+                    android:drawableTop="@drawable/error_light"
                     android:textSize="14sp"
                     android:text="@string/partCheckOut"/>
 
@@ -54,7 +54,7 @@
                     android:layout_weight="1"
                     android:textOff="@string/documentStateChangeButton" android:textOn="@string/documentStateChangeButton"
                     android:textSize="14sp"
-                    android:drawableTop="@drawable/state_change_notification"/>
+                    android:drawableTop="@drawable/selector_notification_state_change"/>
 
         </LinearLayout>
 

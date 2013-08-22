@@ -156,7 +156,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         expandRadioButtons.setLayoutParams(params);
         expandRadioButtons.setGravity(Gravity.CENTER_HORIZONTAL);
-        expandRadioButtons.setBackgroundResource(R.drawable.clickable_item_background);
+        expandRadioButtons.setBackgroundResource(R.drawable.selector_background);
         radioGroup.addView(expandRadioButtons);
     }
 

@@ -17,6 +17,6 @@
                android:layout_width="wrap_content"
                android:layout_alignParentRight="true"
                android:layout_centerVertical="true"
-               android:src="@drawable/element_expand"/>
+               android:src="@drawable/element_expand_light"/>
 
 </RelativeLayout>

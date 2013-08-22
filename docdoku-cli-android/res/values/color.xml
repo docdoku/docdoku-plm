@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="title_bar_background_bottom">#ff0911ad</color>
-    <color name="title_bar_background_top">#ff05095a</color>
     <color name="background">#ff000337</color>
+    <color name="background_light">#fff3f3f3</color>
     <color name="transparent">#00000000</color>
-    <color name="darkGreen">#ff003900</color>
-    <color name="mediumGreen">#ff007000</color>
-    <color name="darkRed">#ff390000</color>
-    <color name="mediumRed">#ff700000</color>
-    <color name="darkYellow">#ff393900</color>
-    <color name="mediumYellow">#ff707000</color>
     <color name="lightGrey">#ffd5d5d5</color>
-    <color name="white">#fff</color>
-    <color name="lightBlue">#33b5e5</color>
-    <color name="lightBlueTransparent">#6633b5e5</color>
     <color name="darkGrey">#666</color>
-    <color name="light_background">#fff3f3f3</color>
+    <color name="white">#fff</color>
     <color name="transparentWhite">#aaffffff</color>
     <color name="veryTransparentWhite">#55ffffff</color>
-
+    <color name="lightBlue">#33b5e5</color>
+    <color name="lightBlueTransparent">#6633b5e5</color>
 </resources>

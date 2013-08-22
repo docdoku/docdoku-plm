@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_margin="15dp"
-        android:src="@drawable/upload"/>
+        android:src="@drawable/upload_light"/>
 
     <ImageButton android:id="@+id/takePicture"
                android:layout_height="wrap_content"

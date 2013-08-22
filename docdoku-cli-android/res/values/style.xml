@@ -8,7 +8,7 @@
         <item name="android:actionBarStyle">@style/Theme.AppTheme.ActionBar</item>
     </style>
     <style name="Theme.AppTheme.ActionBar" parent="android:Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/light_background</item>
+        <item name="android:background">@color/background_light</item>
         <item name="android:titleTextStyle">@style/Theme.AppTheme.ActionBar.TitleTextStyle</item>
     </style>
     <style name="Theme.AppTheme.ActionBar.TitleTextStyle">
@@ -57,7 +57,7 @@
     </style>
     <style name="MenuItem" parent="Menu">
         <item name="android:padding">10dp</item>
-        <item name="android:background">@drawable/clickable_item_background</item>
+        <item name="android:background">@drawable/selector_background</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/menu_item_selectable_text</item>
         <item name="android:layout_width">match_parent</item>
