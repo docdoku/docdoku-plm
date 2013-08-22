@@ -18,17 +18,29 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.converters.catia;
+package com.docdoku.server.converters.catia.product.parser;
 
+import com.docdoku.core.product.CADInstance;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class Positioning {
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+    private double rx;
+    private double ry;
+    private double rz;
+    private double tx;
+    private double ty;
+    private double tz;
 
-@Qualifier
-@Retention(RUNTIME)
-@Target({TYPE, METHOD, FIELD, PARAMETER})
-public @interface CatiaFileConverter {}
+    public Positioning(double rx, double ry, double rz, double tx, double ty, double tz) {
+        this.rx = rx;
+        this.ry = ry;
+        this.rz = rz;
+        this.tx = tx;
+        this.ty = ty;
+        this.tz = tz;
+    }
+
+    public CADInstance toCADInstance() {
+        return new CADInstance(tx, ty, tz, rx, ry, rz, CADInstance.Positioning.ABSOLUTE);
+    }
+}

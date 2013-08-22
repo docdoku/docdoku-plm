@@ -878,6 +878,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @Override
+    public PartMaster findPartMasterByCADFileName(String workspaceId, String cadFileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        BinaryResource br  = new BinaryResourceDAO(em).findNativeCadBinaryResourceInWorkspace(workspaceId,cadFileName);
+        if(br == null){
+            return null;
+        }
+        String partNumber = br.getOwnerId();
+        PartMasterKey partMasterKey = new PartMasterKey(workspaceId,partNumber);
+        try {
+            return new PartMasterDAO(em).loadPartM(partMasterKey);
+        } catch (PartMasterNotFoundException e) {
+            return null;
+        }
+
+    }
 
     @RolesAllowed("users")
     @Override

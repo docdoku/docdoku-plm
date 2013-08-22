@@ -85,6 +85,18 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-catia-product</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-catia-product</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
@@ -238,6 +250,7 @@
                                     <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-all</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-catia</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-catia-product</include>
                                     <include>org.ow2.docdoku:docdoku-server-scorm</include>
                                     <include>org.ow2.docdoku:docdoku-server-office-doc</include>
                                     <include>org.ow2.docdoku:docdoku-server-viewer-image</include>

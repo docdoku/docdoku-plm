@@ -78,14 +78,11 @@ define(["LoaderManager"],function(LoaderManager){
             //this.scene.add(this.grid);
             var self = this ;
             this.loader.parseFile(this.fileName, "", false, function(mesh){
-                try{
+                if ( mesh instanceof THREE.Mesh ) {
                     THREE.GeometryUtils.center( mesh.geometry );
-                }catch(error){
-
                 }
                 self.scene.add(mesh);
                 self.camera.lookAt(mesh.position);
-
             });
             this.animate();
         },

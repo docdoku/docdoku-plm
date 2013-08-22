@@ -2,7 +2,9 @@
 define(function() {
 
     var LoaderManager = function() {
-        this.loader = null;
+        this.ColladaeLoader = null;
+        this.StlLoader = null;
+        this.BinaryLoader = null;
     };
 
     LoaderManager.prototype = {
@@ -14,11 +16,11 @@ define(function() {
             switch ( extension ) {
                 case 'dae':
 
-                    if(this.loader == null) {
-                        this.loader = new THREE.ColladaLoader();
+                    if(this.ColladaeLoader == null) {
+                        this.ColladaeLoader = new THREE.ColladaLoader();
                     }
 
-                    this.loader.load( filename , function(collada) {
+                    this.ColladaeLoader.load( filename , function(collada) {
                         var dae = collada.scene;
                         dae.scale.x = dae.scale.y = dae.scale.z = 1;
                         dae.updateMatrix();
@@ -29,11 +31,11 @@ define(function() {
 
                 case 'stl':
 
-                    if(this.loader == null) {
-                        this.loader = new THREE.STLLoader();
+                    if(this.StlLoader == null) {
+                        this.StlLoader = new THREE.STLLoader();
                     }
 
-                    this.loader.addEventListener( 'load', function ( stl ) {
+                    this.StlLoader.addEventListener( 'load', function ( stl ) {
                         var geometry = stl.content;
                         var material = new THREE.MeshPhongMaterial();
                         var mesh = new THREE.Mesh(geometry,material);
@@ -41,18 +43,18 @@ define(function() {
                         callback(mesh);
                     });
 
-                    this.loader.load( filename );
+                    this.StlLoader.load( filename );
 
                     break;
 
                 case 'js':
                 case 'json':
 
-                    if(this.loader == null) {
-                        this.loader = new THREE.BinaryLoader();
+                    if(this.BinaryLoader == null) {
+                        this.BinaryLoader = new THREE.BinaryLoader();
                     }
 
-                    this.loader.load(filename, function(geometry, materials) {
+                    this.BinaryLoader.load(filename, function(geometry, materials) {
                         if (computeVertexNormals) {
                             geometry.computeVertexNormals();
 

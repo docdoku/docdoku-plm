@@ -19,17 +19,18 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.product.Geometry;
-import com.docdoku.core.product.PartMasterTemplate;
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.FileAlreadyExistsException;
-import com.docdoku.core.services.CreationException;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
-import java.util.*;
+import com.docdoku.core.product.PartMasterTemplate;
+import com.docdoku.core.services.CreationException;
+import com.docdoku.core.services.FileAlreadyExistsException;
+import com.docdoku.core.services.FileNotFoundException;
+
 import javax.persistence.*;
+import java.util.Locale;
 
 public class BinaryResourceDAO {
 
@@ -117,6 +118,15 @@ public class BinaryResourceDAO {
         TypedQuery<PartMasterTemplate> query = em.createQuery("SELECT t FROM PartMasterTemplate t WHERE t.attachedFile = :binaryResource", PartMasterTemplate.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+        } catch (NoResultException pNREx) {
+            return null;
+        }
+    }
+
+    public BinaryResource findNativeCadBinaryResourceInWorkspace(String workspaceId, String cadFileName) {
+        TypedQuery<BinaryResource> query = em.createQuery("SELECT br FROM BinaryResource br WHERE br.fullName like :name", BinaryResource.class);
+        try {
+            return query.setParameter("name", workspaceId + "/parts/%/nativecad/" + cadFileName).getSingleResult();
         } catch (NoResultException pNREx) {
             return null;
         }

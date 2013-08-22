@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.converters.catia;
+package com.docdoku.server.converters.catia;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
@@ -66,8 +66,6 @@ public class CatiaFileConverterImpl implements CADConverter{
         File tmpCadFile;
         File tmpDAEFile = new File(tmpDir, woExName+".dae");
         File daeFile = null;
-
-
 
         try {
             String crossManagerWrapper = CONF.getProperty("crossManagerWrapper");

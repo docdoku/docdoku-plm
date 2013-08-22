@@ -8,9 +8,9 @@
         <groupId>org.ow2.docdoku</groupId>
         <version>2.0-SNAPSHOT</version>
     </parent>
-    <artifactId>docdoku-server-converter-catia</artifactId>
+    <artifactId>docdoku-server-converter-catia-product</artifactId>
     <packaging>jar</packaging>
-    <name>docdoku-server-converter-catia Java EE 6 Catia Converter</name>
+    <name>docdoku-server-converter-catia-product Java EE 6 CATProduct Parser</name>
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -46,5 +46,4 @@
         </plugins>
         <finalName>${project.artifactId}</finalName>
     </build>
-
 </project>

@@ -15,6 +15,7 @@
     <module>docdoku-server-converter-kmz</module>
     <module>docdoku-server-converter-all</module>
     <module>docdoku-server-converter-catia</module>
+    <module>docdoku-server-converter-catia-product</module>
     <module>docdoku-server-scorm</module>
     <module>docdoku-server-office-doc</module>
     <module>docdoku-server-viewer-image</module>

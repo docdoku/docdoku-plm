@@ -79,6 +79,10 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         return BinaryResource.parseOwnerRef(fullName);
     }
 
+    public String getOwnerId() {
+        return BinaryResource.parseId(fullName);
+    }
+
     public String getOwnerIteration(){
         return BinaryResource.parseIteration(fullName);
     }
@@ -89,12 +93,21 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         return parts[2].substring(0, index);
     }
 
+
+
     public static String parseIteration(String pFullName){
         String ref = BinaryResource.parseOwnerRef(pFullName);
         String[] split = ref.split("/");
         return split[2];
     }
-    
+
+    public static String parseId(String pFullName){
+        String ref = BinaryResource.parseOwnerRef(pFullName);
+        String[] split = ref.split("/");
+        return split[0];
+    }
+
+
     public void setFullName(String pFullName) {
         fullName = pFullName;
     }
@@ -183,4 +196,5 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+
 }
