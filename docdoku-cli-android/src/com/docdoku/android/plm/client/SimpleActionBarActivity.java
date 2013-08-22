@@ -24,6 +24,7 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -38,6 +39,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     private static final String URL_API = "api/workspaces/";
 
     protected static String currentUserLogin;
+    private ActionBarDrawerToggle drawerToggle;
 
     protected String getCurrentWorkspace(){
         return MenuFragment.getCurrentWorkspace();
@@ -57,52 +59,35 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         final MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
         menuFragment.setCurrentActivity(getActivityButtonId());
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.navigation_drawer, 0, 0){
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
+            public void onDrawerClosed(View view) {
                 if (menuFragment.workspaceChanged){
                     restartActivity();
                 }
             }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
+        };
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.setDrawerListener(drawerToggle);
+        ActionBar actionBar = getActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        drawerToggle.syncState();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_simple, menu);
-        setHomeIcon();
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         switch (item.getItemId()) {
-            case android.R.id.home:
-                Log.i("com.docdoku.android.plm.client", "Menu drawer button clicked");
-                DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-                if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
-                    drawerLayout.closeDrawer(Gravity.LEFT);
-                }
-                else{
-                    drawerLayout.openDrawer(Gravity.LEFT);
-                }
-                return true;
             case R.id.menu_users:
                 Intent intent = new Intent(this, UserListActivity.class);
                 startActivity(intent);
@@ -126,12 +111,6 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-    }
-
-    protected void setHomeIcon(){
-        ActionBar actionBar = getActionBar();
-        actionBar.setIcon(R.drawable.navigation_drawer);
-        actionBar.setHomeButtonEnabled(true);
     }
 
     public void restartActivity(){

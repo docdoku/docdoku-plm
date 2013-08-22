@@ -36,7 +36,6 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_search, menu);
-        setHomeIcon();
 
         final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
 

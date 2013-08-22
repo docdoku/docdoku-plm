@@ -17,7 +17,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application android:label="@string/app_name"
-                 android:icon="@drawable/docdoku_icon"
+                 android:icon="@drawable/docdoku_plm_icon"
                  android:theme="@style/Theme.AppTheme">
         <activity android:name="com.docdoku.android.plm.client.ConnectionActivity"
                   android:label="@string/app_name"
