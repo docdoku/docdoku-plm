@@ -92,23 +92,32 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 HttpPutListener httpPutListener = new HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result, String responseContent) {
-                        if (b) {
-                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                        if (result){
+                            if (b) {
+                                Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                            }
+                            document.setStateChangeNotification(b);
+                        }else{
+                            Toast.makeText(DocumentActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
+                            notifyStateChange.setChecked(!b);
                         }
-                        document.setStateChangeNotification(b);
                     }
                 };
                 if (b) {
-                    subscriptionChangeRequested(R.string.confirmSubscribeToStateChangeNotification,
+                    subscriptionChangeRequested(
+                            R.drawable.state_change_notification_off_light,
+                            R.string.confirmSubscribeToStateChangeNotification,
                             document,
                             "stateChange/subscribe",
                             notifyStateChange,
                             b,
                             httpPutListener);
                 } else {
-                    subscriptionChangeRequested(R.string.confirmUnsubscribeToStateChangeNotification,
+                    subscriptionChangeRequested(
+                            R.drawable.state_change_notification_off_light,
+                            R.string.confirmUnsubscribeToStateChangeNotification,
                             document,
                             "stateChange/unsubscribe",
                             notifyStateChange,
@@ -129,51 +138,67 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 HttpPutListener httpPutListener = new HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result, String responseContent) {
-                        if (b){
-                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                        if (result){
+                            if (b){
+                                Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
+                            }
+                            document.setIterationNotification(b);
+                        }else{
+                            Toast.makeText(DocumentActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
+                            notifyIteration.setChecked(!b);
                         }
-                        document.setIterationNotification(b);
                     }
                 };
                 if (b) {
-                    subscriptionChangeRequested(R.string.confirmSubscribeToIterationChangeNotification,
+                    subscriptionChangeRequested(
+                            R.drawable.iteration_notification_off_light,
+                            R.string.confirmSubscribeToIterationChangeNotification,
                             document,
                             "iterationChange/subscribe",
                             notifyIteration,
                             b,
                             httpPutListener);
                 } else {
-                    subscriptionChangeRequested(R.string.confirmUnsubscribeToIterationChangeNotification,
+                    subscriptionChangeRequested(
+                            R.drawable.iteration_notification_off_light,
+                            R.string.confirmUnsubscribeToIterationChangeNotification,
                             document,
                             "iterationChange/unsubscribe",
                             notifyIteration,
                             b,
                             httpPutListener);
-
                 }
             }
         });
     }
 
-    private void subscriptionChangeRequested(int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
-        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentActivity.this);
-        builder.setMessage(messageId);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
-                new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                compoundButton.setChecked(!compoundButtonState);
-            }
-        });
-        builder.create().show();
+    private void subscriptionChangeRequested(int iconId, int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
+        new AlertDialog.Builder(DocumentActivity.this)
+            .setIcon(iconId)
+            .setTitle(" ")
+            .setMessage(messageId)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
+                    new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
+                }
+            })
+            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    compoundButton.setChecked(!compoundButtonState);
+                }
+            })
+            .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    compoundButton.setChecked(!compoundButtonState);
+                }
+            })
+            .create().show();
     }
 
     /**
