@@ -80,16 +80,18 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     }
 
     private void checkOutElement(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(ElementActivity.this);
-        builder.setTitle(R.string.checkOutConfirm);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(ElementActivity.this)
+            .setIcon(R.drawable.checked_in_light)
+            .setTitle(" ")
+            .setMessage(R.string.checkOutConfirm)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkout/");
-            }
-        });
-        builder.setNegativeButton(R.string.no, null);
-        builder.create().show();
+                }
+            })
+            .setNegativeButton(R.string.no, null)
+            .create().show();
     }
 
     protected void setElementCheckedOutByCurrentUser(){
@@ -108,43 +110,45 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     }
 
     private void checkInElement(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(ElementActivity.this);
-        builder.setTitle(R.string.checkInConfirm);
-        builder.setMessage(R.string.iterationNotePrompt);
         final EditText iterationNoteField = new EditText(ElementActivity.this);
-        builder.setView(iterationNoteField);
-        builder.setPositiveButton(R.string.doCheckIn, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                final String iterationNote = iterationNoteField.getText().toString();
-                if (iterationNote.length()>0){
-                    Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
-                    HttpPutListener httpPutListener = new HttpPutListener() {
-                        @Override
-                        public void onHttpPutResult(boolean result, String responseContent) {
-                            if (result){
-                                Log.i("com.docdoku.android.plm", "Checking out document after successfully uploading iteration");
-                                new HttpPutTask(ElementActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + element.getUrlPath()+ "/checkin/");
-                            } else{
-                                ElementActivity.this.onHttpPutResult(false, "");
+        new AlertDialog.Builder(ElementActivity.this)
+            .setIcon(R.drawable.checked_out_current_user_light)
+            .setTitle(" ")
+            .setMessage(R.string.checkInConfirm)
+            .setMessage(R.string.iterationNotePrompt)
+            .setView(iterationNoteField)
+            .setPositiveButton(R.string.doCheckIn, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    final String iterationNote = iterationNoteField.getText().toString();
+                    if (iterationNote.length()>0){
+                        Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
+                        HttpPutListener httpPutListener = new HttpPutListener() {
+                            @Override
+                            public void onHttpPutResult(boolean result, String responseContent) {
+                                if (result){
+                                    Log.i("com.docdoku.android.plm", "Checking out document after successfully uploading iteration");
+                                    new HttpPutTask(ElementActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + element.getUrlPath()+ "/checkin/");
+                                } else{
+                                    ElementActivity.this.onHttpPutResult(false, "");
+                                }
                             }
-                        }
-                    };
-                    new HttpPutTask(httpPutListener).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/iterations/" + element.getIterationNumber(), element.getLastIterationJSONWithUpdateNote(iterationNote).toString());
-                }else {
-                    Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
-                    new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkin/");
+                        };
+                        new HttpPutTask(httpPutListener).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/iterations/" + element.getIterationNumber(), element.getLastIterationJSONWithUpdateNote(iterationNote).toString());
+                    }else {
+                        Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
+                        new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkin/");
+                    }
                 }
-            }
-        });
-        builder.setNeutralButton(R.string.cancelCheckOut, new DialogInterface.OnClickListener() {
+            })
+            .setNeutralButton(R.string.cancelCheckOut, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/undocheckout/");
-            }
-        });
-        builder.setNegativeButton(R.string.no, null);
-        builder.create().show();
+                }
+            })
+            .setNegativeButton(R.string.no, null)
+            .create().show();
     }
 
     /**
@@ -171,10 +175,12 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             }
         }
         else{
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.connectionError);
-            builder.setPositiveButton(R.string.OK, null);
-            builder.create().show();
+            new AlertDialog.Builder(this)
+                .setIcon(R.drawable.error_light)
+                .setTitle(" ")
+                .setMessage(R.string.connectionError)
+                .setPositiveButton(R.string.OK, null)
+                .create().show();
         }
     }
 
