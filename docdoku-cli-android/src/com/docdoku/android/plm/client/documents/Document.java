@@ -66,6 +66,15 @@ public class Document extends Element implements Serializable{
         return files[i];
     }
 
+    public void addFile(String file){
+        String[] newFiles = new String[files.length+1];
+        for (int i = 0; i<files.length; i++){
+            newFiles[i] = files[i];
+        }
+        newFiles[files.length] = file;
+        files = newFiles;
+    }
+
     public Document(String identification){
         this.identification = identification;
         reference = identification.substring(0, identification.lastIndexOf("-"));

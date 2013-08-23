@@ -63,8 +63,10 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     private static final int NUM_REVISION_FIELDS = 4;
 
     private Document document;
+    private ExpandableListView expandableListView;
 
     private String pictureSavePath;
+    private String fileUploadUrl;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
         Log.i("com.docdoku.android.plm.client", "starting activity for document with id: " + document.getIdentification());
 
-        ExpandableListView expandableListView = (ExpandableListView) findViewById(R.id.list);
+        expandableListView = (ExpandableListView) findViewById(R.id.list);
         expandableListView.addHeaderView(createHeaderView());
         expandableListView.setAdapter(new DocumentDetailsExpandableListAdapter());
         expandableListView.expandGroup(0);
@@ -209,6 +211,8 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     public void onUploadResult(boolean result, final String fileName) {
         if (result){
             Toast.makeText(this, R.string.uploadSuccess, Toast.LENGTH_SHORT).show();
+            document.addFile(fileUploadUrl);
+            ((BaseExpandableListAdapter) expandableListView.getExpandableListAdapter()).notifyDataSetChanged();
         }
         else{
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -248,16 +252,41 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
-                            if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
+                            if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
                             startUploadingFile(fileName + ".png", pictureSavePath);
                             }
                         })
                         .setNegativeButton(R.string.cancel, null)
                         .create().show();
                     break;
-                case INTENT_CODE_ACTIVITY_VIDEO:
-                    Toast.makeText(this, getResources().getString(R.string.videoSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
-                    break;
+                /*case INTENT_CODE_ACTIVITY_VIDEO:
+                    Uri uri = data.getData();
+                    final String path = getRealPathFromURI(uri);
+                    String fileName  = path.substring(path.lastIndexOf("/")+1);
+                    if (fileName.length() == 0){
+                        fileName = "AndroidFile";
+                    }
+                    Log.i("com.docdoku.android.plm", "Uploading video named " + fileName + " from path: " + path);
+                    Toast.makeText(this, getResources().getString(R.string.imageSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
+                    final View videoDialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
+                    Bitmap video = BitmapFactory.decodeFile(path);
+                    ((ImageView) videoDialogView.findViewById(R.id.image)).setImageBitmap(video);
+                    new AlertDialog.Builder(this)
+                            .setIcon(R.drawable.take_picture_light)
+                            .setTitle(" ")
+                            .setView(videoDialogView)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String fileName = ((EditText) videoDialogView.findViewById(R.id.imageName)).getText().toString();
+                                    if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
+                                    startUploadingFile(fileName + ".png", path);
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .create().show();
+                    break;*/
                 case INTENT_CODE_ACTIVITY_FILE_CHOOSER:
                     Uri uri = data.getData();
                     String path = getRealPathFromURI(uri);
@@ -280,7 +309,8 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         String docReference = document.getIdentification();
         String docId = docReference.substring(0, docReference.lastIndexOf("-"));
         String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
-        new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName,filePath);
+        fileUploadUrl = "files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName;
+        new HttpPostUploadFileTask(DocumentActivity.this).execute(fileUploadUrl,filePath);
     }
 
     private String getRealPathFromURI(Uri contentUri) {
@@ -482,15 +512,20 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 String timeStamp = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "DocDokuPLM" + timeStamp +".jpg");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "DocDokuPLM" + timeStamp +".jpg");
                 try {
                     file.createNewFile();
+                    pictureSavePath = file.getAbsolutePath();
+                    //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file)); //File path causes crash for videos
+                    startActivityForResult(intent, INTENT_CODE_ACTIVITY_VIDEO);
                 } catch (IOException e) {
+                    Toast.makeText(DocumentActivity.this, R.string.documentPictureDirectoryFail, Toast.LENGTH_LONG).show();
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    Log.e("com.docdoku.android.plm", "IOException when creating file." +
+                            "\nError message: " + e.getMessage() +
+                            "\nError cause: " + e.getCause() +
+                            "\nFile path" + file.getAbsolutePath());
                 }
-                pictureSavePath = file.getAbsolutePath();
-                //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file)); //File path causes crash for videos
-                startActivityForResult(intent, INTENT_CODE_ACTIVITY_VIDEO);
             }
         });*/
         ImageButton uploadFile = (ImageButton) rowView.findViewById(R.id.uploadFile);
