@@ -10,4 +10,5 @@
     <color name="veryTransparentWhite">#55ffffff</color>
     <color name="lightBlue">#33b5e5</color>
     <color name="lightBlueTransparent">#6633b5e5</color>
+    <color name="lightBlueTransparentOnBackground">#ff104198</color>
 </resources>
