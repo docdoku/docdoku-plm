@@ -69,7 +69,7 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
                 Log.i("com.docdoku.android.plm.client", "Response content: " + result);
                 in.close();
             }else{
-                analyzeHttpErrorCode(responseCode);
+                result = analyzeHttpErrorCode(responseCode);
             }
 
             conn.disconnect();
