@@ -236,22 +236,24 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             switch (requestCode){
                 case INTENT_CODE_ACTIVITY_PICTURE:
                     Toast.makeText(this, getResources().getString(R.string.imageSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
                     final View dialogView = getLayoutInflater().inflate(R.layout.dialog_upload_picture, null);
                     Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
                     ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
-                    dialogBuilder.setView(dialogView);
-                    dialogBuilder.setCancelable(false);
-                    dialogBuilder.setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.take_picture_light)
+                        .setTitle(" ")
+                        .setView(dialogView)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.uploadImage, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String fileName = ((EditText) dialogView.findViewById(R.id.imageName)).getText().toString();
                             if (fileName.length() == 0) fileName = "mobileImage" + new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());;
                             startUploadingFile(fileName + ".png", pictureSavePath);
-                        }
-                    });
-                    dialogBuilder.setNegativeButton(R.string.cancel, null);
-                    dialogBuilder.create().show();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, null)
+                        .create().show();
                     break;
                 case INTENT_CODE_ACTIVITY_VIDEO:
                     Toast.makeText(this, getResources().getString(R.string.videoSavedIn) + pictureSavePath, Toast.LENGTH_LONG).show();
@@ -458,7 +460,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 String timeStamp = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy").format(new Date());
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "DocDokuPLM" + timeStamp +".jpg");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "DocDokuPLM" + timeStamp +".jpg");
                 try {
                     file.createNewFile();
                     pictureSavePath = file.getAbsolutePath();
