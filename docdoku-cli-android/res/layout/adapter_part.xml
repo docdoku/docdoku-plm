@@ -6,7 +6,8 @@
                 android:layout_marginTop="1px"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp">
+                android:layout_marginRight="3dp"
+                android:background="@drawable/selector_listview_background">
 
     <RelativeLayout
             android:id="@+id/contentLink"
