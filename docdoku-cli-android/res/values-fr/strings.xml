@@ -89,6 +89,8 @@
         <item>Auteur</item>
     </string-array>
 
+    <string name="downloadSuccessToPath">Document downloaded to %1$s</string>
+
     <!-- Users -->
     <string name="userSendEmail">Envoyer email</string>
     <string name="userChooseNumber">Choisir le numéro à appeler</string>

@@ -202,6 +202,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     public void onFileDownloaded(boolean result, String path) {
         fileDownloadProgressDialog.dismiss();
         if (result){
+            Toast.makeText(this, getResources().getString(R.string.downloadSuccessToPath, path), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent();
             intent.setAction(android.content.Intent.ACTION_VIEW);
             File file = new File(path);
