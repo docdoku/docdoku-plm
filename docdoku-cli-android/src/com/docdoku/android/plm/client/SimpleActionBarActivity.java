@@ -93,18 +93,20 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                 startActivity(intent);
                 return true;
             case R.id.menu_logout:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getResources().getString(R.string.confirmDisconnect));
-                builder.setNegativeButton(getResources().getString(R.string.no), null);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.logout_light)
+                    .setTitle(" ")
+                    .setMessage(getResources().getString(R.string.confirmDisconnect))
+                    .setNegativeButton(getResources().getString(R.string.no), null)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(getApplicationContext(), ConnectionActivity.class);
                         intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
                         startActivity(intent);
-                    }
-                });
-                builder.create().show();
+                        }
+                    })
+                    .create().show();
                 return true;
             default:
                 Log.i("com.docdoku.android.plm.client", "Could not identify title bar button click");
