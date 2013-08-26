@@ -43,6 +43,7 @@ import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -51,6 +52,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class ConnectionActivity extends Activity implements HttpGetListener {
 
+    public static final String PREFERENCES_APPLICATION = "DocDokuPLM";
     public static final String PREFERENCE_KEY_USERNAME = "username";
     public static final String PREFERENCE_KEY_PASSWORD = "password";
     public static final String PREFERENCE_KEY_SERVER_URL = "server url";
@@ -69,7 +71,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         setContentView(R.layout.activity_connection);
 
         rememberId = (CheckBox) findViewById(R.id.rememberID);
-        preferences = getPreferences(MODE_PRIVATE);
+        preferences = getSharedPreferences(PREFERENCES_APPLICATION, MODE_PRIVATE);
 
         Intent intent = getIntent();
         boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
@@ -195,10 +197,18 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
     }
 
     public void eraseData(){
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.commit();
+        File dir = new File(getFilesDir().getParent() + "/shared_prefs/");
+        String[] children = dir.list();
+        for (int i = 0; i < children.length; i++) {
+            // clear each of the preferences
+            getSharedPreferences(children[i].replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
+        }
+        // Make sure it has enough time to save all the commited changes
+        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+        for (int i = 0; i < children.length; i++) {
+            // delete the files
+            new File(dir, children[i]).delete();
+        }
     }
 
     @Override
