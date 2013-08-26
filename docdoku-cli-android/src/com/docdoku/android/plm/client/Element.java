@@ -222,7 +222,7 @@ public abstract class Element implements Serializable{
         this.checkOutDate = checkOutDate;
     }
 
-    private void setLastIteration(int iterationNumber, String iterationNote, String iterationAuthor, String iterationDate){
+    public void setLastIteration(int iterationNumber, String iterationNote, String iterationAuthor, String iterationDate){
         this.iterationNumber = iterationNumber;
         this.iterationAuthor = iterationAuthor;
         this.iterationDate = iterationDate;

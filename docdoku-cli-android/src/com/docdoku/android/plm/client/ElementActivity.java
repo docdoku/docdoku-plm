@@ -57,6 +57,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     protected Button checkInOutButton;
     private boolean checkedIn;
     private ProgressDialog fileDownloadProgressDialog;
+    private String iterationNote;
 
     /**
      * Methods to do checkins/checkouts
@@ -120,7 +121,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             .setPositiveButton(R.string.doCheckIn, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    final String iterationNote = iterationNoteField.getText().toString();
+                    iterationNote = iterationNoteField.getText().toString();
                     if (iterationNote.length()>0){
                         Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
                         HttpPutListener httpPutListener = new HttpPutListener() {
@@ -172,6 +173,8 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             else{
                 setElementCheckedIn();
                 Toast.makeText(this, R.string.checkInSuccessful, Toast.LENGTH_SHORT).show();
+                SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserLogin(), dateFormat.format(Calendar.getInstance().getTime()));
             }
         }
         else{
