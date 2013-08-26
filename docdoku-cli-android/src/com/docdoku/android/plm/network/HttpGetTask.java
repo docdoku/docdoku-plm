@@ -22,7 +22,6 @@ package com.docdoku.android.plm.network;
 
 import android.util.Base64;
 import android.util.Log;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 
 import java.io.*;
 import java.net.*;
@@ -104,5 +103,14 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
         if (httpGetListener != null){
             httpGetListener.onHttpGetResult(result);
         }
+    }
+
+    /**
+     *
+     * @author: Martin Devillers
+     */
+    public static interface HttpGetListener {
+
+        void onHttpGetResult(String result);
     }
 }

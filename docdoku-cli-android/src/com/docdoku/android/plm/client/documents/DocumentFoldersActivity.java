@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.HttpGetTask;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +38,7 @@ import java.util.List;
 /**
  * @author: martindevillers
  */
-public class DocumentFoldersActivity extends DocumentListActivity implements HttpGetListener{
+public class DocumentFoldersActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener {
 
     private static final String INTENT_KEY_FOLDER = "folder";
 
@@ -95,7 +94,7 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
                 }
             }
         });
-        HttpGetListener httpGetListener = new HttpGetListener() {
+        HttpGetTask.HttpGetListener httpGetListener = new HttpGetTask.HttpGetListener() {
             @Override
             public void onHttpGetResult(String result) {
                 try {

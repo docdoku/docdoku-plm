@@ -20,9 +20,7 @@
 
 package com.docdoku.android.plm.network;
 
-import android.os.AsyncTask;
 import android.util.Log;
-import com.docdoku.android.plm.network.listeners.HttpPostUploadFileListener;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -140,4 +138,13 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
         }
     }
 
+    /**
+     * @author: martindevillers
+     */
+    public static interface HttpPostUploadFileListener {
+
+        public void onUploadStart();
+        public void onProgressUpdate(int progress);
+        public void onUploadResult(boolean result, String fileName);
+    }
 }

@@ -38,9 +38,6 @@ import com.docdoku.android.plm.client.documents.DocumentActivity;
 import com.docdoku.android.plm.network.HttpGetDownloadFileTask;
 import com.docdoku.android.plm.network.HttpGetTask;
 import com.docdoku.android.plm.network.HttpPutTask;
-import com.docdoku.android.plm.network.listeners.HttpGetDownloadFileListener;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
-import com.docdoku.android.plm.network.listeners.HttpPutListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,7 +48,7 @@ import java.util.Calendar;
 /**
  * @author: martindevillers
  */
-public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutListener, HttpGetDownloadFileListener {
+public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
 
     protected Element element;
     protected Button checkInOutButton;
@@ -124,7 +121,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                     iterationNote = iterationNoteField.getText().toString();
                     if (iterationNote.length()>0){
                         Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
-                        HttpPutListener httpPutListener = new HttpPutListener() {
+                        HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                             @Override
                             public void onHttpPutResult(boolean result, String responseContent) {
                                 if (result){
@@ -254,7 +251,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             @Override
             public void onClick(View view) {
                 Log.i("com.docdoku.android.plm.client", "Following link to " + linkedDocument);
-                HttpGetListener httpGetListener = new HttpGetListener() {
+                HttpGetTask.HttpGetListener httpGetListener = new HttpGetTask.HttpGetListener() {
                     @Override
                     public void onHttpGetResult(String result) {
                         try {

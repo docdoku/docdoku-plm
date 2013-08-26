@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +41,7 @@ import java.util.*;
  *
  * @author: Martin Devillers
  */
-public class PartCompleteListActivity extends PartListActivity implements HttpGetListener, LoaderManager.LoaderCallbacks<List<Part>>{
+public class PartCompleteListActivity extends PartListActivity implements HttpGetTask.HttpGetListener, LoaderManager.LoaderCallbacks<List<Part>>{
 
     private static final int LOADER_ID_ALL_PARTS = 100;
 
@@ -131,7 +130,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
         return R.id.allParts;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private static class PartLoaderByPage extends Loader<List<Part>> implements HttpGetListener {
+    private static class PartLoaderByPage extends Loader<List<Part>> implements HttpGetTask.HttpGetListener {
 
         private int startIndex;
         private String workspace;

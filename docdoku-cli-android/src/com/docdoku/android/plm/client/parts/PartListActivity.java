@@ -32,9 +32,7 @@ import android.widget.*;
 import com.docdoku.android.plm.client.NavigationHistory;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
-import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.network.HttpGetTask;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -177,7 +175,7 @@ public abstract class PartListActivity extends SearchActionBarActivity {
             partSearchResultArray = new ArrayList<Part>();
             partSearchResultAdapter = new PartAdapter(partSearchResultArray);
             partListView.setAdapter(partSearchResultAdapter);
-            HttpGetListener httpGetListener = new HttpGetListener() {
+            HttpGetTask.HttpGetListener httpGetListener = new HttpGetTask.HttpGetListener() {
                 @Override
                 public void onHttpGetResult(String result) {
                     try {

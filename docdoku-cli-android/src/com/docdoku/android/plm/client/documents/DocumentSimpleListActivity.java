@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
  *
  * @author: Martin Devillers
  */
-public class DocumentSimpleListActivity extends DocumentListActivity implements HttpGetListener {
+public class DocumentSimpleListActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener {
 
     public static final String LIST_MODE_EXTRA = "list mode";
     public static final String SEARCH_QUERY_EXTRA = "search query";

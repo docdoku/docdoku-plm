@@ -21,7 +21,6 @@
 package com.docdoku.android.plm.network;
 
 import android.util.Log;
-import com.docdoku.android.plm.network.listeners.HttpPutListener;
 
 import java.io.*;
 import java.net.*;
@@ -116,5 +115,13 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
             httpPutListener.onHttpPutResult(result, responseString);
             Log.i("com.docdoku.android.plm", "HttpPut response string: " + responseString);
         }
+    }
+
+    /**
+     *
+     * @author: Martin Devillers
+     */
+    public static interface HttpPutListener {
+        public void onHttpPutResult(boolean result, String responseContent);
     }
 }

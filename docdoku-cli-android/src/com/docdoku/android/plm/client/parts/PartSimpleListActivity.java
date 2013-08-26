@@ -21,19 +21,9 @@
 package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.client.SearchActionBarActivity;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +35,7 @@ import java.util.*;
  *
  * @author: Martin Devillers
  */
-public class PartSimpleListActivity extends PartListActivity implements HttpGetListener {
+public class PartSimpleListActivity extends PartListActivity implements HttpGetTask.HttpGetListener {
 
     public static final String  LIST_MODE_EXTRA = "list mode";
     public static final int ALL_PARTS_LIST = 0;

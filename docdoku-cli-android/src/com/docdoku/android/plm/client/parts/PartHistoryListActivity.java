@@ -28,7 +28,6 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,7 +93,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
         return R.id.recentlyViewedParts;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private static class PartLoaderByPart extends Loader<Part> implements HttpGetListener {
+    private static class PartLoaderByPart extends Loader<Part> implements HttpGetTask.HttpGetListener {
 
         private String elementId;
         private String workspace;

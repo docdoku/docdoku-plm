@@ -27,7 +27,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +94,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
         return R.id.recentlyViewedDocuments;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetListener {
+    private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetTask.HttpGetListener {
 
         private String elementId;
         private String workspace;

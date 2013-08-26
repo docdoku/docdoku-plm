@@ -1,18 +1,13 @@
 package com.docdoku.android.plm.client;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
-import android.widget.EditText;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
 import com.docdoku.android.plm.network.HttpGetTask;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -21,7 +16,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author: martindevillers
  */
-public class WelcomeScreen extends Activity implements HttpGetListener{
+public class WelcomeScreen extends Activity implements HttpGetTask.HttpGetListener {
 
     private String username;
     private String password;

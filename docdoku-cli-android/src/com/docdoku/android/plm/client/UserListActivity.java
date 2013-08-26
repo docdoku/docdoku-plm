@@ -30,7 +30,6 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.*;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +42,7 @@ import java.util.Iterator;
  *
  * @author: Martin Devillers
  */
-public class UserListActivity extends FragmentActivity implements HttpGetListener {
+public class UserListActivity extends FragmentActivity implements HttpGetTask.HttpGetListener {
 
     private static final int INTENT_CODE_CONTACT_PICKER = 100;
 

@@ -40,8 +40,6 @@ import com.docdoku.android.plm.client.Element;
 import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.*;
-import com.docdoku.android.plm.network.listeners.HttpPostUploadFileListener;
-import com.docdoku.android.plm.network.listeners.HttpPutListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +50,7 @@ import java.util.Date;
  *
  * @author: Martin Devillers
  */
-public class DocumentActivity extends ElementActivity implements HttpPostUploadFileListener {
+public class DocumentActivity extends ElementActivity implements HttpPostUploadFileTask.HttpPostUploadFileListener {
 
     public static final String EXTRA_DOCUMENT = "document";
 
@@ -93,7 +91,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             @Override
             public void onClick(View v) {
                 final boolean b = notifyStateChange.isChecked();
-                HttpPutListener httpPutListener = new HttpPutListener() {
+                HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result, String responseContent) {
                         if (result){
@@ -139,7 +137,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             @Override
             public void onClick(View v) {
                 final boolean b = notifyIteration.isChecked();
-                HttpPutListener httpPutListener = new HttpPutListener() {
+                HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result, String responseContent) {
                         if (result){
@@ -178,7 +176,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         });
     }
 
-    private void subscriptionChangeRequested(int iconId, int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutListener httpPutListener){
+    private void subscriptionChangeRequested(int iconId, int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HttpPutTask.HttpPutListener httpPutListener){
         new AlertDialog.Builder(DocumentActivity.this)
             .setIcon(iconId)
             .setTitle(" ")

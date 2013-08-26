@@ -20,10 +20,8 @@
 
 package com.docdoku.android.plm.network;
 
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import com.docdoku.android.plm.network.listeners.HttpGetDownloadFileListener;
 
 import java.io.*;
 import java.net.*;
@@ -122,5 +120,15 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
         if (httpGetDownloadFileListener != null){
             httpGetDownloadFileListener.onFileDownloadStart();
         }
+    }
+
+    /**
+     * @author: martindevillers
+     */
+    public static interface HttpGetDownloadFileListener {
+
+        public void onFileDownloadStart();
+        public void onFileDownloaded(boolean result, String path);
+        public void onProgressUpdate(int progress);
     }
 }

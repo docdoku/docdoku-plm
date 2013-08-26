@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +22,7 @@ import java.util.Calendar;
 /**
  * @author: martindevillers
  */
-public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetListener {
+public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetTask.HttpGetListener {
 
     protected Button author, minCreationDate, maxCreationDate;
 

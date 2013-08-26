@@ -39,7 +39,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONArray;
@@ -48,13 +47,12 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
 
 /**
  *
  * @author: Martin Devillers
  */
-public class ConnectionActivity extends Activity implements HttpGetListener {
+public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetListener {
 
     public static final String PREFERENCES_APPLICATION = "DocDokuPLM";
     public static final String PREFERENCE_KEY_USERNAME = "username";

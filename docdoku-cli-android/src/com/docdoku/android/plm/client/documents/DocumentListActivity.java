@@ -32,7 +32,6 @@ import android.widget.*;
 import com.docdoku.android.plm.client.NavigationHistory;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
-import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,7 +107,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
             documentSearchResultArray = new ArrayList<Document>();
             documentSearchResultAdapter = new DocumentAdapter(documentSearchResultArray);
             documentListView.setAdapter(documentSearchResultAdapter);
-            HttpGetListener httpGetListener = new HttpGetListener() {
+            HttpGetTask.HttpGetListener httpGetListener = new HttpGetTask.HttpGetListener() {
                 @Override
                 public void onHttpGetResult(String result) {
                     try {
