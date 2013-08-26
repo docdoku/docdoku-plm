@@ -33,7 +33,7 @@ import java.net.URL;
 /**
  * @author: martindevillers
  */
-public class HttpPostUploadFileTask extends HttpTask<String, Void, Boolean>{
+public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
 
     private final static int CHUNK_SIZE = 1024*8;
     private final static int BUFFER_CAPACITY = 1024*32;
@@ -86,6 +86,7 @@ public class HttpPostUploadFileTask extends HttpTask<String, Void, Boolean>{
             FileInputStream fileInputStream = new FileInputStream(file);
             while ((length = fileInputStream.read(data)) != -1) {
                 out.write(data, 0, length);
+                publishProgress(length, (int) len);
             }
 
             out.write(footer);
@@ -117,7 +118,26 @@ public class HttpPostUploadFileTask extends HttpTask<String, Void, Boolean>{
 
     @Override
     public void onPostExecute(Boolean result){
-        listener.onUploadResult(result, fileName);
+        if (listener!=null){
+            listener.onUploadResult(result, fileName);
+        }
+    }
+
+    @Override
+    public void onProgressUpdate(Integer... values){
+        float progress = values[0];
+        float size = values[1];
+        float advancement = progress/size * 100;
+        if (listener != null){
+            listener.onProgressUpdate((int) advancement);
+        }
+    }
+
+    @Override
+    public void onPreExecute(){
+        if (listener != null){
+            listener.onUploadStart();
+        }
     }
 
 }

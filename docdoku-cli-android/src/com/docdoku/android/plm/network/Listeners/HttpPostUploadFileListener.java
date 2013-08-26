@@ -25,5 +25,7 @@ package com.docdoku.android.plm.network.listeners;
  */
 public interface HttpPostUploadFileListener {
 
+    public void onUploadStart();
+    public void onProgressUpdate(int progress);
     public void onUploadResult(boolean result, String fileName);
 }

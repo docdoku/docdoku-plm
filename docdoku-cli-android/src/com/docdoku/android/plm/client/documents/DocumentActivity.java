@@ -21,6 +21,7 @@
 package com.docdoku.android.plm.client.documents;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -67,6 +68,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
     private String pictureSavePath;
     private String fileUploadUrl;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -203,12 +205,26 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             .create().show();
     }
 
+    @Override
+    public void onUploadStart() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("uploading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.show();
+    }
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        progressDialog.setProgress(progress);
+    }
+
     /**
      * HttpPostUploadFileListener method
      * @Override onUploadResult
      */
     @Override
     public void onUploadResult(boolean result, final String fileName) {
+        progressDialog.cancel();
         if (result){
             Toast.makeText(this, R.string.uploadSuccess, Toast.LENGTH_SHORT).show();
             document.addFile(fileUploadUrl);
