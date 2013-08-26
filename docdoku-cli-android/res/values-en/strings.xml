@@ -98,5 +98,6 @@
         <item>Create new contact</item>
         <item>Add email to existing contact</item>
     </string-array>
+    <string name="userSearch">User name</string>
 
 </resources>

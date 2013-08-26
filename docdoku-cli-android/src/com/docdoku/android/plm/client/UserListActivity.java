@@ -412,7 +412,7 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
      */
     @Override
     protected int getSearchQueryHintId() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.string.userSearch;
     }
 
     @Override
