@@ -51,10 +51,10 @@ import java.io.UnsupportedEncodingException;
  */
 public class ConnectionActivity extends Activity implements HttpGetListener {
 
-    private static final String PREFERENCE_KEY_USERNAME = "username";
-    private static final String PREFERENCE_KEY_PASSWORD = "password";
-    private static final String PREFERENCE_KEY_SERVER_URL = "server url";
-    private static final String PREFERENCE_KEY_AUTO_CONNECT = "auto_connect";
+    public static final String PREFERENCE_KEY_USERNAME = "username";
+    public static final String PREFERENCE_KEY_PASSWORD = "password";
+    public static final String PREFERENCE_KEY_SERVER_URL = "server url";
+    public static final String PREFERENCE_KEY_AUTO_CONNECT = "auto_connect";
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
 
     private CheckBox rememberId;
@@ -164,7 +164,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         finish();
     }
 
-    private String extractHostFromUrl(String url){
+    public static String extractHostFromUrl(String url){
         String finalUrl = url;
         if (finalUrl.substring(0,7).equals("http://")){
             finalUrl = finalUrl.substring(7, finalUrl.length());
@@ -179,7 +179,7 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         return finalUrl;
     }
 
-    private int extractPortFromUrl(String url){
+    public static int extractPortFromUrl(String url){
         String finalUrl = url;
         if (finalUrl.substring(0,7).equals("http://")){
             finalUrl = finalUrl.substring(7, finalUrl.length());

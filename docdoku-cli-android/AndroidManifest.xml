@@ -64,5 +64,6 @@
         <activity android:name=".documents.DocumentFoldersActivity"
                   android:label="@string/documents"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name=".WelcomeScreen"/>
     </application>
 </manifest>
