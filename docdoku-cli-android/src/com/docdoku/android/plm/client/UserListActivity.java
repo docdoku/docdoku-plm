@@ -66,7 +66,8 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_list);
 
-        String result = "Email contacts on phone: ";
+        //Show all contacts on phone's id, name, and email
+        /*String result = "Email contacts on phone: ";
         Cursor contacts = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, null, null, null);
         while (contacts.moveToNext()){
             String id = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Email._ID));
@@ -74,7 +75,7 @@ public class UserListActivity extends FragmentActivity implements HttpGetListene
             String address = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
             result += "\nid: " + id + ", name: " + name + ", address: " + address;
         }
-        Log.i("com.docdoku.android.plm", result);
+        Log.i("com.docdoku.android.plm", result);*/
 
         userListView = (ListView) findViewById(R.id.elementList);
         View headerView = getLayoutInflater().inflate(R.layout.header_users, null);
