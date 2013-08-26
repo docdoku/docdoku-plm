@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -40,11 +41,14 @@ import android.widget.EditText;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
 import com.docdoku.android.plm.network.listeners.HttpGetListener;
 import com.docdoku.android.plm.network.HttpGetTask;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 
 /**
  *
@@ -58,6 +62,12 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
     public static final String PREFERENCE_KEY_SERVER_URL = "server url";
     public static final String PREFERENCE_KEY_AUTO_CONNECT = "auto_connect";
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
+
+    private static final String PREFERENCE_KEY_GCM_ID = "GCM id";
+    private static final String PREFERENCE_KEY_GCM_REGISTRATION_VERSION = "GCM version";
+    private static final String PREFERENCE_KEY_GCM_EXPIRATION_DATE = "GCM expiration";
+    private static final String SENDER_ID = "263093437022"; //See Google API Console
+    private static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7; //Default lifespan (7 days) of a reservation until it is considered expired.
 
     private CheckBox rememberId;
     private SharedPreferences preferences;
@@ -73,6 +83,8 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
         rememberId = (CheckBox) findViewById(R.id.rememberID);
         preferences = getSharedPreferences(PREFERENCES_APPLICATION, MODE_PRIVATE);
 
+        getGCMId();
+
         Intent intent = getIntent();
         boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
         if (eraseData){
@@ -87,6 +99,65 @@ public class ConnectionActivity extends Activity implements HttpGetListener {
 
             connect(username, password, serverUrl);
         }
+    }
+
+    private void getGCMId() {
+        String id = preferences.getString(PREFERENCE_KEY_GCM_ID, "");
+        Log.i("com.docdoku.android.plm", "Looking for GCM Id...");
+        if (id.length() > 0){
+            try {
+                if (isGCMIdExpired() || isGCMIdPreviousVersion()){
+                    Log.i("com.docdoku.android.plm", "GCM Id belonged to previoud app version or was expired");
+                    getNewGCMId();
+                }else{
+                    Log.i("com.docdoku.android.plm", "GCM Id found! " + id);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e("com.docdoku.android.plm", "Could not get package name");
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }else{
+            Log.i("com.docdoku.android.plm", "No GCM Id was found in storage");
+            getNewGCMId();
+        }
+    }
+
+    private boolean isGCMIdPreviousVersion() throws PackageManager.NameNotFoundException {
+        int currentVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+        int registeredVersion = preferences.getInt(PREFERENCE_KEY_GCM_REGISTRATION_VERSION, -1);
+        return currentVersion != registeredVersion;
+    }
+
+    private boolean isGCMIdExpired(){
+        long expirationTime = preferences.getLong(PREFERENCE_KEY_GCM_EXPIRATION_DATE, -1);
+        return System.currentTimeMillis() > expirationTime;
+    }
+
+    private void getNewGCMId(){
+        new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object... objects) {
+                GoogleCloudMessaging googleCloudMessaging = GoogleCloudMessaging.getInstance(ConnectionActivity.this);
+                try {
+                    String registrationId = googleCloudMessaging.register(SENDER_ID);
+                    Log.i("com.docdoku.android.plm", "GCM Id obtained: " + registrationId);
+                    //TODO: Send the GCM Id to server for transmitting
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(PREFERENCE_KEY_GCM_ID, registrationId);
+                    editor.putInt(PREFERENCE_KEY_GCM_REGISTRATION_VERSION, getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+                    editor.putLong(PREFERENCE_KEY_GCM_EXPIRATION_DATE, System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS);
+                    editor.commit();
+                } catch (IOException e) {
+                    Log.e("com.docdoku.android.plm", "IOException when registering for GCM Id");
+                    Log.e("com.docdoku.android.plm", "Exception message: " + e.getMessage());
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (PackageManager.NameNotFoundException e) {
+                    Log.e("com.docdoku.android.plm", "Exception when trying to retrieve app version corresponding to new GCM Id");
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        }.execute();
     }
 
     @Override
