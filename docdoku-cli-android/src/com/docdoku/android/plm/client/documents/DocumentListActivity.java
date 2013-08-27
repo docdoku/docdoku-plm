@@ -84,14 +84,10 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
     }
 
     protected void onDocumentClick(Document document){
-        if (document == null || document.getAuthor() == null){
-            //Do nothing
-        }else{
-            navigationHistory.add(document.getIdentification());
-            Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
-            intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
-            startActivity(intent);
-        }
+        navigationHistory.add(document.getIdentification());
+        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
+        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+        startActivity(intent);
     }
 
     /**
@@ -160,6 +156,16 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         @Override
         public long getItemId(int i) {
             return i;
+        }
+
+        @Override
+        public boolean isEnabled(int position){
+            Document document = documents.get(position);
+            if (document == null || document.getAuthor() == null){
+                return false;
+            }else{
+                return true;
+            }
         }
 
         @Override

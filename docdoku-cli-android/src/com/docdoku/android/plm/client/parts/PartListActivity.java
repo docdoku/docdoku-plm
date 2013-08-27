@@ -78,14 +78,10 @@ public abstract class PartListActivity extends SearchActionBarActivity {
     }
 
     private void onPartClick(Part part){
-        if (part == null || part.getAuthor() == null){
-            //Do nothing
-        }else{
-            navigationHistory.add(part.getKey());
-            Intent intent = new Intent(PartListActivity.this, PartActivity.class);
-            intent.putExtra(PartActivity.PART_EXTRA,part);
-            startActivity(intent);
-        }
+        navigationHistory.add(part.getKey());
+        Intent intent = new Intent(PartListActivity.this, PartActivity.class);
+        intent.putExtra(PartActivity.PART_EXTRA,part);
+        startActivity(intent);
     }
 
     protected class PartAdapter extends BaseAdapter {
@@ -111,6 +107,16 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         @Override
         public long getItemId(int i) {
             return i;
+        }
+
+        @Override
+        public boolean isEnabled(int position){
+            Part part = parts.get(position);
+            if (part == null || part.getAuthor() == null){
+                return false;
+            }else{
+                return true;
+            }
         }
 
         @Override
