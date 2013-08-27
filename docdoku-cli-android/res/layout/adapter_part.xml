@@ -38,7 +38,7 @@
                     android:layout_below="@+id/identification"
                     android:layout_alignParentLeft="true"
                     android:layout_toLeftOf="@+id/expand"
-                    android:text="iteration info"
+                    android:text="@string/partDownloadFail"
                     android:textSize="16sp"
                     android:textColor="@color/transparentWhite"
                     android:ellipsize="start"
@@ -81,6 +81,7 @@
         style="@style/Theme.AppTheme.Indicator"/>
 
     <LinearLayout
+            android:id="@+id/iterationNumberBox"
             android:orientation="horizontal"
             android:layout_toRightOf="@+id/checkedInOutImage"
             android:layout_alignParentTop="true"

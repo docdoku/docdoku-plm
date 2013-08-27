@@ -72,13 +72,20 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         partListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Part part = (Part) partListView.getAdapter().getItem(i);
-                navigationHistory.add(part.getKey());
-                Intent intent = new Intent(PartListActivity.this, PartActivity.class);
-                intent.putExtra(PartActivity.PART_EXTRA,part);
-                startActivity(intent);
+                onPartClick((Part) partListView.getAdapter().getItem(i));
             }
         });
+    }
+
+    private void onPartClick(Part part){
+        if (part == null || part.getAuthor() == null){
+            //Do nothing
+        }else{
+            navigationHistory.add(part.getKey());
+            Intent intent = new Intent(PartListActivity.this, PartActivity.class);
+            intent.putExtra(PartActivity.PART_EXTRA,part);
+            startActivity(intent);
+        }
     }
 
     protected class PartAdapter extends BaseAdapter {
@@ -110,7 +117,17 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             final View partRowView;
             final Part part = parts.get(i);
-            if (part != null){
+            if (part == null){
+                partRowView = new ProgressBar(PartListActivity.this);
+            }else if(part.getAuthor() == null){
+                partRowView = inflater.inflate(R.layout.adapter_part, null);
+                TextView identification = (TextView) partRowView.findViewById(R.id.identification);
+                identification.setText(part.getKey());
+                ImageView checkedInOutImage = (ImageView) partRowView.findViewById(R.id.checkedInOutImage);
+                checkedInOutImage.setImageResource(R.drawable.error_light);
+                View iterationNumberBox = partRowView.findViewById(R.id.iterationNumberBox);
+                ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
+            }else{
                 partRowView = inflater.inflate(R.layout.adapter_part, null);
                 TextView reference = (TextView) partRowView.findViewById(R.id.identification);
                 reference.setText(part.getKey());
@@ -133,8 +150,6 @@ public abstract class PartListActivity extends SearchActionBarActivity {
                 }catch (NullPointerException e){
                     lastIteration.setText("");
                 }
-            } else{
-                partRowView = new ProgressBar(PartListActivity.this);
             }
             return partRowView;
         }

@@ -115,10 +115,6 @@ public class Document extends Element implements Serializable{
         return identification;
     }
 
-    public String getAuthor(){
-        return authorName;
-    }
-
     public void setIterationNotification(boolean set){
         iterationNotification = set;
     }

@@ -36,6 +36,8 @@
         <item>Description: </item>
     </string-array>
 
+    <string name="partDownloadFail">Part download fail</string>
+
     <!-- Search parts -->
     <string name="partSearchByKey">Part reference</string>
     <string name="partSearchPrompt">Search parts</string>

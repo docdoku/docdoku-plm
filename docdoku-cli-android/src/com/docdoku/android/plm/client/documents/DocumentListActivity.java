@@ -84,10 +84,14 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
     }
 
     protected void onDocumentClick(Document document){
-        navigationHistory.add(document.getIdentification());
-        Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
-        intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
-        startActivity(intent);
+        if (document == null || document.getAuthor() == null){
+            //Do nothing
+        }else{
+            navigationHistory.add(document.getIdentification());
+            Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
+            intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+            startActivity(intent);
+        }
     }
 
     /**
@@ -162,7 +166,19 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         public View getView(final int i, View view, ViewGroup viewGroup) {
             final View documentRowView;
             final Document doc = documents.get(i);
-            if (doc != null){
+            if (doc == null){ //Document is still being loaded
+                documentRowView = new ProgressBar(DocumentListActivity.this);
+            }else if (doc.getAuthor() == null){ //Document load failed
+                documentRowView = inflater.inflate(R.layout.adapter_document, null);
+                TextView identification = (TextView) documentRowView.findViewById(R.id.identification);
+                identification.setText(doc.getIdentification());
+                ImageView checkedInOutImage = (ImageView) documentRowView.findViewById(R.id.checkedInOutImage);
+                checkedInOutImage.setImageResource(R.drawable.error_light);
+                View iterationNumberBox = documentRowView.findViewById(R.id.iterationNumberBox);
+                ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
+                View numAttachedFiles = documentRowView.findViewById(R.id.attachedFilesIndicator);
+                ((ViewGroup) numAttachedFiles.getParent()).removeView(numAttachedFiles);
+            }else{ //Document was loaded successfully
                 documentRowView = inflater.inflate(R.layout.adapter_document, null);
                 TextView identification = (TextView) documentRowView.findViewById(R.id.identification);
                 identification.setText(doc.getIdentification());
@@ -197,8 +213,6 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     lastIteration.setText(" ");
                     Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
                 }
-                } else {
-                documentRowView = new ProgressBar(DocumentListActivity.this);
             }
             return documentRowView;
         }

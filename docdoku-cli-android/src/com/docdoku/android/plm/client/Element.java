@@ -67,6 +67,11 @@ public abstract class Element implements Serializable{
 
     public abstract Element updateFromJSON(JSONObject elementJSON, Resources resources) throws JSONException;
 
+
+    public String getAuthor(){
+        return authorName;
+    }
+
     public String getCheckOutUserName(){
         return checkOutUserName;
     }

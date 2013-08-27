@@ -27,6 +27,8 @@
         <item>Description</item>
     </string-array>
 
+    <string name="documentDownloadFailed">Echec du chargement du document</string>
+
     <!-- Document pages -->
     <string name="documentGeneralInformation">Général</string>
     <string name="documentFiles">Fichiers</string>

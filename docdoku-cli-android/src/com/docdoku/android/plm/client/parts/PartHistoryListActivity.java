@@ -146,6 +146,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
                 Log.e("docdoku.DocDokuPLM", "Error handling json object of a part");
                 e.printStackTrace();
                 Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+                part = new Part(elementId);
             }
             deliverResult(part);
         }

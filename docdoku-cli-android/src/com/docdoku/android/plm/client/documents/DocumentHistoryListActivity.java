@@ -147,6 +147,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
                 Log.e("docdoku.DocDokuPLM", "Error handling json object of a document");
                 e.printStackTrace();
                 Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+                document = new Document(elementId);
             }
             deliverResult(document);
         }

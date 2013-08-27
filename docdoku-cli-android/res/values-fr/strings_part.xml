@@ -36,6 +36,8 @@
         <item>Description</item>
     </string-array>
 
+    <string name="partDownloadFail">Echec du téléchargement de l\'article</string>
+
     <!-- Search parts -->
     <string name="partSearchByKey">Référence d\'article</string>
     <string name="partSearchPrompt">Recherche d\'articles</string>
