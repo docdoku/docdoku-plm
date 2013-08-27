@@ -42,7 +42,7 @@ import java.util.Iterator;
  *
  * @author: Martin Devillers
  */
-public class UserListActivity extends FragmentActivity implements HttpGetTask.HttpGetListener {
+public class UserListActivity extends SearchActionBarActivity implements HttpGetTask.HttpGetListener {
 
     private static final int INTENT_CODE_CONTACT_PICKER = 100;
 
