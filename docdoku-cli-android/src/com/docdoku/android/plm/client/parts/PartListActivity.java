@@ -111,11 +111,15 @@ public abstract class PartListActivity extends SearchActionBarActivity {
 
         @Override
         public boolean isEnabled(int position){
-            Part part = parts.get(position);
-            if (part == null || part.getAuthor() == null){
+            try{
+                Part part = parts.get(position);
+                if (part == null || part.getAuthor() == null){
+                    return false;
+                }else{
+                    return true;
+                }
+            }catch (IndexOutOfBoundsException e){
                 return false;
-            }else{
-                return true;
             }
         }
 

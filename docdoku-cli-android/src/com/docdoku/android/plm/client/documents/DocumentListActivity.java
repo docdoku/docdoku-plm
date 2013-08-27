@@ -160,11 +160,15 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
         @Override
         public boolean isEnabled(int position){
-            Document document = documents.get(position);
-            if (document == null || document.getAuthor() == null){
+            try{
+                Document document = documents.get(position);
+                if (document == null || document.getAuthor() == null){
+                    return false;
+                }else{
+                    return true;
+                }
+            }catch(IndexOutOfBoundsException e){
                 return false;
-            }else{
-                return true;
             }
         }
 
