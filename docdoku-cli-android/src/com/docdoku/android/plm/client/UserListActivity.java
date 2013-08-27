@@ -324,7 +324,9 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             JSONArray usersJSON = new JSONArray(result);
             for (int i=0; i<usersJSON.length(); i++){
                 JSONObject userJSON = usersJSON.getJSONObject(i);
-                User user = new User(userJSON.getString("name"),userJSON.getString("email"), userJSON.getString("login"));
+                User user = new User(userJSON.getString(User.JSON_KEY_USER_NAME),
+                        userJSON.getString(User.JSON_KEY_USER_EMAIL),
+                        userJSON.getString(User.JSON_KEY_USER_LOGIN));
                 userArray.add(user);
                 searchForContactOnPhone(user);
             }

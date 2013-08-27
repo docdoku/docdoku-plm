@@ -32,6 +32,10 @@ import java.util.Iterator;
  */
 public class User {
 
+    public static final String JSON_KEY_USER_NAME = "name";
+    public static final String JSON_KEY_USER_EMAIL = "email";
+    public static final String JSON_KEY_USER_LOGIN = "login";
+
     private String name;
     private String login;
     private String email;
