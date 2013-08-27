@@ -64,7 +64,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     private static final String PREFERENCE_KEY_GCM_ID = "GCM id";
     private static final String PREFERENCE_KEY_GCM_REGISTRATION_VERSION = "GCM version";
     private static final String PREFERENCE_KEY_GCM_EXPIRATION_DATE = "GCM expiration";
-    private static final String SENDER_ID = "263093437022"; //See Google API Console
+    private static final String SENDER_ID = "263093437022"; //See Google API Console to set Id
     private static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7; //Default lifespan (7 days) of a reservation until it is considered expired.
 
     private CheckBox rememberId;
@@ -249,30 +249,34 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
 
     public static String extractHostFromUrl(String url){
         String finalUrl = url;
-        if (finalUrl.substring(0,7).equals("http://")){
-            finalUrl = finalUrl.substring(7, finalUrl.length());
-        }
-        int semicolonIndex = finalUrl.indexOf(':');
-        if (semicolonIndex != -1){
-            finalUrl = finalUrl.substring(0, semicolonIndex);
-        }
-        if (finalUrl.charAt(finalUrl.length()-1) == '/'){
-            finalUrl = finalUrl.substring(0, finalUrl.length()-1);
+        if (finalUrl != null && finalUrl.length()>0){
+            if (finalUrl.length()>7 && finalUrl.substring(0,7).equals("http://")){
+                finalUrl = finalUrl.substring(7, finalUrl.length());
+            }
+            int semicolonIndex = finalUrl.indexOf(':');
+            if (semicolonIndex != -1){
+                finalUrl = finalUrl.substring(0, semicolonIndex);
+            }
+            if (finalUrl.charAt(finalUrl.length()-1) == '/'){
+                finalUrl = finalUrl.substring(0, finalUrl.length()-1);
+            }
         }
         return finalUrl;
     }
 
     public static int extractPortFromUrl(String url){
         String finalUrl = url;
-        if (finalUrl.substring(0,7).equals("http://")){
-            finalUrl = finalUrl.substring(7, finalUrl.length());
-        }
-        int semicolonIndex = finalUrl.indexOf(':');
-        if (semicolonIndex != -1){
-            String portString = finalUrl.substring(semicolonIndex+1);
-            int port = Integer.parseInt(portString);
-            Log.i("com.docdoku.android.plm", "Extracted port from Url: " + port);
-            return Integer.parseInt(portString);
+        if (finalUrl != null && finalUrl.length()>0){
+            if (finalUrl.length()>7 && finalUrl.substring(0,7).equals("http://")){
+                finalUrl = finalUrl.substring(7, finalUrl.length());
+            }
+            int semicolonIndex = finalUrl.indexOf(':');
+            if (semicolonIndex != -1){
+                String portString = finalUrl.substring(semicolonIndex+1);
+                int port = Integer.parseInt(portString);
+                Log.i("com.docdoku.android.plm", "Extracted port from Url: " + port);
+                return Integer.parseInt(portString);
+            }
         }
         return -1;
     }

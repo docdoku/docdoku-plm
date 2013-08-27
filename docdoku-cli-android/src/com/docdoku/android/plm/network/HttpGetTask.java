@@ -92,6 +92,9 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
         } catch (URISyntaxException e) {
             Log.e("com.docdoku.android.plm", "URISyntaxException message: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }catch (NullPointerException e){
+            Log.e("com.docdoku.android.plm", "NullPointerException when connection to server");
+            e.printStackTrace();
         }
 
         return result;
