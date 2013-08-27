@@ -20,9 +20,11 @@
 
 package com.docdoku.android.plm.client.parts;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 import com.docdoku.android.plm.client.Element;
+import com.docdoku.android.plm.client.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +45,12 @@ public class Part extends Element implements Serializable{
     private static final String JSON_KEY_COMPONENT_INFORMATION = "component";
     private static final String JSON_KEY_COMPONENT_NUMBER = "number";
     private static final String JSON_KEY_COMPONENT_AMOUNT = "amount";
+    private static final String JSON_KEY_PART_NUMBER = "number";
+    private static final String JSON_KEY_PART_VERSION = "version";
+    private static final String JSON_KEY_PART_WORKFLOW = "workflow";
+    private static final String JSON_KEY_PART_LIFECYCLE_STATE = "lifeCycleState";
+    private static final String JSON_KEY_PART_STANDARD_PART = "standardPart";
+    private static final String JSON_KEY_PART_PUBLIC_SHARED = "publicShared";
 
     private String key, number, version;
     private String nativeCADFile;
@@ -56,15 +64,23 @@ public class Part extends Element implements Serializable{
         this.key = key;
     }
 
-    public String[] getGeneralInformationValues(){
+    public String[] getGeneralInformationValues(Context context){
         String[] generalInformationValues = new String[10];
         generalInformationValues[0] = number;
         generalInformationValues[1] = name;
-        generalInformationValues[2] = Boolean.toString(standardPart);
+        if (standardPart){
+            generalInformationValues[2] = context.getResources().getString(R.string.yes);
+        }else{
+            generalInformationValues[2] = context.getResources().getString(R.string.no);
+        }
         generalInformationValues[3] = version;
         generalInformationValues[4] = authorName;
         generalInformationValues[5] = creationDate;
-        generalInformationValues[6] = lifecycleState;
+        if (JSONObject.NULL.toString().equals(lifecycleState)){
+            generalInformationValues[6] = "";
+        } else {
+            generalInformationValues[6] = lifecycleState;
+        }
         generalInformationValues[7] = checkOutUserName;
         generalInformationValues[8] = checkOutDate;
         generalInformationValues[9] = description;
@@ -92,8 +108,12 @@ public class Part extends Element implements Serializable{
     }
 
     public int getNumComponents(){
-        Log.i("com.docdoku.android.plm", "Number of components found: " + components.length);
-        return components.length;
+        if (components == null){
+            return 0;
+        }else{
+            Log.i("com.docdoku.android.plm", "Number of components found: " + components.length);
+            return components.length;
+        }
     }
 
     public Component getComponent(int i){
@@ -136,12 +156,12 @@ public class Part extends Element implements Serializable{
     public Part updateFromJSON(JSONObject partJSON, Resources resources) throws JSONException {
         updateElementFromJSON(partJSON, resources);
         setPartDetails(
-                partJSON.getString("number"),
-                partJSON.getString("version"),
-                partJSON.getString("workflow"),
-                partJSON.getString("lifeCycleState"),
-                partJSON.getBoolean("standardPart"),
-                partJSON.getBoolean("publicShared")
+                partJSON.getString(JSON_KEY_PART_NUMBER),
+                partJSON.getString(JSON_KEY_PART_VERSION),
+                partJSON.getString(JSON_KEY_PART_WORKFLOW),
+                partJSON.getString(JSON_KEY_PART_LIFECYCLE_STATE),
+                partJSON.getBoolean(JSON_KEY_PART_STANDARD_PART),
+                partJSON.getBoolean(JSON_KEY_PART_PUBLIC_SHARED)
         );
         return this;
     }

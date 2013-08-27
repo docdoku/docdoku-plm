@@ -22,6 +22,7 @@ package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -202,7 +203,7 @@ public class PartActivity extends ElementActivity {
             switch (i){
                 case 0://Part general information
                     String[] fieldNames = getResources().getStringArray(R.array.partGeneralInformationFieldNames);
-                    String[] fieldValues = part.getGeneralInformationValues();
+                    String[] fieldValues = part.getGeneralInformationValues(PartActivity.this);
                     rowView = createNameValuePairRowView(fieldNames[i2], fieldValues[i2]);
                     break;
                 case 1://CAD file
@@ -253,7 +254,20 @@ public class PartActivity extends ElementActivity {
 
         @Override
         public boolean isChildSelectable(int i, int i2) {
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            switch (i){
+                case 1: //CAD file
+                    if (part.getCADFileUrl() != null && part.getCADFileUrl().length()>0){
+                        Log.i("com.docdoku.android.plm", "CAD url: " + part.getCADFileUrl());
+                        return true;
+                    }
+                    break;
+                case 3: //Linked documents
+                    if (part.getNumberOfLinkedDocuments()>0){
+                        return true;
+                    }
+                    break;
+            }
+            return false;
         }
     }
 

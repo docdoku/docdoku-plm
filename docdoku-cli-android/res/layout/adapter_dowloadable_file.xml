@@ -4,6 +4,7 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:background="@drawable/selector_background"
               android:layout_margin="10dp"
               android:paddingTop="20dp">
 
