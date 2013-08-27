@@ -81,5 +81,7 @@ define({
     "REFERENCE":"Référence",
     "REVISION_NOTE":"Note de révision",
     "MODIFICATION_DATE":"Date de modification",
-    EXPLODE:"Exploser"
+    EXPLODE:"Exploser",
+    ABSOLUTE:"Absolue",
+    RELATIVE:"Relative"
 });

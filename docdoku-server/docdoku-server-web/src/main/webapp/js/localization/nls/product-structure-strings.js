@@ -86,7 +86,9 @@ define({
         "REFERENCE":"ID",
         "REVISION_NOTE":"Revision note",
         "MODIFICATION_DATE":"Modification date",
-        EXPLODE:"Explode"
+        EXPLODE:"Explode",
+        ABSOLUTE:"Absolute",
+        RELATIVE:"Relative"
     },
     "fr": true,
     "es": true
