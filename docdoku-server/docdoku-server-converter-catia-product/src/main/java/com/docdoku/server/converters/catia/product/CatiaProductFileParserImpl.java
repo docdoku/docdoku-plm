@@ -64,7 +64,6 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
     @Override
     public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
-        System.out.println("#### cat product parser init");
         String woExName = FileIO.getFileNameWithoutExtension(cadFile.getName());
         File tmpDir = Files.createTempDir();
         File tmpCadFile;
@@ -135,7 +134,6 @@ public class CatiaProductFileParserImpl implements CADConverter {
     }
 
     private void syncAssembly(Component_DTK component_dtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        System.out.println("#### SYNC BEGIN");
 
         List<PartUsageLink> partUsageLinks = new ArrayList<PartUsageLink>();
 
@@ -149,14 +147,11 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
             PartMaster partMaster = productService.findPartMasterByCADFileName(partToConvert.getWorkspaceId(), cadFileName);
             if(partMaster != null){
-                System.out.println("#### PART MASTER FOUND FOR "+cadFileName);
                 PartUsageLink partUsageLink = new PartUsageLink();
                 partUsageLink.setAmount(instances.size());
                 partUsageLink.setComponent(partMaster);
                 partUsageLink.setCadInstances(instances);
                 partUsageLinks.add(partUsageLink);
-            }else{
-                System.out.println("#### PART MASTER NOT FOUND FOR "+cadFileName);
             }
 
         }
@@ -164,8 +159,6 @@ public class CatiaProductFileParserImpl implements CADConverter {
         // Erase old structure
         partToConvert.setComponents(partUsageLinks);
 
-
-        System.out.println("#### END OF SYNC");
     }
 
 

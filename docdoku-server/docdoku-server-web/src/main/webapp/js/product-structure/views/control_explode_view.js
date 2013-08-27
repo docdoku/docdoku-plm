@@ -25,7 +25,7 @@ define(
         },
 
         explode:function(e){
-            sceneManager.explodeMaterials(e.target.value);
+            sceneManager.explodeScene(e.target.value);
         }
 
     });

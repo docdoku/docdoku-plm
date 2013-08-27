@@ -33,9 +33,9 @@ define(
         materialsSwitch:function(){
             $("#materialsSwitch").toggleClass("active");
             if ($("#materialsSwitch").hasClass("active")) {
-                sceneManager.switchWireframe(true);
+                sceneManager.switchWireFrame(true);
             } else {
-                sceneManager.switchWireframe(false);
+                sceneManager.switchWireFrame(false);
             }
         },
 

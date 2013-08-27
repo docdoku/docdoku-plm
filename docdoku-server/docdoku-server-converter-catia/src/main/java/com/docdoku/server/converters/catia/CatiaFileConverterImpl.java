@@ -68,7 +68,7 @@ public class CatiaFileConverterImpl implements CADConverter{
         File daeFile = null;
 
         try {
-            String crossManagerWrapper = CONF.getProperty("crossManagerWrapper");
+            String catPartConverter = CONF.getProperty("catPartConverter");
 
             tmpCadFile = new File(tmpDir, cadFile.getName());
 
@@ -84,7 +84,7 @@ public class CatiaFileConverterImpl implements CADConverter{
                 }
             }, tmpCadFile);
 
-            String[] args = {"sh", crossManagerWrapper, tmpCadFile.getAbsolutePath() , tmpDAEFile.getAbsolutePath()};
+            String[] args = {"sh", catPartConverter, tmpCadFile.getAbsolutePath() , tmpDAEFile.getAbsolutePath()};
 
             ProcessBuilder pb = new ProcessBuilder(args);
             Process process = pb.start();

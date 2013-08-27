@@ -667,16 +667,11 @@ define([
             }
         },
 
-        switchWireframe: function(wireframe) {
-            if (wireframe) {
-                // Set wireframe to futures parts
-                this.wireframe = true;
-            } else {
-                // Remove wireframe to futures parts
-                this.wireframe = false;
-            }
+        switchWireFrame: function(wireframe) {
 
-            // Set/remove wireframe to current parts
+            this.wireframe = wireframe;
+
+            // Set/remove wireFrame to current parts
             var self = this;
             _(this.instances).each(function(instance) {
                 if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
@@ -722,8 +717,8 @@ define([
 
             this.scene.add(mesh);
 
-            if(!mesh.oldPosition){
-                mesh.oldPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            if(!mesh.initialPosition){
+                mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
             }
 
             if(!mesh.geometry.boundingBox){
@@ -745,8 +740,11 @@ define([
 
         },
 
-        explodeMaterials:function(v){
+        explodeScene:function(v){
+
             var self = this ;
+
+            // this could be adjusted
             this.explosionCoeff = v * 0.1;
 
             _(this.instances).each(function(instance) {
@@ -754,10 +752,12 @@ define([
 
                     var mesh =  instance.levelGeometry.mesh;
 
-                    mesh.position.x = mesh.oldPosition.x;
-                    mesh.position.y = mesh.oldPosition.y;
-                    mesh.position.z = mesh.oldPosition.z;
+                    // Replace before translating
+                    mesh.position.x = mesh.initialPosition.x;
+                    mesh.position.y = mesh.initialPosition.y;
+                    mesh.position.z = mesh.initialPosition.z;
 
+                    // Translate instance
                     if(self.explosionCoeff != 0){
                         mesh.translateX(mesh.geometry.boundingBox.centroid.x * self.explosionCoeff)
                         mesh.translateY(mesh.geometry.boundingBox.centroid.y * self.explosionCoeff)
