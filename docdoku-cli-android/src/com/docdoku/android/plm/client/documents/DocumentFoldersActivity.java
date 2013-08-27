@@ -67,10 +67,19 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
     public void onHttpGetResult(String result) {
         try {
             JSONArray foldersArray = new JSONArray(result);
-            folders = new Folder[foldersArray.length()];
+            if (currentFolderId == null){
+                folders = new Folder[foldersArray.length()+1];
+                folders[0] = new Folder(getCurrentUserLogin(), getCurrentWorkspace() + ":~" + getCurrentUserLogin());
+            }else{
+                folders = new Folder[foldersArray.length()];
+            }
             for (int i = 0; i<foldersArray.length(); i++){
                 JSONObject folderObject = foldersArray.getJSONObject(i);
-                folders[i] = new Folder(folderObject.getString("name"),folderObject.getString("id"));
+                if (currentFolderId == null){
+                    folders[i+1] = new Folder(folderObject.getString(Folder.JSON_KEY_FOLDER_NAME),folderObject.getString(Folder.JSON_KEY_FOLDER_ID));
+                }else{
+                    folders[i] = new Folder(folderObject.getString(Folder.JSON_KEY_FOLDER_NAME),folderObject.getString(Folder.JSON_KEY_FOLDER_ID));
+                }
             }
         } catch (JSONException e) {
             Log.e("com.docdoku.android.plm", "JSONException: could not read downloaded folder names");
@@ -134,6 +143,11 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
         }
 
         @Override
+        public boolean isEnabled(int position){
+            return true;
+        }
+
+        @Override
         public Object getItem(int i) {
             if (i<folders.length){
                 return folders[i];
@@ -166,6 +180,9 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
     }
 
     private class Folder{
+
+        public static final String JSON_KEY_FOLDER_NAME = "name";
+        public static final String JSON_KEY_FOLDER_ID = "id";
 
         private String name;
         private String id;
