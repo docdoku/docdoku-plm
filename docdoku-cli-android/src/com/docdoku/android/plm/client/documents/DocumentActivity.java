@@ -492,7 +492,19 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
         @Override
         public boolean isChildSelectable(int i, int i2) {
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            switch (i){
+                case 1: //Document attached files
+                    if (document.getNumberOfFiles()>0){
+                        return true;
+                    }
+                    break;
+                case 2: //Linked documents
+                    if (document.getNumberOfLinkedDocuments()>0){
+                        return true;
+                    }
+                    break;
+            }
+            return false;
         }
     }
 
