@@ -229,18 +229,20 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             ((BaseExpandableListAdapter) expandableListView.getExpandableListAdapter()).notifyDataSetChanged();
         }
         else{
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Echec du chargement de l'image");
-            builder.setNegativeButton("Annuler", null);
-            builder.setPositiveButton("Réessayer", new DialogInterface.OnClickListener() {
+            new AlertDialog.Builder(this)
+                .setIcon(R.drawable.upload_light)
+                .setTitle(R.string.uploadingFile)
+                .setMessage(R.string.fileUploadFail)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {String docReference = document.getIdentification();
                     String docId = docReference.substring(0, docReference.lastIndexOf("-"));
                     String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
                     new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png",pictureSavePath);
-                }
-            });
-            builder.create().show();
+                    }
+                })
+                .create().show();
         }
     }
 

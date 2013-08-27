@@ -19,6 +19,7 @@
     <string name="no">No</string>
     <string name="OK">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
     <string name="True">True</string>
     <string name="False">False</string>
     <string name="error">!Error!</string>
@@ -35,7 +36,9 @@
     <string name="serverUrlError">Url error: server not responding</string>
     <string name="loading">Loading, please wait...</string>
     <string name="downloadingFile">Downloading file...</string>
-    <string name="fileDownloadFail">File download failiure</string>
+    <string name="fileDownloadFail">File download fail</string>
+    <string name="uploadingFile">Uploading file...</string>
+    <string name="fileUploadFail">File upload fail</string>
     <string name="chooseHowToOpenFile">Choose which application to use to open file</string>
 
     <!-- Menu -->

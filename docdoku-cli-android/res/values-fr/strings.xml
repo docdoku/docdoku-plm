@@ -19,6 +19,7 @@
     <string name="no">Non</string>
     <string name="OK">OK</string>
     <string name="cancel">Annuler</string>
+    <string name="retry">Réessayer</string>
     <string name="True">Vrai</string>
     <string name="False">Faux</string>
     <string name="error">!Erreur!</string>
@@ -36,6 +37,8 @@
     <string name="loading">Chargement en cours, veuillez patienter...</string>
     <string name="downloadingFile">Téléchargement du fichier en cours...</string>
     <string name="fileDownloadFail">Echec du téléchargement du fichier</string>
+    <string name="uploadingFile">Chargement du fichier en cours...</string>
+    <string name="fileUploadFail">Echec du chargement du fichier</string>
     <string name="chooseHowToOpenFile">Choisir avec quel programme ouvrir le fichier</string>
 
     <!-- Menu -->
