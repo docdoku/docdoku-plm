@@ -543,12 +543,25 @@ public class PartsResource {
                 PartUsageLink partUsageLink = new PartUsageLink();
 
                 List<CADInstance> cadInstances = new ArrayList<CADInstance>();
-                for(double i = 0 ; i < partUsageLinkDTO.getAmount() ; i ++){
-                    cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0, CADInstance.Positioning.ABSOLUTE));
-                }
 
+                if( partUsageLinkDTO.getCadInstances() != null){
+                    for(CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()){
+                        cadInstances.add(new CADInstance(
+                                cadInstanceDTO.getTx(),
+                                cadInstanceDTO.getTy(),
+                                cadInstanceDTO.getTz(),
+                                cadInstanceDTO.getRx(),
+                                cadInstanceDTO.getRy(),
+                                cadInstanceDTO.getRz(),
+                                cadInstanceDTO.getPositioning()));
+                    }
+                }else{
+                    for(double i = 0 ; i < partUsageLinkDTO.getAmount() ; i ++){
+                        cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0, CADInstance.Positioning.ABSOLUTE));
+                    }
+                }
                 partUsageLink.setComponent(component);
-                partUsageLink.setAmount(partUsageLinkDTO.getAmount());
+                partUsageLink.setAmount(cadInstances.size());
                 partUsageLink.setCadInstances(cadInstances);
                 components.add(partUsageLink);
             }

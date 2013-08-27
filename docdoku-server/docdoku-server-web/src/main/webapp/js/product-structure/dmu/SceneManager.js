@@ -1,9 +1,9 @@
 /*global sceneManager,Instance*/
 define([
-    "views/marker_create_modal_view",
+    "../views/marker_create_modal_view",
     "views/progress_bar_view",
     "views/blocker_view",
-    "LoaderManager"
+    "dmu/LoaderManager"
 ], function(MarkerCreateModalView, ProgressBarView, BlockerView, LoaderManager) {
     var SceneManager = function(pOptions) {
 
@@ -44,6 +44,8 @@ define([
         this.loaderManager = null;
         this.currentLayer = null;
 
+        this.explosionCoeff = 0;
+
         this.projector = new THREE.Projector();
     };
 
@@ -68,7 +70,7 @@ define([
             this.isLoaded = true;
             this.loaderManager = new LoaderManager();
             this.bindClickOnScene();
-
+            this.initSelectionBox();
         },
 
         listenXHR: function() {
@@ -76,9 +78,7 @@ define([
             // override xhr open prototype
 
             var pbv = new ProgressBarView().render();
-
             var xhrCount = 0;
-
             var _xhrOpen = XMLHttpRequest.prototype.open;
 
             XMLHttpRequest.prototype.open = function() {
@@ -86,7 +86,7 @@ define([
                 if (arguments[1].indexOf("/files/") === 0) {
 
                     var totalAdded = false,
-                        totalLoaded = 0 ,
+                        totalLoaded = 0,
                         xhrLength = 0;
 
                     this.addEventListener("loadstart", function(pe) {
@@ -141,7 +141,6 @@ define([
                 console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z);
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
             }
-
         },
 
         initControls: function() {
@@ -355,7 +354,25 @@ define([
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
 
-            var intersects = ray.intersectObjects(this.scene.children, false);
+
+            var intersectList = [];
+
+            function buildIntersectList(sceneChild, list) {
+                for (var i = 0, il = sceneChild.length; i < il; ++i) {
+                    var obj = sceneChild[i];
+                    list.push(obj);
+
+                    if (obj.children.length > 0) {
+                        buildIntersectList(obj.children, list);
+                    }
+                }
+            }
+
+            buildIntersectList(this.scene.children, intersectList);
+
+
+
+            var intersects = ray.intersectObjects(intersectList, false);
 
             if (intersects.length > 0) {
 
@@ -371,14 +388,20 @@ define([
                         $("body").append(mcmv.render().el);
                         mcmv.openModal();
                     } else {
+                        var instance = intersectInstances[0];
+                        var mesh = instance.levelGeometry.mesh;
+                        this.setSelectionBoxOnMesh(mesh);
+
                         // Part inspection
                         Backbone.Events.trigger("instance:selected", intersectInstances[0].partIteration);
                     }
                 }else{
                     Backbone.Events.trigger("selection:reset");
+                    this.unsetSelectionBox();
                 }
             }else{
                 Backbone.Events.trigger("selection:reset");
+                this.unsetSelectionBox();
             }
         },
 
@@ -587,9 +610,9 @@ define([
                             self.addInstanceOnScene(new Instance(
                                 instanceRaw.id,
                                 partIteration,
-                                instanceRaw.tx * 10,
-                                instanceRaw.ty * 10,
-                                instanceRaw.tz * 10,
+                                instanceRaw.tx * 1,
+                                instanceRaw.ty * 1,
+                                instanceRaw.tz * 1,
                                 instanceRaw.rx,
                                 instanceRaw.ry,
                                 instanceRaw.rz
@@ -644,23 +667,20 @@ define([
             }
         },
 
-        switchWireframe: function(wireframe) {
-            if (wireframe) {
-                // Set wireframe to futures parts
-                this.wireframe = true;
-            } else {
-                // Remove wireframe to futures parts
-                this.wireframe = false;
+        switchWireFrame: function(wireframe) {
 
-            }
+            this.wireframe = wireframe;
 
-            // Set/remove wireframe to current parts
+            // Set/remove wireFrame to current parts
             var self = this;
             _(this.instances).each(function(instance) {
                 if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
-                    _(instance.levelGeometry.mesh.material.materials).each(function(material) {
-                        material.wireframe = self.wireframe;
-                    });
+                    if(instance.levelGeometry.mesh.material){
+                        instance.levelGeometry.mesh.material.wireframe = self.wireframe;
+                        _(instance.levelGeometry.mesh.material.materials).each(function(material) {
+                            material.wireframe = self.wireframe;
+                        });
+                    }
                 }
             });
 
@@ -674,15 +694,83 @@ define([
             this.instances = [];
             this.instancesMap = {};
 
-        }//,
-        /*
-         cleanRootId:function(instance){
-         if(instance.id.match(/^0\-.*//*)){
-         instance.id = instance.id.substr(2,instance.id.length);
-         }
-         return instance;
-         }
-         */
+        },
+
+        initSelectionBox:function(){
+            this.selectionBox = new THREE.BoxHelper();
+            this.selectionBox.material.depthTest = false;
+            this.selectionBox.material.transparent = true;
+            this.selectionBox.visible = false;
+            this.scene.add(this.selectionBox );
+        },
+
+        setSelectionBoxOnMesh:function(mesh){
+            this.selectionBox.update(mesh);
+            this.selectionBox.visible = true;
+        },
+
+        unsetSelectionBox:function(){
+            this.selectionBox.visible = false;
+        },
+
+        addMesh:function(mesh){
+
+            this.scene.add(mesh);
+
+            if(!mesh.initialPosition){
+                mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            }
+
+            if(!mesh.geometry.boundingBox){
+                mesh.geometry.computeBoundingBox();
+                mesh.geometry.boundingBox.centroid = new THREE.Vector3 (
+                    (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
+                    (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
+                    (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
+                )
+            }
+
+            if(this.explosionCoeff != 0){
+                mesh.translateX(mesh.geometry.boundingBox.centroid.x * this.explosionCoeff)
+                mesh.translateY(mesh.geometry.boundingBox.centroid.y * this.explosionCoeff)
+                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * this.explosionCoeff)
+            }
+
+            mesh.updateMatrix();
+
+        },
+
+        explodeScene:function(v){
+
+            var self = this ;
+
+            // this could be adjusted
+            this.explosionCoeff = v * 0.1;
+
+            _(this.instances).each(function(instance) {
+                if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
+
+                    var mesh =  instance.levelGeometry.mesh;
+
+                    // Replace before translating
+                    mesh.position.x = mesh.initialPosition.x;
+                    mesh.position.y = mesh.initialPosition.y;
+                    mesh.position.z = mesh.initialPosition.z;
+
+                    // Translate instance
+                    if(self.explosionCoeff != 0){
+                        mesh.translateX(mesh.geometry.boundingBox.centroid.x * self.explosionCoeff)
+                        mesh.translateY(mesh.geometry.boundingBox.centroid.y * self.explosionCoeff)
+                        mesh.translateZ(mesh.geometry.boundingBox.centroid.z * self.explosionCoeff)
+                    }
+
+                    mesh.updateMatrix();
+                }
+            });
+
+
+
+        }
     };
 
     return SceneManager;

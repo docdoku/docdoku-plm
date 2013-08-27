@@ -103,13 +103,11 @@ Instance.prototype = {
             //load the mesh corresponding to the new level
             this.loadMeshFromLevelGeometry(levelGeometry, function(mesh) {
                 //add new mesh to the scene
-                sceneManager.scene.add(mesh);
+                sceneManager.addMesh(mesh);
                 //notify that we have one instance at this level on the scene
                 levelGeometry.onAdd();
-
                 //clear previous state
                 self.clearMeshAndLevelGeometry();
-
                 //save level and mesh for further reuse
                 self.levelGeometry = levelGeometry;
                 callback();

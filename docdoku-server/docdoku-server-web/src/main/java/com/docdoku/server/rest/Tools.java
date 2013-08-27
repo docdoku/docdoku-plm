@@ -25,6 +25,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.BaselinedPartKey;
+import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
@@ -148,8 +149,15 @@ public class Tools {
 
         List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
         PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
+
         for(PartUsageLink partUsageLink : partIteration.getComponents()){
             PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
+            List<CADInstanceDTO> cadInstancesDTO = new ArrayList<CADInstanceDTO>();
+            for(CADInstance cadInstance : partUsageLink.getCadInstances()){
+                CADInstanceDTO cadInstanceDTO = mapper.map(cadInstance,CADInstanceDTO.class);
+                cadInstancesDTO.add(cadInstanceDTO);
+            }
+            partUsageLinkDTO.setCadInstances(cadInstancesDTO);
             usageLinksDTO.add(partUsageLinkDTO);
         }
         partIterationDTO.setComponents(usageLinksDTO);

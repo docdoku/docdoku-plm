@@ -1,7 +1,7 @@
 var sceneManager={
     wireframe:false
 };
-define(["LoaderManager"],function(LoaderManager){
+define(["dmu/LoaderManager"],function(LoaderManager){
 
     function CadRenderer(el,fileName, width, height){
         this.$container =  $(el);
@@ -78,10 +78,11 @@ define(["LoaderManager"],function(LoaderManager){
             //this.scene.add(this.grid);
             var self = this ;
             this.loader.parseFile(this.fileName, "", false, function(mesh){
-                THREE.GeometryUtils.center( mesh.geometry );
+                if ( mesh instanceof THREE.Mesh ) {
+                    THREE.GeometryUtils.center( mesh.geometry );
+                }
                 self.scene.add(mesh);
                 self.camera.lookAt(mesh.position);
-
             });
             this.animate();
         },

@@ -17,7 +17,7 @@
     }
 
     .well{
-
+      float: left;
       padding:9px;
 
       a.remove {
@@ -37,23 +37,68 @@
           opacity: 1;
         }
       }
-
-
-
       input{
 
         &[name="number"]{
-          width:200px;
+          width:190px;
         }
 
         &[name="name"]{
-          width:200px;
+          width:190px;
         }
 
         &[name="amount"]{
           width:20px;
         }
+
       }
+
+      .add-cadInstance{
+        margin-top: 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        float: right;
+        &:hover{
+          opacity: 1;
+        }
+      }
+
+      .cadInstances{
+        float:left;
+        clear:both;
+
+        .cadInstance{
+          h5{
+            font-weight:normal;
+          }
+          float:left;
+          clear:both;
+          .coord-group{
+            float:left;
+            width:33%;
+            input.coord{
+              width:20%;
+            }
+            select{
+              width:90%;
+            }
+            .remove-cadInstance{
+              cursor: pointer;
+              opacity: 0.5;
+              &:hover{
+                opacity: 1;
+              }
+            }
+          }
+
+          &:only-child{
+            .remove-cadInstance{
+              display: none;
+            }
+          }
+        }
+      }
+
 
     }
   }

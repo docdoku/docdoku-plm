@@ -119,7 +119,6 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
                 //get instances that need to be added to the scene
                 var instancesNotOnScene = _.filter(instances, function(instance) {
-                    //instance = sceneManager.cleanRootId(instance);
                     return !sceneManager.isOnScene(instance.id);
                 });
 
@@ -129,9 +128,9 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
                 _.each(instancesNotOnScene, function(instanceRaw) {
 
                     //if we deal with this partIteration for the fist time, we need to create it
-                    if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
+                    //if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
                         sceneManager.addPartIteration(new PartIterationVisualization(instanceRaw));
-                    }
+                    //}
 
                     var partIteration = sceneManager.getPartIteration(instanceRaw.partIterationId);
 
@@ -139,9 +138,9 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
                     sceneManager.addInstanceOnScene(new Instance(
                         instanceRaw.id,
                         partIteration,
-                        instanceRaw.tx*10,
-                        instanceRaw.ty*10,
-                        instanceRaw.tz*10,
+                        instanceRaw.tx,
+                        instanceRaw.ty,
+                        instanceRaw.tz,
                         instanceRaw.rx,
                         instanceRaw.ry,
                         instanceRaw.rz
@@ -155,7 +154,6 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
             $.getJSON(this.getInstancesUrl(), function(instances) {
                 _.each(instances, function(instanceRaw) {
-                    //instanceRaw = sceneManager.cleanRootId(instanceRaw);
                     if (sceneManager.isOnScene(instanceRaw.id)) {
                         sceneManager.removeInstanceFromScene(instanceRaw.id);
                     }

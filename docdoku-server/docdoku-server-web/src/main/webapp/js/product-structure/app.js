@@ -13,12 +13,13 @@ define(
         "views/control_markers_view",
         "views/control_layers_view",
         "views/control_options_view",
+        "views/control_explode_view",
         "views/baseline_select_view",
-        "SceneManager",
+        "dmu/SceneManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
         "models/part"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, BaselineSelectView, SceneManager, template, i18n, Part) {
+    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlExplodeView, BaselineSelectView, SceneManager, template, i18n, Part) {
 
     var AppView = Backbone.View.extend({
 
@@ -59,8 +60,9 @@ define(
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
             this.$ControlsContainer.append(new ControlModesView().render().$el);
-            this.$ControlsContainer.append(new ControlMarkersView().render().$el);
             this.$ControlsContainer.append(new ControlOptionsView().render().$el);
+            this.$ControlsContainer.append(new ControlExplodeView().render().$el);
+            this.$ControlsContainer.append(new ControlMarkersView().render().$el);
             this.$ControlsContainer.append(new ControlLayersView().render().$el);
 
             try{
@@ -81,10 +83,12 @@ define(
                 autoHide: true,
                 stop: function(e, ui) {
                     var parent = ui.element.parent();
+                    var percent = ui.element.width()/parent.width()*100;
                     ui.element.css({
-                        width: ui.element.width()/parent.width()*100+"%",
+                        width: percent+"%",
                         height: "100%"
                     });
+                    ui.element.toggleClass("alpha",Math.floor(percent)>15);
                 }
             });
         },
