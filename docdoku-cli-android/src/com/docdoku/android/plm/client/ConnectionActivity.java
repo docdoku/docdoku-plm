@@ -73,6 +73,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     private String username, password, serverUrl;
     private AsyncTask connectionTask;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -97,6 +98,17 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
 
             connect(username, password, serverUrl);
         }
+
+        if (!eraseData){
+            Intent welcomeIntent = new Intent(this, WelcomeScreen.class);
+            startActivity(welcomeIntent);
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
     }
 
     private void getGCMId() {
@@ -268,15 +280,15 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     public void eraseData(){
         File dir = new File(getFilesDir().getParent() + "/shared_prefs/");
         String[] children = dir.list();
-        for (int i = 0; i < children.length; i++) {
+        for (String child: children) {
             // clear each of the preferences
-            getSharedPreferences(children[i].replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
+            getSharedPreferences(child.replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
         }
         // Make sure it has enough time to save all the commited changes
         try { Thread.sleep(1000); } catch (InterruptedException e) {}
-        for (int i = 0; i < children.length; i++) {
+        for (String child: children) {
             // delete the files
-            new File(dir, children[i]).delete();
+            new File(dir, child).delete();
         }
     }
 
