@@ -106,10 +106,8 @@ Instance.prototype = {
                 sceneManager.scene.add(mesh);
                 //notify that we have one instance at this level on the scene
                 levelGeometry.onAdd();
-
                 //clear previous state
                 self.clearMeshAndLevelGeometry();
-
                 //save level and mesh for further reuse
                 self.levelGeometry = levelGeometry;
                 callback();

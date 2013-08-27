@@ -75,16 +75,19 @@ define(
         },
 
         menuResizable:function(){
+            var self = this ;
             this.$productMenu.resizable({
                 containment: this.$el,
                 handles: 'e',
                 autoHide: true,
                 stop: function(e, ui) {
                     var parent = ui.element.parent();
+                    var percent = ui.element.width()/parent.width()*100;
                     ui.element.css({
-                        width: ui.element.width()/parent.width()*100+"%",
+                        width: percent+"%",
                         height: "100%"
                     });
+                    ui.element.toggleClass("alpha",Math.floor(percent)>15);
                 }
             });
         },

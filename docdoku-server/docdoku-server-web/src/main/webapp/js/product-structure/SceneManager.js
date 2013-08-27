@@ -68,7 +68,7 @@ define([
             this.isLoaded = true;
             this.loaderManager = new LoaderManager();
             this.bindClickOnScene();
-
+            this.initSelectionBox();
         },
 
         listenXHR: function() {
@@ -76,9 +76,7 @@ define([
             // override xhr open prototype
 
             var pbv = new ProgressBarView().render();
-
             var xhrCount = 0;
-
             var _xhrOpen = XMLHttpRequest.prototype.open;
 
             XMLHttpRequest.prototype.open = function() {
@@ -86,7 +84,7 @@ define([
                 if (arguments[1].indexOf("/files/") === 0) {
 
                     var totalAdded = false,
-                        totalLoaded = 0 ,
+                        totalLoaded = 0,
                         xhrLength = 0;
 
                     this.addEventListener("loadstart", function(pe) {
@@ -141,7 +139,6 @@ define([
                 console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z);
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
             }
-
         },
 
         initControls: function() {
@@ -355,9 +352,29 @@ define([
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
 
-            var intersects = ray.intersectObjects(this.scene.children, false);
+
+            var intersectList = [];
+
+            function buildIntersectList(sceneChild, list) {
+                for (var i = 0, il = sceneChild.length; i < il; ++i) {
+                    var obj = sceneChild[i];
+                    list.push(obj);
+
+                    if (obj.children.length > 0) {
+                        buildIntersectList(obj.children, list);
+                    }
+                }
+            }
+
+            buildIntersectList(this.scene.children, intersectList);
+
+
+
+            var intersects = ray.intersectObjects(intersectList, false);
 
             if (intersects.length > 0) {
+
+                console.log(intersects)
 
                 var intersectInstances = _.select(this.instancesMap, function(instance) {
                     return instance.levelGeometry == null ? false : instance.levelGeometry.mesh == intersects[0].object;
@@ -367,18 +384,25 @@ define([
                     if (this.markerCreationMode) {
                         // Marker creation
                         var intersectPoint = intersects[0].point;
+
                         var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersectPoint});
                         $("body").append(mcmv.render().el);
                         mcmv.openModal();
                     } else {
+                        var instance = intersectInstances[0];
+                        var mesh = instance.levelGeometry.mesh;
+                        this.setSelectionBoxOnMesh(mesh);
+
                         // Part inspection
                         Backbone.Events.trigger("instance:selected", intersectInstances[0].partIteration);
                     }
                 }else{
                     Backbone.Events.trigger("selection:reset");
+                    this.unsetSelectionBox();
                 }
             }else{
                 Backbone.Events.trigger("selection:reset");
+                this.unsetSelectionBox();
             }
         },
 
@@ -587,9 +611,9 @@ define([
                             self.addInstanceOnScene(new Instance(
                                 instanceRaw.id,
                                 partIteration,
-                                instanceRaw.tx * 10,
-                                instanceRaw.ty * 10,
-                                instanceRaw.tz * 10,
+                                instanceRaw.tx * 1,
+                                instanceRaw.ty * 1,
+                                instanceRaw.tz * 1,
                                 instanceRaw.rx,
                                 instanceRaw.ry,
                                 instanceRaw.rz
@@ -651,7 +675,6 @@ define([
             } else {
                 // Remove wireframe to futures parts
                 this.wireframe = false;
-
             }
 
             // Set/remove wireframe to current parts
@@ -659,6 +682,7 @@ define([
             _(this.instances).each(function(instance) {
                 if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
                     if(instance.levelGeometry.mesh.material){
+                        instance.levelGeometry.mesh.material.wireframe = self.wireframe;
                         _(instance.levelGeometry.mesh.material.materials).each(function(material) {
                             material.wireframe = self.wireframe;
                         });
@@ -676,15 +700,26 @@ define([
             this.instances = [];
             this.instancesMap = {};
 
-        }//,
-        /*
-         cleanRootId:function(instance){
-         if(instance.id.match(/^0\-.*//*)){
-         instance.id = instance.id.substr(2,instance.id.length);
-         }
-         return instance;
-         }
-         */
+        },
+
+        initSelectionBox:function(){
+            this.selectionBox = new THREE.BoxHelper();
+            this.selectionBox.material.depthTest = false;
+            this.selectionBox.material.transparent = true;
+            this.selectionBox.visible = false;
+            this.scene.add(this.selectionBox );
+        },
+
+        setSelectionBoxOnMesh:function(mesh){
+            this.selectionBox.update(mesh);
+            this.selectionBox.visible = true;
+        },
+
+        unsetSelectionBox:function(){
+            this.selectionBox.visible = false;
+        }
+
+
     };
 
     return SceneManager;
