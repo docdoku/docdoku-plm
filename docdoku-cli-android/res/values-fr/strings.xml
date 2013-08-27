@@ -26,7 +26,6 @@
     <string name="fullDateFormat">dd/MM/yyyy kk:mm:ss</string>
     <string name="today">aujourd\'hui</string>
     <string name="yesterday">hier</string>
-    <string name="search">Rechercher</string>
 
     <!-- Network interaction -->
     <string name="connection">Connexion</string>
