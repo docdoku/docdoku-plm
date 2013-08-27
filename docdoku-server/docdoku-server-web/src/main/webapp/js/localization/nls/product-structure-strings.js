@@ -85,7 +85,8 @@ define({
         LIFECYCLE_STATE:"Life cycle state",
         "REFERENCE":"ID",
         "REVISION_NOTE":"Revision note",
-        "MODIFICATION_DATE":"Modification date"
+        "MODIFICATION_DATE":"Modification date",
+        EXPLODE:"Explode"
     },
     "fr": true,
     "es": true

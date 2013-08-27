@@ -1,6 +1,6 @@
 var sceneManager;
 
-define(["models/part_iteration_visualization","SceneManager"], function (PartIteration,SceneManager) {
+define(["models/part_iteration_visualization","dmu/SceneManager"], function (PartIteration,SceneManager) {
 
     var FrameAppView = Backbone.View.extend({
 

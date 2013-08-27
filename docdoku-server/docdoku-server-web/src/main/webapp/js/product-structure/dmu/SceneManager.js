@@ -1,9 +1,9 @@
 /*global sceneManager,Instance*/
 define([
-    "views/marker_create_modal_view",
+    "../views/marker_create_modal_view",
     "views/progress_bar_view",
     "views/blocker_view",
-    "LoaderManager"
+    "dmu/LoaderManager"
 ], function(MarkerCreateModalView, ProgressBarView, BlockerView, LoaderManager) {
     var SceneManager = function(pOptions) {
 
@@ -43,6 +43,8 @@ define([
 
         this.loaderManager = null;
         this.currentLayer = null;
+
+        this.explosionCoeff = 0;
 
         this.projector = new THREE.Projector();
     };
@@ -374,8 +376,6 @@ define([
 
             if (intersects.length > 0) {
 
-                console.log(intersects)
-
                 var intersectInstances = _.select(this.instancesMap, function(instance) {
                     return instance.levelGeometry == null ? false : instance.levelGeometry.mesh == intersects[0].object;
                 });
@@ -384,7 +384,6 @@ define([
                     if (this.markerCreationMode) {
                         // Marker creation
                         var intersectPoint = intersects[0].point;
-
                         var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersectPoint});
                         $("body").append(mcmv.render().el);
                         mcmv.openModal();
@@ -717,9 +716,61 @@ define([
 
         unsetSelectionBox:function(){
             this.selectionBox.visible = false;
+        },
+
+        addMesh:function(mesh){
+
+            this.scene.add(mesh);
+
+            if(!mesh.oldPosition){
+                mesh.oldPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            }
+
+            if(!mesh.geometry.boundingBox){
+                mesh.geometry.computeBoundingBox();
+                mesh.geometry.boundingBox.centroid = new THREE.Vector3 (
+                    (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
+                    (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
+                    (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
+                )
+            }
+
+            if(this.explosionCoeff != 0){
+                mesh.translateX(mesh.geometry.boundingBox.centroid.x * this.explosionCoeff)
+                mesh.translateY(mesh.geometry.boundingBox.centroid.y * this.explosionCoeff)
+                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * this.explosionCoeff)
+            }
+
+            mesh.updateMatrix();
+
+        },
+
+        explodeMaterials:function(v){
+            var self = this ;
+            this.explosionCoeff = v * 0.1;
+
+            _(this.instances).each(function(instance) {
+                if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
+
+                    var mesh =  instance.levelGeometry.mesh;
+
+                    mesh.position.x = mesh.oldPosition.x;
+                    mesh.position.y = mesh.oldPosition.y;
+                    mesh.position.z = mesh.oldPosition.z;
+
+                    if(self.explosionCoeff != 0){
+                        mesh.translateX(mesh.geometry.boundingBox.centroid.x * self.explosionCoeff)
+                        mesh.translateY(mesh.geometry.boundingBox.centroid.y * self.explosionCoeff)
+                        mesh.translateZ(mesh.geometry.boundingBox.centroid.z * self.explosionCoeff)
+                    }
+
+                    mesh.updateMatrix();
+                }
+            });
+
+
+
         }
-
-
     };
 
     return SceneManager;

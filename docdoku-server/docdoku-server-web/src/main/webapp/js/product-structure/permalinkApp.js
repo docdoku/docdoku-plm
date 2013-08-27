@@ -1,7 +1,7 @@
 var sceneManager={
     wireframe:false
 };
-define(["LoaderManager"],function(LoaderManager){
+define(["dmu/LoaderManager"],function(LoaderManager){
 
     function CadRenderer(el,fileName, width, height){
         this.$container =  $(el);

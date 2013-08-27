@@ -80,5 +80,6 @@ define({
     LIFECYCLE_STATE:"Etat du cycle de vie",
     "REFERENCE":"Référence",
     "REVISION_NOTE":"Note de révision",
-    "MODIFICATION_DATE":"Date de modification"
+    "MODIFICATION_DATE":"Date de modification",
+    EXPLODE:"Exploser"
 });
