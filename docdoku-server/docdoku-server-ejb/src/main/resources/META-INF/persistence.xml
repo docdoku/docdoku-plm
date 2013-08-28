@@ -72,6 +72,7 @@
     <class>com.docdoku.core.sharing.SharedEntity</class>
     <class>com.docdoku.core.sharing.SharedPart</class>
     <class>com.docdoku.core.sharing.SharedDocument</class>
+    <class>com.docdoku.core.gcm.GCMAccount</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.logging.level" value="FINE"/>

@@ -19,17 +19,14 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.StateChangeSubscription;
-import com.docdoku.core.document.IterationChangeSubscription;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.SubscriptionKey;
-import java.util.*;
-import javax.persistence.EntityExistsException;
+import com.docdoku.core.document.*;
+import com.docdoku.core.gcm.GCMAccount;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
+import java.util.List;
 
 public class SubscriptionDAO {
 
@@ -160,4 +157,29 @@ public class SubscriptionDAO {
 
         return users;
     }
+
+    public GCMAccount[] getIterationChangeEventSubscribersGCMAccount(DocumentMaster pDocM) {
+        GCMAccount[] gcmAccounts;
+        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, IterationChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentMaster = :docM");
+        List gcmAccountsList = query.setParameter("docM", pDocM).getResultList();
+        gcmAccounts = new GCMAccount[gcmAccountsList.size()];
+        for (int i = 0; i < gcmAccountsList.size(); i++) {
+            gcmAccounts[i] = (GCMAccount) gcmAccountsList.get(i);
+        }
+
+        return gcmAccounts;
+    }
+
+    public GCMAccount[] getStateChangeEventSubscribersGCMAccount(DocumentMaster pDocM) {
+        GCMAccount[] gcmAccounts;
+        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, StateChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentMaster = :docM");
+        List gcmAccountsList = query.setParameter("docM", pDocM).getResultList();
+        gcmAccounts = new GCMAccount[gcmAccountsList.size()];
+        for (int i = 0; i < gcmAccountsList.size(); i++) {
+            gcmAccounts[i] = (GCMAccount) gcmAccountsList.get(i);
+        }
+
+        return gcmAccounts;
+    }
+
 }

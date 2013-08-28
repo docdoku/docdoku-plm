@@ -95,9 +95,8 @@ public class CatiaProductFileParserImpl implements CADConverter {
             BufferedReader br = new BufferedReader(isr);
 
             String line = "";
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
+            while ((line = br.readLine()) != null);
+
             process.waitFor();
 
             int exitCode = process.exitValue();

@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.dao.*;
@@ -462,6 +463,23 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         String callerLogin = ctx.getCallerPrincipal().getName();
         List<Workspace> workspaces = new WorkspaceDAO(em).findWorkspacesWhereUserIsActive(callerLogin);
         return workspaces.toArray(new Workspace[workspaces.size()]);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException {
+
+        String callerLogin = ctx.getCallerPrincipal().getName();
+        Account account = getAccount(callerLogin);
+        GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
+
+        try{
+            GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
+            gcmAccount.setGcmId(gcmId);
+        }catch(GCMAccountNotFoundException e){
+            gcmAccountDAO.createGCMAccount(new GCMAccount(account, gcmId));
+        }
+
     }
 
     private Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {

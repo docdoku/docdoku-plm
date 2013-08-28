@@ -21,6 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
+import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACL;
@@ -68,6 +69,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @EJB
     private IMailerLocal mailer;
+
+    @EJB
+    private IGCMSenderLocal gcmNotifier;
 
     @EJB
     private IndexerBean indexer;
@@ -1087,13 +1091,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
 
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
-            User[] subscribers = new SubscriptionDAO(em).getIterationChangeEventSubscribers(docM);
+            SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
+            User[] subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docM);
+            GCMAccount[] gcmAccounts = subscriptionDAO.getIterationChangeEventSubscribersGCMAccount(docM);
 
             docM.setCheckOutDate(null);
             docM.setCheckOutUser(null);
 
             if (subscribers.length != 0) {
                 mailer.sendIterationNotification(subscribers, docM);
+            }
+
+            if (gcmAccounts.length != 0) {
+                gcmNotifier.sendIterationNotification(gcmAccounts, docM);
             }
 
             for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
