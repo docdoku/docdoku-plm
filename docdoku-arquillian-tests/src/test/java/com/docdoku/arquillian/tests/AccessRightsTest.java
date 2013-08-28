@@ -25,14 +25,13 @@ import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.*;
+import com.docdoku.server.gcm.GCMSenderBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +41,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
-import java.util.*;
+import java.util.Date;
 
 /**
  * @author: Asmae CHADID
@@ -77,6 +76,8 @@ public class AccessRightsTest {
                         UserManagerBean.class,
                         IMailerLocal.class,
                         MailerBean.class,
+                        IGCMSenderLocal.class,
+                        GCMSenderBean.class,
                         IndexerBean.class,
                         IndexSearcherBean.class,
                         IDocumentManagerLocal.class,
