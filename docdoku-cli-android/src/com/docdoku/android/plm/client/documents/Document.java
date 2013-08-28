@@ -78,8 +78,6 @@ public class Document extends Element implements Serializable{
     public Document(String identification){
         this.identification = identification;
         reference = identification.substring(0, identification.lastIndexOf("-"));
-        iterationNotification = false;
-        stateChangeNotification = false;
     }
 
     public String[] getDocumentDetails(){
@@ -138,6 +136,8 @@ public class Document extends Element implements Serializable{
                 documentJSON.getString("type"),
                 documentJSON.getString("lifeCycleState")
         );
+        iterationNotification = documentJSON.getBoolean("iterationSubscription");
+        stateChangeNotification = documentJSON.getBoolean("stateSubscription");
         return this;
     }
 
