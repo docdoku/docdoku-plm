@@ -40,9 +40,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
 import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.HttpPutTask;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +74,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     private ProgressDialog progressDialog;
     private String username, password, serverUrl;
     private AsyncTask connectionTask;
+    private String gcmId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,15 +115,15 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     private void getGCMId() {
-        String id = preferences.getString(PREFERENCE_KEY_GCM_ID, "");
+        gcmId = preferences.getString(PREFERENCE_KEY_GCM_ID, "");
         Log.i("com.docdoku.android.plm", "Looking for GCM Id...");
-        if (id.length() > 0){
+        if (gcmId.length() > 0){
             try {
                 if (isGCMIdExpired() || isGCMIdPreviousVersion()){
                     Log.i("com.docdoku.android.plm", "GCM Id belonged to previoud app version or was expired");
                     getNewGCMId();
                 }else{
-                    Log.i("com.docdoku.android.plm", "GCM Id found! " + id);
+                    Log.i("com.docdoku.android.plm", "GCM Id found! " + gcmId);
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e("com.docdoku.android.plm", "Could not get package name");
@@ -310,6 +313,14 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         }else if (result.equals(HttpGetTask.ERROR_URL)){
             createErrorDialog(R.string.serverUrlError);
         }else{
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("gcmId", gcmId);
+                new HttpPutTask(null).execute("/api/accounts/gcm", jsonObject.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
             SearchActionBarActivity.currentUserLogin = username;
             SimpleActionBarActivity.currentUserLogin = username;
             try{
