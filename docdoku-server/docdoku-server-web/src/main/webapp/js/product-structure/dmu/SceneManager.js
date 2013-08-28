@@ -407,7 +407,7 @@ define([
 
         initLayerManager: function() {
             var self = this;
-            require(["LayerManager"], function(LayerManager) {
+            require(["dmu/LayerManager"], function(LayerManager) {
 
                 if (self.stateControl == self.STATECONTROL.PLC) {
                     self.layerManager = new LayerManager(self.scene, self.controls.getObject(), self.renderer, self.controls, self.$container);
