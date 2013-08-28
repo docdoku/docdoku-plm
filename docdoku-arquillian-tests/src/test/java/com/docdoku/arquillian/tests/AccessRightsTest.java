@@ -22,6 +22,7 @@ package com.docdoku.arquillian.tests;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.*;
@@ -70,6 +71,7 @@ public class AccessRightsTest {
                 .addPackage(UserGroupMapping.class.getPackage())
                 .addClasses(
                         Account.class,
+                        GCMAccount.class,
                         Workspace.class,
                         TestEJBBean.class,
                         IUserManagerLocal.class,
