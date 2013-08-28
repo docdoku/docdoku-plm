@@ -18,4 +18,4 @@ docdoku-cli-android/out/
 classes/
 docdoku-cli-android/gen/
 derby.log
-docdoku-server/docdoku-server-ejb/src/main/resources/com/docdoku/server/gcm/conf.properties
+gcm.properties

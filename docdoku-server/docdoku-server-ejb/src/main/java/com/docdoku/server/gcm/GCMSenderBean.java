@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class GCMSenderBean implements IGCMSenderLocal {
 
     private final static String GCM_URL = "https://android.googleapis.com/gcm/send";
-    private final static String CONF_PROPERTIES = "/com/docdoku/server/gcm/conf.properties";
+    private final static String CONF_PROPERTIES = "/com/docdoku/server/gcm/gcm.properties";
     private final static Properties CONF = new Properties();
     private final static Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
 
