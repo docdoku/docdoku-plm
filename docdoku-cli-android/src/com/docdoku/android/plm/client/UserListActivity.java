@@ -50,6 +50,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
     private UserArrayAdapter userArrayAdapter;
     private ListView userListView;
     private User linkedContact;
+    private View headerView;
 
     @Override
     public void onResume(){
@@ -77,7 +78,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         Log.i("com.docdoku.android.plm", result);*/
 
         userListView = (ListView) findViewById(R.id.elementList);
-        View headerView = getLayoutInflater().inflate(R.layout.header_users, null);
+        headerView = getLayoutInflater().inflate(R.layout.header_users, null);
         headerView.findViewById(R.id.selectAllUsers).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -327,8 +328,12 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
                 User user = new User(userJSON.getString(User.JSON_KEY_USER_NAME),
                         userJSON.getString(User.JSON_KEY_USER_EMAIL),
                         userJSON.getString(User.JSON_KEY_USER_LOGIN));
-                userArray.add(user);
-                searchForContactOnPhone(user);
+                if (user.getLogin().equals(getCurrentUserLogin())){
+                    ((TextView) headerView.findViewById(R.id.currentUser)).setText(user.getName());
+                }else{
+                    userArray.add(user);
+                    searchForContactOnPhone(user);
+                }
             }
             userArrayAdapter = new UserArrayAdapter(userArray);
             userListView.setAdapter(userArrayAdapter);

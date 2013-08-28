@@ -36,7 +36,7 @@
     <string name="documentIteration">Iteration</string>
     <string name="documentAttributes">Attributes</string>
 
-    <!-- Subscribe/Usubscribe to document notifications-->
+    <!-- Document notifications-->
     <string name="documentStateChangeButton">States</string>
     <string name="documentIterationButton">Iterations</string>
     <string name="confirmSubscribeToIterationChangeNotification">Are you sure you want to activate iteration notifications on this document?</string>
@@ -47,6 +47,8 @@
     <string name="documentIterationChangeNotificationSuccessfullyDeactivated">Iteration notifications deactivated</string>
     <string name="documentStateChangeNotificationSuccessfullyActivated">State change notifications activated</string>
     <string name="documentStateChangeNotificationSuccessfullyDeactivated">State change notifications deactivated</string>
+    <string name="documentStateChangeNotified">State change</string>
+    <string name="documentIterationNotified">New iteration</string>
 
     <!-- Search documents -->
     <string name="documentSearchPrompt">Search documents</string>

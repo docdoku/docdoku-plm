@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/selectAllUsers"
+        android:id="@+id/currentUser"
+        style="@style/Theme.AppTheme.BigTitle"
+        android:textStyle="bold"
+        android:textColor="@color/transparentWhite"
+        android:ellipsize="end"
+        android:singleLine="true"/>
 
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:id="@+id/selectAllUsers"
             android:src="@drawable/all_users_light"
             android:layout_gravity="right|center_vertical"/>
-</LinearLayout>
+</RelativeLayout>
