@@ -14,6 +14,12 @@ public class GCMIntentService extends IntentService {
 
     private static final long VIBRATION_DURATION_MILLIS = 800;
 
+    private static final String INTENT_KEY_DOCUMENT_ID = "documentMasterId";
+    private static final String INTENT_KEY_DOCUMENT_VERSION = "documentMasterVersion";
+    private static final String INTENT_KEY_NOTIFICATION_TYPE = "type";
+    private static final String INTENT_KEY_WORKSPACE_ID = "workspaceId";
+    private static final String INTENT_KEY_DOCUMENT_HASHCODE = "hashCode";
+
     public GCMIntentService() {
         super("GcmIntentService");
     }
@@ -30,18 +36,31 @@ public class GCMIntentService extends IntentService {
         }*/
 
         Log.i("com.docdoku.android.plm", "Received GCM message indicating a new iteration/state change");
-        String docId = bundle.getString("documentMasterId");
-        String docVersion = bundle.getString("documentMasterVersion");
-        String notificationType = bundle.getString("type");
-        String workspaceId = bundle.getString("workspaceId");
+        String docId = bundle.getString(INTENT_KEY_DOCUMENT_ID);
+        String docVersion = bundle.getString(INTENT_KEY_DOCUMENT_VERSION);
+        String notificationType = bundle.getString(INTENT_KEY_NOTIFICATION_TYPE);
+        String workspaceId = bundle.getString(INTENT_KEY_WORKSPACE_ID);
+        String docHashCode = bundle.getString(INTENT_KEY_DOCUMENT_HASHCODE);
+        int notificationCode = 0;
+        try{
+            notificationCode = Integer.parseInt(docHashCode);
+        }catch(NumberFormatException e){
+            Log.e("com.docdoku.android.plm", "Received hashcode for document was not an integer. Value: " + docHashCode);
+            notificationCode = (int) (Math.random()*1000000);
+        }
 
-        sendNotification(docId + "-" + docVersion, notificationType, workspaceId);
+        sendNotification(docId + "-" + docVersion, notificationType, workspaceId, notificationCode);
 
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void sendNotification(String docReference, String notificationType, String workspaceId){
+    private void sendNotification(String docReference, String notificationType, String workspaceId, int notificationCode){
+        Log.i("com.docdoku.android.plm", "Showing notification for document " +
+                "\nNotification type: " + notificationType +
+                "\nDocument reference: " + docReference +
+                "\nNotification code: " + notificationCode +
+                "\nWorkspace id: " + workspaceId);
         Intent notificationIntent = new Intent(this, NotificationService.class);
         notificationIntent.putExtra("docReference", docReference);
         notificationIntent.putExtra("workspaceId", workspaceId);
@@ -53,7 +72,7 @@ public class GCMIntentService extends IntentService {
                 .setVibrate(new long[]{0, VIBRATION_DURATION_MILLIS})
                 .setContentIntent(pendingIntent)
                 .build();
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(notificationCode, notification);
     }
 
     private String formatNotificationType(String notificationType){

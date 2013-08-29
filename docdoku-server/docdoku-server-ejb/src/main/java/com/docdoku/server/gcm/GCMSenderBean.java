@@ -64,6 +64,7 @@ public class GCMSenderBean implements IGCMSenderLocal {
             data.put("documentMasterId",documentMaster.getId());
             data.put("documentMasterVersion",documentMaster.getVersion());
             data.put("documentMasterIteration", documentMaster.getLastIteration().getIteration());
+            data.put("hashCode", documentMaster.hashCode());
             LOGGER.info("gcm Sender : Sending state notification for the document " + documentMaster.getLastIteration());
             sendMessage(data,gcmAccount);
         } catch (JSONException e) {
@@ -80,6 +81,7 @@ public class GCMSenderBean implements IGCMSenderLocal {
             data.put("documentMasterId",documentMaster.getId());
             data.put("documentMasterVersion",documentMaster.getVersion());
             data.put("documentMasterIteration",documentMaster.getLastIteration().getIteration());
+            data.put("hashCode", documentMaster.hashCode());
             LOGGER.info("gcm Sender : Sending iteration notification for the document " + documentMaster.getLastIteration());
             sendMessage(data,gcmAccount);
         } catch (JSONException e) {
