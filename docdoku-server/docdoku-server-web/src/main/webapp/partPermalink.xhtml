@@ -202,7 +202,7 @@
                                         },
                                         urlArgs:"v=${BUILD_NUMBER}"
                                     });
-                                    require(["permalink_cad_rendering"],function(Renderer){
+                                    require(["permalinkApp"],function(Renderer){
                                         new Renderer("#permalink-cad-rendering",PartGeometryPath, width, height).init();
                                     });
                                 });
