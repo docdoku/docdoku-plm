@@ -45,7 +45,7 @@ define(  [
             self.$cadInstances.append(instanceView.$el);
             instanceView.on("instance:remove",function(){
                 self.onRemoveCadInstance(instance);
-            })
+            });
         },
 
         onRemove : function(){
@@ -56,14 +56,14 @@ define(  [
 
         onRemoveCadInstance:function(instance){
             this.model.set("cadInstances", _(this.model.get("cadInstances")).without(instance));
-            this.$amount.val(parseInt(this.$amount.val())-1);
+            this.$amount.val(parseInt(this.$amount.val(),10)-1);
         },
 
         addCadInstance:function(){
             var instance = {tx:0,ty:0,tz:0,rx:0,ry:0,rz:0,positioning:"ABSOLUTE"};
             this.model.get("cadInstances").push(instance);
             this.addCadInstanceView(instance);
-            this.$amount.val(parseInt(this.$amount.val())+1);
+            this.$amount.val(parseInt(this.$amount.val(),10)+1);
         },
 
         changeNumber:function(e){

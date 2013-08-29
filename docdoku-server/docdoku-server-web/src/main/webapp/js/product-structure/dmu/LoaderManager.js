@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global sceneManager, ColladaLoader2*/
 define(function() {
 
     var LoaderManager = function() {
@@ -8,13 +8,14 @@ define(function() {
     };
 
     function getMeshes(collada,geometries){
-        if(!collada) return;
-        _.each(collada.children,function(child){
-            if(child instanceof THREE.Mesh && child.geometry){
-                geometries.push(child.geometry);
-            }
-            getMeshes(child,geometries)
-        });
+        if(collada){
+            _.each(collada.children,function(child){
+                if(child instanceof THREE.Mesh && child.geometry){
+                    geometries.push(child.geometry);
+                }
+                getMeshes(child,geometries);
+            });
+        }
     }
 
     LoaderManager.prototype = {

@@ -1,6 +1,6 @@
 /*global sceneManager,Instance*/
 define([
-    "../views/marker_create_modal_view",
+    "views/marker_create_modal_view",
     "views/progress_bar_view",
     "views/blocker_view",
     "dmu/LoaderManager"
@@ -407,7 +407,7 @@ define([
 
         initLayerManager: function() {
             var self = this;
-            require(["LayerManager"], function(LayerManager) {
+            require(["dmu/LayerManager"], function(LayerManager) {
 
                 if (self.stateControl == self.STATECONTROL.PLC) {
                     self.layerManager = new LayerManager(self.scene, self.controls.getObject(), self.renderer, self.controls, self.$container);
@@ -727,13 +727,13 @@ define([
                     (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
                     (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
                     (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
-                )
+                );
             }
 
             if(this.explosionCoeff != 0){
-                mesh.translateX(mesh.geometry.boundingBox.centroid.x * this.explosionCoeff)
-                mesh.translateY(mesh.geometry.boundingBox.centroid.y * this.explosionCoeff)
-                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * this.explosionCoeff)
+                mesh.translateX(mesh.geometry.boundingBox.centroid.x * this.explosionCoeff);
+                mesh.translateY(mesh.geometry.boundingBox.centroid.y * this.explosionCoeff);
+                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * this.explosionCoeff);
             }
 
             mesh.updateMatrix();
@@ -759,9 +759,9 @@ define([
 
                     // Translate instance
                     if(self.explosionCoeff != 0){
-                        mesh.translateX(mesh.geometry.boundingBox.centroid.x * self.explosionCoeff)
-                        mesh.translateY(mesh.geometry.boundingBox.centroid.y * self.explosionCoeff)
-                        mesh.translateZ(mesh.geometry.boundingBox.centroid.z * self.explosionCoeff)
+                        mesh.translateX(mesh.geometry.boundingBox.centroid.x * self.explosionCoeff);
+                        mesh.translateY(mesh.geometry.boundingBox.centroid.y * self.explosionCoeff);
+                        mesh.translateZ(mesh.geometry.boundingBox.centroid.z * self.explosionCoeff);
                     }
 
                     mesh.updateMatrix();
