@@ -73,7 +73,7 @@
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".WelcomeScreen"/>
 
-        <receiver android:name=".GcmBroadcastReceiver"
+        <receiver android:name=".GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />

@@ -20,7 +20,7 @@ import org.json.JSONObject;
 /**
  * @author: martindevillers
  */
-public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
+public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

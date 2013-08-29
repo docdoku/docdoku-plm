@@ -3,7 +3,6 @@ package com.docdoku.android.plm.client;
 import android.app.*;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -52,7 +51,7 @@ public class GCMIntentService extends IntentService {
         sendNotification(docId + "-" + docVersion, notificationType, workspaceId, notificationCode);
 
         // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GcmBroadcastReceiver.completeWakefulIntent(intent);
+        GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     private void sendNotification(String docReference, String notificationType, String workspaceId, int notificationCode){
@@ -73,6 +72,7 @@ public class GCMIntentService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .build();
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(notificationCode, notification);
+        stopSelf();
     }
 
     private String formatNotificationType(String notificationType){
