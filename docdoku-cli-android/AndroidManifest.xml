@@ -81,5 +81,6 @@
             </intent-filter>
         </receiver>
         <service android:name=".GCMIntentService"/>
+        <service android:name=".NotificationService"/>
     </application>
 </manifest>

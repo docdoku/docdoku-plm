@@ -63,9 +63,9 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     public static final String PREFERENCE_KEY_AUTO_CONNECT = "auto_connect";
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
 
-    private static final String PREFERENCE_KEY_GCM_ID = "GCM id";
-    private static final String PREFERENCE_KEY_GCM_REGISTRATION_VERSION = "GCM version";
-    private static final String PREFERENCE_KEY_GCM_EXPIRATION_DATE = "GCM expiration";
+    private static final String PREFERENCE_KEY_GCM_ID = "gcm id";
+    private static final String PREFERENCE_KEY_GCM_REGISTRATION_VERSION = "gcm version";
+    private static final String PREFERENCE_KEY_GCM_EXPIRATION_DATE = "gcm expiration";
     private static final String SENDER_ID = "263093437022"; //See Google API Console to set Id
     private static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7; //Default lifespan (7 days) of a reservation until it is considered expired.
 
@@ -116,21 +116,21 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
 
     private void getGCMId() {
         gcmId = preferences.getString(PREFERENCE_KEY_GCM_ID, "");
-        Log.i("com.docdoku.android.plm", "Looking for GCM Id...");
+        Log.i("com.docdoku.android.plm", "Looking for gcm Id...");
         if (gcmId.length() > 0){
             try {
                 if (isGCMIdExpired() || isGCMIdPreviousVersion()){
-                    Log.i("com.docdoku.android.plm", "GCM Id belonged to previoud app version or was expired");
+                    Log.i("com.docdoku.android.plm", "gcm Id belonged to previoud app version or was expired");
                     getNewGCMId();
                 }else{
-                    Log.i("com.docdoku.android.plm", "GCM Id found! " + gcmId);
+                    Log.i("com.docdoku.android.plm", "gcm Id found! " + gcmId);
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e("com.docdoku.android.plm", "Could not get package name");
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }else{
-            Log.i("com.docdoku.android.plm", "No GCM Id was found in storage");
+            Log.i("com.docdoku.android.plm", "No gcm Id was found in storage");
             getNewGCMId();
         }
     }
@@ -153,19 +153,19 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                 GoogleCloudMessaging googleCloudMessaging = GoogleCloudMessaging.getInstance(ConnectionActivity.this);
                 try {
                     String registrationId = googleCloudMessaging.register(SENDER_ID);
-                    Log.i("com.docdoku.android.plm", "GCM Id obtained: " + registrationId);
-                    //TODO: Send the GCM Id to server for transmitting
+                    Log.i("com.docdoku.android.plm", "gcm Id obtained: " + registrationId);
+                    //TODO: Send the gcm Id to server for transmitting
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString(PREFERENCE_KEY_GCM_ID, registrationId);
                     editor.putInt(PREFERENCE_KEY_GCM_REGISTRATION_VERSION, getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
                     editor.putLong(PREFERENCE_KEY_GCM_EXPIRATION_DATE, System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS);
                     editor.commit();
                 } catch (IOException e) {
-                    Log.e("com.docdoku.android.plm", "IOException when registering for GCM Id");
+                    Log.e("com.docdoku.android.plm", "IOException when registering for gcm Id");
                     Log.e("com.docdoku.android.plm", "Exception message: " + e.getMessage());
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 } catch (PackageManager.NameNotFoundException e) {
-                    Log.e("com.docdoku.android.plm", "Exception when trying to retrieve app version corresponding to new GCM Id");
+                    Log.e("com.docdoku.android.plm", "Exception when trying to retrieve app version corresponding to new gcm Id");
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
