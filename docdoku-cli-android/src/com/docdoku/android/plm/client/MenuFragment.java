@@ -50,6 +50,7 @@ import java.util.Set;
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
+    private static final String PREFERENCES_WORKSPACES = "MenuFragment";
     public static final String PREFERENCE_KEY_WORKSPACE = "workspace";
     private static final String PREFERENCE_KEY_DOWNLOADED_WORKSPACES = "downloaded workspaces";
 
@@ -68,7 +69,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         final RadioGroup workspaceRadioGroup = (RadioGroup) view.findViewById(R.id.workspaceRadioGroup);
         if (checkForWorkspaces()){
             if (CURRENT_WORKSPACE == null){
-                SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences preferences = getActivity().getSharedPreferences(PREFERENCES_WORKSPACES, Context.MODE_PRIVATE);
                 CURRENT_WORKSPACE = preferences.getString(PREFERENCE_KEY_WORKSPACE,"");
                 if (CURRENT_WORKSPACE.equals("")){
                     CURRENT_WORKSPACE = DOWNLOADED_WORKSPACES[0];
@@ -98,7 +99,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton selectedWorkspace = (RadioButton) view.findViewById(radioGroup.getCheckedRadioButtonId());
-                SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences preferences = getActivity().getSharedPreferences(PREFERENCES_WORKSPACES, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 CURRENT_WORKSPACE = selectedWorkspace.getText().toString();
                 editor.putString(PREFERENCE_KEY_WORKSPACE, CURRENT_WORKSPACE);
@@ -122,7 +123,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
     private boolean checkForWorkspaces(){
         if (DOWNLOADED_WORKSPACES == null){
-            SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences preferences = getActivity().getSharedPreferences(PREFERENCES_WORKSPACES, Context.MODE_PRIVATE);
             Set<String> workspacesSet = preferences.getStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, new HashSet<String>());
             DOWNLOADED_WORKSPACES = new String[workspacesSet.size()];
             Iterator<String> iterator = workspacesSet.iterator();
@@ -179,8 +180,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public static void setDOWNLOADED_WORKSPACES(String[] setWorkspaces, SharedPreferences preferences){
+    public static void setDOWNLOADED_WORKSPACES(String[] setWorkspaces, Context context){
         DOWNLOADED_WORKSPACES = setWorkspaces;
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_WORKSPACES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         Set<String> workspacesSet = new HashSet<String>(Arrays.asList(setWorkspaces));
         editor.putStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, workspacesSet);
