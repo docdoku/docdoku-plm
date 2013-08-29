@@ -859,10 +859,20 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         task.approve(pComment, docM.getLastIteration().getIteration(), pSignature);
         int currentStep = workflow.getCurrentStep();
 
-        User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(docM);
+        if (previousStep != currentStep){
 
-        if (previousStep != currentStep && subscribers.length != 0) {
-            mailer.sendStateNotification(subscribers, docM);
+            SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
+
+            User[] subscribers = subscriptionDAO.getStateChangeEventSubscribers(docM);
+            if (subscribers.length != 0) {
+                mailer.sendStateNotification(subscribers, docM);
+            }
+
+            GCMAccount[] gcmAccounts = subscriptionDAO.getStateChangeEventSubscribersGCMAccount(docM);
+            if (gcmAccounts.length != 0) {
+                gcmNotifier.sendStateNotification(gcmAccounts, docM);
+            }
+
         }
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
