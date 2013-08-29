@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
  */
 public class NotificationService extends Service implements HttpGetTask.HttpGetListener{
 
+    private String login;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -32,7 +34,7 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
         String workspaceId = bundle.getString("workspaceId");
 
         SharedPreferences preferences = getSharedPreferences(ConnectionActivity.PREFERENCES_APPLICATION, MODE_PRIVATE);
-        String login = preferences.getString(ConnectionActivity.PREFERENCE_KEY_USERNAME, "");
+        login = preferences.getString(ConnectionActivity.PREFERENCE_KEY_USERNAME, "");
         String password = preferences.getString(ConnectionActivity.PREFERENCE_KEY_PASSWORD, "");
         String serverUrl = preferences.getString(ConnectionActivity.PREFERENCE_KEY_SERVER_URL, "");
         String host = ConnectionActivity.extractHostFromUrl(serverUrl);
@@ -51,6 +53,7 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
     public void onHttpGetResult(String result) {
         Log.i("com.docdoku.android.plm", "Downloaded document that caused a notification");
         try {
+            SimpleActionBarActivity.currentUserLogin = login;
             JSONObject documentJson = new JSONObject(result);
             Document document = new Document(documentJson.getString("id"));
             document.updateFromJSON(documentJson, getResources());

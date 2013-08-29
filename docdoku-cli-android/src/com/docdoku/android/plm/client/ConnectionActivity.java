@@ -321,7 +321,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
             } catch (JSONException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            SearchActionBarActivity.currentUserLogin = username;
             SimpleActionBarActivity.currentUserLogin = username;
             try{
                 JSONArray workspaceJSON = new JSONArray(result);
