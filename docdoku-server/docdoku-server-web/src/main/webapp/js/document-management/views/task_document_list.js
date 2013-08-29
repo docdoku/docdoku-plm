@@ -47,7 +47,7 @@ define([
         rendered:function(){
             ContentDocumentListView.prototype.rendered.apply(this, arguments);
             var filter = this.options.filter || "all";
-            this.$("button.filter[value="+filter+"]").addClass("active")
+            this.$("button.filter[value="+filter+"]").addClass("active");
         }
     });
 	return TaskDocumentListView;
