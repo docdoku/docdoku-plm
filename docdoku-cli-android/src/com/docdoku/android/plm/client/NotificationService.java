@@ -43,7 +43,7 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
             Log.e("com.docdoku.android.plm", "UnsupportedEncodingException in NotificationService");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return i;
+        return START_NOT_STICKY;
     }
 
     @Override
