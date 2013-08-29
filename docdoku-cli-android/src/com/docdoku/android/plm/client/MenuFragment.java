@@ -125,14 +125,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if (DOWNLOADED_WORKSPACES == null){
             SharedPreferences preferences = getActivity().getSharedPreferences(PREFERENCES_WORKSPACES, Context.MODE_PRIVATE);
             Set<String> workspacesSet = preferences.getStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, new HashSet<String>());
-            DOWNLOADED_WORKSPACES = new String[workspacesSet.size()];
-            Iterator<String> iterator = workspacesSet.iterator();
-            int i = 0;
-            while (iterator.hasNext()){
-                String workspace = iterator.next();
-                DOWNLOADED_WORKSPACES[i] = workspace;
-                i++;
-            }
+            String[] workspaceArray = workspacesSet.toArray(new String[0]);
+            Arrays.sort(workspaceArray);
+            DOWNLOADED_WORKSPACES = workspaceArray;
         }
         if (DOWNLOADED_WORKSPACES.length == 0){
             if (expandRadioButtons != null){
