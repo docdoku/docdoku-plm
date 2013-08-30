@@ -64,6 +64,16 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         return null;
     }
 
+    protected String getCurrentUserName(){
+        try{
+            return Session.getSession(this).getUserName();
+        } catch (Session.SessionLoadException e) {
+            Log.e("com.docdoku.android.plm", "Unable to get current user login because no session was found");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
+    }
+
     @Override
     public void onResume(){
         super.onResume();

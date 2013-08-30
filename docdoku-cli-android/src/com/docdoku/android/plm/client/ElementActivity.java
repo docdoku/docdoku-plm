@@ -98,7 +98,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         checkInOutButton.setText(R.string.checkin);
         Calendar c = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-        element.setCheckOutInformation(getCurrentUserLogin(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
+        element.setCheckOutInformation(getCurrentUserName(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +171,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                 setElementCheckedIn();
                 Toast.makeText(this, R.string.checkInSuccessful, Toast.LENGTH_SHORT).show();
                 SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserLogin(), dateFormat.format(Calendar.getInstance().getTime()));
+                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserName(), dateFormat.format(Calendar.getInstance().getTime()));
             }
         }
         else{
