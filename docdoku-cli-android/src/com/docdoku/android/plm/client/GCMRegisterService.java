@@ -46,7 +46,7 @@ public class GCMRegisterService extends Service {
                 getGCMId();
                 break;
             case ACTION_ERASE_ID:
-                sendGCMId(null);
+                sendGCMId("");
                 break;
             default:
                 Log.w("com.docdoku.android.plm", "No code provided for GCM Registration service");

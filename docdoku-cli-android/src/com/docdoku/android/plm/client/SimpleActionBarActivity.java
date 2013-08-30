@@ -112,7 +112,10 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(getApplicationContext(), ConnectionActivity.class);
+                        Intent GCMLogoutIntent = new Intent(SimpleActionBarActivity.this, GCMRegisterService.class);
+                        GCMLogoutIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_ERASE_ID);
+                        startService(GCMLogoutIntent);
+                        Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
                         intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
                         startActivity(intent);
                         }
