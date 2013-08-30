@@ -61,7 +61,7 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
             Intent intent = new Intent(this, ConnectionActivity.class);
             intent.putExtra(ConnectionActivity.INTENT_KEY_PENDING_INTENT, pendingIntent);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent)
+            startActivity(intent);
             stopSelf();
         } catch (JSONException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
