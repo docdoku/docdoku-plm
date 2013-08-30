@@ -71,6 +71,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         setContentView(R.layout.activity_connection);
 
         rememberId = (CheckBox) findViewById(R.id.rememberID);
+        rememberId.setChecked(true);
 
         Intent intent = getIntent();
         boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
