@@ -98,6 +98,10 @@ public final class Session {
         return session;
     }
 
+    public void setUserName(String userName){
+        this.userName = userName;
+    }
+
     public void setDownloadedWorkspaces(Context context, String[] downloadedWorkspaces) {
         this.downloadedWorkspaces = downloadedWorkspaces;
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);

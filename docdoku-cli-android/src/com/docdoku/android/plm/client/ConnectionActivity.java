@@ -226,6 +226,18 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                     Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
                 session.setDownloadedWorkspaces(this, workspaceArray);
+                new HttpGetTask(new HttpGetTask.HttpGetListener() {
+                    @Override
+                    public void onHttpGetResult(String result) {
+                        try {
+                            JSONObject userJSON = new JSONObject(result);
+                            session.setUserName(userJSON.getString("name"));
+                        } catch (JSONException e) {
+                            Log.w("com.docdoku.android.plm", "Unable to read json containing current user's name");
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
+                }).execute("/api/accounts/me");
                 if (autoConnect){
                     Intent GCMRegisterIntent = new Intent(this, GCMRegisterService.class);
                     GCMRegisterIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_SEND_ID);
