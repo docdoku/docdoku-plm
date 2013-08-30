@@ -110,14 +110,21 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                     .setMessage(getResources().getString(R.string.confirmDisconnect))
                     .setNegativeButton(getResources().getString(R.string.no), null)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent GCMLogoutIntent = new Intent(SimpleActionBarActivity.this, GCMRegisterService.class);
-                        GCMLogoutIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_ERASE_ID);
-                        startService(GCMLogoutIntent);
-                        Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
-                        intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
-                        startActivity(intent);
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            try {
+                                if (Session.getSession(SimpleActionBarActivity.this).isPermanentSession()) {
+                                    Intent GCMLogoutIntent = new Intent(SimpleActionBarActivity.this, GCMRegisterService.class);
+                                    GCMLogoutIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_ERASE_ID);
+                                    startService(GCMLogoutIntent);
+                                }
+                            } catch (Session.SessionLoadException e) {
+                                Log.w("com.docdoku.android.plm", "Could not remove gcm id from server because session information was unavailable");
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                            Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
+                            intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
+                            startActivity(intent);
                         }
                     })
                     .create().show();

@@ -25,6 +25,7 @@ public final class Session {
 
     private static Session session;
 
+    boolean permanentSession;
     private String userName;
     private String userLogin;
     private String password;
@@ -34,7 +35,8 @@ public final class Session {
     private String[] downloadedWorkspaces;
     private String currentWorkspace;
 
-    private Session(String userName, String userLogin, String password, String host, int port){
+    private Session(boolean permanentSession, String userName, String userLogin, String password, String host, int port){
+        this.permanentSession = permanentSession;
         this.userName = userName;
         this.userLogin = userLogin;
         this.password = password;
@@ -45,10 +47,10 @@ public final class Session {
     public static Session initSession(Context context, boolean autoConnect, String userName, String userLogin, String password, String url){
         String host = extractHostFromUrl(url);
         int port = extractPortFromUrl(url);
-        session = new Session(userName, userLogin, password, host, port);
+        session = new Session(autoConnect, userName, userLogin, password, host, port);
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
         preferences.edit()
-                .putBoolean(PREFERENCE_KEY_AUTO_CONNECT, true)
+                .putBoolean(PREFERENCE_KEY_AUTO_CONNECT, autoConnect)
                 .putString(PREFERENCE_KEY_USER_NAME, userName)
                 .putString(PREFERENCE_KEY_USER_LOGIN, userLogin)
                 .putString(PREFERENCE_KEY_PASSWORD, password)
@@ -67,7 +69,7 @@ public final class Session {
             String password = preferences.getString(PREFERENCE_KEY_PASSWORD, null);
             String host = preferences.getString(PREFERENCE_KEY_SERVER_HOST, null);
             int port = preferences.getInt(PREFERENCE_KEY_SERVER_PORT, -1);
-            session = new Session(userName, userLogin, password, host, port);
+            session = new Session(true, userName, userLogin, password, host, port);
             return true;
         }else{
             return false;
@@ -111,6 +113,10 @@ public final class Session {
         preferences.edit()
             .putString(PREFERENCE_KEY_CURRENT_WORKSPACE, currentWorkspace)
             .commit();
+    }
+
+    public boolean isPermanentSession(){
+        return permanentSession;
     }
 
     public String getUserName() {
