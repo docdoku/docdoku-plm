@@ -31,6 +31,7 @@ import java.util.NoSuchElementException;
  * @author: martindevillers
  */
 public class NavigationHistory {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.NavigationHistory";
 
     private static final int NAVIGATION_HISTORY_MAX_SIZE = 20;
     private static final String PREFERENCE_NAVIGATION_HISTORY_SIZE = "size";
@@ -46,7 +47,7 @@ public class NavigationHistory {
         for (int i = 0; i< size; i++){
             String key = sharedPreferences.getString(Integer.toString(i), "");
             navigationHistory.add(key);
-            Log.i("com.docdoku.android.plm.client", "Retreiving key at position " + i + ": " + key);
+            Log.i(LOG_TAG, "Retreiving key at position " + i + ": " + key);
         }
     }
 
@@ -78,7 +79,7 @@ public class NavigationHistory {
         int i = size - 1;
         while (iterator.hasNext()){
             String next = iterator.next();
-            Log.i("com.docdoku.android.plm.client", "Storing key " + next + " in preferences at position " + i);
+            Log.i(LOG_TAG, "Storing key " + next + " in preferences at position " + i);
             editor.putString(Integer.toString(i), next);
             i--;
         }

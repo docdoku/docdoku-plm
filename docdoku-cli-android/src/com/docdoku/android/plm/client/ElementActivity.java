@@ -49,6 +49,7 @@ import java.util.Calendar;
  * @author: martindevillers
  */
 public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";
 
     protected Element element;
     protected Button checkInOutButton;
@@ -120,12 +121,12 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                 public void onClick(DialogInterface dialogInterface, int i) {
                     iterationNote = iterationNoteField.getText().toString();
                     if (iterationNote.length()>0){
-                        Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
+                        Log.i(LOG_TAG, "Iteration note for document checkin: " + iterationNote);
                         HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                             @Override
                             public void onHttpPutResult(boolean result, String responseContent) {
                                 if (result){
-                                    Log.i("com.docdoku.android.plm", "Checking out document after successfully uploading iteration");
+                                    Log.i(LOG_TAG, "Checking out document after successfully uploading iteration");
                                     new HttpPutTask(ElementActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + element.getUrlPath()+ "/checkin/");
                                 } else{
                                     ElementActivity.this.onHttpPutResult(false, "");
@@ -134,7 +135,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                         };
                         new HttpPutTask(httpPutListener).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/iterations/" + element.getIterationNumber(), element.getLastIterationJSONWithUpdateNote(iterationNote).toString());
                     }else {
-                        Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
+                        Log.i(LOG_TAG, "No iteration note was entered for document checkin");
                         new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkin/");
                     }
                 }
@@ -155,7 +156,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      */
     @Override
     public void onHttpPutResult(boolean result, String responseContent) {
-        Log.i("com.docdoku.android.plm.client", "Result of checkin/checkout: " + result);
+        Log.i(LOG_TAG, "Result of checkin/checkout: " + result);
         if (result){
             if (checkedIn){
                 setElementCheckedOutByCurrentUser();

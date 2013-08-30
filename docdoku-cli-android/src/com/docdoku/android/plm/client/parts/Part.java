@@ -36,6 +36,7 @@ import java.io.Serializable;
  * @author: Martin Devillers
  */
 public class Part extends Element implements Serializable{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.Part";
 
     private static final String JSON_KEY_PART_NAME = "name";
     private static final String JSON_KEY_PART_ITERATIONS = "partIterations";
@@ -107,7 +108,7 @@ public class Part extends Element implements Serializable{
         if (components == null){
             return 0;
         }else{
-            Log.i("com.docdoku.android.plm", "Number of components found: " + components.length);
+            Log.i(LOG_TAG, "Number of components found: " + components.length);
             return components.length;
         }
     }
@@ -133,7 +134,7 @@ public class Part extends Element implements Serializable{
             nativeCADFile = null;
         }else{
             nativeCADFile = (String) CADFile;
-            Log.i("com.docdoku.android.plm", "CAD file downloaded: " + nativeCADFile);
+            Log.i(LOG_TAG, "CAD file downloaded: " + nativeCADFile);
         }
         JSONArray componentArray = lastIteration.getJSONArray(JSON_KEY_COMPONENT_ARRAY);
         components = new Component[componentArray.length()];

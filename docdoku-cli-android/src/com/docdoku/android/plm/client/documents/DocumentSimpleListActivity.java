@@ -36,6 +36,7 @@ import java.util.ArrayList;
  * @author: Martin Devillers
  */
 public class DocumentSimpleListActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentSimpleListActivity";
 
     public static final String LIST_MODE_EXTRA = "list mode";
     public static final String SEARCH_QUERY_EXTRA = "search query";
@@ -48,7 +49,7 @@ public class DocumentSimpleListActivity extends DocumentListActivity implements 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i("com.docdoku.android.plm.client", "DocumentSimpleListActivity starting");
+        Log.i(LOG_TAG, "DocumentSimpleListActivity starting");
 
         Intent intent = getIntent();
         int listType = intent.getIntExtra(LIST_MODE_EXTRA, 0);
@@ -80,9 +81,9 @@ public class DocumentSimpleListActivity extends DocumentListActivity implements 
             }
             documentListView.setAdapter(new DocumentAdapter(docsArray));
         } catch (JSONException e) {
-            Log.e("com.docdoku.android.plm.client", "Error handling json of workspace's documents");
+            Log.e(LOG_TAG, "Error handling json of workspace's documents");
             e.printStackTrace();
-            Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+            Log.i(LOG_TAG, "Error message: " + e.getMessage());
         }
     }
 

@@ -34,6 +34,7 @@ import java.util.Date;
  * @author: martindevillers
  */
 public abstract class Element implements Serializable{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.Element";
 
     private static final String JSON_KEY_AUTHOR = "author";
     private static final String JSON_KEY_CREATION_DATE = "creationDate";
@@ -133,7 +134,7 @@ public abstract class Element implements Serializable{
             lastIteration.put(getIterationNoteJSONKey(), note);
             return lastIteration;
         } catch (JSONException e){
-            Log.e("com.docdoku.android.plm", "Failed to update iteration JSON object");
+            Log.e(LOG_TAG, "Failed to update iteration JSON object");
         }
         return null;
     }
@@ -173,7 +174,7 @@ public abstract class Element implements Serializable{
                     dateFormat.format(new Date(Long.valueOf(lastIteration.getString(JSON_KEY_ITERATION_DATE)))));
             JSONArray linkedDocuments = lastIteration.getJSONArray(JSON_KEY_LINKED_DOCUMENTS);
             String[] documents = new String[linkedDocuments.length()];
-            Log.i("com.docdoku.android.plm.client", "Number of linked documents found :" + linkedDocuments.length());
+            Log.i(LOG_TAG, "Number of linked documents found :" + linkedDocuments.length());
             for (int i = 0; i<documents.length; i++){
                 documents[i] = linkedDocuments.getJSONObject(i).getString(JSON_KEY_LINKED_DOCUMENT_ID) + "-" + linkedDocuments.getJSONObject(i).getString(JSON_KEY_LINKED_DOCUMENT_VERSION);
             }
@@ -185,9 +186,9 @@ public abstract class Element implements Serializable{
                 String attributeType = attribute.getString(JSON_KEY_ATTRIBUTE_TYPE);
                 String attributeName = attribute.getString(JSON_KEY_ATTRIBUTE_NAME);
                 String attributeValue = attribute.getString(JSON_KEY_ATTRIBUTE_VALUE);
-                Log.i("com.docdoku.android.plm", "Attribute found. \nType: " + attributeType + "\nName: " + attributeName + "\nRaw value: " + attributeValue);
+                Log.i(LOG_TAG, "Attribute found. \nType: " + attributeType + "\nName: " + attributeName + "\nRaw value: " + attributeValue);
                 if (attributeType.equals(ATTRIBUTE_DATE) && !attributeValue.equals("")){
-                    Log.i("com.docdoku.android.plm", "Attribute identified as date type");
+                    Log.i(LOG_TAG, "Attribute identified as date type");
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(resources.getString(R.string.simpleDateFormat));
                     attributes[i] = new Attribute(attributeName, simpleDateFormat.format(new Date(Long.valueOf(attributeValue))));
                 }else if(attributeType.equals(ATTRIBUTE_BOOLEAN)){

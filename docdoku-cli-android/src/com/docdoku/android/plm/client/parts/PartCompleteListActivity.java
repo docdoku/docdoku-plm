@@ -42,6 +42,7 @@ import java.util.*;
  * @author: Martin Devillers
  */
 public class PartCompleteListActivity extends PartListActivity implements HttpGetTask.HttpGetListener, LoaderManager.LoaderCallbacks<List<Part>>{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartCompleteListActivity";
 
     private static final int LOADER_ID_ALL_PARTS = 100;
 
@@ -51,7 +52,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("com.docdoku.android.plm.client", "Creating PartCompleteListActivity");
+        Log.i(LOG_TAG, "Creating PartCompleteListActivity");
 
         ((ViewGroup) loading.getParent()).removeView(loading);
 
@@ -75,7 +76,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount == totalItemCount && partAdapter.getCount() < numPartsAvailable){
-                        Log.i("com.docdoku.android.plm.client", "Loading more parts. Next page: " + numPagesDownloaded);
+                        Log.i(LOG_TAG, "Loading more parts. Next page: " + numPagesDownloaded);
                         Bundle bundle = new Bundle();
                         bundle.putInt("page", numPagesDownloaded);
                         bundle.putString("workspace", getCurrentWorkspace());
@@ -97,7 +98,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
         partAdapter.notifyDataSetChanged();
         numPagesDownloaded++;
 
-        Log.i("com.docdoku.android.plm.client", "Finished loading a page. \nNumber of parts available: " + numPartsAvailable + "; \nNumber of parts downloaded: " + partAdapter.getCount());
+        Log.i(LOG_TAG, "Finished loading a page. \nNumber of parts available: " + numPartsAvailable + "; \nNumber of parts downloaded: " + partAdapter.getCount());
         if (partAdapter.getCount() == numPartsAvailable){
             partListView.removeFooterView(footerProgressBar);
         }
@@ -116,11 +117,11 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             Bundle bundle = new Bundle();
             bundle.putInt("page", 0);
             bundle.putString("workspace", getCurrentWorkspace());
-            Log.i("com.docdoku.android.plm.client", "Loading first part page");
+            Log.i(LOG_TAG, "Loading first part page");
             getSupportLoaderManager().initLoader(LOADER_ID_ALL_PARTS + 0, bundle, this);
         } catch (NumberFormatException e) {
-            Log.e("com.docdoku.android.plm.client", "NumberFormatException: didn't correctly download_light number of pages of parts");
-            Log.e("com.docdoku.android.plm.client", "Number of pages result: " + result);
+            Log.e(LOG_TAG, "NumberFormatException: didn't correctly download_light number of pages of parts");
+            Log.e(LOG_TAG, "Number of pages result: " + result);
             e.printStackTrace();
         }
     }
@@ -146,7 +147,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
 
         @Override
         protected void onStartLoading (){
-            Log.i("com.docdoku.android.plm.client", "Starting PartLoader load for page " + startIndex/20);
+            Log.i(LOG_TAG, "Starting PartLoader load for page " + startIndex/20);
             if (downloadedParts.size() == 0){
                 asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts?start=" +  startIndex);
             } else {
@@ -163,7 +164,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
 
         @Override
         protected void onReset (){
-            Log.i("com.docdoku.android.plm.client", "Restarting PartLoader load for page " + startIndex/20);
+            Log.i(LOG_TAG, "Restarting PartLoader load for page " + startIndex/20);
             downloadedParts = new ArrayList<Part>();
             if (asyncTask != null){
                 asyncTask.cancel(false);
@@ -192,9 +193,9 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
                     downloadedParts.add(part);
                 }
             }catch (JSONException e){
-                Log.e("docdoku.DocDokuPLM", "Error handling json array of workspace's parts");
+                Log.e(LOG_TAG, "Error handling json array of workspace's parts");
                 e.printStackTrace();
-                Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+                Log.i(LOG_TAG, "Error message: " + e.getMessage());
             }
             deliverResult(downloadedParts);
         }

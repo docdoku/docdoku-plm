@@ -34,6 +34,7 @@ import com.docdoku.android.plm.client.SearchActivity;
  * @author: martindevillers
  */
 public class PartSearchActivity extends SearchActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartSearchActivity";
 
     private EditText partKey, partTitle, partVersion;
 
@@ -74,7 +75,7 @@ public class PartSearchActivity extends SearchActivity {
                     String maxDateString = Long.toString(maxDate.getTimeInMillis());
                     searchQuery += "&to="+ maxDateString;
                 }
-                Log.i("docDoku.DocDokuPLM", "Part search_light query: " + searchQuery);
+                Log.i(LOG_TAG, "Part search query: " + searchQuery);
                 Intent intent = new Intent(PartSearchActivity.this, PartSimpleListActivity.class);
                 intent.putExtra(PartSimpleListActivity.LIST_MODE_EXTRA, PartSimpleListActivity.PART_SEARCH);
                 intent.putExtra(PartSimpleListActivity.SEARCH_QUERY_EXTRA, searchQuery);

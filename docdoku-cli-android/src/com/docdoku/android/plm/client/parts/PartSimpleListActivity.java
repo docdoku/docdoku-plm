@@ -36,6 +36,7 @@ import java.util.*;
  * @author: Martin Devillers
  */
 public class PartSimpleListActivity extends PartListActivity implements HttpGetTask.HttpGetListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartSimpleListActivity";
 
     public static final String  LIST_MODE_EXTRA = "list mode";
     public static final int ALL_PARTS_LIST = 0;
@@ -75,9 +76,9 @@ public class PartSimpleListActivity extends PartListActivity implements HttpGetT
             partAdapter = new PartAdapter(partsArray);
             partListView.setAdapter(partAdapter);
         } catch (JSONException e) {
-            Log.e("docdoku.DocDokuPLM", "Error handling json of workspace's parts");
+            Log.e(LOG_TAG, "Error handling json of workspace's parts");
             e.printStackTrace();
-            Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+            Log.i(LOG_TAG, "Error message: " + e.getMessage());
         }
     }
 

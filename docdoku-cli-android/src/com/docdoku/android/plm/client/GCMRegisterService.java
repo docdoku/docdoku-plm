@@ -19,6 +19,7 @@ import java.io.IOException;
  * @author: martindevillers
  */
 public class GCMRegisterService extends Service {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMRegisterService";
 
     public static final String INTENT_KEY_ACTION = "register/unregister";
     public static final int ACTION_SEND_ID = 1;
@@ -52,7 +53,7 @@ public class GCMRegisterService extends Service {
                     sendGCMId("");
                     break;
                 default:
-                    Log.w("com.docdoku.android.plm", "No code provided for GCM Registration service");
+                    Log.w(LOG_TAG, "No code provided for GCM Registration service");
                     break;
             }
             return START_STICKY;
@@ -63,7 +64,7 @@ public class GCMRegisterService extends Service {
     private void getGCMId() {
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_GCM, MODE_PRIVATE);
         String gcmId = preferences.getString(PREFERENCE_KEY_GCM_ID, null);
-        Log.i("com.docdoku.android.plm", "Looking for gcm Id...");
+        Log.i(LOG_TAG, "Looking for gcm Id...");
         if (gcmId == null){
             Log.i("com.docdoku.android.plm", "No gcm Id was found in storage");
             getNewGCMId();
@@ -72,14 +73,14 @@ public class GCMRegisterService extends Service {
                 int gcmAppVersion = preferences.getInt(PREFERENCE_KEY_GCM_REGISTRATION_VERSION, -1);
                 long expirationTime = preferences.getLong(PREFERENCE_KEY_GCM_EXPIRATION_DATE, -1);
                 if (isGCMIdExpired(expirationTime) || isGCMIdPreviousVersion(gcmAppVersion)){
-                    Log.i("com.docdoku.android.plm", "gcm Id belonged to previoud app version or was expired");
+                    Log.i(LOG_TAG, "gcm Id belonged to previoud app version or was expired");
                     getNewGCMId();
                 }else{
-                    Log.i("com.docdoku.android.plm", "gcm Id found! " + gcmId);
+                    Log.i(LOG_TAG, "gcm Id found! " + gcmId);
                     sendGCMId(gcmId);
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                Log.e("com.docdoku.android.plm", "Could not get package name");
+                Log.e(LOG_TAG, "Could not get package name");
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
@@ -101,15 +102,15 @@ public class GCMRegisterService extends Service {
                 GoogleCloudMessaging googleCloudMessaging = GoogleCloudMessaging.getInstance(GCMRegisterService.this);
                 try {
                     String gcmId = googleCloudMessaging.register(SENDER_ID);
-                    Log.i("com.docdoku.android.plm", "gcm Id obtained: " + gcmId);
+                    Log.i(LOG_TAG, "gcm Id obtained: " + gcmId);
                     saveGCMId(gcmId);
                     sendGCMId(gcmId);
                 } catch (IOException e) {
-                    Log.e("com.docdoku.android.plm", "IOException when registering for gcm Id");
-                    Log.e("com.docdoku.android.plm", "Exception message: " + e.getMessage());
+                    Log.e(LOG_TAG, "IOException when registering for gcm Id");
+                    Log.e(LOG_TAG, "Exception message: " + e.getMessage());
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 } catch (PackageManager.NameNotFoundException e) {
-                    Log.e("com.docdoku.android.plm", "Exception when trying to retrieve app version corresponding to new gcm Id");
+                    Log.e(LOG_TAG, "Exception when trying to retrieve app version corresponding to new gcm Id");
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -127,7 +128,7 @@ public class GCMRegisterService extends Service {
     }
 
     private void sendGCMId(String gcmId){
-        Log.i("com.docdoku.android.plm", "Sending gcm id to server");
+        Log.i(LOG_TAG, "Sending gcm id to server");
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(JSON_KEY_GCM_ID, gcmId);

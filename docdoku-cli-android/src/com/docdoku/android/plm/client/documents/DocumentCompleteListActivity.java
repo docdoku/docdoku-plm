@@ -41,6 +41,7 @@ import java.util.List;
  * @author: Martin Devillers
  */
 public class DocumentCompleteListActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener, LoaderManager.LoaderCallbacks<List<Document>> {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentCompleteListActivity";
 
     private static final int LOADER_ID_ALL_DOCUMENTS = 400;
 
@@ -73,7 +74,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount == totalItemCount && documentAdapter.getCount() < numDocumentsAvailable) {
-                    Log.i("com.docdoku.android.plm.client", "Loading more parts. Next page: " + numPagesDownloaded);
+                    Log.i(LOG_TAG, "Loading more parts. Next page: " + numPagesDownloaded);
                     Bundle bundle = new Bundle();
                     bundle.putInt("page", numPagesDownloaded);
                     bundle.putString("workspace", getCurrentWorkspace());
@@ -92,11 +93,11 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
             Bundle bundle = new Bundle();
             bundle.putInt("page", 0);
             bundle.putString("workspace", getCurrentWorkspace());
-            Log.i("com.docdoku.android.plm.client", "Loading first part page");
+            Log.i(LOG_TAG, "Loading first part page");
             getSupportLoaderManager().initLoader(LOADER_ID_ALL_DOCUMENTS + 0, bundle, this);
         } catch (NumberFormatException e) {
-            Log.e("com.docdoku.android.plm.client", "NumberFormatException: didn't correctly download number of pages of documents");
-            Log.e("com.docdoku.android.plm.client", "Number of pages result: " + result);
+            Log.e(LOG_TAG, "NumberFormatException: didn't correctly download number of pages of documents");
+            Log.e(LOG_TAG, "Number of pages result: " + result);
             e.printStackTrace();
         }
     }
@@ -120,7 +121,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         documentAdapter.notifyDataSetChanged();
         numPagesDownloaded++;
 
-        Log.i("com.docdoku.android.plm.client", "Finished loading a page. \nNumber of parts available: " + numDocumentsAvailable + "; \nNumber of parts downloaded: " + documentAdapter.getCount());
+        Log.i(LOG_TAG, "Finished loading a page. \nNumber of parts available: " + numDocumentsAvailable + "; \nNumber of parts downloaded: " + documentAdapter.getCount());
         if (documentAdapter.getCount() == numDocumentsAvailable){
             documentListView.removeFooterView(footerProgressBar);
         }
@@ -147,7 +148,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
 
         @Override
         protected void onStartLoading (){
-            Log.i("com.docdoku.android.plm.client", "Starting DocumentLoader load for page " + startIndex/20);
+            Log.i(LOG_TAG, "Starting DocumentLoader load for page " + startIndex/20);
             if (downloadedParts.size() == 0){
                 asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" +  startIndex);
             } else {
@@ -164,7 +165,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
 
         @Override
         protected void onReset (){
-            Log.i("com.docdoku.android.plm.client", "Restarting DocumentLoader load for page " + startIndex/20);
+            Log.i(LOG_TAG, "Restarting DocumentLoader load for page " + startIndex/20);
             downloadedParts = new ArrayList<Document>();
             if (asyncTask != null){
                 asyncTask.cancel(false);
@@ -193,9 +194,9 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
                     downloadedParts.add(part);
                 }
             }catch (JSONException e){
-                Log.e("com.docdoku.android.plm.client", "Error handling json array of workspace's documents");
+                Log.e(LOG_TAG, "Error handling json array of workspace's documents");
                 e.printStackTrace();
-                Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+                Log.i(LOG_TAG, "Error message: " + e.getMessage());
             }
             deliverResult(downloadedParts);
         }

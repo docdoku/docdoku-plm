@@ -47,6 +47,7 @@ import java.util.List;
  * @author: martindevillers
  */
 public abstract class PartListActivity extends SearchActionBarActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartListActivity";
 
     private static final String PREFERENCE_PART_HISTORY = "part history";
 
@@ -213,9 +214,9 @@ public abstract class PartListActivity extends SearchActionBarActivity {
                         }
                         partSearchResultAdapter.notifyDataSetChanged();
                     }catch (JSONException e){
-                        Log.e("com.docdoku.android.plm.client", "Error handling json array of workspace's parts");
+                        Log.e(LOG_TAG, "Error handling json array of workspace's parts");
                         e.printStackTrace();
-                        Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
                     }
                 }
             };

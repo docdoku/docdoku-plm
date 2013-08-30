@@ -31,6 +31,7 @@ import android.widget.TextView;
  * @author: Martin Devillers
  */
 public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActionBarActivity";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,13 +52,13 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                Log.i("com.docdoku.android.plm.client", "Search query submitted: " + s);
+                Log.i(LOG_TAG, "Search query submitted: " + s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Log.i("com.docdoku.android.plm.client", "Document search query changed to: " + s);
+                Log.i(LOG_TAG, "Document search query changed to: " + s);
                 executeSearch(s);
                 return false;
             }

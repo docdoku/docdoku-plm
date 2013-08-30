@@ -56,6 +56,7 @@ import java.io.UnsupportedEncodingException;
  * @author: Martin Devillers
  */
 public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.ConnectionActivity";
 
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
     public static final String INTENT_KEY_PENDING_INTENT = "pending intent";
@@ -90,7 +91,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                 session = Session.getSession();
                 connect(session);
             } catch (Session.SessionLoadException e) {
-                Log.e("com.docdoku.android.plm", "Error: session incorrectly loaded");
+                Log.e(LOG_TAG, "Error: session incorrectly loaded");
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
@@ -108,7 +109,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
 
     private void connect(final Session session){
         if (checkInternetConnection()){
-            Log.i("com.docdoku.android.plm.client", "Showing progress dialog");
+            Log.i(LOG_TAG, "Showing progress dialog");
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setCanceledOnTouchOutside(false);
@@ -124,19 +125,19 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
             progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-                    Log.i("com.docdoku.android.plm.client", "Progress dialog shown");
+                    Log.i(LOG_TAG, "Progress dialog shown");
                     try {
-                        Log.i("com.docdoku.android.plm.client", "Attempting to connect to server for identification");
+                        Log.i(LOG_TAG, "Attempting to connect to server for identification");
                         connectionTask = new HttpGetTask(session, ConnectionActivity.this).execute("/api/accounts/workspaces");
                     } catch (UnsupportedEncodingException e) {
-                        Log.e("com.docdoku.android.plm.client","Error encoding id for server connection");
+                        Log.e(LOG_TAG,"Error encoding id for server connection");
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
             });
             progressDialog.show();
         } else {
-            Log.i("com.docdoku.android.plm.client", "No internet connection available");
+            Log.i(LOG_TAG, "No internet connection available");
             new AlertDialog.Builder(this)
                 .setMessage(R.string.noConnectionAvailable)
                 .setNegativeButton(R.string.OK, null)
@@ -148,11 +149,11 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         if (info != null){
-            Log.i("com.docdoku.android.plm.client", "Connected to network with type code: " + info.getType());
+            Log.i(LOG_TAG, "Connected to network with type code: " + info.getType());
             return info.isConnected();
         }
         else{
-            Log.i("com.docdoku.android.plm.client", "Not connected to any data network");
+            Log.i(LOG_TAG, "Not connected to any data network");
             return false;
         }
     }
@@ -206,9 +207,9 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     @Override
     public void onHttpGetResult(String result) {
         if (progressDialog != null && progressDialog.isShowing()){
-            progressDialog.dismiss(); Log.i("com.docdoku.android.plm.client", "Dismissing connection dialog");
+            progressDialog.dismiss(); Log.i(LOG_TAG, "Dismissing connection dialog");
         }else{
-            Log.i("com.docdoku.android.plm.client", "Connection dialog not showing on request result");
+            Log.i(LOG_TAG, "Connection dialog not showing on request result");
         }
         if(result == null || result.equals(HttpGetTask.ERROR_UNKNOWN) || result.equals(HttpGetTask.ERROR_HTTP_BAD_REQUEST)){
             createErrorDialog(R.string.connectionError);
@@ -223,7 +224,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                 String[] workspaceArray = new String[numWorkspaces];
                 for (int i=0; i<numWorkspaces; i++){
                     workspaceArray[i] = workspaceJSON.getJSONObject(i).getString("id");
-                    Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
+                    Log.i(LOG_TAG, "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
                 session.setDownloadedWorkspaces(this, workspaceArray);
                 new HttpGetTask(new HttpGetTask.HttpGetListener() {
@@ -233,7 +234,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                             JSONObject userJSON = new JSONObject(result);
                             session.setUserName(userJSON.getString("name"));
                         } catch (JSONException e) {
-                            Log.w("com.docdoku.android.plm", "Unable to read json containing current user's name");
+                            Log.w(LOG_TAG, "Unable to read json containing current user's name");
                             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         }
                     }
@@ -244,7 +245,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                     startService(GCMRegisterIntent);
                 }
             }catch (JSONException e) {
-                Log.e("com.docdoku.android.plm.client","Error creating workspace JSONArray from String result");
+                Log.e(LOG_TAG,"Error creating workspace JSONArray from String result");
                 e.printStackTrace();
             }
             endConnectionActivity();

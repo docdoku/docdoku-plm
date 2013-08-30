@@ -23,6 +23,7 @@ import java.util.Calendar;
  * @author: martindevillers
  */
 public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetTask.HttpGetListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActivity";
 
     protected Button author, minCreationDate, maxCreationDate;
 
@@ -84,7 +85,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
                 users.add(user);
             }
         } catch (JSONException e) {
-            Log.e("com.docdoku.android.plm.client", "Error handling json of workspace's users");
+            Log.e(LOG_TAG, "Error handling json of workspace's users");
             e.printStackTrace();
         }
     }

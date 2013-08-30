@@ -10,6 +10,7 @@ import android.util.Log;
  * @author: martindevillers
  */
 public class GCMIntentService extends IntentService {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMIntentService";
 
     private static final long VIBRATION_DURATION_MILLIS = 800;
 
@@ -27,14 +28,14 @@ public class GCMIntentService extends IntentService {
     protected void onHandleIntent(Intent intent){
         Bundle bundle = intent.getExtras();
 
-        /*Log.i("com.docdoku.android.plm", "Printing out all extras in the intent:");
+        /*Log.i(LOG_TAG, "Printing out all extras in the intent:");
         for (String key : bundle.keySet()) {
             Object value = bundle.get(key);
-            Log.i("com.docdoku.android.plm", String.format("Key: %s;  Value: %s; Type (%s)", key,
+            Log.i(LOG_TAG, String.format("Key: %s;  Value: %s; Type (%s)", key,
                     value.toString(), value.getClass().getName()));
         }*/
 
-        Log.i("com.docdoku.android.plm", "Received GCM message indicating a new iteration/state change");
+        Log.i(LOG_TAG, "Received GCM message indicating a new iteration/state change");
         String docId = bundle.getString(INTENT_KEY_DOCUMENT_ID);
         String docVersion = bundle.getString(INTENT_KEY_DOCUMENT_VERSION);
         String notificationType = bundle.getString(INTENT_KEY_NOTIFICATION_TYPE);
@@ -44,7 +45,7 @@ public class GCMIntentService extends IntentService {
         try{
             notificationCode = Integer.parseInt(docHashCode);
         }catch(NumberFormatException e){
-            Log.e("com.docdoku.android.plm", "Received hashcode for document was not an integer. Value: " + docHashCode);
+            Log.e(LOG_TAG, "Received hashcode for document was not an integer. Value: " + docHashCode);
             notificationCode = (int) (Math.random()*1000000);
         }
 
@@ -55,7 +56,7 @@ public class GCMIntentService extends IntentService {
     }
 
     private void sendNotification(String docReference, String notificationType, String workspaceId, int notificationCode){
-        Log.i("com.docdoku.android.plm", "Showing notification for document " +
+        Log.i(LOG_TAG, "Showing notification for document " +
                 "\nNotification type: " + notificationType +
                 "\nDocument reference: " + docReference +
                 "\nNotification code: " + notificationCode +

@@ -39,6 +39,7 @@ import java.util.Iterator;
  * @author: martindevillers
  */
 public class PartHistoryListActivity extends PartListActivity implements LoaderManager.LoaderCallbacks<Part> {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartHistoryListActivity";
 
     private static final int LOADER_ID_RECENT_PARTS = 200;
 
@@ -48,7 +49,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
 
         ((ViewGroup) loading.getParent()).removeView(loading);
 
-        Log.i("com.docdoku.android.plm.client", "navigation history_light size: " + navigationHistory.getSize());
+        Log.i(LOG_TAG, "navigation history_light size: " + navigationHistory.getSize());
         partsArray= new ArrayList<Part>();
         partAdapter = new PartAdapter(partsArray);
         partListView.setAdapter(partAdapter);
@@ -63,7 +64,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
             getSupportLoaderManager().initLoader(LOADER_ID_RECENT_PARTS + i, bundle, this);
             i++;
         }
-        Log.i("com.docdoku.android.plm.client", "Part history_light list size : " + partsArray.size());
+        Log.i(LOG_TAG, "Part history_light list size : " + partsArray.size());
     }
 
 /**
@@ -72,13 +73,13 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
 
     @Override
     public Loader<Part> onCreateLoader(int id, Bundle bundle) {
-        Log.i("com.docdoku.android.plm.client", "Querying information for part in history_light at position " + (id - LOADER_ID_RECENT_PARTS) + " with reference " + bundle.getString("partKey"));
+        Log.i(LOG_TAG, "Querying information for part in history_light at position " + (id - LOADER_ID_RECENT_PARTS) + " with reference " + bundle.getString("partKey"));
         return new PartLoaderByPart(this, bundle.getString("partKey"), bundle.getString("workspace"));
     }
 
     @Override
     public void onLoadFinished(Loader<Part> loader, Part part) {
-        Log.i("com.docdoku.android.plm.client", "Received information for part in history_light at position " + (loader.getId() - LOADER_ID_RECENT_PARTS) + " with reference " + part.getKey());
+        Log.i(LOG_TAG, "Received information for part in history_light at position " + (loader.getId() - LOADER_ID_RECENT_PARTS) + " with reference " + part.getKey());
         partsArray.set(loader.getId() - LOADER_ID_RECENT_PARTS, part);
         partAdapter.notifyDataSetChanged();
     }
@@ -143,9 +144,9 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
                 part = new Part(partJSON.getString("partKey"));
                 part.updateFromJSON(partJSON, getContext().getResources());
             }catch (JSONException e){
-                Log.e("docdoku.DocDokuPLM", "Error handling json object of a part");
+                Log.e(LOG_TAG, "Error handling json object of a part");
                 e.printStackTrace();
-                Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+                Log.i(LOG_TAG, "Error message: " + e.getMessage());
                 part = new Part(elementId);
             }
             deliverResult(part);

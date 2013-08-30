@@ -32,6 +32,7 @@ import java.net.*;
  * @author: Martin Devillers
  */
 public class HttpGetTask extends HttpTask<String, Void, String>{
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpGetTask";
 
     private HttpGetListener httpGetListener;
 
@@ -52,7 +53,7 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
         String result = ERROR_UNKNOWN;
         try {
             URL url = createURL(strings[0]);
-            Log.i("com.docdoku.android.plm.client","Sending HttpGet request to url: " + url);
+            Log.i(LOG_TAG,"Sending HttpGet request to url: " + url);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -60,13 +61,13 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
             conn.connect();
 
             int responseCode = conn.getResponseCode();
-            Log.i("com.docdoku.android.plm.client","Response code: " + responseCode);
+            Log.i(LOG_TAG,"Response code: " + responseCode);
             if (responseCode == 200){
-                Log.i("com.docdoku.android.plm.client", "Response headers: " + conn.getHeaderFields());
-                Log.i("com.docdoku.android.plm.client", "Response message: " + conn.getResponseMessage());
+                Log.i(LOG_TAG, "Response headers: " + conn.getHeaderFields());
+                Log.i(LOG_TAG, "Response message: " + conn.getResponseMessage());
                 InputStream in = (InputStream) conn.getContent();
                 result = inputStreamToString(in);
-                Log.i("com.docdoku.android.plm.client", "Response content: " + result);
+                Log.i(LOG_TAG, "Response content: " + result);
                 in.close();
             }else{
                 result = analyzeHttpErrorCode(responseCode);
@@ -74,27 +75,27 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
 
             conn.disconnect();
         } catch (MalformedURLException e) {
-            Log.e("com.docdoku.android.plm.client","ERROR: MalformedURLException");
+            Log.e(LOG_TAG,"ERROR: MalformedURLException");
             result = ERROR_URL;
             e.printStackTrace();
         } catch (ProtocolException e) {
-            Log.e("com.docdoku.android.plm.client","ERROR: ProtocolException");
+            Log.e(LOG_TAG,"ERROR: ProtocolException");
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm.client", "ERROR: UnsupportedEncodingException");
+            Log.e(LOG_TAG, "ERROR: UnsupportedEncodingException");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client","ERROR: IOException");
+            Log.e(LOG_TAG,"ERROR: IOException");
             e.printStackTrace();
-            Log.e("com.docdoku.android.plm.client", "Exception message: " + e.getMessage());
+            Log.e(LOG_TAG, "Exception message: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e){
-            Log.e("com.docdoku.android.plm.client", "ERROR: No Url provided for the Get query");
+            Log.e(LOG_TAG, "ERROR: No Url provided for the Get query");
             e.printStackTrace();
         } catch (URISyntaxException e) {
-            Log.e("com.docdoku.android.plm", "URISyntaxException message: " + e.getMessage());
+            Log.e(LOG_TAG, "URISyntaxException message: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }catch (NullPointerException e){
-            Log.e("com.docdoku.android.plm", "NullPointerException when connection to server");
+            Log.e(LOG_TAG, "NullPointerException when connection to server");
             e.printStackTrace();
         }
 

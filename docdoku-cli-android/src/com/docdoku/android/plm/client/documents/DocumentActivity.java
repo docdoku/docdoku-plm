@@ -51,6 +51,7 @@ import java.util.Date;
  * @author: Martin Devillers
  */
 public class DocumentActivity extends ElementActivity implements HttpPostUploadFileTask.HttpPostUploadFileListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentActivity";
 
     public static final String EXTRA_DOCUMENT = "document";
 
@@ -77,7 +78,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         document = (Document) intent.getSerializableExtra(EXTRA_DOCUMENT);
         element = document;
 
-        Log.i("com.docdoku.android.plm.client", "starting activity for document with id: " + document.getIdentification());
+        Log.i(LOG_TAG, "starting activity for document with id: " + document.getIdentification());
 
         expandableListView = (ExpandableListView) findViewById(R.id.list);
         expandableListView.addHeaderView(createHeaderView());
@@ -184,7 +185,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Log.i("docDoku.DocDokuPLM", "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
+                    Log.i(LOG_TAG, "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
                     new HttpPutTask(httpPutListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
                 }
             })
@@ -310,7 +311,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                     if (fileName.length() == 0){
                         fileName = "AndroidFile";
                     }
-                    Log.i("com.docdoku.android.plm", "Uploading file named " + fileName + " from path: " + path);
+                    Log.i(LOG_TAG, "Uploading file named " + fileName + " from path: " + path);
                     startUploadingFile(fileName, path);
                     break;
             }
@@ -527,7 +528,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 } catch (IOException e) {
                     Toast.makeText(DocumentActivity.this, R.string.documentPictureDirectoryFail, Toast.LENGTH_LONG).show();
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    Log.e("com.docdoku.android.plm", "IOException when creating file." +
+                    Log.e(LOG_TAG, "IOException when creating file." +
                             "\nError message: " + e.getMessage() +
                             "\nError cause: " + e.getCause() +
                             "\nFile path" + file.getAbsolutePath());
@@ -549,7 +550,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 } catch (IOException e) {
                     Toast.makeText(DocumentActivity.this, R.string.documentPictureDirectoryFail, Toast.LENGTH_LONG).show();
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    Log.e("com.docdoku.android.plm", "IOException when creating file." +
+                    Log.e(LOG_TAG, "IOException when creating file." +
                             "\nError message: " + e.getMessage() +
                             "\nError cause: " + e.getCause() +
                             "\nFile path" + file.getAbsolutePath());

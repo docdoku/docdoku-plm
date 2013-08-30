@@ -19,8 +19,7 @@ import java.io.UnsupportedEncodingException;
  * @author: martindevillers
  */
 public class NotificationService extends Service implements HttpGetTask.HttpGetListener{
-
-    private String login;
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.NotificationService";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -29,7 +28,7 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
 
     @Override
     public int onStartCommand(Intent intent, int i, int j){
-        Log.i("com.docdoku.android.plm", "Click on notification detected. Starting NotificationService.");
+        Log.i(LOG_TAG, "Click on notification detected. Starting NotificationService.");
         Bundle bundle = intent.getExtras();
         String docRef = bundle.getString("docReference");
         String workspaceId = bundle.getString("workspaceId");
@@ -39,10 +38,10 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
             session.setCurrentWorkspace(this, workspaceId);
             new HttpGetTask(session, this).execute("/api/workspaces/" + workspaceId + "/documents/" + docRef);
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm", "UnsupportedEncodingException in NotificationService");
+            Log.e(LOG_TAG, "UnsupportedEncodingException in NotificationService");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (Session.SessionLoadException e) {
-            Log.e("com.docdoku.android.plm", "Failed to load session to start application from notification");
+            Log.e(LOG_TAG, "Failed to load session to start application from notification");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return START_NOT_STICKY;
@@ -50,7 +49,7 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
 
     @Override
     public void onHttpGetResult(String result) {
-        Log.i("com.docdoku.android.plm", "Downloaded document that caused a notification");
+        Log.i(LOG_TAG, "Downloaded document that caused a notification");
         try {
             JSONObject documentJson = new JSONObject(result);
             Document document = new Document(documentJson.getString("id"));

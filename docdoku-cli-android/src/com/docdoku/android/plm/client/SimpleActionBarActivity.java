@@ -35,6 +35,7 @@ import android.view.*;
  * @author: Martin Devillers
  */
 public abstract class SimpleActionBarActivity extends FragmentActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.SimpleActionBarActivity";
 
     private static final String URL_API = "api/workspaces/";
 
@@ -44,7 +45,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         try {
             return Session.getSession(this).getCurrentWorkspace(this);
         } catch (Session.SessionLoadException e) {
-            Log.e("com.docdoku.android.plm", "Unable to get current workspace because no session was found");
+            Log.e(LOG_TAG, "Unable to get current workspace because no session was found");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return null;
@@ -58,7 +59,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         try{
             return Session.getSession(this).getUserLogin();
         } catch (Session.SessionLoadException e) {
-            Log.e("com.docdoku.android.plm", "Unable to get current user login because no session was found");
+            Log.e(LOG_TAG, "Unable to get current user login because no session was found");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return null;
@@ -68,7 +69,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         try{
             return Session.getSession(this).getUserName();
         } catch (Session.SessionLoadException e) {
-            Log.e("com.docdoku.android.plm", "Unable to get current user login because no session was found");
+            Log.e(LOG_TAG, "Unable to get current user login because no session was found");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return null;
@@ -129,7 +130,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                                     startService(GCMLogoutIntent);
                                 }
                             } catch (Session.SessionLoadException e) {
-                                Log.w("com.docdoku.android.plm", "Could not remove gcm id from server because session information was unavailable");
+                                Log.w(LOG_TAG, "Could not remove gcm id from server because session information was unavailable");
                                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
                             Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
@@ -140,7 +141,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                     .create().show();
                 return true;
             default:
-                Log.i("com.docdoku.android.plm.client", "Could not identify title bar button click");
+                Log.i(LOG_TAG, "Could not identify title bar button click");
                 return super.onOptionsItemSelected(item);
         }
 

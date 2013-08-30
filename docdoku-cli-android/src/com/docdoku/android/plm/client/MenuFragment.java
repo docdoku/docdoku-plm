@@ -42,6 +42,7 @@ import com.docdoku.android.plm.client.parts.PartSearchActivity;
  * @author: Martin Devillers
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.MenuFragment";
 
     protected boolean workspaceChanged = false;
 
@@ -141,7 +142,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if (activityView != null){
             activityView.setSelected(true);
         }else{
-            Log.i("com.docdoku.android.plm","Current activity did not provide a correct button id. Id provided: " + buttonId);
+            Log.i(LOG_TAG,"Current activity did not provide a correct button id. Id provided: " + buttonId);
         }
     }
 

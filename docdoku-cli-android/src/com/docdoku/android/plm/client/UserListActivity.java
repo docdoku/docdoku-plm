@@ -43,6 +43,7 @@ import java.util.Iterator;
  * @author: Martin Devillers
  */
 public class UserListActivity extends SearchActionBarActivity implements HttpGetTask.HttpGetListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.UserListActivity";
 
     private static final int INTENT_CODE_CONTACT_PICKER = 100;
 
@@ -75,7 +76,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             String address = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
             result += "\nid: " + id + ", name: " + name + ", address: " + address;
         }
-        Log.i("com.docdoku.android.plm", result);*/
+        Log.i(LOG_TAG, result);*/
 
         userListView = (ListView) findViewById(R.id.elementList);
         headerView = getLayoutInflater().inflate(R.layout.header_users, null);
@@ -83,7 +84,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             @Override
             public void onClick(View view) {
                 int numUsers = userArrayAdapter.getCount();
-                Log.i("com.docdoku.android.plm", "Current number of users in list: " + numUsers);
+                Log.i(LOG_TAG, "Current number of users in list: " + numUsers);
                 if (getNumSelectedUsers() == numUsers){
                     for (int j=0; j < numUsers; j++) {
                         userListView.setItemChecked(j, false);
@@ -101,23 +102,23 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             @Override
             public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
                 int numSelectedUsers = getNumSelectedUsers();
-                Log.i("com.docdoku.android.plm", numSelectedUsers + " users now selected");
+                Log.i(LOG_TAG, numSelectedUsers + " users now selected");
                 if (numSelectedUsers>1){
                     if (selectedUsersHavePhoneNumber()){
-                        Log.i("com.docdoku.android.plm", "Removing call option");
+                        Log.i(LOG_TAG, "Removing call option");
                         setMenu(R.menu.action_bar_users_selected, actionMode);
                     }else{
-                        Log.i("com.docdoku.android.plm", "Removing phone related options");
+                        Log.i(LOG_TAG, "Removing phone related options");
                         setMenu(R.menu.action_bar_users_selected_nonexistent, actionMode);
                     }
                 }else {
                     User selectedUser = getSelectedUser();
                     if (selectedUser != null){
                         if (selectedUser.existsOnPhone()){
-                            Log.i("com.docdoku.android.plm", "Adding call option");
+                            Log.i(LOG_TAG, "Adding call option");
                             setMenu(R.menu.action_bar_user_selected, actionMode);
                         }else{
-                            Log.i("com.docdoku.android.plm", "Adding create user option");
+                            Log.i(LOG_TAG, "Adding create user option");
                             setMenu(R.menu.action_bar_user_selected_nonexistent, actionMode);
                         }
                     }
@@ -157,7 +158,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
                                 .setItems(phoneNumbers, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        Log.i("com.docdoku.android.plm", "Calling phone number: " + phoneNumbers[i]);
+                                        Log.i(LOG_TAG, "Calling phone number: " + phoneNumbers[i]);
                                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumbers[i]));
                                         startActivity(intent);
                                     }
@@ -213,12 +214,12 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
-        Log.i("com.docdoku.android.plm", "onActivityResult called with request code " + reqCode + " and result code " + resCode);
+        Log.i(LOG_TAG, "onActivityResult called with request code " + reqCode + " and result code " + resCode);
         if (resCode == RESULT_OK) {
             switch (reqCode){
             case INTENT_CODE_CONTACT_PICKER:
                 Uri result = data.getData();
-                Log.i("com.docdoku.android.plm", "Contact Uri: " + result.toString());
+                Log.i(LOG_TAG, "Contact Uri: " + result.toString());
                 int id = Integer.parseInt(result.getLastPathSegment());
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(ContactsContract.Data.RAW_CONTACT_ID, id);
@@ -312,7 +313,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
                 return (User) userArrayAdapter.getItem(checked.keyAt(i));
             }
         }
-        Log.i("com.docdoku.android.plm", "Internal error: couldn't find a selected user");
+        Log.i(LOG_TAG, "Internal error: couldn't find a selected user");
         return null;
     }
 
@@ -338,7 +339,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             userArrayAdapter = new UserArrayAdapter(userArray);
             userListView.setAdapter(userArrayAdapter);
         } catch (JSONException e) {
-            Log.e("docdoku.DocDokuPLM", "Error handling json of workspace's users");
+            Log.e(LOG_TAG, "Error handling json of workspace's users");
             e.printStackTrace();
         }
     }
@@ -362,7 +363,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
                 result += "\nPhone: " + phoneNumber + ", Type: " + phoneType;
                 user.addPhoneNumber(phoneNumber, phoneType);
             }
-            Log.i("com.docdoku.android.plm", result);
+            Log.i(LOG_TAG, result);
         }
     }
 
@@ -431,7 +432,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
     @Override
     protected void executeSearch(String query) {
         if (query.length()>0){
-            Log.i("com.docdoku.android.plm", "User seach query: " + query);
+            Log.i(LOG_TAG, "User seach query: " + query);
             ArrayList<User> searchResultUsers =  searchUsers(query);
             UserArrayAdapter searchResultAdapter = new UserArrayAdapter(searchResultUsers);
             userListView.setAdapter(searchResultAdapter);

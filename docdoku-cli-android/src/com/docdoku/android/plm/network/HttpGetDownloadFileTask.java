@@ -31,6 +31,7 @@ import java.net.*;
  * @author: Martin Devillers
  */
 public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean> {
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpGetDownloadFileTask";
 
     HttpGetDownloadFileListener httpGetDownloadFileListener;
     private String fileSavePath;
@@ -47,10 +48,10 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
         String filename = strings[1];
         try {
             URL url = createURL(strings[0]);
-            Log.i("com.docdoku.android.plm.client", "Sending HttpGet request to download_light file at url: " + url);
+            Log.i(LOG_TAG, "Sending HttpGet request to download_light file at url: " + url);
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
             fileSavePath = file.getAbsolutePath();
-            Log.i("com.docdoku.android.plm.client", "Path to which file is being saved: " + fileSavePath);
+            Log.i(LOG_TAG, "Path to which file is being saved: " + fileSavePath);
             FileOutputStream outputStream = new FileOutputStream(file);
 
             conn = (HttpURLConnection) url.openConnection();
@@ -60,7 +61,7 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
             conn.connect();
-            Log.i("com.docdoku.android.plm.client", "Response code: " + conn.getResponseCode());
+            Log.i(LOG_TAG, "Response code: " + conn.getResponseCode());
 
             InputStream inputStream = conn.getInputStream();
             int totalSize = conn.getContentLength();
@@ -78,17 +79,17 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
             inputStream.close();
             result = (responseCode == 200);
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException in file download");
+            Log.e(LOG_TAG,"UnsupportedEncodingException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (ProtocolException e) {
-            Log.e("com.docdoku.android.plm.client","ProtocolException in file download");
+            Log.e(LOG_TAG,"ProtocolException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (MalformedURLException e) {
-            Log.e("com.docdoku.android.plm.client","MalformedURLException in file download");
+            Log.e(LOG_TAG,"MalformedURLException in file download");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client","IOException in file download");
-            Log.e("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+            Log.e(LOG_TAG,"IOException in file download");
+            Log.e(LOG_TAG, "Error message: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (URISyntaxException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

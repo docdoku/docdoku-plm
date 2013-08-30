@@ -32,6 +32,7 @@ import java.net.URL;
  * @author: martindevillers
  */
 public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpPostUploadFileTask";
 
     private final static int CHUNK_SIZE = 1024*8;
     private final static int BUFFER_CAPACITY = 1024*32;
@@ -54,7 +55,7 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
             String filePath = strings[1];
 
             URL url = createURL(strings[0]);
-            Log.i("com.docdoku.android.plm.client", "Sending HttpPost request to upload file at from path: " + filePath + " to Url: "+ url);
+            Log.i(LOG_TAG, "Sending HttpPost request to upload file at from path: " + filePath + " to Url: "+ url);
             File file = new File(filePath);
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
@@ -94,19 +95,19 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
             conn.disconnect();
 
             result = (responseCode == 200);
-            Log.i("com.docdoku.android.plm.client", "HttpPostUploadFileTask Response code: " + responseCode);
+            Log.i(LOG_TAG, "HttpPostUploadFileTask Response code: " + responseCode);
         } catch (ArrayIndexOutOfBoundsException e){
-            Log.e("com.docdoku.android.plm.client","ArrayIndexOutOfBoundsException: not enough arguments passed to upload file");
+            Log.e(LOG_TAG,"ArrayIndexOutOfBoundsException: not enough arguments passed to upload file");
             e.printStackTrace();
         } catch (MalformedURLException e) {
-            Log.e("com.docdoku.android.plm.client","MalformedURLException: failed to upload file");
+            Log.e(LOG_TAG,"MalformedURLException: failed to upload file");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm.client","UnsupportedEncodingException: failed to upload file");
+            Log.e(LOG_TAG,"UnsupportedEncodingException: failed to upload file");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client","IOException: failed to upload file");
-            Log.e("com.docdoku.android.plm.client","IOException message: " + e.getMessage());
+            Log.e(LOG_TAG,"IOException: failed to upload file");
+            Log.e(LOG_TAG,"IOException message: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (URISyntaxException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

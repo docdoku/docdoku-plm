@@ -12,6 +12,7 @@ import java.util.Set;
  * @author: martindevillers
  */
 public final class Session {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.Session";
 
     private static final String PREFERENCES_SESSION = "session";
     private static final String PREFERENCE_KEY_USER_NAME = "user name";
@@ -145,14 +146,14 @@ public final class Session {
 
     public String[] getDownloadedWorkspaces(Context context) {
         if (downloadedWorkspaces == null){
-            Log.i("com.docdoku.android.plm", "Loading downloaded workspaces from preferences");
+            Log.i(LOG_TAG, "Loading downloaded workspaces from preferences");
             SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
             Set<String> workspaceSet = preferences.getStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, null);
             try {
                 downloadedWorkspaces = workspaceSet.toArray(new String[0]);
                 Arrays.sort(downloadedWorkspaces);
             }catch (NullPointerException e){
-                Log.w("com.docdoku.android.plm", "No downloaded workspaces found in preferences");
+                Log.w(LOG_TAG, "No downloaded workspaces found in preferences");
             }
 
         }
@@ -161,19 +162,19 @@ public final class Session {
 
     public String getCurrentWorkspace(Context context) {
         if (currentWorkspace == null){
-            Log.i("com.docdoku.android.plm", "Loading current workspace from preferences");
+            Log.i(LOG_TAG, "Loading current workspace from preferences");
             SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
             currentWorkspace = preferences.getString(PREFERENCE_KEY_CURRENT_WORKSPACE, null);
             if (currentWorkspace == null){
-                Log.i("com.docdoku.android.plm", "No current workspace found in preferences");
+                Log.i(LOG_TAG, "No current workspace found in preferences");
                 try{
                     if (downloadedWorkspaces == null){
                         getDownloadedWorkspaces(context);
                     }
-                    Log.i("com.docdoku.android.plm", "Setting current workspace as default");
+                    Log.i(LOG_TAG, "Setting current workspace as default");
                     currentWorkspace = downloadedWorkspaces[0];
                 }catch (ArrayIndexOutOfBoundsException e){
-                    Log.w("com.docdoku.android.plm", "No workspaces downloaded, unable to set current workspace as default");
+                    Log.w(LOG_TAG, "No workspaces downloaded, unable to set current workspace as default");
                 }
             }
         }
@@ -207,11 +208,11 @@ public final class Session {
             if (semicolonIndex != -1){
                 String portString = finalUrl.substring(semicolonIndex+1);
                 int port = Integer.parseInt(portString);
-                Log.i("com.docdoku.android.plm", "Extracted port from Url: " + port);
+                Log.i(LOG_TAG, "Extracted port from Url: " + port);
                 try{
                     return Integer.parseInt(portString);
                 }catch(NumberFormatException e){
-                    Log.w("com.docdoku.android.plm", "Error reading port number");
+                    Log.w(LOG_TAG, "Error reading port number");
                 }
             }
         }

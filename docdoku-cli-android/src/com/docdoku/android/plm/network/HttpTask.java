@@ -11,6 +11,7 @@ import java.net.*;
  * @author: martindevillers
  */
 public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpTask";
 
     public static final String ERROR_UNKNOWN = "Connection Error";
     public static final String ERROR_URL = "Url error";
@@ -26,10 +27,10 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
 
     protected HttpTask(){
         if (id == null || host == null){
-            Log.e("com.docdoku.android.plm", "Server connection information is missing.");
+            Log.e(LOG_TAG, "Server connection information is missing.");
             //TODO recuperate server connection information
         }else{
-            Log.i("com.docdoku.android.plm", "All the server connection information is correctly available");
+            Log.i(LOG_TAG, "All the server connection information is correctly available");
         }
     }
 
@@ -37,7 +38,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
         String uriPath = path.replace(" ", "%20");
         URI uri = new URI(uriPath);
         String ASCIIPath = uri.toASCIIString();
-        Log.i("com.docdoku.android.plm", "Parameters for Http connection: " +
+        Log.i(LOG_TAG, "Parameters for Http connection: " +
                 "\n Host: " + host +
                 "\n Port: " + port +
                 "\n Path: " + path);

@@ -47,6 +47,7 @@ import java.util.List;
  * @author: martindevillers
  */
 public abstract class DocumentListActivity extends SearchActionBarActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentListActivity";
 
     private static final String PREFERENCE_DOCUMENT_HISTORY = "document history";
 
@@ -65,7 +66,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         setContentView(R.layout.activity_element_list);
 
         documentListView = (ListView) findViewById(R.id.elementList);
-        Log.i("com.docdoku.android.plm.client", "Loading navigation history from preference path: " + getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY);
+        Log.i(LOG_TAG, "Loading navigation history from preference path: " + getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY);
         navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
 
         documentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,9 +121,9 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                         }
                         documentSearchResultAdapter.notifyDataSetChanged();
                     }catch (JSONException e){
-                        Log.e("com.docdoku.android.plm.client", "Error handling json array of workspace's documents");
+                        Log.e(LOG_TAG, "Error handling json array of workspace's documents");
                         e.printStackTrace();
-                        Log.i("com.docdoku.android.plm.client", "Error message: " + e.getMessage());
+                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
                     }
                 }
             };
@@ -218,10 +219,10 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
                     lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(doc.getLastIterationDate()), doc.getLastIterationAuthorName())));
                 } catch (ParseException e) {
                     lastIteration.setText(" ");
-                    Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (ParseException)" + doc.getIdentification());
+                    Log.i(LOG_TAG, "Unable to correctly get a date for document (ParseException)" + doc.getIdentification());
                 }catch(NullPointerException e){
                     lastIteration.setText(" ");
-                    Log.i("com.docdoku.android.plm", "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
+                    Log.i(LOG_TAG, "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
                 }
             }
             return documentRowView;
