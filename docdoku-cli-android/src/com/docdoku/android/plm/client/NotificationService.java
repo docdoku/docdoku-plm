@@ -33,14 +33,9 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
         String docRef = bundle.getString("docReference");
         String workspaceId = bundle.getString("workspaceId");
 
-        SharedPreferences preferences = getSharedPreferences(ConnectionActivity.PREFERENCES_APPLICATION, MODE_PRIVATE);
-        login = preferences.getString(ConnectionActivity.PREFERENCE_KEY_USERNAME, "");
-        String password = preferences.getString(ConnectionActivity.PREFERENCE_KEY_PASSWORD, "");
-        String serverUrl = preferences.getString(ConnectionActivity.PREFERENCE_KEY_SERVER_URL, "");
-        String host = ConnectionActivity.extractHostFromUrl(serverUrl);
-        int port = ConnectionActivity.extractPortFromUrl(serverUrl);
         try {
             Session session = Session.getSession(this);
+            session.setCurrentWorkspace(this, workspaceId);
             new HttpGetTask(session, this).execute("/api/workspaces/" + workspaceId + "/documents/" + docRef);
         } catch (UnsupportedEncodingException e) {
             Log.e("com.docdoku.android.plm", "UnsupportedEncodingException in NotificationService");

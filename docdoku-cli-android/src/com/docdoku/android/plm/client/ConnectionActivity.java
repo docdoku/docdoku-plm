@@ -251,40 +251,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         finish();
     }
 
-    public static String extractHostFromUrl(String url){
-        String finalUrl = url;
-        if (finalUrl != null && finalUrl.length()>0){
-            if (finalUrl.length()>7 && finalUrl.substring(0,7).equals("http://")){
-                finalUrl = finalUrl.substring(7, finalUrl.length());
-            }
-            int semicolonIndex = finalUrl.indexOf(':');
-            if (semicolonIndex != -1){
-                finalUrl = finalUrl.substring(0, semicolonIndex);
-            }
-            if (finalUrl.charAt(finalUrl.length()-1) == '/'){
-                finalUrl = finalUrl.substring(0, finalUrl.length()-1);
-            }
-        }
-        return finalUrl;
-    }
-
-    public static int extractPortFromUrl(String url){
-        String finalUrl = url;
-        if (finalUrl != null && finalUrl.length()>0){
-            if (finalUrl.length()>7 && finalUrl.substring(0,7).equals("http://")){
-                finalUrl = finalUrl.substring(7, finalUrl.length());
-            }
-            int semicolonIndex = finalUrl.indexOf(':');
-            if (semicolonIndex != -1){
-                String portString = finalUrl.substring(semicolonIndex+1);
-                int port = Integer.parseInt(portString);
-                Log.i("com.docdoku.android.plm", "Extracted port from Url: " + port);
-                return Integer.parseInt(portString);
-            }
-        }
-        return -1;
-    }
-
     public void eraseData(){
         File dir = new File(getFilesDir().getParent() + "/shared_prefs/");
         String[] children = dir.list();
