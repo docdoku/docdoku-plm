@@ -46,9 +46,8 @@ public final class Session {
         String host = extractHostFromUrl(url);
         int port = extractPortFromUrl(url);
         session = new Session(userName, userLogin, password, host, port);
-        if (autoConnect){
-            SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
-            preferences.edit()
+        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
+        preferences.edit()
                 .putBoolean(PREFERENCE_KEY_AUTO_CONNECT, true)
                 .putString(PREFERENCE_KEY_USER_NAME, userName)
                 .putString(PREFERENCE_KEY_USER_LOGIN, userLogin)
@@ -56,7 +55,6 @@ public final class Session {
                 .putString(PREFERENCE_KEY_SERVER_HOST, host)
                 .putInt(PREFERENCE_KEY_SERVER_PORT, port)
                 .commit();
-        }
         return session;
     }
 
