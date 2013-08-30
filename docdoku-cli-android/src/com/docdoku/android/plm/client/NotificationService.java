@@ -40,9 +40,13 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
         String host = ConnectionActivity.extractHostFromUrl(serverUrl);
         int port = ConnectionActivity.extractPortFromUrl(serverUrl);
         try {
-            new HttpGetTask(host, port, login, password, this).execute("/api/workspaces/" + workspaceId + "/documents/" + docRef);
+            Session session = Session.getSession(this);
+            new HttpGetTask(session, this).execute("/api/workspaces/" + workspaceId + "/documents/" + docRef);
         } catch (UnsupportedEncodingException e) {
             Log.e("com.docdoku.android.plm", "UnsupportedEncodingException in NotificationService");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Session.SessionLoadException e) {
+            Log.e("com.docdoku.android.plm", "Failed to load session to start application from notification");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         stopSelf();
@@ -53,7 +57,6 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
     public void onHttpGetResult(String result) {
         Log.i("com.docdoku.android.plm", "Downloaded document that caused a notification");
         try {
-            SimpleActionBarActivity.currentUserLogin = login;
             JSONObject documentJson = new JSONObject(result);
             Document document = new Document(documentJson.getString("id"));
             document.updateFromJSON(documentJson, getResources());

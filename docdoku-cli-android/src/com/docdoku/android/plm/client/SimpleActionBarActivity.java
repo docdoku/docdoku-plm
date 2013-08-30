@@ -38,11 +38,16 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
 
     private static final String URL_API = "api/workspaces/";
 
-    protected static String currentUserLogin;
     private ActionBarDrawerToggle drawerToggle;
 
     protected String getCurrentWorkspace(){
-        return MenuFragment.getCurrentWorkspace();
+        try {
+            return Session.getSession(this).getCurrentWorkspace(this);
+        } catch (Session.SessionLoadException e) {
+            Log.e("com.docdoku.android.plm", "Unable to get current workspace because no session was found");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
     }
 
     protected String getUrlWorkspaceApi(){
@@ -50,7 +55,13 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     }
 
     protected String getCurrentUserLogin(){
-        return currentUserLogin;
+        try{
+            return Session.getSession(this).getUserLogin();
+        } catch (Session.SessionLoadException e) {
+            Log.e("com.docdoku.android.plm", "Unable to get current user login because no session was found");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
     }
 
     @Override

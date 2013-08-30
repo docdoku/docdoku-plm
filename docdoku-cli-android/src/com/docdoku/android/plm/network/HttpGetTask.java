@@ -22,6 +22,7 @@ package com.docdoku.android.plm.network;
 
 import android.util.Base64;
 import android.util.Log;
+import com.docdoku.android.plm.client.Session;
 
 import java.io.*;
 import java.net.*;
@@ -39,10 +40,10 @@ public class HttpGetTask extends HttpTask<String, Void, String>{
         this.httpGetListener = httpGetListener;
     }
 
-    public HttpGetTask(String host, int port, String username, String password, HttpGetListener httpGetListener) throws UnsupportedEncodingException {
-        this.host = host;
-        this.port = port;
-        id = Base64.encode((username + ":" + password).getBytes("ISO-8859-1"), Base64.DEFAULT);
+    public HttpGetTask(Session session, HttpGetListener httpGetListener) throws UnsupportedEncodingException {
+        this.host = session.getHost();
+        this.port = session.getPort();
+        id = Base64.encode((session.getUserLogin() + ":" + session.getPassword()).getBytes("ISO-8859-1"), Base64.DEFAULT);
         this.httpGetListener = httpGetListener;
     }
 

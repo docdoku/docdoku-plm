@@ -69,10 +69,10 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     private static final String SENDER_ID = "263093437022"; //See Google API Console to set Id
     private static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7; //Default lifespan (7 days) of a reservation until it is considered expired.
 
+    private Session session;
     private CheckBox rememberId;
     private SharedPreferences preferences;
     private ProgressDialog progressDialog;
-    private String username, password, serverUrl;
     private AsyncTask connectionTask;
     private String gcmId;
 
@@ -94,12 +94,13 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         }
 
         startConnection();
-        if (preferences.getBoolean(PREFERENCE_KEY_AUTO_CONNECT, false)){
-            username = preferences.getString(PREFERENCE_KEY_USERNAME, ""); ((EditText) findViewById(R.id.usernameField)).setText(username);
-            password = preferences.getString(PREFERENCE_KEY_PASSWORD, ""); ((EditText) findViewById(R.id.passwordField)).setText(password);
-            serverUrl = preferences.getString(PREFERENCE_KEY_SERVER_URL, ""); ((EditText) findViewById(R.id.urlField)).setText(serverUrl);
-
-            connect(username, password, serverUrl);
+        if (Session.loadSession(this)){
+            try {
+                session = Session.getSession();
+                connect(session);
+            } catch (Session.SessionLoadException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
 
         if (!eraseData){
@@ -178,10 +179,8 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         //BACK BUTTON DISABLED
     }
 
-    private void connect(final String username, final String password, String serverUrl){
+    private void connect(final Session session){
         if (checkInternetConnection()){
-            final String host = extractHostFromUrl(serverUrl);
-            final int port = extractPortFromUrl(serverUrl);
             Log.i("com.docdoku.android.plm.client", "Showing progress dialog");
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -201,7 +200,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                     Log.i("com.docdoku.android.plm.client", "Progress dialog shown");
                     try {
                         Log.i("com.docdoku.android.plm.client", "Attempting to connect to server for identification");
-                        connectionTask = new HttpGetTask(host, port, username, password, ConnectionActivity.this).execute("/api/accounts/workspaces");
+                        connectionTask = new HttpGetTask(session, ConnectionActivity.this).execute("/api/accounts/workspaces");
                     } catch (UnsupportedEncodingException e) {
                         Log.e("com.docdoku.android.plm.client","Error encoding id for server connection");
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -236,10 +235,12 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         connection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                username = ((EditText) findViewById(R.id.usernameField)).getText().toString();
-                password = ((EditText) findViewById(R.id.passwordField)).getText().toString();
-                serverUrl = ((EditText) findViewById(R.id.urlField)).getText().toString();
-                connect(username,password,serverUrl);
+                boolean autoConnect = rememberId.isChecked();
+                String username = ((EditText) findViewById(R.id.usernameField)).getText().toString();
+                String password = ((EditText) findViewById(R.id.passwordField)).getText().toString();
+                String serverUrl = ((EditText) findViewById(R.id.urlField)).getText().toString();
+                session = Session.initSession(ConnectionActivity.this, autoConnect, username, username, password, serverUrl);
+                connect(session);
             }
         });
     }
@@ -321,7 +322,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
             } catch (JSONException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            SimpleActionBarActivity.currentUserLogin = username;
             try{
                 JSONArray workspaceJSON = new JSONArray(result);
                 int numWorkspaces = workspaceJSON.length();
@@ -330,19 +330,10 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                     workspaceArray[i] = workspaceJSON.getJSONObject(i).getString("id");
                     Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
-                MenuFragment.setDOWNLOADED_WORKSPACES(workspaceArray, this);
+                session.setDownloadedWorkspaces(this, workspaceArray);
             }catch (JSONException e) {
                 Log.e("com.docdoku.android.plm.client","Error creating workspace JSONArray from String result");
                 e.printStackTrace();
-            }
-            if (rememberId.isChecked()){
-                Log.i("com.docdoku.android.plm.client", "Saving in memory user identification for: " + username);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(PREFERENCE_KEY_AUTO_CONNECT, true);
-                editor.putString(PREFERENCE_KEY_USERNAME, username);
-                editor.putString(PREFERENCE_KEY_PASSWORD, password);
-                editor.putString(PREFERENCE_KEY_SERVER_URL, serverUrl);
-                editor.commit();
             }
             endConnectionActivity();
         }
