@@ -395,8 +395,14 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         public View getView(final int i, View view, ViewGroup viewGroup) {
             View userRowView = inflater.inflate(R.layout.adapter_user, null);
             User user = users.get(i);
-            TextView username = (TextView) userRowView.findViewById(R.id.username);
+            final TextView username = (TextView) userRowView.findViewById(R.id.username);
             username.setText(user.getName());
+            username.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    username.setSingleLine(false);
+                }
+            });
             CheckBox checkBox = (CheckBox) userRowView.findViewById(R.id.checkBox);
             if (user.existsOnPhone()){
                 checkBox.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.user_highlighted, 0);

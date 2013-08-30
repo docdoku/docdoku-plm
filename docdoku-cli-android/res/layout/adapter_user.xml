@@ -9,10 +9,13 @@
     <TextView
         android:id="@+id/username"
         android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/checkBox"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         style="@style/Theme.AppTheme.BigTitle"
-        android:text="Username"/>
+        android:text="Username"
+        android:ellipsize="end"
+        android:singleLine="true"/>
 
     <CheckBox
             android:id="@+id/checkBox"
