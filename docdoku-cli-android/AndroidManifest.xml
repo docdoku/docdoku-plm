@@ -82,5 +82,6 @@
         </receiver>
         <service android:name=".GCMIntentService"/>
         <service android:name=".NotificationService"/>
+        <service android:name=".GCMRegisterService"/>
     </application>
 </manifest>

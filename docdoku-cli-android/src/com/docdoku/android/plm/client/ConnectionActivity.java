@@ -56,25 +56,13 @@ import java.io.UnsupportedEncodingException;
  */
 public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetListener {
 
-    public static final String PREFERENCES_APPLICATION = "DocDokuPLM";
-    public static final String PREFERENCE_KEY_USERNAME = "username";
-    public static final String PREFERENCE_KEY_PASSWORD = "password";
-    public static final String PREFERENCE_KEY_SERVER_URL = "server url";
-    public static final String PREFERENCE_KEY_AUTO_CONNECT = "auto_connect";
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
 
-    private static final String PREFERENCE_KEY_GCM_ID = "gcm id";
-    private static final String PREFERENCE_KEY_GCM_REGISTRATION_VERSION = "gcm version";
-    private static final String PREFERENCE_KEY_GCM_EXPIRATION_DATE = "gcm expiration";
-    private static final String SENDER_ID = "263093437022"; //See Google API Console to set Id
-    private static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7; //Default lifespan (7 days) of a reservation until it is considered expired.
-
     private Session session;
-    private CheckBox rememberId;
-    private SharedPreferences preferences;
     private ProgressDialog progressDialog;
     private AsyncTask connectionTask;
-    private String gcmId;
+    private CheckBox rememberId;
+    private boolean autoConnect;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,9 +71,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         setContentView(R.layout.activity_connection);
 
         rememberId = (CheckBox) findViewById(R.id.rememberID);
-        preferences = getSharedPreferences(PREFERENCES_APPLICATION, MODE_PRIVATE);
-
-        getGCMId();
 
         Intent intent = getIntent();
         boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
@@ -96,9 +81,11 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         startConnection();
         if (Session.loadSession(this)){
             try {
+                autoConnect = true;
                 session = Session.getSession();
                 connect(session);
             } catch (Session.SessionLoadException e) {
+                Log.e("com.docdoku.android.plm", "Error: session incorrectly loaded");
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
@@ -107,71 +94,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
             Intent welcomeIntent = new Intent(this, WelcomeScreen.class);
             startActivity(welcomeIntent);
         }
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-
-    }
-
-    private void getGCMId() {
-        gcmId = preferences.getString(PREFERENCE_KEY_GCM_ID, "");
-        Log.i("com.docdoku.android.plm", "Looking for gcm Id...");
-        if (gcmId.length() > 0){
-            try {
-                if (isGCMIdExpired() || isGCMIdPreviousVersion()){
-                    Log.i("com.docdoku.android.plm", "gcm Id belonged to previoud app version or was expired");
-                    getNewGCMId();
-                }else{
-                    Log.i("com.docdoku.android.plm", "gcm Id found! " + gcmId);
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.e("com.docdoku.android.plm", "Could not get package name");
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }else{
-            Log.i("com.docdoku.android.plm", "No gcm Id was found in storage");
-            getNewGCMId();
-        }
-    }
-
-    private boolean isGCMIdPreviousVersion() throws PackageManager.NameNotFoundException {
-        int currentVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-        int registeredVersion = preferences.getInt(PREFERENCE_KEY_GCM_REGISTRATION_VERSION, -1);
-        return currentVersion != registeredVersion;
-    }
-
-    private boolean isGCMIdExpired(){
-        long expirationTime = preferences.getLong(PREFERENCE_KEY_GCM_EXPIRATION_DATE, -1);
-        return System.currentTimeMillis() > expirationTime;
-    }
-
-    private void getNewGCMId(){
-        new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object... objects) {
-                GoogleCloudMessaging googleCloudMessaging = GoogleCloudMessaging.getInstance(ConnectionActivity.this);
-                try {
-                    String registrationId = googleCloudMessaging.register(SENDER_ID);
-                    Log.i("com.docdoku.android.plm", "gcm Id obtained: " + registrationId);
-                    //TODO: Send the gcm Id to server for transmitting
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(PREFERENCE_KEY_GCM_ID, registrationId);
-                    editor.putInt(PREFERENCE_KEY_GCM_REGISTRATION_VERSION, getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
-                    editor.putLong(PREFERENCE_KEY_GCM_EXPIRATION_DATE, System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS);
-                    editor.commit();
-                } catch (IOException e) {
-                    Log.e("com.docdoku.android.plm", "IOException when registering for gcm Id");
-                    Log.e("com.docdoku.android.plm", "Exception message: " + e.getMessage());
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (PackageManager.NameNotFoundException e) {
-                    Log.e("com.docdoku.android.plm", "Exception when trying to retrieve app version corresponding to new gcm Id");
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-        }.execute();
     }
 
     @Override
@@ -210,10 +132,10 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
             progressDialog.show();
         } else {
             Log.i("com.docdoku.android.plm.client", "No internet connection available");
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.noConnectionAvailable);
-            builder.setNegativeButton(R.string.OK, null);
-            builder.create().show();
+            new AlertDialog.Builder(this)
+                .setMessage(R.string.noConnectionAvailable)
+                .setNegativeButton(R.string.OK, null)
+                .create().show();
         }
     }
 
@@ -235,7 +157,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         connection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean autoConnect = rememberId.isChecked();
+                autoConnect = rememberId.isChecked();
                 String username = ((EditText) findViewById(R.id.usernameField)).getText().toString();
                 String password = ((EditText) findViewById(R.id.passwordField)).getText().toString();
                 String serverUrl = ((EditText) findViewById(R.id.urlField)).getText().toString();
@@ -280,14 +202,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         }else if (result.equals(HttpGetTask.ERROR_URL)){
             createErrorDialog(R.string.serverUrlError);
         }else{
-
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("gcmId", gcmId);
-                new HttpPutTask(null).execute("/api/accounts/gcm", jsonObject.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
             try{
                 JSONArray workspaceJSON = new JSONArray(result);
                 int numWorkspaces = workspaceJSON.length();
@@ -297,6 +211,11 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                     Log.i("com.docdoku.android.plm.client", "Workspace downloaded: " + workspaceJSON.getJSONObject(i).getString("id"));
                 }
                 session.setDownloadedWorkspaces(this, workspaceArray);
+                if (autoConnect){
+                    Intent GCMRegisterIntent = new Intent(this, GCMRegisterService.class);
+                    GCMRegisterIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_SEND_ID);
+                    startService(GCMRegisterIntent);
+                }
             }catch (JSONException e) {
                 Log.e("com.docdoku.android.plm.client","Error creating workspace JSONArray from String result");
                 e.printStackTrace();
@@ -306,9 +225,9 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     private void createErrorDialog(int messageId){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(messageId);
-        builder.setNegativeButton(getResources().getString(R.string.OK), null);
-        builder.create().show();
+        new AlertDialog.Builder(this)
+            .setMessage(messageId)
+            .setNegativeButton(getResources().getString(R.string.OK), null)
+            .create().show();
     }
 }
