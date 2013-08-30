@@ -38,13 +38,14 @@ import java.util.Iterator;
  * @author: martindevillers
  */
 public class DocumentHistoryListActivity extends DocumentListActivity implements LoaderManager.LoaderCallbacks<Document>{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentHistoryListActivity";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         removeLoadingView();
 
-        Log.i("com.docdoku.android.plm.client", "navigation history size: " + navigationHistory.getSize());
+        Log.i(LOG_TAG, "navigation history size: " + navigationHistory.getSize());
         documentArray= new ArrayList<Document>();
         documentAdapter = new DocumentAdapter(documentArray);
         documentListView.setAdapter(documentAdapter);
@@ -59,7 +60,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
             getSupportLoaderManager().initLoader(i, bundle, this);
             i++;
         }
-        Log.i("com.docdoku.android.plm.client", "Document history list size : " + documentArray.size());
+        Log.i(LOG_TAG, "Document history list size : " + documentArray.size());
     }
 
     /**
@@ -68,19 +69,19 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
 
     @Override
     public Loader<Document> onCreateLoader(int id, Bundle bundle) {
-        Log.i("com.docdoku.android.plm.client", "Querying information for part in history at position " + id + " with reference " + bundle.getString("partKey"));
+        Log.i(LOG_TAG, "Querying information for part in history at position " + id + " with reference " + bundle.getString("partKey"));
         return new DocumentLoaderByDocument(this, bundle.getString("partKey"), bundle.getString("workspace"));
     }
 
     @Override
     public void onLoadFinished(Loader<Document> loader, Document document) {
         try{
-            Log.i("com.docdoku.android.plm.client", "Received information for part in history at position " + loader.getId() + " with reference " + document.getIdentification());
+            Log.i(LOG_TAG, "Received information for part in history at position " + loader.getId() + " with reference " + document.getIdentification());
             documentArray.set(loader.getId(), document);
             documentAdapter.notifyDataSetChanged();
         } catch (NullPointerException e){
             e.printStackTrace();
-            Log.i("com.docdoku.android.plm.client", "Load of a document in history failed");
+            Log.i(LOG_TAG, "Load of a document in history failed");
         }
     }
 
@@ -144,9 +145,9 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
                 document = new Document(documentJSON.getString("id"));
                 document.updateFromJSON(documentJSON, getContext().getResources());
             }catch (JSONException e){
-                Log.e("docdoku.DocDokuPLM", "Error handling json object of a document");
+                Log.e(LOG_TAG, "Error handling json object of a document");
                 e.printStackTrace();
-                Log.i("docdoku.DocDokuPLM", "Error message: " + e.getMessage());
+                Log.i(LOG_TAG, "Error message: " + e.getMessage());
                 document = new Document(elementId);
             }
             deliverResult(document);

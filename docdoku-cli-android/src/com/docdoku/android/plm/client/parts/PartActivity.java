@@ -35,6 +35,7 @@ import com.docdoku.android.plm.client.R;
  * @author: Martin Devillers
  */
 public class PartActivity extends ElementActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartActivity";
 
     public static final String PART_EXTRA = "part";
 
@@ -227,7 +228,7 @@ public class PartActivity extends ElementActivity {
             switch (i){
                 case 1: //CAD file
                     if (part.getCADFileUrl() != null && part.getCADFileUrl().length()>0){
-                        Log.i("com.docdoku.android.plm", "CAD url: " + part.getCADFileUrl());
+                        Log.i(LOG_TAG, "CAD url: " + part.getCADFileUrl());
                         return true;
                     }
                     break;

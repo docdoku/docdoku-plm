@@ -20,10 +20,12 @@ import org.json.JSONObject;
 /**
  * @author: martindevillers
  */
-public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
+public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMBroadcastReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.i(LOG_TAG, "Broadcast receiver started by intent");
         // Explicitly specify that GcmIntentService will handle the intent.
         ComponentName comp = new ComponentName(context.getPackageName(),
                 GCMIntentService.class.getName());

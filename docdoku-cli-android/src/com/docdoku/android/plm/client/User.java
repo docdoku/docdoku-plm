@@ -31,6 +31,7 @@ import java.util.Iterator;
  * @author: Martin Devillers
  */
 public class User {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.User";
 
     public static final String JSON_KEY_USER_NAME = "name";
     public static final String JSON_KEY_USER_EMAIL = "email";
@@ -80,14 +81,14 @@ public class User {
         while (iterator.hasNext()){
             PhoneNumber phoneNumber = iterator.next();
             if (phoneNumber.type.toString().equals(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)){
-                Log.i("com.docdoku.android.plm", "Found mobile number for contact " + name);
+                Log.i(LOG_TAG, "Found mobile number for contact " + name);
                 return phoneNumber.getNumber();
             }
         }
         try{
             return phoneNumbers.get(0).getNumber();
         }catch (IndexOutOfBoundsException e){
-            Log.i("com.docdoku.android.plm", "No phone number found for a contact on phone");
+            Log.i(LOG_TAG, "No phone number found for a contact on phone");
             return "";
         }
     }

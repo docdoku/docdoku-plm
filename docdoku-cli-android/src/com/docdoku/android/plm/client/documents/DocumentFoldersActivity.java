@@ -39,6 +39,7 @@ import java.util.List;
  * @author: martindevillers
  */
 public class DocumentFoldersActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentFoldersActivity";
 
     private static final String INTENT_KEY_FOLDER = "folder";
 
@@ -82,7 +83,7 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
                 }
             }
         } catch (JSONException e) {
-            Log.e("com.docdoku.android.plm", "JSONException: could not read downloaded folder names");
+            Log.e(LOG_TAG, "JSONException: could not read downloaded folder names");
             folders = new Folder[0];
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

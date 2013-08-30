@@ -34,6 +34,7 @@ import java.io.Serializable;
  * @author: Martin Devillers
  */
 public class Document extends Element implements Serializable{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.Document";
 
     private static final String JSON_KEY_DOCUMENT_NAME = "title";
     private static final String JSON_KEY_DOCUMENT_ITERATIONS = "documentIterations";
@@ -78,8 +79,6 @@ public class Document extends Element implements Serializable{
     public Document(String identification){
         this.identification = identification;
         reference = identification.substring(0, identification.lastIndexOf("-"));
-        iterationNotification = false;
-        stateChangeNotification = false;
     }
 
     public String[] getDocumentDetails(){
@@ -138,6 +137,8 @@ public class Document extends Element implements Serializable{
                 documentJSON.getString("type"),
                 documentJSON.getString("lifeCycleState")
         );
+        iterationNotification = documentJSON.getBoolean("iterationSubscription");
+        stateChangeNotification = documentJSON.getBoolean("stateSubscription");
         return this;
     }
 
@@ -147,7 +148,7 @@ public class Document extends Element implements Serializable{
         String[] files = new String[attachedFiles.length()];
         for (int i = 0; i<files.length; i++){
             files[i] = attachedFiles.getString(i);
-            Log.i("com.docdoku.android.plm.client", "File found: " + files[i]);
+            Log.i(LOG_TAG, "File found: " + files[i]);
         }
         setFiles(files);
     }

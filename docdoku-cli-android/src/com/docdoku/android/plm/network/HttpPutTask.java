@@ -30,6 +30,7 @@ import java.net.*;
  * @author: Martin Devillers
  */
 public class HttpPutTask extends HttpTask<String, Void, Boolean> {
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpPutTask";
 
     private HttpPutListener httpPutListener;
     private String responseString;
@@ -45,7 +46,7 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
 
         try {
             URL url = createURL(strings[0]);
-            Log.i("com.docdoku.android.plm.client", "Sending HttpPut request to url: " + url);
+            Log.i(LOG_TAG, "Sending HttpPut request to url: " + url);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
@@ -54,7 +55,7 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
             try{
                 String message = strings[1];
                 messageBytes = message.getBytes();
-                Log.i("com.docdoku.android.plm", "Message found attached to put request: " + message);
+                Log.i(LOG_TAG, "Message found attached to put request: " + message);
                 //conn.setRequestProperty("Content-Length", Integer.toString(message.getBytes().length));
                 conn.setFixedLengthStreamingMode(messageBytes.length);
                 conn.setDoOutput(true);
@@ -62,7 +63,7 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
                 conn.setAllowUserInteraction(true);
                 conn.setRequestProperty("Connection", "keep-alive");
             }catch (ArrayIndexOutOfBoundsException e){
-                Log.i("com.docdoku.android.plm", "No message attached to HttpPut request");
+                Log.i(LOG_TAG, "No message attached to HttpPut request");
             }
             conn.setRequestMethod("PUT");
             conn.connect();
@@ -72,36 +73,36 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
             }
 
             int responseCode = conn.getResponseCode();
-            Log.i("com.docdoku.android.plm.client","Response code: " + responseCode);
+            Log.i(LOG_TAG,"Response code: " + responseCode);
             if (responseCode == 200){
-                Log.i("com.docdoku.android.plm.client", "Response headers: " + conn.getHeaderFields());
-                Log.i("com.docdoku.android.plm.client", "Response message: " + conn.getResponseMessage());
+                Log.i(LOG_TAG, "Response headers: " + conn.getHeaderFields());
+                Log.i(LOG_TAG, "Response message: " + conn.getResponseMessage());
                 InputStream in = (InputStream) conn.getContent();
                 if (in != null){
                     responseString = inputStreamToString(in);
                     in.close();
-                    Log.i("com.docdoku.android.plm.client", "Response content: " + result);
+                    Log.i(LOG_TAG, "Response content: " + result);
                 }
                 result = true;
             }
 
-            Log.i("com.docdoku.android.plm","Response message: " + conn.getResponseMessage());
+            Log.i(LOG_TAG, "Response message: " + conn.getResponseMessage());
 
             conn.disconnect();
 
         } catch (MalformedURLException e) {
-            Log.e("com.docdoku.android.plm.client","ERROR: MalformedURLException");
+            Log.e(LOG_TAG,"ERROR: MalformedURLException");
             e.printStackTrace();
         } catch (ProtocolException e) {
-            Log.e("com.docdoku.android.plm.client","ERROR: ProtocolException");
+            Log.e(LOG_TAG,"ERROR: ProtocolException");
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
-            Log.e("com.docdoku.android.plm.client", "ERROR: UnsupportedEncodingException");
+            Log.e(LOG_TAG, "ERROR: UnsupportedEncodingException");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("com.docdoku.android.plm.client", "ERROR: IOException");
+            Log.e(LOG_TAG, "ERROR: IOException");
             e.printStackTrace();
-            Log.e("com.docdoku.android.plm.client", "Exception message: " + e.getMessage());
+            Log.e(LOG_TAG, "Exception message: " + e.getMessage());
         } catch (URISyntaxException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -113,7 +114,7 @@ public class HttpPutTask extends HttpTask<String, Void, Boolean> {
         super.onPostExecute(result);
         if (httpPutListener != null){
             httpPutListener.onHttpPutResult(result, responseString);
-            Log.i("com.docdoku.android.plm", "HttpPut response string: " + responseString);
+            Log.i(LOG_TAG, "HttpPut response string: " + responseString);
         }
     }
 

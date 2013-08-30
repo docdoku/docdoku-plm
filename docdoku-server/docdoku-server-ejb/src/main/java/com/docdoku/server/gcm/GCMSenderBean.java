@@ -64,7 +64,8 @@ public class GCMSenderBean implements IGCMSenderLocal {
             data.put("documentMasterId",documentMaster.getId());
             data.put("documentMasterVersion",documentMaster.getVersion());
             data.put("documentMasterIteration", documentMaster.getLastIteration().getIteration());
-            LOGGER.info("GCM Sender : Sending state notification for the document " + documentMaster.getLastIteration());
+            data.put("hashCode", documentMaster.hashCode());
+            LOGGER.info("gcm Sender : Sending state notification for the document " + documentMaster.getLastIteration());
             sendMessage(data,gcmAccount);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -80,7 +81,8 @@ public class GCMSenderBean implements IGCMSenderLocal {
             data.put("documentMasterId",documentMaster.getId());
             data.put("documentMasterVersion",documentMaster.getVersion());
             data.put("documentMasterIteration",documentMaster.getLastIteration().getIteration());
-            LOGGER.info("GCM Sender : Sending iteration notification for the document " + documentMaster.getLastIteration());
+            data.put("hashCode", documentMaster.hashCode());
+            LOGGER.info("gcm Sender : Sending iteration notification for the document " + documentMaster.getLastIteration());
             sendMessage(data,gcmAccount);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -115,13 +117,13 @@ public class GCMSenderBean implements IGCMSenderLocal {
 
             int responseCode = con.getResponseCode();
             String responseMessage = con.getResponseMessage();
-            LOGGER.info("GCM Sender : Response code is " + responseCode);
-            LOGGER.info("GCM Sender : Response message is " + responseMessage);
+            LOGGER.info("gcm Sender : Response code is " + responseCode);
+            LOGGER.info("gcm Sender : Response message is " + responseMessage);
 
         }catch(IOException e){
-            LOGGER.info("GCM Sender : Failed to send message :  " + message.toString());
+            LOGGER.info("gcm Sender : Failed to send message :  " + message.toString());
         } catch (JSONException e) {
-            LOGGER.info("GCM Sender : JSON exception occurred :  " + message.toString());
+            LOGGER.info("gcm Sender : JSON exception occurred :  " + message.toString());
         }
 
     }

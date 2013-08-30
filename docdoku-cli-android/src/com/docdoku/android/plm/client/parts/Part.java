@@ -36,6 +36,7 @@ import java.io.Serializable;
  * @author: Martin Devillers
  */
 public class Part extends Element implements Serializable{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.Part";
 
     private static final String JSON_KEY_PART_NAME = "name";
     private static final String JSON_KEY_PART_ITERATIONS = "partIterations";
@@ -47,17 +48,13 @@ public class Part extends Element implements Serializable{
     private static final String JSON_KEY_COMPONENT_AMOUNT = "amount";
     private static final String JSON_KEY_PART_NUMBER = "number";
     private static final String JSON_KEY_PART_VERSION = "version";
-    private static final String JSON_KEY_PART_WORKFLOW = "workflow";
     private static final String JSON_KEY_PART_LIFECYCLE_STATE = "lifeCycleState";
     private static final String JSON_KEY_PART_STANDARD_PART = "standardPart";
-    private static final String JSON_KEY_PART_PUBLIC_SHARED = "publicShared";
 
     private String key, number, version;
     private String nativeCADFile;
-    private String workflow;
     private String lifecycleState;
     private boolean standardPart;
-    private boolean publicShared;
     private Component[] components;
 
     public Part(String key){
@@ -111,7 +108,7 @@ public class Part extends Element implements Serializable{
         if (components == null){
             return 0;
         }else{
-            Log.i("com.docdoku.android.plm", "Number of components found: " + components.length);
+            Log.i(LOG_TAG, "Number of components found: " + components.length);
             return components.length;
         }
     }
@@ -137,7 +134,7 @@ public class Part extends Element implements Serializable{
             nativeCADFile = null;
         }else{
             nativeCADFile = (String) CADFile;
-            Log.i("com.docdoku.android.plm", "CAD file downloaded: " + nativeCADFile);
+            Log.i(LOG_TAG, "CAD file downloaded: " + nativeCADFile);
         }
         JSONArray componentArray = lastIteration.getJSONArray(JSON_KEY_COMPONENT_ARRAY);
         components = new Component[componentArray.length()];
@@ -158,21 +155,17 @@ public class Part extends Element implements Serializable{
         setPartDetails(
                 partJSON.getString(JSON_KEY_PART_NUMBER),
                 partJSON.getString(JSON_KEY_PART_VERSION),
-                partJSON.getString(JSON_KEY_PART_WORKFLOW),
                 partJSON.getString(JSON_KEY_PART_LIFECYCLE_STATE),
-                partJSON.getBoolean(JSON_KEY_PART_STANDARD_PART),
-                partJSON.getBoolean(JSON_KEY_PART_PUBLIC_SHARED)
+                partJSON.getBoolean(JSON_KEY_PART_STANDARD_PART)
         );
         return this;
     }
 
-    private void setPartDetails(String number, String version, String workflow, String lifecycleState, boolean standardPart, boolean publicShared){
+    private void setPartDetails(String number, String version, String lifecycleState, boolean standardPart){
         this.number = number;
         this.version = version;
-        this.workflow = workflow;
         this.lifecycleState = lifecycleState;
         this.standardPart = standardPart;
-        this.publicShared = publicShared;
     }
 
     /**

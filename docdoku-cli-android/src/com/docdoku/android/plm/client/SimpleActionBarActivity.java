@@ -35,14 +35,20 @@ import android.view.*;
  * @author: Martin Devillers
  */
 public abstract class SimpleActionBarActivity extends FragmentActivity {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.SimpleActionBarActivity";
 
     private static final String URL_API = "api/workspaces/";
 
-    protected static String currentUserLogin;
     private ActionBarDrawerToggle drawerToggle;
 
     protected String getCurrentWorkspace(){
-        return MenuFragment.getCurrentWorkspace();
+        try {
+            return Session.getSession(this).getCurrentWorkspace(this);
+        } catch (Session.SessionLoadException e) {
+            Log.e(LOG_TAG, "Unable to get current workspace because no session was found");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
     }
 
     protected String getUrlWorkspaceApi(){
@@ -50,7 +56,23 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     }
 
     protected String getCurrentUserLogin(){
-        return currentUserLogin;
+        try{
+            return Session.getSession(this).getUserLogin();
+        } catch (Session.SessionLoadException e) {
+            Log.e(LOG_TAG, "Unable to get current user login because no session was found");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
+    }
+
+    protected String getCurrentUserName(){
+        try{
+            return Session.getSession(this).getUserName();
+        } catch (Session.SessionLoadException e) {
+            Log.e(LOG_TAG, "Unable to get current user login because no session was found");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
     }
 
     @Override
@@ -99,17 +121,27 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                     .setMessage(getResources().getString(R.string.confirmDisconnect))
                     .setNegativeButton(getResources().getString(R.string.no), null)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(getApplicationContext(), ConnectionActivity.class);
-                        intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
-                        startActivity(intent);
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            try {
+                                if (Session.getSession(SimpleActionBarActivity.this).isPermanentSession()) {
+                                    Intent GCMLogoutIntent = new Intent(SimpleActionBarActivity.this, GCMRegisterService.class);
+                                    GCMLogoutIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_ERASE_ID);
+                                    startService(GCMLogoutIntent);
+                                }
+                            } catch (Session.SessionLoadException e) {
+                                Log.w(LOG_TAG, "Could not remove gcm id from server because session information was unavailable");
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                            Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
+                            intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
+                            startActivity(intent);
                         }
                     })
                     .create().show();
                 return true;
             default:
-                Log.i("com.docdoku.android.plm.client", "Could not identify title bar button click");
+                Log.i(LOG_TAG, "Could not identify title bar button click");
                 return super.onOptionsItemSelected(item);
         }
 

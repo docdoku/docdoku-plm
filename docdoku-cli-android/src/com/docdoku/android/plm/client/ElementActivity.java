@@ -49,6 +49,7 @@ import java.util.Calendar;
  * @author: martindevillers
  */
 public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";
 
     protected Element element;
     protected Button checkInOutButton;
@@ -98,7 +99,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         checkInOutButton.setText(R.string.checkin);
         Calendar c = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-        element.setCheckOutInformation(getCurrentUserLogin(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
+        element.setCheckOutInformation(getCurrentUserName(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,12 +121,12 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                 public void onClick(DialogInterface dialogInterface, int i) {
                     iterationNote = iterationNoteField.getText().toString();
                     if (iterationNote.length()>0){
-                        Log.i("com.docdoku.android.plm", "Iteration note for document checkin: " + iterationNote);
+                        Log.i(LOG_TAG, "Iteration note for document checkin: " + iterationNote);
                         HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                             @Override
                             public void onHttpPutResult(boolean result, String responseContent) {
                                 if (result){
-                                    Log.i("com.docdoku.android.plm", "Checking out document after successfully uploading iteration");
+                                    Log.i(LOG_TAG, "Checking out document after successfully uploading iteration");
                                     new HttpPutTask(ElementActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + element.getUrlPath()+ "/checkin/");
                                 } else{
                                     ElementActivity.this.onHttpPutResult(false, "");
@@ -134,7 +135,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                         };
                         new HttpPutTask(httpPutListener).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/iterations/" + element.getIterationNumber(), element.getLastIterationJSONWithUpdateNote(iterationNote).toString());
                     }else {
-                        Log.i("com.docdoku.android.plm", "No iteration note was entered for document checkin");
+                        Log.i(LOG_TAG, "No iteration note was entered for document checkin");
                         new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkin/");
                     }
                 }
@@ -155,7 +156,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      */
     @Override
     public void onHttpPutResult(boolean result, String responseContent) {
-        Log.i("com.docdoku.android.plm.client", "Result of checkin/checkout: " + result);
+        Log.i(LOG_TAG, "Result of checkin/checkout: " + result);
         if (result){
             if (checkedIn){
                 setElementCheckedOutByCurrentUser();
@@ -171,7 +172,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
                 setElementCheckedIn();
                 Toast.makeText(this, R.string.checkInSuccessful, Toast.LENGTH_SHORT).show();
                 SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserLogin(), dateFormat.format(Calendar.getInstance().getTime()));
+                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserName(), dateFormat.format(Calendar.getInstance().getTime()));
             }
         }
         else{

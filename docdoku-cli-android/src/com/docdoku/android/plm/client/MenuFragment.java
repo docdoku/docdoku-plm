@@ -20,9 +20,7 @@
 
 package com.docdoku.android.plm.client;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -39,73 +37,56 @@ import com.docdoku.android.plm.client.parts.PartCompleteListActivity;
 import com.docdoku.android.plm.client.parts.PartHistoryListActivity;
 import com.docdoku.android.plm.client.parts.PartSearchActivity;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 /**
  *
  * @author: Martin Devillers
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
-
-    public static final String PREFERENCE_KEY_WORKSPACE = "workspace";
-    private static final String PREFERENCE_KEY_DOWNLOADED_WORKSPACES = "downloaded workspaces";
-
-    private static String[] DOWNLOADED_WORKSPACES;
-    private static String CURRENT_WORKSPACE;
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.MenuFragment";
 
     protected boolean workspaceChanged = false;
 
     private View view;
+    private RadioGroup workspaceRadioGroup;
     private TextView expandRadioButtons;
+
+    private Session session;
+    private String[] downloadedWorkspaces;
+    private String currentWorkspace;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.fragment_menu, container);
         workspaceChanged = false;
-        final RadioGroup workspaceRadioGroup = (RadioGroup) view.findViewById(R.id.workspaceRadioGroup);
-        if (checkForWorkspaces()){
-            if (CURRENT_WORKSPACE == null){
-                SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                CURRENT_WORKSPACE = preferences.getString(PREFERENCE_KEY_WORKSPACE,"");
-                if (CURRENT_WORKSPACE.equals("")){
-                    CURRENT_WORKSPACE = DOWNLOADED_WORKSPACES[0];
-                }
-                else{
-                    Log.i("com.docdoku.android.plm.client", "Loading workspace from last session: " + CURRENT_WORKSPACE);
-                }
-            }
-            addCurrentWorkspace(CURRENT_WORKSPACE, workspaceRadioGroup);;
-            if (DOWNLOADED_WORKSPACES.length == 1){
+        workspaceRadioGroup = (RadioGroup) view.findViewById(R.id.workspaceRadioGroup);
+        try {
+            session = Session.getSession();
+            currentWorkspace = session.getCurrentWorkspace(getActivity());
+            addCurrentWorkspace(currentWorkspace, workspaceRadioGroup);
+            downloadedWorkspaces = session.getDownloadedWorkspaces(getActivity());
+            if (downloadedWorkspaces.length == 1){
                 ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
             }else{
                 expandRadioButtons.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
-                        addWorkspaces(DOWNLOADED_WORKSPACES, workspaceRadioGroup);
+                        addWorkspaces(downloadedWorkspaces, workspaceRadioGroup);
                     }
                 });
             }
-        }
-        if (DOWNLOADED_WORKSPACES != null){
 
+            workspaceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                    RadioButton selectedWorkspace = (RadioButton) view.findViewById(radioGroup.getCheckedRadioButtonId());
+                    session.setCurrentWorkspace(getActivity(), selectedWorkspace.getText().toString());
+                    workspaceChanged = true;
+                }
+            });
+        } catch (Session.SessionLoadException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
-        workspaceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton selectedWorkspace = (RadioButton) view.findViewById(radioGroup.getCheckedRadioButtonId());
-                SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                CURRENT_WORKSPACE = selectedWorkspace.getText().toString();
-                editor.putString(PREFERENCE_KEY_WORKSPACE, CURRENT_WORKSPACE);
-                editor.commit();
-                workspaceChanged = true;
-            }
-        });
 
         view.findViewById(R.id.documentSearch).setOnClickListener(this);
         view.findViewById(R.id.recentlyViewedDocuments).setOnClickListener(this);
@@ -118,29 +99,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.allParts).setOnClickListener(this);
 
         return view;
-    }
-
-    private boolean checkForWorkspaces(){
-        if (DOWNLOADED_WORKSPACES == null){
-            SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-            Set<String> workspacesSet = preferences.getStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, new HashSet<String>());
-            DOWNLOADED_WORKSPACES = new String[workspacesSet.size()];
-            Iterator<String> iterator = workspacesSet.iterator();
-            int i = 0;
-            while (iterator.hasNext()){
-                String workspace = iterator.next();
-                DOWNLOADED_WORKSPACES[i] = workspace;
-                i++;
-            }
-        }
-        if (DOWNLOADED_WORKSPACES.length == 0){
-            if (expandRadioButtons != null){
-                ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
-                Log.e("com.docdoku.android.plm.client","ERROR: No workspaces downloaded");
-            }
-            return false;
-        }
-        return true;
     }
 
     public void addCurrentWorkspace(String workspace, RadioGroup radioGroup){
@@ -173,22 +131,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             radioButton.setText(workspaces[i]);
             radioButton.setTextColor(R.color.darkGrey);
             radioGroup.addView(radioButton);
-            if (workspaces[i].equals(CURRENT_WORKSPACE)){
+            if (workspaces[i].equals(currentWorkspace)){
                 radioGroup.check(radioButton.getId());
             }
         }
-    }
-
-    public static void setDOWNLOADED_WORKSPACES(String[] setWorkspaces, SharedPreferences preferences){
-        DOWNLOADED_WORKSPACES = setWorkspaces;
-        SharedPreferences.Editor editor = preferences.edit();
-        Set<String> workspacesSet = new HashSet<String>(Arrays.asList(setWorkspaces));
-        editor.putStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, workspacesSet);
-        editor.commit();
-    }
-
-    public static String getCurrentWorkspace(){
-        return CURRENT_WORKSPACE;
     }
 
     public void setCurrentActivity(int buttonId){
@@ -196,7 +142,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if (activityView != null){
             activityView.setSelected(true);
         }else{
-            Log.i("com.docdoku.android.plm","Current activity did not provide a correct button id. Id provided: " + buttonId);
+            Log.i(LOG_TAG,"Current activity did not provide a correct button id. Id provided: " + buttonId);
         }
     }
 

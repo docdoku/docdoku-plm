@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
  * @author: martindevillers
  */
 public class WelcomeScreen extends Activity{
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.WelcomeScreen";
 
     private static final long WELCOME_SCREEN_DURATION_MILLIS = 3000;
 
@@ -30,6 +31,7 @@ public class WelcomeScreen extends Activity{
 
     @Override
     public void onResume(){
+        Log.i(LOG_TAG, "Showing Splash screen");
         super.onResume();
         new Thread(){
             @Override
