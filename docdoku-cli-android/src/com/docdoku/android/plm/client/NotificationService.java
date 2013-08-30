@@ -1,5 +1,6 @@
 package com.docdoku.android.plm.client;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,7 +45,6 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
             Log.e("com.docdoku.android.plm", "Failed to load session to start application from notification");
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        stopSelf();
         return START_NOT_STICKY;
     }
 
@@ -55,10 +55,14 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
             JSONObject documentJson = new JSONObject(result);
             Document document = new Document(documentJson.getString("id"));
             document.updateFromJSON(documentJson, getResources());
-            Intent intent = new Intent(this, DocumentActivity.class);
-            intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+            Intent documentIntent = new Intent(this, DocumentActivity.class);
+            documentIntent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+            PendingIntent pendingIntent =  PendingIntent.getActivity(this, 0, documentIntent, 0);
+            Intent intent = new Intent(this, ConnectionActivity.class);
+            intent.putExtra(ConnectionActivity.INTENT_KEY_PENDING_INTENT, pendingIntent);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startActivity(intent)
+            stopSelf();
         } catch (JSONException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

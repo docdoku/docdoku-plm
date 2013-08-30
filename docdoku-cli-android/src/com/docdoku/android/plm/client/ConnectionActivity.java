@@ -22,6 +22,7 @@ package com.docdoku.android.plm.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -57,12 +58,14 @@ import java.io.UnsupportedEncodingException;
 public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetListener {
 
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
+    public static final String INTENT_KEY_PENDING_INTENT = "pending intent";
 
     private Session session;
     private ProgressDialog progressDialog;
     private AsyncTask connectionTask;
     private CheckBox rememberId;
     private boolean autoConnect;
+    private PendingIntent pendingIntent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         if (eraseData){
             eraseData();
         }
+        pendingIntent = intent.getParcelableExtra(INTENT_KEY_PENDING_INTENT);
 
         startConnection();
         if (Session.loadSession(this)){
@@ -169,8 +173,18 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     private void endConnectionActivity(){
-        Intent intent = new Intent(ConnectionActivity.this, DocumentCompleteListActivity.class);
-        startActivity(intent);
+        if (pendingIntent == null){
+            Intent documentListIntent = new Intent(this, DocumentCompleteListActivity.class);
+            startActivity(documentListIntent);
+        }else{
+            try {
+                pendingIntent.send();
+            } catch (PendingIntent.CanceledException e) {
+                Intent documentListIntent = new Intent(this, DocumentCompleteListActivity.class);
+                startActivity(documentListIntent);
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
         finish();
     }
 

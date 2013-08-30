@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import com.docdoku.android.plm.network.HttpPutTask;
@@ -40,19 +41,23 @@ public class GCMRegisterService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int i, int j){
-        int action = intent.getExtras().getInt(INTENT_KEY_ACTION);
-        switch (action){
-            case ACTION_SEND_ID:
-                getGCMId();
-                break;
-            case ACTION_ERASE_ID:
-                sendGCMId("");
-                break;
-            default:
-                Log.w("com.docdoku.android.plm", "No code provided for GCM Registration service");
-                break;
+        Bundle bundle = intent.getExtras();
+        if (bundle!=null){
+            int action = intent.getExtras().getInt(INTENT_KEY_ACTION);
+            switch (action){
+                case ACTION_SEND_ID:
+                    getGCMId();
+                    break;
+                case ACTION_ERASE_ID:
+                    sendGCMId("");
+                    break;
+                default:
+                    Log.w("com.docdoku.android.plm", "No code provided for GCM Registration service");
+                    break;
+            }
+            return START_STICKY;
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void getGCMId() {
@@ -130,5 +135,6 @@ public class GCMRegisterService extends Service {
         } catch (JSONException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        stopSelf();
     }
 }
