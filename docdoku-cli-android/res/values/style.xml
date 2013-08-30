@@ -39,7 +39,7 @@
     <!-- Indicators with image, shown in document and part lists -->
     <style name="Theme.AppTheme.Indicator">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_height">20dp</item>
         <item name="android:adjustViewBounds">false</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:textSize">16sp</item>
