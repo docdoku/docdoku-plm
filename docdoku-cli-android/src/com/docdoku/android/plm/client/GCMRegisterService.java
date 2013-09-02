@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import com.docdoku.android.plm.network.HttpDeleteTask;
 import com.docdoku.android.plm.network.HttpPutTask;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
@@ -18,7 +19,7 @@ import java.io.IOException;
 /**
  * @author: martindevillers
  */
-public class GCMRegisterService extends Service {
+public class GCMRegisterService extends Service implements HttpDeleteTask.HttpDeleteListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMRegisterService";
 
     public static final String INTENT_KEY_ACTION = "register/unregister";
@@ -50,7 +51,7 @@ public class GCMRegisterService extends Service {
                     getGCMId();
                     break;
                 case ACTION_ERASE_ID:
-                    sendGCMId("");
+                    deleteGCMId();
                     break;
                 default:
                     Log.w(LOG_TAG, "No code provided for GCM Registration service");
@@ -136,6 +137,16 @@ public class GCMRegisterService extends Service {
         } catch (JSONException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        stopSelf();
+    }
+
+    private void deleteGCMId(){
+        new HttpDeleteTask(this).execute("/api/accounts/gcm");
+    }
+
+    @Override
+    public void onHttpDeleteResult(boolean result) {
+        Log.i(LOG_TAG, "Result of GCM Id delete: " + result);
         stopSelf();
     }
 }
