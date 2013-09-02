@@ -106,4 +106,16 @@ public class AccountResource {
         }
     }
 
+
+    @DELETE
+    @Path("gcm")
+    public Response deleteGCMAccount(){
+        try{
+            userManager.deleteGCMAccount();
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
 }

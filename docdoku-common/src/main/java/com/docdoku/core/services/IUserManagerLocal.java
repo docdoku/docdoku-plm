@@ -65,4 +65,5 @@ public interface IUserManagerLocal{
     UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
     Workspace[] getWorkspacesWhereCallerIsActive();
     void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException;
+    void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
 }

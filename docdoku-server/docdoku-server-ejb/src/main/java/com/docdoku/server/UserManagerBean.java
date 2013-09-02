@@ -482,6 +482,16 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     }
 
+    @RolesAllowed("users")
+    @Override
+    public void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException {
+        String callerLogin = ctx.getCallerPrincipal().getName();
+        Account account = getAccount(callerLogin);
+        GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
+        GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
+        gcmAccountDAO.deleteGCMAccount(gcmAccount);
+    }
+
     private Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
         if (!pWorkspace.getAdmin().equals(account)) {
