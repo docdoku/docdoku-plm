@@ -9,6 +9,7 @@
 
     <TextView
             android:id="@+id/fieldName"
+            android:textSize="18sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
@@ -17,6 +18,7 @@
 
     <TextView
             android:id="@+id/fieldValue"
+            android:textSize="18sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
