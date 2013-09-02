@@ -213,8 +213,10 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     }
 
     @Override
-    public void onProgressUpdate(int progress) {
-        progressDialog.setProgress(progress);
+    public void onUploadProgressUpdate(int progress) {
+        if (progressDialog != null){
+            progressDialog.setProgress(progress);
+        }
     }
 
     /**

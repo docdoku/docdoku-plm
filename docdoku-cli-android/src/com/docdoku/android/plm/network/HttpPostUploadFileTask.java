@@ -128,7 +128,7 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
         float size = values[1];
         float advancement = progress/size * 100;
         if (listener != null){
-            listener.onProgressUpdate((int) advancement);
+            listener.onUploadProgressUpdate((int) advancement);
         }
     }
 
@@ -145,7 +145,7 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
     public static interface HttpPostUploadFileListener {
 
         public void onUploadStart();
-        public void onProgressUpdate(int progress);
+        public void onUploadProgressUpdate(int progress);
         public void onUploadResult(boolean result, String fileName);
     }
 }
