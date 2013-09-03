@@ -231,6 +231,7 @@ public class GCMRegisterService extends Service implements HttpDeleteTask.HttpDe
     @Override
     public void onHttpDeleteResult(boolean result) {
         Log.i(LOG_TAG, "Result of GCM Id delete: " + result);
+        //TODO handle a failiure to unregister from GCM
         stopSelf();
     }
 }
