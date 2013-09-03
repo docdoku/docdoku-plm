@@ -69,6 +69,7 @@ define(
                 sceneManager = new SceneManager();
                 sceneManager.init();
             }catch(ex){
+                console.log("Exception " + ex)
                 this.onNoWebGLSupport();
             }
 
@@ -134,11 +135,6 @@ define(
                 this.exportSceneButton.show();
             }
 
-            if(sceneManager.isLoaded){
-                sceneManager.resume();
-                sceneManager.showStats();
-            }
-
         },
 
         bomMode: function() {
@@ -151,11 +147,6 @@ define(
             this.fullScreenSceneButton.hide();
             this.bomContainer.show();
             this.updateBom();
-
-            if(sceneManager.isLoaded){
-                sceneManager.pause();
-                sceneManager.hideStats();
-            }
         },
 
         isInBomMode: function() {
@@ -169,7 +160,7 @@ define(
                 this.exportSceneButton.show();
             }
             this.showPartMetadata();
-            sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
+            sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
         },
 
         exportScene:function(){
@@ -231,6 +222,7 @@ define(
         },
 
         onInstanceSelected:function(instance){
+
             var partKey = instance.partIterationId.substr(0, instance.partIterationId.lastIndexOf("-"));
             var part = new Part({partKey:partKey});
             var self = this;

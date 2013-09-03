@@ -110,6 +110,7 @@ Instance.prototype = {
                 self.clearMeshAndLevelGeometry();
                 //save level and mesh for further reuse
                 self.levelGeometry = levelGeometry;
+
                 callback();
             });
         } else {
@@ -122,11 +123,30 @@ Instance.prototype = {
     loadMeshFromLevelGeometry: function(levelGeometry, callback) {
         var self = this;
         levelGeometry.getMesh(function(mesh) {
+
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
+
+            if(!mesh.initialPosition){
+                mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            }
+
+            if(!mesh.geometry.boundingBox){
+                mesh.geometry.computeBoundingBox();
+                mesh.geometry.computeBoundingSphere();
+                mesh.geometry.boundingBox.centroid = new THREE.Vector3 (
+                    (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
+                    (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
+                    (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
+                );
+            }
+            // Set the radius calculated by THREE
+            self.partIteration.radius = mesh.geometry.boundingSphere.radius;
+
             mesh.matrixAutoUpdate = false;
             mesh.updateMatrix();
             self.matrixWorld = mesh.matrixWorld;
+
             callback(mesh);
         });
     },

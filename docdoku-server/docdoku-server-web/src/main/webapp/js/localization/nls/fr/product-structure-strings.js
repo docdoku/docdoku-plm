@@ -17,6 +17,7 @@ define({
     CHECKIN: "Libérer",
     CHECKOUT: "Réserver",
     DELETE_MARKER: "Supprimer le marqueur",
+    NEW_MARKER: "Créer un marqueur",
     NAME : "Nom",
     EMBED_SCENE : "Exporter la scène",
     CONTROLS_SHORTCUTS : "Raccourcis clavier/souris",
@@ -81,7 +82,7 @@ define({
     "REFERENCE":"Référence",
     "REVISION_NOTE":"Note de révision",
     "MODIFICATION_DATE":"Date de modification",
-    EXPLODE:"Exploser",
+    EXPLODE:"Eclater",
     ABSOLUTE:"Absolue",
     RELATIVE:"Relative"
 });

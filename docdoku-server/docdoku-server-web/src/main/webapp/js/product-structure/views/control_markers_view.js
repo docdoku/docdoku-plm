@@ -17,8 +17,8 @@ define(["text!templates/control_markers.html","i18n!localization/nls/product-str
         },
 
         markerZoomLess:function(){
-            if(sceneManager.layerManager.markerScale.x>0.5) {
-                sceneManager.layerManager.markerScale.addScalar(-0.5);
+            if(sceneManager.layerManager.markerScale.x>0.2) {
+                sceneManager.layerManager.markerScale.addScalar(-0.1);
                 sceneManager.layerManager.rescaleMarkers();
             }
         },
@@ -27,7 +27,7 @@ define(["text!templates/control_markers.html","i18n!localization/nls/product-str
         },
 
         markerZoomMore:function(){
-            sceneManager.layerManager.markerScale.addScalar(0.5);
+            sceneManager.layerManager.markerScale.addScalar(0.1);
             sceneManager.layerManager.rescaleMarkers();
         },
 

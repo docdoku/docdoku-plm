@@ -43,9 +43,7 @@ define(function() {
                             break;
                     }
                 });
-
             }
-
         },
 
         addLevelGeometry: function(filename, quality, computeVertexNormals) {

@@ -22,11 +22,18 @@
 
     <c:if test="${!geometryFileURI.isEmpty()}">
         <script type="text/javascript" src="#{request.contextPath}/js/lib/underscore-1.4.2.min.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/backbone-1.0.0.min.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/mustache-0.5.0-dev.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/require/require.min-2.1.2.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/string.prototype.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three.min.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/ColladaLoader.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/STLLoader.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
     </c:if>
 
@@ -184,27 +191,43 @@
                         </c:if>
 
                         <c:if test="${!geometryFileURI.isEmpty()}">
-                            <div id="permalink-cad-rendering"></div>
+                            <div id="container"></div>
                             <script type="text/javascript">
-
+                                var SCENE_INIT = {
+                                    camera: {
+                                        x:0,
+                                        y:0,
+                                        z:0
+                                    }
+                                };
+                                var APP_CONFIG = {};
                                 $(document).ready(function () {
-                                    var PartGeometryPath = "${geometryFileURI}";
-                                    var $content = $("#content");
-                                    var padding = 34;
-                                    var width = $content.width() - 34;
+
+                                    var rendered = false;
+                                    var geometryFileURI = "${geometryFileURI}";
+                                    var width = $("#content").width() - 34;
                                     var height = 600;
 
-                                    console.log("Document is ready to process cad rendering");
                                     require.config({
                                         baseUrl: "${request.contextPath}/js/product-structure",
                                         paths: {
-                                            "require": "../lib/require/require.min-2.1.2"
+                                            "require": "../lib/require/require.min-2.1.2",
+                                            "text": "../lib/require/text-2.0.3",
+                                            "i18n": "../lib/require/i18n-2.0.1",
+                                            "localization": "../localization"
                                         },
                                         urlArgs:"v=${BUILD_NUMBER}"
                                     });
-                                    require(["permalinkApp"],function(Renderer){
-                                        new Renderer("#permalink-cad-rendering",PartGeometryPath, width, height).init();
+
+                                    $('a[data-toggle="tab"][href=#tab-part-native-cad-file]').on('shown', function (e) {
+                                        if(!rendered){
+                                            require(["permalinkApp"],function(PermalinkApp){
+                                                new PermalinkApp(geometryFileURI, width, height);
+                                            });
+                                            rendered=true;
+                                        }
                                     });
+
                                 });
                             </script>
 

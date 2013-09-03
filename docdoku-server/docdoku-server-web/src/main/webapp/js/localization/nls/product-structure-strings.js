@@ -22,6 +22,7 @@ define({
         CHECKIN: "Check in",
         CHECKOUT: "Check out",
         DELETE_MARKER: "Delete marker",
+        NEW_MARKER: "New marker",
         NAME: "Name",
         EMBED_SCENE: "Embed Scene",
         CONTROLS_SHORTCUTS: "Mouse/keyboard shortcuts",
