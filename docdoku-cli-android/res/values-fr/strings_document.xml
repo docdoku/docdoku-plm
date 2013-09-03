@@ -63,6 +63,7 @@
     <string name="confirmImageUpload">Ajouter l\'image au document?</string>
     <string name="chooseImageFileName">Nom de l\'image</string>
     <string name="uploadImage">Charger l\'image</string>
+    <string name="uploading">Chargement en cours...</string>
     <string name="uploadSuccess">Fichier chargé avec succès</string>
     <string name="imageUploadFail">Echec du chargement de l\'image</string>
     <string name="mediaError">Erreur média</string>

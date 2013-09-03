@@ -223,7 +223,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     @Override
     public void onUploadStart() {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("uploading...");
+        progressDialog.setTitle(R.string.uploading);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
     }
