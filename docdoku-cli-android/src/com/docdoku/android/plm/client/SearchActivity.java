@@ -24,6 +24,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -53,6 +54,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
     protected ArrayList<User> users;
     protected User selectedUser;
     protected Calendar minDate, maxDate;
+    private AsyncTask<String, Void, String> userLoadTask;
 
     /**
      * Called when the <code>Activity</code> is created
@@ -66,23 +68,13 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
+        userLoadTask  = new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
 
         author = (Button) findViewById(R.id.author);
         author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SearchActivity.this);
-                builder.setTitle(R.string.documentPickAuthor);
-                if (users != null) {
-                    builder.setItems(getUserNames(users), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int item) {
-                            selectedUser = users.get(item);
-                            author.setText(selectedUser.getName());
-                        }
-                    });
-                }
-                builder.create().show();
+                showUserPickerDialog();
             }
         });
 
@@ -102,6 +94,31 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
                 new DatePickerFragment(maxCreationDate, maxDate).show(getSupportFragmentManager(), "tagMax");
             }
         });
+    }
+
+    /**
+     * Shows a {@code AlertDialog} with the list of users so that the current can pick one.
+     * <p>If the {@code ArrayList} of users has not yet been downloaded, the method checks if the {@link HttpGetTask} user download task is still running.
+     * <br>If it is, then the dialog indicates to the user that the workspace's users have not yet been downloaded.
+     * <br>If it isn't, then the task is assumed to have failed, and an error message is shown to the user.
+     */
+    private void showUserPickerDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(SearchActivity.this)
+                .setTitle(R.string.documentPickAuthor);
+        if (users != null) {
+            builder.setItems(getUserNames(users), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int item) {
+                    selectedUser = users.get(item);
+                    author.setText(selectedUser.getName());
+                    author.setCompoundDrawables(null, null, null, null);
+                }
+            });
+        }else if (AsyncTask.Status.FINISHED.equals(userLoadTask.getStatus())){
+            builder.setMessage(R.string.userLoadError);
+        }else{
+            builder.setMessage(R.string.userLoadInProgress);
+        }
+        builder.create().show();
     }
 
     /**
@@ -170,6 +187,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
             date.set(year, month, day, 0, 0);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
             button.setText(simpleDateFormat.format(date.getTime()));
+            button.setCompoundDrawables(null, null, null, null);
         }
     }
 }

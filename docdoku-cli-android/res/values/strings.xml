@@ -102,5 +102,7 @@
         <item>Add email to existing contact</item>
     </string-array>
     <string name="userSearch">User name</string>
+    <string name="userLoadError">Error loading user list</string>
+    <string name="userLoadInProgress">Loading user list...</string>
 
 </resources>

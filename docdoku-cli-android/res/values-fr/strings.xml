@@ -103,5 +103,7 @@
         <item>Ajouter l\'adresse email à un contact existant</item>
     </string-array>
     <string name="userSearch">Nom d\'utilisateur</string>
+    <string name="userLoadError">Erreur dans le chargement de la liste des utilisateurs</string>
+    <string name="userLoadInProgress">Chargement de la liste des utilisateurs en cours...</string>
 
 </resources>
