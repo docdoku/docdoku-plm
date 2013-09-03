@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.android.plm.client;
 
 import android.app.PendingIntent;
@@ -16,16 +36,38 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 /**
+ * <code>Service</code> called when a user clicks on a <code>Notification</code>. Attempts to start a {@link DocumentActivity}
+ * for the {@link Document} whose Id was indicated in the <code>Notification</code>.
+ *
  * @author: martindevillers
  */
 public class NotificationService extends Service implements HttpGetTask.HttpGetListener{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.NotificationService";
 
+    /**
+     * Unused method. Useful if this <code>Service</code> was bound to an <code>Activity</code>, which it shouldn't be.
+     *
+     * @param intent
+     * @return
+     * @see Service
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    /**
+     * Called when this <code>Service</code> is started.
+     * <p>Loads the {@link Session} information in order to be able to send a request to the server.
+     * <p>Extracts the <code>Document</code> data from the <code>Extras</code> in the <code>Intent</code> to start a {@link HttpGetTask} to fetch
+     * the information about the document from the server.
+     *
+     * @param intent the <code>PendingIntent</code> created in the {@link GCMIntentService}
+     * @param i
+     * @param j
+     * @return
+     * @see Service
+     */
     @Override
     public int onStartCommand(Intent intent, int i, int j){
         Log.i(LOG_TAG, "Click on notification detected. Starting NotificationService.");
@@ -47,6 +89,15 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
         return START_NOT_STICKY;
     }
 
+    /**
+     * Handles the result of the {@link HttpGetTask}.
+     * <p>If the Http request was successful, the result is a <code>JSONObject</code> representing the <code>Document</code>.
+     * A <code>PendingIntent</code> is created to start the {@link DocumentActivity} for this {@link Document} and it is
+     * put inside of another <code>Intent</code> which starts the {@link ConnectionActivity};
+     *
+     * @param result
+     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     */
     @Override
     public void onHttpGetResult(String result) {
         Log.i(LOG_TAG, "Downloaded document that caused a notification");

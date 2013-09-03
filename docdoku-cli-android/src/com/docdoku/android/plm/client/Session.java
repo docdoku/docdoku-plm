@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.android.plm.client;
 
 import android.content.Context;
@@ -9,6 +29,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Singleton containing the data for the current session used by the user.
+ *
  * @author: martindevillers
  */
 public final class Session {
@@ -45,6 +67,19 @@ public final class Session {
         this.port = port;
     };
 
+    /**
+     * Sets the current <code>Session</code> with the specified parameters. If the <code>autoConnect</code> parameter's value is <code>true</code>,
+     * the <code>Session</code> data is stored in the application's <code>SharedPreferences</code>. The <code>url</code> is used to
+     * extract the <code>host</code> and <code>port</code> to access the server.
+     *
+     * @param context The <code>Context</code>, used to access the <code>SharedPreferences</code>
+     * @param autoConnect Whether the auto connect option was selected
+     * @param userName the user's name
+     * @param userLogin the user's login
+     * @param password the user's password
+     * @param url the provided url
+     * @return the <code>Session</code> that was generated
+     */
     public static Session initSession(Context context, boolean autoConnect, String userName, String userLogin, String password, String url){
         String host = extractHostFromUrl(url);
         int port = extractPortFromUrl(url);
@@ -61,6 +96,12 @@ public final class Session {
         return session;
     }
 
+    /**
+     * Attempts to load a <code>Session</code> from the <code>SharedPreferences</code>
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     * @return whether a <code>Session</code> was found in the <code>SharedPreferences</code>
+     */
     public static boolean loadSession(Context context){
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
         boolean autoConnect = preferences.getBoolean(PREFERENCE_KEY_AUTO_CONNECT, false);
@@ -77,12 +118,23 @@ public final class Session {
         }
     }
 
+    /**
+     * Erases the current <code>Session</code> from memory and from the <code>SharedPreferences</code>
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     */
     public void eraseSession(Context context){
         session = null;
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
         preferences.edit().clear().commit();
     }
 
+    /**
+     * Gets the current <code>Session</code> instance
+     *
+     * @return the current <code>Session</code>
+     * @throws SessionLoadException if no <code>Session</code> instance is available
+     */
     public static Session getSession() throws SessionLoadException{
         if (session == null){
             throw new SessionLoadException();
@@ -90,6 +142,13 @@ public final class Session {
         return session;
     }
 
+    /**
+     * Gets the current <code>Session</code> instance, loading it from the <code>SharedPreferences</code> if none is available in memory.
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     * @return The current <code>Session</code>
+     * @throws SessionLoadException if no <code>Session</code> instance is available
+     */
     public static Session getSession(Context context) throws SessionLoadException{
         if (session == null){
             if (!loadSession(context)){
@@ -99,10 +158,21 @@ public final class Session {
         return session;
     }
 
+    /**
+     * Sets the user's name in the current <code>Session</code>
+     *
+     * @param userName the user's name
+     */
     public void setUserName(String userName){
         this.userName = userName;
     }
 
+    /**
+     * Sets the workspaces available to the current user for the current <code>Session</code>, and stores them in the <code>SharedPreferences</code>
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     * @param downloadedWorkspaces The workspaces available
+     */
     public void setDownloadedWorkspaces(Context context, String[] downloadedWorkspaces) {
         this.downloadedWorkspaces = downloadedWorkspaces;
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
@@ -112,6 +182,12 @@ public final class Session {
             .commit();
     }
 
+    /**
+     * Sets the workspace that the current user is consulting for the current <code>Session</code>, and stores it in the <code>SharedPreferences</code>
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     * @param currentWorkspace The worspace currently in use
+     */
     public void setCurrentWorkspace(Context context, String currentWorkspace) {
         this.currentWorkspace = currentWorkspace;
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
@@ -120,6 +196,11 @@ public final class Session {
             .commit();
     }
 
+    /**
+     * If auto connect was enabled for the current session
+     *
+     * @return
+     */
     public boolean isPermanentSession(){
         return permanentSession;
     }
@@ -144,6 +225,13 @@ public final class Session {
         return port;
     }
 
+    /**
+     * Gets the downloaded workspaces for the current <code>Session</code>, and attempts to load them from the <code>SharedPreferences</code>
+     * if none is available in memory.
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     * @return The workspace array
+     */
     public String[] getDownloadedWorkspaces(Context context) {
         if (downloadedWorkspaces == null){
             Log.i(LOG_TAG, "Loading downloaded workspaces from preferences");
@@ -160,6 +248,13 @@ public final class Session {
         return downloadedWorkspaces;
     }
 
+    /**
+     * Gets the workspaces last used by the current <code>Session</code>'s user, and attempts to load it from the <code>SharedPreferences</code>
+     * if none is available in memory.
+     *
+     * @param context The <code>Context</code> to access the <code>SharedPreferences</code>
+     * @return The workspace's name
+     */
     public String getCurrentWorkspace(Context context) {
         if (currentWorkspace == null){
             Log.i(LOG_TAG, "Loading current workspace from preferences");
@@ -219,6 +314,9 @@ public final class Session {
         return -1;
     }
 
+    /**
+     * Exception indicating that the class was unable to load a <code>Session</code>
+     */
     public static class SessionLoadException extends Exception{
 
         public SessionLoadException(){

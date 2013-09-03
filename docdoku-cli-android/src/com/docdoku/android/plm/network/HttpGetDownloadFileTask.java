@@ -27,7 +27,11 @@ import java.io.*;
 import java.net.*;
 
 /**
- *
+ * Sends an Http GET request to the server, receiving a <code>File</code> as a result.
+ * <p>The constructor requires a {@link HttpGetDownloadFileListener} to notify the result of the request.
+ * <p>The host's url path is specified in the first <code>String</code> parameter in the <code>execute()</code> method.
+ * <p>The second parameter in the <code>execute()</code> method is the name that will be used to save the <code>File</code>,
+ * inside of the Downloads directory.
  * @author: Martin Devillers
  */
 public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean> {

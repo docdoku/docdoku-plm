@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * Models either a {@link com.docdoku.android.plm.client.parts.Part Part} or a {@link com.docdoku.android.plm.client.documents.Document Document}.
+ *
  * @author: martindevillers
  */
 public abstract class Element implements Serializable{
@@ -66,6 +68,14 @@ public abstract class Element implements Serializable{
     protected String iterationNote, iterationAuthor, iterationDate;
     protected String lastIterationJSONString;
 
+    /**
+     * Uses a <code>JSONObject</code> representing this <code>Element</code> to fill in its attributes
+     *
+     * @param elementJSON this <code>Element</code>'s <code>JSONObject</code>
+     * @param resources the <code>Resources</code> to convert some of attributes in the <code>JSONObject</code> to more readable <code>String</code>s
+     * @return this <code>Element</code>
+     * @throws JSONException if an error is encountered when reading the <code>JSONObject</code>
+     */
     public abstract Element updateFromJSON(JSONObject elementJSON, Resources resources) throws JSONException;
 
 
@@ -79,6 +89,10 @@ public abstract class Element implements Serializable{
 
     public String getCheckOutUserLogin(){
         return checkOutUserLogin;
+    }
+
+    public String getCheckOutDate(){
+        return checkOutDate;
     }
 
     public int getIterationNumber() {
@@ -128,6 +142,13 @@ public abstract class Element implements Serializable{
         return linkedDocuments[i];
     }
 
+    /**
+     * Update the <code>JSONObject</code> representing this <code>Element</code>'s last iteration to set the iteration
+     * note provided by the user.
+     *
+     * @param note the iteration note
+     * @return the <code>JSONObject</code>, updated
+     */
     public JSONObject getLastIterationJSONWithUpdateNote(String note){
         try{
             JSONObject lastIteration = new JSONObject(lastIterationJSONString);
@@ -222,12 +243,27 @@ public abstract class Element implements Serializable{
         this.linkedDocuments = linkedDocuments;
     }
 
+    /**
+     * Sets the information for the last checkin/checkout of this <code>Element</code>
+     *
+     * @param checkOutUserName null if checked in, the checkout user's name if checked out
+     * @param checkOutUserLogin null if checked in, the checkout user's login if checked out
+     * @param checkOutDate null if checked in, the checkout date if checked out
+     */
     public void setCheckOutInformation(String checkOutUserName, String checkOutUserLogin, String checkOutDate){
         this.checkOutUserName = checkOutUserName;
         this.checkOutUserLogin = checkOutUserLogin;
         this.checkOutDate = checkOutDate;
     }
 
+    /**
+     * Sets the information for this <code>Element</code>'s last iteration
+     *
+     * @param iterationNumber the last iteration's number
+     * @param iterationNote the note left by the last iteration's author
+     * @param iterationAuthor the last iteration author's name
+     * @param iterationDate the date of the last iteration
+     */
     public void setLastIteration(int iterationNumber, String iterationNote, String iterationAuthor, String iterationDate){
         this.iterationNumber = iterationNumber;
         this.iterationAuthor = iterationAuthor;
@@ -246,6 +282,9 @@ public abstract class Element implements Serializable{
     protected abstract String getUrlPath();
     protected abstract String[] getLastIteration();
 
+    /**
+     * Class representing an <code>Element</code>'s attribute, with its <code>name</code> and its <code>value</code>.
+     */
     public class Attribute implements Serializable {
 
         private String name;

@@ -44,6 +44,12 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
+ * Base class for {@code Activities} representing a list of {@link Part Parts}. This class contains:
+ * <br>The {@link PartAdapter} used to represent the parts in a {@code ListView}
+ * <br>The {@link #onPartClick(Part) onPartClick()} method used to handle click events on parts
+ * <br>The {@link #getSearchQueryHintId()} and {@link #executeSearch(String) executeSearch()} methods used to handle
+ * searches made by the user in the {@code ActionBar}.
+ *
  * @author: martindevillers
  */
 public abstract class PartListActivity extends SearchActionBarActivity {
@@ -61,6 +67,14 @@ public abstract class PartListActivity extends SearchActionBarActivity {
     private List<Part> partSearchResultArray;
     private PartAdapter partSearchResultAdapter;
 
+    /**
+     * Called when this {@code Activity} is created.
+     * <p>Initializes the {@code partListView} and {@link NavigationHistory}
+     * <br>Sets the {@code OnItemClickListener} on the {@code ListView}
+     *
+     * @param savedInstanceState
+     * @see android.app.Activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +92,12 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         });
     }
 
+    /**
+     * Handles a click on a {@link Part}. Adds its id to the {@link NavigationHistory} and create an {@code Intent}
+     * to start a new {@link PartActivity}.
+     *
+     * @param part the part whose row was clicked
+     */
     private void onPartClick(Part part){
         navigationHistory.add(part.getKey());
         Intent intent = new Intent(PartListActivity.this, PartActivity.class);
@@ -85,6 +105,9 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         startActivity(intent);
     }
 
+    /**
+     * {@code BaseAdapter} implementation for handling the representation of {@link Part} rows.
+     */
     protected class PartAdapter extends BaseAdapter {
 
         private List<Part> parts;
@@ -110,6 +133,15 @@ public abstract class PartListActivity extends SearchActionBarActivity {
             return i;
         }
 
+        /**
+         * Returns if the row at {@code position} is clickable
+         * <br>If the {@code Part} at {@code position} is not {@code null} and its {@code author} is not {@code null},
+         * then it is clickable.
+         *
+         * @param position
+         * @return
+         * @see BaseAdapter
+         */
         @Override
         public boolean isEnabled(int position){
             try{
@@ -124,6 +156,23 @@ public abstract class PartListActivity extends SearchActionBarActivity {
             }
         }
 
+        /**
+         * Generates the {@code View} for a row representing a {@link Part}
+         * <p>If the part at position {@code i} is {@code null}, then a row with a {@code ProgressBar} is returned to
+         * indicate that the {@code Part} is still being loaded.
+         * <p>If the {@code Part} is not {@code null} but it's {@code author} is {@code null}, the the part loading is
+         * assumed to have failed, and a row indicating an error is created.
+         * <p>If the {@code Part} is correctly available:
+         * <br>Its reference and last revision {@code TextView}s are set
+         * <br>Its check in/out {@code ImageView} is set by comparing its {@code checkoutUserLogin} to the current user's login
+         * <br>Its iteration number {@code TextView} is set
+         *
+         * @param i
+         * @param view
+         * @param viewGroup
+         * @return
+         * @see BaseAdapter
+         */
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             final View partRowView;
@@ -166,6 +215,21 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         }
     }
 
+    /**
+     * Method that converts a date into a {@code String} that is easier to read for the user. The possible scenarios are:
+     * today, yesterday, and the date for a previous event.
+     * <p>The {@code currentTime} is created, and compared to {@code date}, the date parsed from {@code dateString}:
+     * <br>If they are the same year and the same day of the year, then the resource at {@code R.string.today} is returned.
+     * <br>If they are the same year and {@code date} is one day before {@code currentTime}, then the resource at
+     * {@code R.string.yesterday} is returned.
+     * <br>Otherwise, {@code DateUtils.getRelativeTimeSpanString} is used to generate a {@code String} easily readable by the user.
+     * <p>Note: if we are the first day of a new year and the {@code dateString} indicates the last day of previous year,
+     * then this method will not return yesterday but instead the date. But nobody really cares.
+     * @param dateString
+     * @return the {@code String} to be displayed to the user
+     * @throws ParseException if the {@code dateString} could not be parsed into a {@code Calendar}
+     * @throws NullPointerException
+     */
     protected String simplifyDate(String dateString) throws ParseException, NullPointerException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         Calendar date = Calendar.getInstance();
@@ -185,13 +249,27 @@ public abstract class PartListActivity extends SearchActionBarActivity {
     }
 
     /**
-     * SearchActionBarActivity methods
+     *
+     * @return
+     * @see SearchActionBarActivity#getSearchQueryHintId()
      */
     @Override
     protected int getSearchQueryHintId() {
         return R.string.partSearchByKey;
     }
 
+    /**
+     * Handles user part searches by id.
+     * <p>Cancels the {@link #searchTask} to stop a search query that may be running.
+     * <p>If the search query is empty, the {@code Adapter} for the {@code ListView} is set to the default one contained
+     * in this class: {@link #partAdapter}.
+     * <p>If it isn't empty, starts an {@link HttpGetTask} to send a part search by id request to server. Once the result
+     * is obtained, a new {@link PartAdapter} is created with the {@link Part Parts} found in the resulting {@code JSONArray},
+     * and is set for the {@code ListView} for this {@code Activity}.
+     *
+     * @param query the text entered in the <code>SearchActionBar</code>
+     * @see SearchActionBarActivity#executeSearch(String)
+     */
     @Override
     protected void executeSearch(String query) {
         if (searchTask != null){

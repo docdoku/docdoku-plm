@@ -25,6 +25,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
+ * Abstract class for <code>Activity</code> representing an <code>Element</code>'s data.
+ * <p>Contains the methods used for operation that <code>Document</code>s and <code>Part</code>s have in common.
+ *
  * @author: martindevillers
  */
 public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
@@ -58,18 +62,28 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     private String iterationNote;
 
     /**
-     * Methods to do checkins/checkouts
+     * Obtains the instance of the <code>Element</code> that this <code>Activity</code> is presenting to the user
      *
-     * setElementCheckedIn
-     * checkOutElement
-     * setElementCheckedOutByCurrentUser
-     * checkInElement
+     * @see android.app.Activity
+     */
+    @Override
+    public void onResume(){
+        super.onResume();
+        element = getElement();
+    }
+
+    protected abstract Element getElement();
+
+    /**
+     * Sets the <code>Element</code> checked in by the current user.
+     * <p>Set the <code>checkInOutButton OnClickListener</code>'s <code>onClick()</code> method to start the
+     * {@link #checkOutElement()} method.
      */
     protected void setElementCheckedIn(){
         checkedIn = true;
         checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_in_light, 0, 0);
         checkInOutButton.setText(R.string.checkOut);
-        element.setCheckOutInformation(null, null, null);
+        getElement().setCheckOutInformation(null, null, null);
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,6 +92,11 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         });
     }
 
+    /**
+     * Attempts to check out the <code>Element</code> by the current user.
+     * <p>Shows an <code>AlertDialog</code> to obtain confirmation that this is what the user wants to do.
+     * If he confirms it, a new {@link HttpPutTask} is started.
+     */
     private void checkOutElement(){
         new AlertDialog.Builder(ElementActivity.this)
             .setIcon(R.drawable.checked_in_light)
@@ -93,13 +112,29 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             .create().show();
     }
 
+    /**
+     * Sets the <code>Element</code> checked out by the current user at the current time by calling the
+     * {@link #setElementCheckedOutByCurrentUser(String) setElementCheckedOutByCurrentUser(String date)} method
+     * with date set to current date.
+     */
     protected void setElementCheckedOutByCurrentUser(){
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        setElementCheckedOutByCurrentUser(simpleDateFormat.format(c.getTime()));
+    }
+
+    /**
+     * Sets the <code>Element</code> checked out by the current user at the specified time.
+     * <p>Set the <code>checkInOutButton OnClickListener</code>'s <code>onClick()</code> method to start the
+     * {@link #checkInElement()} method.
+     *
+     * @param date the checkout date
+     */
+    protected void setElementCheckedOutByCurrentUser(String date){
         checkedIn = false;
         checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_current_user_light, 0, 0);
         checkInOutButton.setText(R.string.checkin);
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-        element.setCheckOutInformation(getCurrentUserName(), getCurrentUserLogin(), simpleDateFormat.format(c.getTime()));
+        getElement().setCheckOutInformation(getCurrentUserName(), getCurrentUserLogin(), date);
         checkInOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,6 +143,14 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         });
     }
 
+    /**
+     * Attempts to check in the <code>Element</code> by the current user.
+     * <p>Shows an <code>AlertDialog</code> to obtain confirmation that this is what the user wants to do and to allow
+     * the user to add a revision note in an <code>EditText</code>.
+     * If he confirm without a revision  it, a new {@link HttpPutTask} is started to check in the <code>Element</code>.
+     * If he confirms with a revision, a new {@link HttpPutTask} is started to send the revision note to the server, and
+     * if that task returns a positive result, then another task is started to do the checkin.
+     */
     private void checkInElement(){
         final EditText iterationNoteField = new EditText(ElementActivity.this);
         new AlertDialog.Builder(ElementActivity.this)
@@ -151,8 +194,15 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     }
 
     /**
-     * HttpPutListener method:
-     * @Override onHttpPutResult
+     * Handles the result of an checkin/checkout task.
+     * <p>If the result is <code>false</code>, shows a <code>AlertDialog</code> to indicate a connection error.
+     * <p>If the result is <code>true</code>, checks the chek in/out status of the <code>Element</code>, and shows
+     * a <code>Toast</code> indicating that the operation was successful. The document is also updated with this new
+     * check in/out operation.
+     *
+     * @param result If the Http request return a code 200, indicating that the task was successful
+     * @param responseContent The String of the updated <code>JSONObject</code>
+     * @see com.docdoku.android.plm.network.HttpPutTask.HttpPutListener
      */
     @Override
     public void onHttpPutResult(boolean result, String responseContent) {
@@ -186,10 +236,9 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
     }
 
     /**
-     * HttpGetDownloadListener methods :
-     * @Override onFileDownloadStart
-     * @Override onFileDownloaded
-     * @Override onFileDownloadStart
+     * When a file download begins, opens a <code>ProgressDialog</code>.
+     *
+     * @see com.docdoku.android.plm.network.HttpGetDownloadFileTask.HttpGetDownloadFileListener
      */
     @Override
     public void onFileDownloadStart() {
@@ -199,6 +248,15 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         fileDownloadProgressDialog.show();
     }
 
+    /**
+     * Closes the <code>ProgressDialog</code> when the file download task is finished
+     * <p>If the download was successful, shows a <code>Toast</code> indicating where the file was saved, and creates a <code>chooser</code>
+     * for the user to open the file.
+     * <p>If the download failed, show a <code>Toast</code> indicating a download error to the user.
+     *
+     * @param result whether the download was successful
+     * @param path the path on the device to the downloaded file
+     */
     @Override
     public void onFileDownloaded(boolean result, String path) {
         fileDownloadProgressDialog.dismiss();
@@ -221,21 +279,24 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         }
     }
 
+    /**
+     * Updates the <code>ProgressDialog</code> during the file download.
+     *
+     * @param progress the percentage of file download completed
+     * @see com.docdoku.android.plm.network.HttpGetDownloadFileTask.HttpGetDownloadFileListener
+     */
     @Override
     public void onProgressUpdate(int progress) {
         fileDownloadProgressDialog.setProgress(progress);
     }
 
-
     /**
-     * @return View
-     * Create Views for the rows in each group. Methods:
+     * Inflates a layout for an attribute having a name and a value.
+     * <p>Layout file: {@link /res/layout/adapter_name_value_pair.xml adapter_name_value_pair}
      *
-     * createNameValuePairRowView //Row presenting an attribute's name and value
-     * createLinkedDocumentRowView //Row linking to another document
-     * createUploadFileRowView //Row with buttons to upload files
-     * createFileRowView //Row linking to a file download
-     * createNoContentFoundRowView //Row indicating that no content is available for group
+     * @param name The attribute's name
+     * @param value The attribute's value
+     * @return The <code>View</code>, which is a row presenting the name and value.
      */
     protected View createNameValuePairRowView(String name, String value){
         View rowView = getLayoutInflater().inflate(R.layout.adapter_name_value_pair, null);
@@ -244,6 +305,15 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         return rowView;
     }
 
+    /**
+     * Inflates a layout for an linked document, showing its id.
+     * Sets the <code>OnClickListener</code> that starts the download of the document's information with an {@link HttpGetTask}, then, on result,
+     * start the {@link DocumentActivity} for it.
+     * <p>Layout file: {@link /res/layout/adapter_document_simple.xml adapter_document_simple}
+     *
+     * @param linkedDocument the id of the linked document
+     * @return The <code>View</code>, which is a row with the document's id
+     */
     protected View createLinkedDocumentRowView(final String linkedDocument){
         ViewGroup rowView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_simple, null);
         TextView docView = (TextView) rowView.findViewById(R.id.docId);
@@ -273,6 +343,15 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         return rowView;
     }
 
+    /**
+     * Inflates a layout for an linked file, showing its name.
+     * Sets the <code>OnClickListener</code> that starts the download of the file with an {@link HttpGetDownloadFileTask}.
+     * <p>Layout file: {@link /res/layout/adapter_dowloadable_file.xml adapter_downloadable_file}
+     *
+     * @param fileName the name of the downloadable file
+     * @param fileUrl the end of the url used to download the file
+     * @return The <code>View</code>, which is a row with the file's name
+     */
     protected View createFileRowView(final String fileName, final String fileUrl){
         View rowView = getLayoutInflater().inflate(R.layout.adapter_dowloadable_file, null);
         TextView fileNameField = (TextView) rowView.findViewById(R.id.fileName);
@@ -287,6 +366,13 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         return rowView;
     }
 
+    /**
+     * Inflates a layout for a row indicating a simple message.
+     * <p>Layout file: {@link /res/layout/adapter_message.xml adapter_message}
+     *
+     * @param messageId the id of the <code>String</code> resource containing the message
+     * @return The <code>View</code>, which is a row with the message
+     */
     protected View createNoContentFoundRowView(int messageId){
         View rowView = getLayoutInflater().inflate(R.layout.adapter_message, null);
         TextView message = (TextView) rowView.findViewById(R.id.message);

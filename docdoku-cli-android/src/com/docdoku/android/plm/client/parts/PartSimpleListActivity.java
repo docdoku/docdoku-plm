@@ -32,17 +32,43 @@ import org.json.JSONObject;
 import java.util.*;
 
 /**
+ * {@code Activity} for displaying list of results of an advanced part search.
+ * <br>The type of result to display is specified in the {@code Intent} extra with key {@link #LIST_MODE_EXTRA}.
+ * This should always indicate a part search query results.
+ * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
  */
 public class PartSimpleListActivity extends PartListActivity implements HttpGetTask.HttpGetListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartSimpleListActivity";
 
+    /**
+     * {@code Intent} extra key to find the type of result to display
+     */
     public static final String  LIST_MODE_EXTRA = "list mode";
+    /**
+     * Value of {@code Intent} extra with key {@link #LIST_MODE_EXTRA} indicating that the list of all parts should be shown
+     * @deprecated use a {@link PartCompleteListActivity}
+     */
     public static final int ALL_PARTS_LIST = 0;
+    /**
+     * Value of {@code Intent} extra with key {@link #LIST_MODE_EXTRA} indicating that the list of search results should be shown
+     */
     public static final int PART_SEARCH = 2;
+    /**
+     * {@code Intent} extra key to find the search query to execute
+     */
     public static final String SEARCH_QUERY_EXTRA = "search query";
 
+    /**
+     * Called when the {@code Activity} is created.
+     * <br>Reads from the {@code Intent} the which parts should be displayed, and starts an {@link HttpGetTask} to query
+     * the server for the results.
+     *
+     * @param savedInstanceState
+     * @see android.app.Activity
+     * @see PartListActivity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +85,13 @@ public class PartSimpleListActivity extends PartListActivity implements HttpGetT
         }
     }
 
+    /**
+     * Called when the query result is obtained.
+     * <br>Reads the array and adds the parts to the {@code Adapter}, then notifies it that its data set has changed.
+     *
+     * @param result a {@code JSONArray} of {@link Part Parts}
+     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     */
     @Override
     public void onHttpGetResult(String result) {
         if (loading !=null){
@@ -82,6 +115,10 @@ public class PartSimpleListActivity extends PartListActivity implements HttpGetT
         }
     }
 
+    /**
+     * @return
+     * @see com.docdoku.android.plm.client.SimpleActionBarActivity#getActivityButtonId()
+     */
     @Override
     protected int getActivityButtonId() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.

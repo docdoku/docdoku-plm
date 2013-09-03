@@ -28,7 +28,12 @@ import java.io.*;
 import java.net.*;
 
 /**
- *
+ * Sends an Http GET request to the server, receiving a simple <code>String</code> result.
+ * <p>The constructor requires a {@link HttpGetListener} to notify the result of the request.
+ * <p>The host's url path is specified in the first <code>String</code> parameter in the <code>execute()</code> method.
+ * <p>
+ * <p>This method has a second constructors with a <code>Session</code> parameter, that defines the server connection
+ * information for all Http methods.
  * @author: Martin Devillers
  */
 public class HttpGetTask extends HttpTask<String, Void, String>{

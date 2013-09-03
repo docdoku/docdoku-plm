@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 /**
+ * Model containing the data for a document
  *
  * @author: Martin Devillers
  */

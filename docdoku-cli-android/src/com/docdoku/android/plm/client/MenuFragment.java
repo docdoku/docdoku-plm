@@ -38,13 +38,14 @@ import com.docdoku.android.plm.client.parts.PartHistoryListActivity;
 import com.docdoku.android.plm.client.parts.PartSearchActivity;
 
 /**
+ * The <code>DrawerLayout</code> component that slides from the left side of the screen to allow users to access the menu.
  *
  * @author: Martin Devillers
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.MenuFragment";
 
-    protected boolean workspaceChanged = false;
+    private boolean workspaceChanged = false;
 
     private View view;
     private RadioGroup workspaceRadioGroup;
@@ -54,6 +55,21 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private String[] downloadedWorkspaces;
     private String currentWorkspace;
 
+    /**
+     * Creates the <code>View</code> for the sliding menu.
+     * <p>Attempts to find the downloaded workspaces  and the current workspace for the <code>RadioGroup</code> in the
+     * current <code>Session</code>, and if that fails attempts to load them from the <code>SharedPreferences</code>.
+     * Sets the <code>OnClickListener</code> that expands the list of workspaces, and the one that detects when the current
+     * workspace has been changed.
+     * <p>Sets this <code>MenuFragment</code> as the <code>OnClickListener</code> for the menu items.
+     * <p>Layout file: {@link /res/layout/fragment_menu.xml fragment_menu}
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.fragment_menu, container);
@@ -101,6 +117,14 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    /**
+     * Sets the current workspace in the workspaces <code>RadioGroup</code>
+     * <p>Adds a single <code>RadioButton</code>, which is selected, for the current workspace. If more than one workspace
+     * have been downloaded, than add a <code>Button</code> to show the other workspaces.
+     *
+     * @param workspace the selected workspace
+     * @param radioGroup the empty <code>RadioGroup</code> to be populated
+     */
     public void addCurrentWorkspace(String workspace, RadioGroup radioGroup){
         RadioButton radioButton;
         radioButton = new RadioButton(getActivity());
@@ -118,6 +142,14 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         radioGroup.addView(expandRadioButtons);
     }
 
+    /**
+     * Expands the list of workspaces in the <code>RadioGroup</code> to show them all.
+     * <p>Removes the selected workspace, then adds the full list of workspaces. Goes through the list until the position
+     * of the current workspace is found and sets its <code>RadioButton</code> to checked.
+     *
+     * @param workspaces the list of downloaded workspaces
+     * @param radioGroup the <code>RadioGroup</code>, containing only one child <code>View</code>, which is the selected workspace
+     */
     public void addWorkspaces(String[] workspaces, RadioGroup radioGroup){
         int selectedButtonId = radioGroup.getCheckedRadioButtonId();
         if (selectedButtonId != -1){
@@ -137,6 +169,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Highlights the menu item that represents the current <code>Activity</code>, if such an item exists.
+     *
+     * @param buttonId The id of the item linking to the current <code>Activity</code>, if such an item exists.
+     */
     public void setCurrentActivity(int buttonId){
         View activityView = view.findViewById(buttonId);
         if (activityView != null){
@@ -146,6 +183,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Handles a click on a menu item by starting an <code>Intent</code> to the corresponding activity.
+     *
+     * @param view
+     * @see android.view.View.OnClickListener
+     */
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
@@ -180,5 +223,14 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if (intent !=null){
             startActivity(intent);
         }
+    }
+
+    /**
+     * Indicates whether the user has changed workspace while this drawer menu was open.
+     *
+     * @return if the selected workspace has changed
+     */
+    public boolean isWorkspaceChanged() {
+        return workspaceChanged;
     }
 }

@@ -29,6 +29,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
+ * Sends an Http POST request to the server.
+ * <p>The constructor requires a {@link HttpPostUploadFileListener} to notify the result of the request.
+ * <p>The host's url path is  the first <code>String</code> parameter in the <code>execute()</code> method.
+ * <p>The second parameter in the <code>execute()</code> method is the path on the phone to the <code>File</code> to be uploaded
  * @author: martindevillers
  */
 public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{

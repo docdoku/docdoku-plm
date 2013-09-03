@@ -36,6 +36,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <code>Activity</code> that displays the documents in the workspace using the filing system created by the user.
+ * <p>First, a request is sent to the server to get the list of sub-folders in the current folder. Once these have been
+ * downloaded and displayed, a second request is made to download all the documents in the current folder at once.
+ * <p>Due to the fact that this <code>Activity</code>, unlike {@link DocumentCompleteListActivity}, does use a page-by-page <code>Loader</code>
+ * to download the <code>Documents</code>, it may encounter problems delivering results if the user does not have a good
+ * filing system.
+ * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
+ *
  * @author: martindevillers
  */
 public class DocumentFoldersActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener {
@@ -46,6 +54,16 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
     private Folder[] folders;
     private String currentFolderId;
 
+    /**
+     * Called when the <code>Activity</code> is created.
+     * <p>Reads the <code>Intent</code> to find what is the current folder. If no data is in the <code>Extra</code>s, the
+     * current folder is assumed to be the root folder.
+     * <p>Starts an {@link HttpGetTask} to query the list of sub-folders.
+     *
+     * @param savedInstanceState
+     * @see android.app.Activity
+     */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -59,11 +77,28 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
         }
     }
 
+    /**
+     *
+     * @return
+     * @see com.docdoku.android.plm.client.SimpleActionBarActivity#getActivityButtonId()
+     */
     @Override
     protected int getActivityButtonId() {
         return R.id.documentFolders;
     }
 
+    /**
+     * Handles the result of the query for the list of sub-folders.
+     * <p>The result is a {@code JSONArray} of the sub-folders of the current folder. These are put into an {@code Array}
+     * then passed to a new {@link FolderAdapter} to be displayed. The {@code OnItemClickListener} is then set on the
+     * {@code ListView}.
+     * <br>If the current folder is the root one, the user's private folder is added to the list of folders.
+     * <p>A new {@link HttpGetTask} is started to query the list of document in the current folder. When the results are
+     * obtained, they are added to the {@link FolderAdapter}.
+     *
+     * @param result the {@code JSONArray} of sub-folders
+     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     */
     @Override
     public void onHttpGetResult(String result) {
         try {
@@ -132,6 +167,10 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
         removeLoadingView();
     }
 
+    /**
+     * Extends the {@link DocumentAdapter} to be able to display {@link Folder Folders} and {@link Document Documents} in
+     * the same {@code ListView}.
+     */
     private class FolderAdapter extends DocumentAdapter{
 
         public FolderAdapter(List<Document> documents) {

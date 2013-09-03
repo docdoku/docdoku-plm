@@ -31,12 +31,17 @@ import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
 
 /**
+ * <code>Activity</code> presenting the details for a {@link Part} in the form of an <code>ExpandableListView</code>
+ * <p>Layout file: {@link /res/layout/activity_element.xml activity_element}
  *
  * @author: Martin Devillers
  */
 public class PartActivity extends ElementActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartActivity";
 
+    /**
+     * Key for the <code>Parcelable Intent Extra</code> which is the <code>Part</code> represented in this <code>Activity</code>
+     */
     public static final String PART_EXTRA = "part";
 
     private static final int NUM_PAGES = 6;
@@ -45,6 +50,14 @@ public class PartActivity extends ElementActivity {
 
     private Part part;
 
+    /**
+     * Called on this <code>Activity</code>'s creation.
+     * Extracts the <code>Part</code> from the <code>Intent</code> and then sets the <code>Adapter</code> for the
+     * <code>ExpandableListView</code>. The first group (general information) of the <code>ExpandableListView</code> is
+     * expanded here.
+     * @param savedInstanceState
+     * @see android.app.Activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +65,6 @@ public class PartActivity extends ElementActivity {
 
         Intent intent = getIntent();
         part = (Part) intent.getSerializableExtra(PART_EXTRA);
-        element = part;
 
         ExpandableListView expandableListView = (ExpandableListView) findViewById(R.id.list);
         expandableListView.addHeaderView(createHeaderView());
@@ -87,11 +99,36 @@ public class PartActivity extends ElementActivity {
         return header;
     }
 
+    /**
+     * There is no {@code Button} in the menu leading directly to this activity, so 0 is returned.
+     * @return
+     * @see com.docdoku.android.plm.client.SimpleActionBarActivity
+     */
     @Override
     protected int getActivityButtonId() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     *
+     * @return
+     * @see com.docdoku.android.plm.client.ElementActivity#getElement()
+     */
+    @Override
+    protected Element getElement() {
+        return part;
+    }
+
+    /**
+     * {@code Adapter} for the {@code ExpandableListView}
+     * Group 0: Header with tile of part and the check in/out {@code Button}
+     * Group 1: General information about the part
+     * Group 2: CAD file
+     * Group 3: Components
+     * Group 4: Linked documents
+     * Group 5: Information about the last iteration
+     * Group 6: Attributes
+     */
     private class PartDetailsExpandableListAdapter extends BaseExpandableListAdapter{
 
         @Override

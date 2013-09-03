@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
+ * Model for a user of the workspace
  *
  * @author: Martin Devillers
  */
@@ -56,10 +57,19 @@ public class User {
         return existsOnPhone;
     }
 
+    /**
+     * Indicate if a contact with an email address matching this user's was found on the phone
+     * @param existsOnPhone if a contact was found
+     */
     public void setExistsOnPhone(boolean existsOnPhone){
         this.existsOnPhone = existsOnPhone;
     }
 
+    /**
+     * Add a phone number belonging to a contact on the phone to this user
+     * @param number the phone number
+     * @param type the type of phone number (mobile, home, ...)
+     */
     public void addPhoneNumber(String number, String type){
         phoneNumbers.add(new PhoneNumber(number, type));
     }
@@ -76,6 +86,12 @@ public class User {
         return login;
     }
 
+    /**
+     * Searches the phone number provided for this <code>User</code>. If a mobile phone number is found, returns it.
+     * Otherwise, if a phone number is found, returns the first one in the <code>ArrayList</code>. If no phone numbers
+     * are found, returns an empty <code>String</code>.
+     * @return the best phone number found for contact
+     */
     public String getPhoneNumber(){
         Iterator<PhoneNumber> iterator = phoneNumbers.iterator();
         while (iterator.hasNext()){
@@ -101,6 +117,9 @@ public class User {
         return phoneNumbersArray;
     }
 
+    /**
+     * Class representing a phone number, with a type and a number.
+     */
     public class PhoneNumber{
 
         private String number;

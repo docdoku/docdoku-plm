@@ -31,6 +31,19 @@ import android.util.Log;
 import android.view.*;
 
 /**
+ * This class contains the methods that are used by almost all of this application's <code>Activities</code>.
+ * <p>The roles of this class are:
+ * <br> - Implement the methods that handle the <code>ActionBar</code>
+ * ({@link #onCreateOptionsMenu(android.view.Menu) onCreateOptionsMenu()},
+ * {@link #onOptionsItemSelected(android.view.MenuItem) onOptionsItemSelected()},
+ * {@link #restartActivity()})
+ * <br> - Implement the methods that handle the drawer menu
+ * ({@link #onResume()})
+ * <br> - Provide methods to easily access the <code>Seesion</code> data
+ * ({@link #getCurrentWorkspace()},
+ * {@link #getCurrentUserLogin()},
+ * {@link #getUrlWorkspaceApi()},
+ * {@link #getCurrentUserName()})
  *
  * @author: Martin Devillers
  */
@@ -41,6 +54,11 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
 
     private ActionBarDrawerToggle drawerToggle;
 
+    /**
+     * Returns the current workspace being used by the user, loading it from the <code>SharedPreferences</code> if it
+     * can't be found in memory.
+     * @return the current workspace.
+     */
     protected String getCurrentWorkspace(){
         try {
             return Session.getSession(this).getCurrentWorkspace(this);
@@ -51,10 +69,18 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         return null;
     }
 
+    /**
+     * Returns the url used to access the current workspace in Http requests
+     * @return the url path to the current workspace
+     */
     protected String getUrlWorkspaceApi(){
         return URL_API + getCurrentWorkspace();
     }
 
+    /**
+     * Returns the login of the current user, loading it from the <code>SharedPreferences</code> if it can't be found in memory.
+     * @return the current users's login
+     */
     protected String getCurrentUserLogin(){
         try{
             return Session.getSession(this).getUserLogin();
@@ -65,6 +91,10 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         return null;
     }
 
+    /**
+     * Returns the name of the current user, loading it from the <code>SharedPreferences</code> if it can't be found in memory.
+     * @return the current users's name
+     */
     protected String getCurrentUserName(){
         try{
             return Session.getSession(this).getUserName();
@@ -75,6 +105,13 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         return null;
     }
 
+    /**
+     * Called when the GUI is visible to the user.
+     * <p> - Sets the <code>ActionBar</code> "Home" button to open the navigation drawer.
+     * <br> Sets a <code>Listener</code> that calls {@link #restartActivity()} if the selected workspace has changed while the
+     * drawer menu was visible to the user.
+     * @see android.app.Activity
+     */
     @Override
     public void onResume(){
         super.onResume();
@@ -84,7 +121,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.navigation_drawer, 0, 0){
             @Override
             public void onDrawerClosed(View view) {
-                if (menuFragment.workspaceChanged){
+                if (menuFragment.isWorkspaceChanged()){
                     restartActivity();
                 }
             }
@@ -97,6 +134,14 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         drawerToggle.syncState();
     }
 
+    /**
+     * Inflates the menu to create the <code>ActionBar</code> buttons
+     * <p>menu file: {@link /res/menu/action_bar_simple.xml action_bar_simple}
+     *
+     * @param menu the menu to inflate
+     * @return true
+     * @see android.app.Activity
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -104,6 +149,15 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         return true;
     }
 
+    /**
+     * Handles <code>ActionBar</code> button clicks, identifying them by the <code>MenuItem</code> id.
+     * <p> - Users button: starts the {@link UserListActivity}
+     * <br> - Logout button: show an <code>AlertDialog</code> asking the user for confirmation.
+     *
+     * @param item the <code>ActionBar</code> item that was clicked
+     * @return true
+     * @see android.app.Activity
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item)) {
@@ -153,5 +207,10 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    /**
+     * Returns the Id of the <code>Button</code> leading to the current {@code Activity}. This {@code Button} is highlighted
+     * in the side menu to show that this is the {@code Activity} that the user is currently viewing.
+     * @return the id of the {@code Button} linking to the current {@code Activity}
+     */
     protected abstract int getActivityButtonId();
 }

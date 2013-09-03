@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.android.plm.client;
 
 import android.app.*;
@@ -7,6 +27,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 /**
+ * Class called by {@link GCMBroadcastReceiver} when a GCM message is received. Handles the message and creates a <code>Notification</code>.
+ *
  * @author: martindevillers
  */
 public class GCMIntentService extends IntentService {
@@ -24,6 +46,14 @@ public class GCMIntentService extends IntentService {
         super("GcmIntentService");
     }
 
+    /**
+     * Called when this <code>Service</code> is started.
+     * <p>Extracts the data from the message, then calls {@link #sendNotification} to show a <code>Notification</code> to the user.
+     * The <code>Document</code>'s hashcode (on the server) is used as an id for the message, so that only one notification per document
+     * can be shown simultaneously.
+     *
+     * @param intent The intent that started this service, containing the GCM message.
+     */
     @Override
     protected void onHandleIntent(Intent intent){
         Bundle bundle = intent.getExtras();
@@ -55,6 +85,17 @@ public class GCMIntentService extends IntentService {
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    /**
+     * Show a <code>Notification</code> to the user for the document.
+     * <p>Sets the <code>PendingIntent</code> for the notification, which will start a {@link NotificationService}
+     * with this document's id and workspaceId as extra.
+     * <p>Makes the phone vibrate
+     *
+     * @param docReference the reference of the document
+     * @param notificationType the notification type (state change or new iteration)
+     * @param workspaceId the id of the workspace, to
+     * @param notificationCode
+     */
     private void sendNotification(String docReference, String notificationType, String workspaceId, int notificationCode){
         Log.i(LOG_TAG, "Showing notification for document " +
                 "\nNotification type: " + notificationType +
@@ -76,6 +117,12 @@ public class GCMIntentService extends IntentService {
         stopSelf();
     }
 
+    /**
+     * Converts the string read from the GCM message into a readable message indicating the notification type
+     *
+     * @param notificationType the notification type read from the GCM message
+     * @return The <code>String</code> to be presented to the user to indicate the notification type
+     */
     private String formatNotificationType(String notificationType){
         if ("iterationNotification".equals(notificationType)){
             return getResources().getString(R.string.documentIterationNotified);

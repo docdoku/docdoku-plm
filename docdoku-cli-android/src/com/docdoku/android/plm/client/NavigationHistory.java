@@ -28,6 +28,33 @@ import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 
 /**
+ * This class is used to keep track of which <code>Document</code>s and <code>Part</code>s the user has most recently viewed.
+ *
+ * <p>An instance of this path is generated with a <code>SharedPreferences</code> file in the constructor, then this instance
+ * should be updated every time a new <code>Element</code> is viewed by the user. If the user wants to view his browsing history,
+ * he can the fetch this instance.
+ *
+ * <p>Create a <code>NavigationHistory</code> instance when starting a {@link com.docdoku.android.plm.client.documents.DocumentListActivity DocumentListActivity}:
+ * <p><code>
+ *     private static final String PREFERENCE_DOCUMENT_HISTORY = "document history";
+ * <p>
+ * <p> navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
+ * </code>
+ *
+ * <p>Update the <code>NavigationHistory</code> when viewing a <code>Document</code>
+ * <p><code>
+ *     navigationHistory.add(document.getIdentification());
+ * </code>
+ * <p>Load the full <code>NavigationHistory</code> in {@link com.docdoku.android.plm.client.documents.DocumentHistoryListActivity DocumentHistoryListActivity}
+ * <p><code>
+      Iterator<String> iterator = navigationHistory.getKeyIterator();
+  <p> int i = 0;
+  <p> while (iterator.hasNext()){
+  <p>       String docKey = iterator.next();
+  <p>       i++;
+  <p>  }
+ * </code>
+ *
  * @author: martindevillers
  */
 public class NavigationHistory {
@@ -40,6 +67,13 @@ public class NavigationHistory {
     private LinkedHashSet<String> navigationHistory;
     private int size;
 
+    /**
+     * Create a <code>NavigationHistory</code> instance linked to the provided <code>SharedPreferences</code>.
+     * <p>Loads the <code>String</code> preferences that are the Id's of the previously visited <code>Element</code>s, and
+     * stores them in a <code>LinkedHashSet</code>
+     *
+     * @param sharedPreferences <code>SharedPreferences</code> where the <code>NavigationHistory</code> data is kept
+     */
     public NavigationHistory(SharedPreferences sharedPreferences){
         this.sharedPreferences = sharedPreferences;
         size = sharedPreferences.getInt(PREFERENCE_NAVIGATION_HISTORY_SIZE, 0);
@@ -51,14 +85,29 @@ public class NavigationHistory {
         }
     }
 
+    /**
+     * Gets the <code>Iterator</code> used to load the <code>NavigationHistory</code> <code>Element</code> keys
+     * @return the <code>Iterator</code>
+     */
     public Iterator<String> getKeyIterator(){
         return navigationHistory.iterator();
     }
 
+    /**
+     * Returns the number of elements in the <code>NavigationHistory</code>
+     * @return the navigation history size
+     */
     public int getSize(){
         return size;
     }
 
+    /**
+     * Adds an entry to the <code>NavigationHistory</code>.
+     * <p>If the key of the <code>Element</code> is already in history <code>LinkedHashSet</code>, then that key is moved to the top
+     * of the <code>LinkedHashSet</code>. Otherwise, it is added at the top. {@link #saveHistory()} is then called to store
+     * the new history into the <code>SharedPreferences</code>.
+     * @param key the key of the entry to add to the history
+     */
     public void add(String key){
         if (navigationHistory.contains(key)){
             navigationHistory.remove(key);

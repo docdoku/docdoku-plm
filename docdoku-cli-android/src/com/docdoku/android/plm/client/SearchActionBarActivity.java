@@ -27,12 +27,21 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 /**
+ * Extends the {@link SimpleActionBarActivity} for <code>Activities</code> that require a search <code>Button</code> that
+ * launches a <code>SearchActionBar</code>
  *
  * @author: Martin Devillers
  */
 public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActionBarActivity";
 
+    /**
+     * Inflates the menu to create the <code>ActionBar</code> buttons
+     * <p>menu file: {@link /res/menu/action_bar_search.xml action_bar_search}
+     *
+     * @param menu the menu to inflate
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -66,7 +75,15 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
         return true;
     }
 
+    /**
+     * Returns the id of the message to display as a hint in the <code>SearchActionBar</code> when it is opened.
+     * @return the <code>String</code> resource id for the hint
+     */
     protected abstract int getSearchQueryHintId();
 
+    /**
+     * Called to do a search
+     * @param query the text entered in the <code>SearchActionBar</code>
+     */
     protected abstract void executeSearch(String query);
 }

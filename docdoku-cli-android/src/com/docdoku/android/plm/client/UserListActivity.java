@@ -39,6 +39,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
+ * <code>Actity</code> that displays the list of the current workspace's <code>User</code>s and allows the current user to:
+ * <p> - Send an email
+ * <p> - Add to contacts or search in contacts
+ * <p> - Call by phone (if available in contacts)
+ * <p> - Send SMS (if available in contacts)
+ * <p> </p>
+ * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
  */
@@ -53,6 +60,11 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
     private User linkedContact;
     private View headerView;
 
+    /**
+     * Checks if this <code>Activity</code> was resumed after having added a <code>User's</code> email to one of the phone's
+     * contacts or after having create a new contact. In that case, this <code>User</code> is marked as existing on phone.
+     * @see android.app.Activity
+     */
     @Override
     public void onResume(){
         super.onResume();
@@ -62,6 +74,17 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+    /**
+     * Called on the <code>Activity</code>'s creation.
+     * <p> - Adds the header showing the current user's name and the <code>Button</code> to (un)select all users, and sets the
+     * <code>OnClickListener</code> for that <code>Button</code>
+     * <p> - Sets the <code>MultiChoiceModeListener</code> on the <code>User</code> <code>ListView</code> to enable the current
+     * user to select them, prompting a contextual <code>ActionBar</code>. Handles the clicks on <code>MenuItem</code>s.
+     * <p> - Starts an {@link HttpGetTask} to query the server for the list of the current workspace's <code>User</code>s
+     *
+     * @param savedInstanceState
+     * @see android.app.Activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,23 +235,29 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
     }
 
+    /**
+     * Handles the result of an <code>Activity</code> that was started to choose a contact to which to add an email
+     * @param reqCode
+     * @param resCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         Log.i(LOG_TAG, "onActivityResult called with request code " + reqCode + " and result code " + resCode);
         if (resCode == RESULT_OK) {
             switch (reqCode){
-            case INTENT_CODE_CONTACT_PICKER:
-                Uri result = data.getData();
-                Log.i(LOG_TAG, "Contact Uri: " + result.toString());
-                int id = Integer.parseInt(result.getLastPathSegment());
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(ContactsContract.Data.RAW_CONTACT_ID, id);
-                contentValues.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE);
-                contentValues.put(ContactsContract.CommonDataKinds.Email.ADDRESS, linkedContact.getEmail());
-                contentValues.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK);
-                getContentResolver().insert(ContactsContract.Data.CONTENT_URI, contentValues);
-                searchForContactOnPhone(linkedContact);
-                userArrayAdapter.notifyDataSetChanged();
+                case INTENT_CODE_CONTACT_PICKER:
+                    Uri result = data.getData();
+                    Log.i(LOG_TAG, "Contact Uri: " + result.toString());
+                    int id = Integer.parseInt(result.getLastPathSegment());
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(ContactsContract.Data.RAW_CONTACT_ID, id);
+                    contentValues.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE);
+                    contentValues.put(ContactsContract.CommonDataKinds.Email.ADDRESS, linkedContact.getEmail());
+                    contentValues.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK);
+                    getContentResolver().insert(ContactsContract.Data.CONTENT_URI, contentValues);
+                    searchForContactOnPhone(linkedContact);
+                    userArrayAdapter.notifyDataSetChanged();
                 break;
             }
         }
@@ -317,6 +346,13 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         return null;
     }
 
+    /**
+     * Handles the result of the {@link HttpGetTask}. If the query was successful, the result contains a <code>JSONArray</code>
+     * of the <code>User</code>s of the workspace.
+     *
+     * @param result the result of the query
+     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     */
     @Override
     public void onHttpGetResult(String result) {
         View loading = findViewById(R.id.loading);

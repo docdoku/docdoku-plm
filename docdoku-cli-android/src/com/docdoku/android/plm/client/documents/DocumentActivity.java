@@ -47,12 +47,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * <code>Activity</code> presenting the details for a {@link Document} in the form of an <code>ExpandableListView</code>
+ * <p>Layout file: {@link /res/layout/activity_element.xml activity_element}
  *
  * @author: Martin Devillers
  */
 public class DocumentActivity extends ElementActivity implements HttpPostUploadFileTask.HttpPostUploadFileListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentActivity";
 
+    /**
+     * Key for the <code>Parcelable Intent Extra</code> which is the <code>Document</code> represented in this <code>Activity</code>
+     */
     public static final String EXTRA_DOCUMENT = "document";
 
     private static final int INTENT_CODE_ACTIVITY_PICTURE = 0;
@@ -69,6 +74,14 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     private String fileUploadUrl;
     private ProgressDialog progressDialog;
 
+    /**
+     * Called on this <code>Activity</code>'s creation.
+     * Extracts the <code>Document</code> from the <code>Intent</code> and then sets the <code>Adapter</code> for the
+     * <code>ExpandableListView</code>. The first group (general information) of the <code>ExpandableListView</code> is
+     * expanded here.
+     * @param savedInstanceState
+     * @see android.app.Activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +89,6 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
         Intent intent = getIntent();
         document = (Document) intent.getSerializableExtra(EXTRA_DOCUMENT);
-        element = document;
 
         Log.i(LOG_TAG, "starting activity for document with id: " + document.getIdentification());
 
@@ -95,14 +107,14 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result, String responseContent) {
-                        if (result){
+                        if (result) {
                             if (b) {
                                 Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
                             }
                             document.setStateChangeNotification(b);
-                        }else{
+                        } else {
                             Toast.makeText(DocumentActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
                             notifyStateChange.setChecked(!b);
                         }
@@ -141,14 +153,14 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
                     @Override
                     public void onHttpPutResult(boolean result, String responseContent) {
-                        if (result){
-                            if (b){
+                        if (result) {
+                            if (b) {
                                 Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyActivated, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
                             }
                             document.setIterationNotification(b);
-                        }else{
+                        } else {
                             Toast.makeText(DocumentActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
                             notifyIteration.setChecked(!b);
                         }
@@ -204,6 +216,10 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             .create().show();
     }
 
+    /**
+     * Opens a <code>ProgressDialog</code> to show progress while uploading a file to the server.
+     * @see com.docdoku.android.plm.network.HttpPostUploadFileTask.HttpPostUploadFileListener
+     */
     @Override
     public void onUploadStart() {
         progressDialog = new ProgressDialog(this);
@@ -212,6 +228,11 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         progressDialog.show();
     }
 
+    /**
+     * Changes the progress on the progress dialog
+     * @param progress the percentage of the upload progress
+     * @see com.docdoku.android.plm.network.HttpPostUploadFileTask.HttpPostUploadFileListener
+     */
     @Override
     public void onUploadProgressUpdate(int progress) {
         if (progressDialog != null){
@@ -220,8 +241,12 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     }
 
     /**
-     * HttpPostUploadFileListener method
-     * @Override onUploadResult
+     * Called when the file upload is finished, closes the progress dialog.
+     * If the file upload was successful, shows a <code>Toast</code> and updates the document.
+     * If the file upload was unsuccessful, show an <code>AlertDialog</code>, offering the user to try again.
+     * @param result
+     * @param fileName
+     * @see com.docdoku.android.plm.network.HttpPostUploadFileTask.HttpPostUploadFileListener
      */
     @Override
     public void onUploadResult(boolean result, final String fileName) {
@@ -250,8 +275,19 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     }
 
     /**
-     * Result of taking a picture or video
-     * @Override onActivityResult
+     * Called when the <code>Activity</code> started by <code>startActivityForResult()</code> is finished.
+     * The <code>Activity</code> started may have been to take a picture or to choose a file to upload.
+     * If the <code>Activity</code> was successful:
+     * <br>If the <code>Activity</code> was taking a picture, a <code>Toast</code> shows the user where the picture was saved.
+     * An <code>AlertDialog</code> show a preview of the picture, allows the user to choose the name of the picture on the server, and
+     * offers him to start the upload (starting an {@link HttpPostUploadFileTask}) or cancelling it.
+     * <br>If the <code>Activity</code> was choosing a file, an {@link HttpPostUploadFileTask} is started to upload the file to
+     * the server.
+     *
+     * @param requestCode the <code>Intent</code> code that was passed to the <code>Activity</code> to identify the request
+     * @param resultCode the result indicating a success or failure in the <code>Activity</code>
+     * @param data the data passed as a result by the <code>Activity</code>
+     * @see android.app.Activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -351,8 +387,18 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     }
 
     /**
-     * Adapter for the expandable list view
-     * Group 0: Header with tile of document and important buttons
+     *
+     * @return
+     * @see com.docdoku.android.plm.client.ElementActivity#getElement()
+     */
+    @Override
+    protected Element getElement() {
+        return document;
+    }
+
+    /**
+     * {@code Adapter} for the {@code ExpandableListView}
+     * Group 0: Header with tile of document and notification and check in/out {@code Buttons}
      * Group 1: General information about the document
      * Group 2: Linked files
      * Group 3: Linked documents
@@ -591,7 +637,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         checkInOutButton = (Button) header.findViewById(R.id.checkInOutButton);
         if (document.getCheckOutUserLogin() != null){
             if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())){
-                setElementCheckedOutByCurrentUser();
+                setElementCheckedOutByCurrentUser(document.getCheckOutDate());
             }
             else{
                 checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);

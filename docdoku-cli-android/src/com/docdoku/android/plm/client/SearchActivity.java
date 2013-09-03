@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.android.plm.client;
 
 import android.app.AlertDialog;
@@ -20,6 +40,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
+ * Basic structure for {@link com.docdoku.android.plm.client.documents.DocumentSearchActivity DocumentSearchActivity}
+ * and {@link com.docdoku.android.plm.client.parts.PartSearchActivity PartSeachActivity}.
+ *
  * @author: martindevillers
  */
 public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetTask.HttpGetListener {
@@ -31,6 +54,13 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
     protected User selectedUser;
     protected Calendar minDate, maxDate;
 
+    /**
+     * Called when the <code>Activity</code> is created
+     * <p>Starts an {@link HttpGetTask} to request the list of users for the current workspace
+     * <br>Sets the listeners for the search criterion that open a <code>Dialog</code> when choosing them (author, maxDate, minDate)
+     * @param savedInstanceState
+     * @see android.app.Activity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +104,13 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
         });
     }
 
+    /**
+     * Called when the result of the <code>HttpGetTask</code> is obtained.
+     * If the request was successful, the result is a <code>JSONArray</code> of the users of the workspace.
+     *
+     * @param result
+     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     */
     @Override
     public void onHttpGetResult(String result) {
         users = new ArrayList<User>();
@@ -98,6 +135,9 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
         return userNames;
     }
 
+    /**
+     * <code>DialogFragment</code> that allows the user to pick a date.
+     */
     protected static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 

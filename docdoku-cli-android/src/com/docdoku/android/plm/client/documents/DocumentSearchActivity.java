@@ -30,6 +30,15 @@ import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActivity;
 
 /**
+ * {@code Activity} used for doing an advanced search of documents.
+ * <p>The criteria that the user may use for a document search are:
+ * <br>Document reference
+ * <br>Title
+ * <br>Version
+ * <br>Author
+ * <br>Minimum creation date
+ * <br>Maximum creation date
+ * <p>Layout file: {@link /res/layout/activity_search.xml activity_search}
  *
  * @author: Martin Devillers
  */
@@ -38,6 +47,17 @@ public class DocumentSearchActivity extends SearchActivity {
 
     private EditText docReference, docTitle, docVersion;
 
+    /**
+     * Called when the {@code Activity} is created
+     * <p>Set the {@code OnClickListener} on the {@code Button} that starts the search, so that it creates the {@code String}
+     * to be passed in the server url to execute the query.
+     * <br>This {@code String} is then passed in an {@code Intent} to a {@link DocumentSimpleListActivity}, specifying that
+     * it should display the search results.
+     *
+     * @param savedInstanceState
+     * @see android.app.Activity
+     * @see SearchActivity
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +97,11 @@ public class DocumentSearchActivity extends SearchActivity {
         });
     }
 
+    /**
+     *
+     * @return
+     * @see com.docdoku.android.plm.client.SimpleActionBarActivity#getActivityButtonId()
+     */
     @Override
     protected int getActivityButtonId() {
         return R.id.documentSearch;  //To change body of implemented methods use File | Settings | File Templates.

@@ -38,6 +38,9 @@ import org.json.JSONObject;
 import java.util.*;
 
 /**
+ * <code>Activity</code> for presenting all the {@link Part Parts} in a workspace.
+ * <p>The parts are loaded asynchronously by pages of 20 items using a <code>Loader</code>.
+ * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
  */
@@ -50,6 +53,21 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
     private int numPartsAvailable;
     private int numPagesDownloaded;
 
+    /**
+     * Called when the <code>Activity</code> is created.
+     * <p>Adds a footer <code>ProgressBar</code> that will be maintained while there remains more <code>Part</code>s
+     * to be loaded.
+     * <br>Sets an <code>setOnScrollListener</code> that loads the next page of <code>Part</code>s when this footer
+     * becomes visible.
+     * <p>Initializes the <code>ArrayList</code> containing the <code>Part</code>s and the <code>Adapter</code> for the
+     * <code>ListView</code>, as well as the number of documents downloaded.
+     * <p>Starts an {@link HttpGetTask} to download the number of parts in the workspace.
+     *
+     * @param savedInstanceState
+     * @see android.app.Activity
+     * @see PartListActivity
+     */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "Creating PartCompleteListActivity");
@@ -87,11 +105,29 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
 
     }
 
+    /**
+     * Returns a new {@link PartLoaderByPage} for the page indicated in the <code>Bundle</code>
+     *
+     * @param i
+     * @param bundle <code>Bundle</code> containing the <code>Part</code> page and the current workspace
+     * @return The resulting <code>Loader</code>
+     * @see LoaderManager.LoaderCallbacks
+     */
     @Override
     public Loader<List<Part>> onCreateLoader(int i, Bundle bundle) {
         return new PartLoaderByPage(this, bundle.getInt("page"), bundle.getString("workspace"));  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Adds the <code>List</code> of <code>Part</code>s obtained by the {@link PartLoaderByPage} to the
+     * <code>ArrayList</code> of parts, and notifies the {@link PartAdapter} that the data has changed.
+     * Updates the number of pages downloaded.
+     * <p>If there are no more parts to download, removes the <code>FooterView</code>.
+     *
+     * @param partLoader the <code>Loader</code> that provided the result
+     * @param parts the {@code List<Part>} provided by the <code>Loader</code>
+     * @see LoaderManager.LoaderCallbacks
+     */
     @Override
     public void onLoadFinished(Loader<List<Part>> partLoader, List<Part> parts) {
         partsArray.addAll(parts);
@@ -104,11 +140,24 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
         }
     }
 
+    /**
+     *
+     * @param partLoader
+     * @see LoaderManager.LoaderCallbacks
+     */
     @Override
     public void onLoaderReset(Loader<List<Part>> partLoader) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Handles the result of the query for the number of parts in the workspace.
+     * <p>Registers the result. Removes the <code>View</code> that indicated that a loading was taking place. Starts
+     * the <code>Loader</code> for the first page of parts.
+     *
+     * @param result The number of <code>Part</code>s in the workspace
+     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     */
     @Override
     public void onHttpGetResult(String result) {
         try{
@@ -126,11 +175,19 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
         }
     }
 
+    /**
+     *
+     * @return
+     * @see com.docdoku.android.plm.client.SimpleActionBarActivity
+     */
     @Override
     protected int getActivityButtonId() {
         return R.id.allParts;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Class that handles the loading of parts asynchronously.
+     */
     private static class PartLoaderByPage extends Loader<List<Part>> implements HttpGetTask.HttpGetListener {
 
         private int startIndex;
@@ -138,6 +195,15 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
         private AsyncTask asyncTask;
         private List<Part> downloadedParts;
 
+        /**
+         * Constructor called by the <code>LoaderManager.LoaderCallbacks</code> to start loading a page of parts.
+         * The parts with index ranging from <code>20*page</code> to <code>20*page+19</code> will be loaded.
+         *
+         * @param context
+         * @param page
+         * @param workspace
+         * @see Loader
+         */
         public PartLoaderByPage(Context context, int page, String workspace) {
             super(context);
             startIndex = page*20;
@@ -145,6 +211,12 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             this.workspace = workspace;
         }
 
+        /**
+         * Starts an {@link HttpGetTask} to download the page of parts If the parts have already been downloaded,
+         * passes them as a result.
+         *
+         * @see Loader
+         */
         @Override
         protected void onStartLoading (){
             Log.i(LOG_TAG, "Starting PartLoader load for page " + startIndex/20);
@@ -155,6 +227,11 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             }
         }
 
+        /**
+         * Cancels the {@link HttpGetTask} that was downloading the part page.
+         *
+         * @see Loader
+         */
         @Override
         protected void onStopLoading (){
             if (asyncTask != null){
@@ -162,6 +239,11 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             }
         }
 
+        /**
+         * Restarts the {@link HttpGetTask} that was downloading the document page.
+         *
+         * @see Loader
+         */
         @Override
         protected void onReset (){
             Log.i(LOG_TAG, "Restarting PartLoader load for page " + startIndex/20);
@@ -172,16 +254,31 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts?start=" +  startIndex);
         }
 
+        /**
+         * @see Loader
+         */
         @Override
         protected void onForceLoad (){
             //To change body of implemented methods use File | Settings | File Templates.
         }
 
+        /**
+         * @see Loader
+         */
         @Override
         protected void onAbandon (){
             //To change body of implemented methods use File | Settings | File Templates.
         }
 
+        /**
+         * Handles the result of the {@link HttpGetTask} containing a <code>JSONArray</code> of parts.
+         * <p>Creates <code>Part</code> instances from the result and adds them to an {@code ArrayList<Document>}
+         * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
+         *
+         * @param result the query <code>String</code> result
+         * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+         * @see Loader
+         */
         @Override
         public void onHttpGetResult(String result) {
             try {
