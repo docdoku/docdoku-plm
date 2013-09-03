@@ -38,6 +38,7 @@ public class GCMIntentService extends IntentService {
 
     private static final String INTENT_KEY_DOCUMENT_ID = "documentMasterId";
     private static final String INTENT_KEY_DOCUMENT_VERSION = "documentMasterVersion";
+    private static final String INTENT_KEY_DOCUMENT_ITERATION = "documentMasterIteration";
     private static final String INTENT_KEY_NOTIFICATION_TYPE = "type";
     private static final String INTENT_KEY_WORKSPACE_ID = "workspaceId";
     private static final String INTENT_KEY_DOCUMENT_HASHCODE = "hashCode";
@@ -58,16 +59,20 @@ public class GCMIntentService extends IntentService {
     protected void onHandleIntent(Intent intent){
         Bundle bundle = intent.getExtras();
 
-        /*Log.i(LOG_TAG, "Printing out all extras in the intent:");
+        /*
+        //Displays all the data received in the GCM message
+        Log.i(LOG_TAG, "Printing out all extras in the intent:");
         for (String key : bundle.keySet()) {
             Object value = bundle.get(key);
             Log.i(LOG_TAG, String.format("Key: %s;  Value: %s; Type (%s)", key,
                     value.toString(), value.getClass().getName()));
-        }*/
+        }
+        */
 
         Log.i(LOG_TAG, "Received GCM message indicating a new iteration/state change");
         String docId = bundle.getString(INTENT_KEY_DOCUMENT_ID);
         String docVersion = bundle.getString(INTENT_KEY_DOCUMENT_VERSION);
+        String docIteration = bundle.getString(INTENT_KEY_DOCUMENT_ITERATION);
         String notificationType = bundle.getString(INTENT_KEY_NOTIFICATION_TYPE);
         String workspaceId = bundle.getString(INTENT_KEY_WORKSPACE_ID);
         String docHashCode = bundle.getString(INTENT_KEY_DOCUMENT_HASHCODE);
@@ -79,7 +84,7 @@ public class GCMIntentService extends IntentService {
             notificationCode = (int) (Math.random()*1000000);
         }
 
-        sendNotification(docId + "-" + docVersion, notificationType, workspaceId, notificationCode);
+        sendNotification(docId + "-" + docVersion, docIteration, notificationType, workspaceId, notificationCode);
 
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GCMBroadcastReceiver.completeWakefulIntent(intent);
@@ -92,14 +97,16 @@ public class GCMIntentService extends IntentService {
      * <p>Makes the phone vibrate
      *
      * @param docReference the reference of the document
+     * @param iterationNumber the new iteration number
      * @param notificationType the notification type (state change or new iteration)
      * @param workspaceId the id of the workspace, to
      * @param notificationCode
      */
-    private void sendNotification(String docReference, String notificationType, String workspaceId, int notificationCode){
+    private void sendNotification(String docReference, String iterationNumber, String notificationType, String workspaceId, int notificationCode){
         Log.i(LOG_TAG, "Showing notification for document " +
                 "\nNotification type: " + notificationType +
                 "\nDocument reference: " + docReference +
+                "\nDocument iteration" + iterationNumber +
                 "\nNotification code: " + notificationCode +
                 "\nWorkspace id: " + workspaceId);
         Intent notificationIntent = new Intent(this, NotificationService.class);
@@ -109,7 +116,7 @@ public class GCMIntentService extends IntentService {
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.icon_notifications)
                 .setContentTitle(docReference)
-                .setContentText(formatNotificationType(notificationType))
+                .setContentText(formatNotificationType(notificationType, iterationNumber))
                 .setVibrate(new long[]{0, VIBRATION_DURATION_MILLIS})
                 .setContentIntent(pendingIntent)
                 .build();
@@ -118,14 +125,16 @@ public class GCMIntentService extends IntentService {
     }
 
     /**
-     * Converts the string read from the GCM message into a readable message indicating the notification type
+     * Converts the string read from the GCM message into a readable message indicating the notification type.
+     * If it is an iteration notification, then the new iteration number is included in the message.
      *
      * @param notificationType the notification type read from the GCM message
+     * @param iterationNumber the new iteration number
      * @return The <code>String</code> to be presented to the user to indicate the notification type
      */
-    private String formatNotificationType(String notificationType){
+    private String formatNotificationType(String notificationType, String iterationNumber){
         if ("iterationNotification".equals(notificationType)){
-            return getResources().getString(R.string.documentIterationNotified);
+            return getResources().getString(R.string.documentIterationNotified) + ": " + iterationNumber;
         }else if ("stateNotification".equals(notificationType)){
             return getResources().getString(R.string.documentStateChangeNotified);
         }
