@@ -162,65 +162,18 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
 
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                Intent intent;
                 switch (menuItem.getItemId()){
                     case R.id.sendEmails:
-                        intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "", null));
-                        String[] checkedEmailsArray = getSelectedUsersEmail();
-                        intent.putExtra(Intent.EXTRA_EMAIL, checkedEmailsArray);
-                        intent.putExtra(Intent.EXTRA_SUBJECT, getCurrentWorkspace() + "//");
-                        startActivity(Intent.createChooser(intent, getResources().getString(R.string.userSendEmail)));
+                        sendEmailToSelectedUsers();
                         return true;
                     case R.id.call:
-                        User selectedUser = getSelectedUser();
-                        final String[] phoneNumbers = selectedUser.getPhoneNumbers();
-                        new AlertDialog.Builder(UserListActivity.this)
-                                .setTitle(R.string.userChooseNumber)
-                                .setIcon(R.drawable.call_light)
-                                .setNegativeButton(R.string.userCancelCall, null)
-                                .setItems(phoneNumbers, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Log.i(LOG_TAG, "Calling phone number: " + phoneNumbers[i]);
-                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumbers[i]));
-                                        startActivity(intent);
-                                    }
-                                })
-                                .create().show();
+                        callSelectedUser();
                         break;
                     case R.id.sendSMS:
-                        String receiversString = "smsto:";
-                        String[] receivers = getSelectedUsersPhoneNumbers();
-                        for (int i = 0; i<receivers.length; i++){
-                            receiversString += receivers[i];
-                            if (i<receivers.length-1) receiversString += "; ";
-                        }
-                        intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(receiversString));
-                        startActivity(intent);
+                        sendSMSToSelectedUsers();
                         break;
                     case R.id.createContact:
-                        new AlertDialog.Builder(UserListActivity.this)
-                                .setIcon(R.drawable.create_contact_light)
-                                .setTitle(" ")
-                                .setItems(R.array.userAddContactOptions, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        User selectedUser = getSelectedUser();
-                                        linkedContact = selectedUser;
-                                        switch (i) {
-                                            case 0: //Create new user
-                                                Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
-                                                intent.putExtra(ContactsContract.Intents.Insert.NAME, selectedUser.getName());
-                                                intent.putExtra(ContactsContract.Intents.Insert.EMAIL, selectedUser.getEmail());
-                                                startActivity(intent);
-                                                break;
-                                            case 1: //Add email to existing user
-                                                intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                                                startActivityForResult(intent, INTENT_CODE_CONTACT_PICKER);
-                                        }
-                                    }
-                                })
-                                .create().show();
+                        createContactForSelectedUser();
                         break;
                 }
                 return false;
@@ -233,6 +186,95 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         });
 
         new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
+    }
+
+    /**
+     * Send an email to all selected {@code User}s in the {@code ListView}
+     * <p>Gets all the selected {@code User}'s email addresses, then creates a chooser {@code Dialog} to allow the user
+     * to choose which email service to use. The email's subject is set to the current workspace's name followed by "//"
+     * by default.
+     */
+    private void sendEmailToSelectedUsers(){
+        Intent intent;
+        intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "", null));
+        String[] checkedEmailsArray = getSelectedUsersEmail();
+        intent.putExtra(Intent.EXTRA_EMAIL, checkedEmailsArray);
+        intent.putExtra(Intent.EXTRA_SUBJECT, getCurrentWorkspace() + "//");
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.userSendEmail)));
+    }
+
+    /**
+     * Call the selected {@code User} in the {@code ListView}
+     * <p>If several users are selected, the first one in the list is chosen.
+     * <p>Creates an {@code AlertDialog} to allow the user to choose between the phone numbers available for the selected
+     * {@code User}.
+     */
+    private void callSelectedUser(){
+        User selectedUser = getSelectedUser();
+        final String[] phoneNumbers = selectedUser.getPhoneNumbers();
+        new AlertDialog.Builder(UserListActivity.this)
+                .setTitle(R.string.userChooseNumber)
+                .setIcon(R.drawable.call_light)
+                .setNegativeButton(R.string.userCancelCall, null)
+                .setItems(phoneNumbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.i(LOG_TAG, "Calling phone number: " + phoneNumbers[i]);
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumbers[i]));
+                        startActivity(intent);
+                    }
+                })
+                .create().show();
+    }
+
+    /**
+     * Sends an SMS to all the selected {@code User}s in the {@code ListView}
+     * <p>Attempts to find a mobile number for all the users. For users for which none is available, their number will be
+     * set to an empty {@code String}, so they will not be in the SMS receivers.
+     */
+    private void sendSMSToSelectedUsers(){
+        Intent intent;
+        String receiversString = "smsto:";
+        String[] receivers = getSelectedUsersPhoneNumbers();
+        for (int i = 0; i<receivers.length; i++){
+            receiversString += receivers[i];
+            if (i<receivers.length-1) receiversString += "; ";
+        }
+        intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(receiversString));
+        startActivity(intent);
+    }
+
+    /**
+     * Set the selected {@code User}'s email address to a contact.
+     * <p>An {@code AlertDialog} offers the user the possibility of adding the selected {@code User}'s email addres to
+     * an existing contact on phone, in which case an {@code Intent} start an {@code Activity} to pick a contact
+     * among those existing on the phone.
+     * <br>The user can also create a new contact with that email address, in which case an {@code Intent} starts the
+     * {@code Activity} to create a new contact.
+     */
+    private void createContactForSelectedUser(){
+        new AlertDialog.Builder(UserListActivity.this)
+                .setIcon(R.drawable.create_contact_light)
+                .setTitle(" ")
+                .setItems(R.array.userAddContactOptions, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        User selectedUser = getSelectedUser();
+                        linkedContact = selectedUser;
+                        switch (i) {
+                            case 0: //Create new user
+                                Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
+                                intent.putExtra(ContactsContract.Intents.Insert.NAME, selectedUser.getName());
+                                intent.putExtra(ContactsContract.Intents.Insert.EMAIL, selectedUser.getEmail());
+                                startActivity(intent);
+                                break;
+                            case 1: //Add email to existing user
+                                intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                                startActivityForResult(intent, INTENT_CODE_CONTACT_PICKER);
+                        }
+                    }
+                })
+                .create().show();
     }
 
     /**
@@ -263,6 +305,12 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+    /**
+     * Sets the {@code ActionBar} with the menu inflated from the resources.
+     *
+     * @param menuId the resource Id for the menu file to inflate
+     * @param actionMode
+     */
     private void setMenu(int menuId, ActionMode actionMode){
         MenuInflater inflater = actionMode.getMenuInflater();
         Menu menu = actionMode.getMenu();
@@ -270,6 +318,10 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         inflater.inflate(menuId, menu);
     }
 
+    /**
+     * Returns the number of selected {@code User}s in the {@code ListView}
+     * @return
+     */
     private int getNumSelectedUsers(){
         int numSelectedUsers = 0;
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
@@ -284,6 +336,12 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         return numSelectedUsers;
     }
 
+    /**
+     * Returns a {@code String[]} of the selected {@code User}'s email addresses.
+     * <p>The email addresses are those that the user put on the <b>PLM</b> website for his account.
+     *
+     * @return
+     */
     private String[] getSelectedUsersEmail(){
         ArrayList<String> checkedEmails = new ArrayList<String>();
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
@@ -300,22 +358,35 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         return checkedEmailsArray;
     }
 
+    /**
+     * Returns a {@code String[]} of the selected {@code User}'s preferred phone numbers.
+     * <p>If the contact of the phone has a mobile phone number available, the {@code User}'s {@link com.docdoku.android.plm.client.User#getPhoneNumber()}
+     * method will return it. Otherwise, it will return the first number it can find.
+     * <br>If there are no phone numbers on the phone for the {@code User}, then it will return an empty {@code String}.
+     * @return
+     */
     private String[] getSelectedUsersPhoneNumbers(){
-        ArrayList<String> checkedEmails = new ArrayList<String>();
+        ArrayList<String> checkedPhoneNumbers = new ArrayList<String>();
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
         int size = checked.size();
         for (int i = 0; i < size; i++) {
             int key = checked.keyAt(i);
             boolean value = checked.get(key);
             if (value){
-                checkedEmails.add(((User) userArrayAdapter.getItem(checked.keyAt(i))).getPhoneNumber());
+                checkedPhoneNumbers.add(((User) userArrayAdapter.getItem(checked.keyAt(i))).getPhoneNumber());
             }
         }
-        String[] checkedEmailsArray = new String[checkedEmails.size()];
-        checkedEmailsArray = checkedEmails.toArray(checkedEmailsArray);
-        return checkedEmailsArray;
+        String[] checkedPhoneNumbersArray = new String[checkedPhoneNumbers.size()];
+        checkedPhoneNumbersArray = checkedPhoneNumbers.toArray(checkedPhoneNumbersArray);
+        return checkedPhoneNumbersArray;
     }
 
+    /**
+     * Checks if all selected users exist in the phone's contacts.
+     * <p>It does not actually check if the contacts have a phone number available for them.
+     *
+     * @return
+     */
     private boolean selectedUsersHavePhoneNumber(){
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
         int size = checked.size();
@@ -332,6 +403,13 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         return true;
     }
 
+    /**
+     * Returns the selected {@link User}.
+     * <p>If several users are selected, returns the first selected one in the list.
+     * <p>If no users are selected, returns {@code null} and prints out an error message in the {@code Log}.
+     *
+     * @return the selected {@code User}
+     */
     private User getSelectedUser(){
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
         int size = checked.size();
@@ -380,6 +458,14 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+    /**
+     * Searches on the phone contacts for one that has an email address matching the {@link User}'s.
+     * <p>If one is found, then the {@code User} is notified through {@link User#setExistsOnPhone(boolean) setExistsOnPhone()}
+     * that it exists in the phone's contacts. All the phone numbers available for this contact are added to the
+     * {@code User}'s {@code ArrayList} of phone numbers.
+     *
+     * @param user the user to search for on phone and that may be updated
+     */
     private void searchForContactOnPhone(User user){
         Cursor contacts = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
                 ContactsContract.CommonDataKinds.Email.ADDRESS + "= ?", new String[]{user.getEmail()}, null);
@@ -403,6 +489,9 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+    /**
+     * {@code BaseAdapter} implementation for the presentation of rows for each {@link User}
+     */
     private class UserArrayAdapter extends BaseAdapter {
 
         private ArrayList<User> users;
@@ -428,6 +517,22 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
             return i;
         }
 
+        /**
+         * Inflates a row {@code View} to present a {@link User}.
+         * <p>The {@code TextView}'s text is set to the {@code User}'s name.
+         * <br>An {@code OnClickListener} is set on this {@code TextView} so that when the user clicks on it, it height
+         * increases to be able to show the full name of the {@code User}, if that was not possible on a single line.
+         * <p>If a contact matching the {@code User} was found on the phone, the icon next to the {@code CheckBox} is
+         * highlighted in light blue.
+         * <br>The {@code CheckBox} is set in the correct state and an {@code OnCheckedChangeListener} is set on it, to
+         * notify the {@code ListView} that the item has been checked.
+         *
+         * @param i
+         * @param view
+         * @param viewGroup
+         * @return
+         * @see BaseAdapter
+         */
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
             View userRowView = inflater.inflate(R.layout.adapter_user, null);
@@ -457,14 +562,26 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+
     /**
-     * SearchActionBarActivity methods
+     *
+     *
+     * @return
+     * @see SearchActionBarActivity#getSearchQueryHintId()
      */
     @Override
     protected int getSearchQueryHintId() {
         return R.string.userSearch;
     }
 
+    /**
+     * Filters the list of {@code User}s by name with the query entered in the {@code SearchActionBar}. The search result
+     * is used to create a new {@link UserArrayAdapter} that is set for the {@code ListView}.
+     * <br>If the query was empty, the default {@link #userArrayAdapter} is set as the {@code Adapter} for the {@code ListView}.
+     *
+     * @param query the text entered in the <code>SearchActionBar</code>
+     * @see SearchActionBarActivity#executeSearch(String)
+     */
     @Override
     protected void executeSearch(String query) {
         if (query.length()>0){
@@ -477,6 +594,13 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         }
     }
 
+    /**
+     * Executes the filtering of the {@link User} {@code ArrayList} to return only those whose name contains the content of
+     * the {@code query}. Not case-sensitive.
+     *
+     * @param query
+     * @return an {@code ArrayList<User>} with only the users matching the search criteria
+     */
     private ArrayList<User> searchUsers(String query){
         ArrayList<User> searchResult = new ArrayList<User>();
         Iterator<User> iterator = userArray.iterator();
@@ -489,6 +613,13 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
         return searchResult;
     }
 
+    /**
+     * This {@code Activity}'s {@code Button} is in the {@code ActionBar}, not in the {@link MenuFragment}, so this method does
+     * not provide a {@code Button} id to be highlighted.
+     *
+     * @return
+     * @see SimpleActionBarActivity
+     */
     @Override
     protected int getActivityButtonId() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
