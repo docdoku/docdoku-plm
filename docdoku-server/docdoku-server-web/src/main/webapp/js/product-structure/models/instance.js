@@ -25,7 +25,7 @@ Instance.prototype = {
 
     getRating: function(frustum) {
         var inFrustum = this.isInFrustum(frustum);
-        return inFrustum ? this.partIteration.radius / this.getDistance(sceneManager.cameraPosition) : 0;
+        return inFrustum ? this.partIteration.radius *5 / this.getDistance(sceneManager.cameraPosition) : 0;
     },
 
     getDistance: function(position) {
@@ -110,6 +110,7 @@ Instance.prototype = {
                 self.clearMeshAndLevelGeometry();
                 //save level and mesh for further reuse
                 self.levelGeometry = levelGeometry;
+
 
                 callback();
             });

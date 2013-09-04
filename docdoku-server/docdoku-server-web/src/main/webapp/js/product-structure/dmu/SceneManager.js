@@ -65,6 +65,7 @@ define([
             this.$blocker = new BlockerView().render().$el;
             this.$container.append(this.$blocker);
             this.scene = new THREE.Scene();
+            this.frustum = new THREE.Frustum();
         },
 
         initSceneUtils: function () {
@@ -72,6 +73,7 @@ define([
             this.initControls();
             this.initAxes();
             this.initGrid();
+            this.initCutPlan();
             this.initSelectionBox();
             this.initLights();
             this.initLayerManager();
@@ -273,6 +275,29 @@ define([
             this.scene.remove(this.grid);
         },
 
+        initCutPlan: function () {
+            // Would be better to calculate the whole model bounding box to get en adapted plan size
+            var size = 500000;
+            var plane1 = new THREE.PlaneGeometry(size, size,1,1);
+            this.cutPlan = new THREE.Mesh(plane1, new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.3 } ));
+            this.cutPlan.onScene=false;
+            this.cutPlan.overdraw = true;
+            this.cutPlan.material.side = THREE.DoubleSide;
+            this.cutPlan.material.color = new THREE.Color(0xffffff);
+            this.cutPlan.initialPosition = {x:this.cutPlan.position.x,y:this.cutPlan.position.y,z:this.cutPlan.position.z};
+            this.cutPlan.initialRotation = {x:this.cutPlan.rotation.x,y:this.cutPlan.rotation.y,z:this.cutPlan.rotation.z};
+        },
+
+        showCutPlan: function () {
+            this.cutPlan.onScene=true;
+            this.scene.add(this.cutPlan);
+        },
+
+        removeCutPlan: function () {
+            this.cutPlan.onScene=false;
+            this.scene.remove(this.cutPlan);
+        },
+
         loadWindowResize: function () {
             var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.$container);
         },
@@ -309,20 +334,17 @@ define([
 
         updateInstances: function () {
 
-            var frustum = new THREE.Frustum();
             var projScreenMatrix = new THREE.Matrix4();
             projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
-            frustum.setFromMatrix(projScreenMatrix);
+            this.frustum.setFromMatrix(projScreenMatrix);
 
             var updateIndex = Math.min((this.updateOffset + this.updateCycleLength), this.instances.length);
+
             for (var j = this.updateOffset; j < updateIndex; j++) {
-                this.instances[j].update(frustum);
+                this.instances[j].update(this.frustum);
             }
-            if (updateIndex < this.instances.length) {
-                this.updateOffset = updateIndex;
-            } else {
-                this.updateOffset = 0;
-            }
+
+            this.updateOffset = updateIndex < this.instances.length ? updateIndex : 0;
         },
 
         addPartIteration: function (partIteration) {
@@ -375,10 +397,10 @@ define([
 
         updateLevelGeometryValues: function (instanceNumber) {
             if (instanceNumber < this.maxInstanceDisplayed) {
-                this.levelGeometryValues[0] = 0.1;
+                this.levelGeometryValues[0] = 0.02;
                 this.levelGeometryValues[1] = 0;
             } else {
-                this.levelGeometryValues[0] = 0.15;
+                this.levelGeometryValues[0] = 0.14;
                 this.levelGeometryValues[1] = 0.08;
             }
         },
@@ -562,6 +584,54 @@ define([
             });
         },
 
+        moveCutPlan:function(axis, value){
+            this.resetFPSReducer();
+            this.cutPlan.position.x = this.cutPlan.initialPosition.x;
+            this.cutPlan.position.y = this.cutPlan.initialPosition.y;
+            this.cutPlan.position.z = this.cutPlan.initialPosition.z;
+            this.cutPlan.translateZ(value);
+
+        },
+
+
+        setCutPlanAxis:function(axis){
+            this.resetFPSReducer();
+            this.cutPlan.position.x = this.cutPlan.initialPosition.x;
+            this.cutPlan.position.y = this.cutPlan.initialPosition.y;
+            this.cutPlan.position.z = this.cutPlan.initialPosition.z;
+
+            switch(axis){
+                case 'X' :
+                    this.cutPlan.rotation.set(0, 0, 0);
+                    break;
+                case 'Y' :
+                    this.cutPlan.rotation.set( Math.PI/2, Math.PI/2, Math.PI/2);
+                    break;
+                case 'Z' :
+                    this.cutPlan.rotation.set( Math.PI/2, 0, 0);
+                    break;
+                default:break;
+            }
+        },
+
+        fitView:function(){
+
+           if(!this.instances.length){
+               return;
+           }
+            // compute center of gravity and place camera point.
+            var combined = new THREE.Geometry();
+
+            _(this.scene.children).each(function(child){
+                if(child instanceof THREE.Mesh){
+                    THREE.GeometryUtils.merge(combined, child.geometry);
+                }
+            });
+            combined.computeBoundingSphere();
+            this.controls.target = combined.boundingSphere.center;
+
+        },
+
         /*
          * FPS Reducer
          *
@@ -615,7 +685,6 @@ define([
          * */
 
         bindMouseAndKeyEvents: function () {
-
 
             this.$container[0].addEventListener('mousedown', this.onMouseDown, false);
             this.$container[0].addEventListener('mouseup', this.onSceneMouseUp, false);
@@ -681,22 +750,7 @@ define([
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
 
-            var intersectList = [];
-
-            function buildIntersectList(sceneChild, list) {
-                for (var i = 0, il = sceneChild.length; i < il; ++i) {
-                    var obj = sceneChild[i];
-                    list.push(obj);
-
-                    if (obj.children.length > 0) {
-                        buildIntersectList(obj.children, list);
-                    }
-                }
-            }
-
-            buildIntersectList(this.scene.children, intersectList);
-
-            var intersects = ray.intersectObjects(intersectList, false);
+            var intersects = ray.intersectObjects(this.scene.children, false);
 
             if (intersects.length > 0) {
 
@@ -737,3 +791,29 @@ define([
 
     return SceneManager;
 });
+
+function getUpdateStatements(){
+    var resultSQL ="";
+    _(sceneManager.partIterations).each(function(pi){
+        resultSQL += drawsql(pi.partIterationId,pi.radius);
+    });
+    $("body").empty().text(resultSQL)
+
+    console.log("Done with " + Object.keys(sceneManager.partIterations).length + " objects");
+}
+
+function drawsql(ref, radius){
+
+    var parseRegex = /^(.*)+\-([A-Z]{1})\-([1-9])+$/g;
+    var match = parseRegex.exec(ref);
+
+    return "UPDATE INSTANCEATTRIBUTE I , PARTITERATION_ATTRIBUTE P " +
+        "SET I.NUMBERVALUE = " + radius + " " +
+        "WHERE I.ID = P.INSTANCEATTRIBUTE_ID " +
+        "AND P.PARTMASTER_PARTNUMBER = '"+match[1]+"' " +
+        "AND P.PARTREVISION_VERSION = '"+match[2]+"' " +
+        "AND P.ITERATION = '"+match[3]+"' " +
+        "AND I.NAME = 'radius'; "
+
+
+}

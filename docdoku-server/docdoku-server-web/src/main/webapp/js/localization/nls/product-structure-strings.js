@@ -70,6 +70,7 @@ define({
         SEARCH_PART_ENDING:"Search part ending by ",
         FLYING_MODE:"Fly mode",
         TRACKBALL_MODE:"Trackball mode",
+        FIT_VIEW:"Fit view",
         MARKERS_SIZE_MIN:"Reduce markers size",
         MARKERS_OPACITY:"Change markers opacity",
         MARKERS_SIZE_MAX:"Increase markers size",
@@ -88,6 +89,7 @@ define({
         "REVISION_NOTE":"Revision note",
         "MODIFICATION_DATE":"Modification date",
         EXPLODE:"Explode",
+        CUTPLAN:"Cut plan",
         ABSOLUTE:"Absolute",
         RELATIVE:"Relative"
     },

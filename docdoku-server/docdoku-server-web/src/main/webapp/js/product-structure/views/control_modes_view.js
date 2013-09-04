@@ -14,7 +14,8 @@ define(
 
         events:{
             "click button#flying_mode_view_btn": "flyingView",
-            "click button#tracking_mode_view_btn": "trackingView"
+            "click button#tracking_mode_view_btn": "trackingView",
+            "click button#fit_view_btn": "fitView"
         },
 
         initialize:function(){
@@ -32,6 +33,10 @@ define(
             sceneManager.updateNewCamera();
             sceneManager.updateLayersManager();
             sceneManager.setTrackBallControls();
+        },
+
+        fitView:function(){
+            sceneManager.fitView();
         },
 
         render:function(){

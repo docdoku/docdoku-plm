@@ -14,12 +14,30 @@ define(
         "views/control_layers_view",
         "views/control_options_view",
         "views/control_explode_view",
+        "views/control_cutplan_view",
         "views/baseline_select_view",
         "dmu/SceneManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
         "models/part"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlExplodeView, BaselineSelectView, SceneManager, template, i18n, Part) {
+    ], function (Router,
+                 NavBarView,
+                 SearchView,
+                 PartsTreeView,
+                 BomView,
+                 PartMetadataView,
+                 ExportSceneModalView,
+                 ControlModesView,
+                 ControlMarkersView,
+                 ControlLayersView,
+                 ControlOptionsView,
+                 ControlExplodeView,
+                 ControlCutPlanView,
+                 BaselineSelectView,
+                 SceneManager,
+                 template,
+                 i18n,
+                 Part) {
 
     var AppView = Backbone.View.extend({
 
@@ -62,6 +80,7 @@ define(
             this.$ControlsContainer.append(new ControlModesView().render().$el);
             this.$ControlsContainer.append(new ControlOptionsView().render().$el);
             this.$ControlsContainer.append(new ControlExplodeView().render().$el);
+            this.$ControlsContainer.append(new ControlCutPlanView().render().$el);
             this.$ControlsContainer.append(new ControlMarkersView().render().$el);
             this.$ControlsContainer.append(new ControlLayersView().render().$el);
 

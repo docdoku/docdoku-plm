@@ -65,6 +65,7 @@ define({
     SEARCH_PART_ENDING:"Article finissant par",
     FLYING_MODE:"Mode libre",
     TRACKBALL_MODE:"Mode trackball",
+    FIT_VIEW:"Centrer les objets visibles",
     MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
     MARKERS_OPACITY:"Changer l'opacité des marqueurs",
     MARKERS_SIZE_MAX:"Augmenter la taille des marqueurs",
@@ -83,6 +84,7 @@ define({
     "REVISION_NOTE":"Note de révision",
     "MODIFICATION_DATE":"Date de modification",
     EXPLODE:"Eclater",
+    CUTPLAN:"Plan de coupe",
     ABSOLUTE:"Absolue",
     RELATIVE:"Relative"
 });
