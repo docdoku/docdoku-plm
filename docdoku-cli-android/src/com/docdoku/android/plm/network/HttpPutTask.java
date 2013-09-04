@@ -22,7 +22,9 @@ package com.docdoku.android.plm.network;
 
 import android.util.Log;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 
 /**

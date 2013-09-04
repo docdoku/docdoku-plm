@@ -21,18 +21,9 @@
 package com.docdoku.android.plm.client;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.*;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
-import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
-import com.docdoku.android.plm.network.HttpGetTask;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * Displays a welcome screen

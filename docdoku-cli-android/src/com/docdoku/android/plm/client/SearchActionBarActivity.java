@@ -20,9 +20,9 @@
 
 package com.docdoku.android.plm.client;
 
-import android.app.ActionBar;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.SearchView;
 import android.widget.TextView;
 

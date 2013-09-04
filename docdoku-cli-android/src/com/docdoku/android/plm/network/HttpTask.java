@@ -20,7 +20,6 @@
 
 package com.docdoku.android.plm.network;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;

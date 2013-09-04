@@ -22,20 +22,22 @@ package com.docdoku.android.plm.client.parts;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.LoaderManager;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <code>Activity</code> for presenting all the {@link Part Parts} in a workspace.

@@ -20,12 +20,14 @@
 
 package com.docdoku.android.plm.network;
 
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
-import java.io.*;
-import java.net.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Sends an Http DELETE request to the server.
