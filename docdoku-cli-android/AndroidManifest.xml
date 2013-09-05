@@ -5,6 +5,14 @@
     <uses-sdk android:minSdkVersion="11"
             android:targetSdkVersion="15"/>
 
+    <!-- The application in this version targets only mobile phones -->
+    <supports-screens
+            android:anyDensity="true"
+            android:xlargeScreens="false"
+            android:largeScreens="false"
+            android:normalScreens="true"
+            android:smallScreens="true" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
