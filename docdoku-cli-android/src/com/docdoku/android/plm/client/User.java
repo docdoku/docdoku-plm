@@ -24,7 +24,6 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Model for a user of the workspace
@@ -69,9 +68,10 @@ public class User {
      * Add a phone number belonging to a contact on the phone to this user
      * @param number the phone number
      * @param type the type of phone number (mobile, home, ...)
+     * @param typeCode
      */
-    public void addPhoneNumber(String number, String type){
-        phoneNumbers.add(new PhoneNumber(number, type));
+    public void addPhoneNumber(String number, String type, int typeCode){
+        phoneNumbers.add(new PhoneNumber(number, type, typeCode));
     }
 
     public String getName(){
@@ -94,7 +94,7 @@ public class User {
      */
     public String getPhoneNumber(){
         for (PhoneNumber phoneNumber : phoneNumbers) {
-            if (phoneNumber.type.equals(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)) {
+            if (phoneNumber.typeCode == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) {
                 Log.i(LOG_TAG, "Found mobile number for contact " + name);
                 return phoneNumber.getNumber();
             }
@@ -120,12 +120,13 @@ public class User {
      */
     public class PhoneNumber{
 
-        private final String number;
-        private final String type;
+        private final String number, type;
+        private final int typeCode;
 
-        public PhoneNumber(String number, String type){
+        public PhoneNumber(String number, String type, int typeCode){
             this.number = number;
             this.type = type;
+            this.typeCode = typeCode;
         }
 
         public String getNumber(){

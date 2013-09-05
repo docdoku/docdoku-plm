@@ -38,7 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * <code>Actity</code> that displays the list of the current workspace's <code>User</code>s and allows the current user to:
@@ -485,7 +484,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
                 String phoneLabel = contactPhones.getString(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
                 String phoneType = ContactsContract.CommonDataKinds.Phone.getTypeLabel(getResources(), phoneTypeCode, phoneLabel).toString();
                 result += "\nPhone: " + phoneNumber + ", Type: " + phoneType;
-                user.addPhoneNumber(phoneNumber, phoneType);
+                user.addPhoneNumber(phoneNumber, phoneType, phoneTypeCode);
             }
             Log.i(LOG_TAG, result);
         }
