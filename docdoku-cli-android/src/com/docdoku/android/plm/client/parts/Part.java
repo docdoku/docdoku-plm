@@ -52,7 +52,9 @@ public class Part extends Element implements Serializable{
     private static final String JSON_KEY_PART_LIFECYCLE_STATE = "lifeCycleState";
     private static final String JSON_KEY_PART_STANDARD_PART = "standardPart";
 
-    private String key, number, version;
+    private final String key;
+    private String number;
+    private String version;
     private String nativeCADFile;
     private String lifecycleState;
     private boolean standardPart;
@@ -193,8 +195,8 @@ public class Part extends Element implements Serializable{
     }
 
     public class Component implements Serializable{
-        private String number;
-        private int amount;
+        private final String number;
+        private final int amount;
 
         public Component(String number, int amount){
             this.number = number;

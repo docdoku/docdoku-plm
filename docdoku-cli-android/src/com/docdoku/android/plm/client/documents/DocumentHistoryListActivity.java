@@ -141,8 +141,8 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
      */
     private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetTask.HttpGetListener {
 
-        private String elementId;
-        private String workspace;
+        private final String elementId;
+        private final String workspace;
         private AsyncTask asyncTask;
 
         public DocumentLoaderByDocument(Context context, String elementId, String workspace) {
@@ -208,7 +208,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
          */
         @Override
         public void onHttpGetResult(String result) {
-            Document document = null;
+            Document document;
             try {
                 JSONObject documentJSON = new JSONObject(result);
                 document = new Document(documentJSON.getString("id"));

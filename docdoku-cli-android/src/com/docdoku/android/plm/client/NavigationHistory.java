@@ -63,8 +63,8 @@ public class NavigationHistory {
     private static final int NAVIGATION_HISTORY_MAX_SIZE = 20;
     private static final String PREFERENCE_NAVIGATION_HISTORY_SIZE = "size";
 
-    private SharedPreferences sharedPreferences;
-    private LinkedHashSet<String> navigationHistory;
+    private final SharedPreferences sharedPreferences;
+    private final LinkedHashSet<String> navigationHistory;
     private int size;
 
     /**

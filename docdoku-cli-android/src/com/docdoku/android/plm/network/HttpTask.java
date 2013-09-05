@@ -46,9 +46,9 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
     private final static int CHUNK_SIZE = 1024*8;
     private final static int BUFFER_CAPACITY = 1024*32;
 
-    protected static String host;
-    protected static int port;
-    protected static byte[] id;
+    static String host;
+    static int port;
+    static byte[] id;
 
     /**
      * Checks that the server connection information is available.
@@ -56,7 +56,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * fetches the server connection information from it.
      * <br>If no server connection information can be found, prints a {@code Log} message.
      */
-    protected HttpTask(){
+    HttpTask(){
         if (id == null || host == null){
             try {
                 Log.i(LOG_TAG, "attempting to retrieve server connection information from memory...");
@@ -83,7 +83,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * @throws URISyntaxException if the specified path could not be converted into an ASCII {@code String}
      * @throws MalformedURLException
      */
-    protected URL createURL(String path) throws URISyntaxException, MalformedURLException {
+    URL createURL(String path) throws URISyntaxException, MalformedURLException {
         String uriPath = path.replace(" ", "%20");
         URI uri = new URI(uriPath);
         String ASCIIPath = uri.toASCIIString();
@@ -102,7 +102,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * @param errorCode
      * @return
      */
-    protected String analyzeHttpErrorCode(int errorCode){
+    String analyzeHttpErrorCode(int errorCode){
         switch (errorCode){
             case 400: return ERROR_HTTP_BAD_REQUEST;
             case 401: return ERROR_HTTP_UNAUTHORIZED;
@@ -118,7 +118,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * @param bytes the {@code byte[]} to write on the Http conection
      * @throws IOException
      */
-    protected void writeBytesToConnection(HttpURLConnection connection, byte[] bytes) throws IOException {
+    void writeBytesToConnection(HttpURLConnection connection, byte[] bytes) throws IOException {
         OutputStream out = new BufferedOutputStream(connection.getOutputStream(), BUFFER_CAPACITY);
         InputStream inputStream = new ByteArrayInputStream(bytes);
         byte[] data = new byte[CHUNK_SIZE];
@@ -136,7 +136,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * @return the {@code String} read from the {@code InputStream}
      * @throws IOException
      */
-    protected String inputStreamToString(InputStream in) throws IOException {
+    String inputStreamToString(InputStream in) throws IOException {
         String string;
         InputStreamReader reader = new InputStreamReader(in);
         BufferedReader bf = new BufferedReader(reader);
@@ -144,7 +144,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
         String line;
         try {
             while ((line = bf.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();

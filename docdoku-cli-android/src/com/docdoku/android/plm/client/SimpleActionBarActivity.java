@@ -98,7 +98,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
      * Returns the name of the current user, loading it from the <code>SharedPreferences</code> if it can't be found in memory.
      * @return the current users's name
      */
-    protected String getCurrentUserName(){
+    String getCurrentUserName(){
         try{
             return Session.getSession(this).getUserName();
         } catch (Session.SessionLoadException e) {
@@ -204,7 +204,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
 
     }
 
-    public void restartActivity(){
+    void restartActivity(){
         Intent intent = getIntent();
         finish();
         startActivity(intent);

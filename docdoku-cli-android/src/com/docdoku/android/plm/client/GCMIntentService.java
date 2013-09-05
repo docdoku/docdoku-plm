@@ -79,7 +79,7 @@ public class GCMIntentService extends IntentService {
         String notificationType = bundle.getString(INTENT_KEY_NOTIFICATION_TYPE);
         String workspaceId = bundle.getString(INTENT_KEY_WORKSPACE_ID);
         String docHashCode = bundle.getString(INTENT_KEY_DOCUMENT_HASHCODE);
-        int notificationCode = 0;
+        int notificationCode;
         try{
             notificationCode = Integer.parseInt(docHashCode);
         }catch(NumberFormatException e){

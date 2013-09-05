@@ -54,7 +54,7 @@ import java.util.Calendar;
 public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";
 
-    protected Element element;
+    private Element element;
     protected Button checkInOutButton;
     private boolean checkedIn;
     private ProgressDialog fileDownloadProgressDialog;

@@ -48,12 +48,12 @@ public final class Session {
 
     private static Session session;
 
-    boolean permanentSession;
+    private final boolean permanentSession;
     private String userName;
-    private String userLogin;
-    private String password;
-    private String host;
-    private int port;
+    private final String userLogin;
+    private final String password;
+    private final String host;
+    private final int port;
 
     private String[] downloadedWorkspaces;
     private String currentWorkspace;
@@ -65,7 +65,7 @@ public final class Session {
         this.password = password;
         this.host = host;
         this.port = port;
-    };
+    }
 
     /**
      * Sets the current <code>Session</code> with the specified parameters. If the <code>autoConnect</code> parameter's value is <code>true</code>,
@@ -238,7 +238,7 @@ public final class Session {
             SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
             Set<String> workspaceSet = preferences.getStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, null);
             try {
-                downloadedWorkspaces = workspaceSet.toArray(new String[0]);
+                downloadedWorkspaces = workspaceSet.toArray(new String[workspaceSet.size()]);
                 Arrays.sort(downloadedWorkspaces);
             }catch (NullPointerException e){
                 Log.w(LOG_TAG, "No downloaded workspaces found in preferences");

@@ -60,13 +60,17 @@ public abstract class Element implements Serializable{
     private static final String ATTRIBUTE_BOOLEAN = "BOOLEAN";
     private static final String ATTRIBUTE_BOOLEAN_TRUE = "true";
 
-    protected String name, authorName, authorLogin, creationDate, description;
-    protected String[] linkedDocuments;
-    protected Attribute[] attributes;
+    protected String name;
+    protected String authorName;
+    private String authorLogin;
+    protected String creationDate;
+    protected String description;
+    private String[] linkedDocuments;
+    private Attribute[] attributes;
     protected String checkOutUserName, checkOutUserLogin, checkOutDate;
     protected int iterationNumber;
     protected String iterationNote, iterationAuthor, iterationDate;
-    protected String lastIterationJSONString;
+    private String lastIterationJSONString;
 
     /**
      * Uses a <code>JSONObject</code> representing this <code>Element</code> to fill in its attributes
@@ -287,8 +291,8 @@ public abstract class Element implements Serializable{
      */
     public class Attribute implements Serializable {
 
-        private String name;
-        private String value;
+        private final String name;
+        private final String value;
 
         public Attribute(String name, String value){
             this.name = name;

@@ -186,8 +186,8 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
      */
     private static class DocumentLoaderByPage extends Loader<List<Document>> implements HttpGetTask.HttpGetListener {
 
-        private int startIndex;
-        private String workspace;
+        private final int startIndex;
+        private final String workspace;
         private AsyncTask asyncTask;
         private List<Document> downloadedParts;
 

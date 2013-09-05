@@ -57,11 +57,11 @@ public abstract class PartListActivity extends SearchActionBarActivity {
 
     private static final String PREFERENCE_PART_HISTORY = "part history";
 
-    protected NavigationHistory navigationHistory;
-    protected List<Part> partsArray;
-    protected PartAdapter partAdapter;
-    protected ListView partListView;
-    protected View loading;
+    NavigationHistory navigationHistory;
+    List<Part> partsArray;
+    PartAdapter partAdapter;
+    ListView partListView;
+    View loading;
 
     private AsyncTask searchTask;
     private List<Part> partSearchResultArray;
@@ -110,7 +110,7 @@ public abstract class PartListActivity extends SearchActionBarActivity {
      */
     protected class PartAdapter extends BaseAdapter {
 
-        private List<Part> parts;
+        private final List<Part> parts;
         private LayoutInflater inflater;
 
         public PartAdapter(List<Part> parts){
@@ -146,11 +146,7 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         public boolean isEnabled(int position){
             try{
                 Part part = parts.get(position);
-                if (part == null || part.getAuthor() == null){
-                    return false;
-                }else{
-                    return true;
-                }
+                return !(part == null || part.getAuthor() == null);
             }catch (IndexOutOfBoundsException e){
                 return false;
             }
@@ -230,7 +226,7 @@ public abstract class PartListActivity extends SearchActionBarActivity {
      * @throws ParseException if the {@code dateString} could not be parsed into a {@code Calendar}
      * @throws NullPointerException
      */
-    protected String simplifyDate(String dateString) throws ParseException, NullPointerException {
+    String simplifyDate(String dateString) throws ParseException, NullPointerException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         Calendar date = Calendar.getInstance();
         date.setTime(simpleDateFormat.parse(dateString));

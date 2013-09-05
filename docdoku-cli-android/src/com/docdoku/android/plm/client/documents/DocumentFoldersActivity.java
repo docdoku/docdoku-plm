@@ -226,8 +226,8 @@ public class DocumentFoldersActivity extends DocumentListActivity implements Htt
         public static final String JSON_KEY_FOLDER_NAME = "name";
         public static final String JSON_KEY_FOLDER_ID = "id";
 
-        private String name;
-        private String id;
+        private final String name;
+        private final String id;
 
         public Folder(String name, String id){
             this.name = name;

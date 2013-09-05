@@ -49,8 +49,6 @@ import java.util.List;
 public class PartCompleteListActivity extends PartListActivity implements HttpGetTask.HttpGetListener, LoaderManager.LoaderCallbacks<List<Part>>{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartCompleteListActivity";
 
-    private static final int LOADER_ID_ALL_PARTS = 100;
-
     private View footerProgressBar;
     private int numPartsAvailable;
     private int numPagesDownloaded;
@@ -100,7 +98,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
                         Bundle bundle = new Bundle();
                         bundle.putInt("page", numPagesDownloaded);
                         bundle.putString("workspace", getCurrentWorkspace());
-                        getSupportLoaderManager().initLoader(LOADER_ID_ALL_PARTS + numPagesDownloaded, bundle, PartCompleteListActivity.this);
+                        getSupportLoaderManager().initLoader(numPagesDownloaded, bundle, PartCompleteListActivity.this);
                 }
             }
         });
@@ -169,7 +167,7 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
             bundle.putInt("page", 0);
             bundle.putString("workspace", getCurrentWorkspace());
             Log.i(LOG_TAG, "Loading first part page");
-            getSupportLoaderManager().initLoader(LOADER_ID_ALL_PARTS + 0, bundle, this);
+            getSupportLoaderManager().initLoader(0, bundle, this);
         } catch (NumberFormatException e) {
             Log.e(LOG_TAG, "NumberFormatException: didn't correctly download_light number of pages of parts");
             Log.e(LOG_TAG, "Number of pages result: " + result);
@@ -192,8 +190,8 @@ public class PartCompleteListActivity extends PartListActivity implements HttpGe
      */
     private static class PartLoaderByPage extends Loader<List<Part>> implements HttpGetTask.HttpGetListener {
 
-        private int startIndex;
-        private String workspace;
+        private final int startIndex;
+        private final String workspace;
         private AsyncTask asyncTask;
         private List<Part> downloadedParts;
 

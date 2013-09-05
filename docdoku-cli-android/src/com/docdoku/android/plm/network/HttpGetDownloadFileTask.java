@@ -37,7 +37,7 @@ import java.net.*;
 public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean> {
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpGetDownloadFileTask";
 
-    HttpGetDownloadFileListener httpGetDownloadFileListener;
+    private HttpGetDownloadFileListener httpGetDownloadFileListener;
     private String fileSavePath;
 
     public HttpGetDownloadFileTask(HttpGetDownloadFileListener httpGetDownloadFileListener){
@@ -71,7 +71,7 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
             int totalSize = conn.getContentLength();
             int downloadedSize = 0;
             byte[] buffer = new byte[1024];
-            int bufferLength = 0;
+            int bufferLength;
             int responseCode = conn.getResponseCode();
             while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
                 outputStream.write(buffer, 0, bufferLength);

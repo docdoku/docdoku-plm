@@ -139,8 +139,8 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
      */
     private static class PartLoaderByPart extends Loader<Part> implements HttpGetTask.HttpGetListener {
 
-        private String elementId;
-        private String workspace;
+        private final String elementId;
+        private final String workspace;
         private AsyncTask asyncTask;
 
         public PartLoaderByPart(Context context, String elementId, String workspace) {
@@ -209,7 +209,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
          */
         @Override
         public void onHttpGetResult(String result) {
-            Part part = null;
+            Part part;
             try {
                 JSONObject partJSON = new JSONObject(result);
                 part = new Part(partJSON.getString("partKey"));

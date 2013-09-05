@@ -496,7 +496,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
      */
     private class UserArrayAdapter extends BaseAdapter {
 
-        private ArrayList<User> users;
+        private final ArrayList<User> users;
         private LayoutInflater inflater;
 
         public UserArrayAdapter(ArrayList<User> users){
@@ -605,10 +605,8 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
      */
     private ArrayList<User> searchUsers(String query){
         ArrayList<User> searchResult = new ArrayList<User>();
-        Iterator<User> iterator = userArray.iterator();
-        while (iterator.hasNext()){
-            User user = iterator.next();
-            if (user.getName().toLowerCase().contains(query.toLowerCase())){
+        for (User user : userArray) {
+            if (user.getName().toLowerCase().contains(query.toLowerCase())) {
                 searchResult.add(user);
             }
         }

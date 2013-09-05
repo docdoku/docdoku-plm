@@ -247,7 +247,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
      *
      * @see SharedPreferences
      */
-    public void eraseData(){
+    void eraseData(){
         File dir = new File(getFilesDir().getParent() + "/shared_prefs/");
         String[] children = dir.list();
         for (String child: children) {

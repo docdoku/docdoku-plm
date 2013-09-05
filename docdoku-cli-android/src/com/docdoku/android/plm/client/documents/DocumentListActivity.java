@@ -57,10 +57,10 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
 
     private static final String PREFERENCE_DOCUMENT_HISTORY = "document history";
 
-    protected NavigationHistory navigationHistory;
-    protected List<Document> documentArray;
-    protected BaseAdapter documentAdapter;
-    protected ListView documentListView;
+    NavigationHistory navigationHistory;
+    List<Document> documentArray;
+    BaseAdapter documentAdapter;
+    ListView documentListView;
 
     private AsyncTask searchTask;
     private List<Document> documentSearchResultArray;
@@ -91,7 +91,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         });
     }
 
-    protected void removeLoadingView(){
+    void removeLoadingView(){
         View loading = findViewById(R.id.loading);
         if (loading != null){
             ((ViewGroup) loading.getParent()).removeView(loading);
@@ -104,7 +104,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
      *
      * @param document the document whose row was clicked
      */
-    protected void onDocumentClick(Document document){
+    void onDocumentClick(Document document){
         navigationHistory.add(document.getIdentification());
         Intent intent = new Intent(DocumentListActivity.this, DocumentActivity.class);
         intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
@@ -171,9 +171,9 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
     /**
      * {@code BaseAdapter} implementation for handling the representation of {@link Document} rows.
      */
-    protected class DocumentAdapter extends BaseAdapter {
+    class DocumentAdapter extends BaseAdapter {
 
-        protected List<Document> documents;
+        List<Document> documents;
         private LayoutInflater inflater;
 
         public DocumentAdapter(List<Document> documents){
@@ -209,11 +209,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
         public boolean isEnabled(int position){
             try{
                 Document document = documents.get(position);
-                if (document == null || document.getAuthor() == null){
-                    return false;
-                }else{
-                    return true;
-                }
+                return !(document == null || document.getAuthor() == null);
             }catch(IndexOutOfBoundsException e){
                 return false;
             }
@@ -309,7 +305,7 @@ public abstract class DocumentListActivity extends SearchActionBarActivity {
      * @throws ParseException if the {@code dateString} could not be parsed into a {@code Calendar}
      * @throws NullPointerException
      */
-    protected String simplifyDate(String dateString) throws ParseException, NullPointerException {
+    String simplifyDate(String dateString) throws ParseException, NullPointerException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         Calendar date = Calendar.getInstance();
         date.setTime(simpleDateFormat.parse(dateString));

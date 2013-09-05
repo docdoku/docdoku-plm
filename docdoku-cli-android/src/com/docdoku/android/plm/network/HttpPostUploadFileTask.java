@@ -53,7 +53,7 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
     @Override
     protected Boolean doInBackground(String... strings) {
         boolean result = false;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try{
             fileName = strings[0];
             String filePath = strings[1];

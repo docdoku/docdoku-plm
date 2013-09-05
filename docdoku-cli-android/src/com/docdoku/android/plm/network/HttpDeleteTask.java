@@ -49,7 +49,7 @@ public class HttpDeleteTask extends HttpTask<String, Void, Boolean> {
     @Override
     protected Boolean doInBackground(String... strings) {
         boolean result = false;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             URL url = createURL(strings[0]);
             Log.i(LOG_TAG, "Sending Http request to URL: " + url);

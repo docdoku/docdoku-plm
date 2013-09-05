@@ -49,9 +49,11 @@ import java.util.Calendar;
 public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetTask.HttpGetListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActivity";
 
-    protected Button author, minCreationDate, maxCreationDate;
+    private Button author;
+    protected Button minCreationDate;
+    protected Button maxCreationDate;
 
-    protected ArrayList<User> users;
+    private ArrayList<User> users;
     protected User selectedUser;
     protected Calendar minDate, maxDate;
     private AsyncTask<String, Void, String> userLoadTask;
@@ -144,7 +146,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
         }
     }
 
-    protected String[] getUserNames(ArrayList<User> userArray){
+    String[] getUserNames(ArrayList<User> userArray){
         String[] userNames = new String[userArray.size()];
         for (int i=0; i<userNames.length; i++){
             userNames[i] = userArray.get(i).getName();
@@ -155,7 +157,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
     /**
      * <code>DialogFragment</code> that allows the user to pick a date.
      */
-    protected static class DatePickerFragment extends DialogFragment
+    static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
         Button button;

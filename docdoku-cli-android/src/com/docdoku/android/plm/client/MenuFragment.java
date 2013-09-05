@@ -125,7 +125,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @param workspace the selected workspace
      * @param radioGroup the empty <code>RadioGroup</code> to be populated
      */
-    public void addCurrentWorkspace(String workspace, RadioGroup radioGroup){
+    void addCurrentWorkspace(String workspace, RadioGroup radioGroup){
         RadioButton radioButton;
         radioButton = new RadioButton(getActivity());
         radioButton.setText(workspace);
@@ -150,20 +150,19 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @param workspaces the list of downloaded workspaces
      * @param radioGroup the <code>RadioGroup</code>, containing only one child <code>View</code>, which is the selected workspace
      */
-    public void addWorkspaces(String[] workspaces, RadioGroup radioGroup){
+    void addWorkspaces(String[] workspaces, RadioGroup radioGroup){
         int selectedButtonId = radioGroup.getCheckedRadioButtonId();
         if (selectedButtonId != -1){
             radioGroup.removeView(view.findViewById(selectedButtonId));
         }
         workspaceChanged = false;
-        int numWorkspaces = workspaces.length;
-        for (int i=0; i<numWorkspaces; i++){
+        for (String workspace : workspaces) {
             RadioButton radioButton;
             radioButton = new RadioButton(getActivity());
-            radioButton.setText(workspaces[i]);
+            radioButton.setText(workspace);
             radioButton.setTextColor(R.color.darkGrey);
             radioGroup.addView(radioButton);
-            if (workspaces[i].equals(currentWorkspace)){
+            if (workspace.equals(currentWorkspace)) {
                 radioGroup.check(radioButton.getId());
             }
         }

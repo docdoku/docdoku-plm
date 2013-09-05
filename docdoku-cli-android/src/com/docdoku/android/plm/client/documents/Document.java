@@ -42,7 +42,8 @@ public class Document extends Element implements Serializable{
     private static final String JSON_KEY_DOCUMENT_ITERATION_NOTE = "revisionNote";
     private static final String JSON_KEY_DOCUMENT_ATTACHED_FILES = "attachedFiles";
 
-    private String identification, reference;
+    private final String identification;
+    private final String reference;
     private String path, type, lifeCycleState;
     private String[] files;
 
@@ -70,9 +71,7 @@ public class Document extends Element implements Serializable{
 
     public void addFile(String file){
         String[] newFiles = new String[files.length+1];
-        for (int i = 0; i<files.length; i++){
-            newFiles[i] = files[i];
-        }
+        System.arraycopy(files, 0, newFiles, 0, files.length);
         newFiles[files.length] = file;
         files = newFiles;
     }

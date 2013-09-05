@@ -38,9 +38,9 @@ public class User {
     public static final String JSON_KEY_USER_EMAIL = "email";
     public static final String JSON_KEY_USER_LOGIN = "login";
 
-    private String name;
-    private String login;
-    private String email;
+    private final String name;
+    private final String login;
+    private final String email;
 
     private boolean existsOnPhone;
     private ArrayList<PhoneNumber> phoneNumbers;
@@ -93,10 +93,8 @@ public class User {
      * @return the best phone number found for contact
      */
     public String getPhoneNumber(){
-        Iterator<PhoneNumber> iterator = phoneNumbers.iterator();
-        while (iterator.hasNext()){
-            PhoneNumber phoneNumber = iterator.next();
-            if (phoneNumber.type.toString().equals(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)){
+        for (PhoneNumber phoneNumber : phoneNumbers) {
+            if (phoneNumber.type.equals(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)) {
                 Log.i(LOG_TAG, "Found mobile number for contact " + name);
                 return phoneNumber.getNumber();
             }
@@ -122,8 +120,8 @@ public class User {
      */
     public class PhoneNumber{
 
-        private String number;
-        private String type;
+        private final String number;
+        private final String type;
 
         public PhoneNumber(String number, String type){
             this.number = number;
