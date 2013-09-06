@@ -37,7 +37,16 @@ import java.util.Iterator;
 
 /**
  * {@code Activity} displaying the list of parts recently viewed by the user.
- * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
+ * <p>
+ * Since only the recently viewed parts' Id is stored in the device's permanent memory, the data for each part
+ * has to be loaded from the server. {@link PartLoaderByPart}s are used to handle the asynchronous loading
+ * of these parts.
+ * <p>
+ * While the parts are loading, the {@code ListView} rows display an indeterminate {@code ProgressBar}. Once a
+ * {@link Part} is downloaded, its row is updated to show its information. If the download of a part fails (for
+ * example, if the part was deleted from the server after the user viewed it), then an error row is shown.
+ * <p>
+ * Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
  * @version 1.0

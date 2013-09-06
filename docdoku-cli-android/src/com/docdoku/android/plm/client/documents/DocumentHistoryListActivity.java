@@ -36,7 +36,16 @@ import java.util.Iterator;
 
 /**
  * {@code Activity} displaying the list of documents recently viewed by the user.
- * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
+ * <p>
+ * Since only the recently viewed documents' Id is stored in the device's permanent memory, the data for each document
+ * has to be loaded from the server. {@link DocumentLoaderByDocument}s are used to handle the asynchronous loading
+ * of these documents.
+ * <p>
+ * While the documents are loading, the {@code ListView} rows display an indeterminate {@code ProgressBar}. Once a
+ * {@link Document} is downloaded, its row is updated to show its information. If the download of a document fails (for
+ * example, if the document was deleted from the server after the user viewed it), then an error row is shown.
+ * <p>
+ * Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
  * @version 1.0
@@ -78,11 +87,12 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
             getSupportLoaderManager().initLoader(i, bundle, this);
             i++;
         }
+        //TODO Currently, the documents are loaded in the order from the least recently viewed one to the most recently viewed one, which is absurd
         Log.i(LOG_TAG, "Document history list size : " + documentArray.size());
     }
 
     /**
-     * Starts of {@link DocumentLoaderByDocument} to load a {@link Document}.
+     * Starts a {@link DocumentLoaderByDocument} to load a {@link Document}.
      *
      * @param id
      * @param bundle the {@code Bundle} containing the id and the workspace of the document to be downloaded.
@@ -97,7 +107,8 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
 
     /**
      * Handles the result of the {@link DocumentLoaderByDocument}.
-     * <p>The id of the {@code Loader} is used to determine its position in the {@code ListView}, which is where it is added in
+     * <p>
+     * The id of the {@code Loader} is used to determine its position in the {@code ListView}, which is where it is added in
      * the {@code ArrayList} of documents, replacing the null value. The {@link DocumentAdapter} is then notified that the
      * data has changed.
      *

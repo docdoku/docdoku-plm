@@ -30,6 +30,15 @@ import java.util.Set;
 
 /**
  * Singleton containing the data for the current session used by the user.
+ * <p>
+ * When the {@code Session} instance is created, it contains the data to connect to the server. It needs to be updated
+ * with the list of workspaces once it has been downloaded from the server. The current workspace being used by the
+ * user is also kept in the {@code Session} instance. The user's name, which is initially initialized as his login, should
+ * also be updated once it is downloaded from the server.
+ * <p>
+ * If the instance was created specifying that automatic connection is enabled by the user, then the information
+ * about the instance is stored in the application's {@code SharedPreferences}. This {@code class} then handles the
+ * loading of this instance from the {@code SharedPreferences} whenever necessary.
  *
  * @author: Martin Devillers
  * @version 1.0
