@@ -41,6 +41,7 @@ import com.docdoku.android.plm.client.SearchActivity;
  * <p>Layout file: {@link /res/layout/activity_search.xml activity_search}
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class DocumentSearchActivity extends SearchActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentSearchActivity";

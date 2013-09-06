@@ -33,7 +33,9 @@ import java.net.URL;
  * Sends an Http DELETE request to the server.
  * <p>The constructor requires a {@link HttpDeleteListener} to notify the result of the request.
  * <p>The host's url path is specified in the first <code>String</code> parameter in the <code>execute()</code> method.
- * @author: martindevillers
+ *
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class HttpDeleteTask extends HttpTask<String, Void, Boolean> {
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpDeleteTask";

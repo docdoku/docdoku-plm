@@ -33,7 +33,8 @@ import java.net.*;
  * <p>Contains the data for the server connection in the form of {@code static} fields.
  * <br>Also contains some useful methods for reading and writing data on/from network connections.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpTask";

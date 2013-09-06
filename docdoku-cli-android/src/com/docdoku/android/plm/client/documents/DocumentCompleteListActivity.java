@@ -43,6 +43,7 @@ import java.util.List;
  * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class DocumentCompleteListActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener, LoaderManager.LoaderCallbacks<List<Document>> {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentCompleteListActivity";

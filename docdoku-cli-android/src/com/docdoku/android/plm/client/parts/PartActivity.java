@@ -35,6 +35,7 @@ import com.docdoku.android.plm.client.R;
  * <p>Layout file: {@link /res/layout/activity_element.xml activity_element}
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class PartActivity extends ElementActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartActivity";

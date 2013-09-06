@@ -33,7 +33,8 @@ import java.util.Date;
 /**
  * Models either a {@link com.docdoku.android.plm.client.parts.Part Part} or a {@link com.docdoku.android.plm.client.documents.Document Document}.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract class Element implements Serializable{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.Element";

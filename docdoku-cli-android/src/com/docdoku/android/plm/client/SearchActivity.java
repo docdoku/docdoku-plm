@@ -45,7 +45,8 @@ import java.util.Calendar;
  * Basic structure for {@link com.docdoku.android.plm.client.documents.DocumentSearchActivity DocumentSearchActivity}
  * and {@link com.docdoku.android.plm.client.parts.PartSearchActivity PartSeachActivity}.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetTask.HttpGetListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActivity";

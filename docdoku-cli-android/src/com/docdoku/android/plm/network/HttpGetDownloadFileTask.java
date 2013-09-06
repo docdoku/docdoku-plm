@@ -32,7 +32,9 @@ import java.net.*;
  * <p>The host's url path is specified in the first <code>String</code> parameter in the <code>execute()</code> method.
  * <p>The second parameter in the <code>execute()</code> method is the name that will be used to save the <code>File</code>,
  * inside of the Downloads directory.
+ *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean> {
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpGetDownloadFileTask";

@@ -31,13 +31,18 @@ import android.util.Log;
 import com.docdoku.android.plm.client.R;
 
 /**
- * Class called by {@link GCMWakefulBroadcastReceiver} when a GCM message is received. Handles the message and creates a <code>Notification</code>.
+ * {@code IntentService} called by {@link GCMWakefulBroadcastReceiver} when a GCM message is received. Handles the message and creates
+ * a clickable {@code Notification} on the device.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class GCMIntentService extends IntentService {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.GCMIntentService";
 
+    /**
+     * Duration that the phone should vibrate when a GCM message is received (in milliseconds)
+     */
     private static final long VIBRATION_DURATION_MILLIS = 800;
 
     private static final String INTENT_KEY_DOCUMENT_ID = "documentMasterId";
@@ -52,12 +57,13 @@ public class GCMIntentService extends IntentService {
     }
 
     /**
-     * Called when this <code>Service</code> is started.
-     * <p>Extracts the data from the message, then calls {@link #sendNotification} to show a <code>Notification</code> to the user.
-     * The <code>Document</code>'s hashcode (on the server) is used as an id for the message, so that only one notification per document
+     * Called when this {@code Service} is started.
+     * <p>
+     * Extracts the data from the message, then calls {@link #sendNotification} to show a {@code Notification} to the user.
+     * The document's hashcode (on the server) is used as an id for the message, so that only one notification per document
      * can be shown simultaneously.
      *
-     * @param intent The intent that started this service, containing the GCM message.
+     * @param intent the intent that started this service, containing the GCM message.
      */
     @Override
     protected void onHandleIntent(Intent intent){
@@ -95,10 +101,11 @@ public class GCMIntentService extends IntentService {
     }
 
     /**
-     * Show a <code>Notification</code> to the user for the document.
-     * <p>Sets the <code>PendingIntent</code> for the notification, which will start a {@link NotificationService}
-     * with this document's id and workspaceId as extra.
-     * <p>Makes the phone vibrate
+     * Show a {@code Notification} to the user for the document.
+     * <p>
+     * Sets the {@code PendingIntent} for the notification, which will start a {@link NotificationService} if the {@code Notification} is clicked,
+     * with this document's id and workspaceId as {@code Extra}s.
+     * <p>Makes the phone vibrate during {@value #VIBRATION_DURATION_MILLIS} milliseconds.
      *
      * @param docReference the reference of the document
      * @param iterationNumber the new iteration number
@@ -129,12 +136,13 @@ public class GCMIntentService extends IntentService {
     }
 
     /**
-     * Converts the string read from the GCM message into a readable message indicating the notification type.
+     * Converts the string read from the GCM message indicating the type of notifications into a readable message.
+     * <p>
      * If it is an iteration notification, then the new iteration number is included in the message.
      *
      * @param notificationType the notification type read from the GCM message
      * @param iterationNumber the new iteration number
-     * @return The <code>String</code> to be presented to the user to indicate the notification type
+     * @return The {@code String} to be presented to the user to indicate the notification type
      */
     private String formatNotificationType(String notificationType, String iterationNumber){
         if ("iterationNotification".equals(notificationType)){

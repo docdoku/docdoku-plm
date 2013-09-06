@@ -41,6 +41,7 @@ import com.docdoku.android.plm.client.parts.PartSearchActivity;
  * The <code>DrawerLayout</code> component that slides from the left side of the screen to allow users to access the menu.
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.MenuFragment";

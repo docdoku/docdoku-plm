@@ -37,16 +37,17 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 /**
- * <code>Service</code> called when a user clicks on a <code>Notification</code>. Attempts to start a {@link DocumentActivity}
- * for the {@link Document} whose Id was indicated in the <code>Notification</code>.
+ * {@code Service} called when a user clicks on a {@code Notification}. Attempts to start a {@link DocumentActivity}
+ * for the document whose Id was indicated in the {@code Notification}.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class NotificationService extends Service implements HttpGetTask.HttpGetListener{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.NotificationService";
 
     /**
-     * Unused method. Useful if this <code>Service</code> was bound to an <code>Activity</code>, which it shouldn't be.
+     * Unused method. Useful if this {@code Service} was bound to an {@code Activity}, which it shouldn't be.
      *
      * @param intent
      * @return
@@ -58,12 +59,15 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
     }
 
     /**
-     * Called when this <code>Service</code> is started.
-     * <p>Loads the {@link com.docdoku.android.plm.client.Session} information in order to be able to send a request to the server.
-     * <p>Extracts the <code>Document</code> data from the <code>Extras</code> in the <code>Intent</code> to start a {@link HttpGetTask} to fetch
-     * the information about the document from the server.
+     * Called when this {@code Service} is started.
+     * <p>
+     * Loads the {@link com.docdoku.android.plm.client.Session} information in order to be able to send a request to the server.
+     * <p>
+     * Extracts the document data from the {@code Extra}s in the {@code Intent} to start an {@link HttpGetTask} to fetch
+     * the information about the document from the server. This {@code NotificationService} is set as {@link com.docdoku.android.plm.network.HttpGetTask.HttpGetListener}
+     * for the {@code HttpGetTask}.
      *
-     * @param intent the <code>PendingIntent</code> created in the {@link com.docdoku.android.plm.client.GCM.GCMIntentService}
+     * @param intent the {@code PendingIntent} created in the {@link com.docdoku.android.plm.client.GCM.GCMIntentService}
      * @param i
      * @param j
      * @return
@@ -92,12 +96,12 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
 
     /**
      * Handles the result of the {@link HttpGetTask}.
-     * <p>If the Http request was successful, the result is a <code>JSONObject</code> representing the <code>Document</code>.
-     * A <code>PendingIntent</code> is created to start the {@link DocumentActivity} for this {@link Document} and it is
-     * put inside of another <code>Intent</code> which starts the {@link com.docdoku.android.plm.client.connection.ConnectionActivity};
+     * <p>
+     * If the Http request was successful, the result is a {@code JSONObject} representing the {@code Document}.
+     * A {@code PendingIntent} is created to start the {@link DocumentActivity} for this {@link Document} and it is
+     * put inside of another {@code Intent} which starts the {@link com.docdoku.android.plm.client.connection.ConnectionActivity}.
      *
      * @param result
-     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
      */
     @Override
     public void onHttpGetResult(String result) {

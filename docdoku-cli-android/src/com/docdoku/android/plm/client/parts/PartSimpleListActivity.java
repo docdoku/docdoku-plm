@@ -38,6 +38,7 @@ import java.util.ArrayList;
  * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class PartSimpleListActivity extends PartListActivity implements HttpGetTask.HttpGetListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartSimpleListActivity";

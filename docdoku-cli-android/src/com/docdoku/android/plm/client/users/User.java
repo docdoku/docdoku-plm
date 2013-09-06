@@ -29,6 +29,7 @@ import java.util.ArrayList;
  * Model for a user of the workspace
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class User {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.users.User";

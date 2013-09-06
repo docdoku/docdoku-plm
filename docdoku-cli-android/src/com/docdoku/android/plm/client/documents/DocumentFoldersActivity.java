@@ -46,7 +46,8 @@ import java.util.List;
  * filing system.
  * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class DocumentFoldersActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentFoldersActivity";

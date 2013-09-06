@@ -33,7 +33,9 @@ import java.net.URL;
  * <p>The constructor requires a {@link HttpPostUploadFileListener} to notify the result of the request.
  * <p>The host's url path is  the first <code>String</code> parameter in the <code>execute()</code> method.
  * <p>The second parameter in the <code>execute()</code> method is the path on the phone to the <code>File</code> to be uploaded
- * @author: martindevillers
+ *
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpPostUploadFileTask";

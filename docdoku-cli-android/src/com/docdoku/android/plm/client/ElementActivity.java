@@ -49,7 +49,8 @@ import java.util.Calendar;
  * Abstract class for <code>Activity</code> representing an <code>Element</code>'s data.
  * <p>Contains the methods used for operation that <code>Document</code>s and <code>Part</code>s have in common.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";

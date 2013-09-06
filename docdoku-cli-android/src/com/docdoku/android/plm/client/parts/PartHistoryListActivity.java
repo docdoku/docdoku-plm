@@ -39,7 +39,8 @@ import java.util.Iterator;
  * {@code Activity} displaying the list of parts recently viewed by the user.
  * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class PartHistoryListActivity extends PartListActivity implements LoaderManager.LoaderCallbacks<Part> {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartHistoryListActivity";

@@ -50,7 +50,8 @@ import java.util.List;
  * <br>The {@link #getSearchQueryHintId()} and {@link #executeSearch(String) executeSearch()} methods used to handle
  * searches made by the user in the {@code ActionBar}.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract class PartListActivity extends SearchActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartListActivity";

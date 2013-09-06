@@ -33,6 +33,7 @@ import java.io.Serializable;
  * Model containing the data for a document
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class Document extends Element implements Serializable{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.Document";

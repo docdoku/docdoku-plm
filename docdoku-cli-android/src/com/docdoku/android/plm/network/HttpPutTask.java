@@ -32,7 +32,9 @@ import java.net.*;
  * <p>The constructor requires a {@link HttpPutListener} to notify the result of the request.
  * <p>The host's url path is specified in the first <code>String</code> parameter in the <code>execute()</code> method.
  * <p>If a request body is to be sent, it is passed as the second parameter in the <code>execute()</code> method.
+ *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class HttpPutTask extends HttpTask<String, Void, Boolean> {
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpPutTask";

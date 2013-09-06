@@ -41,7 +41,8 @@ import com.docdoku.android.plm.client.SearchActivity;
  * <br>Maximum creation date
  * <p>Layout file: {@link /res/layout/activity_search.xml activity_search}
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class PartSearchActivity extends SearchActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartSearchActivity";

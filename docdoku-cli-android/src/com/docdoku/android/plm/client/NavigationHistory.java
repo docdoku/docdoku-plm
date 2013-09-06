@@ -28,38 +28,47 @@ import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 
 /**
- * This class is used to keep track of which <code>Document</code>s and <code>Part</code>s the user has most recently viewed.
- *
- * <p>An instance of this path is generated with a <code>SharedPreferences</code> file in the constructor, then this instance
- * should be updated every time a new <code>Element</code> is viewed by the user. If the user wants to view his browsing history,
- * he can the fetch this instance.
- *
- * <p>Create a <code>NavigationHistory</code> instance when starting a {@link com.docdoku.android.plm.client.documents.DocumentListActivity DocumentListActivity}:
- * <p><code>
- *     private static final String PREFERENCE_DOCUMENT_HISTORY = "document history";
+ * This class is used to keep track of which {@code Document}s and {@code Part}s the user has most recently viewed.
  * <p>
- * <p> navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
- * </code>
- *
- * <p>Update the <code>NavigationHistory</code> when viewing a <code>Document</code>
- * <p><code>
+ * An instance of this {@code class} is generated with a {@code SharedPreferences} instance in the constructor, and this instance
+ * is used to update the data is the phone's permanent memory every time a new <code>Element</code> is viewed by the
+ * user. If the user wants to view his browsing history, this instance is fetched in the {@link com.docdoku.android.plm.client.documents.DocumentHistoryListActivity}
+ * and {@link com.docdoku.android.plm.client.parts.PartHistoryListActivity} {@code Activities}.
+ * <p>
+ * <p>
+ * In order to maintain the navigation history updated correctly:
+ * <p>
+ * Create a {@code NavigationHistory} instance when starting a list {@code Activity}, providing the correct {@code SharedPreferences}.
+ * For example, in {@link com.docdoku.android.plm.client.documents.DocumentListActivity}:
+ * <code><pre>
+ *     private static final String PREFERENCE_DOCUMENT_HISTORY = "document history";
+ *     navigationHistory = new NavigationHistory(getSharedPreferences(getCurrentWorkspace() + PREFERENCE_DOCUMENT_HISTORY, MODE_PRIVATE));
+ * </pre></code>
+ * <p>
+ * Update the {@code NavigationHistory} when viewing a {@code Document}:
+ * <code><pre>
  *     navigationHistory.add(document.getIdentification());
- * </code>
- * <p>Load the full <code>NavigationHistory</code> in {@link com.docdoku.android.plm.client.documents.DocumentHistoryListActivity DocumentHistoryListActivity}
- * <p><code>
-      Iterator<String> iterator = navigationHistory.getKeyIterator();
-  <p> int i = 0;
-  <p> while (iterator.hasNext()){
-  <p>       String docKey = iterator.next();
-  <p>       i++;
-  <p>  }
- * </code>
+ * </pre></code>
+ * <p>
+ * Load the full {@code NavigationHistory} in {@link com.docdoku.android.plm.client.documents.DocumentHistoryListActivity DocumentHistoryListActivity},
+ * and iterate through it to find the {@code Document}s:
+ * <code><pre>
+ *     Iterator<String> iterator = navigationHistory.getKeyIterator();
+ *     while (iterator.hasNext()){
+ *        String docKey = iterator.next();
+ *        //Load Document with docKey
+ *     }
+ * </pre></code>
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class NavigationHistory {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.NavigationHistory";
 
+    /**
+     * Maximum number of elements to be kept in the navigation history.
+     */
     private static final int NAVIGATION_HISTORY_MAX_SIZE = 20;
     private static final String PREFERENCE_NAVIGATION_HISTORY_SIZE = "size";
 
@@ -68,9 +77,12 @@ public class NavigationHistory {
     private int size;
 
     /**
-     * Create a <code>NavigationHistory</code> instance linked to the provided <code>SharedPreferences</code>.
-     * <p>Loads the <code>String</code> preferences that are the Id's of the previously visited <code>Element</code>s, and
-     * stores them in a <code>LinkedHashSet</code>
+     * Create a {@code NavigationHistory} instance linked to the provided {@code SharedPreferences}.
+     * <p>
+     * Loads the number of elements in history.
+     * <p>
+     * Loads the {@code String} preferences that are the Id's of the previously visited {@code Element}s, and
+     * stores them in a {@code LinkedHashSet}.
      *
      * @param sharedPreferences <code>SharedPreferences</code> where the <code>NavigationHistory</code> data is kept
      */
@@ -87,6 +99,7 @@ public class NavigationHistory {
 
     /**
      * Gets the <code>Iterator</code> used to load the <code>NavigationHistory</code> <code>Element</code> keys
+     *
      * @return the <code>Iterator</code>
      */
     public Iterator<String> getKeyIterator(){

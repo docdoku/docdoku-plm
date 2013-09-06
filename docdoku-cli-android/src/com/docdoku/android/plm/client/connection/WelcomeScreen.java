@@ -27,14 +27,27 @@ import android.view.Window;
 import com.docdoku.android.plm.client.R;
 
 /**
- * Displays a welcome screen
- *<p>Layout file: {@link /res/layout/welcome_screen.xml welcome_screen}
+ * Displays a welcome screen.
+ * <p>
+ * If the user does not have the automatic connection enabled, this screen will last for
+ * {@value #WELCOME_SCREEN_DURATION_MILLIS} milliseconds, then this {@code Activity} will finish and
+ * {@link ConnectionActivity} will become visible.
+ * <br> If the user has the automatic connection enabled, this screen will also last for
+ * {@value #WELCOME_SCREEN_DURATION_MILLIS} milliseconds. However, if during this time the connection process finishes,
+ * the starting {@code Activity} will be shown on top of this one. If not, then this {@code Activity} will finish and
+ * the {@code ConnectionActivity} will become visible with the connection {@code AlertDialog} showing.
+ * <p>
+ * Layout file: {@link /res/layout/welcome_screen.xml welcome_screen}
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class WelcomeScreen extends Activity{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.connection.WelcomeScreen";
 
+    /**
+     * Duration that this screen should be shown.
+     */
     private static final long WELCOME_SCREEN_DURATION_MILLIS = 3000;
 
     /**
@@ -51,7 +64,9 @@ public class WelcomeScreen extends Activity{
     }
 
     /**
-     * Wait for <code>WELCOME_SCREEN_DURATION_MILLIS</code> milliseconds then calls {@link #finish()} to end this <code>Activity</code>
+     * Called when the graphical layout becomes visible to the user.
+     * Starts a {@code Thread} which waits for {@code WELCOME_SCREEN_DURATION_MILLIS} milliseconds then calls
+     * {@link #endActivity()} ()} to end this {@code Activity}.
      *
      * @see Activity
      */
@@ -75,7 +90,9 @@ public class WelcomeScreen extends Activity{
     }
 
     /**
-     * Back button disabled
+     * Called when the user presses the {@code Android} back button.
+     * <p>
+     * The back button is disabled in this {@code Activity}, so this method does nothing.
      */
     @Override
     public void onBackPressed(){
@@ -83,7 +100,7 @@ public class WelcomeScreen extends Activity{
     }
 
     /**
-     * Finishes this <code>Activity</code>
+     * Finishes this {@code Activity}
      */
     private void endActivity(){
         finish();

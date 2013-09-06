@@ -28,15 +28,21 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 /**
- * <code>BroadcastReceiver</code> that is called when a Google Cloud Message is received on the device, targeting this application's package.
+ * {@code WakefulBroadcastReceiver} that is called when a Google Cloud Message is received on the device, targeting
+ * this application's package.
+ * <p>
+ * The handling of this message is delegated to a {@link GCMIntentService}.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public class GCMWakefulBroadcastReceiver extends WakefulBroadcastReceiver {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.GCMWakefulBroadcastReceiver";
 
     /**
-     * Called when a message is received. The message is then passed to the {@link GCMIntentService} to be processed.
+     * Called when a message is received.
+     * <p>
+     * The message is then passed to the {@link GCMIntentService} to be processed.
      *
      * @param context The current <code>Context</code>
      * @param intent The intent containing information about the message and the message itself

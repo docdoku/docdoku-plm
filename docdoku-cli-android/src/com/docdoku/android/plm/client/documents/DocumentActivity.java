@@ -52,6 +52,7 @@ import java.util.Date;
  * <p>Layout file: {@link /res/layout/activity_element.xml activity_element}
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class DocumentActivity extends ElementActivity implements HttpPostUploadFileTask.HttpPostUploadFileListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentActivity";

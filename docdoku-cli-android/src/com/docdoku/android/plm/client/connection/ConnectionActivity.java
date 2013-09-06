@@ -51,23 +51,47 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 /**
- * <code>Activity</code> that handles the user's input of connection data (if necessary), the verification of the Id provided,
- * and the initialization of the <code>Session</code> data.
- * <p>Layout file: {@link /res/layout/activity_connection.xml activity_connection}
+ * {@code Activity} that authenticates the user with the DocDokuPLM server.
+ * <p>
+ * If the user has not enabled the automatic connection, then this {@code Activity} will present him with the {@code EditText} fields to
+ * enter the server url, his login, and his password. He may also enable the automatic connection. The connection
+ * {@code Button} is then pressed to start the connection process.
+ * <br>If the user has previously enabled the automatic connection, then his data is automatically loaded from memory and
+ * the connection process is started.
+ * <p>
+ * The connection process uses a {@link Session} instance which is created with the data available in memory or given by
+ * the user to store the connection information. {@link #connect()} is
+ * then called to begin the connection process.
+ * <p>
+ * The connection process consists in the following steps:
+ * <br>1. An {@code AlerDialog} is shown to the user to indicate to him that the connection is taking place.
+ * <br>2. Once this {@code AlertDialog} becomes visible, an Http request is sent to the server to download the list of
+ * workspaces to which he has access. The credentials provided by the user are used to execute this request.
+ * <br>3.a. The request response is received, containing a {@code JSONArray}. The authentication
+ * process was successful, and the workspaces contained in the {@code JSONArray} are passed to the user's {@code Session}.
+ * A new task is then started to query the server for the user's real name which, once it is obtained, will be used
+ * to display to the user instead of his login, for a more pleasant user experience. {@link #endConnectionActivity()} is
+ * called to start the default {@code Activity}.
+ * <br>3.b The response is not a {@code JSONArray}. In that case, it is an error message indicating the server connection
+ * error type. This error is used to display an {@code AlertDialog} to the user indicating that the connection has failed.
+ * <p>
+ * Layout file: {@link /res/layout/activity_connection.xml activity_connection}
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.connection.ConnectionActivity";
 
     /**
-     * <code>Intent</code> key for a <code>boolean</code> indicating this <code>Activity</code> was started after the user disconnected from inside the
-     * application. The user's data must be erased from memory and no splash screen is shown.
+     * {@code Intent Extra} key for a {@code boolean} indicating that this {@code Activity} was started after the user disconnected from inside the
+     * application. The user's data must be erased from memory and the {@link WelcomeScreen} is not shown.
      */
     public static final String INTENT_KEY_ERASE_ID = "erase_id";
     /**
-     * <code>Intent</code> key for a <code>Parcelable</code> which is a <code>PendingIntent</code> to start an activity (other than the default one) after the
-     * connection process. Used when the connection is started following a click on a <code>Notification</code>.
+     * {@code Intent Extra} key for a {@code Parcelable} which is a {@code PendingIntent} to start an {@code Activity} (other than the default one) after the
+     * connection process. This is used when the connection is started from {@link com.docdoku.android.plm.client.GCM.NotificationService},
+     * following a click on a {@code Notification}.
      * @see PendingIntent
      */
     public static final String INTENT_KEY_PENDING_INTENT = "pending intent";
@@ -80,17 +104,18 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     private PendingIntent pendingIntent;
 
     /**
-     * Called on the <code>Activity</code>'s creation.
-     *
-     * <p>- Sets the auto connect <code>Checkbox</code> to checked by default.
-     * <p>- Extracts the data from the <code>Intent</code>. If it indicates that data should be erased, calls {@link #eraseData() eraseData()}.
-     * <p>- Calls {@link #startConnection() startConnection()} to set the <code>OnClickListener</code> on the connection button.
-     * <p>- Checks if the <code>Session</code> data is available in the <Code>SharedPreferences</Code>. If it is, attempts to connect with this data.
-     * <p>- If this activity was not started from inside the application, start the splash screen activity: {@link WelcomeScreen}.
+     * Called on the {@code Activity}'s creation.
+     * <p>
+     * - Extracts the data from the {@code Intent}. If it indicates that data should be erased, calls {@link #eraseData()}.
+     * <br>- Calls {@link #startConnection()} to set the {@code OnClickListener} on the connection button that starts
+     * the connection process.
+     * <br>- Calls {@link Session#loadSession(android.content.Context) Seesion.loadSession()} to check if
+     * the {@code SharedPreferences} contain data for an automatic connection. If that data if found, attempts to connect
+     * with this it.
+     * <br>- If this activity was not started due to a disconnection from inside the application, start the splash
+     * screen {@code Activity}: {@link WelcomeScreen}.
      *
      * @param savedInstanceState
-     *
-     * @see Activity
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +124,6 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
         setContentView(R.layout.activity_connection);
 
         rememberId = (CheckBox) findViewById(R.id.rememberID);
-        rememberId.setChecked(true);
 
         Intent intent = getIntent();
         boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
@@ -113,7 +137,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
             try {
                 autoConnect = true;
                 session = Session.getSession();
-                connect(session);
+                connect();
             } catch (Session.SessionLoadException e) {
                 Log.e(LOG_TAG, "Error: session incorrectly loaded");
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -127,9 +151,9 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     /**
-     * Back button disabled
-     *
-     * @see Activity
+     * Called when the user presses the {@code Android} back button.
+     * <p>
+     * The back button is disabled in this {@code Activity}, so this method does nothing.
      */
     @Override
     public void onBackPressed(){
@@ -137,16 +161,17 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     /**
-     * Verifies the Id contained in the <code>Session</code> by attempting to connect to the server to download the workspaces.
+     * Verifies the Id contained in the {@link Session} by attempting to connect to the server to download the workspaces.
      *
-     * <p>Checks that the internet connection is available.
-     * <p> - If it isn't, an <code>AlertDialog</code> is shown to indicate it to the user.
-     * <p> - If it is, the a <code>Progressdialog</code> is shown to indicate that the connection process is taking place, and once
-     * it is visible, the connection begins by starting a new {@link HttpGetTask}.
+     * <p>
+     * Checks that the internet connection is available.
+     * <br> - If it isn't, an {@code AlertDialog} is shown to indicate it to the user.
+     * <br> - If it is, the a {@code ProgressDialog} (with indeterminate progress) is shown to indicate that the
+     * connection process is taking place. Once it is visible, the connection begins by calling
+     * {@link #downloadWorkspaces()}.
      *
-     * @param session the session object containing the connection data
      */
-    private void connect(final Session session){
+    private void connect(){
         if (checkInternetConnection()){
             Log.i(LOG_TAG, "Showing progress dialog");
             progressDialog = new ProgressDialog(this);
@@ -165,27 +190,36 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
                     Log.i(LOG_TAG, "Progress dialog shown");
-                    try {
-                        Log.i(LOG_TAG, "Attempting to connect to server for identification");
-                        connectionTask = new HttpGetTask(session, ConnectionActivity.this).execute("/api/accounts/workspaces");
-                    } catch (UnsupportedEncodingException e) {
-                        Log.e(LOG_TAG,"Error encoding id for server connection");
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
+                    downloadWorkspaces();
                 }
             });
             progressDialog.show();
         } else {
             Log.i(LOG_TAG, "No internet connection available");
-            new AlertDialog.Builder(this)
-                .setMessage(R.string.noConnectionAvailable)
-                .setNegativeButton(R.string.OK, null)
-                .create().show();
+            createErrorDialog(R.string.noConnectionAvailable);
+        }
+    }
+
+    /**
+     * Attempts to download workspaces from server.
+     * <p>
+     * Starts a new {@link HttpGetTask} to download the workspaces, with this {@code ConnectionActivity} set as the
+     * {@link com.docdoku.android.plm.network.HttpGetTask.HttpGetListener}.
+     */
+    private void downloadWorkspaces(){
+        try {
+            Log.i(LOG_TAG, "Attempting to download workspaces from server");
+            connectionTask = new HttpGetTask(session, ConnectionActivity.this).execute("/api/accounts/workspaces");
+        } catch (UnsupportedEncodingException e) {
+            Log.e(LOG_TAG,"Error encoding id for server connection");
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
     /**
      * Checks that the device is connected to the internet.
+     * <p>
+     * The network type code is printed into the {@code Log}.
      *
      * @return whether the device's internet connection is available or not
      *
@@ -205,8 +239,10 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     /**
-     * Sets the <code>OnClickListener</code> for the connection <code>Button</code>. The <code>onClick()</code> method reads the value of the id input field to
-     * create a new {@link Session Session} and start calls {@link #connect(Session) connect()}.
+     * Sets the {@code OnClickListener} for the connection {@code Button}.
+     * <p>
+     * The {@code onClick()} method reads the value
+     * of the id input fields to create a new {@link Session Session} and then calls {@link #connect()}.
      */
     private void startConnection(){
         Button connection = (Button) findViewById(R.id.connection);
@@ -218,14 +254,17 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
                 String password = ((EditText) findViewById(R.id.passwordField)).getText().toString();
                 String serverUrl = ((EditText) findViewById(R.id.urlField)).getText().toString();
                 session = Session.initSession(ConnectionActivity.this, autoConnect, username, username, password, serverUrl);
-                connect(session);
+                connect();
             }
         });
     }
 
     /**
-     * If this activity was provided with a <code>PendingIntent</code>, starts this intent. Otherwise, starts the default
-     * activity, which is {@link DocumentCompleteListActivity}. After starting this <code>Intent</code>, this <code>Activity</code> is finished.
+     * Finishes this {@code Activity}, starting a new one.
+     * <p>
+     * If this activity was provided with a {@code PendingIntent}, starts a new {@code Activity} using it. Otherwise, starts the default
+     * activity, which is {@link DocumentCompleteListActivity}. After starting the {@code Intent}, this
+     * {@code Activity} is finished.
      *
      * @see PendingIntent
      */
@@ -246,7 +285,10 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     /**
-     * Erases all data contained in this application package's <code>SharedPreferences</code>.
+     * Erases all data contained in this application package's {@code SharedPreferences}.
+     * <p>
+     * This method not only erases the user's login data, but also all of his navigation history. It opens the
+     * directory containing all of the application's {@code Preferences} and erases all the files found there.
      *
      * @see SharedPreferences
      */
@@ -267,17 +309,18 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
 
     /**
      * Handles the result of the request to the server.
+     * <p>
+     * If the request failed, the result is a message indicating the error type. An {@code AlertDialog} is shown to
+     * notify the user of this error by calling {@link #createErrorDialog(int) createErrorDialog()}. If the error is with the authentication or with the server's url, this is
+     * specified. Otherwise, a default connection error message is specified.
+     * <p>If the request was successful, the result is a {@code JSONArray} of the workspaces of which the user is a member.
+     * This array of workspaces is transferred to the {@link Session} so that it can be stored in memory and in the
+     * {@code Preferences}. A new {@link HttpGetTask} is started to load request the server for the user's name,
+     * to be presented instead of his login once it is obtained. If the auto connect {@code CheckBox} was checked,
+     * a {@link com.docdoku.android.plm.client.GCM.GCMIntentService} is started to register for GCM messaging.
+     * The {@link #endConnectionActivity()} method is called.
      *
-     * <p>If the request failed, the result is a message indicating the error type.
-     * An <code>AlertDialog</code> is shown to indicate the user of this error.
-     * <p>If the request was successful, the result is a <code>JSONArray</code> of the workspaces of which the user is a member.
-     * These workspaces are set in the <code>Session</code>. A new (asynchronous) request is started to load the user's name,
-     * to be presented instead of his login once it is obtained. If the auto connect <code>Checkbox</code> was checked,
-     * a {@link com.docdoku.android.plm.client.GCM.GCMIntentService} is started to register for GCM messaging. The {@link #endConnectionActivity() endConnectionActivity()} method is called.
-     *
-     * @param result
-     *
-     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
+     * @param result the result of the {@code HttpGetTask} started by {@link #connect()}
      */
     @Override
     public void onHttpGetResult(String result) {
@@ -328,12 +371,13 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
     }
 
     /**
-     * Creates an <code>AlertDialog</code> with the error message indicated by the resource Id provided.
+     * Creates an {@code AlertDialog} with the error message indicated by the resource Id provided.
      *
      * @param messageId The id of the resource containing the error message
      */
     private void createErrorDialog(int messageId){
         new AlertDialog.Builder(this)
+            .setIcon(R.drawable.error_light)
             .setMessage(messageId)
             .setNegativeButton(getResources().getString(R.string.OK), null)
             .create().show();

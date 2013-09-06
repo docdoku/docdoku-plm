@@ -31,6 +31,7 @@ import android.widget.TextView;
  * launches a <code>SearchActionBar</code>
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActionBarActivity";

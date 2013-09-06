@@ -31,7 +31,8 @@ import java.util.Set;
 /**
  * Singleton containing the data for the current session used by the user.
  *
- * @author: martindevillers
+ * @author: Martin Devillers
+ * @version 1.0
  */
 public final class Session {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.Session";

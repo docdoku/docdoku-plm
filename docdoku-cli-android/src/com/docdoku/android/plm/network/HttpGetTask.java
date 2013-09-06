@@ -36,7 +36,9 @@ import java.net.*;
  * <p>
  * <p>This method has a second constructors with a <code>Session</code> parameter, that defines the server connection
  * information for all Http methods.
+ *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class HttpGetTask extends HttpTask<String, Void, String>{
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpGetTask";

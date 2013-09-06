@@ -35,6 +35,7 @@ import java.io.Serializable;
  * Model containing the data for a part
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public class Part extends Element implements Serializable{
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.Part";

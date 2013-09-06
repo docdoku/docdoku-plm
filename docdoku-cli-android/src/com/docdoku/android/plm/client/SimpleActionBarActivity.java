@@ -52,6 +52,7 @@ import com.docdoku.android.plm.client.users.UserListActivity;
  * {@link #getCurrentUserName()})
  *
  * @author: Martin Devillers
+ * @version 1.0
  */
 public abstract class SimpleActionBarActivity extends FragmentActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SimpleActionBarActivity";
