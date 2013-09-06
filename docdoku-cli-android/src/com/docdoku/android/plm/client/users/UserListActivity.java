@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.users;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -32,6 +32,8 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.*;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.SearchActionBarActivity;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +53,7 @@ import java.util.ArrayList;
  * @author: Martin Devillers
  */
 public class UserListActivity extends SearchActionBarActivity implements HttpGetTask.HttpGetListener {
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.UserListActivity";
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.users.UserListActivity";
 
     private static final int INTENT_CODE_CONTACT_PICKER = 100;
 
@@ -361,7 +363,7 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
 
     /**
      * Returns a {@code String[]} of the selected {@code User}'s preferred phone numbers.
-     * <p>If the contact of the phone has a mobile phone number available, the {@code User}'s {@link com.docdoku.android.plm.client.User#getPhoneNumber()}
+     * <p>If the contact of the phone has a mobile phone number available, the {@code User}'s {@link User#getPhoneNumber()}
      * method will return it. Otherwise, it will return the first number it can find.
      * <br>If there are no phone numbers on the phone for the {@code User}, then it will return an empty {@code String}.
      * @return
@@ -613,11 +615,11 @@ public class UserListActivity extends SearchActionBarActivity implements HttpGet
     }
 
     /**
-     * This {@code Activity}'s {@code Button} is in the {@code ActionBar}, not in the {@link MenuFragment}, so this method does
+     * This {@code Activity}'s {@code Button} is in the {@code ActionBar}, not in the {@link com.docdoku.android.plm.client.MenuFragment}, so this method does
      * not provide a {@code Button} id to be highlighted.
      *
      * @return
-     * @see SimpleActionBarActivity
+     * @see com.docdoku.android.plm.client.SimpleActionBarActivity
      */
     @Override
     protected int getActivityButtonId() {

@@ -18,12 +18,13 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.connection;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
+import com.docdoku.android.plm.client.R;
 
 /**
  * Displays a welcome screen
@@ -32,7 +33,7 @@ import android.view.Window;
  * @author: martindevillers
  */
 public class WelcomeScreen extends Activity{
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.WelcomeScreen";
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.connection.WelcomeScreen";
 
     private static final long WELCOME_SCREEN_DURATION_MILLIS = 3000;
 

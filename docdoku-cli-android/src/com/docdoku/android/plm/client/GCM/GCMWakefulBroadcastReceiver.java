@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.GCM;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -32,8 +32,8 @@ import android.util.Log;
  *
  * @author: martindevillers
  */
-public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMBroadcastReceiver";
+public class GCMWakefulBroadcastReceiver extends WakefulBroadcastReceiver {
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.GCMWakefulBroadcastReceiver";
 
     /**
      * Called when a message is received. The message is then passed to the {@link GCMIntentService} to be processed.

@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.users;
 
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * @author: Martin Devillers
  */
 public class User {
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.User";
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.users.User";
 
     public static final String JSON_KEY_USER_NAME = "name";
     public static final String JSON_KEY_USER_EMAIL = "email";

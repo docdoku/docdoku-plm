@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.GCM;
 
 import android.app.Service;
 import android.content.Intent;
@@ -40,7 +40,7 @@ import java.io.IOException;
  * @author: martindevillers
  */
 public class GCMRegisterService extends Service implements HttpDeleteTask.HttpDeleteListener, HttpPutTask.HttpPutListener{
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMRegisterService";
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.GCMRegisterService";
 
     /**
      * Key for the <code>Intent Extra</code> indicating which action to perform

@@ -33,7 +33,7 @@
     <application android:label="@string/app_name"
                  android:icon="@drawable/docdoku_plm_icon"
                  android:theme="@style/Theme.AppTheme">
-        <activity android:name="com.docdoku.android.plm.client.ConnectionActivity"
+        <activity android:name=".connection.ConnectionActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden">
             <intent-filter>
@@ -53,7 +53,7 @@
         <activity android:name=".parts.PartSimpleListActivity"
                   android:label="@string/parts"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".UserListActivity"
+        <activity android:name=".users.UserListActivity"
                   android:label="@string/users"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".parts.PartActivity"
@@ -77,17 +77,17 @@
         <activity android:name=".documents.DocumentFoldersActivity"
                   android:label="@string/documents"
                   android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".WelcomeScreen"/>
+        <activity android:name=".connection.WelcomeScreen"/>
 
-        <receiver android:name=".GCMBroadcastReceiver"
+        <receiver android:name=".GCM.GCMWakefulBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.docdoku.android.plm.client" />
             </intent-filter>
         </receiver>
-        <service android:name=".GCMIntentService"/>
-        <service android:name=".NotificationService"/>
-        <service android:name=".GCMRegisterService"/>
+        <service android:name=".GCM.GCMIntentService"/>
+        <service android:name=".GCM.NotificationService"/>
+        <service android:name=".GCM.GCMRegisterService"/>
     </application>
 </manifest>

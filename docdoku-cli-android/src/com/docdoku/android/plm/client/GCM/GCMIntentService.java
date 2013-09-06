@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.GCM;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -28,14 +28,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import com.docdoku.android.plm.client.R;
 
 /**
- * Class called by {@link GCMBroadcastReceiver} when a GCM message is received. Handles the message and creates a <code>Notification</code>.
+ * Class called by {@link GCMWakefulBroadcastReceiver} when a GCM message is received. Handles the message and creates a <code>Notification</code>.
  *
  * @author: martindevillers
  */
 public class GCMIntentService extends IntentService {
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCMIntentService";
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.GCMIntentService";
 
     private static final long VIBRATION_DURATION_MILLIS = 800;
 
@@ -90,7 +91,7 @@ public class GCMIntentService extends IntentService {
         sendNotification(docId + "-" + docVersion, docIteration, notificationType, workspaceId, notificationCode);
 
         // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GCMBroadcastReceiver.completeWakefulIntent(intent);
+        GCMWakefulBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     /**

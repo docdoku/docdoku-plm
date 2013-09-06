@@ -32,6 +32,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import com.docdoku.android.plm.client.GCM.GCMRegisterService;
+import com.docdoku.android.plm.client.connection.ConnectionActivity;
+import com.docdoku.android.plm.client.users.UserListActivity;
 
 /**
  * This class contains the methods that are used by almost all of this application's <code>Activities</code>.
@@ -42,7 +45,7 @@ import android.view.View;
  * {@link #restartActivity()})
  * <br> - Implement the methods that handle the drawer menu
  * ({@link #onResume()})
- * <br> - Provide methods to easily access the <code>Seesion</code> data
+ * <br> - Provide methods to easily access the <code>Session</code> data
  * ({@link #getCurrentWorkspace()},
  * {@link #getCurrentUserLogin()},
  * {@link #getUrlWorkspaceApi()},
@@ -154,7 +157,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
 
     /**
      * Handles <code>ActionBar</code> button clicks, identifying them by the <code>MenuItem</code> id.
-     * <p> - Users button: starts the {@link UserListActivity}
+     * <p> - Users button: starts the {@link com.docdoku.android.plm.client.users.UserListActivity}
      * <br> - Logout button: show an <code>AlertDialog</code> asking the user for confirmation.
      *
      * @param item the <code>ActionBar</code> item that was clicked

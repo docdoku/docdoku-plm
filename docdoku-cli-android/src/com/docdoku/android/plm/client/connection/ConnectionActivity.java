@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.client;
+package com.docdoku.android.plm.client.connection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,6 +38,9 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import com.docdoku.android.plm.client.GCM.GCMRegisterService;
+import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.Session;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
 import com.docdoku.android.plm.network.HttpGetTask;
 import org.json.JSONArray;
@@ -55,7 +58,7 @@ import java.io.UnsupportedEncodingException;
  * @author: Martin Devillers
  */
 public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetListener {
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.ConnectionActivity";
+    private static final String LOG_TAG = "com.docdoku.android.plm.client.connection.ConnectionActivity";
 
     /**
      * <code>Intent</code> key for a <code>boolean</code> indicating this <code>Activity</code> was started after the user disconnected from inside the
@@ -270,7 +273,7 @@ public class ConnectionActivity extends Activity implements HttpGetTask.HttpGetL
      * <p>If the request was successful, the result is a <code>JSONArray</code> of the workspaces of which the user is a member.
      * These workspaces are set in the <code>Session</code>. A new (asynchronous) request is started to load the user's name,
      * to be presented instead of his login once it is obtained. If the auto connect <code>Checkbox</code> was checked,
-     * a {@link GCMIntentService} is started to register for GCM messaging. The {@link #endConnectionActivity() endConnectionActivity()} method is called.
+     * a {@link com.docdoku.android.plm.client.GCM.GCMIntentService} is started to register for GCM messaging. The {@link #endConnectionActivity() endConnectionActivity()} method is called.
      *
      * @param result
      *
