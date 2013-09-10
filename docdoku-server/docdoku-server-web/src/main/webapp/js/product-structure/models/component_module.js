@@ -1,4 +1,4 @@
-/*global sceneManager,Instance*/
+/*global instancesManager,Instance*/
 define(["models/part_iteration_visualization", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIterationVisualization, date, i18n) {
 
     var ComponentModule = {};
@@ -115,53 +115,11 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
         },
 
         putOnScene: function() {
-            $.getJSON(this.getInstancesUrl(), function(instances) {
-
-                //get instances that need to be added to the scene
-                var instancesNotOnScene = _.filter(instances, function(instance) {
-                    return !sceneManager.isOnScene(instance.id);
-                });
-
-                //update the levels geometry with the future number of instances
-                sceneManager.updateLevelGeometryValues(sceneManager.instances.length + instancesNotOnScene.length);
-
-                _.each(instancesNotOnScene, function(instanceRaw) {
-
-                    //if we deal with this partIteration for the fist time, we need to create it
-                    //if (!sceneManager.hasPartIteration(instanceRaw.partIterationId)) {
-                        sceneManager.addPartIteration(new PartIterationVisualization(instanceRaw));
-                    //}
-
-                    var partIteration = sceneManager.getPartIteration(instanceRaw.partIterationId);
-
-                    //finally we create the instance and add it to the scene
-                    sceneManager.addInstanceOnScene(new Instance(
-                        instanceRaw.id,
-                        partIteration,
-                        instanceRaw.tx,
-                        instanceRaw.ty,
-                        instanceRaw.tz,
-                        instanceRaw.rx,
-                        instanceRaw.ry,
-                        instanceRaw.rz
-                    ));
-
-                });
-            });
+            instancesManager.loadFromTree(this);
         },
 
         removeFromScene: function() {
-
-            $.getJSON(this.getInstancesUrl(), function(instances) {
-                _.each(instances, function(instanceRaw) {
-                    if (sceneManager.isOnScene(instanceRaw.id)) {
-                        sceneManager.removeInstanceFromScene(instanceRaw.id);
-                    }
-                });
-
-                //update the levels geometry with the number of instances
-                sceneManager.updateLevelGeometryValues(sceneManager.instances.length);
-            });
+            instancesManager.unLoadFromTree(this);
         },
 
         getUrlForBom: function() {

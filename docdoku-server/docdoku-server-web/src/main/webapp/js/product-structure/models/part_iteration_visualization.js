@@ -2,71 +2,88 @@
 define(function() {
 
     var PartIterationVisualization = function(partIterationParams) {
-        this.partIterationId = partIterationParams.partIterationId;
-        this.files = partIterationParams.files;
-        this.attributes = partIterationParams.attributes;
-        this.initialize();
+        this.id = partIterationParams.partIterationId;
+        this.files=partIterationParams.files;
+        this.instances=[];
+        this.radius=null;
+        this.levelGeometries=[];
+        this.setRadiusFromServer(partIterationParams.attributes);
+        this.parseFiles();
     };
 
     PartIterationVisualization.prototype = {
+
+        setRadiusFromServer:function(attributes){
+            var radiusAttribute = _.find(attributes, function(attribute) {
+                return attribute.name == 'radius';
+            });
+            this.radius = radiusAttribute ? radiusAttribute.value : 0;
+        },
 
         hasGeometry: function() {
             return this.files.length > 0;
         },
 
-        initialize: function() {
-
-            this.idle = true;
-
-            if (this.hasGeometry()) {
-
-                this.levels = [];
-
-                var radiusAttribute = _.find(this.attributes, function(attribute) {
-                    return attribute.name == 'radius';
-                });
-
-                if (radiusAttribute) {
-                    this.radius = radiusAttribute.value;
-                }
-
-                var self = this;
-
-                _.each(this.files, function(file) {
-                    var filename = '/files/' + file.fullName;
-                    switch (file.quality) {
-                        case 0:
-                            self.addLevelGeometry(filename, file.quality,  false);
-                            break;
-                        case 1:
-                            self.addLevelGeometry(filename, file.quality, true);
-                            break;
-                    }
-                });
+        addInstance:function(instanceRaw){
+            var self = this;
+            if(!this.hasInstance(instanceRaw.id)){
+                this.instances[instanceRaw.id] = new Instance(
+                    instanceRaw.id,
+                    self.id,
+                    instanceRaw.tx,
+                    instanceRaw.ty,
+                    instanceRaw.tz,
+                    instanceRaw.rx,
+                    instanceRaw.ry,
+                    instanceRaw.rz,
+                    self.radius
+                );
             }
+            return this;
         },
 
-        addLevelGeometry: function(filename, quality, computeVertexNormals) {
-            for (var i = 0; i<this.levels.length ; i++) {
-                if (quality < this.levels[i].quality) {
-                    break;
-                }
-            }
-            this.levels.splice(i, 0, new LevelGeometry(filename, quality, computeVertexNormals));
+        hasInstance:function(instanceId){
+            return this.instances[instanceId] !== undefined;
         },
 
-        getLevelGeometry: function(rating) {
-            for (var i = 0; i < this.levels.length ; i++) {
-                if (rating > sceneManager.levelGeometryValues[i]) {
-                    return this.levels[i];
-                }
-            }
-            //no level found for this rating
-            return null;
+        getInstance:function(instanceId){
+            return this.instances[instanceId];
         },
 
-        getBestLevelGeometry: function() {
-            return this.levels[this.levels.length-1];
+        removeInstance:function(instanceId){
+            var instance = this.getInstance(instanceId);
+            instance.clearMesh();
+        },
+
+        parseFiles:function(){
+            var self = this;
+            _.each(this.files, function(file) {
+                self.addLevelGeometry( "/files/" + file.fullName, file.quality);
+            });
+        },
+
+        addLevelGeometry:function(filename, quality){
+            this.levelGeometries[parseInt(quality)] = new LevelGeometry(filename,quality,quality>0);
+        },
+
+        getLevelGeometry:function(rating){
+
+            if(this.levelGeometries.length == 1){
+                return this.getBestLevelGeometry();
+            }
+
+            // Do something with rating (ie get the size of levelGeometries and get right index), instead of returning the worst level geometry
+            return this.levelGeometries[this.levelGeometries.length-1];
+
+        },
+
+        getBestLevelGeometry:function(){
+            return this.levelGeometries[0];
+        },
+
+
+        showInstance:function(instance){
+            this.getInstance(instance.id).addToScene(instance.rating,instance.fullQuality);
         }
 
     };

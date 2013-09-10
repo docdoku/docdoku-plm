@@ -1,6 +1,6 @@
-var sceneManager;
+var sceneManager,instancesManager;
 
-define(["models/part_iteration_visualization","dmu/SceneManager"],function(PartIteration,SceneManager){
+define(["models/part_iteration_visualization","dmu/SceneManager","dmu/InstancesManager"],function(PartIteration,SceneManager,InstancesManager){
 
     function PermalinkApp(fileName, width, height){
 
@@ -15,15 +15,21 @@ define(["models/part_iteration_visualization","dmu/SceneManager"],function(PartI
         SceneManager.prototype.initPermalinkScene = function() {
             this.init();
             var self = this;
-            this.loaderManager.parseFile(fileName, "", false, function(mesh){
+            instancesManager.loadMeshFromFile(fileName, function(mesh){
+
                 THREE.GeometryUtils.center(mesh.geometry);
+                mesh.initialPosition=mesh.position;
+
                 self.addMesh(mesh);
                 self.camera.lookAt(mesh.position);
             });
         };
 
+        instancesManager = new InstancesManager();
+        instancesManager.init();
         sceneManager = new SceneManager();
         sceneManager.initPermalinkScene();
+
     }
 
     return PermalinkApp;

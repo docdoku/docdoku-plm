@@ -1,4 +1,5 @@
 var sceneManager;
+var instancesManager;
 
 define(
     [
@@ -17,6 +18,7 @@ define(
         //"views/control_cutplan_view",
         "views/baseline_select_view",
         "dmu/SceneManager",
+        "dmu/InstancesManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
         "models/part"
@@ -35,6 +37,7 @@ define(
                  //ControlCutPlanView,
                  BaselineSelectView,
                  SceneManager,
+                 InstancesManager,
                  template,
                  i18n,
                  Part) {
@@ -85,7 +88,9 @@ define(
             this.$ControlsContainer.append(new ControlLayersView().render().$el);
 
             try{
+                instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
+                instancesManager.init();
                 sceneManager.init();
             }catch(ex){
                 console.log("Exception " + ex)
@@ -117,7 +122,7 @@ define(
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
             this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
-            Backbone.Events.on("instance:selected", this.onInstanceSelected, this);
+            Backbone.Events.on("mesh:selected", this.onMeshSelected, this);
             Backbone.Events.on("selection:reset", this.onResetSelection, this);
         },
 
@@ -240,9 +245,8 @@ define(
             sceneManager.clear();
         },
 
-        onInstanceSelected:function(instance){
-
-            var partKey = instance.partIterationId.substr(0, instance.partIterationId.lastIndexOf("-"));
+        onMeshSelected:function(mesh){
+            var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf("-"));
             var part = new Part({partKey:partKey});
             var self = this;
             part.fetch({success:function() {

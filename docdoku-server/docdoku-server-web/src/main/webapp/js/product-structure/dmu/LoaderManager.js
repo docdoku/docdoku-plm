@@ -1,10 +1,18 @@
 /*global sceneManager, ColladaLoader2*/
 define(["views/progress_bar_view"], function (ProgressBarView) {
 
-    var LoaderManager = function () {
+    var LoaderManager = function (options) {
+
         this.ColladaLoader = null;
         this.StlLoader = null;
         this.BinaryLoader = null;
+
+        _.extend(this,options);
+
+        if(this.progressBar){
+            this.listenXHR();
+        }
+
     };
 
     /*
@@ -25,7 +33,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
         listenXHR: function () {
 
-            // override xhr open prototype
+            // Override xhr open prototype
             var pbv = new ProgressBarView().render();
             var xhrCount = 0;
             var _xhrOpen = XMLHttpRequest.prototype.open;
@@ -70,14 +78,13 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
             };
         },
 
-        parseFile: function (filename, texturePath, computeVertexNormals, callback) {
+        parseFile: function (filename, texturePath, callback) {
 
             var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
             switch (extension) {
                 case 'dae':
 
-                    // Lazy loading
                     if (this.ColladaLoader == null) {
                         this.ColladaLoader = new ColladaLoader2();
                     }
@@ -85,28 +92,22 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
                     this.ColladaLoader.load(filename, function (collada) {
 
                         // Merge all sub meshes into one
-                        var geometries = [];
+                        var geometries = [],
+                            combined = new THREE.Geometry(),
+                            materials = collada.threejs.materials[0];
+
                         getMeshes(collada.threejs.scene, geometries);
-                        var combined = new THREE.Geometry();
 
                         _.each(geometries, function (geometry) {
                             THREE.GeometryUtils.merge(combined, geometry);
                         });
 
-                        if (computeVertexNormals) {
-                            combined.computeVertexNormals();
-                        }
-
                         combined.dynamic = false;
                         combined.mergeVertices();
-
-                        var materials = collada.threejs.materials[0];
-                        materials.wireframe = sceneManager.wireframe;
                         materials.transparent = true;
                         materials.color = new THREE.Color(0xbbbbbb);
 
-                        var mesh = new THREE.Mesh(combined, materials);
-                        callback(mesh);
+                        callback(new THREE.Mesh(combined, materials));
 
                     });
 
@@ -114,24 +115,18 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                 case 'stl':
 
-                    // Lazy loading
                     if (this.StlLoader == null) {
                         this.StlLoader = new THREE.STLLoader();
                     }
 
                     this.StlLoader.addEventListener('load', function (stl) {
-                        var geometry = stl.content;
+                        var geometry = stl.content,
+                            materials = new THREE.MeshPhongMaterial();
 
-                        var materials = new THREE.MeshPhongMaterial();
-                        materials.wireframe = sceneManager.wireframe;
                         materials.transparent = true;
                         materials.color = new THREE.Color(0xbbbbbb);
-
-                        var mesh = new THREE.Mesh(geometry, materials);
-                        callback(mesh);
-
+                        callback(new THREE.Mesh(geometry, materials));
                     });
-
                     this.StlLoader.load(filename);
 
                     break;
@@ -139,26 +134,22 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
                 case 'js':
                 case 'json':
 
-                    // Lazy loading
                     if (this.BinaryLoader == null) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
 
                     this.BinaryLoader.load(filename, function (geometry, materials) {
-                        if (computeVertexNormals) {
-                            geometry.computeVertexNormals();
-                        }
                         _.each(materials, function (material) {
-                            material.wireframe = sceneManager.wireframe;
                             material.transparent = true;
                             material.color = new THREE.Color(0xbbbbbb);
                         });
                         geometry.dynamic = false;
-
-                        var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-                        callback(mesh);
-
+                        callback(new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials)));
                     }, texturePath);
+
+                    break;
+
+                default: break;
 
             }
         }

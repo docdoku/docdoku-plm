@@ -1,9 +1,8 @@
 /*global sceneManager,Instance*/
 define([
     "views/marker_create_modal_view",
-    "views/blocker_view",
-    "dmu/LoaderManager"
-], function (MarkerCreateModalView, BlockerView, LoaderManager) {
+    "views/blocker_view"
+], function (MarkerCreateModalView, BlockerView) {
 
     var SceneManager = function (pOptions) {
 
@@ -36,7 +35,7 @@ define([
         this.maxInstanceDisplayed = 1000;
         this.levelGeometryValues = [];
 
-        this.loaderManager = null;
+
         this.currentLayer = null;
         this.explosionCoeff = 0;
         this.wireframe = false;
@@ -46,13 +45,16 @@ define([
         this.nominalFPSValue = 60; // 60 Fps
         this.currentFPSValue = 1; // Start the scene at 1 fps
         this.fpsReducerTime = 1000; // reducing fps every 1 seconds
+
+        this.cameraPosition_old = null;
+        this.frustum_old = null;
+
     };
 
     SceneManager.prototype = {
 
         init: function () {
             _.bindAll(this);
-            this.updateLevelGeometryValues(0);
             this.initScene();
             this.initSceneUtils();
             this.initRendering();
@@ -77,7 +79,6 @@ define([
             this.initSelectionBox();
             this.initLights();
             this.initLayerManager();
-            this.initLoaderManager();
         },
 
         initRendering: function () {
@@ -94,15 +95,15 @@ define([
             this.$container.append(this.renderer.domElement);
         },
 
-        initLoaderManager: function () {
-            this.loaderManager = new LoaderManager();
-            this.loaderManager.listenXHR();
-        },
+
 
         animate: function () {
-            var self = this;
+
             // Clear timeout if any
             clearTimeout(this.animateTimout);
+
+            var self = this;
+
             if (!this.isPaused) {
                 switch (this.stateControl) {
                     case this.STATECONTROL.PLC:
@@ -115,6 +116,7 @@ define([
                         this.controls.update();
                         break;
                 }
+
                 this.animateTimout = setTimeout(function () {
                     window.requestAnimationFrame(function () {
                         self.animate();
@@ -127,7 +129,6 @@ define([
         },
 
         render: function () {
-            this.updateInstances();
             this.scene.updateMatrixWorld();
             this.renderer.render(this.scene, this.camera);
         },
@@ -135,9 +136,9 @@ define([
         initCamera: function () {
             this.camera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
             if (!_.isUndefined(SCENE_INIT.camera)) {
-                console.log(SCENE_INIT.camera.x + ' , ' + SCENE_INIT.camera.y + ' , ' + SCENE_INIT.camera.z);
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
             }
+            instancesManager.initWorker();
         },
 
         updateNewCamera: function () {
@@ -157,7 +158,7 @@ define([
         },
 
         initLayerManager: function () {
-            if (APP_CONFIG.productId) {
+            if (!_.isUndefined(APP_CONFIG.productId)) {
                 var self = this;
                 require(["dmu/LayerManager"], function (LayerManager) {
 
@@ -203,7 +204,6 @@ define([
             var axes = new THREE.AxisHelper(100);
             axes.position.set(-1000, 0, 0);
             this.scene.add(axes);
-
             var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 100);
             arrow.position.set(200, 0, 400);
             this.scene.add(arrow);
@@ -211,9 +211,10 @@ define([
 
         initSelectionBox: function () {
             this.selectionBox = new THREE.BoxHelper();
-            this.selectionBox.material.depthTest = false;
+            this.selectionBox.material.depthTest = true;
             this.selectionBox.material.transparent = true;
             this.selectionBox.visible = false;
+            this.selectionBox.overdraw = true;
             this.scene.add(this.selectionBox);
         },
 
@@ -241,14 +242,6 @@ define([
             this.$statsArrow.bind('click', function () {
                 that.$stats.toggleClass('statsWinMinimized statsWinMaximized');
             });
-        },
-
-        showStats: function () {
-            this.$stats.show();
-        },
-
-        hideStats: function () {
-            this.$stats.hide();
         },
 
         initGrid: function () {
@@ -299,110 +292,31 @@ define([
         },
 
         loadWindowResize: function () {
-            var windowResize = THREEx.WindowResize(this.renderer, this.camera, this.$container);
+            THREEx.WindowResize(this.renderer, this.camera, this.$container);
         },
 
         /*
          *
-         * Mesh, instances, partIterations
+         * Meshes
          *
          * */
 
         addMesh: function (mesh) {
-
-            this.scene.add(mesh);
-
-            if (this.explosionCoeff != 0) {
-                mesh.translateX(mesh.geometry.boundingBox.centroid.x * this.explosionCoeff);
-                mesh.translateY(mesh.geometry.boundingBox.centroid.y * this.explosionCoeff);
-                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * this.explosionCoeff);
-            }
-
-            mesh.updateMatrix();
-
             this.resetFPSReducer();
+            this.scene.add(mesh);
+            this.applyExplosionCoeff(mesh);
+            this.applyWireFrame(mesh);
         },
 
-        clear: function () {
-            for (var instance in this.instances) {
-                sceneManager.instances[instance].clearMeshAndLevelGeometry();
-                delete this.instancesMap[instance];
-            }
-            this.instances = [];
-            this.instancesMap = {};
+        removeMesh:function(mesh){
+            this.resetFPSReducer();
+            this.scene.remove(mesh);
         },
-
-        updateInstances: function () {
-
-            var projScreenMatrix = new THREE.Matrix4();
-            projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse);
-            this.frustum.setFromMatrix(projScreenMatrix);
-
-            var updateIndex = Math.min((this.updateOffset + this.updateCycleLength), this.instances.length);
-
-            for (var j = this.updateOffset; j < updateIndex; j++) {
-                this.instances[j].update(this.frustum);
-            }
-
-            this.updateOffset = updateIndex < this.instances.length ? updateIndex : 0;
-        },
-
-        addPartIteration: function (partIteration) {
-            this.partIterations[partIteration.partIterationId] = partIteration;
-        },
-
-        getPartIteration: function (partIterationId) {
-            return this.partIterations[partIterationId];
-        },
-
-        hasPartIteration: function (partIterationId) {
-            return _.has(this.partIterations, partIterationId);
-        },
-
-        addInstanceOnScene: function (instance) {
-            this.instancesMap[instance.id] = instance;
-            sceneManager.instances.push(instance);
-        },
-
-        removeInstanceFromScene: function (instanceId) {
-            var numbersOfInstances = sceneManager.instances.length;
-
-            var index = null;
-
-            for (var j = 0; j < numbersOfInstances; j++) {
-                if (sceneManager.instances[j].id == instanceId) {
-                    index = j;
-                    break;
-                }
-            }
-
-            if (index != null) {
-                sceneManager.instances[j].clearMeshAndLevelGeometry();
-                sceneManager.instances.splice(index, 1);
-                delete this.instancesMap[instanceId];
-            }
-        },
-
-        isOnScene: function (instanceId) {
-            return _.has(this.instancesMap, instanceId);
-        },
-
 
         bind: function (scope, fn) {
             return function () {
                 fn.apply(scope, arguments);
             };
-        },
-
-
-        updateLevelGeometryValues: function (instanceNumber) {
-            if (instanceNumber < this.maxInstanceDisplayed) {
-                this.levelGeometryValues[0] = 0.02;
-                this.levelGeometryValues[1] = 0;
-            } else {
-                this.levelGeometryValues[0] = 0.14;
-                this.levelGeometryValues[1] = 0.08;
-            }
         },
 
         /*
@@ -547,18 +461,22 @@ define([
         switchWireFrame: function (wireframe) {
             this.resetFPSReducer();
             this.wireframe = wireframe;
-            // Set/remove wireFrame to current parts
             var self = this;
-            _(this.instances).each(function (instance) {
-                if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
-                    if (instance.levelGeometry.mesh.material) {
-                        instance.levelGeometry.mesh.material.wireframe = self.wireframe;
-                        _(instance.levelGeometry.mesh.material.materials).each(function (material) {
-                            material.wireframe = self.wireframe;
-                        });
-                    }
+            _(this.scene.children).each(function (child) {
+                if (child instanceof THREE.Mesh) {
+                    self.applyWireFrame(child);
+
                 }
             });
+        },
+
+        applyWireFrame:function(mesh){
+            mesh.material.wireframe = this.wireframe;
+            if((mesh.material.materials)){
+                _(mesh.material.materials).each(function (m) {
+                    m.wireframe = mesh.material.wireframe;
+                });
+            }
         },
 
         explodeScene: function (v) {
@@ -566,22 +484,36 @@ define([
             var self = this;
             // this could be adjusted
             this.explosionCoeff = v * 0.1;
-            _(this.instances).each(function (instance) {
-                if (instance.levelGeometry != null && instance.levelGeometry.mesh != null) {
-                    var mesh = instance.levelGeometry.mesh;
-                    // Replace before translating
-                    mesh.position.x = mesh.initialPosition.x;
-                    mesh.position.y = mesh.initialPosition.y;
-                    mesh.position.z = mesh.initialPosition.z;
-                    // Translate instance
-                    if (self.explosionCoeff != 0) {
-                        mesh.translateX(mesh.geometry.boundingBox.centroid.x * self.explosionCoeff);
-                        mesh.translateY(mesh.geometry.boundingBox.centroid.y * self.explosionCoeff);
-                        mesh.translateZ(mesh.geometry.boundingBox.centroid.z * self.explosionCoeff);
-                    }
-                    mesh.updateMatrix();
+            _(this.scene.children).each(function (child) {
+                if (child instanceof THREE.Mesh) {
+                    self.applyExplosionCoeff(child);
                 }
             });
+        },
+
+        applyExplosionCoeff:function(mesh){
+
+            if(!mesh.geometry.boundingBox){
+                mesh.geometry.computeBoundingBox();
+                mesh.geometry.computeBoundingSphere();
+                mesh.geometry.boundingBox.centroid = new THREE.Vector3 (
+                    (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
+                    (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
+                    (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
+                );
+            }
+
+            // Replace before translating
+            mesh.position.x = mesh.initialPosition.x;
+            mesh.position.y = mesh.initialPosition.y;
+            mesh.position.z = mesh.initialPosition.z;
+            // Translate instance
+            if (this.explosionCoeff != 0) {
+                mesh.translateX(mesh.geometry.boundingBox.centroid.x * this.explosionCoeff);
+                mesh.translateY(mesh.geometry.boundingBox.centroid.y * this.explosionCoeff);
+                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * this.explosionCoeff);
+            }
+            mesh.updateMatrix();
         },
 
         moveCutPlan:function(axis, value){
@@ -670,7 +602,7 @@ define([
         },
 
         reduceFPS: function () {
-            console.log("Reducing fps at " + Math.ceil(this.currentFPSValue / 2))
+             // console.log("Reducing fps at " + Math.ceil(this.currentFPSValue / 2))
             this.currentFPSValue = Math.ceil(this.currentFPSValue / 2);
         },
 
@@ -685,12 +617,12 @@ define([
          * */
 
         bindMouseAndKeyEvents: function () {
-
             this.$container[0].addEventListener('mousedown', this.onMouseDown, false);
             this.$container[0].addEventListener('mouseup', this.onSceneMouseUp, false);
             this.$container[0].addEventListener('mouseover', this.onMouseEnter, false);
             this.$container[0].addEventListener('mouseout', this.onMouseLeave, false);
             this.$container[0].addEventListener('keydown', this.onKeyDown, false);
+            this.$container[0].addEventListener('keyup', this.onKeyUp, false);
             this.$container[0].addEventListener('mousemove', this.onSceneMouseMove, false);
             this.$container[0].addEventListener('mousewheel', this.onSceneMouseWheel, false);
         },
@@ -700,19 +632,26 @@ define([
         },
 
         onMouseLeave: function () {
-            //this.resetFPSReducer();
         },
 
         onKeyDown: function () {
+            this.preventInstancesUpdate();
+            this.resetFPSReducer();
+        },
+
+        onKeyUp: function () {
+            this.needsInstancesUpdate();
             this.resetFPSReducer();
         },
 
         onMouseDown: function () {
+            this.preventInstancesUpdate();
             this.resetFPSReducer();
             this.isMoving = false;
         },
 
         onSceneMouseWheel: function () {
+            this.needsInstancesUpdate();
             this.resetFPSReducer();
         },
 
@@ -722,6 +661,7 @@ define([
         },
 
         onSceneMouseUp: function (event) {
+            this.needsInstancesUpdate();
             this.resetFPSReducer();
 
             if (this.isMoving) {
@@ -731,7 +671,6 @@ define([
             event.preventDefault();
 
             // RayCaster to get the clicked mesh
-
             var vector = new THREE.Vector3(
                 ((event.clientX - this.$container.offset().left) / this.$container[0].offsetWidth ) * 2 - 1,
                 -((event.clientY - this.$container.offset().top) / this.$container[0].offsetHeight ) * 2 + 1,
@@ -749,38 +688,30 @@ define([
             }
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
-
             var intersects = ray.intersectObjects(this.scene.children, false);
 
             if (intersects.length > 0) {
-
-                var intersectInstances = _.select(this.instancesMap, function (instance) {
-                    return instance.levelGeometry == null ? false : instance.levelGeometry.mesh == intersects[0].object;
-                });
-
-                if (intersectInstances.length) {
-                    if (this.markerCreationMode) {
-                        // Marker creation
-                        var intersectPoint = intersects[0].point;
-                        var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersectPoint});
-                        $("body").append(mcmv.render().el);
-                        mcmv.openModal();
-                    } else {
-                        var instance = intersectInstances[0];
-                        var mesh = instance.levelGeometry.mesh;
-                        this.setSelectionBoxOnMesh(mesh);
-
-                        // Part inspection
-                        Backbone.Events.trigger("instance:selected", intersectInstances[0].partIteration);
-                    }
+                if (this.markerCreationMode) {
+                    var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersects[0].point});
+                    $("body").append(mcmv.render().el);
+                    mcmv.openModal();
                 } else {
-                    Backbone.Events.trigger("selection:reset");
-                    this.unsetSelectionBox();
+                    this.setSelectionBoxOnMesh(intersects[0].object);
+                    Backbone.Events.trigger("mesh:selected", intersects[0].object);
                 }
             } else {
-                Backbone.Events.trigger("selection:reset");
                 this.unsetSelectionBox();
             }
+
+        },
+
+        needsInstancesUpdate:function(){
+            this.preventInstancesUpdate();
+            this.updateTimer = setTimeout(function(){instancesManager.updateWorker()},500);
+        },
+
+        preventInstancesUpdate:function(){
+            clearTimeout(this.updateTimer);
         },
 
         setPathForIFrame: function (pathForIFrame) {
@@ -792,28 +723,26 @@ define([
     return SceneManager;
 });
 
-function getUpdateStatements(){
-    var resultSQL ="";
-    _(sceneManager.partIterations).each(function(pi){
-        resultSQL += drawsql(pi.partIterationId,pi.radius);
-    });
-    $("body").empty().text(resultSQL)
+function getRadiusSqlStatements(){
 
-    console.log("Done with " + Object.keys(sceneManager.partIterations).length + " objects");
-}
+    var pi = instancesManager.partIterations, r = /^(.*)+\-([A-Z]{1})\-([1-9])+$/g , sql="", i, e, f;
 
-function drawsql(ref, radius){
+    f = function(ref, radius){
+        var m = r.exec(ref);
+        return "UPDATE INSTANCEATTRIBUTE I , PARTITERATION_ATTRIBUTE P " +
+            "SET I.NUMBERVALUE = " + radius + " " +
+            "WHERE I.ID = P.INSTANCEATTRIBUTE_ID " +
+            "AND P.PARTMASTER_PARTNUMBER = '"+m[1]+"' " +
+            "AND P.PARTREVISION_VERSION = '"+m[2]+"' " +
+            "AND I.NAME = 'radius'; \n";
+    }
 
-    var parseRegex = /^(.*)+\-([A-Z]{1})\-([1-9])+$/g;
-    var match = parseRegex.exec(ref);
+    for(i in pi){
+        sql += f(pi[i].id,pi[i].radius);
+    }
 
-    return "UPDATE INSTANCEATTRIBUTE I , PARTITERATION_ATTRIBUTE P " +
-        "SET I.NUMBERVALUE = " + radius + " " +
-        "WHERE I.ID = P.INSTANCEATTRIBUTE_ID " +
-        "AND P.PARTMASTER_PARTNUMBER = '"+match[1]+"' " +
-        "AND P.PARTREVISION_VERSION = '"+match[2]+"' " +
-        "AND P.ITERATION = '"+match[3]+"' " +
-        "AND I.NAME = 'radius'; "
-
-
+    e = document.createElement('a');
+    e.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(sql));
+    e.setAttribute('download', "update.sql");
+    e.click();
 }
