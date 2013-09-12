@@ -93,7 +93,6 @@ define(
                 instancesManager.init();
                 sceneManager.init();
             }catch(ex){
-                console.log("Exception " + ex)
                 this.onNoWebGLSupport();
             }
 

@@ -8,7 +8,9 @@ var instanceWorker = null;
 var data;
 var frustum = new THREE.Frustum();
 var cameraPosition ={x:0,y:0,z:0}, oldCameraPosition={x:0,y:0,z:0};
-var i;
+var switchRating = 0.3;
+var maxInstancesToSend = 500;
+var debug = true;
 
 function InstanceWorker(){
     this.init();
@@ -17,67 +19,91 @@ function InstanceWorker(){
 InstanceWorker.prototype = {
 
     init:function(){
-        this.maxInstancesToSend = 750;
         this.indexedInstances={};
         this.instances=[];
         this.instancesOnScene=[];
         this.instancesToUpdate=[];
     },
 
-    insert:function(instance){
-        this.addInstance(instance);
-        instance.rating = getRating(instance);
-        instance.fullQuality = instance.rating > 0.18;
-        this.needsSend = true;
+    insert:function(instances){
+        var that = this ;
+        _(instances).each(function(instance){
+             that.addInstance(instance);
+        });
         return this;
     },
 
     addInstance:function(instance){
         this.indexedInstances[instance.id] = instance;
-    },
-
-    remove:function(instanceId){
-        delete this.indexedInstances[instanceId];
+        instance.rating = getRating(instance);
+        instance.oldRating = instance.rating;
+        instance.fullQuality = instance.rating > switchRating;
         this.needsSend = true;
         return this;
     },
 
+    remove:function(instancesId){
+        var that = this;
+        _(instancesId).each(function(instanceId){
+            that.removeInstance(instanceId);
+        });
+        this.needsSend = true;
+        return this;
+    },
+
+    removeInstance:function(instanceId){
+        delete this.indexedInstances[instanceId];
+    },
+
     sendInstances:function(){
 
-        this.instances = _.values(this.indexedInstances);
+        var instances = _.values(this.indexedInstances);
 
-        this.recomputeRatings();
-        this.sort();
+        this.recomputeRatings(instances);
+        this.sort(instances);
 
         if(this.needsSend){
 
-            var instancesToAdd = _.difference(this.instances.slice(0,this.maxInstancesToSend),this.instancesOnScene);
-            var instancesToRemove = _.intersection(this.instancesOnScene,this.instances.slice(this.maxInstancesToSend,this.instances.length));
+            var shouldBeOnScene = instances.slice(0,maxInstancesToSend);
+            var shouldNotBeOnScene = instances.slice(maxInstancesToSend,instances.length);
 
-            if(instancesToRemove.length){
+            var instancesToShow = _.difference(shouldBeOnScene,this.instancesOnScene);
+            var instancesToHide = _.intersection(shouldNotBeOnScene,this.instancesOnScene);
+
+            var instancesToUpdate = _.difference(shouldBeOnScene,instancesToShow).filter(function(instance){
+                if(instance.rating > switchRating && instance.oldRating < switchRating){
+                    return true
+                }
+                if(instance.rating < switchRating && instance.oldRating > switchRating){
+                    return true
+                }
+                return false;
+            });
+
+
+
+            if(instancesToHide.length){
                 self.postMessage(JSON.stringify({
-                    fn:"remove",
-                    instances:instancesToRemove
+                    fn:"hide",
+                    instances:instancesToHide
                 }));
             }
 
-            if(instancesToAdd.length){
+            if(instancesToShow.length){
                 self.postMessage(JSON.stringify({
                     fn:"show",
-                    instances:instancesToAdd
+                    instances:instancesToShow
                 }));
             }
 
-            if(this.instancesToUpdate.length){
+            if(instancesToUpdate.length){
                 self.postMessage(JSON.stringify({
                     fn:"update",
-                    instances:this.instancesToUpdate
+                    instances:instancesToUpdate
                 }));
-                this.instancesToUpdate=[];
             }
 
-            this.instancesOnScene = this.instances.slice(0,this.maxInstancesToSend);
-
+            this.instancesOnScene = shouldBeOnScene;
             this.needsSend = false;
             this.setOldCameraPosition();
         }
@@ -87,7 +113,7 @@ InstanceWorker.prototype = {
 
     setFrustum:function(pFrustum){
 
-        for(i = 0; i< 6 ; i++){
+        for(var i = 0; i< 6 ; i++){
             frustum.planes[i].normal.x = pFrustum.planes[i].normal.x;
             frustum.planes[i].normal.y = pFrustum.planes[i].normal.y;
             frustum.planes[i].normal.z = pFrustum.planes[i].normal.z;
@@ -103,35 +129,25 @@ InstanceWorker.prototype = {
     },
 
     setOldCameraPosition:function(){
-        oldCameraPosition = {x:cameraPosition.x , y: cameraPosition.y,  z:cameraPosition.z };
+        oldCameraPosition = {x:cameraPosition.x, y:cameraPosition.y, z:cameraPosition.z};
         return this;
     },
 
-    sort:function(){
-        // Don't sort if the array didn't reach max size
-        if(this.instances.length > this.maxInstancesToSend){
-            this.instances.sort(function(a,b){
-                return a.rating < b.rating ? 1  : a.rating > b.rating ? -1 : 0;
+    recomputeRatings:function(instances){
+        if(cameraHasChanged()){
+            _(instances).each(function(instance){
+                instance.oldRating = instance.rating;
+                instance.rating = getRating(instance);
+                instance.fullQuality = instance.rating > switchRating;
             });
-            this.needsSend = true;
         }
     },
 
-    recomputeRatings:function(){
-        // Don't recompute if camera didn't changed
-        if(cameraHasChanged()){
-            this.instancesToUpdate=[];
-            var that=this;
-            _(this.instances).each(function(instance){
-
-                var rating = instance.rating;
-                instance.rating = getRating(instance);
-                instance.fullQuality = instance.rating > 0.18;
-
-                if(rating != undefined && rating>0.18 && instance.rating < 0.18 || rating<0.18 && instance.rating > 0.18){
-                    that.instancesToUpdate.push(instance);
-                }
-
+    sort:function(instances){
+        // Don't sort if the array didn't reach max size
+        if(instances.length > maxInstancesToSend){
+            instances.sort(function(a,b){
+                return a.rating < b.rating ? 1  : a.rating > b.rating ? -1 : 0;
             });
             this.needsSend = true;
         }
@@ -140,7 +156,7 @@ InstanceWorker.prototype = {
     debug:function(){
         self.postMessage(JSON.stringify({
             fn:"debug",
-            instances:this.instances,
+            instances: _.values(this.indexedInstances),
             instancesToUpdate:this.instancesToUpdate,
             instancesOnScene:this.instancesOnScene,
             cameraPosition:cameraPosition
@@ -186,7 +202,7 @@ self.addEventListener('message', function(message) {
 
     switch(data.fn){
         case 'insert' :
-            instanceWorker.insert(data.instance);
+            instanceWorker.insert(data.instances).sendInstances();
             break ;
 
         case 'instances' :
@@ -194,7 +210,7 @@ self.addEventListener('message', function(message) {
             break ;
 
         case 'remove' :
-            instanceWorker.remove(data.instanceId);
+            instanceWorker.remove(data.instancesId).sendInstances();
             break ;
 
         case 'update' :
@@ -202,7 +218,7 @@ self.addEventListener('message', function(message) {
             break ;
 
         case 'init' :
-            instanceWorker.setFrustum(data.frustum).setCameraPosition(data.cameraPosition);
+            instanceWorker.setFrustum(data.frustum).setCameraPosition(data.cameraPosition).setOldCameraPosition();
             break ;
 
         case 'debug' :

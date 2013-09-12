@@ -33,22 +33,23 @@ Instance.prototype = {
     },
 
     addToScene:function(rating,fullQuality){
-
-        var levelGeometryForGivenRating = fullQuality ?
-            this.getPartIteration().getBestLevelGeometry(): this.getPartIteration().getLevelGeometry(rating);
-
         if(this.mesh === null){
-            // Check if partiteration has already an instance loaded with mesh not null, if so, clone this mesh.
-            // If no mesh already exists, load it.
-            this.loadLevelGeometry(levelGeometryForGivenRating);
+            this.loadLevelGeometry(rating,fullQuality);
         }
-        else if(this.currentFullQuality != fullQuality){
-            this.loadLevelGeometry(levelGeometryForGivenRating);
+        // old rating
+        this.currentRating = rating;
+        this.currentFullQuality = fullQuality;
+    },
+
+    updateMesh:function(rating,fullQuality){
+
+        if(this.mesh == null){
+            return ; // WTF ? ... should not happen
         }
-        else if(this.currentRating != rating){
-            this.loadLevelGeometry(levelGeometryForGivenRating);
-        }else{
-            return ;
+
+        this.clearMesh();
+        if(this.currentFullQuality != fullQuality){
+            this.loadLevelGeometry(rating,fullQuality);
         }
 
         // old rating
@@ -56,19 +57,22 @@ Instance.prototype = {
         this.currentFullQuality = fullQuality;
     },
 
-    loadLevelGeometry:function(levelGeometry){
-        var self = this ;
-        levelGeometry.loadMesh(function(mesh){
+    loadLevelGeometry:function(rating,fullQuality){
 
+        var self = this ;
+
+        var levelGeometryForGivenRating = fullQuality ?
+            this.getPartIteration().getBestLevelGeometry(): this.getPartIteration().getLevelGeometry(rating);
+
+        levelGeometryForGivenRating.loadMesh(function(mesh){
+            self.mesh = mesh;
             mesh.instanceId = self.id;
             mesh.partIterationId = self.partIterationId;
             mesh.position.set(self.position.x, self.position.y, self.position.z);
             VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
             mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
-            self.clearMesh();
+            mesh.overdraw = true;
             sceneManager.addMesh(mesh);
-            self.mesh = mesh;
-
         });
     },
 

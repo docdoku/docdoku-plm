@@ -18,23 +18,12 @@ define([
         this.isPaused = false;
         this.isMoving = false;
 
-        this.updateOffset = 0;
-        this.updateCycleLength = 250;
-
-        this.instances = [];
-        this.instancesMap = {};
-        this.partIterations = {};
-
         this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
 
         this.STATECONTROL = { PLC: 0, TBC: 1};
         this.stateControl = this.STATECONTROL.TBC;
         this.time = Date.now();
-
-        this.maxInstanceDisplayed = 1000;
-        this.levelGeometryValues = [];
-
 
         this.currentLayer = null;
         this.explosionCoeff = 0;
@@ -45,9 +34,6 @@ define([
         this.nominalFPSValue = 60; // 60 Fps
         this.currentFPSValue = 1; // Start the scene at 1 fps
         this.fpsReducerTime = 1000; // reducing fps every 1 seconds
-
-        this.cameraPosition_old = null;
-        this.frustum_old = null;
 
     };
 
@@ -95,10 +81,7 @@ define([
             this.$container.append(this.renderer.domElement);
         },
 
-
-
         animate: function () {
-
             // Clear timeout if any
             clearTimeout(this.animateTimout);
 
@@ -189,11 +172,10 @@ define([
         initLights: function () {
             var ambient = new THREE.AmbientLight(0x101030);
             this.scene.add(ambient);
-
             this.addLightsToCamera();
         },
 
-        addLightsToCamera: function () {
+        addLightsToCamera:function(){
             var dirLight = new THREE.DirectionalLight(0xffffff);
             dirLight.position.set(200, 200, 1000).normalize();
             this.camera.add(dirLight);
@@ -270,13 +252,13 @@ define([
 
         initCutPlan: function () {
             // Would be better to calculate the whole model bounding box to get en adapted plan size
-            var size = 500000;
+            var size = 5000;
             var plane1 = new THREE.PlaneGeometry(size, size,1,1);
-            this.cutPlan = new THREE.Mesh(plane1, new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.3 } ));
+            this.cutPlan = new THREE.Mesh(plane1, new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5 } ));
             this.cutPlan.onScene=false;
             this.cutPlan.overdraw = true;
             this.cutPlan.material.side = THREE.DoubleSide;
-            this.cutPlan.material.color = new THREE.Color(0xffffff);
+            this.cutPlan.material.color = new THREE.Color(0xf5f5f5);
             this.cutPlan.initialPosition = {x:this.cutPlan.position.x,y:this.cutPlan.position.y,z:this.cutPlan.position.z};
             this.cutPlan.initialRotation = {x:this.cutPlan.rotation.x,y:this.cutPlan.rotation.y,z:this.cutPlan.rotation.z};
         },
@@ -463,9 +445,8 @@ define([
             this.wireframe = wireframe;
             var self = this;
             _(this.scene.children).each(function (child) {
-                if (child instanceof THREE.Mesh) {
+                if(child instanceof THREE.Mesh && child.partIterationId){
                     self.applyWireFrame(child);
-
                 }
             });
         },
@@ -485,7 +466,7 @@ define([
             // this could be adjusted
             this.explosionCoeff = v * 0.1;
             _(this.scene.children).each(function (child) {
-                if (child instanceof THREE.Mesh) {
+                if(child instanceof THREE.Mesh && child.partIterationId){
                     self.applyExplosionCoeff(child);
                 }
             });
@@ -522,7 +503,12 @@ define([
             this.cutPlan.position.y = this.cutPlan.initialPosition.y;
             this.cutPlan.position.z = this.cutPlan.initialPosition.z;
             this.cutPlan.translateZ(value);
-
+            var self = this ;
+            _(this.scene.children).each(function(child){
+                if(child instanceof THREE.Mesh && child.partIterationId){
+                    child.visible = child.position.z < self.cutPlan.position.z ;
+                }
+            });
         },
 
 
@@ -548,14 +534,11 @@ define([
 
         fitView:function(){
 
-           if(!this.instances.length){
-               return;
-           }
             // compute center of gravity and place camera point.
             var combined = new THREE.Geometry();
 
             _(this.scene.children).each(function(child){
-                if(child instanceof THREE.Mesh){
+                if(child instanceof THREE.Mesh && child.partIterationId){
                     THREE.GeometryUtils.merge(combined, child.geometry);
                 }
             });
@@ -602,7 +585,6 @@ define([
         },
 
         reduceFPS: function () {
-             // console.log("Reducing fps at " + Math.ceil(this.currentFPSValue / 2))
             this.currentFPSValue = Math.ceil(this.currentFPSValue / 2);
         },
 
@@ -640,8 +622,10 @@ define([
         },
 
         onKeyUp: function () {
-            this.needsInstancesUpdate();
-            this.resetFPSReducer();
+            if(!this.isMoving){
+                this.needsInstancesUpdate();
+                this.resetFPSReducer();
+            }
         },
 
         onMouseDown: function () {
@@ -690,7 +674,7 @@ define([
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
             var intersects = ray.intersectObjects(this.scene.children, false);
 
-            if (intersects.length > 0) {
+            if (intersects.length > 0 && intersects[0].object.partIterationId) {
                 if (this.markerCreationMode) {
                     var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersects[0].point});
                     $("body").append(mcmv.render().el);
@@ -722,27 +706,3 @@ define([
 
     return SceneManager;
 });
-
-function getRadiusSqlStatements(){
-
-    var pi = instancesManager.partIterations, r = /^(.*)+\-([A-Z]{1})\-([1-9])+$/g , sql="", i, e, f;
-
-    f = function(ref, radius){
-        var m = r.exec(ref);
-        return "UPDATE INSTANCEATTRIBUTE I , PARTITERATION_ATTRIBUTE P " +
-            "SET I.NUMBERVALUE = " + radius + " " +
-            "WHERE I.ID = P.INSTANCEATTRIBUTE_ID " +
-            "AND P.PARTMASTER_PARTNUMBER = '"+m[1]+"' " +
-            "AND P.PARTREVISION_VERSION = '"+m[2]+"' " +
-            "AND I.NAME = 'radius'; \n";
-    }
-
-    for(i in pi){
-        sql += f(pi[i].id,pi[i].radius);
-    }
-
-    e = document.createElement('a');
-    e.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(sql));
-    e.setAttribute('download', "update.sql");
-    e.click();
-}

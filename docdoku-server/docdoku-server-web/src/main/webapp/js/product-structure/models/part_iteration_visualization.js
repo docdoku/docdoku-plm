@@ -50,8 +50,8 @@ define(function() {
             return this.instances[instanceId];
         },
 
-        removeInstance:function(instanceId){
-            var instance = this.getInstance(instanceId);
+        hideInstance:function(instance){
+            var instance = this.getInstance(instance.id);
             instance.clearMesh();
         },
 
@@ -84,6 +84,10 @@ define(function() {
 
         showInstance:function(instance){
             this.getInstance(instance.id).addToScene(instance.rating,instance.fullQuality);
+        },
+
+        updateInstance:function(instance){
+            this.getInstance(instance.id).updateMesh(instance.rating,instance.fullQuality);
         }
 
     };

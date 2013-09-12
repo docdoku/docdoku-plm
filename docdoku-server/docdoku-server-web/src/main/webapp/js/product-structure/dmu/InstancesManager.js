@@ -15,11 +15,21 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
       *
      * */
 
-
     var InstancesManager = function () {
         this.partIterations = [];
         this.loaderManager = null;
         this.workerURI = "/js/product-structure/workers/InstancesWorker.js";
+
+        // Queue
+
+        this.queue = {
+            offset:0,
+            maxByLoop:10,
+            instancesToAdd:[],
+            instancesToRemove:[],
+            instancesToUpdate:[]
+        }
+
     };
 
     InstancesManager.prototype = {
@@ -62,37 +72,47 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             var self = this;
             this.loaderIndicator.show();
             $.getJSON(component.getInstancesUrl(), function (instances) {
+
+                var instancesToInsert=[];
                 _.each(instances, function (instanceRaw) {
                     var partIteration = self.getOrCreatePartIteration(instanceRaw).addInstance(instanceRaw);
                     if (partIteration.hasGeometry()) {
-                        self.onInstanceAdded(partIteration.getInstance(instanceRaw.id));
+                        instancesToInsert.push(partIteration.getInstance(instanceRaw.id));
                     }
                 });
+
+                // Send to worker
+                if(instancesToInsert.length){
+                    self.onInstancesAdded(instancesToInsert);
+                }
+
                 self.loaderIndicator.hide();
-                setTimeout(function(){self.updateWorker();}, 2);
+
             });
         },
 
-        onInstanceAdded: function (instance) {
-            this.worker.postMessage(JSON.stringify({fn: "insert", instance: instance.toCircularDataSafe()}));
+        onInstancesAdded: function (instances) {
+            this.worker.postMessage(JSON.stringify({fn: "insert", instances: instances}));
         },
 
         unLoadFromTree: function (component) {
             var self = this;
             $.getJSON(component.getInstancesUrl(), function (instances) {
+                var instancesToRemove=[];
                 _.each(instances, function (instanceRaw) {
                     var partIteration = self.getPartIteration(instanceRaw.partIterationId);
                     if (partIteration && partIteration.hasGeometry()) {
-                        self.onInstanceRemoved(instanceRaw.id);
-                        partIteration.removeInstance(instanceRaw.id);
+                        instancesToRemove.push(instanceRaw.id);
+                        partIteration.hideInstance(instanceRaw);
                     }
                 });
-                setTimeout(function(){self.updateWorker();}, 50);
+
+                self.onInstancesRemoved(instancesToRemove);
             });
         },
 
-        onInstanceRemoved: function (instanceId) {
-            this.worker.postMessage(JSON.stringify({fn: "remove", instanceId:instanceId}));
+        onInstancesRemoved: function (instancesId) {
+            this.worker.postMessage(JSON.stringify({fn: "remove", instancesId:instancesId}));
         },
 
         debugWorker: function () {
@@ -121,32 +141,30 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             var data = JSON.parse(message.data);
             var self = this;
 
+            // Remove instances from scene
+            if(data.fn == "hide"){
+                _(data.instances).each(function (instance) {
+                    self.getPartIteration(instance.partIterationId).hideInstance(instance);
+                });
+            }
             // Show instances on scene
-            if(data.fn == "show"){
+            else  if(data.fn == "show"){
                 _(data.instances).each(function (instance) {
                     self.getPartIteration(instance.partIterationId).showInstance(instance);
                 });
             }
-
-            // Remove instances on scene
-            else if(data.fn == "remove"){
-                _(data.instances).each(function (instance) {
-                    self.getPartIteration(instance.partIterationId).removeInstance(instance.id);
-                });
-            }
-
             // Update instances quality
             else if(data.fn == "update"){
                 _(data.instances).each(function (instance) {
-                    self.getPartIteration(instance.partIterationId).showInstance(instance);
+                    self.getPartIteration(instance.partIterationId).updateInstance(instance);
                 });
             }
-
             // Debug worker
             else if(data.fn == "debug"){
-               console.log(data);
+                console.log(data);
+                console.log("on scene " + (sceneManager.scene.children.length - 5))
+                console.log(sceneManager.renderer.info.render)
             }
-
         }
 
     };
