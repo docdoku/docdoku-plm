@@ -71,13 +71,8 @@ InstanceWorker.prototype = {
             var instancesToHide = _.intersection(shouldNotBeOnScene,this.instancesOnScene);
 
             var instancesToUpdate = _.difference(shouldBeOnScene,instancesToShow).filter(function(instance){
-                if(instance.rating > switchRating && instance.oldRating < switchRating){
-                    return true
-                }
-                if(instance.rating < switchRating && instance.oldRating > switchRating){
-                    return true
-                }
-                return false;
+                return (instance.rating > switchRating && instance.oldRating < switchRating
+                        || instance.rating < switchRating && instance.oldRating > switchRating);
             });
 
 
