@@ -22,6 +22,7 @@ define({
         CHECKIN: "Check in",
         CHECKOUT: "Check out",
         DELETE_MARKER: "Delete marker",
+        NEW_MARKER: "New marker",
         NAME: "Name",
         EMBED_SCENE: "Embed Scene",
         CONTROLS_SHORTCUTS: "Mouse/keyboard shortcuts",
@@ -69,6 +70,7 @@ define({
         SEARCH_PART_ENDING:"Search part ending by ",
         FLYING_MODE:"Fly mode",
         TRACKBALL_MODE:"Trackball mode",
+        FIT_VIEW:"Fit view",
         MARKERS_SIZE_MIN:"Reduce markers size",
         MARKERS_OPACITY:"Change markers opacity",
         MARKERS_SIZE_MAX:"Increase markers size",
@@ -87,8 +89,10 @@ define({
         "REVISION_NOTE":"Revision note",
         "MODIFICATION_DATE":"Modification date",
         EXPLODE:"Explode",
+        CUTPLAN:"Cut plan",
         ABSOLUTE:"Absolute",
-        RELATIVE:"Relative"
+        RELATIVE:"Relative",
+        MEASURE:"Measure"
     },
     "fr": true,
     "es": true

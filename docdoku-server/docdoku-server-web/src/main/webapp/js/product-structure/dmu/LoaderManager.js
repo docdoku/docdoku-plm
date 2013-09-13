@@ -1,60 +1,115 @@
 /*global sceneManager, ColladaLoader2*/
-define(function() {
+define(["views/progress_bar_view"], function (ProgressBarView) {
 
-    var LoaderManager = function() {
+    var LoaderManager = function (options) {
+
         this.ColladaLoader = null;
         this.StlLoader = null;
         this.BinaryLoader = null;
+
+        _.extend(this,options);
+
+        if(this.progressBar){
+            this.listenXHRProgress();
+        }
+        // Reuse material
+        this.material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
+
     };
 
-    function getMeshes(collada,geometries){
-        if(collada){
-            _.each(collada.children,function(child){
-                if(child instanceof THREE.Mesh && child.geometry){
+    /*
+     * Parse all meshes geometries in collada object given by COlladaLoader
+     * */
+    function getMeshGeometries(collada, geometries) {
+        if (collada) {
+            _.each(collada.children, function (child) {
+                if (child instanceof THREE.Mesh && child.geometry) {
                     geometries.push(child.geometry);
                 }
-                getMeshes(child,geometries);
+                getMeshGeometries(child, geometries);
             });
         }
     }
 
     LoaderManager.prototype = {
 
-        parseFile: function ( filename, texturePath, computeVertexNormals, callback ) {
+        listenXHRProgress: function () {
+
+            // Override xhr open prototype
+            var pbv = new ProgressBarView().render();
+            var xhrCount = 0;
+            var _xhrOpen = XMLHttpRequest.prototype.open;
+
+            XMLHttpRequest.prototype.open = function () {
+
+                if (arguments[1].indexOf("/files/") === 0) {
+
+                    var totalAdded = false,
+                        totalLoaded = 0,
+                        xhrLength = 0;
+
+                    this.addEventListener("loadstart", function (pe) {
+                        xhrCount++;
+                    }, false);
+
+                    this.addEventListener("progress", function (pe) {
+
+                        if (xhrLength == 0) {
+                            xhrLength = pe.total;
+                        }
+
+                        if (totalAdded == false) {
+                            pbv.addTotal(xhrLength);
+                            totalAdded = true;
+                        }
+
+                        pbv.addLoaded(pe.loaded - totalLoaded);
+                        totalLoaded = pe.loaded;
+
+                    }, false);
+
+                    this.addEventListener("loadend", function () {
+                        xhrCount--;
+                        setTimeout(function () {
+                            pbv.removeXHRData(xhrLength);
+                        }, 20);
+                    }, false);
+                }
+
+                return _xhrOpen.apply(this, arguments);
+            };
+        },
+
+        parseFile: function (filename, texturePath, callback) {
+
+            var material = this.material;
 
             var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
-            switch ( extension ) {
+            switch (extension) {
                 case 'dae':
 
-                    if(this.ColladaLoader == null) {
+                    if (this.ColladaLoader == null) {
                         this.ColladaLoader = new ColladaLoader2();
                     }
 
-                    this.ColladaLoader.load( filename , function(collada) {
+                    this.ColladaLoader.load(filename, function (collada) {
+
+                        var geometries = [], combined = new THREE.Geometry();
+                        getMeshGeometries(collada.threejs.scene, geometries);
 
                         // Merge all sub meshes into one
-                        var geometries = [];
-                        getMeshes(collada.threejs.scene,geometries);
-                        var combined = new THREE.Geometry();
-
-                        _.each(geometries,function(geometry){
-                            THREE.GeometryUtils.merge( combined, geometry);
+                        _.each(geometries, function (geometry) {
+                            THREE.GeometryUtils.merge(combined, geometry);
                         });
-
-                        if (computeVertexNormals) {
-                            combined.computeVertexNormals();
-                        }
-
-                        var materials = collada.threejs.materials[0];
-                        materials.wireframe = sceneManager.wireframe;
-                        materials.transparent = true ;
 
                         combined.dynamic = false;
                         combined.mergeVertices();
 
-                        var mesh = new THREE.Mesh( combined,materials);
-                        callback(mesh);
+                        combined.computeBoundingSphere();
+                        console.log(JSON.stringify({radius:combined.boundingSphere.radius}));
+
+                        callback(new THREE.Mesh(combined, material));
 
                     });
 
@@ -62,42 +117,33 @@ define(function() {
 
                 case 'stl':
 
-                    if(this.StlLoader == null) {
+                    if (this.StlLoader == null) {
                         this.StlLoader = new THREE.STLLoader();
                     }
 
-                    this.StlLoader.addEventListener( 'load', function ( stl ) {
+                    this.StlLoader.addEventListener('load', function (stl) {
                         var geometry = stl.content;
-                        var materials = new THREE.MeshPhongMaterial();
-                        materials.wireframe = sceneManager.wireframe;
-                        materials.transparent = true ;
-                        var mesh = new THREE.Mesh(geometry,materials);
-                        callback(mesh);
+                        callback(new THREE.Mesh(geometry, material));
                     });
-
-                    this.StlLoader.load( filename );
+                    this.StlLoader.load(filename);
 
                     break;
 
                 case 'js':
                 case 'json':
 
-                    if(this.BinaryLoader == null) {
+                    if (this.BinaryLoader == null) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
 
-                    this.BinaryLoader.load(filename, function(geometry, materials) {
-                        if (computeVertexNormals) {
-                            geometry.computeVertexNormals();
-                        }
-                        _.each(materials, function(material) {
-                            material.wireframe = sceneManager.wireframe;
-                            material.transparent = true;
-                        });
+                    this.BinaryLoader.load(filename, function (geometry, materials) {
                         geometry.dynamic = false;
-                        var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-                        callback(mesh);
+                        callback(new THREE.Mesh(geometry, material));
                     }, texturePath);
+
+                    break;
+
+                default: break;
 
             }
         }
