@@ -86,5 +86,6 @@ define({
     EXPLODE:"Eclater",
     CUTPLAN:"Plan de coupe",
     ABSOLUTE:"Absolue",
-    RELATIVE:"Relative"
+    RELATIVE:"Relative",
+    MEASURE:"Mesure"
 });

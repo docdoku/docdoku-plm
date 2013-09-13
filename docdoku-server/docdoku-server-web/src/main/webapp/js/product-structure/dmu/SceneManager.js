@@ -169,6 +169,10 @@ define([
             }
         },
 
+        setMeasureListener:function(callback){
+            this.measureCallback = callback;
+        },
+
         initLights: function () {
             var ambient = new THREE.AmbientLight(0x101030);
             this.scene.add(ambient);
@@ -288,6 +292,7 @@ define([
             this.scene.add(mesh);
             this.applyExplosionCoeff(mesh);
             this.applyWireFrame(mesh);
+            this.applyMeasureStateOpacity(mesh);
         },
 
         removeMesh:function(mesh){
@@ -547,6 +552,23 @@ define([
 
         },
 
+        setMeasureState:function(state){
+            this.$sceneContainer.toggleClass("measureMode",state)
+            this.measureState = state;
+            var opacity =  state ? 0.5 : 1;
+            _(this.scene.children).each(function (child) {
+                if(child instanceof THREE.Mesh && child.partIterationId){
+                    child.material.opacity = opacity;
+                }
+            });
+        },
+
+        applyMeasureStateOpacity:function(mesh){
+            if(this.measureState){
+                mesh.material.opacity = this.measureState ? 0.5 : 1;
+            }
+        },
+
         /*
          * FPS Reducer
          *
@@ -622,7 +644,7 @@ define([
         },
 
         onKeyUp: function () {
-            if(!this.isMoving){
+            if(this.isMoving){
                 this.needsInstancesUpdate();
                 this.resetFPSReducer();
             }
@@ -645,10 +667,10 @@ define([
         },
 
         onSceneMouseUp: function (event) {
-            this.needsInstancesUpdate();
-            this.resetFPSReducer();
 
             if (this.isMoving) {
+                this.needsInstancesUpdate();
+                this.resetFPSReducer();
                 return false;
             }
 
@@ -679,12 +701,19 @@ define([
                     var mcmv = new MarkerCreateModalView({model: this.currentLayer, intersectPoint: intersects[0].point});
                     $("body").append(mcmv.render().el);
                     mcmv.openModal();
-                } else {
+                }
+                else if(this.measureState){
+                    this.measureCallback(intersects[0].point.clone());
+                }
+                else {
                     this.setSelectionBoxOnMesh(intersects[0].object);
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
                 }
             } else {
                 this.unsetSelectionBox();
+                if(this.measureState){
+                    this.measureCallback(-1);
+                }
             }
 
         },

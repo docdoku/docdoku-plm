@@ -16,6 +16,7 @@ define(
         "views/control_options_view",
         "views/control_explode_view",
         //"views/control_cutplan_view",
+        "views/control_measure_view",
         "views/baseline_select_view",
         "dmu/SceneManager",
         "dmu/InstancesManager",
@@ -35,6 +36,7 @@ define(
                  ControlOptionsView,
                  ControlExplodeView,
                  //ControlCutPlanView,
+                 ControlMeasureView,
                  BaselineSelectView,
                  SceneManager,
                  InstancesManager,
@@ -80,18 +82,20 @@ define(
 
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
-            this.$ControlsContainer.append(new ControlModesView().render().$el);
-            this.$ControlsContainer.append(new ControlOptionsView().render().$el);
-            this.$ControlsContainer.append(new ControlExplodeView().render().$el);
-            //this.$ControlsContainer.append(new ControlCutPlanView().render().$el);
-            this.$ControlsContainer.append(new ControlMarkersView().render().$el);
-            this.$ControlsContainer.append(new ControlLayersView().render().$el);
-
             try{
                 instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
                 instancesManager.init();
                 sceneManager.init();
+
+                this.$ControlsContainer.append(new ControlModesView().render().$el);
+                this.$ControlsContainer.append(new ControlOptionsView().render().$el);
+                this.$ControlsContainer.append(new ControlExplodeView().render().$el);
+                //this.$ControlsContainer.append(new ControlCutPlanView().render().$el);
+                this.$ControlsContainer.append(new ControlMeasureView().render().$el);
+                this.$ControlsContainer.append(new ControlMarkersView().render().$el);
+                this.$ControlsContainer.append(new ControlLayersView().render().$el);
+
             }catch(ex){
                 this.onNoWebGLSupport();
             }
@@ -235,7 +239,7 @@ define(
         },
 
         onNoWebGLSupport:function(){
-            this.centerSceneContainer.html("<span class='alert'>"+i18n.NO_WEBGL+"</span>");
+            this.centerSceneContainer.html("<span class='alert no-webgl'>"+i18n.NO_WEBGL+"</span>");
         },
 
         onConfigSpecChange:function(configSpec){
