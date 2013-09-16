@@ -14,8 +14,8 @@ update_deploy.sh
 updateJars.sh
 docdoku-cli-jar-with-dependencies.jar
 docdoku-cli.jar
-docdoku-cli-android/out/
+docdoku-android-client/out/
 classes/
-docdoku-cli-android/gen/
+docdoku-android-client/gen/
 derby.log
 gcm.properties
