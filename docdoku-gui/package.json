@@ -6,7 +6,7 @@
     "requirejs": ">=1.0.0"
   },
   "window": {
-    "toolbar": true,
+    "toolbar": false,
     "position": "center",
     "width": 820,
     "height": 500,
