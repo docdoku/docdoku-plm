@@ -19,7 +19,12 @@ define({
         CHOOSE_PATH:"Choose path",
         SELECT_PATH:"Select an existing path",
         PATH:"Path",
-        LOCAL_PATHS:"Local folders"
+        OPTIONS:"Options",
+        LOCAL_PATHS:"Local folders",
+        FORCE:"Force rewrite",
+        RECURSIVE:"Recursive",
+        BASELINE:"Baseline"
+
     },
     "fr": true
 });

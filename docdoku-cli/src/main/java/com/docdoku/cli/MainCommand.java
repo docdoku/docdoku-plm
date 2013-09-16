@@ -77,6 +77,11 @@ public class MainCommand {
                 case "wl" :
                     execCommand(new WorkspacesCommand(),Arrays.copyOfRange(args, 1, args.length));
                     break;
+
+                case "baselinelist" :
+                case "bl" :
+                    execCommand(new BaselineListCommand(),Arrays.copyOfRange(args, 1, args.length));
+                    break;
                 case "help":
                 case "?":
                 case "h":

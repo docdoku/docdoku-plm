@@ -18,5 +18,9 @@ define({
     CHOOSE_PATH:"Choisir un dossier",
     SELECT_PATH:"Choisir un dossier",
     PATH:"Dossier",
-    LOCAL_PATHS:"Dossiers locaux"
+    OPTIONS:"Options",
+    LOCAL_PATHS:"Dossiers locaux",
+    FORCE:"Ecraser fichiers existants",
+    RECURSIVE:"Récursif",
+    BASELINE:"Baseline"
 });

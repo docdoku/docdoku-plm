@@ -1,6 +1,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import org.codehaus.jettison.json.JSONArray;
@@ -56,5 +57,13 @@ public class JSONPrinter {
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("dplmError", message);
         System.out.println(jsonObj);
+    }
+
+    public static JSONObject getJSONBaseline(Baseline baseline) throws JSONException {
+        JSONObject baselineObject = new JSONObject();
+        baselineObject.put("id", baseline.hashCode());
+        baselineObject.put("name",baseline.getName());
+        baselineObject.put("configurationItem",baseline.getConfigurationItem().getId());
+        return baselineObject;
     }
 }

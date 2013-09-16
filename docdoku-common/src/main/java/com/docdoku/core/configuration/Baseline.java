@@ -22,6 +22,7 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
+import javax.persistence.criteria.Fetch;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import java.util.Map;
 @Entity
 @NamedQueries({
         @NamedQuery(name="Baseline.findByConfigurationItemId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId"),
+        @NamedQuery(name="Baseline.findByBaselineId", query="SELECT b FROM Baseline b WHERE b.id = :baselineId"),
         @NamedQuery(name="Baseline.findByConfigurationItemIdAndBaselineId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId AND b.id = :baselineId")
 })
 public class Baseline implements Serializable {

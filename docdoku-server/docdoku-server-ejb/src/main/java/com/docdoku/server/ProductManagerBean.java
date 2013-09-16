@@ -894,6 +894,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
+    @RolesAllowed("users")
+    @Override
+    public List<Baseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
+        PartRevision partRevision = new PartRevisionDAO(new Locale(user.getLanguage()),em).loadPartR(partRevisionKey);
+        List<Baseline> baselines = new BaselineDAO(em).findBaselineWherePartRevisionHasIterations(partRevision);
+        return baselines;
+    }
 
     @RolesAllowed("users")
     @Override
@@ -1346,6 +1354,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         BaselineDAO baselineDAO = new BaselineDAO(em);
         Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
+        return baseline;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Baseline getBaselineById(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.findBaselineById(baselineId);
+        Workspace workspace = baseline.getConfigurationItem().getWorkspace();
+        User user = userManager.checkWorkspaceReadAccess(workspace.getId());
         return baseline;
     }
 

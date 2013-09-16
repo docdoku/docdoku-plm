@@ -5,26 +5,84 @@
         <h3>{{i18n.CHOOSE_PATH}}</h3>
     </div>
     <div class="modal-body">
-        <form id="form-choose-path" class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="path">{{i18n.SELECT_PATH}}</label>
-                <div class="controls">
-                    <select id="path">
-                        <option value="">...</option>
-                        {{#each paths}}
-                            <option value="{{this}}">{{folderName this}}</option>
-                        {{/each}}
-                    </select>
+
+
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-path" data-toggle="tab">{{i18n.PATH}}</a></li>
+                <li><a href="#tab-options" data-toggle="tab">{{i18n.OPTIONS}}</a></li>
+            </ul>
+
+            <form id="form-choose-path" class="form-horizontal">
+                <div class="tab-content form-horizontal">
+
+                    <div id="tab-path" class="tab-pane active">
+
+                        <div class="control-group">
+                            <label class="control-label" for="path">{{i18n.SELECT_PATH}}</label>
+
+                            <div class="controls">
+                                <select id="path">
+                                    <option value="">...</option>
+                                    {{#each paths}}
+                                        <option value="{{this}}">{{folderName this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="new-path">{{i18n.NEW_PATH}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="new-path" readonly/>
+
+                                <div class="directory-chooser"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div id="tab-options" class="tab-pane">
+
+                        <div class="control-group">
+                            <label class="control-label" for="recursive">{{i18n.RECURSIVE}}</label>
+
+                            <div class="controls">
+                                <input type="checkbox" id="recursive"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="force">{{i18n.FORCE}}</label>
+
+                            <div class="controls">
+                                <input type="checkbox" id="force"/>
+                            </div>
+                        </div>
+
+                        {{#if baselines}}
+                            <div class="control-group">
+                                <label class="control-label" for="baseline">{{i18n.BASELINE}}</label>
+
+                                <div class="controls">
+                                    <select id="baseline">
+                                        <option value="">...</option>
+                                        {{#each baselines}}
+                                            <option value="{{this.id}}">{{this.name}} ({{this.configurationItem}})
+                                            </option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                        {{/if}}
+                    </div>
                 </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="new-path">{{i18n.NEW_PATH}}</label>
-                <div class="controls">
-                   <input type="text" id="new-path" readonly/>
-                   <div class="directory-chooser"></div>
-                </div>
-            </div>
-        </form>
+            </form>
+
+        </div>
+
     </div>
 
     <div class="modal-footer">

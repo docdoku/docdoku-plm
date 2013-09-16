@@ -33,17 +33,22 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
         checkout:function() {
             var self = this;
             require(["views/choose_path_view"],function(ChoosePathView){
-                var choosePathView = new ChoosePathView();
-                $("body").append(choosePathView.render().el);
-                choosePathView.openModal();
-                choosePathView.on("path:chosen",function(path){
-                    APP_GLOBAL.CURRENT_PATH = path;
-                    self.loader();
-                    Commander.checkout(self.model, function() {
-                        Commander.getStatusForPart(self.model, function(pStatus) {
-                            var status = JSON.parse(pStatus);
-                            self.model.setStatus(status);
-                            self.render();
+
+                Commander.getBaselines(self.model,function(pBaselines){
+                    var baselines = pBaselines ? JSON.parse(pBaselines): [];
+
+                    var choosePathView = new ChoosePathView();
+                    $("body").append(choosePathView.setBaselines(baselines).render().el);
+                    choosePathView.openModal();
+                    choosePathView.on("path:chosen",function(choosePathViewOptions){
+                        APP_GLOBAL.CURRENT_PATH = choosePathViewOptions.path;
+                        self.loader();
+                        Commander.checkout(self.model, choosePathViewOptions, function() {
+                            Commander.getStatusForPart(self.model, function(pStatus) {
+                                var status = JSON.parse(pStatus);
+                                self.model.setStatus(status);
+                                self.render();
+                            });
                         });
                     });
                 });
@@ -52,16 +57,24 @@ define(["text!templates/remote_versioned_file.html", "views/loader_view",  "comm
         get:function(){
             var self = this;
             require(["views/choose_path_view"],function(ChoosePathView){
-                var choosePathView = new ChoosePathView();
-                $("body").append(choosePathView.render().el);
-                choosePathView.openModal();
-                choosePathView.on("path:chosen",function(path){
-                    APP_GLOBAL.CURRENT_PATH = path;
-                    self.loader();
-                    Commander.get(self.model, function() {
-                        self.render();
+
+                Commander.getBaselines(self.model,function(pBaselines){
+                     var baselines = pBaselines ? JSON.parse(pBaselines): [];
+
+                    var choosePathView = new ChoosePathView();
+                    $("body").append(choosePathView.setBaselines(baselines).render().el);
+                    choosePathView.openModal();
+                    choosePathView.on("path:chosen",function(choosePathViewOptions){
+                        APP_GLOBAL.CURRENT_PATH = choosePathViewOptions.path;
+                        self.loader();
+                        Commander.get(self.model, choosePathViewOptions, function() {
+                            self.render();
+                        });
                     });
+
                 });
+
+
             });
         }
     });
