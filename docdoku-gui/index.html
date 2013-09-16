@@ -1,31 +1,12 @@
 <!DOCTYPE html>
 <head>
+    <title>DPLM</title>
     <LINK rel="stylesheet" type="text/less" href="less/style.less">
     <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-    <title>DPLM</title>
-
-    <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <script type="text/javascript">
-        if (typeof(window.require) !== "undefined") {
-            window.requireNode = window.require;
-            window.gui = window.requireNode('nw.gui');
-            window.events = require('events');
-            window.eventEmitter = new events.EventEmitter();
-            window.exec = window.requireNode('child_process').exec;
-            window.fs = window.requireNode('fs');
-            window.moment = window.requireNode('moment');
-            window.os = window.requireNode('os');
-            window.path = window.requireNode('path');
-            window.util = window.requireNode('util');
-            window.wrench = window.requireNode('wrench');
-            window.require = undefined;
-        }
-    </script>
+    <script type="text/javascript" src="js/init.js"></script>
 </head>
 <body>
     <script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>

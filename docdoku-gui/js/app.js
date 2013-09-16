@@ -12,6 +12,44 @@ var APP_GLOBAL = {
     CURRENT_WORKSPACE:""
 };
 
+// Menu
+var menu = new gui.Menu({ 'type': 'menubar' });
+gui.Window.get().menu = menu;
+
+var dplmMenu = new gui.MenuItem({ label: 'File' });
+var helpMenu = new gui.MenuItem({ label: 'Help' });
+
+menu.append(dplmMenu);
+menu.append(helpMenu);
+
+var dplmSubmenu = new gui.Menu();
+
+dplmSubmenu.append(new gui.MenuItem({ label: 'Configuration', click:function(){
+    require(["views/configuration_view"],function(ConfigView){
+        var configView = new ConfigView();
+        $("body").append(configView.render().el);
+        configView.openModal();
+    });
+}}));
+
+dplmSubmenu.append(new gui.MenuItem({ type: 'separator' }));
+dplmSubmenu.append(new gui.MenuItem({ label: 'Exit' , click:function(){
+    gui.App.closeAllWindows();
+    gui.App.quit();
+}}));
+
+dplmMenu.submenu = dplmSubmenu;
+
+var helpSubmenu = new gui.Menu();
+
+helpSubmenu.append(new gui.MenuItem({ label: 'Docdoku PLM', click:function(){
+    window.open("https://github.com/docdoku/docdoku-plm/wiki");
+}}));
+helpSubmenu.append(new gui.MenuItem({ label: 'About ...', click:function(){
+    alert("Docdoku dplm v1.0");
+}}));
+helpMenu.submenu = helpSubmenu;
+
 var OS_SLASH = os.type() == "Windows_NT" ? "\\":"/";
 
 define(["text!templates/main.html", "views/menu_view", "views/content_view", "storage"], function (MainView, MenuView, ContentView, Storage) {

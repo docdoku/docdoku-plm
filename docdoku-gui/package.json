@@ -1,5 +1,5 @@
 {
-  "name": "nw-demo",
+  "name": "DPLM",
   "main": "index.html",
   "locale":"fr_FR",
   "dependencies": {
@@ -8,8 +8,10 @@
   "window": {
     "toolbar": true,
     "position": "center",
-    "width": 800,
-    "height": 600,
-    "resizable": false
+    "width": 820,
+    "height": 500,
+    "min_width": 820,
+    "min_height": 500,
+    "resizable": true
   }
 }

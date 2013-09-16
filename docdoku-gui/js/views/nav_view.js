@@ -6,7 +6,6 @@ define(["text!templates/nav.html", "views/configuration_view","commander", "i18n
         template: Handlebars.compile(template),
 
         events: {
-            "click .icon-cog" : "openConfigView",
             "click .open-path": "openPath"
         },
 
@@ -22,7 +21,6 @@ define(["text!templates/nav.html", "views/configuration_view","commander", "i18n
 
         path:function(path){
             this.currentPath = path;
-            var shortName = "";
             var lastSlash = path.lastIndexOf(OS_SLASH);
             var shortName = path.substr(lastSlash+1,path.length);
             this.$breadcrumb.html("<a class='open-path'>"+i18n.LOCAL_PATHS + " > " +shortName+"</a>");
@@ -34,13 +32,8 @@ define(["text!templates/nav.html", "views/configuration_view","commander", "i18n
 
         workspace:function(workspace){
             this.$breadcrumb.html("<a class='workspace'>"+ i18n.WORKSPACE + " > " +workspace+"</a>");
-        },
-
-        openConfigView:function() {
-            var configView = new ConfigView();
-            $("body").append(configView.render().el);
-            configView.openModal();
         }
+
     });
 
     return NavView;
