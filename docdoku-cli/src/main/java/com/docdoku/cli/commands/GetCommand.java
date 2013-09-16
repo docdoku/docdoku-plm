@@ -68,6 +68,7 @@ public class GetCommand extends AbstractCommandLine{
     private IProductManagerWS productS;
 
     public void execImpl() throws Exception {
+
         if(partNumber==null){
             loadMetadata();
         }
@@ -107,15 +108,15 @@ public class GetCommand extends AbstractCommandLine{
     private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
         PartRevision pr;
         PartIteration pi;
+        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
         if(pRevision==null){
-            PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
             pr = pm.getLastRevision();
         }else{
             pr = productS.getPartRevision(new PartRevisionKey(workspace,pPartNumber,pRevision));
         }
 
         if(cs != null){
-            pi = cs.filterConfigSpec(pr.getPartMaster());
+            pi = cs.filterConfigSpec(pm);
         }else if(pIteration==0){
             pi = pr.getLastIteration();
         }else{
@@ -138,8 +139,6 @@ public class GetCommand extends AbstractCommandLine{
         if(recursive){
             PartIterationKey partIPK = new PartIterationKey(workspace,pPartNumber,pr.getVersion(),pi.getIteration());
             List<PartUsageLink> usageLinks = productS.getComponents(partIPK);
-            //TODO we chose to select latest revision and iteration but should be possible to change that
-            //(by specifying a config spec ?)
 
             for(PartUsageLink link:usageLinks){
                 PartMaster subPM = link.getComponent();

@@ -26,13 +26,18 @@ import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.configuration.BaselineConfigSpec;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.product.*;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.*;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class CheckOutCommand extends AbstractCommandLine{
 
@@ -57,20 +62,26 @@ public class CheckOutCommand extends AbstractCommandLine{
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
+    @Option(name="-b", aliases = "--baseline", metaVar = "<baseline>", usage="baseline to filter")
+    protected int baselineId;
+
+    private IProductManagerWS productS;
+
     public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartRevision pr = productS.checkOutPart(new PartRevisionKey(workspace, partNumber, revision.toString()));
-        PartIteration pi = pr.getLastIteration();
-        System.out.println("Checking out part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+        productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
-        BinaryResource bin = pi.getNativeCADFile();
-        if(bin!=null && !noDownload){
-            FileHelper fh = new FileHelper(user,password);
-            fh.downloadNativeCADFile(getServerURL(),path, workspace, partNumber, pr, pi, force);
+        String strRevision = revision==null?null:revision.toString();
+
+        ConfigSpec cs = null;
+
+        if(baselineId != 0){
+            cs = new BaselineConfigSpec(productS.getBaselineById(baselineId));
         }
+
+        checkoutPart(partNumber,strRevision,0,cs);
     }
 
     private void loadMetadata() throws IOException {
@@ -88,6 +99,48 @@ public class CheckOutCommand extends AbstractCommandLine{
         //once partNumber and revision have been inferred, set path to folder where files are stored
         //in order to implement perform the rest of the treatment
         path=path.getParentFile();
+    }
+
+
+    private void checkoutPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
+        PartRevision pr;
+        PartIteration pi;
+        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
+        if(pRevision==null){
+            pr = pm.getLastRevision();
+        }else{
+            pr = productS.getPartRevision(new PartRevisionKey(workspace,pPartNumber,pRevision));
+        }
+
+        if(cs != null){
+            pi = cs.filterConfigSpec(pm);
+        }else if(pIteration==0){
+            pi = pr.getLastIteration();
+        }else{
+            if(pIteration > pr.getNumberOfIterations()){
+                throw new IllegalArgumentException("Iteration " + pIteration + " doesn't exist");
+            }else{
+                pi = pr.getIteration(pIteration);
+            }
+        }
+
+        BinaryResource bin = pi.getNativeCADFile();
+
+        if(bin!=null && !noDownload){
+            FileHelper fh = new FileHelper(user,password);
+            fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
+        }
+
+        if(recursive){
+            PartIterationKey partIPK = new PartIterationKey(workspace,pPartNumber,pr.getVersion(),pi.getIteration());
+            List<PartUsageLink> usageLinks = productS.getComponents(partIPK);
+
+            for(PartUsageLink link:usageLinks){
+                PartMaster subPM = link.getComponent();
+                checkoutPart(subPM.getNumber(), null, 0, cs);
+            }
+        }
+
     }
 
     @Override

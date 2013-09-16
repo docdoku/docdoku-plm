@@ -109,7 +109,7 @@ public class MainCommand {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             System.err.println(e.getMessage());
         }
 
