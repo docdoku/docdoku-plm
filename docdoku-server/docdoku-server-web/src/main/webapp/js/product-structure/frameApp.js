@@ -21,7 +21,7 @@ define(["models/part_iteration_visualization","dmu/SceneManager","dmu/InstancesM
                     };
                     instancesManager.loadFromTree(new Component());
                 }
-            }
+            };
 
             instancesManager = new InstancesManager();
             instancesManager.init();
