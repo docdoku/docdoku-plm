@@ -13,11 +13,12 @@ define(["models/part_iteration_visualization","dmu/SceneManager","dmu/InstancesM
             SceneManager.prototype.initIFrameScene = function() {
                 this.init();
                 if (!_.isUndefined(SCENE_INIT.pathForIFrame)) {
-                    var self = this;
                     var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path=" + SCENE_INIT.pathForIFrame;
                     var Component = function() {
-                        this.getInstancesUrl=function(){return instancesUrl}
-                    }
+                        this.getInstancesUrl=function(){
+                            return instancesUrl;
+                        };
+                    };
                     instancesManager.loadFromTree(new Component());
                 }
             }

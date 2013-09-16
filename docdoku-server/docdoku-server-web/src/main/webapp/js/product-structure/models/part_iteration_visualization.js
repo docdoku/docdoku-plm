@@ -1,4 +1,4 @@
-/*global isIpad,LevelGeometry,sceneManager*/
+/*global LevelGeometry,sceneManager,Instance*/
 define(function() {
 
     var PartIterationVisualization = function(partIterationParams) {
@@ -50,8 +50,8 @@ define(function() {
             return this.instances[instanceId];
         },
 
-        hideInstance:function(instance){
-            var instance = this.getInstance(instance.id);
+        hideInstance:function(instanceRaw){
+            var instance = this.getInstance(instanceRaw.id);
             instance.clearMesh();
         },
 
@@ -63,7 +63,7 @@ define(function() {
         },
 
         addLevelGeometry:function(filename, quality){
-            this.levelGeometries[parseInt(quality)] = new LevelGeometry(filename,quality,quality>0);
+            this.levelGeometries[parseInt(quality,10)] = new LevelGeometry(filename,quality,quality>0);
         },
 
         getLevelGeometry:function(rating){

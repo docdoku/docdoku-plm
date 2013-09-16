@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global instancesManager*/
 function LevelGeometry(filename, quality, computeVertexNormals) {
     this.fileName = filename;
     this.quality = quality;

@@ -1,3 +1,5 @@
+/*global sceneManager*/
+
 define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (PartIterationVisualization, LoaderManager) {
 
     /*
@@ -19,17 +21,6 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
         this.partIterations = [];
         this.loaderManager = null;
         this.workerURI = "/js/product-structure/workers/InstancesWorker.js";
-
-        // Queue
-
-        this.queue = {
-            offset:0,
-            maxByLoop:10,
-            instancesToAdd:[],
-            instancesToRemove:[],
-            instancesToUpdate:[]
-        }
-
     };
 
     InstancesManager.prototype = {
@@ -162,8 +153,8 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             // Debug worker
             else if(data.fn == "debug"){
                 console.log(data);
-                console.log("on scene " + (sceneManager.scene.children.length - 5))
-                console.log(sceneManager.renderer.info.render)
+                console.log("on scene " + (sceneManager.scene.children.length - 5));
+                console.log(sceneManager.renderer.info.render);
             }
         }
 
@@ -171,4 +162,4 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
 
     return InstancesManager;
 
-})
+});

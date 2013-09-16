@@ -107,7 +107,6 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
                         combined.mergeVertices();
 
                         combined.computeBoundingSphere();
-                        console.log(JSON.stringify({radius:combined.boundingSphere.radius}));
 
                         callback(new THREE.Mesh(combined, material));
 

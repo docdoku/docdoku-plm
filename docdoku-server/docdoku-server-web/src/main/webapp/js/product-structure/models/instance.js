@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global sceneManager,instancesManager*/
 var Instance = function(id, partIterationId, tx, ty, tz, rx, ry, rz , radius) {
 
     this.id = id;
@@ -90,7 +90,7 @@ Instance.prototype = {
             position:this.position,
             partIterationId:this.partIterationId,
             radius:this.radius
-        }
+        };
     }
 
 };

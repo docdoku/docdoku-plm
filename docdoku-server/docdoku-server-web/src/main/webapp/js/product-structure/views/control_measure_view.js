@@ -109,7 +109,7 @@ define(
         },
 
         clear:function(){
-            this.$result.html("")
+            this.$result.html("");
             if(this.points[0] && this.points[0].mesh){
                 sceneManager.scene.remove(this.points[0].mesh);
             }

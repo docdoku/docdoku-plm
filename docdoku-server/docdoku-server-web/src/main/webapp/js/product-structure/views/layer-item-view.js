@@ -68,7 +68,7 @@ define(
         },
 
         removeLayer:function(){
-            var collection = this.model.collection
+            var collection = this.model.collection;
             this.model.destroy();
             if(collection.length == 0){
                 collection.onEmpty();

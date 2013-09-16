@@ -1,3 +1,4 @@
+/*global self*/
 importScripts(
     "/js/lib/underscore-1.4.2.min.js",
     "/js/lib/visualization/three.min.js"
@@ -12,9 +13,45 @@ var switchRating = 0.3;
 var maxInstancesToSend = 500;
 var debug = true;
 
+
+function isInFrustum (instance){
+    center.x= instance.position.x;
+    center.y= instance.position.y;
+    center.z= instance.position.z;
+    for (var i = 0; i < 6; i ++ ) {
+        if ( frustum.planes[ i ].distanceToPoint(center) < -instance.radius ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function getDistance(instancePosition) {
+    return Math.sqrt(Math.pow(cameraPosition.x - instancePosition.x, 2)
+        + Math.pow(cameraPosition.y - instancePosition.y, 2)
+        + Math.pow(cameraPosition.z - instancePosition.z, 2));
+}
+
+function getRating (instance) {
+    return isInFrustum(instance) ? instance.radius / getDistance(instance.position) : 0;
+}
+
+function cameraHasChanged(){
+    if(oldCameraPosition.x != cameraPosition.x){
+        return true;
+    }
+    if(oldCameraPosition.y != cameraPosition.y){
+        return true;
+    }
+    if(oldCameraPosition.z != cameraPosition.z){
+        return true;
+    }
+    return false;
+}
+
 function InstanceWorker(){
     this.init();
-};
+}
 
 InstanceWorker.prototype = {
 
@@ -160,34 +197,6 @@ InstanceWorker.prototype = {
 
 };
 
-function getRating (instance) {
-    return isInFrustum(instance) ? instance.radius / getDistance(instance.position) : 0;
-};
-
-function isInFrustum (instance){
-    center.x= instance.position.x;
-    center.y= instance.position.y;
-    center.z= instance.position.z;
-    for (i = 0; i < 6; i ++ ) {
-        if ( frustum.planes[ i ].distanceToPoint(center) < -instance.radius ) {
-            return false;
-        }
-    }
-    return true;
-};
-
-function getDistance(instancePosition) {
-    return Math.sqrt(Math.pow(cameraPosition.x - instancePosition.x, 2)
-        + Math.pow(cameraPosition.y - instancePosition.y, 2)
-        + Math.pow(cameraPosition.z - instancePosition.z, 2));
-};
-
-function cameraHasChanged(){
-    if(oldCameraPosition.x != cameraPosition.x) return true;
-    if(oldCameraPosition.y != cameraPosition.y) return true;
-    if(oldCameraPosition.z != cameraPosition.z) return true;
-    return false;
-}
 
 instanceWorker = new InstanceWorker();
 

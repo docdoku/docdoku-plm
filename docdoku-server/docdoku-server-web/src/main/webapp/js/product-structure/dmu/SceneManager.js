@@ -1,4 +1,4 @@
-/*global sceneManager,Instance*/
+/*global sceneManager,Instance,instancesManager*/
 define([
     "views/marker_create_modal_view",
     "views/blocker_view"
@@ -49,7 +49,7 @@ define([
 
         initScene: function () {
             this.$container = $('div#container');
-            this.$sceneContainer = $("#scene_container")
+            this.$sceneContainer = $("#scene_container");
             this.$blocker = new BlockerView().render().$el;
             this.$container.append(this.$blocker);
             this.scene = new THREE.Scene();
@@ -553,7 +553,7 @@ define([
         },
 
         setMeasureState:function(state){
-            this.$sceneContainer.toggleClass("measureMode",state)
+            this.$sceneContainer.toggleClass("measureMode",state);
             this.measureState = state;
             var opacity =  state ? 0.5 : 1;
             _(this.scene.children).each(function (child) {
@@ -720,7 +720,9 @@ define([
 
         needsInstancesUpdate:function(){
             this.preventInstancesUpdate();
-            this.updateTimer = setTimeout(function(){instancesManager.updateWorker()},500);
+            this.updateTimer = setTimeout(function(){
+                instancesManager.updateWorker();
+            },500);
         },
 
         preventInstancesUpdate:function(){
