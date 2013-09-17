@@ -102,15 +102,11 @@ public class CheckOutCommand extends AbstractCommandLine{
     }
 
 
-    private void checkoutPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
-        PartRevision pr;
+    private void checkoutPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException {
+
         PartIteration pi;
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
-        if(pRevision==null){
-            pr = pm.getLastRevision();
-        }else{
-            pr = productS.getPartRevision(new PartRevisionKey(workspace,pPartNumber,pRevision));
-        }
+        PartRevision pr = productS.checkOutPart(new PartRevisionKey(workspace, pPartNumber, pRevision));
 
         if(cs != null){
             pi = cs.filterConfigSpec(pm);

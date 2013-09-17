@@ -73,6 +73,11 @@ public class MainCommand {
                     execCommand(new PartListCommand(), Arrays.copyOfRange(args, 1, args.length));
                     break;
 
+                case "search":
+                case "s":
+                    execCommand(new SearchPartsCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
                 case "workspaces":
                 case "wl" :
                     execCommand(new WorkspacesCommand(),Arrays.copyOfRange(args, 1, args.length));

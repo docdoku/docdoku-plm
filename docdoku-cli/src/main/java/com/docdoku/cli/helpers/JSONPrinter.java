@@ -4,6 +4,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,6 +48,42 @@ public class JSONPrinter {
 
         return status;
     }
+
+    public static JSONObject getJSONPartRevisionDescription(PartRevision pr, long lastModified) throws JSONException {
+        JSONObject status = new JSONObject();
+
+        User user = pr.getCheckOutUser();
+        String login = user != null ? user.getLogin() : "";
+        Date checkoutDate = pr.getCheckOutDate();
+        Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+
+        status.put("isCheckedOut", pr.isCheckedOut());
+        status.put("partNumber", pr.getPartMasterNumber());
+        status.put("checkoutUser", login);
+        status.put("checkoutDate", timeStamp);
+        status.put("workspace", pr.getPartMasterWorkspaceId());
+        status.put("version", pr.getVersion());
+        status.put("description", pr.getDescription());
+        status.put("lastModified", lastModified);
+
+        if(pr != null && pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
+            String nativeCADFileName  = pr.getLastIteration().getNativeCADFile().getName();
+            status.put("cadFileName", nativeCADFileName);
+        }
+
+        List<PartIteration> partIterations = pr.getPartIterations();
+        JSONArray partIterationJSonArray;
+        if (partIterations != null) {
+            partIterationJSonArray = new JSONArray();
+            for(PartIteration partIteration : partIterations) {
+                partIterationJSonArray.put(partIteration.getIteration());
+            }
+            status.put("iterations", partIterationJSonArray);
+        }
+
+        return status;
+    }
+
 
     public static void printPartMasterStatus(PartMaster pm, long lastModified) throws JSONException {
           System.out.println(getJSONPartMasterDescription(pm,lastModified).toString());

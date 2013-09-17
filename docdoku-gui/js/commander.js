@@ -180,12 +180,35 @@ define([], function () {
 
         },
 
-        getPartMasters:function(workspace){
+        getPartMasters:function(workspace, start, max){
             return this.base() + " pl"
                 + " -h " + APP_GLOBAL.GLOBAL_CONF.host
                 + " -P " + APP_GLOBAL.GLOBAL_CONF.port
                 + " -u " + APP_GLOBAL.GLOBAL_CONF.user
                 + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -s " + start
+                + " -m " + max
+                + " -w " + escapeShell(workspace);
+        },
+
+        searchPartMasters:function(workspace, search){
+            return this.base() + " search"
+                + " -h " + APP_GLOBAL.GLOBAL_CONF.host
+                + " -P " + APP_GLOBAL.GLOBAL_CONF.port
+                + " -u " + APP_GLOBAL.GLOBAL_CONF.user
+                + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -s " + escapeShell(search)
+                + " -w " + escapeShell(workspace);
+        },
+
+
+        getPartMastersCount:function(workspace){
+            return this.base() + " pl"
+                + " -h " + APP_GLOBAL.GLOBAL_CONF.host
+                + " -P " + APP_GLOBAL.GLOBAL_CONF.port
+                + " -u " + APP_GLOBAL.GLOBAL_CONF.user
+                + " -p " + APP_GLOBAL.GLOBAL_CONF.password
+                + " -c "
                 + " -w " + escapeShell(workspace);
         },
 
@@ -293,8 +316,8 @@ define([], function () {
             });
         },
 
-        getPartMasters: function (workspace,callback) {
-            var c = cmd.getPartMasters(workspace);
+        getPartMasters: function (workspace, start, max, callback) {
+            var c = cmd.getPartMasters(workspace, start, max);
             console.log("Commander.getPartMasters : " + c);
             exec(c,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
                 if (error || stderr) {
@@ -304,6 +327,30 @@ define([], function () {
                 }
             });
         },
+        searchPartMasters: function (workspace, search, callback) {
+                    var c = cmd.searchPartMasters(workspace, search);
+                    console.log("Commander.searchPartMasters : " + c);
+                    exec(c,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
+                        if (error || stderr) {
+                            console.log('searchPartMasters : exec error' + stderr + " " + error);
+                        } else {
+                            callback(stdout);
+                        }
+                    });
+                },
+
+        getPartMastersCount: function (workspace, callback) {
+            var c = cmd.getPartMastersCount(workspace);
+            console.log("Commander.getPartMastersCount : " + c);
+            exec(c,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
+                if (error || stderr) {
+                    console.log('getPartMastersCount : exec error' + stderr + " " + error);
+                } else {
+                    callback(stdout);
+                }
+            });
+        },
+
         get:function(part,options,callback){
             var c = cmd.get(part,options);
             console.log("Commander.get : " + c);

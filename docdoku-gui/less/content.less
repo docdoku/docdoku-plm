@@ -1,7 +1,7 @@
 #content {
   position: absolute;
   bottom: 0;
-  top: 40px;
+  top: 45px;
   left: 200px;
   right: 0;
   display: inline-block;
@@ -12,6 +12,31 @@
     height:100%;
     overflow: auto;
     >h4{
+      float:left;
+      margin-left:20px;
+    }
+    >#searchForm{
+      position: relative;
+      float: right;
+      margin: 5px 15px 0 0;
+      >input{
+        width: 85px;
+        transition:0.4s width ease;
+        &:focus{
+          width:180px;
+        }
+        &:not([value=""]){
+          width:180px;
+        }
+      }
+      >button{
+        position: absolute;
+        right:0;
+        top:0;
+      }
+    }
+    h5{
+      float:left;
       margin-left:20px;
     }
 
@@ -32,9 +57,9 @@
     }
 
     #localRepo {
-      margin-top: 20px;
+      margin-top: 10px;
 
-      h4 {
+      h4, h5 {
         margin: 10px 0 15px 15px;
       }
 
@@ -47,6 +72,7 @@
         }
 
         .versionedFile {
+          clear: both;
           height: 50px;
           line-height: 40px;
           margin-left: 15px;
@@ -262,7 +288,10 @@
     }
 
     #workspace {
-      margin-top: 20px;
+      margin-top: 5px;
+      clear: both;
+      float:left;
+      width:100%;
 
       >.spinner {
         margin: auto;
@@ -271,6 +300,7 @@
       }
 
       .versionedFile {
+        clear: both;
         height: 50px;
         line-height: 40px;
         margin-left: 15px;
@@ -395,6 +425,12 @@
           }
         }
       }
+    }
+    #loadMore{
+      display: none;
+      float:left;
+      cursor:pointer;
+      margin: 10px 0 10px 20px;
     }
   }
 }

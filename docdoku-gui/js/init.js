@@ -12,3 +12,6 @@ if (typeof(window.require) !== "undefined") {
     window.wrench = window.requireNode('wrench');
     window.require = undefined;
 }
+if(gui.App.argv[0] == "devtools"){
+    gui.Window.get().showDevTools();
+}
