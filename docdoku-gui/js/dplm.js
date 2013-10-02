@@ -1,6 +1,15 @@
 define(function(){
 
-    var java = requireNode("java");
+    var javaModule = "java";
+    console.log(os.type());
+    switch (os.type()){
+        case "Linux" : javaModule = "java-unix"; break;
+        case "Windows_NT" : javaModule = "java-win"; break;
+        case "Darwin" : javaModule = "java-osx"; break;
+        default : break;
+    }
+
+    var java = requireNode(javaModule);
     java.classpath.push(classPath);
 
     var Dplm = {
