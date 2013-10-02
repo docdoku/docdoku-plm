@@ -20,7 +20,6 @@
 
 package com.docdoku.cli.commands;
 
-
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
@@ -39,6 +38,10 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+/**
+ *
+ * @author Florent Garin
+ */
 public class CheckOutCommand extends AbstractCommandLine{
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
@@ -67,7 +70,7 @@ public class CheckOutCommand extends AbstractCommandLine{
 
     private IProductManagerWS productS;
 
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
@@ -82,6 +85,7 @@ public class CheckOutCommand extends AbstractCommandLine{
         }
 
         checkoutPart(partNumber,strRevision,0,cs);
+        return null;
     }
 
     private void loadMetadata() throws IOException {

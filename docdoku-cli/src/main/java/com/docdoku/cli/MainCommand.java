@@ -21,103 +21,112 @@
 package com.docdoku.cli;
 
 import com.docdoku.cli.commands.*;
+import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.services.FileNotFoundException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import java.util.*;
+import java.io.File;
+import java.util.Arrays;
 
-
+/**
+ *
+ * @author Florent Garin
+ */
 public class MainCommand {
 
+    /*
+    * Called from command line
+    * */
     public static void main(String[] args) {
+        _main(args);
+    }
 
+    /*
+    * Called from node-webkit client, return json string
+    * */
+    public static Object nodeMain(String[] args) {
+        // Change the working directory, to write files on appropriated folder.
+        if(args[0] != null){
+            if(new File(args[0]).isDirectory()){
+                System.setProperty("user.dir", args[0]);
+            }else{
+                return JSONOutput.printException(new FileNotFoundException(args[0]));
+            }
+        }
+        return _main(Arrays.copyOfRange(args, 1, args.length));
+    }
+
+    /*
+    * Main function wrapper
+    * */
+    private static Object _main(String[] args) {
         try {
             switch (args[0]) {
                 case "status":
                 case "stat":
                 case "st":
-                    execCommand(new StatusCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new StatusCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "get":
-                    execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "put":
-                    execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "checkout":
                 case "co":
-                    execCommand(new CheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new CheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "undocheckout":
                 case "uco":
-                    execCommand(new UndoCheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new UndoCheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "checkin":
                 case "ci":
-                    execCommand(new CheckInCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new CheckInCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "create":
                 case "cr":
-                    execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "partlist":
                 case "pl":
-                    execCommand(new PartListCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new PartListCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "search":
                 case "s":
-                    execCommand(new SearchPartsCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
+                    return execCommand(new SearchPartsCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "workspaces":
-                case "wl" :
-                    execCommand(new WorkspacesCommand(),Arrays.copyOfRange(args, 1, args.length));
-                    break;
-
-                case "baselinelist" :
-                case "bl" :
-                    execCommand(new BaselineListCommand(),Arrays.copyOfRange(args, 1, args.length));
-                    break;
+                case "wl":
+                    return execCommand(new WorkspacesCommand(), Arrays.copyOfRange(args, 1, args.length));
+                case "baselinelist":
+                case "bl":
+                    return execCommand(new BaselineListCommand(), Arrays.copyOfRange(args, 1, args.length));
                 case "help":
                 case "?":
                 case "h":
                     if (args.length > 1) {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                        break;
+                        return execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
                     }
                 default:
                     printUsage();
+                    return null;
             }
-
         } catch (Exception e) {
             printUsage();
+            return null;
         }
     }
 
-
-    private static void execCommand(CommandLine cl, String[] args) {
+    private static Object execCommand(AbstractCommandLine cl, String[] args) {
         CmdLineParser.registerHandler(Version.class, VersionOptionHandler.class);
         CmdLineParser parser = new CmdLineParser(cl);
         try {
             parser.parseArgument(args);
-            cl.exec();
+            return cl.exec();
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
+            return JSONOutput.printException(e);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
+            return JSONOutput.printException(e);
         }
-
     }
 
     private static void printUsage() {
@@ -137,6 +146,5 @@ public class MainCommand {
         System.err.println();
         System.err.println("For additional information, see http://www.docdokuplm.com");
     }
-
 
 }

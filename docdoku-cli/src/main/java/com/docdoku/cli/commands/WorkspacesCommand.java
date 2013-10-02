@@ -21,34 +21,27 @@
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.IUserManagerWS;
-import org.codehaus.jettison.json.JSONArray;
-import org.kohsuke.args4j.Option;
 
+/**
+ *
+ * @author Morgan Guimard
+ */
 public class WorkspacesCommand extends AbstractCommandLine{
-
-    @Option(name="-j", aliases = "--jsonparser", usage="return the list of the workspaces in JSON format")
-    private boolean jsonParser;
 
     private IUserManagerWS userS;
 
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
 
         userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
         Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
 
-        if(jsonParser){
-            JSONArray wks = new JSONArray();
-            for(int i = 0 ; i < workspaces.length; i++){
-                wks.put(i,workspaces[i].getId());
-            }
-            System.out.println(wks.toString());
-        }else{
-            for(int i = 0 ; i < workspaces.length; i++){
-                System.out.println(workspaces[i].getId());
-            }
+        for(int i = 0 ; i < workspaces.length; i++){
+            System.out.println(workspaces[i].getId());
         }
+        return JSONOutput.printWorkspaces(workspaces);
 
     }
 

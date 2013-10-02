@@ -20,7 +20,6 @@
 
 package com.docdoku.cli.commands;
 
-
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
@@ -34,6 +33,10 @@ import org.kohsuke.args4j.Option;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ *
+ * @author Florent Garin
+ */
 public class UndoCheckOutCommand extends AbstractCommandLine{
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to undo check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
@@ -57,7 +60,7 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
@@ -72,6 +75,7 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
             FileHelper fh = new FileHelper(user,password);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
+        return null;
     }
 
     private void loadMetadata() throws IOException {

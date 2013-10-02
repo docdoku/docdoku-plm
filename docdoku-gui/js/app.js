@@ -1,139 +1,106 @@
-// Global vars
-var APP_GLOBAL = {
-    // Application Router
-    ROUTER:{},
-    // Application signals
-    SIGNALS:{},
-    // Sync between local storage and memory
-    GLOBAL_CONF:{},
-    // Current path settings (exec dir at startup)
-    CURRENT_PATH:window.process.cwd(),
-    // Current workspace id
-    CURRENT_WORKSPACE:""
-};
+require(["text!templates/main.html", "views/menu", "views/content", "views/home", "views/nav","views/configuration","storage"], function (MainView, MenuView, ContentView, HomeView, NavView,ConfigurationView, Storage) {
 
-// Menu
-var menu = new gui.Menu({ 'type': 'menubar' });
-gui.Window.get().menu = menu;
+    $(function () {
 
-var dplmMenu = new gui.MenuItem({ label: 'File' });
-var helpMenu = new gui.MenuItem({ label: 'Help' });
+        var AppView = Backbone.View.extend({
 
-menu.append(dplmMenu);
-menu.append(helpMenu);
+            template: Handlebars.compile(MainView),
 
-var dplmSubmenu = new gui.Menu();
+            render: function () {
+                this.$el.html(this.template());
+                this.checkConfAtStartup();
+                return this;
+            },
 
-dplmSubmenu.append(new gui.MenuItem({ label: 'Configuration', click:function(){
-    require(["views/configuration_view"],function(ConfigView){
-        var configView = new ConfigView();
-        $("body").append(configView.render().el);
-        configView.openModal();
-    });
-}}));
+            reset: function () {
+                this.render();
+            },
 
-dplmSubmenu.append(new gui.MenuItem({ type: 'separator' }));
-dplmSubmenu.append(new gui.MenuItem({ label: 'Exit' , click:function(){
-    gui.App.closeAllWindows();
-    gui.App.quit();
-}}));
+            error:function(){
+                this.menuView.onConfigurationError();
+                this.contentView.onConfigurationError();
+                this.navView.onConfigurationError();
+                this.homeView.onConfigurationError();
+            },
 
-dplmMenu.submenu = dplmSubmenu;
+            checkConfAtStartup: function () {
 
-var helpSubmenu = new gui.Menu();
-
-helpSubmenu.append(new gui.MenuItem({ label: 'Docdoku PLM', click:function(){
-    window.open("https://github.com/docdoku/docdoku-plm/wiki");
-}}));
-helpSubmenu.append(new gui.MenuItem({ label: 'About ...', click:function(){
-    alert("Docdoku dplm v1.0");
-}}));
-helpMenu.submenu = helpSubmenu;
-
-var OS_SLASH = os.type() == "Windows_NT" ? "\\":"/";
-
-define(["text!templates/main.html", "views/menu_view", "views/content_view", "storage"], function (MainView, MenuView, ContentView, Storage) {
-
-    var AppView = Backbone.View.extend({
-
-        template:Handlebars.compile(MainView),
-
-        render:function() {
-            this.$el.html(this.template({}));
-            this.checkConfAtStartup();
-            return this;
-        },
-
-        reset:function(){
-            this.render();
-        },
-
-        checkConfAtStartup:function(){
-            var self = this ;
-
-            if(Storage.needsGlobalConf()){
-                require(["views/configuration_view"],function(ConfigurationView){
+                if (Storage.needsGlobalConf()) {
                     var configView = new ConfigurationView();
                     $("body").append(configView.render().el);
                     configView.openModal();
-                    configView.on("configuration:done",self.checkConfAtStartup);
+                } else {
+                    APP_GLOBAL.GLOBAL_CONF = Storage.getGlobalConf();
+                    this.menuView = new MenuView({el: "#menu"}).render();
+                    this.navView = new NavView().render();
+                    this.contentView = new ContentView({el: "#content"}).render();
+                    this.homeView = new HomeView().render();
+                }
+            },
+
+            showWorkspace: function (workspace) {
+                var self = this;
+                Storage.addRecentlyUsedWorkspace(workspace);
+                require(["views/workspace"], function (WorkspaceView) {
+                    new WorkspaceView().setWorkspace(workspace).render();
+                    self.navView.workspace(workspace);
                 });
-            }else{
-                APP_GLOBAL.GLOBAL_CONF = Storage.getGlobalConf();
-                new MenuView({el: "#menu"}).render();
-                this.contentView = new ContentView({el: "#content"}).render();
+            },
+
+            showPath: function (path) {
+                var self = this;
+                Storage.addRecentlyUsedPath(path)
+                require(["views/local_dir"], function (LocalRepoView) {
+                    new LocalRepoView().setPath(path).render();
+                    self.navView.path(path);
+                });
             }
-        },
-
-        showWorkspace:function(workspace){
-            var self = this;
-            require(["views/workspace_view"],function(WorkspaceView){
-                new WorkspaceView().setWorkspace(workspace).render();
-                self.contentView.breadcrumbWorkspace(workspace);
-            });
-        },
-
-        showPath:function(path){
-            var self = this;
-            require(["views/local_dir_view"],function(LocalRepoView){
-                new LocalRepoView().setPath(path).render();
-                self.contentView.breadcrumbPath(path);
-            });
-        }
-    });
-
-    $(function() {
+        });
 
         _.extend(APP_GLOBAL.SIGNALS, Backbone.Events);
 
         var AppRouter = Backbone.Router.extend({
             routes: {
-                "path/*path":	"path",
-                "workspace/*workspace":	"workspace"
+                "/":"home",
+                "home": "home",
+                "path/*path": "path",
+                "workspace/*workspace": "workspace"
             }
         });
-
-        APP_GLOBAL.ROUTER = new AppRouter();
-        Backbone.history.start();
 
         Handlebars.registerHelper('folderName', function(context, block) {
             var lastSlash = context.lastIndexOf(OS_SLASH);
             return context.substr(lastSlash+1,context.length);
         });
 
+        APP_GLOBAL.ROUTER = new AppRouter();
+        Backbone.history.start();
 
-        var app = new AppView({el:"body"}).render();
+        var app = new AppView({el: "body"}).render();
 
-        APP_GLOBAL.ROUTER.on("route:workspace",function(workspaceId){
+        APP_GLOBAL.ROUTER.on("route:workspace", function (workspaceId) {
             app.showWorkspace(workspaceId);
         });
 
-        APP_GLOBAL.ROUTER.on("route:path",function(path){
+        APP_GLOBAL.ROUTER.on("route:path", function (path) {
             app.showPath(path);
+            process.chdir(path);
         });
 
-        APP_GLOBAL.SIGNALS.on("configuration:changed",function(){
+        APP_GLOBAL.ROUTER.on("route:home", function () {
             app.reset();
+        });
+
+        APP_GLOBAL.SIGNALS.on("configuration:changed", function () {
+            app.reset();
+        });
+
+        APP_GLOBAL.SIGNALS.on("configuration:error", function () {
+            app.error();
+        });
+
+        APP_GLOBAL.SIGNALS.on("path:changed", function (path) {
+            process.chdir(path);
         });
 
     });

@@ -20,14 +20,16 @@
 
 package com.docdoku.cli.commands;
 
-
 import org.kohsuke.args4j.Option;
 import java.io.Console;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ *
+ * @author Florent Garin
+ */
 public abstract class AbstractCommandLine implements CommandLine{
-
 
     @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="port number to use for connection; default is 80")
     protected int port=80;
@@ -52,7 +54,7 @@ public abstract class AbstractCommandLine implements CommandLine{
     }
 
     @Override
-    public void exec() throws Exception {
+    public Object exec() throws Exception {
 
         if(user==null){
             promptForUser();
@@ -60,12 +62,11 @@ public abstract class AbstractCommandLine implements CommandLine{
         if(password==null){
             promptForPassword();
         }
-        execImpl();
+        return execImpl();
     }
-
 
     public URL getServerURL() throws MalformedURLException {
         return new URL("http",host,port,"");
     }
-    public abstract void  execImpl() throws Exception;
+    public abstract Object  execImpl() throws Exception;
 }

@@ -38,6 +38,10 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+/**
+ *
+ * @author Florent Garin
+ */
 public class GetCommand extends AbstractCommandLine{
 
 
@@ -67,7 +71,7 @@ public class GetCommand extends AbstractCommandLine{
 
     private IProductManagerWS productS;
 
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
 
         if(partNumber==null){
             loadMetadata();
@@ -83,7 +87,7 @@ public class GetCommand extends AbstractCommandLine{
         }
 
         getPart(partNumber, strRevision, iteration, cs);
-
+        return null;
     }
 
     private void loadMetadata() throws IOException {
