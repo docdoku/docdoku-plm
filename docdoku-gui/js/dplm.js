@@ -6,19 +6,19 @@ define(function(){
 
     var WindowsCMD = {
         base:function(){
-            return '"%JAVA_HOME%\\bin\\java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
+            return '"'+APP_GLOBAL.GLOBAL_CONF.javaHome+'\\bin\\java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
         }
     };
 
     var LinuxCMD = {
         base:function(){
-            return '"$JAVA_HOME/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
+            return'"'+APP_GLOBAL.GLOBAL_CONF.javaHome+'/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
         }
     };
 
     var OsxCMD = {
         base:function(){
-            return '"$JAVA_HOME/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
+            return '"'+APP_GLOBAL.GLOBAL_CONF.javaHome+'/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
         }
     };
 
@@ -38,7 +38,6 @@ define(function(){
         case "Darwin" : _.extend(Dplm,OsxCMD); break;
         default :_.extend(Dplm,LinuxCMD); break;
     }
-
 
     _.extend(Dplm,{
 

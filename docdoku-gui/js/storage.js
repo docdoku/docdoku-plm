@@ -35,7 +35,7 @@ define(function () {
 
         needsGlobalConf:function(){
             var conf = this.getGlobalConf();
-            return !conf.host || !conf.user || !conf.password || !conf.port;
+            return !conf.host || !conf.user || !conf.password || !conf.port || !conf.javaHome;
         },
 
         /*

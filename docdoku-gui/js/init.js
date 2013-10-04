@@ -16,7 +16,7 @@ var classPath = spawnDir + '/dplm/docdoku-cli-jar-with-dependencies.jar';
 if(gui.App.argv[0] == "devtools"){
     gui.Window.get().showDevTools();
 }
-gui.Window.get().showDevTools();
+
 window.requireNode = window.require;
 // require will be replaced by requireJs
 delete window.require;

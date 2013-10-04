@@ -21,6 +21,7 @@ define(["text!templates/configuration.html","i18n!localization/nls/global","stor
             this.$inputPort = this.$('#inputPort');
             this.$inputUser = this.$('#inputUser');
             this.$inputPwd = this.$('#inputPwd');
+            this.$inputJavaHome = this.$('#inputJavaHome');
         },
 
         onSubmitForm:function(e) {
@@ -28,8 +29,9 @@ define(["text!templates/configuration.html","i18n!localization/nls/global","stor
             var inputPort = this.$inputPort.val();
             var inputUser = this.$inputUser.val();
             var inputPwd = this.$inputPwd.val();
+            var inputJavaHome = this.$inputJavaHome.val();
 
-            Storage.setGlobalConf({host:inputHost,port:inputPort,user:inputUser,password:inputPwd});
+            Storage.setGlobalConf({host:inputHost,port:inputPort,user:inputUser,password:inputPwd, javaHome:inputJavaHome});
             this.closeModal();
 
             APP_GLOBAL.SIGNALS.trigger("configuration:changed");

@@ -8,7 +8,8 @@ define(["text!templates/menu.html","i18n!localization/nls/global","dplm","storag
             "click .add-path":"addPath",
             "click .workspace-item":"toggleActives",
             "click .path-item":"toggleActives",
-            "click i.remove-path":"removePath"
+            "click i.remove-path":"removePath",
+            "click .edit-conf":"editConf"
         },
 
         initialize:function(){
@@ -54,6 +55,14 @@ define(["text!templates/menu.html","i18n!localization/nls/global","dplm","storag
         toggleActives:function(e){
             this.$(".active").removeClass("active");
             $(e.target).addClass("active");
+        },
+
+        editConf:function(){
+            require(["views/configuration"],function(ConfigView){
+                var configView = new ConfigView();
+                $("body").append(configView.render().el);
+                configView.openModal();
+            });
         }
 
 

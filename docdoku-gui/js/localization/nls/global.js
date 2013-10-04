@@ -6,6 +6,7 @@ define({
         PORT:"Port",
         USER:"User",
         PASSWORD:"Password",
+        JAVA_HOME:"Java Home",
         WORKSPACE:"Workspace",
         WORKING_DIR:"Working Dir",
         OK:"OK",
