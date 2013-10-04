@@ -6,23 +6,14 @@
 # Author : Morgan Guimard
 # Date : Wed Oct 2 2013
 #
-# Args : 
-# $1 : source directory
-# $2 : version (TODO : use date if no version specified)
+# Args :
+# $1 : version (TODO : use date if no version specified)
 #
 
-# Check sources
-if [ -d "$1" ] ; then
-	echo "Source directory is $1";
-	echo "Let's build dplm releases"
-else
-	echo "No such directory for $1"
-	exit 1;
-fi
-
 # Vars init
+VERSION=$1;
 RELEASER_DIR=$(dirname "$0");
-SOURCE="$1/*";
+SOURCE="$RELEASER_DIR/../docdoku-gui/*";
 TMP_DIR="$RELEASER_DIR/tmp";
 
 NW_LINUX_32="$RELEASER_DIR/nw-releases/node-webkit-v0.7.5-linux-ia32/nw";
@@ -72,10 +63,10 @@ cp "$NW_LINUX_32.pak" $TMP_DIR;
 
 # zipping dplm + pak file
 cd $TMP_DIR;
-zip dplm-linux-32-$2.zip *;
+zip dplm-linux-32-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
-mv dplm-linux-32-$2.zip $OUT_DIR_LINUX_32;
+mv dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -97,10 +88,10 @@ cp "$NW_LINUX_64.pak" $TMP_DIR;
 
 # zipping dplm + pak file
 cd $TMP_DIR;
-zip dplm-linux-64-$2.zip *;
+zip dplm-linux-64-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
-mv dplm-linux-64-$2.zip $OUT_DIR_LINUX_64;
+mv dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -122,10 +113,10 @@ cp "$NW_WIN_32/"*.dll $TMP_DIR;
 cp "$NW_WIN_32/nw.pak" $TMP_DIR;
 # zipping dplm + DLLs
 cd $TMP_DIR;
-zip dplm-win32-$2.zip *;
+zip dplm-win32-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
-mv dplm-win32-$2.zip $OUT_DIR_WIN32;
+mv dplm-win32-$VERSION.zip $OUT_DIR_WIN32;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -138,30 +129,30 @@ rm -rf $TMP_DIR/*;
 cd $RELEASER_DIR;
 echo "Building OSX app ...";
 
-if [ -d "$OUT_DIR_OSX/dplm-$2.app/" ] ; then
+if [ -d "$OUT_DIR_OSX/dplm-$VERSION.app/" ] ; then
 	echo "Removing old .app"
-	rm -rf "$OUT_DIR_OSX/dplm-$2.app/";
+	rm -rf "$OUT_DIR_OSX/dplm-$VERSION.app/";
 fi
 # copy nutshell
 echo "Copying nutshell ...";
 cp -R $NW_OSX $OUT_DIR_OSX;
 # rename
-mv "$OUT_DIR_OSX/node-webkit.app/" "$OUT_DIR_OSX/dplm-$2.app/";
+mv "$OUT_DIR_OSX/node-webkit.app/" "$OUT_DIR_OSX/dplm-$VERSION.app/";
 #copy the source in Contents/Resources
-mkdir "$OUT_DIR_OSX/dplm-$2.app/Contents/Resources/app.nw"
+mkdir "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/Resources/app.nw"
 echo "Copying source files ...";
-cp -R $SOURCE "$OUT_DIR_OSX/dplm-$2.app/Contents/Resources/app.nw";
+cp -R $SOURCE "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/Resources/app.nw";
 echo "Copying plist and icon ...";
 #Replace Plist
-#cp Info.plist "$OUT_DIR_OSX/dplm-$2.app/Contents/";
+#cp Info.plist "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/";
 #Replace Icon
-cp nw.icns "$OUT_DIR_OSX/dplm-$2.app/Contents/Resources/";
+cp nw.icns "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/Resources/";
 # chmod it
-chmod -R 0775 "$OUT_DIR_OSX/dplm-$2.app/";
+chmod -R 0775 "$OUT_DIR_OSX/dplm-$VERSION.app/";
 # zip the .app
 cd $OUT_DIR_OSX;
-zip -r dplm-$2.zip dplm-$2.app;
-rm -rf dplm-$2.app;
+zip -r dplm-$VERSION.zip dplm-$VERSION.app;
+rm -rf dplm-$VERSION.app;
 echo "... done";
 
 
