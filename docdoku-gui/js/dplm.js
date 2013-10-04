@@ -1,11 +1,15 @@
 define(function(){
 
     var javaModule = "java";
-    console.log(os.type());
+
+    /*
+    * Won't work on osx since node-webkit doesn't support 64bit arch, cannot build java module with nw-gyp
+    * */
+
     switch (os.type()){
         case "Linux" : javaModule = "java-unix"; break;
         case "Windows_NT" : javaModule = "java-win"; break;
-        case "Darwin" : javaModule = "java-osx"; break;
+        //case "Darwin" : javaModule = "java-osx"; break;
         default : break;
     }
 
