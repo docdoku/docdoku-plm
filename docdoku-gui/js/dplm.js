@@ -1,48 +1,70 @@
 define(function(){
 
-    var javaModule = "java";
+    var escapeShell = function(cmd) {
+        return '"'+cmd+'"';
+    };
 
-    /*
-    * Won't work on osx since node-webkit doesn't support 64bit arch, cannot build java module with nw-gyp
-    * */
+    var WindowsCMD = {
+        base:function(){
+            return '"%JAVA_HOME%\\bin\\java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
+        }
+    };
 
-    switch (os.type()){
-        case "Linux" : javaModule = "java-unix"; break;
-        case "Windows_NT" : javaModule = "java-win"; break;
-        //case "Darwin" : javaModule = "java-osx"; break;
-        default : break;
+    var LinuxCMD = {
+        base:function(){
+            return '"$JAVA_HOME/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
+        }
+    };
+
+    var OsxCMD = {
+        base:function(){
+            return '"$JAVA_HOME/bin/java" -Xmx1024M -cp "' + classPath + '" com.docdoku.cli.NodeCommand ';
+        }
+    };
+
+    var toCommand = function(args){
+        var command = "";
+        _(args).each(function(arg){
+            command += escapeShell(arg) + " ";
+        });
+        return command;
+    };
+
+    var Dplm = {};
+
+    switch(os.type()){
+        case "Windows_NT" : _.extend(Dplm,WindowsCMD); break;
+        case "Linux" : _.extend(Dplm,LinuxCMD); break;
+        case "Darwin" : _.extend(Dplm,OsxCMD); break;
+        default :_.extend(Dplm,LinuxCMD); break;
     }
 
-    var java = requireNode(javaModule);
-    java.classpath.push(classPath);
 
-    var Dplm = {
+    _.extend(Dplm,{
 
         run:function(args,callbacks){
-            java.callStaticMethod("com.docdoku.cli.MainCommand", "nodeMain", args, function (err, jsonData) {
-                if (err) {
-                    callbacks.error(err);
+            var command = toCommand(args);
+            console.log("NEW CALL")
+            console.log(command);
+            exec(Dplm.base() + command,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
+                var results = stdout ? JSON.parse(stdout) : {};
+                if (error || stderr) {
+                    callbacks.error();
                 } else {
-                    var results = jsonData ? JSON.parse(jsonData) : {};
-                    if(results.error){
-                        callbacks.error(results);
-                    }else{
-                        callbacks.success(results);
-                    }
+                    callbacks.success(results);
                 }
             });
         },
 
         getWorkspaces: function (callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "wl",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
                 "-u", APP_GLOBAL.GLOBAL_CONF.user,
                 "-p", APP_GLOBAL.GLOBAL_CONF.password
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
 
@@ -50,24 +72,21 @@ define(function(){
 
         getStatusForFile: function (file, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "st",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
                 "-u", APP_GLOBAL.GLOBAL_CONF.user,
                 "-p", APP_GLOBAL.GLOBAL_CONF.password,
                 file
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
-
         },
 
         getStatusForPart: function (part, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "st",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -76,7 +95,7 @@ define(function(){
                 "-w", part.getWorkspace(),
                 "-o", part.getNumber(),
                 "-r", part.getVersion()
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
 
@@ -84,8 +103,7 @@ define(function(){
 
         checkout: function (part, options, callbacks) {
 
-            var _args = [
-                process.cwd(),
+            var args = [
                 "co",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -97,17 +115,15 @@ define(function(){
             ];
 
             if (options.recursive) {
-                _args.push("-R");
+                args.push("-R");
             }
             if (options.force) {
-                _args.push("f");
+                args.push("f");
             }
             if (options.baseline) {
-                _args.push("-b");
-                _args.push(options.baseline);
+                args.push("-b");
+                args.push(options.baseline);
             }
-
-            var args = java.newArray("java.lang.String", _args);
 
             Dplm.run(args,callbacks);
 
@@ -115,8 +131,7 @@ define(function(){
 
         checkin: function (part, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "ci",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -125,7 +140,7 @@ define(function(){
                 "-w", part.getWorkspace(),
                 "-o", part.getNumber(),
                 "-r", part.getVersion()
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
 
@@ -133,8 +148,7 @@ define(function(){
 
         undoCheckout: function (part, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "uco",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -143,16 +157,14 @@ define(function(){
                 "-w", part.getWorkspace(),
                 "-o", part.getNumber(),
                 "-r", part.getVersion()
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
-
         },
 
         download: function (part, options, callbacks) {
 
-            var _args = [
-                process.cwd(),
+            var args = [
                 "get",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -164,17 +176,15 @@ define(function(){
             ];
 
             if (options.recursive) {
-                _args.push("-R");
+                args.push("-R");
             }
             if (options.force) {
-                _args.push("f");
+                args.push("f");
             }
             if (options.baseline) {
-                _args.push("-b");
-                _args.push(options.baseline);
+                args.push("-b");
+                args.push(options.baseline);
             }
-
-            var args = java.newArray("java.lang.String", _args);
 
             Dplm.run(args,callbacks);
 
@@ -182,8 +192,7 @@ define(function(){
 
         createPart: function (part, filePath, callbacks) {
 
-            var _args = [
-                process.cwd(),
+            var args = [
                 "cr",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -194,17 +203,15 @@ define(function(){
             ];
 
             if (part.getName()) {
-                _args.push("-N");
-                _args.push(part.getName());
+                args.push("-N");
+                args.push(part.getName());
             }
             if (part.getDescription()) {
-                _args.push("-d");
-                _args.push(part.getDescription());
+                args.push("-d");
+                args.push(part.getDescription());
             }
 
-            _args.push(filePath);
-
-            var args = java.newArray("java.lang.String", _args);
+            args.push(filePath);
 
             Dplm.run(args,callbacks);
 
@@ -212,8 +219,7 @@ define(function(){
 
         getPartMastersCount: function (workspace, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "pl",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -221,7 +227,7 @@ define(function(){
                 "-p", APP_GLOBAL.GLOBAL_CONF.password,
                 "-w", workspace,
                 "-c"
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
 
@@ -229,8 +235,7 @@ define(function(){
 
         getPartMasters: function (workspace, start, max, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "pl",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -239,7 +244,7 @@ define(function(){
                 "-s", Number(start).toString(),
                 "-m", Number(max).toString(),
                 "-w", workspace
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
 
@@ -247,8 +252,7 @@ define(function(){
 
         searchPartMasters: function (workspace, search, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "s",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -256,15 +260,14 @@ define(function(){
                 "-p", APP_GLOBAL.GLOBAL_CONF.password,
                 "-w", workspace,
                 "-s", search
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
         },
 
         getBaselines: function (part, callbacks) {
 
-            var args = java.newArray("java.lang.String", [
-                process.cwd(),
+            var args = [
                 "bl",
                 "-h", APP_GLOBAL.GLOBAL_CONF.host,
                 "-P", APP_GLOBAL.GLOBAL_CONF.port,
@@ -273,12 +276,12 @@ define(function(){
                 "-w", part.getWorkspace(),
                 "-o", part.getNumber(),
                 "-r", part.getVersion()
-            ]);
+            ];
 
             Dplm.run(args,callbacks);
 
         }
-    };
+    });
 
     return Dplm;
 });

@@ -9,6 +9,7 @@ var path = require('path');
 var fs = require('fs');
 var wrench = require('wrench');
 var moment = require('moment');
+var exec = require('child_process').exec;
 var spawnDir = process.cwd();
 var classPath = spawnDir + '/dplm/docdoku-cli-jar-with-dependencies.jar';
 
