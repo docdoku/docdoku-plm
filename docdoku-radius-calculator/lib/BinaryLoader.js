@@ -45,7 +45,7 @@ THREE.BinaryLoader.prototype.loadAjaxJSON = function ( context, url, callback, t
 		        context.loadAjaxBuffers( json, callback, binaryPath, texturePath, callbackProgress );
 		}catch(ex){
 			console.log("Error on parsing json, is file corrupted ?");
-			process.exit(1);
+            callback(0);
 		}	        
 	});
 
@@ -61,8 +61,8 @@ THREE.BinaryLoader.prototype.loadAjaxBuffers = function ( json, callback, binary
 	        	THREE.BinaryLoader.prototype.createBinModel( buffer, callback, texturePath, json.materials );
 		}catch(ex){
 			console.log("Error on parsing json binary, is file corrupted ?");
-			process.exit(1);
-		}		
+            callback(0);
+        }
 	});
 
 };

@@ -4107,7 +4107,7 @@ ColladaLoader2.prototype.load = function (e, t, n) {
        		o.parse(xml, t, e);
 	}catch(ex){
 		console.log("Error on parsing collada, is file corrupted ?");
-		process.exit(1);
+        callback(0);
 	}
     });
 

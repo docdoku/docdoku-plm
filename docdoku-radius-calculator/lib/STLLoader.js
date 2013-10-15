@@ -46,7 +46,7 @@ THREE.STLLoader.prototype.load = function (url, callback) {
                 	if ( callback ) callback( geometry );
 		}catch(ex){
 			console.log("Error on parsing stl, is file corrupted ?");
-			process.exit(1);
+            callback(0);
 		}
 	});
 };

@@ -4,20 +4,37 @@ define(function() {
     var PartIterationVisualization = function(partIterationParams) {
         this.id = partIterationParams.partIterationId;
         this.files=partIterationParams.files;
+        this.attributes=partIterationParams.attributes;
         this.instances=[];
         this.radius=null;
         this.levelGeometries=[];
-        this.setRadiusFromServer(partIterationParams.attributes);
+        this.findRadius();
         this.parseFiles();
     };
 
     PartIterationVisualization.prototype = {
 
-        setRadiusFromServer:function(attributes){
+        findRadius:function(){
+            // check in files if radius available (new way)
+            this.radius = this.findRadiusInFiles(this.files);
+            // check in attributes if not found (old way)
+            if(!this.radius){
+                this.radius = this.findRadiusInAttributes(this.attributes);
+            }
+        },
+
+        findRadiusInFiles:function(files){
+            if(files.length){
+               return files[0].radius;
+            }
+            return 0;
+        },
+
+        findRadiusInAttributes:function(attributes){
             var radiusAttribute = _.find(attributes, function(attribute) {
                 return attribute.name == 'radius';
             });
-            this.radius = radiusAttribute ? radiusAttribute.value : 0;
+            return radiusAttribute.value || 0;
         },
 
         hasGeometry: function() {

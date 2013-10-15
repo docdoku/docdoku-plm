@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -96,7 +97,11 @@ public class CatiaFileConverterImpl implements CADConverter{
             if (exitCode==0) {
                 if(tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
                     PartIterationKey partIPK = partToConvert.getKey();
-                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length());
+
+                    // Calculate radius
+                    double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
+
+                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length(),radius);
                     OutputStream daeOutputStream = null;
                     try {
                         daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);

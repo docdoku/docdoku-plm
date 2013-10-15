@@ -309,7 +309,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     
     /**
      * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>

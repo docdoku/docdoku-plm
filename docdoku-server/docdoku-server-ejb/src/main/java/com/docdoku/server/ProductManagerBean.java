@@ -484,7 +484,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
+    public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
@@ -504,13 +504,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
             if (geometryBinaryResource == null) {
-                geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date());
+                geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date(), radius);
                 new BinaryResourceDAO(em).createBinaryResource(geometryBinaryResource);
                 partI.addGeometry(geometryBinaryResource);
             } else {
                 geometryBinaryResource.setContentLength(pSize);
                 geometryBinaryResource.setQuality(quality);
                 geometryBinaryResource.setLastModified(new Date());
+                geometryBinaryResource.setRadius(radius);
             }
             return geometryBinaryResource;
         } else {
