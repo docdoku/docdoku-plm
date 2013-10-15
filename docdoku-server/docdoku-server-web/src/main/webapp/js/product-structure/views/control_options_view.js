@@ -14,7 +14,8 @@ define(
 
         events:{
             "click button#gridSwitch": "gridSwitch",
-            "click button#materialsSwitch": "materialsSwitch"
+            "click button#materialsSwitch": "materialsSwitch",
+            "click button#screenshot": "takeScreenShot"
         },
 
         initialize:function(){
@@ -37,6 +38,10 @@ define(
             } else {
                 sceneManager.switchWireFrame(false);
             }
+        },
+
+        takeScreenShot:function(){
+            sceneManager.takeScreenShot();
         },
 
         render:function(){

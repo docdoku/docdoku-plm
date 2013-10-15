@@ -76,7 +76,7 @@ define([
         },
 
         initRenderer: function () {
-            this.renderer = new THREE.WebGLRenderer();
+            this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer:true});
             this.renderer.setSize(this.$container.width(), this.$container.height());
             this.$container.append(this.renderer.domElement);
         },
@@ -567,6 +567,16 @@ define([
             if(this.measureState){
                 mesh.material.opacity = this.measureState ? 0.5 : 1;
             }
+        },
+
+        takeScreenShot:function(){
+            var now = new Date();
+            var filename = APP_CONFIG.productId +"-"+now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
+            var pom = document.createElement('a');
+            //pom.setAttribute('href', this.renderer.domElement.toDataURL('image/png'));
+            pom.setAttribute('href', this.renderer.domElement.toDataURL('image/png'));
+            pom.setAttribute('download', filename);
+            pom.click();
         },
 
         /*

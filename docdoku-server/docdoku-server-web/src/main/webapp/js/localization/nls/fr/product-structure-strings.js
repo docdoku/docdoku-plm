@@ -78,6 +78,7 @@ define({
     BOM_VIEW:"Liste des matériaux",
     OPTIONS:"Options",
     MATERIALS_SWITCH:"Afficher/Masquer les matériaux",
+    TAKE_SCREENSHOT:"Capture d'écran",
     GRID_SWITCH:"Afficher/Masquer la grille",
     LIFECYCLE_STATE:"Etat du cycle de vie",
     "REFERENCE":"Référence",
