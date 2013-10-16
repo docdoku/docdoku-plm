@@ -20,7 +20,6 @@
 
 package com.docdoku.cli.commands;
 
-
 import com.docdoku.core.common.Version;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -28,6 +27,10 @@ import org.kohsuke.args4j.OptionDef;
 import org.kohsuke.args4j.spi.OneArgumentOptionHandler;
 import org.kohsuke.args4j.spi.Setter;
 
+/**
+ *
+ * @author Florent Garin
+ */
 public class VersionOptionHandler extends OneArgumentOptionHandler<Version> {
 
     public VersionOptionHandler(CmdLineParser parser, OptionDef option, Setter<? super Version> setter) {

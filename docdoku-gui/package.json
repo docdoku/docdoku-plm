@@ -1,0 +1,17 @@
+{
+  "name": "DPLM",
+  "main": "index.html",
+  "locale":"fr_FR",
+  "dependencies": {
+    "requirejs": ">=1.0.0"
+  },
+  "window": {
+    "toolbar": false,
+    "position": "center",
+    "width": 820,
+    "height": 500,
+    "min_width": 820,
+    "min_height": 500,
+    "resizable": true
+  }
+}

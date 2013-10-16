@@ -1,4 +1,5 @@
 var sceneManager;
+var instancesManager;
 
 define(
     [
@@ -13,12 +14,35 @@ define(
         "views/control_markers_view",
         "views/control_layers_view",
         "views/control_options_view",
+        "views/control_explode_view",
+        //"views/control_cutplan_view",
+        "views/control_measure_view",
         "views/baseline_select_view",
-        "SceneManager",
+        "dmu/SceneManager",
+        "dmu/InstancesManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
         "models/part"
-    ], function (Router, NavBarView, SearchView, PartsTreeView, BomView, PartMetadataView, ExportSceneModalView, ControlModesView, ControlMarkersView, ControlLayersView, ControlOptionsView, BaselineSelectView, SceneManager, template, i18n, Part) {
+    ], function (Router,
+                 NavBarView,
+                 SearchView,
+                 PartsTreeView,
+                 BomView,
+                 PartMetadataView,
+                 ExportSceneModalView,
+                 ControlModesView,
+                 ControlMarkersView,
+                 ControlLayersView,
+                 ControlOptionsView,
+                 ControlExplodeView,
+                 //ControlCutPlanView,
+                 ControlMeasureView,
+                 BaselineSelectView,
+                 SceneManager,
+                 InstancesManager,
+                 template,
+                 i18n,
+                 Part) {
 
     var AppView = Backbone.View.extend({
 
@@ -58,14 +82,20 @@ define(
 
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
-            this.$ControlsContainer.append(new ControlModesView().render().$el);
-            this.$ControlsContainer.append(new ControlMarkersView().render().$el);
-            this.$ControlsContainer.append(new ControlOptionsView().render().$el);
-            this.$ControlsContainer.append(new ControlLayersView().render().$el);
-
             try{
+                instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
+                instancesManager.init();
                 sceneManager.init();
+
+                this.$ControlsContainer.append(new ControlModesView().render().$el);
+                this.$ControlsContainer.append(new ControlOptionsView().render().$el);
+                this.$ControlsContainer.append(new ControlExplodeView().render().$el);
+                //this.$ControlsContainer.append(new ControlCutPlanView().render().$el);
+                this.$ControlsContainer.append(new ControlMeasureView().render().$el);
+                this.$ControlsContainer.append(new ControlMarkersView().render().$el);
+                this.$ControlsContainer.append(new ControlLayersView().render().$el);
+
             }catch(ex){
                 this.onNoWebGLSupport();
             }
@@ -81,10 +111,12 @@ define(
                 autoHide: true,
                 stop: function(e, ui) {
                     var parent = ui.element.parent();
+                    var percent = ui.element.width()/parent.width()*100;
                     ui.element.css({
-                        width: ui.element.width()/parent.width()*100+"%",
+                        width: percent+"%",
                         height: "100%"
                     });
+                    ui.element.toggleClass("alpha",Math.floor(percent)>15);
                 }
             });
         },
@@ -93,7 +125,7 @@ define(
             this.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
             this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
-            Backbone.Events.on("instance:selected", this.onInstanceSelected, this);
+            Backbone.Events.on("mesh:selected", this.onMeshSelected, this);
             Backbone.Events.on("selection:reset", this.onResetSelection, this);
         },
 
@@ -130,11 +162,6 @@ define(
                 this.exportSceneButton.show();
             }
 
-            if(sceneManager.isLoaded){
-                sceneManager.resume();
-                sceneManager.showStats();
-            }
-
         },
 
         bomMode: function() {
@@ -147,11 +174,6 @@ define(
             this.fullScreenSceneButton.hide();
             this.bomContainer.show();
             this.updateBom();
-
-            if(sceneManager.isLoaded){
-                sceneManager.pause();
-                sceneManager.hideStats();
-            }
         },
 
         isInBomMode: function() {
@@ -165,7 +187,7 @@ define(
                 this.exportSceneButton.show();
             }
             this.showPartMetadata();
-            sceneManager.setPathForIframe(this.partsTreeView.componentSelected.getPath());
+            sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
         },
 
         exportScene:function(){
@@ -217,7 +239,7 @@ define(
         },
 
         onNoWebGLSupport:function(){
-            this.centerSceneContainer.html("<span class='alert'>"+i18n.NO_WEBGL+"</span>");
+            this.centerSceneContainer.html("<span class='alert no-webgl'>"+i18n.NO_WEBGL+"</span>");
         },
 
         onConfigSpecChange:function(configSpec){
@@ -226,8 +248,8 @@ define(
             sceneManager.clear();
         },
 
-        onInstanceSelected:function(instance){
-            var partKey = instance.partIterationId.substr(0, instance.partIterationId.lastIndexOf("-"));
+        onMeshSelected:function(mesh){
+            var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf("-"));
             var part = new Part({partKey:partKey});
             var self = this;
             part.fetch({success:function() {

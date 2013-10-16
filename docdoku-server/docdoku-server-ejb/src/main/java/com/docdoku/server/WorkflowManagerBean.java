@@ -130,7 +130,6 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         Role role = new Role(roleName,wks);
 
         if(userLogin != null){
-            System.out.println("#### userLogin not null ! "+userLogin + "  " + workspaceId);
             User userMapped = new UserDAO(new Locale(user.getLanguage()),em).loadUser(new UserKey(workspaceId,userLogin));
             role.setDefaultUserMapped(userMapped);
         }

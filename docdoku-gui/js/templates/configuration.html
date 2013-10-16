@@ -1,0 +1,51 @@
+<div id="configuration-modal" class="modal modal hide fade">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+        <h3>{{i18n.CONFIGURATION}}</h3>
+    </div>
+    <div class="modal-body">
+        <form id="form-configuration" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label">{{i18n.HOST}}</label>
+                <div class="controls">
+                    <input type="text" id="inputHost" value="{{configuration.host}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.PORT}}</label>
+                <div class="controls">
+                    <input type="text" id="inputPort" value="{{configuration.port}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.USER}}</label>
+                <div class="controls">
+                    <input type="text" id="inputUser" value="{{configuration.user}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.PASSWORD}}</label>
+                <div class="controls">
+                    <input type="password" id="inputPwd" value="{{configuration.password}}" required/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.JAVA_HOME}}</label>
+                <div class="controls">
+                    <input type="text" id="inputJavaHome" value="{{configuration.javaHome}}" required/>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button id="save-part" class="btn btn-primary" form="form-configuration">{{i18n.OK}}</button>
+        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+    </div>
+</div>

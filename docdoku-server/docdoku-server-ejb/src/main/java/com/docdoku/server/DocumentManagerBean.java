@@ -21,6 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
+import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACL;
@@ -68,6 +69,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @EJB
     private IMailerLocal mailer;
+
+    @EJB
+    private IGCMSenderLocal gcmNotifier;
 
     @EJB
     private IndexerBean indexer;
@@ -197,7 +201,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({"users"})
     @Override
     public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        return userManager.checkWorkspaceReadAccess(pWorkspaceId);
+         return userManager.checkWorkspaceReadAccess(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -367,6 +371,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @RolesAllowed("users")
     @Override
     public void removeACLFromDocumentMaster(DocumentMasterKey documentMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentMasterNotFoundException, AccessRightException {
 
@@ -387,6 +392,33 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @Override
+    public DocumentMaster[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).getDocumentsMasterFiltered(user, workspaceId, start, pMaxResults);
+        ListIterator<DocumentMaster> ite = docMs.listIterator();
+
+        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
+
+        while (ite.hasNext()) {
+            DocumentMaster docM = ite.next();
+
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+                docM = docM.clone();
+                docM.removeLastIteration();
+                ite.set(docM);
+            }
+
+        }
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
+    }
+
+    @Override
+    public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        return new DocumentMasterDAO(new Locale(user.getLanguage()), em).getDocumentsMasterCountFiltered(user, workspaceId);
+    }
 
     @RolesAllowed("users")
     @Override
@@ -410,7 +442,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return new SubscriptionDAO(em).getIterationChangeEventSubscriptions(user);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users"})
     @Override
     public DocumentMasterKey[] getStateChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -432,6 +464,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return  new SubscriptionDAO(em).isUserIterationChangeEventSubscribedForGivenDocument(user, docM);
     }
 
+    @RolesAllowed("users")
     @Override
     public DocumentMaster[] getDocumentMastersWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -439,6 +472,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docMs.toArray(new DocumentMaster[docMs.size()]);
     }
 
+    @RolesAllowed("users")
+    @Override
+    public DocumentMaster[] getDocumentMastersWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        List<DocumentMaster> docMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).findDocWithOpenedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
+        return docMs.toArray(new DocumentMaster[docMs.size()]);
+    }
+
+    @RolesAllowed("users")
     @Override
     public DocumentMaster[] getDocumentMastersWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -580,6 +622,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         new TagDAO(userLocale, em).removeTag(pKey);
     }
 
+    @RolesAllowed("users")
     @Override
     public void createTag(String pWorkspaceId, String pLabel) throws WorkspaceNotFoundException, AccessRightException, CreationException, TagAlreadyExistsException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
@@ -816,10 +859,20 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         task.approve(pComment, docM.getLastIteration().getIteration(), pSignature);
         int currentStep = workflow.getCurrentStep();
 
-        User[] subscribers = new SubscriptionDAO(em).getStateChangeEventSubscribers(docM);
+        if (previousStep != currentStep){
 
-        if (previousStep != currentStep && subscribers.length != 0) {
-            mailer.sendStateNotification(subscribers, docM);
+            SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
+
+            User[] subscribers = subscriptionDAO.getStateChangeEventSubscribers(docM);
+            if (subscribers.length != 0) {
+                mailer.sendStateNotification(subscribers, docM);
+            }
+
+            GCMAccount[] gcmAccounts = subscriptionDAO.getStateChangeEventSubscribersGCMAccount(docM);
+            if (gcmAccounts.length != 0) {
+                gcmNotifier.sendStateNotification(gcmAccounts, docM);
+            }
+
         }
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
@@ -1048,13 +1101,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMaster docM = docMDAO.loadDocM(pDocMPK);
 
         if (docM.isCheckedOut() && docM.getCheckOutUser().equals(user)) {
-            User[] subscribers = new SubscriptionDAO(em).getIterationChangeEventSubscribers(docM);
+            SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
+            User[] subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docM);
+            GCMAccount[] gcmAccounts = subscriptionDAO.getIterationChangeEventSubscribersGCMAccount(docM);
 
             docM.setCheckOutDate(null);
             docM.setCheckOutUser(null);
 
             if (subscribers.length != 0) {
                 mailer.sendIterationNotification(subscribers, docM);
+            }
+
+            if (gcmAccounts.length != 0) {
+                gcmNotifier.sendIterationNotification(gcmAccounts, docM);
             }
 
             for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {

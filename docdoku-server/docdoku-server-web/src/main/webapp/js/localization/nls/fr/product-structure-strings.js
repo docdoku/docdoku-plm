@@ -17,6 +17,7 @@ define({
     CHECKIN: "Libérer",
     CHECKOUT: "Réserver",
     DELETE_MARKER: "Supprimer le marqueur",
+    NEW_MARKER: "Créer un marqueur",
     NAME : "Nom",
     EMBED_SCENE : "Exporter la scène",
     CONTROLS_SHORTCUTS : "Raccourcis clavier/souris",
@@ -64,6 +65,7 @@ define({
     SEARCH_PART_ENDING:"Article finissant par",
     FLYING_MODE:"Mode libre",
     TRACKBALL_MODE:"Mode trackball",
+    FIT_VIEW:"Centrer les objets visibles",
     MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
     MARKERS_OPACITY:"Changer l'opacité des marqueurs",
     MARKERS_SIZE_MAX:"Augmenter la taille des marqueurs",
@@ -76,9 +78,15 @@ define({
     BOM_VIEW:"Liste des matériaux",
     OPTIONS:"Options",
     MATERIALS_SWITCH:"Afficher/Masquer les matériaux",
+    TAKE_SCREENSHOT:"Capture d'écran",
     GRID_SWITCH:"Afficher/Masquer la grille",
     LIFECYCLE_STATE:"Etat du cycle de vie",
     "REFERENCE":"Référence",
     "REVISION_NOTE":"Note de révision",
-    "MODIFICATION_DATE":"Date de modification"
+    "MODIFICATION_DATE":"Date de modification",
+    EXPLODE:"Eclater",
+    CUTPLAN:"Plan de coupe",
+    ABSOLUTE:"Absolue",
+    RELATIVE:"Relative",
+    MEASURE:"Mesure"
 });

@@ -10,7 +10,7 @@ define([
             if (this.parent) {
                 return  baseUrl + "/folders" + "/" + this.parent.id + "/documents";
             } else {
-                return baseUrl + "/documents";
+                return  baseUrl + "/folders" + "/" + APP_CONFIG.workspaceId + "/documents";
             }
         },
 

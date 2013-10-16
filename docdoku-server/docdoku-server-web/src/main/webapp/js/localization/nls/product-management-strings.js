@@ -6,7 +6,7 @@ define({
         NEW_PRODUCT:"New product",
         NEW_PART:"New part",
         PRODUCT_ID:"Product Id",
-        DESIGN_ITEM:"Design item",
+        ROOT_PART:"Root part",
         PRODUCT_STRUCTURE:"Product structure",
         PART_NUMBER:"Part number",
         VERSION:"Version",

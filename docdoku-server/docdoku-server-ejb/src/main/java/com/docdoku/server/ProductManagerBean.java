@@ -484,7 +484,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
+    public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
@@ -504,13 +504,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
             if (geometryBinaryResource == null) {
-                geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date());
+                geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date(), radius);
                 new BinaryResourceDAO(em).createBinaryResource(geometryBinaryResource);
                 partI.addGeometry(geometryBinaryResource);
             } else {
                 geometryBinaryResource.setContentLength(pSize);
                 geometryBinaryResource.setQuality(quality);
                 geometryBinaryResource.setLastModified(new Date());
+                geometryBinaryResource.setRadius(radius);
             }
             return geometryBinaryResource;
         } else {
@@ -878,6 +879,30 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @Override
+    public PartMaster findPartMasterByCADFileName(String workspaceId, String cadFileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        BinaryResource br  = new BinaryResourceDAO(em).findNativeCadBinaryResourceInWorkspace(workspaceId,cadFileName);
+        if(br == null){
+            return null;
+        }
+        String partNumber = br.getOwnerId();
+        PartMasterKey partMasterKey = new PartMasterKey(workspaceId,partNumber);
+        try {
+            return new PartMasterDAO(em).loadPartM(partMasterKey);
+        } catch (PartMasterNotFoundException e) {
+            return null;
+        }
+
+    }
+    @RolesAllowed("users")
+    @Override
+    public List<Baseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
+        PartRevision partRevision = new PartRevisionDAO(new Locale(user.getLanguage()),em).loadPartR(partRevisionKey);
+        List<Baseline> baselines = new BaselineDAO(em).findBaselineWherePartRevisionHasIterations(partRevision);
+        return baselines;
+    }
 
     @RolesAllowed("users")
     @Override
@@ -1330,6 +1355,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         BaselineDAO baselineDAO = new BaselineDAO(em);
         Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
+        return baseline;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public Baseline getBaselineById(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.findBaselineById(baselineId);
+        Workspace workspace = baseline.getConfigurationItem().getWorkspace();
+        User user = userManager.checkWorkspaceReadAccess(workspace.getId());
         return baseline;
     }
 

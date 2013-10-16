@@ -260,6 +260,11 @@ public class DocumentMasterDAO {
                 setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
     }
 
+    public List<DocumentMaster> findDocWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
+        return em.createNamedQuery("findDocumentMastersWithOpenedTasksForGivenUser").
+                setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
+    }
+
     public List<DocumentMaster> findDocMsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
         return em.createNamedQuery("findDocumentMastersWithReference").
                 setParameter("workspaceId", pWorkspaceId).setParameter("id", "%" + reference + "%").setMaxResults(maxResults).getResultList();
@@ -303,5 +308,29 @@ public class DocumentMasterDAO {
         }catch(NoResultException ex){
             return null;
         }
+    }
+
+    public List<DocumentMaster> getDocumentsMasterFiltered(User user, String workspaceId, int start, int pMaxResults) {
+
+        String excludedFolders = workspaceId + "/~%";
+
+        return em.createNamedQuery("DocumentMaster.findByWorkspace.filterUserACLEntry", DocumentMaster.class)
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("user", user)
+                .setParameter("excludedFolders", excludedFolders)
+                .setFirstResult(start)
+                .setMaxResults(pMaxResults)
+                .getResultList();
+    }
+
+    public int getDocumentsMasterCountFiltered(User user, String workspaceId) {
+
+        String excludedFolders = workspaceId + "/~%";
+
+        return ((Number) em.createNamedQuery("DocumentMaster.countByWorkspace.filterUserACLEntry")
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("user", user)
+                .setParameter("excludedFolders", excludedFolders)
+                .getSingleResult()).intValue();
     }
 }

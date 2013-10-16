@@ -4,12 +4,16 @@ define([
 	Document
 ) {
 	var CheckedoutDocumentList = Backbone.Collection.extend({
-		model: Document
+
+        model: Document,
+
+        className : "CheckedoutDocumentList",
+
+        url : function(){
+            return  "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents/checkedout";
+        }
+
 	});
-	CheckedoutDocumentList.prototype.__defineGetter__("url", function () {
-		var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
-		return  baseUrl + "/checkedout";
-	});
-    CheckedoutDocumentList.className="CheckedoutDocumentList";
+
 	return CheckedoutDocumentList;
 });

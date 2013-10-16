@@ -20,10 +20,11 @@
 
 package com.docdoku.cli.commands;
 
-
+/**
+ *
+ * @author Florent Garin
+ */
 public interface CommandLine {
-
-    void exec() throws Exception;
+    Object exec() throws Exception;
     String getDescription();
-
 }

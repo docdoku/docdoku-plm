@@ -46,15 +46,12 @@ public class Range {
         String range = pRange.substring(6);
         String[] ranges = range.split("-");
         if (range.matches("[0-9]+-[0-9]+")) {
-            System.out.println("match all");
             this.min = Math.abs(Long.parseLong(ranges[0]));
             this.max = Math.abs(Long.parseLong(ranges[1]));
         } else if (range.matches("[0-9]+-")) {
-            System.out.println("match min");
             this.min = Math.abs(Long.parseLong(ranges[0]));
             this.max = -1;
         } else if (range.matches("-[0-9]+")) {
-            System.out.println("match max");
             this.min = -1;
             this.max = Math.abs(Long.parseLong(ranges[1]));
         }

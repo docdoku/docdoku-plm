@@ -1,0 +1,25 @@
+<div class="home">
+    <p class="greetings"><i class="icon-user"></i> Welcome {{user}} <i class="icon-cogs"></i></p>
+    <hr />
+    <h4>Recently used : </h4>
+    <div class="recently-used">
+        {{#each recentlyUsedPaths}}
+            <a class="item" href="#path/{{this}}">
+                <i class="icon-folder-close-alt" value="{{this}}"></i>
+                <br />
+                <span>{{folderName this}}</span>
+            </a>
+        {{/each}}
+        <a class="btn add-path">Add a New Path <i class="icon-plus"></i></a>
+        <hr />
+        {{#each recentlyUsedWorkspaces}}
+            <a class="item" href="#workspace/{{this}}">
+                <i class="icon-globe" value="{{this}}"></i>
+                <br />
+                <span>{{folderName this}}</span>
+            </a>
+        {{/each}}
+
+    </div>
+
+</div>

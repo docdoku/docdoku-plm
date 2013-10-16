@@ -66,8 +66,13 @@ define(
                 this.input[0].blur();
             }
         },
+
         removeLayer:function(){
+            var collection = this.model.collection;
             this.model.destroy();
+            if(collection.length == 0){
+                collection.onEmpty();
+            }
         }
 
     });

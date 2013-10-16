@@ -45,6 +45,7 @@ public class Geometry extends BinaryResource{
      */
     private int quality;
 
+    private double radius;
  
     public Geometry() {
     }
@@ -54,6 +55,11 @@ public class Geometry extends BinaryResource{
         this.quality=pQuality;
     }
 
+    public Geometry(int pQuality, String pFullName, long pContentLength, Date pLastModified, double pRadius) {
+        this(pQuality,pFullName, pContentLength, pLastModified);
+        this.radius=pRadius;
+    }
+
     public int getQuality() {
         return quality;
     }
@@ -61,5 +67,12 @@ public class Geometry extends BinaryResource{
     public void setQuality(int quality) {
         this.quality = quality;
     }
-    
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
 }

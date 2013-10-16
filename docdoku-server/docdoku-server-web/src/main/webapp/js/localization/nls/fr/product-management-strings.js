@@ -5,7 +5,7 @@ define({
     NEW_PRODUCT:"Nouveau produit",
     NEW_PART:"Nouvel article",
     PRODUCT_ID:"Référence",
-    DESIGN_ITEM:"Article désigné",
+    ROOT_PART:"Article de tête",
     PRODUCT_STRUCTURE:"Structure du produit",
     PART_NUMBER:"Numéro de l'article",
     VERSION:"Version",

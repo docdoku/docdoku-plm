@@ -81,7 +81,7 @@ Channel.prototype = {
         this.ws = new WebSocket(this.url);
         
         this.ws.onopen = function(event){
-            self.onopen(event);            
+            self.onopen(event);
         };
         
         this.ws.onmessage = function(message){

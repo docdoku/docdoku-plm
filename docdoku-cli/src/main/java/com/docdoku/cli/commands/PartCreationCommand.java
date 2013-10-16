@@ -1,3 +1,23 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
@@ -9,6 +29,10 @@ import org.kohsuke.args4j.Option;
 
 import java.io.File;
 
+/**
+ *
+ * @author Morgan Guimard
+ */
 public class PartCreationCommand extends AbstractCommandLine {
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", required = true, usage = "the part number of the part to save")
@@ -26,16 +50,15 @@ public class PartCreationCommand extends AbstractCommandLine {
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, description, false, null, "", null, null, null, null);
         PartRevision pr = partMaster.getLastRevision();
         PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
-        PartIteration pi = pr.getLastIteration();
-        PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
-
+        PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());
         FileHelper fh = new FileHelper(user,password);
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
+        return null;
     }
 
     @Override

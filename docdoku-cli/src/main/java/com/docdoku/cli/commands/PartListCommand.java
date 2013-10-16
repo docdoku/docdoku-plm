@@ -1,43 +1,66 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.helpers.JSONPrinter;
+import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 import org.kohsuke.args4j.Option;
 
 import java.util.List;
 
+/**
+ *
+ * @author Morgan Guimard
+ */
 public class PartListCommand extends AbstractCommandLine {
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name="-j", aliases = "--jsonparser", usage="return the list of the parts in JSON format")
-    private boolean jsonParser;
+    @Option(name="-c", aliases = "--count", usage="return part master count in workspace")
+    private boolean count;
 
+    @Option(name="-s", aliases = "--start", usage="start offset")
+    private int start;
+
+    @Option(name="-m", aliases = "--max-results", usage="max results")
+    private int max;
 
     @Override
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        List<PartMaster> partMasters = productS.getPartMasters(workspace, 0, 10000);
-        JSONArray jsonArray = new JSONArray();
 
-        for(PartMaster partMaster : partMasters) {  
-            for(PartRevision partRevision : partMaster.getPartRevisions()) {
-                JSONObject jsonObject = new JSONObject();
-                jsonArray.put(JSONPrinter.getJSONPartMasterDescription(partMaster,0L));
-            }
+        if(count){
+            int partMastersCount = productS.getPartMastersCount(workspace);
+            return JSONOutput.printPartMastersCount(partMastersCount);
+        }else{
+            List<PartMaster> partMasters = productS.getPartMasters(workspace, start, max);
+            return JSONOutput.printPartMasters(partMasters);
         }
-
-        System.out.println(jsonArray.toString());
     }
 
     @Override
     public String getDescription() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

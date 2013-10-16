@@ -8,7 +8,7 @@ define(    [
         var MarkerCreateModalView = Backbone.View.extend({
 
             events: {
-                "click .save-marker" : "saveMarker",
+                "submit form#save-marker" : "saveMarker",
                 "hidden #creationMarkersModal": "onHidden"
             },
 
@@ -21,15 +21,17 @@ define(    [
             render: function() {
                 this.$el.html(this.template({i18n: i18n}));
                 this.$modal = this.$("#creationMarkersModal");
-                this.$markersModalInputName = this.$('input');
+                this.$markersModalInputName = this.$('input[name=makerName]');
                 this.$markersModalInputDescription = this.$('textarea');
 
                 return this;
             },
 
-            saveMarker: function() {
+            saveMarker: function(e) {
                 this.model.createMarker(this.$markersModalInputName.val(), this.$markersModalInputDescription.val(), this.options.intersectPoint.x, this.options.intersectPoint.y, this.options.intersectPoint.z);
                 this.closeModal();
+                e.preventDefault();
+                return false;
             },
 
             openModal: function() {

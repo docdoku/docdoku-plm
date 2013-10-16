@@ -1,3 +1,5 @@
+/*global sceneManager*/
+
 define([
     "models/layer"
 ], function (
@@ -24,6 +26,10 @@ define([
             _.each(this.areInEditingMarkers(), function(layer) {
                 layer.setEditingMarkers(editingMarkers);
             }, this);
+        },
+
+        onEmpty:function(){
+            sceneManager.stopMarkerCreationMode();
         }
 
     });

@@ -20,10 +20,8 @@
 
 package com.docdoku.cli.commands;
 
-
 import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.exceptions.DplmException;
-import com.docdoku.cli.helpers.JSONPrinter;
+import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.product.PartIteration;
@@ -40,6 +38,10 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Locale;
 
+/**
+ *
+ * @author Florent Garin
+ */
 public class StatusCommand extends AbstractCommandLine{
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to get a status ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
@@ -47,9 +49,6 @@ public class StatusCommand extends AbstractCommandLine{
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to get a status; if not specified choose the part corresponding to the cad file")
     private String partNumber;
-
-    @Option(name="-j", aliases = "--jsonparser", usage="return a JSON description of the status part")
-    private boolean jsonParser;
 
     @Argument(metaVar = "[<cadfile>]", index=0, usage = "specify the cad file of the part to get a status")
     private File cadFile;
@@ -60,26 +59,21 @@ public class StatusCommand extends AbstractCommandLine{
     private long lastModified;
 
     @Override
-    public void execImpl() throws Exception {
+    public Object execImpl() throws Exception {
         try {
             if(partNumber==null || revision==null){
                 loadMetadata();
             }
-
             IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
             PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
+            printMasterStatus(pm);
+            return JSONOutput.printPartMaster(pm,lastModified);
 
-            if (jsonParser) {
-                JSONPrinter.printPartMasterStatus(pm,lastModified);
-            } else {
-                printMasterStatus(pm);
-            }
         } catch (PartMasterNotFoundException pmnfe) {
-            JSONPrinter.printException(pmnfe.getMessage());
+            JSONOutput.printException(pmnfe);
             MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
             meta.deletePartInfo(cadFile.getAbsolutePath());
-        } catch (DplmException de)  {
-            JSONPrinter.printException(de.getMessage());
+            return JSONOutput.printException(pmnfe);
         }
     }
 
@@ -133,11 +127,10 @@ public class StatusCommand extends AbstractCommandLine{
         return b.toString();
     }
 
-    private void loadMetadata() throws IOException, DplmException {
+    private void loadMetadata() throws IOException {
         if(cadFile==null){
             throw new IllegalArgumentException("<partnumber> or <revision> are not specified and no cad file is supplied");
         }
-
         MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
         String filePath = cadFile.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
@@ -145,14 +138,8 @@ public class StatusCommand extends AbstractCommandLine{
         lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null || workspace == null){
-            if (jsonParser) {
-                throw new DplmException("File is unversioned");
-            }
-            else {
-                throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
-            }
+            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
         }
-
         revision = new Version(strRevision);
     }
 
@@ -160,4 +147,5 @@ public class StatusCommand extends AbstractCommandLine{
     public String getDescription() {
         return "Print the status of the selected part.";
     }
+
 }

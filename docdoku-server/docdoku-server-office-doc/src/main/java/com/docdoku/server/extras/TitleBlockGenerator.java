@@ -82,8 +82,8 @@ public class TitleBlockGenerator {
 
             return new FileInputStream(tmpCopyFile);
         }
-        catch (Exception i){
-            System.out.println(i);
+        catch (Exception e){
+            e.printStackTrace();
         }
 
         return null;

@@ -24,6 +24,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
+import com.docdoku.server.rest.dto.GCMAccountDTO;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -35,9 +36,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,5 +94,28 @@ public class AccountResource {
 
     }
 
+    @PUT
+    @Path("gcm")
+    @Consumes("application/json;charset=UTF-8")
+    public Response setGCMAccount(GCMAccountDTO data){
+        try{
+            userManager.setGCMAccount(data.getGcmId());
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+
+    @DELETE
+    @Path("gcm")
+    public Response deleteGCMAccount(){
+        try{
+            userManager.deleteGCMAccount();
+            return Response.ok().build();
+        } catch (com.docdoku.core.services.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 
 }

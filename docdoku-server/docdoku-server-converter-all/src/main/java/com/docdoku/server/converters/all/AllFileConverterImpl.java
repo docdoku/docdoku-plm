@@ -26,19 +26,16 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Properties;
 
 
 @AllFileConverter
@@ -69,8 +66,11 @@ public class AllFileConverterImpl implements CADConverter{
         try {
             PartIterationKey partIPK = partToConvert.getKey();
 
+            // Calculate radius
+            double radius = RadiusCalculator.calculateRadius(tmpCadFile);
+
             // Upload dae
-            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpCadFile.getName(), 0, tmpCadFile.length());
+            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpCadFile.getName(), 0, tmpCadFile.length(), radius);
             OutputStream daeOutputStream = null;
             try {
                 daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);

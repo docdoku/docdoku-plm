@@ -4,6 +4,10 @@ VisualizationUtils.xAxisNormalized = new THREE.Vector3(1,0,0).normalize();
 VisualizationUtils.yAxisNormalized = new THREE.Vector3(0,1,0).normalize();
 VisualizationUtils.zAxisNormalized = new THREE.Vector3(0,0,1).normalize();
 
+VisualizationUtils.rotWorldMatrixX = new THREE.Matrix4();
+VisualizationUtils.rotWorldMatrixY = new THREE.Matrix4();
+VisualizationUtils.rotWorldMatrixZ = new THREE.Matrix4();
+
 VisualizationUtils.rotateAroundOneWorldAxis = function(object, axis, radians) {
     var rotWorldMatrix = new THREE.Matrix4();
     rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
@@ -14,16 +18,11 @@ VisualizationUtils.rotateAroundOneWorldAxis = function(object, axis, radians) {
 
 VisualizationUtils.rotateAroundWorldAxis= function(object, rx, ry, rz) {
 
-    var rotWorldMatrixX = new THREE.Matrix4();
-    rotWorldMatrixX.makeRotationAxis(VisualizationUtils.xAxisNormalized, rx);
+    VisualizationUtils.rotWorldMatrixX.makeRotationAxis(VisualizationUtils.xAxisNormalized, rx);
+    VisualizationUtils.rotWorldMatrixY.makeRotationAxis(VisualizationUtils.yAxisNormalized, ry);
+    VisualizationUtils.rotWorldMatrixZ.makeRotationAxis(VisualizationUtils.zAxisNormalized, rz);
 
-    var rotWorldMatrixY = new THREE.Matrix4();
-    rotWorldMatrixY.makeRotationAxis(VisualizationUtils.yAxisNormalized, ry);
-
-    var rotWorldMatrixZ = new THREE.Matrix4();
-    rotWorldMatrixZ.makeRotationAxis(VisualizationUtils.zAxisNormalized, rz);
-
-    object.matrix = rotWorldMatrixZ.multiply(rotWorldMatrixY).multiply(rotWorldMatrixX);
-    object.rotation.setEulerFromRotationMatrix(object.matrix, "XYZ");
+    object.matrix = VisualizationUtils.rotWorldMatrixZ.multiply(VisualizationUtils.rotWorldMatrixY).multiply(VisualizationUtils.rotWorldMatrixX);
+    object.rotation.setFromRotationMatrix(object.matrix, "XYZ");
 
 }

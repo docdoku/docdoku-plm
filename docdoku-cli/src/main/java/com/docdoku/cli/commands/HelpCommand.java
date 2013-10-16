@@ -20,16 +20,20 @@
 
 package com.docdoku.cli.commands;
 
-
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineParser;
 
-public class HelpCommand implements CommandLine{
+/**
+ *
+ * @author Florent Garin
+ */
+public class HelpCommand extends AbstractCommandLine{
 
     @Argument(metaVar = "<command>", required = true, index=0, usage = "the command to display the help information")
     private String command;
 
-    public void exec() {
+    @Override
+    public Object execImpl() throws Exception {
         CommandLine cl;
         switch(command){
             case "status": case "stat": case "st":
@@ -69,6 +73,7 @@ public class HelpCommand implements CommandLine{
         System.out.println(cl.getDescription());
         System.out.println();
         parser.printUsage(System.out);
+        return null;
     }
 
     @Override

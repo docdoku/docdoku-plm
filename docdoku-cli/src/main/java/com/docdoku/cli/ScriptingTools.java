@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.cli;
 
+package com.docdoku.cli;
 
 import com.docdoku.core.services.*;
 

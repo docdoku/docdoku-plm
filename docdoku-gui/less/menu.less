@@ -1,0 +1,63 @@
+#menu {
+
+  float: left;
+  width: 200px;
+  height: 100%;
+  background-color: #D6DCE3;
+  box-shadow: 1px 0px 2px #9b9b9b;
+  overflow: auto;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+
+  .nav-header {
+    font-size: 12px;
+    padding: 3px 10px;
+    color: #738695;
+
+    i.add-path{
+      float: right;
+      &:hover{
+        color:#3D4554;
+      }
+    }
+  }
+
+  .nav-list {
+
+    a {
+      color: #333;
+      font-size: 12px;
+      position: relative;
+
+      &.active{
+        background-image: linear-gradient(#5EA7E1, #2F7CCD);
+        color: #fff;
+        text-shadow: none;
+      }
+
+      i.remove-path{
+        float: right;
+        display: none;
+        opacity: 0.5;
+        &:hover{
+          opacity: 1;
+        }
+      }
+
+      span{
+        float:left;
+      }
+
+      &:hover{
+        i.remove-path{
+          display: inline-block;
+        }
+      }
+    }
+
+    .edit-conf{
+      cursor: pointer;
+    }
+  }
+}

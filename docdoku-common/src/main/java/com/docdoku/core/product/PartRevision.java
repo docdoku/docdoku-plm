@@ -121,6 +121,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     })
     private List<Workflow> abortedWorkflows;
 
+    @Column(name = "PARTMASTER_PARTNUMBER", nullable = false, insertable = false, updatable = false)
+    private String partMasterNumber="";
+
+    @Column(name = "WORKSPACE_ID", nullable = false, insertable = false, updatable = false)
+    private String partMasterWorkspaceId="";
 
     @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
@@ -159,6 +164,8 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     public void setPartMaster(PartMaster partMaster) {
         this.partMaster = partMaster;
+        partMasterNumber=partMaster.getNumber();
+        partMasterWorkspaceId=partMaster.getWorkspaceId();
     }
 
     @XmlTransient
@@ -310,6 +317,22 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     
     public String getPartNumber() {
         return partMaster==null?"":partMaster.getNumber();
+    }
+
+    public String getPartMasterNumber() {
+        return partMasterNumber;
+    }
+
+    public String getPartMasterWorkspaceId() {
+        return partMasterWorkspaceId;
+    }
+
+    public void setPartMasterNumber(String partMasterNumber) {
+        this.partMasterNumber = partMasterNumber;
+    }
+
+    public void setPartMasterWorkspaceId(String partMasterWorkspaceId) {
+        this.partMasterWorkspaceId = partMasterWorkspaceId;
     }
 
     public Set<Effectivity> getEffectivities() {

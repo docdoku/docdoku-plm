@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -128,7 +129,9 @@ public class StepFileConverterImpl implements CADConverter{
                         binOutputStream.close();
                     }
 
-                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length());
+                    double radius = RadiusCalculator.calculateRadius(tmpJSFile);
+
+                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length(),radius);
                     OutputStream jsOutputStream = null;
                     try {
                         jsOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);

@@ -14,7 +14,8 @@ define(
 
         events:{
             "click button#gridSwitch": "gridSwitch",
-            "click button#materialsSwitch": "materialsSwitch"
+            "click button#materialsSwitch": "materialsSwitch",
+            "click button#screenshot": "takeScreenShot"
         },
 
         initialize:function(){
@@ -33,10 +34,14 @@ define(
         materialsSwitch:function(){
             $("#materialsSwitch").toggleClass("active");
             if ($("#materialsSwitch").hasClass("active")) {
-                sceneManager.switchWireframe(true);
+                sceneManager.switchWireFrame(true);
             } else {
-                sceneManager.switchWireframe(false);
+                sceneManager.switchWireFrame(false);
             }
+        },
+
+        takeScreenShot:function(){
+            sceneManager.takeScreenShot();
         },
 
         render:function(){

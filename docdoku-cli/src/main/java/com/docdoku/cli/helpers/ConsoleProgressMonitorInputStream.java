@@ -20,7 +20,6 @@
 
 package com.docdoku.cli.helpers;
 
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.FilterInputStream;
