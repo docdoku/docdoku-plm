@@ -28,8 +28,7 @@ import com.docdoku.core.workflow.Task;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-import sun.misc.BASE64Decoder;
-
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -301,10 +300,9 @@ public class TitleBlockGenerator {
                         if (task.getSignature() != null) {
                             try {
                                 byte[] imageByte;
-                                BASE64Decoder decoder = new BASE64Decoder();
                                 int indexOfFirstComma = task.getSignature().indexOf(",");
                                 String base64 = task.getSignature().substring(indexOfFirstComma+1,task.getSignature().length());
-                                imageByte = decoder.decodeBuffer(base64);
+                                imageByte = DatatypeConverter.parseBase64Binary(base64);
                                 Image image = Image.getInstance(imageByte);
                                 image.setCompressionLevel(Image.ORIGINAL_NONE);
                                 image.scaleToFit(SIGNATURE_SIZE_W,SIGNATURE_SIZE_H);
