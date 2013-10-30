@@ -60,7 +60,7 @@ public class RoleDAO {
     }
 
     public List<Role> findRolesInWorkspace(String pWorkspaceId){
-        return em.createNamedQuery("Role.findByWorkspace").setParameter("workspaceId", pWorkspaceId).getResultList();
+        return em.createNamedQuery("Role.findByWorkspace",Role.class).setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public void createRole(Role pRole) {
@@ -79,7 +79,7 @@ public class RoleDAO {
     }
 
     public List<Role> findRolesInUseWorkspace(String pWorkspaceId) {
-        return em.createNamedQuery("Role.findRolesInUse").setParameter("workspaceId", pWorkspaceId).getResultList();
+        return em.createNamedQuery("Role.findRolesInUse",Role.class).setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public void removeUserFromRoles(User pUser) {
