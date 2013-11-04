@@ -20,7 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.services.TaskNotFoundException;
+import com.docdoku.core.exceptions.TaskNotFoundException;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.TaskKey;

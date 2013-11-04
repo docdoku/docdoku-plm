@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.Role;
@@ -76,7 +77,7 @@ public class RoleResource {
 
             return rolesDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -97,7 +98,7 @@ public class RoleResource {
 
             return rolesDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -119,7 +120,7 @@ public class RoleResource {
             Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
             RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -140,7 +141,7 @@ public class RoleResource {
             Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
             RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
             return Response.status(Response.Status.OK).entity(roleUpdatedDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -153,7 +154,7 @@ public class RoleResource {
             RoleKey roleKey = new RoleKey(workspaceId, roleName);
             roleService.deleteRole(roleKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

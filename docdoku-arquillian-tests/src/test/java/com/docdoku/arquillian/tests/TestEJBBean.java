@@ -29,6 +29,7 @@ import com.docdoku.core.document.Folder;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.*;
+import com.docdoku.core.exceptions.*;
 import com.sun.appserv.security.ProgrammaticLogin;
 
 import javax.ejb.EJB;

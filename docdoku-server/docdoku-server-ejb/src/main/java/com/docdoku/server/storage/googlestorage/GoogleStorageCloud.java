@@ -20,8 +20,8 @@
 
 package com.docdoku.server.storage.googlestorage;
 
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.logging.Logger;
 

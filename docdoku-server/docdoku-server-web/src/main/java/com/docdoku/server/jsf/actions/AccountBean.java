@@ -20,7 +20,7 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.services.AccountNotFoundException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;

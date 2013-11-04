@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.FolderDTO;
@@ -97,7 +98,7 @@ public class FolderResource {
             }
 
             return folderDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -127,7 +128,7 @@ public class FolderResource {
             }
 
             return folderDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -161,7 +162,7 @@ public class FolderResource {
                     
             return renamedFolderDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -179,7 +180,7 @@ public class FolderResource {
             FolderDTO createdSubFolder =  createFolder(decodedCompletePath, folderName);
             
             return createdSubFolder;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -195,7 +196,7 @@ public class FolderResource {
             
             return createdRootFolder;
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -216,12 +217,12 @@ public class FolderResource {
             
             return Response.status(Response.Status.OK).build();
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
-    private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException{
+    private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException {
 
         String decodedCompletePath = Tools.replaceColonWithSlash(pCompletePath);
 
@@ -230,7 +231,7 @@ public class FolderResource {
         return documentService.deleteFolder(completePath);      
     }
     
-    private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException{
+    private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
     
         Folder createdFolder= documentService.createFolder(pCompletePath, pFolderName);
                         

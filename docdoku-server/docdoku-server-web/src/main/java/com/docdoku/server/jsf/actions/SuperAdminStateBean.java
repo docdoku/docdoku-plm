@@ -21,6 +21,7 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.*;
 import org.codehaus.jettison.json.JSONObject;
 

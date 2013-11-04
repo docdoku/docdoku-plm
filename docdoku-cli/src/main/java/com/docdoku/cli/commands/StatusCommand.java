@@ -29,7 +29,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.PartMasterNotFoundException;
+import com.docdoku.core.exceptions.PartMasterNotFoundException;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

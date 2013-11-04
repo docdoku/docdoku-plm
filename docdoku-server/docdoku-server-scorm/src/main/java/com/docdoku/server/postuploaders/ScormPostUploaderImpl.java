@@ -21,7 +21,7 @@ package com.docdoku.server.postuploaders;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.server.viewers.utils.ScormUtil;
 import com.google.common.io.ByteStreams;
 

@@ -28,13 +28,13 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.services.*;
 import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -88,7 +88,7 @@ public class WorkspaceDAO {
     }
     
     
-    public Workspace loadWorkspace(String pID) throws WorkspaceNotFoundException {        
+    public Workspace loadWorkspace(String pID) throws WorkspaceNotFoundException {
         Workspace workspace=em.find(Workspace.class,pID);      
         if (workspace == null) {
             throw new WorkspaceNotFoundException(mLocale, pID);

@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -75,7 +76,7 @@ public class DocumentTemplateResource {
 
             return dtos;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -91,7 +92,7 @@ public class DocumentTemplateResource {
 
             return dto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -104,7 +105,7 @@ public class DocumentTemplateResource {
 
             return documentService.generateId(workspaceId, templateId);
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }    
@@ -133,7 +134,7 @@ public class DocumentTemplateResource {
 
             return templateDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -163,7 +164,7 @@ public class DocumentTemplateResource {
 
             return templateDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -174,7 +175,7 @@ public class DocumentTemplateResource {
         try {
             documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -189,7 +190,7 @@ public class DocumentTemplateResource {
             documentService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

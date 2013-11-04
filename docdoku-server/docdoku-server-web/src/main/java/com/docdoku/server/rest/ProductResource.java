@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.LatestConfigSpec;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -85,7 +86,7 @@ public class ProductResource {
             }
 
             return dtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -125,7 +126,7 @@ public class ProductResource {
 
             return partsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -152,7 +153,7 @@ public class ProductResource {
                 return createDTO(rootUsageLink, depth);
             }
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -165,7 +166,7 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             productService.deleteConfigurationItem(ciKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -190,7 +191,7 @@ public class ProductResource {
                 paths[i]=sb.toString();
             }
             return paths;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -295,7 +296,7 @@ public class ProductResource {
                 
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths)).build();
             }
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -308,7 +309,7 @@ public class ProductResource {
             ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
             configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -325,7 +326,7 @@ public class ProductResource {
                 baselinesDTO.add(mapper.map(baseline,BaselineDTO.class));
             }
             return baselinesDTO;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -340,7 +341,7 @@ public class ProductResource {
             BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
             return baselineDTO;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -352,7 +353,7 @@ public class ProductResource {
         try {
             productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -371,7 +372,7 @@ public class ProductResource {
 
             productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getDescription(),partIterationKeys);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -384,7 +385,7 @@ public class ProductResource {
         try {
             Baseline baseline = productService.duplicateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
             return mapper.map(baseline, BaselineDTO.class);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -396,7 +397,7 @@ public class ProductResource {
         try {
             productService.deleteBaseline(new ConfigurationItemKey(workspaceId,ciId), Integer.parseInt(baselineId));
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

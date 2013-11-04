@@ -24,9 +24,9 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.product.PartSearchQuery;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.PartRevisionAlreadyExistsException;
-import com.docdoku.core.services.PartRevisionNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
+import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

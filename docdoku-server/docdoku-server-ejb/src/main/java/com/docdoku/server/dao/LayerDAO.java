@@ -21,7 +21,7 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Layer;
-import com.docdoku.core.services.LayerNotFoundException;
+import com.docdoku.core.exceptions.LayerNotFoundException;
 import java.util.List;
 import java.util.Locale;
 

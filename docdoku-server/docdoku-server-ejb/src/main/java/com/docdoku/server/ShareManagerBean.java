@@ -20,7 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.services.IShareManagerLocal;
-import com.docdoku.core.services.SharedEntityNotFoundException;
+import com.docdoku.core.exceptions.SharedEntityNotFoundException;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.server.dao.SharedEntityDAO;
 

@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.*;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACLUserEntry;
@@ -34,7 +35,6 @@ import com.docdoku.core.workflow.TaskKey;
 
 import javax.jws.WebService;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**

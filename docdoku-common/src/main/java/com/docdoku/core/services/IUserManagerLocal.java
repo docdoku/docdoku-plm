@@ -21,6 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.*;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.PasswordRecoveryRequest;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;

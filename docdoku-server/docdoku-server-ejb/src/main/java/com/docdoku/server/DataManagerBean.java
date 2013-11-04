@@ -20,9 +20,9 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.exceptions.FileNotFoundException;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
 

@@ -20,10 +20,9 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.services.AccountNotFoundException;
-import com.docdoku.core.services.AccountAlreadyExistsException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.*;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.AccountAlreadyExistsException;
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.security.Credential;
 import com.docdoku.core.security.UserGroupMapping;

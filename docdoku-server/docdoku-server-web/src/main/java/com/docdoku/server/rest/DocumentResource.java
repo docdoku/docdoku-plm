@@ -26,6 +26,7 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Tag;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -86,7 +87,7 @@ public class DocumentResource {
             }
             return docMsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -109,7 +110,7 @@ public class DocumentResource {
 
             return docMsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -133,7 +134,7 @@ public class DocumentResource {
 
             return docMsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -157,7 +158,7 @@ public class DocumentResource {
 
             return docMsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -184,7 +185,7 @@ public class DocumentResource {
 
             return docMsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -200,7 +201,7 @@ public class DocumentResource {
             documentService.subscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -216,7 +217,7 @@ public class DocumentResource {
             documentService.unsubscribeToIterationChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -232,7 +233,7 @@ public class DocumentResource {
             documentService.subscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -248,7 +249,7 @@ public class DocumentResource {
             documentService.unsubscribeToStateChangeEvent(new DocumentMasterKey(workspaceId, docId, docVersion));
 
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -282,7 +283,7 @@ public class DocumentResource {
             DocumentIterationDTO docDTO = mapper.map(docM.getLastIteration(), DocumentIterationDTO.class);
             return docDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -347,7 +348,7 @@ public class DocumentResource {
 
             return dtos;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -374,7 +375,7 @@ public class DocumentResource {
             docMsDto.setLifeCycleState(docMs.getLifeCycleState());
 
             return docMsDto;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -405,7 +406,7 @@ public class DocumentResource {
             documentService.saveTags(docMPK,tagLabels.toArray(new String[tagLabels.size()]));
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -433,7 +434,7 @@ public class DocumentResource {
 
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -450,7 +451,7 @@ public class DocumentResource {
         try {
             documentService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             return Response.status(Response.Status.OK).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -469,7 +470,7 @@ public class DocumentResource {
             documentService.removeFileFromDocument(fileFullName);
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -489,7 +490,7 @@ public class DocumentResource {
             SharedDocument sharedDocument = documentService.createSharedDocument(new DocumentMasterKey(workspaceId, id, version),password,expireDate);
             SharedDocumentDTO sharedDocumentDTO = mapper.map(sharedDocument,SharedDocumentDTO.class);
             return Response.ok().entity(sharedDocumentDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -507,7 +508,7 @@ public class DocumentResource {
             DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             documentMaster.setPublicShared(true);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -524,7 +525,7 @@ public class DocumentResource {
             DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, id, version));
             documentMaster.setPublicShared(false);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -558,7 +559,7 @@ public class DocumentResource {
                 documentService.removeACLFromDocumentMaster(documentMasterKey);
             }
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -583,7 +584,7 @@ public class DocumentResource {
 
             return abortedWorkflowsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

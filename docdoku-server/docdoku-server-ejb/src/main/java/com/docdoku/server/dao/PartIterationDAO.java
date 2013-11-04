@@ -22,7 +22,7 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.services.PartIterationNotFoundException;
+import com.docdoku.core.exceptions.PartIterationNotFoundException;
 import java.util.Locale;
 import javax.persistence.EntityManager;
 

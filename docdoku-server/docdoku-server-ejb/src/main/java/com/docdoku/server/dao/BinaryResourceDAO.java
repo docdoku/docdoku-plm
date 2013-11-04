@@ -25,9 +25,9 @@ import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMasterTemplate;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.FileAlreadyExistsException;
-import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.FileAlreadyExistsException;
+import com.docdoku.core.exceptions.FileNotFoundException;
 
 import javax.persistence.*;
 import java.util.Locale;

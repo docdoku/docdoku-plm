@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
@@ -71,7 +72,7 @@ public class AccountResource {
         try{
             Account account = userManager.getAccount(ctx.getCallerPrincipal().getName());
             return mapper.map(account,AccountDTO.class);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -101,7 +102,7 @@ public class AccountResource {
         try{
             userManager.setGCMAccount(data.getGcmId());
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -113,7 +114,7 @@ public class AccountResource {
         try{
             userManager.deleteGCMAccount();
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

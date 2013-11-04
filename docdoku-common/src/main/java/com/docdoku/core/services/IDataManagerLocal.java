@@ -21,6 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.StorageException;
 
 import java.io.InputStream;
 import java.io.OutputStream;

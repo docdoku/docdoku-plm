@@ -21,6 +21,7 @@
 package com.docdoku.server.converters.step;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.*;

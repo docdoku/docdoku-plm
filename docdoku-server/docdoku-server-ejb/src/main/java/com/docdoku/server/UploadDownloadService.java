@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevisionKey;

@@ -21,7 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.security.PasswordRecoveryRequest;
-import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
+import com.docdoku.core.exceptions.PasswordRecoveryRequestNotFoundException;
 import java.util.Locale;
 
 

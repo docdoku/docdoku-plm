@@ -21,9 +21,9 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.PartMasterTemplateAlreadyExistsException;
-import com.docdoku.core.services.PartMasterTemplateNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.PartMasterTemplateAlreadyExistsException;
+import com.docdoku.core.exceptions.PartMasterTemplateNotFoundException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

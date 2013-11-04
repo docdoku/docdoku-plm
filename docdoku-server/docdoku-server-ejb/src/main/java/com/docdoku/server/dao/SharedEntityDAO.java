@@ -22,7 +22,7 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.SharedEntityNotFoundException;
+import com.docdoku.core.exceptions.SharedEntityNotFoundException;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
@@ -30,7 +30,6 @@ import com.docdoku.core.sharing.SharedPart;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import java.util.List;
 import java.util.Locale;
 
 /**

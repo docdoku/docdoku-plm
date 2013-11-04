@@ -21,7 +21,7 @@ package com.docdoku.server.dao;
 
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.services.RoleNotFoundException;
+import com.docdoku.core.exceptions.RoleNotFoundException;
 import com.docdoku.core.workflow.Role;
 import com.docdoku.core.workflow.RoleKey;
 

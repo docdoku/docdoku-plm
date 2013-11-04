@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.document.TagKey;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.TagDTO;
@@ -76,7 +77,7 @@ public class TagResource {
             }            
             
             return tagDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
         
             throw new RestApiException(ex.toString(), ex.getMessage());
         }          
@@ -96,7 +97,7 @@ public class TagResource {
             documentService.createTag(workspaceId, tag.getLabel());
             return new TagDTO(tag.getLabel());
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -114,7 +115,7 @@ public class TagResource {
 
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -132,7 +133,7 @@ public class TagResource {
             
             return Response.status(Response.Status.OK).build();
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

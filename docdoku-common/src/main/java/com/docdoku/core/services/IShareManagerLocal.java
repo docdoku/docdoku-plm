@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.exceptions.SharedEntityNotFoundException;
 import com.docdoku.core.sharing.SharedEntity;
 
 /**

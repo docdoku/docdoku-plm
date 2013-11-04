@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Layer;
 import com.docdoku.core.product.Marker;
@@ -72,7 +73,7 @@ public class LayerResource {
                 layerDtos[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName());
             }
             return layerDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }        
     }
@@ -87,7 +88,7 @@ public class LayerResource {
             Layer l = productService.createLayer(ciKey, layer.getName());
             return new LayerDTO(l.getId(), l.getName());
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -101,7 +102,7 @@ public class LayerResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             Layer l = productService.updateLayer(ciKey, layerId, layer.getName());
             return new LayerDTO(l.getId(), l.getName());
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -113,7 +114,7 @@ public class LayerResource {
         try {
             productService.deleteLayer(workspaceId,layerId);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -131,7 +132,7 @@ public class LayerResource {
                 markersDTO[i] = new MarkerDTO(markersArray[i].getId(), markersArray[i].getTitle(),markersArray[i].getDescription(), markersArray[i].getX(), markersArray[i].getY(), markersArray[i].getZ());
             }
             return markersDTO;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -144,7 +145,7 @@ public class LayerResource {
         try {
             Marker marker = productService.createMarker(layerId, markerDTO.getTitle(), markerDTO.getDescription(), markerDTO.getX(), markerDTO.getY(), markerDTO.getZ());
             return new MarkerDTO(marker.getId(), marker.getTitle(), marker.getDescription(), marker.getX(), marker.getY(), marker.getZ());
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -157,7 +158,7 @@ public class LayerResource {
         try {
             productService.deleteMarker(layerId, markerId);
             return Response.status(Response.Status.OK).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

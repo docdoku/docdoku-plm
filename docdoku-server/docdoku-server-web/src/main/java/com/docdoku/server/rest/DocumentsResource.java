@@ -30,7 +30,6 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.workflow.Task;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
 import com.docdoku.server.rest.util.SearchQueryParser;
@@ -106,7 +105,7 @@ public class DocumentsResource {
     public int getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId) {
         try {
             return documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId));
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -131,7 +130,7 @@ public class DocumentsResource {
 
             return docMsDTOs;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -155,7 +154,7 @@ public class DocumentsResource {
             }
 
             return docMsDTOs;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -181,7 +180,7 @@ public class DocumentsResource {
             }
 
             return docMsDTOs;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -204,7 +203,7 @@ public class DocumentsResource {
             }
 
             return docMsDTOs;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -246,7 +245,7 @@ public class DocumentsResource {
 
             return docMsDTOs.toArray(new DocumentMasterDTO[docMsDTOs.size()]);
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -275,7 +274,7 @@ public class DocumentsResource {
             }
 
             return docMsDTOs;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -333,7 +332,7 @@ public class DocumentsResource {
 
             return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocMs.getVersion(),"UTF-8"))).entity(docMsDTO).build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -362,7 +361,7 @@ public class DocumentsResource {
 
             return checkedOutdocMsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -388,7 +387,7 @@ public class DocumentsResource {
 
             return docsLastIter.toArray(new DocumentIterationDTO[docsLastIter.size()]);
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

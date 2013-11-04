@@ -22,9 +22,9 @@ package com.docdoku.server.dao;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.*;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.DocumentMasterAlreadyExistsException;
-import com.docdoku.core.services.DocumentMasterNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.DocumentMasterAlreadyExistsException;
+import com.docdoku.core.exceptions.DocumentMasterNotFoundException;
 
 import javax.persistence.*;
 import java.util.*;

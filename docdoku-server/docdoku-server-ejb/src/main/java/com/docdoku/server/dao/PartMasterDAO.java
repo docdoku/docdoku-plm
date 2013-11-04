@@ -20,12 +20,12 @@
 package com.docdoku.server.dao;
 
 
-import com.docdoku.core.services.CreationException;
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.PartMasterAlreadyExistsException;
-import com.docdoku.core.services.PartMasterNotFoundException;
+import com.docdoku.core.exceptions.PartMasterAlreadyExistsException;
+import com.docdoku.core.exceptions.PartMasterNotFoundException;
 import java.util.*;
 import javax.persistence.*;
 

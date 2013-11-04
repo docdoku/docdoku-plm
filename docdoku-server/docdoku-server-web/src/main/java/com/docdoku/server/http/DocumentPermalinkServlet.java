@@ -25,7 +25,7 @@ import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.NotAllowedException;
+import com.docdoku.core.exceptions.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;

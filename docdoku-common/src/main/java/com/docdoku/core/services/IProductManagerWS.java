@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
@@ -95,7 +96,7 @@ public interface IProductManagerWS{
      * @return
      * The resolved product
      * 
-     * @throws ConfigurationItemNotFoundException
+     * @throws com.docdoku.core.exceptions.ConfigurationItemNotFoundException
      * @throws WorkspaceNotFoundException
      * @throws NotAllowedException
      * @throws UserNotFoundException
@@ -124,10 +125,10 @@ public interface IProductManagerWS{
      * 
      * @throws UserNotFoundException
      * @throws WorkspaceNotFoundException
-     * @throws AccessRightException
+     * @throws com.docdoku.core.exceptions.AccessRightException
      * @throws NotAllowedException
-     * @throws ConfigurationItemAlreadyExistsException
-     * @throws CreationException
+     * @throws com.docdoku.core.exceptions.ConfigurationItemAlreadyExistsException
+     * @throws com.docdoku.core.exceptions.CreationException
      */
     ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, PartMasterNotFoundException;
     

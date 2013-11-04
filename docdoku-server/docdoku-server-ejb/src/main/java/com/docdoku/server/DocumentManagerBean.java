@@ -21,6 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -547,6 +548,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             //TODO search should not fetch back private docM
+
+            if(docM.getLocation().isPrivate() && (!docM.getCheckOutUser().equals(user)) ){
+                ite.remove();
+                continue docMBlock;
+            }
+
             if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
                 docM = docM.clone();
                 docM.removeLastIteration();

@@ -19,6 +19,8 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.exceptions.*;
+
 import java.io.IOException;
 import javax.activation.DataHandler;
 import javax.jws.WebService;

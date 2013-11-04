@@ -19,11 +19,11 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.DocumentMasterTemplateNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.DocumentMasterTemplateNotFoundException;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.services.DocumentMasterTemplateAlreadyExistsException;
+import com.docdoku.core.exceptions.DocumentMasterTemplateAlreadyExistsException;
 
 import java.util.List;
 import java.util.Locale;

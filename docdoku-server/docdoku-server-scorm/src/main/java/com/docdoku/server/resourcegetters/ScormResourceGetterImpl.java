@@ -23,7 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.server.viewers.utils.ScormUtil;
 
 import javax.ejb.EJB;

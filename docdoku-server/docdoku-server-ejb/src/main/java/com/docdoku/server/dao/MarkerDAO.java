@@ -20,7 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.product.Marker;
-import com.docdoku.core.services.MarkerNotFoundException;
+import com.docdoku.core.exceptions.MarkerNotFoundException;
 
 import java.util.Locale;
 

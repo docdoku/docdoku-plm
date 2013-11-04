@@ -19,9 +19,9 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.UserGroupAlreadyExistsException;
-import com.docdoku.core.services.UserGroupNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.UserGroupAlreadyExistsException;
+import com.docdoku.core.exceptions.UserGroupNotFoundException;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
@@ -33,7 +33,6 @@ import java.util.Locale;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 

@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
@@ -76,7 +77,7 @@ public class PartsResource {
             PartRevision partRevision = productService.getPartRevision(revisionKey);
             PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
             return Response.ok(partDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -116,7 +117,7 @@ public class PartsResource {
 
             PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
             return Response.ok(partDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -131,7 +132,7 @@ public class PartsResource {
             PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
             productService.checkInPart(revisionKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -145,7 +146,7 @@ public class PartsResource {
             PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
             productService.checkOutPart(revisionKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -159,7 +160,7 @@ public class PartsResource {
             PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
             productService.undoCheckOutPart(revisionKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -192,7 +193,7 @@ public class PartsResource {
                 productService.removeACLFromPartRevision(revisionKey);
             }
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -243,7 +244,7 @@ public class PartsResource {
 
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -261,7 +262,7 @@ public class PartsResource {
             }
 
             return partDTOs;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -272,7 +273,7 @@ public class PartsResource {
     public int getPartRevisionCount(@PathParam("workspaceId") String workspaceId) {
         try {
             return productService.getPartRevisionsCount(Tools.stripTrailingSlash(workspaceId));
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -293,7 +294,7 @@ public class PartsResource {
             }
 
             return partDTOs;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -309,7 +310,7 @@ public class PartsResource {
                 partNumbers[i] = partMasters.get(i).getNumber();
             }
             return partNumbers;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -378,7 +379,7 @@ public class PartsResource {
             PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
             productService.deletePartRevision(revisionKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -397,7 +398,7 @@ public class PartsResource {
             productService.removeCADFileFromPartIteration(partIKey);
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -417,7 +418,7 @@ public class PartsResource {
             SharedPart sharedPart = productService.createSharedPart(new PartRevisionKey(workspaceId, number, version), password, expireDate);
             SharedPartDTO sharedPartDTO = mapper.map(sharedPart,SharedPartDTO.class);
             return Response.ok().entity(sharedPartDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -434,7 +435,7 @@ public class PartsResource {
             PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,number,version));
             partRevision.setPublicShared(true);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -451,7 +452,7 @@ public class PartsResource {
             PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId,number,version));
             partRevision.setPublicShared(false);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -474,7 +475,7 @@ public class PartsResource {
 
             return abortedWorkflowsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

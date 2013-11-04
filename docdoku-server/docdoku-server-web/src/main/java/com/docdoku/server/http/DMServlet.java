@@ -24,7 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.exceptions.UserNotFoundException;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.EJB;

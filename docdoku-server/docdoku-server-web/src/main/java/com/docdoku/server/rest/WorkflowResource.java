@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
@@ -79,7 +80,7 @@ public class WorkflowResource {
             
             return dtos;
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -92,7 +93,7 @@ public class WorkflowResource {
             WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             WorkflowModelDTO workflowModelDTO = mapper.map(workflowModel, WorkflowModelDTO.class);
             return workflowModelDTO;
-        }  catch (com.docdoku.core.services.ApplicationException ex) {
+        }  catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -103,7 +104,7 @@ public class WorkflowResource {
         try {
             workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             return Response.status(Response.Status.OK).build();
-        }  catch (com.docdoku.core.services.ApplicationException ex) {
+        }  catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -118,7 +119,7 @@ public class WorkflowResource {
 
             return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             ex.printStackTrace();
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -158,7 +159,7 @@ public class WorkflowResource {
             WorkflowModelDTO dto = mapper.map(workflowModel, WorkflowModelDTO.class);
             return dto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             ex.printStackTrace();
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

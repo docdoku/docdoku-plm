@@ -27,6 +27,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.*;
 import org.kohsuke.args4j.Argument;

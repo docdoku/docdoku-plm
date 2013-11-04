@@ -20,9 +20,9 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.FolderAlreadyExistsException;
-import com.docdoku.core.services.FolderNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.FolderAlreadyExistsException;
+import com.docdoku.core.exceptions.FolderNotFoundException;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.document.DocumentMaster;
 

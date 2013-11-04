@@ -23,6 +23,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.*;
 
 import javax.ejb.EJB;

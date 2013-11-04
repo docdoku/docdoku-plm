@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -77,7 +78,7 @@ public class WorkspaceMembershipResource {
 
             return workspaceUserMemberShipDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
 
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -100,7 +101,7 @@ public class WorkspaceMembershipResource {
 
             return workspaceUserGroupMemberShipDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
 
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

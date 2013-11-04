@@ -19,13 +19,11 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.PartUsageLinkNotFoundException;
+import com.docdoku.core.exceptions.PartUsageLinkNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
