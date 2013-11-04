@@ -33,7 +33,7 @@ define(function() {
         findRadiusInAttributes:function(attributes){
             var radiusAttribute = _.find(attributes, function(attribute) {
                 return attribute.name == 'radius';
-            });
+            }) || {};
             return radiusAttribute.value || 0;
         },
 
