@@ -196,6 +196,35 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         }
     }
 
+    private double[] afterRx(double rx, double tx, double ty, double tz){
+        double[] pts=new double[3];
+        pts[0]=tx;
+        pts[1]=ty*Math.cos(rx) - tz*Math.sin(rx);
+        pts[2]=ty*Math.sin(rx) + tz*Math.cos(rx);
+        return pts;
+    }
+    private double[] afterRy(double ry, double tx, double ty, double tz){
+        double[] pts=new double[3];
+        pts[0]=tz*Math.sin(ry)+tx*Math.cos(ry);
+        pts[1]=ty;
+        pts[2]=tz*Math.cos(ry) - tx*Math.sin(ry);
+        return pts;
+    }
+    private double[] afterRz(double rz, double tx, double ty, double tz){
+        double[] pts=new double[3];
+        pts[0]=tx*Math.cos(rz)-ty*Math.sin(rz);
+        pts[1]=tx*Math.sin(rz)+ ty*Math.cos(rz);
+        pts[2]=tz;
+        return pts;
+    }
+    private double[] getTAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
+        double[] pts=afterRx(rx,tx,ty,tz);
+        pts=afterRy(ry,pts[0],pts[1],pts[2]);
+        pts=afterRz(rz,pts[0],pts[1],pts[2]);
+        return pts;
+    }
+
+
     private double getRelativeTxAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
 
         double a = Math.cos(ry) * Math.cos(rz);
@@ -222,8 +251,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
         return g*tx + h*ty + i*tz;
     }
-    
-    
+
+
     
     private Class<?> getDomainClass(Type genericType) {
         if(genericType instanceof Class) {
