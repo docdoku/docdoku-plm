@@ -20,35 +20,32 @@
 
 package com.docdoku.server.mainchannel.util;
 
-import com.docdoku.server.mainchannel.MainChannelWebSocket;
-
+import javax.websocket.Session;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Room {
 
-    private static final ConcurrentMap<String, Room> DB = new ConcurrentHashMap<String, Room>();
+    private static final ConcurrentMap<String, Room> DB = new ConcurrentHashMap<>();
 
     private String keyName;
-    private MainChannelWebSocket userSocket1;
-    private MainChannelWebSocket userSocket2;
+    private Session userSession1;
+    private Session userSession2;
 
     public Room(String roomKey) {
         keyName = roomKey;
         put();
     }
 
-    public MainChannelWebSocket getUserSocket1(){
-        return userSocket1;
+    public String getUser1Login(){
+        return (String)userSession1.getUserProperties().get("userLogin");
     }
-    public MainChannelWebSocket getUserSocket2(){
-        return userSocket2;
+    public String getUser2Login(){
+        return (String)userSession2.getUserProperties().get("userLogin");
     }
     
     /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
@@ -60,11 +57,11 @@ public class Room {
     @Override
     public String toString() {
         String str = "[";
-        if (userSocket1 != null) {
-            str += userSocket1.getUserLogin();
+        if (userSession1 != null) {
+            str += getUser1Login();
         }
-        if (userSocket2 != null) {
-            str += ", " + userSocket2.getUserLogin();
+        if (userSession2 != null) {
+            str += ", " + getUser2Login();
         }
         str += "]";
         return str;
@@ -73,21 +70,21 @@ public class Room {
     /** @return number of participant in this room */
     public int getOccupancy() {
         int occupancy = 0;
-        if (userSocket1 != null) {
+        if (userSession1 != null) {
             occupancy += 1;
         }
-        if (userSocket2 != null) {
+        if (userSession2 != null) {
             occupancy += 1;
         }
         return occupancy;
     }
 
     /** @return the name of the other participant, null if none */
-    public MainChannelWebSocket getOtherUserSocket(MainChannelWebSocket userSocket) {
-        if (userSocket.equals(userSocket1)) {
-            return userSocket2;
-        } else if (userSocket.equals(userSocket2)) {
-            return userSocket1;
+    public Session getOtherUserSession(Session userSession) {
+        if (userSession.equals(userSession1)) {
+            return userSession2;
+        } else if (userSession.equals(userSession2)) {
+            return userSession1;
         } else {
             return null;
         }
@@ -98,14 +95,14 @@ public class Room {
 
         if(user != null) {
 
-            if(userSocket1 != null){
-                if(user.equals(userSocket1.getUserLogin())){
+            if(userSession1 != null){
+                if(user.equals(getUser1Login())){
                     return true;
                 }
             }
 
-            if(userSocket2 != null){
-                if(user.equals(userSocket2.getUserLogin())){
+            if(userSession2 != null){
+                if(user.equals(getUser2Login())){
                     return true;
                 }
             }
@@ -115,19 +112,19 @@ public class Room {
     }
 
     /** @return true if one the participant is named as the input parameter, false otherwise */
-    public MainChannelWebSocket getUserSocket(String user) {
+    public Session getUserSession(String user) {
 
         if(user != null) {
 
-            if(userSocket1 != null){
-                if(user.equals(userSocket1.getUserLogin())){
-                    return userSocket1;
+            if(userSession1 != null){
+                if(user.equals(getUser1Login())){
+                    return userSession1;
                 }
             }
 
-            if(userSocket2 != null){
-                if(user.equals(userSocket2.getUserLogin())){
-                    return userSocket2;
+            if(userSession2 != null){
+                if(user.equals(getUser2Login())){
+                    return userSession2;
                 }
             }
 
@@ -140,15 +137,15 @@ public class Room {
 
         if(user != null) {
 
-            if(userSocket1 != null){
-                if(user.equals(userSocket1.getUserLogin())){
-                    removeUserSocket(userSocket1);
+            if(userSession1 != null){
+                if(user.equals(getUser1Login())){
+                    removeUserSession(userSession1);
                 }
             }
 
-            if(userSocket2 != null){
-                if(user.equals(userSocket2.getUserLogin())){
-                    removeUserSocket(userSocket2);
+            if(userSession2 != null){
+                if(user.equals(getUser2Login())){
+                    removeUserSession(userSession2);
                 }
             }
 
@@ -158,21 +155,21 @@ public class Room {
 
     /** Add a new participant to this room
      * @return if participant is found */
-    public boolean addUserSocket(MainChannelWebSocket userSocket) {
+    public boolean addUserSession(Session userSession) {
 
         boolean success = true;
 
         // avoid a user to be added in the room many times.
-        if(userSocket != null){
-            if(userSocket.equals(userSocket1) || userSocket.equals(userSocket2)){
+        if(userSession != null){
+            if(userSession.equals(userSession1) || userSession.equals(userSession2)){
                 return success;
             }
         }
 
-        if (userSocket1 == null) {
-            userSocket1 = userSocket;
-        } else if (userSocket2 == null) {
-            userSocket2 = userSocket;
+        if (userSession1 == null) {
+            userSession1 = userSession;
+        } else if (userSession2 == null) {
+            userSession2 = userSession;
         } else {
             // room is full, shouldn't happen
             success = false;
@@ -182,18 +179,18 @@ public class Room {
     }
 
     /** Removed a participant form current room */
-    public void removeUserSocket(MainChannelWebSocket userSocket) {
+    public void removeUserSession(Session userSession) {
 
-        if (userSocket != null && userSocket.equals(userSocket2)) {
-            userSocket2 = null;
+        if (userSession != null && userSession.equals(userSession2)) {
+            userSession2 = null;
         }
 
-        if (userSocket != null && userSocket.equals(userSocket1)) {
-            if (userSocket1 != null) {
-                userSocket1 = userSocket2;
-                userSocket2 = null;
+        if (userSession != null && userSession.equals(userSession1)) {
+            if (userSession1 != null) {
+                userSession1 = userSession2;
+                userSession2 = null;
             } else {
-                userSocket1 = null;
+                userSession1 = null;
             }
         }
 
@@ -224,15 +221,15 @@ public class Room {
         }
     }
 
-    public MainChannelWebSocket getSocketForUserLogin(String userLogin){
+    public Session getSessionForUserLogin(String userLogin){
 
-        if (userSocket1 != null) {
-            if(userLogin.equals(userSocket1.getUserLogin())){
-                return userSocket1;
+        if (userSession1 != null) {
+            if(userLogin.equals(getUser2Login())){
+                return userSession1;
             }
-        } else if (userSocket2 != null) {
-            if(userLogin.equals(userSocket2.getUserLogin())){
-                return userSocket2;
+        } else if (userSession2 != null) {
+            if(userLogin.equals(getUser2Login())){
+                return userSession2;
             }
         }
 
@@ -240,11 +237,11 @@ public class Room {
     }
 
     public static void removeUserFromAllRoom(String callerLogin) {
-        Set<Map.Entry<String, Room>> roomsEntries = new HashSet<Map.Entry<String, Room>>(DB.entrySet());
+        Set<Map.Entry<String, Room>> roomsEntries = new HashSet<>(DB.entrySet());
         for (Map.Entry<String, Room> entry : roomsEntries) {
-            MainChannelWebSocket socket = entry.getValue().getSocketForUserLogin(callerLogin);
-            if (socket != null) {
-                entry.getValue().removeUserSocket(socket);
+            Session session = entry.getValue().getSessionForUserLogin(callerLogin);
+            if (session != null) {
+                entry.getValue().removeUserSession(session);
             }
         }
     }

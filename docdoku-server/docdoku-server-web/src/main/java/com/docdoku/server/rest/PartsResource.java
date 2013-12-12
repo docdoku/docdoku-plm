@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;

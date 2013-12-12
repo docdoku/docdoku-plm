@@ -20,40 +20,28 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.CADInstance;
-import com.docdoku.core.product.Geometry;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartUsageLink;
+import com.docdoku.core.product.*;
 import com.docdoku.server.rest.dto.GeometryDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceDTO;
-import com.sun.jersey.api.json.JSONJAXBContext;
-import com.sun.jersey.api.json.JSONMarshaller;
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
+import javax.json.Json;
+import javax.json.stream.JsonGenerator;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.Provider;
-import javax.ws.rs.ext.Providers;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import org.apache.commons.lang.StringUtils;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
 /**
  *
@@ -64,20 +52,8 @@ import org.dozer.Mapper;
 public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
 
     private static final String CHARSET = "charset";
-    
     private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    
 
-    private ThreadLocal<byte[]> tlComma = new ThreadLocal<byte[]>();
-    private ThreadLocal<Boolean> tlAddComma = new ThreadLocal<Boolean>();
-    
-    private ThreadLocal<JSONMarshaller> tlMarshaller=new ThreadLocal<JSONMarshaller>();
-    private ThreadLocal<OutputStream> tlEntityStream=new ThreadLocal<OutputStream>();
-    
-    @Context
-    protected Providers providers;
-    
-    
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -90,51 +66,24 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     }
 
     @Override
-    public void writeTo(InstanceCollection object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        try {
-            //Class<?> domainClass = getDomainClass(genericType);
-            setEntityStream(entityStream);
-            setMarshaller(((JSONJAXBContext)getJAXBContext(InstanceDTO.class, mediaType)).createJSONMarshaller());
-            Map<String, String> mediaTypeParameters = mediaType.getParameters();
-            String charSet="UTF-8";
-            if(mediaTypeParameters.containsKey(CHARSET)) {
-                charSet = mediaTypeParameters.get(CHARSET);
-                getMarshaller().setProperty(Marshaller.JAXB_ENCODING, charSet);
-            }
-            
-            PartUsageLink rootUsageLink = object.getRootUsageLink();
-            List<Integer> usageLinkPaths = object.getUsageLinkPaths();
-            byte[] leftSquareBrace = "[".getBytes(charSet);
-            byte[] rightSquareBrace = "]".getBytes(charSet);
-            setComma(",".getBytes(charSet));
-            
-            setAddComma(false);
-            getEntityStream().write(leftSquareBrace);
-            generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>());
-            getEntityStream().write(rightSquareBrace);
-        } catch (JAXBException ex) {
-            throw new WebApplicationException(ex);
-        }finally{
-            tlEntityStream.remove();
-            tlMarshaller.remove();
-            tlAddComma.remove();
-            tlComma.remove();
+    public void writeTo(InstanceCollection object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
+        String charSet="UTF-8";
+        Map<String, String> mediaTypeParameters = mediaType.getParameters();
+        if(mediaTypeParameters.containsKey(CHARSET)) {
+            charSet = mediaTypeParameters.get(CHARSET);
         }
+        JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
 
-    }
+        PartUsageLink rootUsageLink = object.getRootUsageLink();
+        List<Integer> usageLinkPaths = object.getUsageLinkPaths();
+        jg.writeStartArray();
+        generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>(),jg);
+        jg.writeEnd();
 
-    private JAXBContext getJAXBContext(Class<?> type, MediaType mediaType) throws JAXBException {
-        ContextResolver<JAXBContext> resolver = providers.getContextResolver(JAXBContext.class, mediaType);
-        JAXBContext jaxbContext;
-        if (resolver == null || (jaxbContext = resolver.getContext(type)) == null) {
-            return JAXBContext.newInstance(type);
-        } else {
-            return jaxbContext;
-        }
     }
     
     
-    private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath, List<Integer> instanceIds) throws JAXBException, IOException {
+    private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
         
         
         //List<InstanceDTO> instancesDTO = new ArrayList<InstanceDTO>();
@@ -176,20 +125,46 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             String id = StringUtils.join(copyInstanceIds.toArray(),"-");
             
             if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
-                if(getAddComma())
-                    getEntityStream().write(getComma());
-                
-                getMarshaller().marshallToJSON(new InstanceDTO(id, partIterationId, atx, aty, atz, arx, ary, arz, files, attributes), getEntityStream());
-                setAddComma(true);
+
+                jg.writeStartObject();
+                jg.write("id",id);
+                jg.write("partIterationId",partIterationId);
+                jg.write("tx",atx);
+                jg.write("ty",aty);
+                jg.write("tz",atz);
+                jg.write("rx",arx);
+                jg.write("ry",ary);
+                jg.write("rz",arz);
+                jg.writeStartArray("files");
+                for(GeometryDTO g:files){
+                    jg.writeStartObject();
+                    jg.write("fullName", g.getFullName());
+                    jg.write("quality", g.getQuality());
+                    jg.write("radius", g.getRadius());
+                    jg.writeEnd();
+                }
+                jg.writeEnd();
+
+                jg.writeStartArray("attributes");
+                for(InstanceAttributeDTO a:attributes){
+                    jg.writeStartObject();
+                    jg.write("name", a.getName());
+                    jg.write("type", a.getType().toString());
+                    jg.write("value", a.getValue());
+                    jg.writeEnd();
+                }
+                jg.writeEnd();
+                //(new InstanceDTO(id, partIterationId, atx, aty, atz, arx, ary, arz, files, attributes));
+                jg.writeEnd();
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
                     ArrayList<Integer> copyInstanceIds2 = new ArrayList<Integer>(copyInstanceIds);
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds2);
+                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds2, jg);
                     } else if (component.getId() == filteredPath.get(0)) {
                         ArrayList<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds2);
+                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds2, jg);
                     }
                 }
             }
@@ -251,9 +226,18 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
         return g*tx + h*ty + i*tz;
     }
+    /*
 
+    private JAXBContext getJAXBContext(Class<?> type, MediaType mediaType) throws JAXBException {
+        ContextResolver<JAXBContext> resolver = providers.getContextResolver(JAXBContext.class, mediaType);
+        JAXBContext jaxbContext;
+        if (resolver == null || (jaxbContext = resolver.getContext(type)) == null) {
+            return JAXBContext.newInstance(type);
+        } else {
+            return jaxbContext;
+        }
+    }
 
-    
     private Class<?> getDomainClass(Type genericType) {
         if(genericType instanceof Class) {
             return (Class<?>) genericType;
@@ -263,38 +247,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             return null;
         }
     }
-    
-    
-    private byte[] getComma(){
-        return tlComma.get();
-    }
-    
-    private void setComma(byte[] c){
-        tlComma.set(c);
-    }
-    
-    private boolean getAddComma(){
-        return tlAddComma.get();
-    }
-    
-    private void setAddComma(boolean b){
-        tlAddComma.set(b);
-    }
-    
-    private OutputStream getEntityStream(){
-        return tlEntityStream.get();
-    }
-    
-    private void setEntityStream(OutputStream out){
-        tlEntityStream.set(out);
-    }
-    
-    private JSONMarshaller getMarshaller(){
-        return tlMarshaller.get();
-    }
-    
-    private void setMarshaller(JSONMarshaller m){
-        tlMarshaller.set(m);
-    }
+
+    */
     
 }

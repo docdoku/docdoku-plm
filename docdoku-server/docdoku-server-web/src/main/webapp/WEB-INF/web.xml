@@ -62,10 +62,6 @@
         <url-pattern>/shared-files/*</url-pattern>
     </filter-mapping>
     <servlet>
-        <servlet-name>JnlpDownloadServlet</servlet-name>
-        <servlet-class>jnlp.sample.servlet.JnlpDownloadServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>VoteServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
     </servlet>
@@ -105,10 +101,6 @@
         <servlet-name>UploadDownloadServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>JnlpDownloadServlet</servlet-name>
-        <url-pattern>/apps/*</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VoteServlet</servlet-name>
         <url-pattern>/action/vote</url-pattern>

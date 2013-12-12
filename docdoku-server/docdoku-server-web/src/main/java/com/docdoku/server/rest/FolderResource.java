@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.rest.dto.FolderDTO;

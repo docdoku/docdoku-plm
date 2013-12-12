@@ -20,8 +20,8 @@
 
 package com.docdoku.server.mainchannel;
 
+import javax.websocket.Session;
 import java.util.Collection;
-import java.util.HashMap;
 
 public final class MainChannelDispatcher {
 
@@ -35,10 +35,10 @@ public final class MainChannelDispatcher {
 
             if(MainChannelApplication.getUserChannels(userLogin) != null) {
 
-                Collection<MainChannelWebSocket> sockets = MainChannelApplication.getUserChannels(userLogin).values();
+                Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
 
-                for(MainChannelWebSocket socket:sockets){
-                    send(socket, message);
+                for(Session session:sessions){
+                    send(session, message);
                 }
 
             }
@@ -48,10 +48,10 @@ public final class MainChannelDispatcher {
     }
 
     /* Send a message to single channel */
-    public static boolean send(MainChannelWebSocket socket, String message){
+    public static boolean send(Session session, String message){
 
-        if (socket != null) {
-            socket.send(message);
+        if (session != null) {
+            session.getAsyncRemote().sendText(message);
             return true;
         }
 
