@@ -79,15 +79,12 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         jg.writeStartArray();
         generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>(),jg);
         jg.writeEnd();
-
+        jg.close();
     }
     
     
     private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
         
-        
-        //List<InstanceDTO> instancesDTO = new ArrayList<InstanceDTO>();
-
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
         PartIteration partI = partR.getLastIteration();
@@ -154,8 +151,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                     jg.writeEnd();
                 }
                 jg.writeEnd();
-                //(new InstanceDTO(id, partIterationId, atx, aty, atz, arx, ary, arz, files, attributes));
                 jg.writeEnd();
+                jg.flush();
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
                     ArrayList<Integer> copyInstanceIds2 = new ArrayList<Integer>(copyInstanceIds);

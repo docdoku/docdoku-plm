@@ -29,6 +29,18 @@
                     <version>7</version>
                     <defaultLibBundleDir>/lib</defaultLibBundleDir>
                     <generateApplicationXml>false</generateApplicationXml>
+                    <modules>
+                        <ejbModule>
+                            <groupId>org.ow2.docdoku</groupId>
+                            <artifactId>docdoku-server-ejb</artifactId>
+                            <bundleFileName>docdoku-server-ejb.jar</bundleFileName>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>org.ow2.docdoku</groupId>
+                            <artifactId>docdoku-server-web</artifactId>
+                            <bundleFileName>docdoku-server-web.war</bundleFileName>
+                        </webModule>
+                    </modules>
                 </configuration>
             </plugin>
         </plugins>

@@ -24,6 +24,10 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <organization>
+        <name>DocDoku</name>
+        <url>http://www.docdoku.com</url>
+    </organization>
     <scm>
         <connection>scm:git:https://git@github.com/docdoku/docdoku-plm.git</connection>
         <developerConnection>scm:git:https://git@github.com/docdoku/docdoku-plm.git</developerConnection>
