@@ -48,12 +48,12 @@ public class MultimediaViewerImpl implements DocumentViewer {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/multimedia_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(multimediaResource,uuid));
-        scopes.put("externalUriResource", dataManager.getExternalStorageURI(multimediaResource));
-        scopes.put("fileName", multimediaResource.getName());
-        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
-        return templateWriter.toString();
+
+        String html = ViewerUtils.getViewerTemplate(dataManager, multimediaResource, uuid, templateWriter.toString());
+
+        return html;
     }
 
 }

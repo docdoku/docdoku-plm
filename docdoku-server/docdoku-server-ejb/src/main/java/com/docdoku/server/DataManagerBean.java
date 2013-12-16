@@ -25,6 +25,7 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
+import com.docdoku.server.storage.googlestorage.GoogleStorageProvider;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -52,9 +53,9 @@ public class DataManagerBean implements IDataManagerLocal {
 
     @PostConstruct
     private void init() {
-        //defaultStorageProvider = new GoogleStorageProvider("");
+        defaultStorageProvider = new GoogleStorageProvider("");
         fileStorageProvider = new FileStorageProvider(vaultPath);
-        defaultStorageProvider = fileStorageProvider;
+        //defaultStorageProvider = fileStorageProvider;
     }
 
     @Override

@@ -58,13 +58,13 @@ public class ScormViewerImpl implements DocumentViewer {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/scorm_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("organization", scormOrganization);
-        scopes.put("uriResource", ViewerUtils.getURI(scormResource,uuid));
-        scopes.put("externalUriResource", dataManager.getExternalStorageURI(scormResource));
-        scopes.put("fileName", scormResource.getName());
-        scopes.put("thisId", UUID.randomUUID().toString());
+        scopes.put("uriResource", ViewerUtils.getURI(scormResource, uuid));
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
-        return templateWriter.toString();
+
+        String html = ViewerUtils.getViewerTemplate(dataManager, scormResource, uuid, templateWriter.toString());
+
+        return html;
     }
 
 }
