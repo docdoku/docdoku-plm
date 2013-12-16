@@ -168,7 +168,7 @@ define(
             _.each(template.get("attributeTemplates"),function(object){
                 that.attributesView.collection.add({
                     name: object.name,
-                    type: "TEXT",
+                    type: object.attributeType || "TEXT",
                     value: ""
                 });
             });
