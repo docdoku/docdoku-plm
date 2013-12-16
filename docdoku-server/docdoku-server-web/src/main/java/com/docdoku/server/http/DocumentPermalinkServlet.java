@@ -20,6 +20,7 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;

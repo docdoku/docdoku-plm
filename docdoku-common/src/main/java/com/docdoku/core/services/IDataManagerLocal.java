@@ -38,5 +38,6 @@ public interface IDataManagerLocal {
     void deleteData(BinaryResource binaryResource) throws StorageException;
     Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     String getExternalStorageURI(BinaryResource binaryResource);
+    String getShortenExternalStorageURI(BinaryResource binaryResource);
     void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
 }

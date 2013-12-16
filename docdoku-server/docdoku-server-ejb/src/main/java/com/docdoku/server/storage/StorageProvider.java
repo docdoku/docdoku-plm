@@ -34,5 +34,6 @@ public interface StorageProvider {
     void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException;
     void delData(BinaryResource pBinaryResource) throws StorageException;
     String getExternalResourceURI(BinaryResource binaryResource);
+    String getShortenExternalResourceURI(BinaryResource binaryResource);
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
 }

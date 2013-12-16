@@ -121,6 +121,11 @@ public class FileStorageProvider implements StorageProvider {
         return null;
     }
 
+    @Override
+    public String getShortenExternalResourceURI(BinaryResource binaryResource) {
+        return null;
+    }
+
     public void cleanParentFolders(BinaryResource pBinaryResource){
         cleanRemove(new File(getVirtualPath(pBinaryResource)).getParentFile());
     }

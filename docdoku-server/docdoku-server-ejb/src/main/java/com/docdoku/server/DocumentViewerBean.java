@@ -80,16 +80,18 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
     }
 
     private String getDefaultTemplate(BinaryResource binaryResource,String uuid) throws IOException {
+
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/default_viewer.mustache");
-        Map<String, Object> scopes = new HashMap<>();
-        scopes.put("uriResource", ViewerUtils.getURI(binaryResource,uuid));
-        scopes.put("externalUriResource", dataManager.getExternalStorageURI(binaryResource));
+        HashMap<Object,Object> scopes = new HashMap<>();
+        scopes.put("uriResource", ViewerUtils.getURI(binaryResource, uuid));
         scopes.put("fileName", binaryResource.getName());
-        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
-        return templateWriter.toString();
+
+        String html = ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString());
+
+        return html;
     }
 
 }
