@@ -48,10 +48,9 @@ import java.util.Map;
  * @author Florent Garin
  */
 @Provider
-@Produces("application/json;charset=UTF-8")
+@Produces(MediaType.APPLICATION_JSON)
 public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceCollection> {
 
-    private static final String CHARSET = "charset";
     private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
 
@@ -68,10 +67,6 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     @Override
     public void writeTo(InstanceCollection object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
         String charSet="UTF-8";
-        Map<String, String> mediaTypeParameters = mediaType.getParameters();
-        if(mediaTypeParameters.containsKey(CHARSET)) {
-            charSet = mediaTypeParameters.get(CHARSET);
-        }
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
 
         PartUsageLink rootUsageLink = object.getRootUsageLink();
@@ -79,7 +74,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         jg.writeStartArray();
         generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>(),jg);
         jg.writeEnd();
-        jg.close();
+        jg.flush();
     }
     
     
