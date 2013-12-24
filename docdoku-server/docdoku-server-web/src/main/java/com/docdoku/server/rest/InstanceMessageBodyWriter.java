@@ -28,7 +28,8 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.server.rest.dto.GeometryDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceDTO;
+import com.docdoku.server.rest.dto.PartInstanceDTO;
+import com.docdoku.server.rest.dto.TransformationDTO;
 import com.sun.jersey.api.json.JSONJAXBContext;
 import com.sun.jersey.api.json.JSONMarshaller;
 import java.io.IOException;
@@ -94,7 +95,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         try {
             //Class<?> domainClass = getDomainClass(genericType);
             setEntityStream(entityStream);
-            setMarshaller(((JSONJAXBContext)getJAXBContext(InstanceDTO.class, mediaType)).createJSONMarshaller());
+            setMarshaller(((JSONJAXBContext)getJAXBContext(PartInstanceDTO.class, mediaType)).createJSONMarshaller());
             Map<String, String> mediaTypeParameters = mediaType.getParameters();
             String charSet="UTF-8";
             if(mediaTypeParameters.containsKey(CHARSET)) {
@@ -110,7 +111,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             
             setAddComma(false);
             getEntityStream().write(leftSquareBrace);
-            generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>());
+            generateInstanceStream(rootUsageLink, new ArrayList<TransformationDTO>(), usageLinkPaths, new ArrayList<Integer>());
             getEntityStream().write(rightSquareBrace);
         } catch (JAXBException ex) {
             throw new WebApplicationException(ex);
@@ -134,10 +135,10 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     }
     
     
-    private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath, List<Integer> instanceIds) throws JAXBException, IOException {
+    private void generateInstanceStream(PartUsageLink usageLink, List<TransformationDTO> transformations, List<Integer> filteredPath, List<Integer> instanceIds) throws JAXBException, IOException {
         
         
-        //List<InstanceDTO> instancesDTO = new ArrayList<InstanceDTO>();
+        //List<PartInstanceDTO> instancesDTO = new ArrayList<PartInstanceDTO>();
 
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
@@ -162,40 +163,38 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
 
         for (CADInstance instance : usageLink.getCadInstances()) {
-            ArrayList<Integer> copyInstanceIds = new ArrayList<Integer>(instanceIds);
+            List<Integer> copyInstanceIds = new ArrayList<Integer>(instanceIds);
             if(instance.getId()!=-1)
                 copyInstanceIds.add(instance.getId());
 
-            //compute absolutes values
-            double atx = tx + getRelativeTxAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
-            double aty = ty + getRelativeTyAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
-            double atz = tz + getRelativeTzAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
-            double arx = rx + instance.getRx();
-            double ary = ry + instance.getRy();
-            double arz = rz + instance.getRz();
+            transformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
+
             String id = StringUtils.join(copyInstanceIds.toArray(),"-");
             
             if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
                 if(getAddComma())
                     getEntityStream().write(getComma());
                 
-                getMarshaller().marshallToJSON(new InstanceDTO(id, partIterationId, atx, aty, atz, arx, ary, arz, files, attributes), getEntityStream());
+                getMarshaller().marshallToJSON(new PartInstanceDTO(id, partIterationId, transformations, files, attributes), getEntityStream());
                 setAddComma(true);
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
-                    ArrayList<Integer> copyInstanceIds2 = new ArrayList<Integer>(copyInstanceIds);
+                    List<Integer> copyInstanceIds2 = new ArrayList<Integer>(copyInstanceIds);
+                    List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
+
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds2);
+                        generateInstanceStream(component, copyTransformations, filteredPath, copyInstanceIds2);
                     } else if (component.getId() == filteredPath.get(0)) {
-                        ArrayList<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filteredPath);
+                        List<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds2);
+                        generateInstanceStream(component, copyTransformations, copyWithoutCurrentId, copyInstanceIds2);
                     }
                 }
             }
         }
     }
 
+    /*
     private double[] afterRx(double rx, double tx, double ty, double tz){
         double[] pts=new double[3];
         pts[0]=tx;
@@ -251,7 +250,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
         return g*tx + h*ty + i*tz;
     }
-
+    */
 
     
     private Class<?> getDomainClass(Type genericType) {

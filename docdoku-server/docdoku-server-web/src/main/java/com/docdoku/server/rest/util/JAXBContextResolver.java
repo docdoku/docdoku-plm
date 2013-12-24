@@ -19,8 +19,7 @@
  */
 package com.docdoku.server.rest.util;
 
-import com.docdoku.server.rest.InstanceCollection;
-import com.docdoku.server.rest.dto.InstanceDTO;
+import com.docdoku.server.rest.dto.PartInstanceDTO;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
 
@@ -35,7 +34,7 @@ import javax.xml.bind.JAXBContext;
 public class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
     private JAXBContext context;
-    private Class[] types = {InstanceDTO.class};
+    private Class[] types = {PartInstanceDTO.class};
 
     public JAXBContextResolver() throws Exception {
         this.context = new JSONJAXBContext(
