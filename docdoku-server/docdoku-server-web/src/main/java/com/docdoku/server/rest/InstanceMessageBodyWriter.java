@@ -23,12 +23,14 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.server.rest.dto.GeometryDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.TransformationDTO;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
-
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Vector3d;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -68,18 +70,18 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     public void writeTo(InstanceCollection object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
         String charSet="UTF-8";
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
-
         PartUsageLink rootUsageLink = object.getRootUsageLink();
         List<Integer> usageLinkPaths = object.getUsageLinkPaths();
         jg.writeStartArray();
-        generateInstanceStream(rootUsageLink, 0, 0, 0, 0, 0, 0, usageLinkPaths, new ArrayList<Integer>(),jg);
+        generateInstanceStreamWithGlobalMatrix(rootUsageLink, new ArrayList<TransformationDTO>(), usageLinkPaths, new ArrayList<Integer>(), jg);
         jg.writeEnd();
         jg.flush();
     }
-    
-    
-    private void generateInstanceStream(PartUsageLink usageLink, double tx, double ty, double tz, double rx, double ry, double rz, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
-        
+
+
+
+    private void generateInstanceStreamWithGlobalMatrix(PartUsageLink usageLink, List<TransformationDTO> transformations, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
+
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
         PartIteration partI = partR.getLastIteration();
@@ -103,30 +105,21 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
 
         for (CADInstance instance : usageLink.getCadInstances()) {
-            ArrayList<Integer> copyInstanceIds = new ArrayList<Integer>(instanceIds);
             if(instance.getId()!=-1)
-                copyInstanceIds.add(instance.getId());
+                instanceIds.add(instance.getId());
 
-            //compute absolutes values
-            double atx = tx + getRelativeTxAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
-            double aty = ty + getRelativeTyAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
-            double atz = tz + getRelativeTzAfterParentRotation(rx, ry, rz, instance.getTx(), instance.getTy(), instance.getTz());
-            double arx = rx + instance.getRx();
-            double ary = ry + instance.getRy();
-            double arz = rz + instance.getRz();
-            String id = StringUtils.join(copyInstanceIds.toArray(),"-");
-            
+            transformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
+
+            String id = StringUtils.join(instanceIds.toArray(),"-");
+
             if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
 
                 jg.writeStartObject();
                 jg.write("id",id);
                 jg.write("partIterationId",partIterationId);
-                jg.write("tx",atx);
-                jg.write("ty",aty);
-                jg.write("tz",atz);
-                jg.write("rx",arx);
-                jg.write("ry",ary);
-                jg.write("rz",arz);
+
+                jg.write("transformations",combineTransformations(transformations).toString());
+
                 jg.writeStartArray("files");
                 for(GeometryDTO g:files){
                     jg.writeStartObject();
@@ -148,98 +141,133 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 jg.writeEnd();
                 jg.writeEnd();
                 jg.flush();
+
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
-                    ArrayList<Integer> copyInstanceIds2 = new ArrayList<Integer>(copyInstanceIds);
+                    List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
+                    List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
+
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, filteredPath, copyInstanceIds2, jg);
+                        generateInstanceStreamWithGlobalMatrix(component, copyTransformations, filteredPath, copyInstanceIds, jg);
+
                     } else if (component.getId() == filteredPath.get(0)) {
-                        ArrayList<Integer> copyWithoutCurrentId = new ArrayList<Integer>(filteredPath);
+                        List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStream(component, atx, aty, atz, arx, ary, arz, copyWithoutCurrentId, copyInstanceIds2, jg);
+                        generateInstanceStreamWithGlobalMatrix(component, copyTransformations, copyWithoutCurrentId, copyInstanceIds, jg);
                     }
                 }
             }
         }
     }
 
-    private double[] afterRx(double rx, double tx, double ty, double tz){
-        double[] pts=new double[3];
-        pts[0]=tx;
-        pts[1]=ty*Math.cos(rx) - tz*Math.sin(rx);
-        pts[2]=ty*Math.sin(rx) + tz*Math.cos(rx);
-        return pts;
-    }
-    private double[] afterRy(double ry, double tx, double ty, double tz){
-        double[] pts=new double[3];
-        pts[0]=tz*Math.sin(ry)+tx*Math.cos(ry);
-        pts[1]=ty;
-        pts[2]=tz*Math.cos(ry) - tx*Math.sin(ry);
-        return pts;
-    }
-    private double[] afterRz(double rz, double tx, double ty, double tz){
-        double[] pts=new double[3];
-        pts[0]=tx*Math.cos(rz)-ty*Math.sin(rz);
-        pts[1]=tx*Math.sin(rz)+ ty*Math.cos(rz);
-        pts[2]=tz;
-        return pts;
-    }
-    private double[] getTAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
-        double[] pts=afterRx(rx,tx,ty,tz);
-        pts=afterRy(ry,pts[0],pts[1],pts[2]);
-        pts=afterRz(rz,pts[0],pts[1],pts[2]);
-        return pts;
+    private Matrix4d combineTransformations(List<TransformationDTO> transformations){
+        Matrix4d gM=new Matrix4d();
+        gM.setIdentity();
+        for(TransformationDTO t:transformations){
+            gM.mul(convertToMatrix(t));
+        }
+
+        return gM;
     }
 
-
-    private double getRelativeTxAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
-
-        double a = Math.cos(ry) * Math.cos(rz);
-        double b = -Math.cos(rx) * Math.sin(rz) + Math.sin(rx) * Math.sin(ry) * Math.cos(rz);
-        double c = Math.sin(rx) * Math.sin(rz) + Math.cos(rx) * Math.sin(ry) * Math.cos(rz);
-
-        return a*tx + b*ty + c*tz;
+    private Matrix4d convertToMatrix(TransformationDTO t){
+        Matrix4d m=new Matrix4d();
+        m.rotX(t.getRx());
+        m.rotY(t.getRy());
+        m.rotZ(t.getRz());
+        m.setTranslation(new Vector3d(t.getTx(),t.getTy(),t.getTz()));
+        return m;
     }
 
-    private double getRelativeTyAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
+    private void generateInstanceStreamWithAllTransformations(PartUsageLink usageLink, List<TransformationDTO> transformations, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
 
-        double d = Math.cos(ry) * Math.sin(rz);
-        double e = Math.cos(rx) * Math.cos(rz) + Math.sin(rx) * Math.sin(ry) * Math.sin(rz);
-        double f = -Math.sin(rx) * Math.cos(rz) + Math.cos(rx) * Math.sin(ry) * Math.sin(rz);
+        PartMaster pm = usageLink.getComponent();
+        PartRevision partR = pm.getLastRevision();
+        PartIteration partI = partR.getLastIteration();
 
-        return d*tx + e*ty + f*tz;
-    }
+        String partIterationId = new StringBuilder().append(pm.getNumber())
+                .append("-")
+                .append(partR.getVersion())
+                .append("-")
+                .append(partI.getIteration()).toString();
 
-    private double getRelativeTzAfterParentRotation(double rx, double ry, double rz, double tx, double ty, double tz){
+        List<GeometryDTO> files = new ArrayList<GeometryDTO>();
+        List<InstanceAttributeDTO> attributes = new ArrayList<InstanceAttributeDTO>();
 
-        double g = -Math.sin(ry);
-        double h = Math.sin(rx) * Math.cos(ry);
-        double i = Math.cos(rx) * Math.cos(ry);
+        for (Geometry geometry : partI.getGeometries()) {
+            files.add(mapper.map(geometry, GeometryDTO.class));
+        }
 
-        return g*tx + h*ty + i*tz;
-    }
-    /*
+        for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+            attributes.add(mapper.map(attr, InstanceAttributeDTO.class));
+        }
 
-    private JAXBContext getJAXBContext(Class<?> type, MediaType mediaType) throws JAXBException {
-        ContextResolver<JAXBContext> resolver = providers.getContextResolver(JAXBContext.class, mediaType);
-        JAXBContext jaxbContext;
-        if (resolver == null || (jaxbContext = resolver.getContext(type)) == null) {
-            return JAXBContext.newInstance(type);
-        } else {
-            return jaxbContext;
+
+        for (CADInstance instance : usageLink.getCadInstances()) {
+            if(instance.getId()!=-1)
+                instanceIds.add(instance.getId());
+
+            transformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
+
+            String id = StringUtils.join(instanceIds.toArray(),"-");
+            
+            if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
+
+                jg.writeStartObject();
+                jg.write("id",id);
+                jg.write("partIterationId",partIterationId);
+
+                jg.writeStartArray("transformations");
+                for(TransformationDTO t:transformations){
+                    jg.writeStartObject();
+                    jg.write("tx",t.getTx());
+                    jg.write("ty",t.getTy());
+                    jg.write("tz",t.getTz());
+                    jg.write("rx",t.getRx());
+                    jg.write("ry",t.getRy());
+                    jg.write("rz",t.getRz());
+                    jg.writeEnd();
+                }
+                jg.writeEnd();
+
+                jg.writeStartArray("files");
+                for(GeometryDTO g:files){
+                    jg.writeStartObject();
+                    jg.write("fullName", g.getFullName());
+                    jg.write("quality", g.getQuality());
+                    jg.write("radius", g.getRadius());
+                    jg.writeEnd();
+                }
+                jg.writeEnd();
+
+                jg.writeStartArray("attributes");
+                for(InstanceAttributeDTO a:attributes){
+                    jg.writeStartObject();
+                    jg.write("name", a.getName());
+                    jg.write("type", a.getType().toString());
+                    jg.write("value", a.getValue());
+                    jg.writeEnd();
+                }
+                jg.writeEnd();
+                jg.writeEnd();
+                jg.flush();
+
+            } else {
+                for (PartUsageLink component : partI.getComponents()) {
+                    List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
+                    List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
+
+                    if (filteredPath.isEmpty()) {
+                        generateInstanceStreamWithAllTransformations(component, copyTransformations, filteredPath, copyInstanceIds, jg);
+
+                    } else if (component.getId() == filteredPath.get(0)) {
+                        List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
+                        copyWithoutCurrentId.remove(0);
+                        generateInstanceStreamWithAllTransformations(component, copyTransformations, copyWithoutCurrentId, copyInstanceIds, jg);
+                    }
+                }
+            }
         }
     }
-
-    private Class<?> getDomainClass(Type genericType) {
-        if(genericType instanceof Class) {
-            return (Class<?>) genericType;
-        } else if(genericType instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) genericType).getActualTypeArguments()[0];
-        } else {
-            return null;
-        }
-    }
-
-    */
     
 }
