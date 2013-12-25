@@ -118,7 +118,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 jg.write("id",id);
                 jg.write("partIterationId",partIterationId);
 
-                jg.write("transformations",combineTransformations(transformations).toString());
+                jg.write("transformations", combineTransformations(transformations).toString());
 
                 jg.writeStartArray("files");
                 for(GeometryDTO g:files){
@@ -163,21 +163,29 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     private Matrix4d combineTransformations(List<TransformationDTO> transformations){
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
+        Matrix4d m=new Matrix4d();
         for(TransformationDTO t:transformations){
-            gM.mul(convertToMatrix(t));
+            m.setIdentity();
+            m.setTranslation(new Vector3d(t.getTx(),t.getTy(),t.getTz()));
+            gM.mul(m);
+
+            m.setIdentity();
+            m.rotZ(t.getRz());
+            gM.mul(m);
+
+            m.setIdentity();
+            m.rotY(t.getRy());
+            gM.mul(m);
+
+            m.setIdentity();
+            m.rotX(t.getRx());
+            gM.mul(m);
         }
 
         return gM;
     }
 
-    private Matrix4d convertToMatrix(TransformationDTO t){
-        Matrix4d m=new Matrix4d();
-        m.rotX(t.getRx());
-        m.rotY(t.getRy());
-        m.rotZ(t.getRz());
-        m.setTranslation(new Vector3d(t.getTx(),t.getTy(),t.getTz()));
-        return m;
-    }
+
 
     private void generateInstanceStreamWithAllTransformations(PartUsageLink usageLink, List<TransformationDTO> transformations, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
 
