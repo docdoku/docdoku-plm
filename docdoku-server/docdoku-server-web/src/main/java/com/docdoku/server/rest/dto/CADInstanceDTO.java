@@ -30,19 +30,17 @@ public class CADInstanceDTO {
     private Double ty;
     private Double tz;
 
-    private CADInstance.Positioning positioning;
 
     public CADInstanceDTO() {
     }
 
-    public CADInstanceDTO(Double rx, Double ry, Double rz, Double tx, Double ty, Double tz, CADInstance.Positioning positioning) {
+    public CADInstanceDTO(Double rx, Double ry, Double rz, Double tx, Double ty, Double tz) {
         this.rx = rx;
         this.ry = ry;
         this.rz = rz;
         this.tx = tx;
         this.ty = ty;
         this.tz = tz;
-        this.positioning = positioning;
     }
 
     public Double getRx() {
@@ -93,11 +91,4 @@ public class CADInstanceDTO {
         this.tz = tz;
     }
 
-    public CADInstance.Positioning getPositioning() {
-        return positioning;
-    }
-
-    public void setPositioning(CADInstance.Positioning positioning) {
-        this.positioning = positioning;
-    }
 }

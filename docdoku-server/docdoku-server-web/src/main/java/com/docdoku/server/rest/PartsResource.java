@@ -554,12 +554,11 @@ public class PartsResource {
                                 cadInstanceDTO.getTz(),
                                 cadInstanceDTO.getRx(),
                                 cadInstanceDTO.getRy(),
-                                cadInstanceDTO.getRz(),
-                                cadInstanceDTO.getPositioning()));
+                                cadInstanceDTO.getRz()));
                     }
                 }else{
                     for(double i = 0 ; i < partUsageLinkDTO.getAmount() ; i ++){
-                        cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0, CADInstance.Positioning.ABSOLUTE));
+                        cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
                     }
                 }
                 partUsageLink.setComponent(component);

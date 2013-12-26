@@ -23,7 +23,7 @@ package com.docdoku.server.converters.catia.product.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Component_DTK {
+public class ComponentDTK {
 
     private Integer id;
     private Integer fatherId;
@@ -38,9 +38,9 @@ public class Component_DTK {
     private static final String INSTANCE = "InstanceComponentType";
     private static final String CATALOG = "CatalogComponentType";
 
-    private List<Component_DTK> subComponentDtkList = null;
+    private List<ComponentDTK> subComponentDtkList = null;
 
-    public Component_DTK(Integer id, Integer fatherId, String type, boolean assembly) {
+    public ComponentDTK(Integer id, Integer fatherId, String type, boolean assembly) {
         this.id = id;
         this.fatherId = fatherId;
         this.type = type;
@@ -58,10 +58,10 @@ public class Component_DTK {
         positioning = pPositioning;
     }
 
-    public void addSubComponent(Component_DTK componentDtk) {
+    public void addSubComponent(ComponentDTK componentDtk) {
 
         if (subComponentDtkList == null)
-            subComponentDtkList = new ArrayList<Component_DTK>();
+            subComponentDtkList = new ArrayList<ComponentDTK>();
 
         subComponentDtkList.add(componentDtk);
 
@@ -127,11 +127,11 @@ public class Component_DTK {
         this.metaDataList = metaDataList;
     }
 
-    public List<Component_DTK> getSubComponentDtkList() {
+    public List<ComponentDTK> getSubComponentDtkList() {
         return subComponentDtkList;
     }
 
-    public void setSubComponentDtkList(List<Component_DTK> subComponentDtkList) {
+    public void setSubComponentDtkList(List<ComponentDTK> subComponentDtkList) {
         this.subComponentDtkList = subComponentDtkList;
     }
 

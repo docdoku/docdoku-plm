@@ -17,10 +17,6 @@ define(function() {
         findRadius:function(){
             // check in files if radius available (new way)
             this.radius = this.findRadiusInFiles(this.files);
-            // check in attributes if not found (old way)
-            if(!this.radius){
-                this.radius = this.findRadiusInAttributes(this.attributes);
-            }
         },
 
         findRadiusInFiles:function(files){
@@ -28,13 +24,6 @@ define(function() {
                return files[0].radius;
             }
             return 0;
-        },
-
-        findRadiusInAttributes:function(attributes){
-            var radiusAttribute = _.find(attributes, function(attribute) {
-                return attribute.name == 'radius';
-            }) || {};
-            return radiusAttribute.value || 0;
         },
 
         hasGeometry: function() {
@@ -47,12 +36,7 @@ define(function() {
                 this.instances[instanceRaw.id] = new Instance(
                     instanceRaw.id,
                     self.id,
-                    instanceRaw.tx,
-                    instanceRaw.ty,
-                    instanceRaw.tz,
-                    instanceRaw.rx,
-                    instanceRaw.ry,
-                    instanceRaw.rz,
+                    instanceRaw.matrix,
                     self.radius
                 );
             }

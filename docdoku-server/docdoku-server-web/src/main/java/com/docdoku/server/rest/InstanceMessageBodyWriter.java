@@ -92,8 +92,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 .append("-")
                 .append(partI.getIteration()).toString();
 
-        List<GeometryDTO> files = new ArrayList<GeometryDTO>();
-        List<InstanceAttributeDTO> attributes = new ArrayList<InstanceAttributeDTO>();
+        List<GeometryDTO> files = new ArrayList<>();
+        List<InstanceAttributeDTO> attributes = new ArrayList<>();
 
         for (Geometry geometry : partI.getGeometries()) {
             files.add(mapper.map(geometry, GeometryDTO.class));
@@ -118,7 +118,13 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 jg.write("id",id);
                 jg.write("partIterationId",partIterationId);
 
-                jg.write("transformations", combineTransformations(transformations).toString());
+                jg.writeStartArray("matrix");
+                Matrix4d mG = combineTransformations(transformations);
+                for(int i = 0;i<4;i++)
+                    for(int j = 0;j<4;j++)
+                        jg.write(mG.getElement(i,j));
+
+                jg.writeEnd();
 
                 jg.writeStartArray("files");
                 for(GeometryDTO g:files){
