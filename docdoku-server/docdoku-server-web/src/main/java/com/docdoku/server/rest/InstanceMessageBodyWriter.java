@@ -73,14 +73,16 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         PartUsageLink rootUsageLink = object.getRootUsageLink();
         List<Integer> usageLinkPaths = object.getUsageLinkPaths();
         jg.writeStartArray();
-        generateInstanceStreamWithGlobalMatrix(rootUsageLink, new ArrayList<TransformationDTO>(), usageLinkPaths, new ArrayList<Integer>(), jg);
+        Matrix4d gM=new Matrix4d();
+        gM.setIdentity();
+        generateInstanceStreamWithGlobalMatrix(rootUsageLink, gM, usageLinkPaths, new ArrayList<Integer>(), jg);
         jg.writeEnd();
         jg.flush();
     }
 
 
 
-    private void generateInstanceStreamWithGlobalMatrix(PartUsageLink usageLink, List<TransformationDTO> transformations, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
+    private void generateInstanceStreamWithGlobalMatrix(PartUsageLink usageLink, Matrix4d matrix, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
 
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
@@ -109,8 +111,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             if(instance.getId()!=-1)
                 copyInstanceIds.add(instance.getId());
 
-            List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
-            copyTransformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
+
+            Matrix4d combinedMatrix=combineTransformation(matrix,instance);
 
             String id = StringUtils.join(copyInstanceIds.toArray(),"-");
 
@@ -121,10 +123,9 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 jg.write("partIterationId",partIterationId);
 
                 jg.writeStartArray("matrix");
-                Matrix4d mG = combineTransformations(copyTransformations);
                 for(int i = 0;i<4;i++)
                     for(int j = 0;j<4;j++)
-                        jg.write(mG.getElement(i,j));
+                        jg.write(combinedMatrix.getElement(i,j));
 
                 jg.writeEnd();
 
@@ -156,41 +157,37 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                     //List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
 
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStreamWithGlobalMatrix(component, copyTransformations, filteredPath, copyInstanceIds, jg);
+                        generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, filteredPath, copyInstanceIds, jg);
 
                     } else if (component.getId() == filteredPath.get(0)) {
                         List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStreamWithGlobalMatrix(component, copyTransformations, copyWithoutCurrentId, copyInstanceIds, jg);
+                        generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, copyWithoutCurrentId, copyInstanceIds, jg);
                     }
                 }
             }
         }
     }
 
-    private Matrix4d combineTransformations(List<TransformationDTO> transformations){
-        Matrix4d gM=new Matrix4d();
-        gM.setIdentity();
+    private Matrix4d combineTransformation(Matrix4d matrix, CADInstance i){
+        Matrix4d gM=new Matrix4d(matrix);
         Matrix4d m=new Matrix4d();
-        for(TransformationDTO t:transformations){
 
-            m.setIdentity();
-            m.setTranslation(new Vector3d(t.getTx(),t.getTy(),t.getTz()));
-            gM.mul(m);
+        m.setIdentity();
+        m.setTranslation(new Vector3d(i.getTx(),i.getTy(),i.getTz()));
+        gM.mul(m);
 
-            m.setIdentity();
-            m.rotZ(t.getRz());
-            gM.mul(m);
+        m.setIdentity();
+        m.rotZ(i.getRz());
+        gM.mul(m);
 
-            m.setIdentity();
-            m.rotY(t.getRy());
-            gM.mul(m);
+        m.setIdentity();
+        m.rotY(i.getRy());
+        gM.mul(m);
 
-            m.setIdentity();
-            m.rotX(t.getRx());
-            gM.mul(m);
-
-        }
+        m.setIdentity();
+        m.rotX(i.getRx());
+        gM.mul(m);
 
         return gM;
     }
