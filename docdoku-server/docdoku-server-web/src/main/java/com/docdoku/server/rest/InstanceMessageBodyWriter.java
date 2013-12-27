@@ -105,12 +105,14 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
 
         for (CADInstance instance : usageLink.getCadInstances()) {
+            List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
             if(instance.getId()!=-1)
-                instanceIds.add(instance.getId());
+                copyInstanceIds.add(instance.getId());
 
-            transformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
+            List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
+            copyTransformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
 
-            String id = StringUtils.join(instanceIds.toArray(),"-");
+            String id = StringUtils.join(copyInstanceIds.toArray(),"-");
 
             if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
 
@@ -119,7 +121,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 jg.write("partIterationId",partIterationId);
 
                 jg.writeStartArray("matrix");
-                Matrix4d mG = combineTransformations(transformations);
+                Matrix4d mG = combineTransformations(copyTransformations);
                 for(int i = 0;i<4;i++)
                     for(int j = 0;j<4;j++)
                         jg.write(mG.getElement(i,j));
@@ -150,8 +152,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
 
             } else {
                 for (PartUsageLink component : partI.getComponents()) {
-                    List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
-                    List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
+                    //List<Integer> copyInstanceIds2 = new ArrayList<>(copyInstanceIds);
+                    //List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
 
                     if (filteredPath.isEmpty()) {
                         generateInstanceStreamWithGlobalMatrix(component, copyTransformations, filteredPath, copyInstanceIds, jg);
@@ -171,6 +173,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         gM.setIdentity();
         Matrix4d m=new Matrix4d();
         for(TransformationDTO t:transformations){
+
             m.setIdentity();
             m.setTranslation(new Vector3d(t.getTx(),t.getTy(),t.getTz()));
             gM.mul(m);
@@ -186,6 +189,7 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
             m.setIdentity();
             m.rotX(t.getRx());
             gM.mul(m);
+
         }
 
         return gM;
