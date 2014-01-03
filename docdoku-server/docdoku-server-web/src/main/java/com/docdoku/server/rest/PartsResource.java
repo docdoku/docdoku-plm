@@ -31,7 +31,8 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
@@ -175,7 +176,7 @@ public class PartsResource {
 
             PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(workspaceId, getPartNumber(partKey)), getPartRevision(partKey));
 
-            if (acl != null) {
+            if (acl.getGroupEntries().size() > 0 && acl.getUserEntries().size() > 0) {
 
                 Map<String,String> userEntries = new HashMap<String,String>();
                 Map<String,String> groupEntries = new HashMap<String,String>();
@@ -271,9 +272,9 @@ public class PartsResource {
     @GET
     @Path("count")
     @Produces("application/json;charset=UTF-8")
-    public int getPartRevisionCount(@PathParam("workspaceId") String workspaceId) {
+    public PartCountDTO getPartRevisionCount(@PathParam("workspaceId") String workspaceId) {
         try {
-            return productService.getPartRevisionsCount(Tools.stripTrailingSlash(workspaceId));
+            return new PartCountDTO(productService.getPartRevisionsCount(Tools.stripTrailingSlash(workspaceId)));
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -303,14 +304,14 @@ public class PartsResource {
     @GET
     @Path("numbers")
     @Produces("application/json;charset=UTF-8")
-    public String[] searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
+    public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
             List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
-            String[] partNumbers = new String[partMasters.size()];
-            for (int i = 0; i < partMasters.size(); i++) {
-                partNumbers[i] = partMasters.get(i).getNumber();
+            List<LightPartMasterDTO> partsMastersDTO = new ArrayList<LightPartMasterDTO>();
+            for(PartMaster p : partMasters){
+                partsMastersDTO.add(new LightPartMasterDTO(p.getNumber()));
             }
-            return partNumbers;
+            return partsMastersDTO;
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

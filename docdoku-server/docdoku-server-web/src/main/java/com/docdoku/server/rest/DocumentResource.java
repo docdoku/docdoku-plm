@@ -541,7 +541,7 @@ public class DocumentResource {
             String id = docKey.substring(0, lastDash);
             String version = docKey.substring(lastDash + 1, docKey.length());
             DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, id, version);
-            if (acl != null) {
+            if (acl.getGroupEntries().size() > 0 && acl.getUserEntries().size() > 0) {
 
                 Map<String,String> userEntries = new HashMap<String,String>();
                 Map<String,String> groupEntries = new HashMap<String,String>();

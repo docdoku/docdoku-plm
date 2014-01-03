@@ -22,19 +22,30 @@ package com.docdoku.server.rest.dto;
 
 import com.docdoku.core.security.ACL;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class ACLDTO implements Serializable{
 
-    private Map<String,ACL.Permission> userEntries=new HashMap<String,ACL.Permission>();
-    private Map<String,ACL.Permission> groupEntries=new HashMap<String,ACL.Permission>();
+    @XmlElement(nillable = true)
+    protected Map<String,ACL.Permission> userEntries=new HashMap<String,ACL.Permission>();
+
+    @XmlElement(nillable = true)
+    protected Map<String,ACL.Permission> groupEntries=new HashMap<String,ACL.Permission>();
 
     public ACLDTO(){
     }
-    
+
+    public void setUserEntries(Map<String, ACL.Permission> userEntries) {
+        this.userEntries = userEntries;
+    }
+
+    public void setGroupEntries(Map<String, ACL.Permission> groupEntries) {
+        this.groupEntries = groupEntries;
+    }
+
     public void addUserEntry(String login, ACL.Permission perm){
         userEntries.put(login, perm);
     }
