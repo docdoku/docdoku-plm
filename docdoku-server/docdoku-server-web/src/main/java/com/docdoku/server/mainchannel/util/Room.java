@@ -21,6 +21,7 @@
 package com.docdoku.server.mainchannel.util;
 
 import javax.websocket.Session;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -42,10 +43,12 @@ public class Room {
     }
 
     public String getUser1Login(){
-        return (String)userSession1.getUserProperties().get("userLogin");
+        Principal userPrincipal = userSession1.getUserPrincipal();
+        return userPrincipal.getName();
     }
     public String getUser2Login(){
-        return (String)userSession2.getUserProperties().get("userLogin");
+        Principal userPrincipal = userSession2.getUserPrincipal();
+        return userPrincipal.getName();
     }
     
     /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */

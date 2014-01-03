@@ -7,6 +7,7 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.websocket.Session;
+import java.security.Principal;
 
 public class ChatModule {
 
@@ -22,7 +23,8 @@ public class ChatModule {
         if(!MainChannelApplication.hasChannels(remoteUser)){
             MainChannelDispatcher.send(session, buildChatMessageNotSentMessage(remoteUser, context));
         }else{
-            String userLogin = (String)session.getUserProperties().get("userLogin");
+            Principal userPrincipal = session.getUserPrincipal();
+            String userLogin = userPrincipal.getName();
             MainChannelDispatcher.sendToAllUserChannels(userLogin,buildChatMessageACK(userLogin,remoteUser, context, message));
             MainChannelDispatcher.sendToAllUserChannels(remoteUser,buildChatMessage(userLogin, context, message));
         }

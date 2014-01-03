@@ -20,9 +20,7 @@
 
 package com.docdoku.server.mainchannel;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.http.HttpSessionCollector;
 import com.docdoku.server.mainchannel.modules.ChatModule;
 import com.docdoku.server.mainchannel.modules.UserStatusModule;
 import com.docdoku.server.mainchannel.modules.WebRTCModule;
@@ -30,33 +28,31 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import com.docdoku.server.mainchannel.util.Room;
 
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.io.StringReader;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+@Stateless
 @ServerEndpoint("/mainChannelSocket")
 public class MainChannelApplication {
 
-    // Users WebSockets HashMap : <UserLogin, <Token, Session>>
+    // Users WebSockets HashMap : <UserLogin, <SessionId, Session>>
     private static final ConcurrentMap<String, HashMap<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
     @EJB
     private IUserManagerLocal userManager;
-
 
     public static boolean hasChannels(String userLogin) {
         if (CHANNELS.get(userLogin) == null){
@@ -76,15 +72,17 @@ public class MainChannelApplication {
 
     @OnClose
     public void close(Session session, CloseReason reason) {
-        Map<String, Object> uProps = session.getUserProperties();
-        String userLogin= (String)uProps.get("userLogin");
-        String token= (String)uProps.get("token");
 
-        if (token != null) {
+        Principal userPrincipal = session.getUserPrincipal();
+
+        String userLogin = userPrincipal.getName();
+        String sessionId = session.getId();
+
+        if (sessionId != null && userLogin != null) {
             // find whom the session belongs
             Room.removeUserFromAllRoom(userLogin);
             // remove the session from the user hash map
-            CHANNELS.get(userLogin).remove(token);
+            CHANNELS.get(userLogin).remove(sessionId);
         }
 
     }
@@ -92,13 +90,12 @@ public class MainChannelApplication {
     @OnMessage
     public void message(Session session, String message) {
 
-        Map<String, Object> uProps = session.getUserProperties();
-        String userLogin= (String)uProps.get("userLogin");
-        String token= (String)uProps.get("token");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
-        if (token == null && message.startsWith("MainChannelApplicationNewClient:")) {
-           // Peer declaration message must match "MainChannelApplicationNewClient:${sessionId}"
-           onPeerDeclarationMessage(session, message);
+        if (message.equals(ChannelMessagesType.PEER_DECLARATION)) {
+
+           onPeerDeclarationMessage(session);
 
         } else {
 
@@ -106,24 +103,16 @@ public class MainChannelApplication {
 
                 JsonObject jsObj = Json.createReader(new StringReader(message)).readObject();
 
-                String remoteUser = null;
+                String remoteUser = jsObj.getString("remoteUser");
 
-                try{
-                    remoteUser = jsObj.getString("remoteUser");
-                    if(remoteUser != null){
-                        if(userLogin != remoteUser){
-                            if (!callerIsAllowToReachCallee(userLogin, remoteUser)) {
-                                // caller is not allowed to reach user.
-                                return ;
-                            }
-                        }else{
-                            // try to join him self ?
-                            return;
-                        }
-                    }
-                } catch (JsonException ex){
-                    // remoteUser is empty
-                    remoteUser = "";
+                // Exit if remote user is null or caller tries to join himself
+                if(remoteUser == null || callerLogin == remoteUser){
+                    return;
+                }
+
+                // Exit if caller cannot reach callee (business)
+                if (!callerIsAllowToReachCallee(callerLogin, remoteUser)) {
+                    return ;
                 }
 
                 String type = jsObj.getString("type");
@@ -169,51 +158,30 @@ public class MainChannelApplication {
 
     }
 
-    private void onPeerDeclarationMessage(Session session, String message) {
-        Map<String, Object> uProps = session.getUserProperties();
-        String userLogin= (String)uProps.get("userLogin");
-        String token= (String)uProps.get("token");
+    private void onPeerDeclarationMessage(Session session) {
 
-        String[] dataSplit = message.split(":");
-        if (dataSplit.length == 2) {
-            // parse the sessionId in the declaration message
-            String sessionId = dataSplit[1];
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
+        String sessionId = session.getId();
 
-            // retrieve the user's HttpSession
-            HttpSession httpSession = HttpSessionCollector.find(sessionId);
-            // find the associated user account
-            Account account = (Account) httpSession.getAttribute("account");
-            if (account != null) {
-                String callerLogin = account.getLogin();
+        if (callerLogin != null && sessionId != null) {
 
-                if (callerLogin != null) {
+            // Store the webSocket in the user socket hashMap
+            // If user does not have a channels map yet then we create his channels map
+            if (CHANNELS.get(callerLogin) == null) {
+                CHANNELS.put(callerLogin,new HashMap<String, Session>());
+            }
 
-                    // hook data on the session
-                    uProps.put("token", UUID.randomUUID().toString());
-                    uProps.put("userLogin", callerLogin);
+            // Store the session in the user channels hashMap
+            CHANNELS.get(callerLogin).put(sessionId,session);
 
-                    // store the webSocket in the user socket hashMap
-                    if (CHANNELS.get(callerLogin) == null) {
-                        // user does not have a channels map yet. Let's create his channels map.
-                        CHANNELS.put(callerLogin,new HashMap<String, Session>());
-                    }
-                    // store the session in the user channels hashmap
-                    CHANNELS.get(callerLogin).put(token,session);
-
-                    // send him a welcome message
-                    MainChannelDispatcher.send(session, ChannelMessagesBuilder.BuildWelcomeMessage(userLogin));
-
-                }
-                // else : account without login doesn't make sense. Nothing to do. Maybe close the session ?
-
-            } //else {
-                // user is not authenticated on server, nothing to do. Maybe close the session ?
-            //}
+            // Send him a welcome message
+            MainChannelDispatcher.send(session, ChannelMessagesBuilder.BuildWelcomeMessage(callerLogin));
         }
     }
 
     private boolean callerIsAllowToReachCallee(String caller, String callee) {
-        // allow users to communicate only if they have a common workspace
+        // Allow users to communicate only if they have a common workspace
         return userManager.hasCommonWorkspace(caller, callee);
     }
 

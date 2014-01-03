@@ -8,6 +8,7 @@ import com.docdoku.server.mainchannel.util.Room;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.websocket.Session;
+import java.security.Principal;
 
 public class WebRTCModule {
 
@@ -16,7 +17,8 @@ public class WebRTCModule {
 
     public static void onWebRTCInviteMessage(Session session, JsonObject jsobj) {
 
-        String callerLogin = (String)session.getUserProperties().get("userLogin");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
         String remoteUser = jsobj.getString("remoteUser");
         String context = jsobj.getString("context");
@@ -50,7 +52,9 @@ public class WebRTCModule {
 
     public static void onWebRTCAcceptMessage(Session session, JsonObject jsobj) {
 
-        String callerLogin = (String)session.getUserProperties().get("userLogin");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
+
         String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
 
@@ -76,7 +80,9 @@ public class WebRTCModule {
 
     public static void onWebRTCRejectMessage(Session session, JsonObject jsobj) {
 
-        String callerLogin = (String)session.getUserProperties().get("userLogin");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
+
         String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
         String reason = jsobj.getString("reason");
@@ -99,7 +105,9 @@ public class WebRTCModule {
 
     public static void onWebRTCHangupMessage(Session session, JsonObject jsobj) {
 
-        String callerLogin = (String)session.getUserProperties().get("userLogin");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
+
         String roomKey = jsobj.getString("roomKey");
         Room room = Room.getByKeyName(roomKey);
 
@@ -118,7 +126,9 @@ public class WebRTCModule {
     // These messages are forwarded to the remote peer(s) in the room
     public static void onWebRTCSignalingMessage(Session session, JsonObject jsobj, String data) {
 
-        String callerLogin = (String)session.getUserProperties().get("userLogin");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
+
         String roomKey = jsobj.getString("roomKey");
         Room room = Room.getByKeyName(roomKey);
 
