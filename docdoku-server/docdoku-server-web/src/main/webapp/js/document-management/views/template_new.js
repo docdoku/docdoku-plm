@@ -13,6 +13,7 @@ define([
 		template: Mustache.compile(template),
 		initialize: function () {
 			ModalView.prototype.initialize.apply(this, arguments);
+            this.events["submit form"] = "onSubmitForm";
 		},
 		rendered: function () {
 			this.attributesView = this.addSubView(
@@ -28,7 +29,7 @@ define([
                 content: i18n.MASK_HELP
             });
 		},
-		primaryAction: function () {
+        onSubmitForm: function (e) {
 			var reference = $("#form-" + this.cid + " .reference").val();
 			if (reference) {
 				this.collection.create({
@@ -43,6 +44,9 @@ define([
 					error: this.error
 				});
 			}
+            e.preventDefault();
+            e.stopPropagation();
+
 			return false;
 		},
 		success: function (model, response) {
