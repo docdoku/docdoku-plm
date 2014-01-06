@@ -182,6 +182,7 @@ public class DocumentResource {
             DocumentMasterDTO docMsDTO = mapper.map(movedDocumentMaster, DocumentMasterDTO.class);
             docMsDTO.setPath(movedDocumentMaster.getLocation().getCompletePath());
             docMsDTO.setLifeCycleState(movedDocumentMaster.getLifeCycleState());
+           // docMsDTO.setAcl(Tools.mapACLtoACLDTO(movedDocumentMaster.getACL()));
 
             return docMsDTO;
 

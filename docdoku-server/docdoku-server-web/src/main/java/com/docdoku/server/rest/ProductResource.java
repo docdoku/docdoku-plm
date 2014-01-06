@@ -174,23 +174,29 @@ public class ProductResource {
     @GET
     @Path("{ciId}/paths")
     @Produces("application/json;charset=UTF-8")
-    public String[] searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
+    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
         try {
+
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             List<PartUsageLink[]> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
-            String[] paths=new String[usagePaths.size()];
-            
-            for(int i=0;i<usagePaths.size();i++){
+
+            List<PathDTO> pathsDTO = new ArrayList<PathDTO>();
+
+            for(PartUsageLink[] usagePath : usagePaths){
                 StringBuilder sb=new StringBuilder();
-                PartUsageLink[] usagePath=usagePaths.get(i);
+
                 for(PartUsageLink link:usagePath){
                     sb.append(link.getId());
                     sb.append("-");
                 }
                 sb.deleteCharAt(sb.length()-1);
-                paths[i]=sb.toString();
+                pathsDTO.add(new PathDTO(sb.toString()));
             }
-            return paths;
+
+
+
+            return pathsDTO;
+
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
