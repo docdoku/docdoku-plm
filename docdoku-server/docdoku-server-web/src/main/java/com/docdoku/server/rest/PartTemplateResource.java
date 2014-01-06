@@ -37,6 +37,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class PartTemplateResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO[] getPartMasterTemplates(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -84,7 +85,7 @@ public class PartTemplateResource {
 
     @GET
     @Path("{templateId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO getPartMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
@@ -100,7 +101,7 @@ public class PartTemplateResource {
     
     @GET
     @Path("{templateId}/generate_id")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public String generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
             return productService.generateId(workspaceId, templateId);
@@ -111,8 +112,8 @@ public class PartTemplateResource {
     }    
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId, PartTemplateCreationDTO templateCreationDTO) {
 
         try {      
@@ -141,8 +142,8 @@ public class PartTemplateResource {
     
     @PUT
     @Path("{templateId}") 
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")  
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO updatePartMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO) {
 
         try {
@@ -181,8 +182,8 @@ public class PartTemplateResource {
     }
 
     @DELETE
-    @Consumes("application/json;charset=UTF-8")
     @Path("{templateId}/files/{fileName}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
             String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;

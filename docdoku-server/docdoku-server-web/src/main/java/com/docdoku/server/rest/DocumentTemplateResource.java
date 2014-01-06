@@ -28,18 +28,20 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -63,7 +65,7 @@ public class DocumentTemplateResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -83,7 +85,7 @@ public class DocumentTemplateResource {
 
     @GET
     @Path("{templateId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
@@ -99,7 +101,7 @@ public class DocumentTemplateResource {
     
     @GET
     @Path("{templateId}/generate_id")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public String generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
@@ -111,8 +113,8 @@ public class DocumentTemplateResource {
     }    
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentTemplateCreationDTO templateCreationDTO) {
 
         try {      
@@ -141,8 +143,8 @@ public class DocumentTemplateResource {
     
     @PUT
     @Path("{templateId}") 
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")  
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
@@ -181,8 +183,8 @@ public class DocumentTemplateResource {
     }
 
     @DELETE
-    @Consumes("application/json;charset=UTF-8")
     @Path("{templateId}/files/{fileName}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
             String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;

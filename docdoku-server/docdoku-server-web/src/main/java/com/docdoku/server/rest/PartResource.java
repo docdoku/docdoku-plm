@@ -74,8 +74,6 @@ public class PartResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion ) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException {
         try {
-
-            //PartRevisionKey revisionKey = new PartRevisionKey(new PartMasterKey(pWorkspaceId, getPartNumber(pPartKey)), getPartRevision(pPartKey));
             PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId,partNumber,partVersion);
             PartRevision partRevision = productService.getPartRevision(revisionKey);
             PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
@@ -94,7 +92,7 @@ public class PartResource {
             PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId,partNumber,partVersion);
             PartRevision partRevision = productService.getPartRevision(revisionKey);
 
-            PartIterationKey pKey = new PartIterationKey(pWorkspaceId,partRevision.getPartNumber(), partRevision.getVersion(), partIteration);
+            PartIterationKey pKey = new PartIterationKey(revisionKey, partIteration);
 
             List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
             List<InstanceAttribute> attributes = null;
@@ -210,7 +208,6 @@ public class PartResource {
         RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
         ACLDTO acl = partCreationDTO.getAcl();
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId,partNumber,partVersion);
-        String name = partCreationDTO.getName();
         String description = partCreationDTO.getDescription();
         String workflowModelId = partCreationDTO.getWorkflowModelId();
 
@@ -243,7 +240,7 @@ public class PartResource {
                 }
             }
 
-            PartRevision partR = productService.createPartVersion(revisionKey, description, workflowModelId, userEntries, userGroupEntries,roleMappings);
+            productService.createPartVersion(revisionKey, description, workflowModelId, userEntries, userGroupEntries,roleMappings);
 
             return Response.ok().build();
 
@@ -263,7 +260,6 @@ public class PartResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
@@ -371,7 +367,7 @@ public class PartResource {
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.TEXT)) {
             InstanceTextAttribute attr = new InstanceTextAttribute();
             attr.setName(dto.getName());
-            attr.setTextValue((String) dto.getValue());
+            attr.setTextValue(dto.getValue());
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
             InstanceNumberAttribute attr = new InstanceNumberAttribute();
@@ -449,7 +445,6 @@ public class PartResource {
         }else{
            return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
         }
-
     }
 
     private DocumentIterationKey[] createDocumentIterationKey(List<DocumentIterationDTO> dtos) {
@@ -458,7 +453,6 @@ public class PartResource {
         for (DocumentIterationDTO dto : dtos) {
             data[i++] = createObject(dto);
         }
-
         return data;
     }
 

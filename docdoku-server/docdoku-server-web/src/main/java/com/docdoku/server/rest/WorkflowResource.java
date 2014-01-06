@@ -35,6 +35,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class WorkflowResource {
     }
     
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -86,8 +87,8 @@ public class WorkflowResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
     @Path("{workflowModelId}")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId) {
         try{
             WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
@@ -110,8 +111,8 @@ public class WorkflowResource {
     }
 
     @PUT
-    @Produces("application/json;charset=UTF-8")
     @Path("{workflowModelId}")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
 
@@ -126,7 +127,7 @@ public class WorkflowResource {
     }
 
     @POST
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
 

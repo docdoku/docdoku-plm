@@ -38,10 +38,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -73,7 +70,7 @@ public class ProductResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO[] getRootProducts(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -94,7 +91,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/bom")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink) {
 
         try {
@@ -133,7 +130,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -160,7 +157,7 @@ public class ProductResource {
 
     @DELETE
     @Path("{ciId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -173,7 +170,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/paths")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
         try {
 
@@ -258,7 +255,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/instances")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
         try {
             //Because some AS (like Glassfish) forbids the use of CacheControl
@@ -308,7 +305,7 @@ public class ProductResource {
     }
 
     @POST
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
         try {
             ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
@@ -322,7 +319,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/baseline")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         try {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -339,7 +336,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/baseline/{baselineId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
         try {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -354,7 +351,7 @@ public class ProductResource {
 
     @POST
     @Path("{ciId}/baseline")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
         try {
             productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
@@ -366,7 +363,7 @@ public class ProductResource {
 
     @PUT
     @Path("{ciId}/baseline/{baselineId}")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
         try {
 
@@ -385,8 +382,8 @@ public class ProductResource {
 
     @POST
     @Path("{ciId}/baseline/{baselineId}/duplicate")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId,  BaselineCreationDTO baselineCreationDTO){
         try {
             Baseline baseline = productService.duplicateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
@@ -398,7 +395,7 @@ public class ProductResource {
 
     @DELETE
     @Path("{ciId}/baseline/{baselineId}")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
         try {
             productService.deleteBaseline(new ConfigurationItemKey(workspaceId,ciId), Integer.parseInt(baselineId));

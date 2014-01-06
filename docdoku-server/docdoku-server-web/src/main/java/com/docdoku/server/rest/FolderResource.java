@@ -24,8 +24,11 @@ import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
@@ -34,10 +37,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -78,7 +80,7 @@ public class FolderResource {
      * @return the array of folders
      */
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getRootFoldersJson(@PathParam("workspaceId") String workspaceId) {
         try {
             
@@ -106,7 +108,7 @@ public class FolderResource {
     
     @GET
     @Path("{completePath}/folders")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getSubFoldersJson(@PathParam("completePath") String folderId) {
         try {
             
@@ -138,9 +140,9 @@ public class FolderResource {
      * PUT method for updating or creating an instance of FolderResource
      */
     @PUT
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
     @Path("{folderId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO renameFolderjson(@PathParam("folderId") String folderPath, FolderDTO folder) {
         try {
             
@@ -169,9 +171,9 @@ public class FolderResource {
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
     @Path("{parentFolderPath}/folders")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
         try {
             
@@ -187,8 +189,8 @@ public class FolderResource {
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId, FolderDTO folder) {
         try {
 
@@ -210,7 +212,7 @@ public class FolderResource {
      */
     @DELETE
     @Path("{folderId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRootFolder(@PathParam("folderId") String completePath) {
         try {
             

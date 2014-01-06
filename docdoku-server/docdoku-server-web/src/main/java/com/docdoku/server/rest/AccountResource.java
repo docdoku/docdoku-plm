@@ -38,6 +38,7 @@ import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class AccountResource {
 
     @GET
     @Path("/me")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount(){
 
         try{
@@ -81,7 +82,7 @@ public class AccountResource {
 
     @GET
     @Path("/workspaces")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<WorkspaceDTO> getWorkspaces(){
 
         Workspace[] workspacesWhereCallerIsActive = userManager.getWorkspacesWhereCallerIsActive();
@@ -97,7 +98,7 @@ public class AccountResource {
 
     @PUT
     @Path("gcm")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response setGCMAccount(GCMAccountDTO data){
         try{
             userManager.setGCMAccount(data.getGcmId());

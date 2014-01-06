@@ -39,6 +39,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -62,7 +63,7 @@ public class UserResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -82,7 +83,7 @@ public class UserResource {
 
     @GET
     @Path("me")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO whoami(@PathParam("workspaceId") String workspaceId){
         try {
             User  user = documentService.whoAmI(workspaceId);
@@ -94,7 +95,7 @@ public class UserResource {
 
     @GET
     @Path("reachable")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -114,7 +115,7 @@ public class UserResource {
 
     @GET
     @Path("admin")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException {
         Workspace workspace = userManager.getWorkspace(workspaceId);
         return mapper.map(workspace.getAdmin(),UserDTO.class);

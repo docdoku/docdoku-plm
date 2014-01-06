@@ -22,19 +22,16 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.*;
-import com.docdoku.core.product.*;
+import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.sharing.SharedPart;
-import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -46,8 +43,11 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import java.util.*;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -74,13 +74,13 @@ public class PartsResource {
     }
 
     @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartResource getPart() {
         return part;
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start) {
         try {
             int maxResults = 20;
@@ -99,7 +99,7 @@ public class PartsResource {
 
     @GET
     @Path("count")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartCountDTO getPartRevisionCount(@PathParam("workspaceId") String workspaceId) {
         try {
             return new PartCountDTO(productService.getPartRevisionsCount(Tools.stripTrailingSlash(workspaceId)));
@@ -110,7 +110,7 @@ public class PartsResource {
 
     @GET
     @Path("search/{query}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery) {
         try{
 
@@ -131,7 +131,7 @@ public class PartsResource {
 
     @GET
     @Path("numbers")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
             List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
@@ -147,7 +147,7 @@ public class PartsResource {
 
 
     @POST
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO){
 
         try {

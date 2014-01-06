@@ -24,15 +24,17 @@ import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.TagDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
 /**
  *
@@ -63,7 +65,7 @@ public class TagResource {
     } 
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public TagDTO[] getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
         
         try{    
@@ -89,8 +91,8 @@ public class TagResource {
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag) {
         try {
 
@@ -104,8 +106,8 @@ public class TagResource {
 
     @POST
     @Path("/multiple")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createTags(@PathParam("workspaceId") String workspaceId, TagDTO[] tagsDTO) {
         try {
 
@@ -119,20 +121,14 @@ public class TagResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-    
-    /**
-     * DELETE method for deleting an instance of TagResource
-     */
+
     @DELETE
     @Path("{tagId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId) {
         try {
-            
             documentService.deleteTag(new TagKey(workspaceId, tagId));
-            
             return Response.status(Response.Status.OK).build();
-            
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
