@@ -210,13 +210,13 @@ public class DocumentResource {
             List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
             DocumentIterationKey[] links = null;
             if (linkedDocs != null) {
-                links = createDocumentIterationKey(linkedDocs);
+                links = createDocumentIterationKeys(linkedDocs);
             }
 
             List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
             InstanceAttribute[] attributes = null;
             if (instanceAttributes != null) {
-                attributes = createInstanceAttribute(instanceAttributes);
+                attributes = createInstanceAttributes(instanceAttributes);
             }
 
             DocumentMaster docM = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
@@ -294,10 +294,10 @@ public class DocumentResource {
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentMasterDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, TagDTO[] tagDtos) {
-        String[] tagsLabel = new String[tagDtos.length];
-        for (int i = 0; i < tagDtos.length; i++) {
-            tagsLabel[i] = tagDtos[i].getLabel();
+    public DocumentMasterDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos) {
+        String[] tagsLabel = new String[tagDtos.size()];
+        for (int i = 0; i < tagDtos.size(); i++) {
+            tagsLabel[i] = tagDtos.get(i).getLabel();
         }
 
         try {
@@ -316,15 +316,16 @@ public class DocumentResource {
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, TagDTO[] tagDtos) {
+    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos) {
         try {
             DocumentMasterKey docMPK=new DocumentMasterKey(workspaceId, documentId, documentVersion);
             DocumentMaster docM = documentService.getDocumentMaster(docMPK);
             Set<Tag> tags = docM.getTags();
             Set<String> tagLabels = new HashSet<String>();
 
-            for(TagDTO tagDto:tagDtos)
+            for(TagDTO tagDto:tagDtos){
                 tagLabels.add(tagDto.getLabel());
+            }
 
             for(Tag tag : tags){
                 tagLabels.add(tag.getLabel());
@@ -339,20 +340,13 @@ public class DocumentResource {
     }
 
     @DELETE
-    @Path("/tags")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, String[] tagLabels) {
+    @Path("/tags/{tagName}")
+    public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("tagName") String tagName) {
         try {
             DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, documentId, documentVersion));
-
-            for(String tagLabel : tagLabels){
-                Tag tagToRemove = new Tag(new Workspace(workspaceId), tagLabel);
-                docM.getTags().remove(tagToRemove);
-            }
-
+            Tag tagToRemove = new Tag(new Workspace(workspaceId), tagName);
+            docM.getTags().remove(tagToRemove);
             return Response.ok().build();
-
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -360,7 +354,6 @@ public class DocumentResource {
     }
 
     @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
         try {
             documentService.deleteDocumentMaster(new DocumentMasterKey(workspaceId, documentId, documentVersion));
@@ -372,7 +365,6 @@ public class DocumentResource {
 
     @DELETE
     @Path("/iterations/{docIteration}/files/{fileName}")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
         try {
             String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
@@ -480,20 +472,20 @@ public class DocumentResource {
         }
     }
 
-    private InstanceAttribute[] createInstanceAttribute(List<InstanceAttributeDTO> dtos) {
+    private InstanceAttribute[] createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
             return null;
         }
         InstanceAttribute[] data = new InstanceAttribute[dtos.size()];
         int i = 0;
         for (InstanceAttributeDTO dto : dtos) {
-            data[i++] = createObject(dto);
+            data[i++] = createInstanceAttribute(dto);
         }
 
         return data;
     }
 
-    private InstanceAttribute createObject(InstanceAttributeDTO dto) {
+    private InstanceAttribute createInstanceAttribute(InstanceAttributeDTO dto) {
         if (dto.getType().equals(InstanceAttributeDTO.Type.BOOLEAN)) {
             InstanceBooleanAttribute attr = new InstanceBooleanAttribute();
             attr.setName(dto.getName());
@@ -502,7 +494,7 @@ public class DocumentResource {
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.TEXT)) {
             InstanceTextAttribute attr = new InstanceTextAttribute();
             attr.setName(dto.getName());
-            attr.setTextValue((String) dto.getValue());
+            attr.setTextValue(dto.getValue());
             return attr;
         } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
             InstanceNumberAttribute attr = new InstanceNumberAttribute();
@@ -532,27 +524,14 @@ public class DocumentResource {
         }
     }
 
-    private DocumentIterationKey[] createDocumentIterationKey(DocumentIterationDTO[] dtos) {
-        DocumentIterationKey[] data = new DocumentIterationKey[dtos.length];
-
-        for (int i = 0; i < dtos.length; i++) {
-            data[i] = createObject(dtos[i]);
-        }
-
-        return data;
-    }
-
-    private DocumentIterationKey[] createDocumentIterationKey(List<DocumentIterationDTO> dtos) {
+    private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
         int i = 0;
         for (DocumentIterationDTO dto : dtos) {
-            data[i++] = createObject(dto);
+            data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
         }
 
         return data;
     }
 
-    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
-        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
-    }
 }

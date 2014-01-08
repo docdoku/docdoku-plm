@@ -21,10 +21,11 @@
 package com.docdoku.core.document;
 
 import com.docdoku.core.common.Workspace;
-import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * A tag is just a label pinned on a document.  
@@ -48,12 +49,7 @@ public class Tag implements Serializable {
     
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
-    
-    
-    
-    
-   
-    
+
     public Tag() {
     }
     

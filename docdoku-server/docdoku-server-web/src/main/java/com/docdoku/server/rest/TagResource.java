@@ -35,6 +35,8 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -62,32 +64,33 @@ public class TagResource {
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    } 
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public TagDTO[] getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
-        
-        try{    
-        
-            String[] tagsName = documentService.getTags(workspaceId);
-            TagDTO[] tagDtos = new TagDTO[tagsName.length];
-            for (int i = 0; i < tagsName.length; i++) {                
-                tagDtos[i] = new TagDTO();
-                tagDtos[i].setWorkspaceId(workspaceId);
-                tagDtos[i].setLabel(tagsName[i]);
-            }            
-            
-            return tagDtos;
-        } catch (ApplicationException ex) {
-        
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }          
     }
 
     @Path("{tagId}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TagDTO> getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
+        
+        try{    
+        
+            String[] tagsName = documentService.getTags(workspaceId);
+
+            List<TagDTO> tagsDTO = new ArrayList<TagDTO>();
+
+            for (String tagName : tagsName) {
+                tagsDTO.add(new TagDTO(tagName,workspaceId));
+            }            
+            
+            return tagsDTO;
+
+        } catch (ApplicationException ex) {
+        
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }          
     }
 
     @POST
@@ -108,7 +111,7 @@ public class TagResource {
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTags(@PathParam("workspaceId") String workspaceId, TagDTO[] tagsDTO) {
+    public Response createTags(@PathParam("workspaceId") String workspaceId, List<TagDTO> tagsDTO) {
         try {
 
             for(TagDTO tagDTO : tagsDTO){
