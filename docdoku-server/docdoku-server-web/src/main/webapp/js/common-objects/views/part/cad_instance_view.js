@@ -25,12 +25,11 @@ define(  [
 
         setInstance:function(instance){
             this.instance = instance;
-            this.isAbsolute = instance.positioning == "ABSOLUTE";
             return this;
         },
 
         render: function() {
-            this.$el.html(this.template({instance: this.instance, isAbsolute : this.isAbsolute, i18n:i18n}));
+            this.$el.html(this.template({instance: this.instance, i18n:i18n}));
             return this;
         },
 
@@ -40,7 +39,6 @@ define(  [
         changeRX:function(e){this.instance.rx= e.target.value;},
         changeRY:function(e){this.instance.ry= e.target.value;},
         changeRZ:function(e){this.instance.rz= e.target.value;},
-        changePosition:function(e){this.instance.positioning = e.target.value;},
 
         removeCadInstance:function(){
             this.trigger("instance:remove");
