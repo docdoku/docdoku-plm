@@ -42,6 +42,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -69,14 +70,14 @@ public class DocumentsResource {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
-    @Path("{docKey}")
-    @Produces("application/json;charset=UTF-8")
+    @Path("{documentId: [^/].*}-{documentVersion:[A-Z]+}")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentResource getDocument() {
         return document;
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter , @QueryParam("start") int start) {
 
         if(checkoutUser != null){
@@ -101,7 +102,7 @@ public class DocumentsResource {
 
     @GET
     @Path("count")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public int getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId) {
         try {
             return documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId));
@@ -280,8 +281,8 @@ public class DocumentsResource {
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO, @PathParam("folderId") String folderId) throws UnsupportedEncodingException {
 
         String pDocMID = docCreationDTO.getReference();
@@ -344,7 +345,7 @@ public class DocumentsResource {
 
     @GET
     @Path("checkedout")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
 
         try {
@@ -368,7 +369,7 @@ public class DocumentsResource {
 
     @GET
     @Path("docs_last_iter")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q) {
         try {
 

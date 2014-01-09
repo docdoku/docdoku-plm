@@ -46,8 +46,8 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
             INSTANCE_NAME = "InstanceName";
 
 
-    private Component_DTK componentDtk;
-    private Stack<Component_DTK> components = new Stack<Component_DTK>();
+    private ComponentDTK componentDtk;
+    private Stack<ComponentDTK> components = new Stack<ComponentDTK>();
 
     private MetaData metaData;
     private Stack<MetaData> metaDataStack = new Stack<MetaData>();
@@ -56,7 +56,7 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
         super();
     }
 
-    public Component_DTK getComponent() {
+    public ComponentDTK getComponent() {
         return componentDtk;
     }
 
@@ -76,12 +76,12 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-        Component_DTK lastComponentDtk = getLastComponentDtk();
+        ComponentDTK lastComponentDtk = getLastComponentDtk();
 
         if (COMPONENT.equals(qName)) {
 
             //New component
-            Component_DTK currentComponentDtk = new Component_DTK(
+            ComponentDTK currentComponentDtk = new ComponentDTK(
                     getInt(attributes, ID_ATTR),
                     getInt(attributes, FATHER_ID_ATTR),
                     getString(attributes, TYPE_ATTR),
@@ -134,7 +134,7 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
             getLastComponentDtk().setInstanceName(getBufferValue());
         } else if (METADATA.equals(qName)) {
             MetaData lastMetaData = getLastMetaData();
-            Component_DTK lastComponentDtk = getLastComponentDtk();
+            ComponentDTK lastComponentDtk = getLastComponentDtk();
             if (lastMetaData != null && lastComponentDtk != null) {
                 lastComponentDtk.addMetaData(lastMetaData);
             }
@@ -165,7 +165,7 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
     }
 
 
-    private Component_DTK getLastComponentDtk() {
+    private ComponentDTK getLastComponentDtk() {
         try {
             return components.peek();
         } catch (EmptyStackException e) {

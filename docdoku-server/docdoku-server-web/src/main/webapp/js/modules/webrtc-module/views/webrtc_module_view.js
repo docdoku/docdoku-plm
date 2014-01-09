@@ -336,6 +336,7 @@ define(
                 sessionDescription.sdp = preferOpus(sessionDescription.sdp);
                 this.pc.setLocalDescription(sessionDescription);
                 sessionDescription.roomKey = this.roomKey;
+                sessionDescription.remoteUser = this.remoteUser;
                 mainChannel.sendJSON(sessionDescription);
             },
 
@@ -396,7 +397,8 @@ define(
                         roomKey: this.roomKey,
                         label: event.candidate.sdpMLineIndex,
                         id: event.candidate.sdpMid,
-                        candidate: event.candidate.candidate
+                        candidate: event.candidate.candidate,
+                        remoteUser:this.remoteUser
                     });
                 }
             },

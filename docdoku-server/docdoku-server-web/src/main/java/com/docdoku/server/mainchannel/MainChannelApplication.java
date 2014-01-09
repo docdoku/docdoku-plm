@@ -20,37 +20,39 @@
 
 package com.docdoku.server.mainchannel;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.http.HttpSessionCollector;
 import com.docdoku.server.mainchannel.modules.ChatModule;
 import com.docdoku.server.mainchannel.modules.UserStatusModule;
 import com.docdoku.server.mainchannel.modules.WebRTCModule;
 import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import com.docdoku.server.mainchannel.util.Room;
-import com.sun.grizzly.websockets.*;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.websocket.CloseReason;
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+import java.io.StringReader;
+import java.security.Principal;
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+@Stateless
+@ServerEndpoint("/mainChannelSocket")
+public class MainChannelApplication {
 
-import javax.servlet.http.HttpSession;
+    // Users WebSockets HashMap : <UserLogin, <SessionId, Session>>
+    private static final ConcurrentMap<String, HashMap<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
-public class MainChannelApplication extends WebSocketApplication {
-
-    // Users WebSockets HashMap : <UserLogin, <Token, Socket>>
-    private static final ConcurrentMap<String, HashMap<String, MainChannelWebSocket>> CHANNELS = new ConcurrentHashMap<String, HashMap<String, MainChannelWebSocket>>();
-
+    @EJB
     private IUserManagerLocal userManager;
-
-    public void setUserManager(IUserManagerLocal pUserManager) {
-        this.userManager = pUserManager;
-    }
 
     public static boolean hasChannels(String userLogin) {
         if (CHANNELS.get(userLogin) == null){
@@ -62,79 +64,55 @@ public class MainChannelApplication extends WebSocketApplication {
         return !CHANNELS.get(userLogin).values().isEmpty();
     }
 
-    public static HashMap<String, MainChannelWebSocket> getUserChannels(String userLogin) {
+    public static HashMap<String, Session> getUserChannels(String userLogin) {
         return CHANNELS.get(userLogin);
     }
 
-    @Override
-    public WebSocket createWebSocket(ProtocolHandler protocolHandler, WebSocketListener[] listeners) {
-        return new MainChannelWebSocket(protocolHandler, listeners);
-    }
 
-    @Override
-    public void onConnect(WebSocket socket) {
-    }
 
-    @Override
-    public boolean isApplicationRequest(com.sun.grizzly.tcp.Request rqst) {
-        return true;
-    }
+    @OnClose
+    public void close(Session session, CloseReason reason) {
 
-    @Override
-    public void onClose(WebSocket pSocket, DataFrame frame) {
+        Principal userPrincipal = session.getUserPrincipal();
 
-        MainChannelWebSocket socket = (MainChannelWebSocket) pSocket;
+        String userLogin = userPrincipal.getName();
+        String sessionId = session.getId();
 
-        String token = socket.getToken();
-
-        if (token != null) {
-
-            // find whom the socket belongs
-            String callerLogin = socket.getUserLogin();
-
-            // remove the user from all rooms he might be
-            Room.removeUserFromAllRoom(callerLogin);
-
-            // remove the socket from the user hash map
-            CHANNELS.get(callerLogin).remove(token);
-
+        if (sessionId != null && userLogin != null) {
+            // find whom the session belongs
+            Room.removeUserFromAllRoom(userLogin);
+            // remove the session from the user hash map
+            CHANNELS.get(userLogin).remove(sessionId);
         }
 
     }
 
-    @Override
-    public void onMessage(WebSocket pSocket, String message) {
+    @OnMessage
+    public void message(Session session, String message) {
 
-        MainChannelWebSocket socket = (MainChannelWebSocket) pSocket;
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
-        if (socket.getToken() == null && message.startsWith("MainChannelApplicationNewClient:")) {
-           // Peer declaration message must match "MainChannelApplicationNewClient:${sessionId}"
-           onPeerDeclarationMessage(message, socket);
+        if (message.equals(ChannelMessagesType.PEER_DECLARATION)) {
+
+           onPeerDeclarationMessage(session);
 
         } else {
 
             try {
 
-                JSONObject jsObj = new JSONObject(message);
+                JsonObject jsObj = Json.createReader(new StringReader(message)).readObject();
 
-                String remoteUser = null;
+                String remoteUser = jsObj.getString("remoteUser");
 
-                try{
-                    remoteUser = jsObj.getString("remoteUser");
-                    if(remoteUser != null){
-                        if(socket.getUserLogin() != remoteUser){
-                            if (!callerIsAllowToReachCallee(socket.getUserLogin(), remoteUser)) {
-                                // caller is not allowed to reach user.
-                                return ;
-                            }
-                        }else{
-                            // try to join him self ?
-                            return;
-                        }
-                    }
-                } catch (JSONException ex){
-                    // remoteUser is empty
-                    remoteUser = "";
+                // Exit if remote user is null or caller tries to join himself
+                if(remoteUser == null || callerLogin == remoteUser){
+                    return;
+                }
+
+                // Exit if caller cannot reach callee (business)
+                if (!callerIsAllowToReachCallee(callerLogin, remoteUser)) {
+                    return ;
                 }
 
                 String type = jsObj.getString("type");
@@ -142,91 +120,68 @@ public class MainChannelApplication extends WebSocketApplication {
                 switch (type) {
 
                     case ChannelMessagesType.USER_STATUS:
-                        UserStatusModule.onUserStatusRequestMessage(socket, jsObj);
+                        UserStatusModule.onUserStatusRequestMessage(session, jsObj);
                         break;
 
                     case ChannelMessagesType.WEBRTC_INVITE:
-                        WebRTCModule.onWebRTCInviteMessage(socket, jsObj);
+                        WebRTCModule.onWebRTCInviteMessage(session, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_ACCEPT:
-                        WebRTCModule.onWebRTCAcceptMessage(socket, jsObj);
+                        WebRTCModule.onWebRTCAcceptMessage(session, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_REJECT:
-                        WebRTCModule.onWebRTCRejectMessage(socket, jsObj);
+                        WebRTCModule.onWebRTCRejectMessage(session, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_HANGUP:
-                        WebRTCModule.onWebRTCHangupMessage(socket, jsObj);
+                        WebRTCModule.onWebRTCHangupMessage(session, jsObj);
                         break;
                     case ChannelMessagesType.WEBRTC_ANSWER:
                     case ChannelMessagesType.WEBRTC_OFFER:
                     case ChannelMessagesType.WEBRTC_CANDIDATE:
                     case ChannelMessagesType.WEBRTC_BYE:
-                        WebRTCModule.onWebRTCSignalingMessage(socket, jsObj, message);
+                        WebRTCModule.onWebRTCSignalingMessage(session, jsObj, message);
                         break;
 
                     case ChannelMessagesType.CHAT_MESSAGE:
-                        ChatModule.onChatMessage(socket, jsObj);
+                        ChatModule.onChatMessage(session, jsObj);
                         break;
 
                     default:
                         break;
                 }
 
-            } catch (JSONException ex) {
-                MainChannelDispatcher.send(socket, ChannelMessagesBuilder.BuildJsonExMessage());
+            } catch (JsonException ex) {
+                MainChannelDispatcher.send(session, ChannelMessagesBuilder.BuildJsonExMessage());
             }
 
         }
 
     }
 
-    private void onPeerDeclarationMessage(String data, MainChannelWebSocket socket) {
+    private void onPeerDeclarationMessage(Session session) {
 
-        String[] dataSplit = data.split(":");
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
+        String sessionId = session.getId();
 
-        if (dataSplit.length == 2) {
+        if (callerLogin != null && sessionId != null) {
 
-            // parse the sessionId in the declaration message
-            String sessionId = dataSplit[1];
+            // Store the webSocket in the user socket hashMap
+            // If user does not have a channels map yet then we create his channels map
+            if (CHANNELS.get(callerLogin) == null) {
+                CHANNELS.put(callerLogin,new HashMap<String, Session>());
+            }
 
-            // retrieve the user's HttpSession
-            HttpSession httpSession = HttpSessionCollector.find(sessionId);
+            // Store the session in the user channels hashMap
+            CHANNELS.get(callerLogin).put(sessionId,session);
 
-            // find the associated user account
-            Account account = (Account) httpSession.getAttribute("account");
-
-            if (account != null) {
-
-                String callerLogin = account.getLogin();
-
-                if (callerLogin != null) {
-
-                    // hook data on the socket
-                    socket.setToken(UUID.randomUUID().toString());
-                    socket.setUserLogin(callerLogin);
-
-                    // store the webSocket in the user socket hashMap
-                    if (CHANNELS.get(callerLogin) == null) {
-                        // user does not have a channels map yet. Let's create his channels map.
-                        CHANNELS.put(callerLogin,new HashMap<String, MainChannelWebSocket>());
-                    }
-                    // store the socket in the user channels hashmap
-                    CHANNELS.get(callerLogin).put(socket.getToken(),socket);
-
-                    // send him a welcome message
-                    MainChannelDispatcher.send(socket, ChannelMessagesBuilder.BuildWelcomeMessage(socket.getUserLogin()));
-
-                }
-                // else : account without login doesn't make sense. Nothing to do. Maybe close the socket ?
-
-            } //else {
-                // user is not authenticated on server, nothing to do. Maybe close the socket ?
-            //}
+            // Send him a welcome message
+            MainChannelDispatcher.send(session, ChannelMessagesBuilder.BuildWelcomeMessage(callerLogin));
         }
     }
 
     private boolean callerIsAllowToReachCallee(String caller, String callee) {
-        // allow users to communicate only if they have a common workspace
+        // Allow users to communicate only if they have a common workspace
         return userManager.hasCommonWorkspace(caller, callee);
     }
 

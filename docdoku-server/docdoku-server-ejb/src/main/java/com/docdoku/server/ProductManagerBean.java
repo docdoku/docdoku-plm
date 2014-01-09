@@ -103,7 +103,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink.setId(-1);
             rootUsageLink.setAmount(1d);
             List<CADInstance> cads = new ArrayList<CADInstance>();
-            CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d, CADInstance.Positioning.ABSOLUTE);
+            CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d);
             cad.setId(-1);
             cads.add(cad);
             rootUsageLink.setCadInstances(cads);

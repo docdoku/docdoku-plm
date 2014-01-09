@@ -127,6 +127,11 @@ public class UploadDownloadServlet extends HttpServlet {
             String fileName = binaryResource.getName();
             String eTag = fileName + "_" + length + "_" + lastModified;
 
+            // Insure we serve the requested output format
+            if(outputFormat != null){
+                fileName+="."+outputFormat;
+            }
+
             // Set content type
             String contentType = "";
             if (isSubResource) {

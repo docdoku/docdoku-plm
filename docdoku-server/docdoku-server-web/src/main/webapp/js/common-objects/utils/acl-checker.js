@@ -9,21 +9,31 @@ define([],function(){
             }
 
             var permission = false ;
-            var userEntries = acl.userEntries;
-            var groupEntries = acl.groupEntries;
+            var userEntries = acl.userEntries.entry;
+            var groupEntries = acl.groupEntries.entry;
 
             var userLogin = APP_CONFIG.login;
             var userGroups = APP_CONFIG.groups;
 
             // 1. Find FULL ACCESS
-            if(userEntries[userLogin] == "FULL_ACCESS"){
+            var fullAccess = _(userEntries).filter(function(a){
+                return a.key == userLogin && a.value == "FULL_ACCESS";
+            })[0];
+
+            if(fullAccess){
                 return "FULL_ACCESS";
             }
 
             _.each(userGroups,function(group){
-                if(groupEntries[group] == "FULL_ACCESS"){
+
+                var groupFullAccess =_(groupEntries).filter(function(a){
+                    return a.key == group && a.value == "FULL_ACCESS";
+                })[0];
+
+                if(groupFullAccess){
                     permission = "FULL_ACCESS";
                 }
+
             });
 
             if(permission){
@@ -31,14 +41,24 @@ define([],function(){
             }
 
             // 2. Find READ_ONLY
-            if(userEntries[userLogin] == "READ_ONLY"){
+            var readOnly = _(userEntries).filter(function(a){
+                return a.key == userLogin && a.value == "READ_ONLY";
+            })[0];
+
+            if(readOnly){
                 return "READ_ONLY";
             }
 
             _.each(userGroups,function(group){
-                if(groupEntries[group] == "READ_ONLY"){
+
+                var groupFullAccess =_(groupEntries).filter(function(a){
+                    return a.key == group && a.value == "READ_ONLY";
+                })[0];
+
+                if(groupFullAccess){
                     permission = "READ_ONLY";
                 }
+
             });
 
             if(permission){
@@ -46,14 +66,24 @@ define([],function(){
             }
 
             // 3. Find FORBIDDEN
-            if(userEntries[userLogin] == "FORBIDDEN"){
+            var forbidden = _(userEntries).filter(function(a){
+                return a.key == userLogin && a.value == "FORBIDDEN";
+            })[0];
+
+            if(forbidden){
                 return "FORBIDDEN";
             }
 
             _.each(userGroups,function(group){
-                if(groupEntries[group] == "FORBIDDEN"){
+
+                var groupForbidden =_(groupEntries).filter(function(a){
+                    return a.key == group && a.value == "FORBIDDEN";
+                })[0];
+
+                if(groupForbidden){
                     permission = "FORBIDDEN";
                 }
+
             });
 
             return permission;

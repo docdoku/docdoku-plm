@@ -40,6 +40,7 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -81,13 +82,12 @@ public class FilesFilter implements Filter {
         // Check headers for Authorization
         if(account == null){
 
-            sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
             String authorization = httpRequest.getHeader("Authorization");
 
             if(authorization != null && !authorization.isEmpty()){
                 String[] splitAuthorization = authorization.split(" ");
                 if(splitAuthorization.length == 2){
-                    byte[] decoded = decoder.decodeBuffer(splitAuthorization[1]);
+                    byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
                     String credentials = new String(decoded, "US-ASCII");
                     String[] splitCredentials = credentials.split(":");
                     String userLogin = splitCredentials[0];

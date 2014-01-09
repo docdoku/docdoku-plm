@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
@@ -40,8 +41,13 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private UserDTO author;
     private Date creationDate;
     private String title;
+
+    @XmlElement(nillable = true)
     private UserDTO checkOutUser;
+
+    @XmlElement(nillable = true)
     private Date checkOutDate;
+
     private String[] tags;
     private String description;
     private boolean iterationSubscription;
@@ -51,6 +57,8 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private String path;
     private String lifeCycleState;
     private boolean publicShared;
+
+    @XmlElement(nillable = true)
     private ACLDTO acl;
 
     public DocumentMasterDTO() {

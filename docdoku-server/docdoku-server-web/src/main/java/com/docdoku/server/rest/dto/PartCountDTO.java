@@ -18,29 +18,24 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters.catia.product.parser;
+package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.CADInstance;
+public class PartCountDTO {
 
-public class Positioning {
+    private int count;
 
-    private double rx;
-    private double ry;
-    private double rz;
-    private double tx;
-    private double ty;
-    private double tz;
-
-    public Positioning(double rx, double ry, double rz, double tx, double ty, double tz) {
-        this.rx = rx;
-        this.ry = ry;
-        this.rz = rz;
-        this.tx = tx;
-        this.ty = ty;
-        this.tz = tz;
+    public PartCountDTO(int count) {
+        this.count = count;
     }
 
-    public CADInstance toCADInstance() {
-        return new CADInstance(tx, ty, tz, rx, ry, rz);
+    public PartCountDTO() {
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

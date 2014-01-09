@@ -1627,13 +1627,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         if(documentMaster.getACL()==null){
             return userManager.checkWorkspaceWriteAccess(documentMasterKey.getWorkspaceId());
+        }else if(documentMaster.getACL().hasWriteAccess(user)){
+            return user;
         }else{
-            if(documentMaster.getACL().hasWriteAccess(user)){
-                return user;
-            }else{
-                throw new AccessRightException(new Locale(user.getLanguage()),user);
-            }
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
+
 
     }
 

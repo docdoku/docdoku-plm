@@ -20,9 +20,9 @@
 
 package com.docdoku.server.converters.utils;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -45,14 +45,12 @@ public class RadiusCalculator {
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-            JSONObject body = new JSONObject();
-            body.put("filename",file.getAbsolutePath());
-
+            JsonObjectBuilder body = Json.createObjectBuilder().add("filename",file.getAbsolutePath());
             con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(body.toString());
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
+            wr.write(body.build().toString());
             wr.flush();
             wr.close();
 
@@ -69,12 +67,12 @@ public class RadiusCalculator {
 
             String result = response.toString();
 
-            JSONObject jsonResponse = new JSONObject(result);
-            double radius = Double.parseDouble((String) jsonResponse.get("radius"));
+            JsonObject jsonResponse = Json.createReader(new StringReader(result)).readObject();
+            double radius = Double.parseDouble(jsonResponse.getString("radius"));
 
             return radius;
 
-        } catch (JSONException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

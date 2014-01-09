@@ -154,4 +154,5 @@ public class StepFileConverterImpl implements CADConverter{
     public boolean canConvertToJSON(String cadFileExtension) {
         return Arrays.asList("stp", "step", "igs", "iges").contains(cadFileExtension);
     }
+
 }

@@ -10,12 +10,12 @@
     </parent>
     <artifactId>docdoku-server-converter-catia-product</artifactId>
     <packaging>jar</packaging>
-    <name>docdoku-server-converter-catia-product Java EE 6 CATProduct Parser</name>
+    <name>docdoku-server-converter-catia-product Java EE 7 CATProduct Parser</name>
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>14.0</version>
+            <version>15.0</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>6.0</version>
+            <version>7.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>

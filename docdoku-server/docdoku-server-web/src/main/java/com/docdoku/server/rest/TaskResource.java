@@ -32,6 +32,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -61,8 +62,8 @@ public class TaskResource {
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
     @Path("documents/process")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
 
         try {
@@ -84,8 +85,8 @@ public class TaskResource {
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
     @Path("parts/process")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response processTaskForParts(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
 
         try {

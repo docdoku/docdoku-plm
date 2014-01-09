@@ -36,6 +36,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -64,7 +65,7 @@ public class RoleResource {
     } 
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInWorkspace (@PathParam("workspaceId") String workspaceId){
 
         try {
@@ -85,7 +86,7 @@ public class RoleResource {
 
     @GET
     @Path("inuse")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId){
 
         try {
@@ -106,8 +107,8 @@ public class RoleResource {
 
 
     @POST
-    @Produces("application/json;charset=UTF-8")
-    @Consumes("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
 
@@ -126,9 +127,9 @@ public class RoleResource {
     }
 
     @PUT
-    @Produces("application/json;charset=UTF-8")
-    @Consumes("application/json;charset=UTF-8")
     @Path("{roleName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
 
@@ -148,7 +149,7 @@ public class RoleResource {
 
     @DELETE
     @Path("{roleName}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRole(@PathParam("workspaceId") String workspaceId, @PathParam("roleName") String roleName) {
         try {
             RoleKey roleKey = new RoleKey(workspaceId, roleName);

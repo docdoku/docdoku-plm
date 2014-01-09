@@ -22,6 +22,10 @@
                 <class-a>com.docdoku.core.workflow.Activity</class-a>
                 <class-b>com.docdoku.server.rest.dto.ActivityDTO</class-b>
             </converter>
+            <converter type="com.docdoku.server.rest.util.AclDozerConverter" >
+                <class-a>com.docdoku.core.security.ACL</class-a>
+                <class-b>com.docdoku.server.rest.dto.ACLDTO</class-b>
+            </converter>
         </custom-converters>    
     </configuration>
     

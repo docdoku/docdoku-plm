@@ -142,7 +142,8 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         isCheckout: function() {
-            return !_.isNull(this.attributes.checkOutDate);
+            return this.attributes.checkOutDate;
+           // return !_.isNull(this.attributes.checkOutDate);
         },
 
         getPermalink: function() {
@@ -173,19 +174,17 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         removeTags: function(tags, callback) {
-
-            $.ajax({
-                context: this,
-                type: "DELETE",
-                url: this.url() + "/tags",
-                data: JSON.stringify(tags),
-                contentType: "application/json; charset=utf-8",
-                success: function() {
-                    this.fetch();
-                    callback();
-                }
+            var baseUrl = this.url() + "/tags/"
+            _(tags).each(function(tag){
+                $.ajax({
+                    type: "DELETE",
+                    url:baseUrl+tag,
+                    success: function() {
+                       // callback();
+                    }
+                });
             });
-
+            callback();
         },
 
         createNewVersion: function(title, description, workflow, roleMappingList, aclList) {

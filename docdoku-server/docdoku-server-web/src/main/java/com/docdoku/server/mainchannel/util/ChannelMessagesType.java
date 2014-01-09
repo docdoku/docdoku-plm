@@ -32,10 +32,9 @@ public class ChannelMessagesType {
     public static final String WEBRTC_ANSWER = "answer";
     public static final String WEBRTC_BYE = "bye";
     public static final String WEBRTC_CANDIDATE = "candidate";
-
     public static final String CHAT_MESSAGE = "CHAT_MESSAGE" ;
     public static final String CHAT_MESSAGE_ACK = "CHAT_MESSAGE_ACK" ;
-
     public static final String USER_STATUS = "USER_STATUS" ;
+    public static final String PEER_DECLARATION = "PEER_DECLARATION" ;
 
 }

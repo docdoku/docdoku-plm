@@ -62,6 +62,7 @@
                     <li><a href="#tab-part-attributes" data-toggle="tab">#{i18nPart['tabs.attributes']}</a></li>
                     <li><a href="#tab-part-native-cad-file" data-toggle="tab">#{i18nPart['tabs.nativeCADFile']}</a></li>
                     <li><a href="#tab-part-links" data-toggle="tab">#{i18nPart['tabs.links']}</a></li>
+                    <li><a href="#tab-part-assembly" data-toggle="tab">#{i18nPart['tabs.assembly']}</a></li>
                 </ul>
 
                 <div class="tab-content form-horizontal">
@@ -240,6 +241,16 @@
                             <ul>
                                 <c:forEach var="item" items="${partRevision.lastIteration.linkedDocuments}">
                                     <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li>
+                                </c:forEach>
+                            </ul>
+                        </c:if>
+                    </div>
+
+                    <div id="tab-part-assembly" class="tab-pane">
+                        <c:if test="${partRevision.lastIteration.components.size()!=0}">
+                            <ul>
+                                <c:forEach var="item" items="${partRevision.lastIteration.components}">
+                                    <li><a href="#{request.contextPath}/parts/${item.component.workspace.id}/${item.component.number}/${item.component.getLastRevision().version}">${item.component.number}-${item.component.getLastRevision().version} (${item.amount.intValue()})</a></li>
                                 </c:forEach>
                             </ul>
                         </c:if>

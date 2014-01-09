@@ -178,8 +178,9 @@ define([
                     }
                     selectedPart.getLastIteration().save({
                         iterationNote: iterationNote
+                    }).success(function(){
+                        selectedPart.checkin();
                     });
-                    selectedPart.checkin();
                 });
 
                 self.listenTo(promptView, 'prompt-cancel', function() {

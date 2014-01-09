@@ -26,19 +26,20 @@ import com.docdoku.core.product.Marker;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.LayerDTO;
-import java.util.List;
-import java.util.Set;
+import com.docdoku.server.rest.dto.MarkerDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.docdoku.server.rest.dto.MarkerDTO;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -63,7 +64,7 @@ public class LayerResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO[] getLayersInProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -80,8 +81,8 @@ public class LayerResource {
 
     
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO createLayer(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -95,8 +96,8 @@ public class LayerResource {
 
     @PUT
     @Path("{layerId}")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public LayerDTO updateLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -109,7 +110,7 @@ public class LayerResource {
 
     @DELETE
     @Path("{layerId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         try {
             productService.deleteLayer(workspaceId,layerId);
@@ -121,7 +122,7 @@ public class LayerResource {
 
     @GET
     @Path("{layerId}/markers")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public MarkerDTO[] getMarkersInLayer(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId){
         try {
             Layer layer = productService.getLayer(layerId);
@@ -139,8 +140,8 @@ public class LayerResource {
 
     @POST
     @Path("{layerId}/markers")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public MarkerDTO createMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, MarkerDTO markerDTO) {
         try {
             Marker marker = productService.createMarker(layerId, markerDTO.getTitle(), markerDTO.getDescription(), markerDTO.getX(), markerDTO.getY(), markerDTO.getZ());
@@ -152,8 +153,8 @@ public class LayerResource {
 
     @DELETE
     @Path("{layerId}/markers/{markerId}")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteMarker(@PathParam("workspaceId") String workspaceId, @PathParam("layerId") int layerId, @PathParam("markerId") int markerId) {
         try {
             productService.deleteMarker(layerId, markerId);

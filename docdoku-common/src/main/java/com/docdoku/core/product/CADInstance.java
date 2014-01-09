@@ -78,34 +78,20 @@ public class CADInstance implements Serializable, Cloneable {
      * Radian orientation on z axis.
      */
     private double rz;
-    
 
-    private Positioning positioning;   
-    public enum Positioning {ABSOLUTE, PARENT_RELATIVE}
     
     public CADInstance() {
     }
 
-    public CADInstance(double tx, double ty, double tz, double rx, double ry, double rz, Positioning positioning) {
+    public CADInstance(double tx, double ty, double tz, double rx, double ry, double rz) {
         this.tx = tx;
         this.ty = ty;
         this.tz = tz;
         this.rx = rx;
         this.ry = ry;
         this.rz = rz;
-        this.positioning = positioning;
     }
     
-    
-
-    public Positioning getPositioning() {
-        return positioning;
-    }
-
-    public void setPositioning(Positioning positioning) {
-        this.positioning = positioning;
-    }
-
 
     public double getRx() {
         return rx;
