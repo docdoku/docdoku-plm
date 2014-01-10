@@ -206,8 +206,7 @@ public class DocumentMasterDAO {
 
     public DocumentMaster getDocMRef(DocumentMasterKey pKey) throws DocumentMasterNotFoundException {
         try {
-            DocumentMaster docM = em.getReference(DocumentMaster.class, pKey);
-            return docM;
+            return em.getReference(DocumentMaster.class, pKey);
         } catch (EntityNotFoundException pENFEx) {
             throw new DocumentMasterNotFoundException(mLocale, pKey);
         }
@@ -332,5 +331,12 @@ public class DocumentMasterDAO {
                 .setParameter("user", user)
                 .setParameter("excludedFolders", excludedFolders)
                 .getSingleResult()).intValue();
+    }
+
+    public List<DocumentMaster> getAllByWorkspace(String workspaceId) {
+        List<DocumentMaster> documentMasters = em.createNamedQuery("DocumentMaster.findByWorkspace")
+                .setParameter("workspaceId",workspaceId)
+                .getResultList();
+        return documentMasters;
     }
 }

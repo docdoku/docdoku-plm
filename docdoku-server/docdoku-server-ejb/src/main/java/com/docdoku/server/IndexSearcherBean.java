@@ -19,7 +19,7 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.common.BinaryResource;
+/*import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentMasterKey;
 import java.io.File;
 import java.io.IOException;
@@ -27,22 +27,21 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.ejb.EJBException;
-import javax.ejb.Stateless;
 import org.apache.lucene.index.CorruptIndexException;
+*/import javax.annotation.Resource;
+import javax.ejb.Stateless;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
+/*import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.FSDirectory;
-
+*/
 /**
  *
  * @author Florent Garin
@@ -53,7 +52,7 @@ public class IndexSearcherBean {
     @Resource(name = "indexPath")
     private String indexPath;
     private IndexReader indexReader;
-
+/*
     @PostConstruct
     private void setup() {
         try {
@@ -106,4 +105,5 @@ public class IndexSearcherBean {
             throw new EJBException(ex);
         }
     }
+*/
 }

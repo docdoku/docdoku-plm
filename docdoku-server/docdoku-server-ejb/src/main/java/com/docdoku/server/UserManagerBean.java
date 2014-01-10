@@ -27,6 +27,7 @@ import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -56,7 +57,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @EJB
     private IMailerLocal mailer;
     @EJB
-    private IndexerBean indexer;
+    private ESIndexer indexer;
     @EJB
     private IDataManagerLocal dataManager;
     private final static Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
@@ -298,13 +299,14 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
             for (DocumentMaster docM : docMs) {
                 for (DocumentIteration doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
-                        indexer.removeFromIndex(file.getFullName());
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
                             e.printStackTrace();
                         }
                     }
+
+                    indexer.rmIndex(doc);
                 }
             }
         }

@@ -49,7 +49,8 @@ import javax.persistence.*;
         @NamedQuery(name="findDocumentMastersWithReference", query="SELECT d FROM DocumentMaster d WHERE d.id LIKE :id AND d.workspace.id = :workspaceId"),
         @NamedQuery(name="countDocumentMastersInWorkspace", query="SELECT COUNT(d) FROM DocumentMaster d WHERE d.workspace.id = :workspaceId"),
         @NamedQuery(name="DocumentMaster.findByWorkspace.filterUserACLEntry", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId and (dm.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dm.acl)) AND dm.location.completePath NOT LIKE :excludedFolders ORDER BY dm.id ASC"),
-        @NamedQuery(name="DocumentMaster.countByWorkspace.filterUserACLEntry", query="SELECT count(dm) FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId and (dm.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dm.acl)) AND dm.location.completePath NOT LIKE :excludedFolders")
+        @NamedQuery(name="DocumentMaster.countByWorkspace.filterUserACLEntry", query="SELECT count(dm) FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId and (dm.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = dm.acl)) AND dm.location.completePath NOT LIKE :excludedFolders"),
+        @NamedQuery(name="DocumentMaster.findByWorkspace", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId")
 })
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
     
@@ -384,6 +385,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
 	return hash;
     }
 
+    @Override
     public int compareTo(DocumentMaster pDocM) {
         int wksComp = workspaceId.compareTo(pDocM.workspaceId);
         if (wksComp != 0)

@@ -40,6 +40,7 @@ import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -71,6 +72,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private IUserManagerLocal userManager;
     @EJB
     private IDataManagerLocal dataManager;
+    @EJB
+    private ESIndexer esIndexer;
 
     @RolesAllowed("users")
     @Override
@@ -450,6 +453,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
+
+            esIndexer.index(partR.getLastIteration());                                                                  // Index the last iteration in ElasticSearch
             return partR;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
@@ -853,9 +858,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-
-        List<PartRevision> fetchedPartRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).searchPartRevisions(pQuery.getWorkspaceId(), pQuery.getPartNumber(), pQuery.getName(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo(), pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null, pQuery.isStandardPart());
+        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                      // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
@@ -864,20 +867,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         while (ite.hasNext()) {
             PartRevision partR = ite.next();
 
-            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {                                    // Remove CheckedOut PartRevision From Results
                 partR = partR.clone();
                 partR.removeLastIteration();
                 ite.set(partR);
             }
 
             //Check access rights
-            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {
+            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {                            // Check Rigth Acces
                 ite.remove();
                 continue;
             }
         }
         return new ArrayList<PartRevision>(fetchedPartRs);
-
     }
 
     @Override
@@ -1264,6 +1266,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 } catch (PartIterationNotFoundException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+        // delete ElasticSearch Index for this revision iteration
+        for (PartRevision partRevision : partMaster.getPartRevisions()) {
+            for (PartIteration partIteration : partRevision.getPartIterations()) {
+                esIndexer.rmIndex(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
             }
         }
 

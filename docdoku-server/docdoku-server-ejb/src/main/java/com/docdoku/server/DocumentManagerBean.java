@@ -35,6 +35,7 @@ import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -74,11 +75,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @EJB
     private IGCMSenderLocal gcmNotifier;
 
-    @EJB
+/*    @EJB
     private IndexerBean indexer;
-
-    @EJB
+*/
+/*    @EJB
     private IndexSearcherBean indexSearcher;
+*/
+    @EJB
+    private ESIndexer esIndexer;
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -515,25 +519,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMaster[] searchDocumentMasters(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        //preparing tag filtering
-        Set<Tag> tags = null;
-        if (pQuery.getTags() != null) {
-            Workspace wks = new Workspace();
-            wks.setId(pQuery.getWorkspaceId());
-            tags = new HashSet<Tag>();
-            for (String label : pQuery.getTags()) {
-                tags.add(new Tag(wks, label));
-            }
-        }
-
-        List<DocumentMaster> fetchedDocMs = new DocumentMasterDAO(new Locale(user.getLanguage()), em).searchDocumentMasters(pQuery.getWorkspaceId(), pQuery.getDocMId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo(), tags, pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null);
-
-        //preparing fulltext filtering
-        Set<DocumentMasterKey> indexedKeys = null;
-        if (fetchedDocMs.size() > 0 && pQuery.getContent() != null && !pQuery.getContent().equals("")) {
-            indexedKeys = indexSearcher.searchInIndex(pQuery.getWorkspaceId(), pQuery.getContent());
-        }
+        List<DocumentMaster> fetchedDocMs = esIndexer.search(pQuery);                                                   // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
@@ -542,26 +528,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         docMBlock:
         while (ite.hasNext()) {
             DocumentMaster docM = ite.next();
-            if (indexedKeys != null && (!indexedKeys.contains(docM.getKey()))) {
+
+            if(docM.getLocation().isPrivate() && (!docM.getCheckOutUser().equals(user)) ){                              // Remove Private DocMaster From Results
                 ite.remove();
                 continue docMBlock;
             }
 
-            //TODO search should not fetch back private docM
-
-            if(docM.getLocation().isPrivate() && (!docM.getCheckOutUser().equals(user)) ){
-                ite.remove();
-                continue docMBlock;
-            }
-
-            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {                                      // Remove CheckedOut DocMaster From Results
                 docM = docM.clone();
                 docM.removeLastIteration();
                 ite.set(docM);
             }
 
-            //Check access rights
-            if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {
+            if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {                              // Check Rigth Acces
                 ite.remove();
                 continue;
             }
@@ -1024,7 +1003,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMaster saveTags(DocumentMasterKey pDocMPK, String[] pTags)
             throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
-
         User user = checkDocumentMasterWriteAccess(pDocMPK);
 
         Locale userLocale = new Locale(user.getLanguage());
@@ -1061,6 +1039,44 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
             docM = docM.clone();
             docM.removeLastIteration();
+        }
+
+        for (DocumentIteration documentIteration:docM.getDocumentIterations()){
+            esIndexer.index(documentIteration);
+        }
+        return docM;
+    }
+
+    /**
+     * Remove a tag from a DocumentMaster
+     * @param pDocMPK DocumentMaster with the tag to remove
+     * @param pTag The tag to remove
+     * @return The DocumentMaster without the tag
+     * @throws WorkspaceNotFoundException
+     * @throws NotAllowedException
+     * @throws DocumentMasterNotFoundException
+     * @throws AccessRightException
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     */
+    @RolesAllowed("users")
+    @Override
+    public DocumentMaster removeTag(DocumentMasterKey pDocMPK, String pTag)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentMasterNotFoundException, NotAllowedException {
+
+        User user = checkDocumentMasterWriteAccess(pDocMPK);
+
+        DocumentMaster docM = getDocumentMaster(pDocMPK);
+        Tag tagToRemove = new Tag(user.getWorkspace(), pTag);
+        docM.getTags().remove(tagToRemove);
+
+        if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {
+            docM = docM.clone();
+            docM.removeLastIteration();
+        }
+
+        for (DocumentIteration documentIteration:docM.getDocumentIterations()){
+            esIndexer.index(documentIteration);
         }
         return docM;
     }
@@ -1123,10 +1139,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 gcmNotifier.sendIterationNotification(gcmAccounts, docM);
             }
 
+            esIndexer.index(docM.getLastIteration());                                                                   // Index the last iteration in ElasticSearch
+
             for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
                 try {
                     InputStream inputStream = dataManager.getBinaryResourceInputStream(bin);
-                    indexer.addToIndex(bin.getFullName(), inputStream);
+                    //indexer.addToIndex(bin.getFullName(), inputStream);
                 } catch (StorageException e) {
                     e.printStackTrace();
                 }
@@ -1157,13 +1175,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 pks[i++] = docM.getKey();
                 for (DocumentIteration doc : docM.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
-                        indexer.removeFromIndex(file.getFullName());
+                        //indexer.removeFromIndex(file.getFullName());
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
                             e.printStackTrace();
                         }
                     }
+                    esIndexer.rmIndex(doc);                                                                             // Remove ElasticSearch Index for this DocumentIteration
                 }
             }
             return pks;
@@ -1220,12 +1239,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         for (DocumentIteration doc : docM.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
-                indexer.removeFromIndex(file.getFullName());
+                //indexer.removeFromIndex(file.getFullName());
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
                     e.printStackTrace();
                 }
+
+                esIndexer.rmIndex(doc);                                                                                 // Remove ElasticSearch Index for this DocumentIteration
             }
         }
     }

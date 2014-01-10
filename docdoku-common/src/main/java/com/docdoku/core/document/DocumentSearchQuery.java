@@ -163,6 +163,7 @@ public class DocumentSearchQuery implements Serializable{
         public String getName() {
             return name;
         }
+        public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
         public void setName(String name) {
             this.name = name;
         }

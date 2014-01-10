@@ -343,9 +343,7 @@ public class DocumentResource {
     @Path("/tags/{tagName}")
     public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("tagName") String tagName) {
         try {
-            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, documentId, documentVersion));
-            Tag tagToRemove = new Tag(new Workspace(workspaceId), tagName);
-            docM.getTags().remove(tagToRemove);
+            documentService.removeTag(new DocumentMasterKey(workspaceId, documentId, documentVersion),tagName);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

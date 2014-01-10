@@ -46,11 +46,11 @@ public class DocumentIterationKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + documentMasterId.hashCode();
+	    hash = 31 * hash + workspaceId.hashCode();
+	    hash = 31 * hash + documentMasterId.hashCode();
         hash = 31 * hash + documentMasterVersion.hashCode();
         hash = 31 * hash + iteration;
-	return hash;
+	    return hash;
     }
     
     @Override

@@ -156,6 +156,7 @@ public class PartSearchQuery implements Serializable{
         public void setName(String name) {
             this.name = name;
         }
+        public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
         public AbstractAttributeQuery(){}
         public AbstractAttributeQuery(String name){
             this.name=name;
