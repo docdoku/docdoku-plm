@@ -4,233 +4,219 @@ importScripts(
     "/js/lib/visualization/three.min.js"
 );
 
-var center = new THREE.Vector3();
-var instanceWorker = null;
-var data;
-var frustum = new THREE.Frustum();
-var cameraPosition ={x:0,y:0,z:0}, oldCameraPosition={x:0,y:0,z:0};
-var switchRating = 0.3;
-var maxInstancesToSend = 500;
-var debug = true;
+// Index meshes
+var meshes ={};
+var sortedMeshes ;
+var nMeshes=0;
+// Previous camera
+var _camera=new THREE.Vector3();
+var _target=new THREE.Vector3();
+// Latest camera
+var camera=new THREE.Vector3();
+var target=new THREE.Vector3();
+// Vector on camera -> target
+var ct=new THREE.Vector3();
+var maxQualities=0;
+var bestRating = 0;
 
+var Context = {
 
-function isInFrustum (instance){
-    center.x= instance.position.x;
-    center.y= instance.position.y;
-    center.z= instance.position.z;
-    for (var i = 0; i < 6; i ++ ) {
-        if ( frustum.planes[ i ].distanceToPoint(center) < -instance.radius ) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function getDistance(instancePosition) {
-    return Math.sqrt(Math.pow(cameraPosition.x - instancePosition.x, 2)
-        + Math.pow(cameraPosition.y - instancePosition.y, 2)
-        + Math.pow(cameraPosition.z - instancePosition.z, 2));
-}
-
-function getRating (instance) {
-    return isInFrustum(instance) ? instance.radius / getDistance(instance.position) : 0;
-}
-
-function cameraHasChanged(){
-    if(oldCameraPosition.x != cameraPosition.x){
-        return true;
-    }
-    if(oldCameraPosition.y != cameraPosition.y){
-        return true;
-    }
-    if(oldCameraPosition.z != cameraPosition.z){
-        return true;
-    }
-    return false;
-}
-
-function InstanceWorker(){
-    this.init();
-}
-
-InstanceWorker.prototype = {
-
-    init:function(){
-        this.indexedInstances={};
-        this.instances=[];
-        this.instancesOnScene=[];
-        this.instancesToUpdate=[];
-    },
-
-    insert:function(instances){
-        var that = this ;
-        _(instances).each(function(instance){
-             that.addInstance(instance);
-        });
-        return this;
-    },
-
-    addInstance:function(instance){
-        this.indexedInstances[instance.id] = instance;
-        instance.rating = getRating(instance);
-        instance.oldRating = instance.rating;
-        instance.fullQuality = instance.rating > switchRating;
-        this.needsSend = true;
-        return this;
-    },
-
-    remove:function(instancesId){
-        var that = this;
-        _(instancesId).each(function(instanceId){
-            that.removeInstance(instanceId);
-        });
-        this.needsSend = true;
-        return this;
-    },
-
-    removeInstance:function(instanceId){
-        delete this.indexedInstances[instanceId];
-    },
-
-    sendInstances:function(){
-
-        var instances = _.values(this.indexedInstances);
-
-        this.recomputeRatings(instances);
-        this.sort(instances);
-
-        if(this.needsSend){
-
-            var shouldBeOnScene = instances.slice(0,maxInstancesToSend);
-            var shouldNotBeOnScene = instances.slice(maxInstancesToSend,instances.length);
-
-            var instancesToShow = _.difference(shouldBeOnScene,this.instancesOnScene);
-            var instancesToHide = _.intersection(shouldNotBeOnScene,this.instancesOnScene);
-
-            var instancesToUpdate = _.difference(shouldBeOnScene,instancesToShow).filter(function(instance){
-                return (instance.rating > switchRating && instance.oldRating < switchRating
-                        || instance.rating < switchRating && instance.oldRating > switchRating);
-            });
-
-
-
-            if(instancesToHide.length){
-                self.postMessage(JSON.stringify({
-                    fn:"hide",
-                    instances:instancesToHide
-                }));
-            }
-
-            if(instancesToShow.length){
-                self.postMessage(JSON.stringify({
-                    fn:"show",
-                    instances:instancesToShow
-                }));
-            }
-
-            if(instancesToUpdate.length){
-                self.postMessage(JSON.stringify({
-                    fn:"update",
-                    instances:instancesToUpdate
-                }));
-            }
-
-            this.instancesOnScene = shouldBeOnScene;
-            this.needsSend = false;
-            this.setOldCameraPosition();
-        }
-
-        return this;
-    },
-
-    setFrustum:function(pFrustum){
-
-        for(var i = 0; i< 6 ; i++){
-            frustum.planes[i].normal.x = pFrustum.planes[i].normal.x;
-            frustum.planes[i].normal.y = pFrustum.planes[i].normal.y;
-            frustum.planes[i].normal.z = pFrustum.planes[i].normal.z;
-            frustum.planes[i].constant = pFrustum.planes[i].constant;
-        }
-
-        return this;
-    },
-
-    setCameraPosition:function(pCameraPosition){
-        cameraPosition = pCameraPosition;
-        return this;
-    },
-
-    setOldCameraPosition:function(){
-        oldCameraPosition = {x:cameraPosition.x, y:cameraPosition.y, z:cameraPosition.z};
-        return this;
-    },
-
-    recomputeRatings:function(instances){
-        if(cameraHasChanged()){
-            _(instances).each(function(instance){
-                instance.oldRating = instance.rating;
-                instance.rating = getRating(instance);
-                instance.fullQuality = instance.rating > switchRating;
-            });
+    addMesh:function(mesh){
+        if(!meshes[mesh.uuid]){
+            meshes[mesh.uuid] = mesh;
+            mesh.currentQuality = null;
+            maxQualities = Math.max(maxQualities,mesh.qualities.length);
+            nMeshes++;
+            mesh.checked = true;
         }
     },
 
-    sort:function(instances){
-        // Don't sort if the array didn't reach max size
-        if(instances.length > maxInstancesToSend){
-            instances.sort(function(a,b){
-                return a.rating < b.rating ? 1  : a.rating > b.rating ? -1 : 0;
-            });
-            this.needsSend = true;
-        }
+    unCheckMesh:function(meshId){
+        meshes[meshId].checked = false;
+    },
+    checkMesh:function(meshId){
+        meshes[meshId].checked = true;
     },
 
-    debug:function(){
-        self.postMessage(JSON.stringify({
-            fn:"debug",
-            instances: _.values(this.indexedInstances),
-            instancesToUpdate:this.instancesToUpdate,
-            instancesOnScene:this.instancesOnScene,
-            cameraPosition:cameraPosition
-        }));
+    setFromMessage:function(context){
+        // Backup previous state
+
+        _camera.x= camera.x;
+        _camera.y= camera.y;
+        _camera.z= camera.z;
+
+        _target.x= target.x;
+        _target.y= target.y;
+        _target.z= target.z;
+
+        // New scene context
+        var c = context.camera, t = context.target;
+
+        camera.x = c.x;
+        camera.y = c.y;
+        camera.z = c.z;
+
+        target.x = t.x;
+        target.y = t.y;
+        target.z = t.z;
+
+        ct.x = camera.x - target.x;
+        ct.y = camera.y - target.y;
+        ct.z  =camera.z - target.z;
+
+    },
+
+    changed:function(){
+        return Context.cameraChanged();
+    },
+
+    cameraChanged:function() {
+        if(_camera.x!=camera.x) return true;
+        if(_camera.y!=camera.y) return true;
+        if(_camera.z!=camera.z) return true;
+        if(_target.x!=target.x) return true;
+        if(_target.y!=target.y) return true;
+        if(_target.z!=target.z) return true;
+        return false;
+    },
+
+    cameraDist:function(mesh){
+        var mc = new THREE.Vector3(mesh.cog.x - camera.x, mesh.cog.y - camera.y, mesh.cog.z - camera.z);
+        return mc.length();
+    },
+
+    cameraAngle:function(mesh){
+        var mc = new THREE.Vector3(camera.x-mesh.cog.x, camera.y-mesh.cog.y, camera.z-mesh.cog.z);
+        return mc.angleTo(ct);
+    },
+
+    hasData:function(){
+        return nMeshes>0;
     }
 
 };
 
-
-instanceWorker = new InstanceWorker();
-
 self.addEventListener('message', function(message) {
-
-    data = JSON.parse(message.data);
-
-    switch(data.fn){
-        case 'insert' :
-            instanceWorker.insert(data.instances).sendInstances();
-            break ;
-
-        case 'instances' :
-            instanceWorker.sendInstances();
-            break ;
-
-        case 'remove' :
-            instanceWorker.remove(data.instancesId).sendInstances();
-            break ;
-
-        case 'update' :
-            instanceWorker.setFrustum(data.frustum).setCameraPosition(data.cameraPosition).sendInstances();
-            break ;
-
-        case 'init' :
-            instanceWorker.setFrustum(data.frustum).setCameraPosition(data.cameraPosition).setOldCameraPosition();
-            break ;
-
-        case 'debug' :
-            instanceWorker.debug();
-            break ;
-
-        default :
-            break ;
+    if(message.data.context){
+        Context.setFromMessage(message.data.context);
+        if(Context.changed()){
+            ComputeMeshesRatings();
+            SortMeshes();
+            SendMeshes();
+        }
+    }
+    else if(message.data.mesh){
+        Context.addMesh(message.data.mesh);
+    }
+    else if(message.data.unCheck){
+        Context.unCheckMesh(message.data.unCheck);
+    }
+    else if(message.data.check){
+        Context.checkMesh(message.data.check);
     }
 
 }, false);
+
+function ComputeMeshesRatings(){
+
+    var totalRating = 0;
+
+    _(meshes).each(function(mesh){
+
+        if(mesh.checked){
+
+            var dist = Context.cameraDist(mesh);
+            var angle = Context.cameraAngle(mesh);
+            var radius = mesh.radius;
+
+            mesh.dist=dist;
+            mesh.angle=angle;
+
+            var maxAngle = Math.PI/4;
+
+            var distanceRating = radius/dist;
+            var angleRating =  angle > maxAngle ?  0 : maxAngle/angle ;
+
+            mesh.globalRating = distanceRating * angleRating;
+
+            // console.log("------- dist / angle / rating --- " + dist  + "   " + angle + "   " + distanceRating);
+        }else{
+            mesh.globalRating = 0;
+        }
+
+
+    });
+
+}
+
+function SortMeshes(){
+    sortedMeshes = _.values(meshes);
+    sortedMeshes.sort( function(a,b){
+        return a.globalRating < b.globalRating ? 1 : a.globalRating > b.globalRating ? -1 : 0;
+    });
+
+    if(sortedMeshes.length){
+        bestRating = sortedMeshes[0].globalRating;
+    }
+    else{
+        bestRating = 1;
+    }
+
+}
+
+function SendMeshes(){
+
+    // Take out 500 first
+    var bestRatingsMeshes = sortedMeshes.splice(0,500);
+
+    bestRatingsMeshes.sort(function(a,b){
+        return a.dist>b.dist?1:a.dist< b.dist?-1:0;
+    });
+
+    // Need to be sure to remove all other meshes
+    sendMeshesWithQuality(sortedMeshes,null);
+
+    // split into arrays - spread qualities
+    var arrays = splitArrayIntoArrays(bestRatingsMeshes,maxQualities);
+
+    // Load the bestRatingMeshes
+    for(var i = 0; i < maxQualities; i++){
+        sendMeshesWithQuality(arrays[i],i);
+    }
+
+}
+
+function sendMeshesWithQuality(_meshes,quality){
+    _(_meshes).each(function(mesh){
+        if(mesh.checked){
+            if(quality === null){
+                sendMesh(mesh,null);
+            }
+            else if(mesh.qualities[quality]){
+                sendMesh(mesh,mesh.qualities[quality]);
+            }else{
+                sendMesh(mesh,null);
+            }
+        }else{
+            sendMesh(mesh,null);
+        }
+    });
+}
+
+// Tells the scene to load a mesh in given quality
+function sendMesh(mesh,quality){
+    // If quality has change, tell the main thread to change it
+    if(mesh.currentQuality != quality){
+        mesh.currentQuality = quality;
+        self.postMessage({uuid:mesh.uuid,quality:quality,overall:mesh.globalRating/bestRating});
+    }
+}
+
+function splitArrayIntoArrays(a, n) {
+    var len = a.length,out = [], i = 0;
+    while (i < len) {
+        var size = Math.ceil((len - i) / n--);
+        out.push(a.slice(i, i += size));
+    }
+    return out;
+}

@@ -15,7 +15,6 @@ define([
         _.extend(this, options);
 
         this.isLoaded = false;
-        this.isPaused = false;
         this.isMoving = false;
 
         this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
@@ -31,10 +30,6 @@ define([
 
         this.projector = new THREE.Projector();
 
-        this.nominalFPSValue = 60; // 60 Fps
-        this.currentFPSValue = 1; // Start the scene at 1 fps
-        this.fpsReducerTime = 1000; // reducing fps every 1 seconds
-
     };
 
     SceneManager.prototype = {
@@ -45,6 +40,10 @@ define([
             this.initSceneUtils();
             this.initRendering();
             this.bindMouseAndKeyEvents();
+            var self = this;
+            setInterval(function(){
+                instancesManager.updateWorker(self.camera, self.controls.target);
+            },200);
         },
 
         initScene: function () {
@@ -72,7 +71,6 @@ define([
             this.initStats();
             this.animate();
             this.loadWindowResize();
-            this.startFPSReducer();
         },
 
         initRenderer: function () {
@@ -87,7 +85,6 @@ define([
 
             var self = this;
 
-            if (!this.isPaused) {
                 switch (this.stateControl) {
                     case this.STATECONTROL.PLC:
                         this.cameraPosition = this.controls.getPosition();
@@ -105,14 +102,13 @@ define([
                         self.animate();
                     });
                 }, 1000 / this.currentFPSValue);
-            }
 
             this.render();
             this.stats.update();
+            instancesManager.dequeue();
         },
 
         render: function () {
-            this.scene.updateMatrixWorld();
             this.renderer.render(this.scene, this.camera);
         },
 
@@ -121,7 +117,6 @@ define([
             if (!_.isUndefined(SCENE_INIT.camera)) {
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
             }
-            instancesManager.initWorker();
         },
 
         updateNewCamera: function () {
@@ -288,7 +283,6 @@ define([
          * */
 
         addMesh: function (mesh) {
-            this.resetFPSReducer();
             this.scene.add(mesh);
             this.applyExplosionCoeff(mesh);
             this.applyWireFrame(mesh);
@@ -296,7 +290,6 @@ define([
         },
 
         removeMesh:function(mesh){
-            this.resetFPSReducer();
             this.scene.remove(mesh);
         },
 
@@ -446,7 +439,6 @@ define([
         },
 
         switchWireFrame: function (wireframe) {
-            this.resetFPSReducer();
             this.wireframe = wireframe;
             var self = this;
             _(this.scene.children).each(function (child) {
@@ -466,7 +458,6 @@ define([
         },
 
         explodeScene: function (v) {
-            this.resetFPSReducer();
             var self = this;
             // this could be adjusted
             this.explosionCoeff = v * 0.1;
@@ -502,56 +493,6 @@ define([
             mesh.updateMatrix();
         },
 
-        moveCutPlan:function(axis, value){
-            this.resetFPSReducer();
-            this.cutPlan.position.x = this.cutPlan.initialPosition.x;
-            this.cutPlan.position.y = this.cutPlan.initialPosition.y;
-            this.cutPlan.position.z = this.cutPlan.initialPosition.z;
-            this.cutPlan.translateZ(value);
-            var self = this ;
-            _(this.scene.children).each(function(child){
-                if(child instanceof THREE.Mesh && child.partIterationId){
-                    child.visible = child.position.z < self.cutPlan.position.z ;
-                }
-            });
-        },
-
-
-        setCutPlanAxis:function(axis){
-            this.resetFPSReducer();
-            this.cutPlan.position.x = this.cutPlan.initialPosition.x;
-            this.cutPlan.position.y = this.cutPlan.initialPosition.y;
-            this.cutPlan.position.z = this.cutPlan.initialPosition.z;
-
-            switch(axis){
-                case 'X' :
-                    this.cutPlan.rotation.set(0, 0, 0);
-                    break;
-                case 'Y' :
-                    this.cutPlan.rotation.set( Math.PI/2, Math.PI/2, Math.PI/2);
-                    break;
-                case 'Z' :
-                    this.cutPlan.rotation.set( Math.PI/2, 0, 0);
-                    break;
-                default:break;
-            }
-        },
-
-        fitView:function(){
-
-            // compute center of gravity and place camera point.
-            var combined = new THREE.Geometry();
-
-            _(this.scene.children).each(function(child){
-                if(child instanceof THREE.Mesh && child.partIterationId){
-                    THREE.GeometryUtils.merge(combined, child.geometry);
-                }
-            });
-            combined.computeBoundingSphere();
-            this.controls.target = combined.boundingSphere.center;
-
-        },
-
         setMeasureState:function(state){
             this.$sceneContainer.toggleClass("measureMode",state);
             this.measureState = state;
@@ -580,51 +521,6 @@ define([
         },
 
         /*
-         * FPS Reducer
-         *
-         * */
-
-        pause: function () {
-            this.isPaused = true;
-        },
-
-        resume: function () {
-            this.isPaused = false;
-            this.animate();
-        },
-
-        startFPSReducer: function () {
-            this.needsReduceFPS = true;
-            var self = this;
-            this.fpsReducer = setInterval(function () {
-                if (self.needsReduceFPS && self.currentFPSValue > 1) {
-                    self.reduceFPS();
-                }
-            }, this.fpsReducerTime);
-        },
-
-        resetFPSReducer: function () {
-            this.needsReduceFPS = true;
-            clearInterval(this.fpsReducer);
-            this.resetFPSValue();
-            this.startFPSReducer();
-        },
-
-        stopFPSReducer: function () {
-            this.currentFPSValue = this.nominalFPSValue;
-            this.needsReduceFPS = false;
-            this.animate();
-        },
-
-        reduceFPS: function () {
-            this.currentFPSValue = Math.ceil(this.currentFPSValue / 2);
-        },
-
-        resetFPSValue: function () {
-            this.currentFPSValue = this.nominalFPSValue;
-        },
-
-        /*
          *
          *  Scene mouse events
          *
@@ -642,45 +538,32 @@ define([
         },
 
         onMouseEnter: function () {
-            this.resetFPSReducer();
+
         },
 
         onMouseLeave: function () {
         },
 
         onKeyDown: function () {
-            this.preventInstancesUpdate();
-            this.resetFPSReducer();
         },
 
         onKeyUp: function () {
-            if(this.isMoving){
-                this.needsInstancesUpdate();
-                this.resetFPSReducer();
-            }
         },
 
         onMouseDown: function () {
-            this.preventInstancesUpdate();
-            this.resetFPSReducer();
             this.isMoving = false;
         },
 
         onSceneMouseWheel: function () {
-            this.needsInstancesUpdate();
-            this.resetFPSReducer();
         },
 
         onSceneMouseMove: function () {
-            this.resetFPSReducer();
             this.isMoving = true;
         },
 
         onSceneMouseUp: function (event) {
 
             if (this.isMoving) {
-                this.needsInstancesUpdate();
-                this.resetFPSReducer();
                 return false;
             }
 
@@ -726,17 +609,6 @@ define([
                 }
             }
 
-        },
-
-        needsInstancesUpdate:function(){
-            this.preventInstancesUpdate();
-            this.updateTimer = setTimeout(function(){
-                instancesManager.updateWorker();
-            },500);
-        },
-
-        preventInstancesUpdate:function(){
-            clearTimeout(this.updateTimer);
         },
 
         setPathForIFrame: function (pathForIFrame) {

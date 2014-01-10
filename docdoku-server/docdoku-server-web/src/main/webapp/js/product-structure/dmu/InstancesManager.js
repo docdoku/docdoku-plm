@@ -17,6 +17,89 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
       *
      * */
 
+    var instancesIndexed=[];
+
+    function cleanAndRemoveMesh(object){
+        disposeQueue.add(object);
+        sceneManager.scene.remove(object);
+    }
+
+    function applyMatrix(instanceRaw){
+        var m = new THREE.Matrix4(instanceRaw.matrix[0],instanceRaw.matrix[1],instanceRaw.matrix[2],instanceRaw.matrix[3],instanceRaw.matrix[4],instanceRaw.matrix[5],instanceRaw.matrix[6],instanceRaw.matrix[7],instanceRaw.matrix[8],instanceRaw.matrix[9],instanceRaw.matrix[10],instanceRaw.matrix[11],instanceRaw.matrix[12],instanceRaw.matrix[13],instanceRaw.matrix[14],instanceRaw.matrix[15]);
+        instanceRaw.mesh.applyMatrix(m);
+    }
+
+    var disposeQueue = {
+        _q:[],
+        disposeInALoop:8,
+        add:function(e){
+            disposeQueue._q.push(e);
+        },
+        _run:function(object){
+            if(object){
+                object.traverse( function ( child ) {
+                    if ( child.geometry !== undefined ) {
+                        child.geometry.dispose();
+                        child.material.dispose();
+                    }
+                });
+            }
+            object=null;
+        },
+        run:function(){
+            for(var i = 0 ; i < disposeQueue.disposeInALoop ; i++){
+                disposeQueue._run(disposeQueue._q.shift());
+            }
+        }
+    };
+
+    var queue = {
+        max:4,
+        count:0,
+        _q:[],
+        watch:function(){
+            if(queue.count < queue.max){
+                queue.next();
+            }
+        },
+        add:function(e){
+            queue._q.push(e);
+        },
+        next:function(){
+            var n = queue._q.shift();
+            if(n){
+                queue.count++;
+                try{
+                    n();
+                }catch(e){
+                    console.log("Exception while executing a task : ")
+                    console.log(e);
+                    queue.count--;
+                }
+            }
+        },
+        taskOver:function(){
+            queue.count--;
+            queue.next();
+        }
+    };
+
+    var findQualities = function (files) {
+        var q = [];
+        _(files).each(function (f) {
+            q[f.quality] = "/files/" + f.fullName;
+        });
+        return q;
+    };
+    var findRadius = function (files) {
+        var r = 0;
+        _(files).each(function (f) {
+           if(f.radius){
+               r = f.radius;
+           }
+        });
+        return r || 1;
+    };
     var InstancesManager = function () {
         this.partIterations = [];
         this.loaderManager = null;
@@ -24,6 +107,11 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
     };
 
     InstancesManager.prototype = {
+
+        dequeue:function(){
+            disposeQueue.run();
+            queue.watch();
+        },
 
         init: function () {
             var self = this ;
@@ -35,127 +123,145 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             this.loaderIndicator = $("#product_title > img.loader");
         },
 
-        addPartIteration: function (partIteration) {
-            this.partIterations[partIteration.id] = partIteration;
-        },
-
-        getPartIteration: function (partIterationId) {
-            return this.partIterations[partIterationId];
-        },
-
-        getOrCreatePartIteration: function (instanceRaw) {
-            if (!this.hasPartIteration(instanceRaw.partIterationId)) {
-                this.addPartIteration(new PartIterationVisualization(instanceRaw));
-            }
-            return this.getPartIteration(instanceRaw.partIterationId);
-        },
-
-        hasPartIteration: function (partIterationId) {
-            return this.partIterations[partIterationId] !== undefined;
-        },
-
         loadMeshFromFile: function (fileName, callback) {
             var texturePath = fileName.substring(0, fileName.lastIndexOf('/'));
             this.loaderManager.parseFile(fileName, texturePath, callback);
         },
 
         loadFromTree: function (component) {
+
             var self = this;
+
             this.loaderIndicator.show();
+
             $.getJSON(component.getInstancesUrl(), function (instances) {
 
-                var instancesToInsert=[];
                 _.each(instances, function (instanceRaw) {
-                    var partIteration = self.getOrCreatePartIteration(instanceRaw).addInstance(instanceRaw);
-                    if (partIteration.hasGeometry()) {
-                        instancesToInsert.push(partIteration.getInstance(instanceRaw.id));
-                    }
-                });
 
-                // Send to worker
-                if(instancesToInsert.length){
-                    self.onInstancesAdded(instancesToInsert);
-                }
+                    if(instancesIndexed[instanceRaw.id]){
+                        self.worker.postMessage({
+                            check:instanceRaw.id
+                        });
+                        return ;
+                    }
+
+                    instancesIndexed[instanceRaw.id]=instanceRaw;
+
+                    /*
+                     * Init the mesh with empty geometry
+                     * */
+
+                    var mesh = new THREE.Mesh(new THREE.Geometry(),new THREE.MeshPhongMaterial());
+
+                    instanceRaw.mesh = mesh;
+                    mesh._uuid = instanceRaw.id;
+                    instanceRaw.currentQuality = null;
+
+                    applyMatrix(instanceRaw);
+
+                    instanceRaw.position=mesh.position.clone();
+
+                    var qualities =  findQualities(instanceRaw.files);
+                    var radius =  findRadius(instanceRaw.files);
+
+                    var cog = {
+                        x:mesh.position.x+radius,
+                        y:mesh.position.y+radius,
+                        z:mesh.position.z+radius
+                    };
+
+                    self.worker.postMessage({
+                        mesh: {
+                            uuid: mesh._uuid,
+                            cog: cog,
+                            radius: radius,
+                            qualities:qualities
+                        }
+                    });
+
+                });
 
                 self.loaderIndicator.hide();
 
             });
         },
 
-        onInstancesAdded: function (instances) {
-            this.worker.postMessage(JSON.stringify({fn: "insert", instances: instances}));
-        },
-
         unLoadFromTree: function (component) {
             var self = this;
             $.getJSON(component.getInstancesUrl(), function (instances) {
-                var instancesToRemove=[];
                 _.each(instances, function (instanceRaw) {
-                    var partIteration = self.getPartIteration(instanceRaw.partIterationId);
-                    if (partIteration && partIteration.hasGeometry()) {
-                        instancesToRemove.push(instanceRaw.id);
-                        partIteration.hideInstance(instanceRaw);
-                    }
+                    self.worker.postMessage({unCheck:instanceRaw.id});
                 });
-
-                self.onInstancesRemoved(instancesToRemove);
             });
         },
 
-        onInstancesRemoved: function (instancesId) {
-            this.worker.postMessage(JSON.stringify({fn: "remove", instancesId:instancesId}));
-        },
-
-        debugWorker: function () {
-            this.worker.postMessage(JSON.stringify({fn: "debug"}));
-        },
-
-        initWorker: function () {
-            this.worker.postMessage(JSON.stringify({
-                fn: "init",
-                frustum: sceneManager.frustum,
-                cameraPosition: sceneManager.cameraPosition
-            }));
-        },
-
-        updateWorker: function () {
-            sceneManager.frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(sceneManager.camera.projectionMatrix, sceneManager.camera.matrixWorldInverse));
-            this.worker.postMessage(JSON.stringify({
-                fn: "update",
-                frustum: sceneManager.frustum,
-                cameraPosition: sceneManager.cameraPosition
-            }));
+        updateWorker: function (camera, target) {
+            if(queue.count){
+                return;
+            }
+            this.worker.postMessage({context: {camera: camera.position, target: target}});
         },
 
         onWorkerMessage: function (message) {
 
-            var data = JSON.parse(message.data);
-            var self = this;
+            var self = this ;
 
-            // Remove instances from scene
-            if(data.fn == "hide"){
-                _(data.instances).each(function (instance) {
-                    self.getPartIteration(instance.partIterationId).hideInstance(instance);
-                });
-            }
-            // Show instances on scene
-            else  if(data.fn == "show"){
-                _(data.instances).each(function (instance) {
-                    self.getPartIteration(instance.partIterationId).showInstance(instance);
-                });
-            }
-            // Update instances quality
-            else if(data.fn == "update"){
-                _(data.instances).each(function (instance) {
-                    self.getPartIteration(instance.partIterationId).updateInstance(instance);
-                });
-            }
-            // Debug worker
-            else if(data.fn == "debug"){
-                console.log(data);
-                console.log("on scene " + (sceneManager.scene.children.length - 5));
-                console.log(sceneManager.renderer.info.render);
-            }
+            queue.add(function () {
+
+                var uuid = message.data.uuid;
+                var quality = message.data.quality;
+
+                var instance = instancesIndexed[uuid];
+
+                if (!instance) {
+                    console.log("cannot find instance");
+                    queue.taskOver();
+                    return;
+                }
+
+                // First of all, check if quality sent is different from current one
+
+                /*
+                 * Switching geometry
+                 * */
+
+                if(quality !== instance.currentQuality){
+
+                    if(instance.mesh){
+                        cleanAndRemoveMesh(instance.mesh);
+                    }
+
+                    if(quality != null){
+                        var texturePath = quality.substring(0, quality.lastIndexOf('/'));
+                        self.loaderManager.parseFile(quality, texturePath, function (mesh) {
+
+                            instance.mesh = mesh;
+                            instance.currentQuality = quality;
+                            instance.mesh._uuid = uuid;
+                            instance.overall=message.data.overall;
+                            instance.mesh.geometry.verticesNeedUpdate=true;
+
+                            applyMatrix(instance);
+
+                            sceneManager.scene.add(instance.mesh);
+
+                            queue.taskOver();
+                        });
+                    }else{
+                        // Mesh should be removed by cleanAndRemoveMesh
+                        // Do nothing
+                        instance.currentQuality = null;
+                        queue.taskOver();
+                    }
+                }else{
+                    cleanAndRemoveMesh(instance.mesh);
+                    // Didn't changed ???
+                    queue.taskOver();
+                }
+
+            });
+
+
         }
 
     };

@@ -15,7 +15,6 @@ define(
         "views/control_layers_view",
         "views/control_options_view",
         "views/control_explode_view",
-        //"views/control_cutplan_view",
         "views/control_measure_view",
         "views/baseline_select_view",
         "dmu/SceneManager",
@@ -35,7 +34,6 @@ define(
                  ControlLayersView,
                  ControlOptionsView,
                  ControlExplodeView,
-                 //ControlCutPlanView,
                  ControlMeasureView,
                  BaselineSelectView,
                  SceneManager,
@@ -82,7 +80,7 @@ define(
 
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
-            try{
+            //try{
                 instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
                 instancesManager.init();
@@ -96,9 +94,9 @@ define(
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
 
-            }catch(ex){
+            /*}catch(ex){
                 this.onNoWebGLSupport();
-            }
+            }*/
 
             this.listenEvents();
 
