@@ -43,6 +43,7 @@ public class TagDTO implements Serializable {
     }
 
     public TagDTO(String label, String workspaceId) {
+        this.id = label;
         this.label = label;
         this.workspaceId = workspaceId;
     }
