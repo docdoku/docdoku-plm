@@ -117,26 +117,6 @@ public class WorkspaceBean {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         
-        switch (workspace.getVaultType()) {
-            case DEMO:
-                if (users.length > 1) {
-                    throw new NotAllowedException(request.getLocale(), "NotAllowedException1");
-                }
-                break;
-
-            case SMALL:
-                if (users.length > 9) {
-                    throw new NotAllowedException(request.getLocale(), "NotAllowedException2");
-                }
-                break;
-
-            case LARGE:
-                if (users.length > 19) {
-                    throw new NotAllowedException(request.getLocale(), "NotAllowedException3");
-                }
-                break;
-        }
-        
         if (adminState.getSelectedGroup() != null && !adminState.getSelectedGroup().equals("")) {
             userManager.addUserInGroup(new UserGroupKey(workspace.getId(), adminState.getSelectedGroup()), loginToAdd);
             return "/admin/workspace/manageUsersGroup.xhtml?group=" + adminState.getSelectedGroup();
@@ -191,9 +171,7 @@ public class WorkspaceBean {
         Account account = (Account) sessionHTTP.getAttribute("account");
         Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
-        Workspace.VaultType vaultType = Workspace.VaultType.UNLIMITED;
-
-        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, vaultType, freezeFolders);
+        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
 
         administeredWorkspaces.put(workspace.getId(), workspace);
         adminState.setSelectedWorkspace(workspace.getId());
