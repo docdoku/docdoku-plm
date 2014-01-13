@@ -274,8 +274,19 @@ define([
                     }} :
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
-                    isAdded: false,
-                    clicked: null
+                    isAdded: true,
+                    clicked: function () {
+                        that.tagsToRemove.push(tagLabel);
+                        tagView.$el.remove();
+                        that.model.removeTag(tagLabel, function(){
+                            if(that.model.collection.parent) {
+                                if(_.contains(that.tagsToRemove, that.model.collection.parent.id)){
+                                    that.model.collection.remove(that.model);
+                                }
+                            }
+                        });
+                        tagView.$el.remove();
+                    }
                 };
 
                 tagView = new TagView(tagViewParams).render();
@@ -287,9 +298,9 @@ define([
         },
 
         deleteClickedTags:function(){
-            var that = this ;
             if(this.tagsToRemove.length){
-                that.model.removeTags(this.tagsToRemove, function(){
+                var that = this ;
+                this.model.removeTags(this.tagsToRemove, function(){
                     if(that.model.collection.parent) {
                         if(_.contains(that.tagsToRemove, that.model.collection.parent.id)){
                             that.model.collection.remove(that.model);
