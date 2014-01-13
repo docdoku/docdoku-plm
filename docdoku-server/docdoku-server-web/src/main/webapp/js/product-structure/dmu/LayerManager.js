@@ -12,17 +12,16 @@ define([
 
     var STATE = { FULL : 0, TRANSPARENT : 1};
 
-    var LayerManager = function( scene, camera, renderer, controls, container ) {
+    var LayerManager = function( scene, cameraObject, renderer, container ) {
         this.scene = scene;
-        this.camera = camera;
+        this.cameraObject = cameraObject;
         this.meshs = [];
         this.state = STATE.FULL;
         this.renderer = renderer;
-        this.controls = controls;
         this.container = container;
         this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
-        this.domEvent = new THREEx.DomEvent(this.camera, container);
+       // this.domEvent = new THREEx.DomEvent(cameraObject, container);
         this.markerScale = new THREE.Vector3(1,1,1);
     };
 
@@ -32,21 +31,23 @@ define([
             new LayersListView({collection: this.layersCollection}).render();
         },
 
-        updateCamera: function(camera, controls) {
-            this.camera = camera;
-            this.controls = controls;
+        updateCameraObject: function(cameraObject, isPLC) {
+
+            this.cameraObject = cameraObject;
 
             this.layersCollection.each(function(layer) {
                 layer._removeAllMarkersFromScene();
             });
 
-            this.domEvent = new THREEx.DomEvent(camera, this.container);
+          // this.domEvent = new THREEx.DomEvent(cameraObject, this.container);
 
             this.layersCollection.each(function(layer) {
                 if(layer.get('shown')){
                     layer._addAllMarkersToScene();
                 }
             });
+
+            //this.domEvent._isPLC = isPLC;
         },
 
         addMeshFromMarker: function(marker, material) {
@@ -67,13 +68,13 @@ define([
             markerMesh.position.set(marker.getX(), marker.getY(), marker.getZ());
 
             var self = this;
-
+/*
             this.domEvent.bind(markerMesh, 'click', function(){
                 if (self.state != STATE.HIDDEN) {
                     self.showPopup(marker);
                 }
             });
-
+*/
             // add the sphere to the scene
             this.scene.add( markerMesh );
 
@@ -94,7 +95,7 @@ define([
         },
 
         _removeMesh: function(cid) {
-            this.domEvent.unbind(this.meshs[cid], 'click');
+           // this.domEvent.unbind(this.meshs[cid], 'click');
             this.scene.remove(this.meshs[cid]);
             delete this.meshs[cid];
         },

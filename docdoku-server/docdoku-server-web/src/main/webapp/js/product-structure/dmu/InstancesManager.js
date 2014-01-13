@@ -199,7 +199,7 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             if(queue.count){
                 return;
             }
-            this.worker.postMessage({context: {camera: camera.position, target: target}});
+            this.worker.postMessage({context: {camera: camera.position, target: target || {} }});
         },
 
         onWorkerMessage: function (message) {

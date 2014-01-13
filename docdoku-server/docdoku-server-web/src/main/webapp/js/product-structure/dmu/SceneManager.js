@@ -1,167 +1,120 @@
 /*global sceneManager,Instance,instancesManager*/
 define([
     "views/marker_create_modal_view",
-    "views/blocker_view"
-], function (MarkerCreateModalView, BlockerView) {
+    "views/blocker_view",
+    "dmu/LayerManager"
+], function (MarkerCreateModalView, BlockerView , LayerManager) {
 
     var SceneManager = function (pOptions) {
 
         var options = pOptions || {};
-
-        var defaultsOptions = {
-        };
-
-        _.defaults(options, defaultsOptions);
         _.extend(this, options);
 
-        this.isLoaded = false;
         this.isMoving = false;
 
         this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
 
+        this.controlsObject = null;
+
         this.STATECONTROL = { PLC: 0, TBC: 1};
-        this.stateControl = this.STATECONTROL.TBC;
+        this.stateControl = null;
         this.time = Date.now();
 
         this.currentLayer = null;
         this.explosionCoeff = 0;
         this.wireframe = false;
 
+        this.scene = new THREE.Scene();
+
         this.projector = new THREE.Projector();
+
+        // Switching controls means different camera management
+        // Represent the eye
+        this.cameraObject = null;
+        // Represent a target point (where we look at)
+        this.targetObject = null;
 
     };
 
     SceneManager.prototype = {
 
         init: function () {
-            _.bindAll(this);
-            this.initScene();
-            this.initSceneUtils();
-            this.initRendering();
-            this.bindMouseAndKeyEvents();
+
             var self = this;
+
+            _.bindAll(this);
+
+            this.initDOM();
+            this.initCamera();
+            this.initControls();
+            this.initLayerManager();
+            this.initAxes();
+            this.initGrid();
+            this.initSelectionBox();
+            this.initLights();
+            this.initRenderer();
+            this.initStats();
+            this.loadWindowResize();
+            this.bindMouseAndKeyEvents();
+
+            this.setTrackBallControls();
+            //this.setPointerLockControls();
+
+
+            var t = Date.now();
+            var animate = function () {
+                requestAnimationFrame(animate);
+                self.controlsObject.update(Date.now() - t);
+                t = Date.now();
+                self.stats.update();
+                instancesManager.dequeue();
+            };
+
             setInterval(function(){
-                instancesManager.updateWorker(self.camera, self.controls.target);
+                instancesManager.updateWorker(self.cameraObject, self.targetObject);
             },200);
+
+            animate();
         },
 
-        initScene: function () {
+        render :function () {
+            this.camera.updateProjectionMatrix();
+            this.renderer.render(this.scene, this.camera);
+        },
+
+        initDOM: function () {
             this.$container = $('div#container');
             this.$sceneContainer = $("#scene_container");
             this.$blocker = new BlockerView().render().$el;
             this.$container.append(this.$blocker);
-            this.scene = new THREE.Scene();
-            this.frustum = new THREE.Frustum();
-        },
-
-        initSceneUtils: function () {
-            this.initCamera();
-            this.initControls();
-            this.initAxes();
-            this.initGrid();
-            this.initCutPlan();
-            this.initSelectionBox();
-            this.initLights();
-            this.initLayerManager();
-        },
-
-        initRendering: function () {
-            this.initRenderer();
-            this.initStats();
-            this.animate();
-            this.loadWindowResize();
         },
 
         initRenderer: function () {
-            this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer:true});
+            this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer:true, alpha: true});
             this.renderer.setSize(this.$container.width(), this.$container.height());
             this.$container.append(this.renderer.domElement);
         },
 
-        animate: function () {
-            // Clear timeout if any
-            clearTimeout(this.animateTimout);
-
-            var self = this;
-
-                switch (this.stateControl) {
-                    case this.STATECONTROL.PLC:
-                        this.cameraPosition = this.controls.getPosition();
-                        this.controls.update(Date.now() - this.time);
-                        this.time = Date.now();
-                        break;
-                    case this.STATECONTROL.TBC:
-                        this.cameraPosition = this.camera.position;
-                        this.controls.update();
-                        break;
-                }
-
-                this.animateTimout = setTimeout(function () {
-                    window.requestAnimationFrame(function () {
-                        self.animate();
-                    });
-                }, 1000 / this.currentFPSValue);
-
-            this.render();
-            this.stats.update();
-            instancesManager.dequeue();
-        },
-
-        render: function () {
-            this.renderer.render(this.scene, this.camera);
-        },
-
         initCamera: function () {
             this.camera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
+            this.camera.position.set(this.defaultCameraPosition.x, this.defaultCameraPosition.y, this.defaultCameraPosition.z);
+            this.scene.add(this.camera);
             if (!_.isUndefined(SCENE_INIT.camera)) {
                 this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
             }
         },
 
-        updateNewCamera: function () {
-            // Remove camera from scene and save position
-            if (this.stateControl == this.STATECONTROL.PLC) {
-                this.cameraPosition = this.controls.getPosition();
-                this.unbindPointerLock();
-                this.scene.remove(this.controls.getObject());
-            } else {
-                this.cameraPosition = this.camera.position;
-                this.scene.remove(this.camera);
-            }
-
-            this.initCamera();
-            this.layerManager.updateCamera(this.camera, this.controls);
-            this.addLightsToCamera();
-        },
-
         initLayerManager: function () {
             if (!_.isUndefined(APP_CONFIG.productId)) {
-                var self = this;
-                require(["dmu/LayerManager"], function (LayerManager) {
-
-                    if (self.stateControl == self.STATECONTROL.PLC) {
-                        self.layerManager = new LayerManager(self.scene, self.controls.getObject(), self.renderer, self.controls, self.$container);
-                        self.layerManager.domEvent._isPLC = true;
-                    } else {
-                        self.layerManager = new LayerManager(self.scene, self.camera, self.renderer, self.controls, self.$container);
-                        self.layerManager.domEvent._isPLC = false;
-                    }
-
-                    self.layerManager.rescaleMarkers();
-                    self.layerManager.renderList();
-                });
+                this.layerManager = new LayerManager(this.scene, this.camera, this.renderer, this.$container);
+                this.layerManager.rescaleMarkers();
+                this.layerManager.renderList();
             }
         },
 
         updateLayersManager: function () {
-            if (this.stateControl == this.STATECONTROL.PLC) {
-                this.layerManager.updateCamera(this.controls.getObject(), this.controls);
-                this.layerManager.domEvent._isPLC = true;
-            } else {
-                this.layerManager.updateCamera(this.camera, this.controls);
-                this.layerManager.domEvent._isPLC = false;
-            }
+            this.layerManager.updateCameraObject(this.cameraObject,  this.stateControl == this.STATECONTROL.PLC);
         },
 
         setMeasureListener:function(callback){
@@ -249,29 +202,6 @@ define([
             this.scene.remove(this.grid);
         },
 
-        initCutPlan: function () {
-            // Would be better to calculate the whole model bounding box to get en adapted plan size
-            var size = 5000;
-            var plane1 = new THREE.PlaneGeometry(size, size,1,1);
-            this.cutPlan = new THREE.Mesh(plane1, new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5 } ));
-            this.cutPlan.onScene=false;
-            this.cutPlan.overdraw = true;
-            this.cutPlan.material.side = THREE.DoubleSide;
-            this.cutPlan.material.color = new THREE.Color(0xf5f5f5);
-            this.cutPlan.initialPosition = {x:this.cutPlan.position.x,y:this.cutPlan.position.y,z:this.cutPlan.position.z};
-            this.cutPlan.initialRotation = {x:this.cutPlan.rotation.x,y:this.cutPlan.rotation.y,z:this.cutPlan.rotation.z};
-        },
-
-        showCutPlan: function () {
-            this.cutPlan.onScene=true;
-            this.scene.add(this.cutPlan);
-        },
-
-        removeCutPlan: function () {
-            this.cutPlan.onScene=false;
-            this.scene.remove(this.cutPlan);
-        },
-
         loadWindowResize: function () {
             THREEx.WindowResize(this.renderer, this.camera, this.$container);
         },
@@ -301,58 +231,104 @@ define([
 
         /*
          *
-         * Scene mouse / keyboard controls
+         * Controls management
          *
          * */
 
         initControls: function () {
-            switch (this.stateControl) {
-                case this.STATECONTROL.PLC:
-                    this.$blocker.show();
-                    this.setPointerLockControls();
-                    $('#flying_mode_view_btn').addClass("active");
-                    break;
-                case this.STATECONTROL.TBC:
-                    this.$blocker.hide();
-                    this.setTrackBallControls();
-                    $('#tracking_mode_view_btn').addClass("active");
-                    break;
-            }
+            this.createPointerLockControls();
+            this.createTrackBallControls();
         },
 
-        setPointerLockControls: function () {
-            if (this.controls != null) {
-                this.controls.destroyControl();
-                this.controls = null;
+        onControlsChanged:function(){
+            this.updateLayersManager();
+        },
+
+        setPointerLockControls:function(){
+
+            if(this.stateControl == this.STATECONTROL.PLC) {
+                return;
             }
 
+            this.stateControl = this.STATECONTROL.PLC;
+
+            // Remove trackball controls
+            this.trackBallControls.removeEventListener("change",this.render);
+            this.trackBallControls.enabled = false;
+            this.scene.remove(this.camera);
+
+            $('#flying_mode_view_btn').addClass("active");
+            this.$blocker.show();
+
+            this.cameraObject = this.camera;
+            this.controlsObject = this.pointerLockControls;
+            this.targetObject = this.pointerLockControls.getTarget(); // TODO implement
+
+            this.pointerLockControls.addEventListener("change",this.render);
+            this.pointerLockControls.resetCamera(this.camera);
+            this.scene.add(this.pointerLockControls.getObject());
+            this.pointerLockControls.moveToPosition(this.defaultCameraPosition);
+
+            this.onControlsChanged();
+        },
+
+        setTrackBallControls:function(){
+
+            if(this.stateControl == this.STATECONTROL.TBC) {
+                return;
+            }
+
+            this.stateControl = this.STATECONTROL.TBC;
+
+            this.pointerLockControls.removeEventListener("change",this.render);
+            this.scene.remove(this.pointerLockControls.getObject());
+
+            $('#tracking_mode_view_btn').addClass("active");
+            this.$blocker.hide();
+
+            this.controlsObject = this.trackBallControls;
+            this.cameraObject = this.camera;
+            this.targetObject = this.trackBallControls.target;
+
+            this.trackBallControls.enabled = true;
+            this.trackBallControls.addEventListener("change",this.render);
+
+            this.scene.add(this.camera);
+
+            this.onControlsChanged();
+        },
+
+        createPointerLockControls: function () {
             var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
             if (havePointerLock) {
                 var self = this;
                 var pointerLockChange = function (event) {
+                    if(self.stateControl != self.STATECONTROL.PLC){
+                        return ;
+                    }
                     if (document.pointerLockElement === self.$container[0] || document.mozPointerLockElement === self.$container[0] || document.webkitPointerLockElement === self.$container[0]) {
-                        self.controls.enabled = true;
+                        self.pointerLockControls.enabled = true;
                     } else {
-                        self.controls.enabled = false;
+                        self.pointerLockControls.enabled = false;
                     }
                 };
-
                 // Hook pointer lock state change events
                 document.addEventListener('pointerlockchange', pointerLockChange, false);
                 document.addEventListener('mozpointerlockchange', pointerLockChange, false);
                 document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-
                 this.$container[0].addEventListener('dblclick', this.bindPointerLock, false);
             }
 
-            this.controls = new THREE.PointerLockControlsCustom(this.camera, this.$container[0]);
-            this.controls.moveToPosition(this.defaultCameraPosition);
-            this.scene.add(this.controls.getObject());
-            this.stateControl = this.STATECONTROL.PLC;
+            this.pointerLockControls = new THREE.PointerLockControls(this.camera, this.$container[0]);
+            this.scene.add(this.pointerLockControls.getObject())
         },
 
         bindPointerLock: function (event) {
+
+            if(this.stateControl != this.STATECONTROL.PLC){
+                return ;
+            }
 
             this.$blocker.hide();
 
@@ -372,39 +348,22 @@ define([
             }
         },
 
+        createTrackBallControls: function () {
 
-        unbindPointerLock: function () {
-            this.$container[0].removeEventListener('dblclick', this.bindPointerLock, false);
-            document.removeEventListener('fullscreenchange', this.onFullScreenChange, false);
-            document.removeEventListener('mozfullscreenchange', this.onFullScreenChange, false);
-        },
+            this.trackBallControls = new THREE.TrackballControls(this.camera, this.$container[0]);
 
-        setTrackBallControls: function () {
+            this.trackBallControls.rotateSpeed = 3.0;
+            this.trackBallControls.zoomSpeed = 10;
+            this.trackBallControls.panSpeed = 1;
 
-            if (this.controls != null) {
-                this.controls.destroyControl();
-                this.controls = null;
-            }
+            this.trackBallControls.noZoom = false;
+            this.trackBallControls.noPan = false;
 
-            this.controls = new THREE.TrackballControlsCustom(this.camera, this.$container[0]);
-            this.controls.initDefaultControl();
+            this.trackBallControls.staticMoving = true;
+            this.trackBallControls.dynamicDampingFactor = 0.3;
 
-            this.controls.rotateSpeed = 3.0;
-            this.controls.zoomSpeed = 10;
-            this.controls.panSpeed = 1;
+            this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
-            this.controls.noZoom = false;
-            this.controls.noPan = false;
-
-            this.controls.staticMoving = true;
-            this.controls.dynamicDampingFactor = 0.3;
-
-            this.controls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
-
-            this.camera.position.set(this.defaultCameraPosition.x, this.defaultCameraPosition.y, this.defaultCameraPosition.z);
-            this.scene.add(this.camera);
-
-            this.stateControl = this.STATECONTROL.TBC;
         },
 
         /*
@@ -578,8 +537,8 @@ define([
 
             var cameraPosition;
             if (this.stateControl == this.STATECONTROL.PLC) {
-                this.projector.unprojectVector(vector, this.controls.getObject().children[0].children[0]);
-                cameraPosition = this.controls.getObject().position;
+                this.projector.unprojectVector(vector, this.camera);
+                cameraPosition = this.controlsObject.getObject().position;
 
             } else {
                 this.projector.unprojectVector(vector, this.camera);

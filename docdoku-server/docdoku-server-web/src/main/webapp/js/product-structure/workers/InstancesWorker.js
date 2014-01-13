@@ -97,6 +97,7 @@ var Context = {
 };
 
 self.addEventListener('message', function(message) {
+
     if(message.data.context){
         Context.setFromMessage(message.data.context);
         if(Context.changed()){
