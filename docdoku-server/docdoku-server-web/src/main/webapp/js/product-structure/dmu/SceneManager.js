@@ -109,11 +109,6 @@ define([
                 this.layerManager = new LayerManager(this.scene, this.camera, this.renderer, this.$container);
                 this.layerManager.rescaleMarkers();
                 this.layerManager.renderList();
-            } },
-
-        updateLayersManager: function () {
-            if(this.layerManager){
-                this.layerManager.updateCameraObject(this.cameraObject,  this.stateControl == this.STATECONTROL.PLC);
             }
         },
 
@@ -241,7 +236,6 @@ define([
         },
 
         onControlsChanged:function(){
-            this.updateLayersManager();
         },
 
         setPointerLockControls:function(){
@@ -478,7 +472,7 @@ define([
 
         bindMouseAndKeyEvents: function () {
             this.$container[0].addEventListener('mousedown', this.onMouseDown, false);
-            this.$container[0].addEventListener('mouseup', this.onSceneMouseUp, false);
+            this.$container[0].addEventListener('mouseup', this.onMouseUp, false);
             this.$container[0].addEventListener('mouseover', this.onMouseEnter, false);
             this.$container[0].addEventListener('mouseout', this.onMouseLeave, false);
             this.$container[0].addEventListener('keydown', this.onKeyDown, false);
@@ -511,7 +505,7 @@ define([
             this.isMoving = true;
         },
 
-        onSceneMouseUp: function (event) {
+        onMouseUp: function (event) {
 
             if (this.isMoving) {
                 return false;
@@ -554,7 +548,14 @@ define([
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
                     this.render(); // need a reframe
                 }
-            } else {
+            }
+
+            else if (intersects.length > 0 && intersects[0].object.markerId) {
+                // remove marker
+                this.layerManager.onMarkerClicked(intersects[0].object.markerId);
+            }
+
+            else {
                 Backbone.Events.trigger("selection:reset");
                 this.unsetSelectionBox();
                 if(this.measureState){

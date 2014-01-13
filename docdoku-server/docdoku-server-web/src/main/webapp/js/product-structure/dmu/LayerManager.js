@@ -21,33 +21,14 @@ define([
         this.container = container;
         this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
-       // this.domEvent = new THREEx.DomEvent(cameraObject, container);
         this.markerScale = new THREE.Vector3(1,1,1);
+        this.markers = [];
     };
 
     LayerManager.prototype = {
 
         renderList: function() {
             new LayersListView({collection: this.layersCollection}).render();
-        },
-
-        updateCameraObject: function(cameraObject, isPLC) {
-
-            this.cameraObject = cameraObject;
-
-            this.layersCollection.each(function(layer) {
-                layer._removeAllMarkersFromScene();
-            });
-
-          // this.domEvent = new THREEx.DomEvent(cameraObject, this.container);
-
-            this.layersCollection.each(function(layer) {
-                if(layer.get('shown')){
-                    layer._addAllMarkersToScene();
-                }
-            });
-
-            //this.domEvent._isPLC = isPLC;
         },
 
         addMeshFromMarker: function(marker, material) {
@@ -67,6 +48,8 @@ define([
 
             markerMesh.position.set(marker.getX(), marker.getY(), marker.getZ());
 
+            markerMesh.markerId  = marker.cid;
+
             var self = this;
 /*
             this.domEvent.bind(markerMesh, 'click', function(){
@@ -83,10 +66,16 @@ define([
 
             //save the mesh for further reuse
             this.meshs[marker.cid] = markerMesh;
+            this.markers[marker.cid] = marker;
 
             markerMesh.geometry.dynamic = true;
 
             marker.set('onScene', true);
+        },
+
+        onMarkerClicked:function(markerId){
+            var marker = this.markers[markerId];
+            this.showPopup(marker);
         },
 
         removeMeshFromMarker: function(marker) {
