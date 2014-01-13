@@ -61,7 +61,6 @@ define([
             this.setTrackBallControls();
             //this.setPointerLockControls();
 
-
             var t = Date.now();
             var animate = function () {
                 requestAnimationFrame(animate);
@@ -110,11 +109,12 @@ define([
                 this.layerManager = new LayerManager(this.scene, this.camera, this.renderer, this.$container);
                 this.layerManager.rescaleMarkers();
                 this.layerManager.renderList();
-            }
-        },
+            } },
 
         updateLayersManager: function () {
-            this.layerManager.updateCameraObject(this.cameraObject,  this.stateControl == this.STATECONTROL.PLC);
+            if(this.layerManager){
+                this.layerManager.updateCameraObject(this.cameraObject,  this.stateControl == this.STATECONTROL.PLC);
+            }
         },
 
         setMeasureListener:function(callback){
@@ -283,6 +283,12 @@ define([
             this.pointerLockControls.removeEventListener("change",this.render);
             this.scene.remove(this.pointerLockControls.getObject());
 
+            // Ask the browser to release the pointer
+            document.exitPointerLock = document.exitPointerLock ||
+                document.mozExitPointerLock ||
+                document.webkitExitPointerLock;
+            document.exitPointerLock();
+
             $('#tracking_mode_view_btn').addClass("active");
             this.$blocker.hide();
 
@@ -299,14 +305,12 @@ define([
         },
 
         createPointerLockControls: function () {
+
             var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
             if (havePointerLock) {
                 var self = this;
                 var pointerLockChange = function (event) {
-                    if(self.stateControl != self.STATECONTROL.PLC){
-                        return ;
-                    }
                     if (document.pointerLockElement === self.$container[0] || document.mozPointerLockElement === self.$container[0] || document.webkitPointerLockElement === self.$container[0]) {
                         self.pointerLockControls.enabled = true;
                     } else {
@@ -320,7 +324,7 @@ define([
                 this.$container[0].addEventListener('dblclick', this.bindPointerLock, false);
             }
 
-            this.pointerLockControls = new THREE.PointerLockControls(this.camera, this.$container[0]);
+            this.pointerLockControls = new THREE.PointerLockControls(this.camera);
             this.scene.add(this.pointerLockControls.getObject())
         },
 
@@ -349,21 +353,8 @@ define([
         },
 
         createTrackBallControls: function () {
-
             this.trackBallControls = new THREE.TrackballControls(this.camera, this.$container[0]);
-
-            this.trackBallControls.rotateSpeed = 3.0;
-            this.trackBallControls.zoomSpeed = 10;
-            this.trackBallControls.panSpeed = 1;
-
-            this.trackBallControls.noZoom = false;
-            this.trackBallControls.noPan = false;
-
-            this.trackBallControls.staticMoving = true;
-            this.trackBallControls.dynamicDampingFactor = 0.3;
-
             this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
-
         },
 
         /*
@@ -556,22 +547,30 @@ define([
                 }
                 else if(this.measureState){
                     this.measureCallback(intersects[0].point.clone());
+                    this.render(); // need a reframe
                 }
                 else {
                     this.setSelectionBoxOnMesh(intersects[0].object);
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
+                    this.render(); // need a reframe
                 }
             } else {
+                Backbone.Events.trigger("selection:reset");
                 this.unsetSelectionBox();
                 if(this.measureState){
                     this.measureCallback(-1);
                 }
+                this.render(); // need a reframe
             }
 
         },
 
         setPathForIFrame: function (pathForIFrame) {
             this.pathForIFrameLink = pathForIFrame;
+        },
+
+        clear: function () {
+           instancesManager.clear();
         }
 
     };

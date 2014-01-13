@@ -156,11 +156,11 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
                     instanceRaw.mesh = mesh;
                     mesh._uuid = instanceRaw.id;
                     instanceRaw.currentQuality = null;
+                    instanceRaw.mesh.partIterationId = instanceRaw.partIterationId;
 
                     applyMatrix(instanceRaw);
 
                     instanceRaw.position=mesh.position.clone();
-
                     var qualities =  findQualities(instanceRaw.files);
                     var radius =  findRadius(instanceRaw.files);
 
@@ -196,10 +196,22 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
         },
 
         updateWorker: function (camera, target) {
+
+            // Finish current work before, maybe we would abort all tasks instead ?
             if(queue.count){
                 return;
             }
+
             this.worker.postMessage({context: {camera: camera.position, target: target || {} }});
+        },
+
+        clear:function(){
+            this.worker.postMessage({clear:true});
+            for(var i in instancesIndexed){
+                var instance = instancesIndexed[i];
+                cleanAndRemoveMesh(instance.mesh);
+            }
+            instancesIndexed=[];
         },
 
         onWorkerMessage: function (message) {
@@ -240,6 +252,7 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
                             instance.mesh._uuid = uuid;
                             instance.overall=message.data.overall;
                             instance.mesh.geometry.verticesNeedUpdate=true;
+                            instance.mesh.partIterationId = instance.partIterationId;
 
                             applyMatrix(instance);
 

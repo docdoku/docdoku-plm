@@ -19,7 +19,14 @@ var ct=new THREE.Vector3();
 var maxQualities=0;
 var bestRating = 0;
 
+var _meshCount = 0, _oldMeshCount = 0;
+
 var Context = {
+
+    clear:function(){
+        _meshCount = _oldMeshCount = 0;
+        meshes ={};
+    },
 
     addMesh:function(mesh){
         if(!meshes[mesh.uuid]){
@@ -27,15 +34,17 @@ var Context = {
             mesh.currentQuality = null;
             maxQualities = Math.max(maxQualities,mesh.qualities.length);
             nMeshes++;
-            mesh.checked = true;
+            Context.checkMesh(mesh.uuid);
         }
     },
 
     unCheckMesh:function(meshId){
         meshes[meshId].checked = false;
+        _meshCount--;
     },
     checkMesh:function(meshId){
         meshes[meshId].checked = true;
+        _meshCount++;
     },
 
     setFromMessage:function(context){
@@ -77,6 +86,9 @@ var Context = {
         if(_target.x!=target.x) return true;
         if(_target.y!=target.y) return true;
         if(_target.z!=target.z) return true;
+
+        if(_meshCount != _oldMeshCount) return true;
+
         return false;
     },
 
@@ -105,6 +117,7 @@ self.addEventListener('message', function(message) {
             SortMeshes();
             SendMeshes();
         }
+        _oldMeshCount=_meshCount;
     }
     else if(message.data.mesh){
         Context.addMesh(message.data.mesh);
@@ -114,6 +127,9 @@ self.addEventListener('message', function(message) {
     }
     else if(message.data.check){
         Context.checkMesh(message.data.check);
+    }
+    else if(message.data.clear){
+        Context.clear();
     }
 
 }, false);

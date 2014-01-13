@@ -34,7 +34,8 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
     </c:if>
 
 </head>
@@ -195,11 +196,6 @@
                             <div id="container"></div>
                             <script type="text/javascript">
                                 var SCENE_INIT = {
-                                    camera: {
-                                        x:0,
-                                        y:0,
-                                        z:0
-                                    }
                                 };
                                 var APP_CONFIG = {};
                                 $(document).ready(function () {
