@@ -12,13 +12,9 @@ define([
 
     var STATE = { FULL : 0, TRANSPARENT : 1};
 
-    var LayerManager = function( scene, cameraObject, renderer, container ) {
-        this.scene = scene;
-        this.cameraObject = cameraObject;
+    var LayerManager = function() {
         this.meshs = [];
         this.state = STATE.FULL;
-        this.renderer = renderer;
-        this.container = container;
         this.markerStateControl = $('#markerState i');
         this.layersCollection = new LayerCollection();
         this.markerScale = new THREE.Vector3(1,1,1);
@@ -59,7 +55,7 @@ define([
             });
 */
             // add the sphere to the scene
-            this.scene.add( markerMesh );
+            sceneManager.scene.add( markerMesh );
 
             // rescale the marker to the others markers scale
             markerMesh.scale = this.markerScale;
@@ -85,7 +81,7 @@ define([
 
         _removeMesh: function(cid) {
            // this.domEvent.unbind(this.meshs[cid], 'click');
-            this.scene.remove(this.meshs[cid]);
+            sceneManager.scene.remove(this.meshs[cid]);
             delete this.meshs[cid];
         },
 

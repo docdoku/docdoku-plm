@@ -3,7 +3,7 @@ define([
     "views/marker_create_modal_view",
     "views/blocker_view",
     "dmu/LayerManager"
-], function (MarkerCreateModalView, BlockerView , LayerManager) {
+], function (MarkerCreateModalView, BlockerView, LayerManager) {
 
     var SceneManager = function (pOptions) {
 
@@ -14,6 +14,11 @@ define([
 
         this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
+
+        // Each kind of controls must implement following methods
+        // getObject
+        // getTarget
+        //  ...
 
         this.controlsObject = null;
 
@@ -26,7 +31,6 @@ define([
         this.wireframe = false;
 
         this.scene = new THREE.Scene();
-
         this.projector = new THREE.Projector();
 
         // Switching controls means different camera management
@@ -46,22 +50,22 @@ define([
             _.bindAll(this);
 
             this.initDOM();
-            this.initCamera();
             this.initControls();
             this.initLayerManager();
             this.initAxes();
             this.initGrid();
             this.initSelectionBox();
-            this.initLights();
+            this.initAmbientLight();
             this.initRenderer();
             this.initStats();
             this.loadWindowResize();
             this.bindMouseAndKeyEvents();
 
+            // Choose here which controls are enabled at scene load
             this.setTrackBallControls();
-            //this.setPointerLockControls();
 
             var t = Date.now();
+
             var animate = function () {
                 requestAnimationFrame(animate);
                 self.controlsObject.update(Date.now() - t);
@@ -70,63 +74,54 @@ define([
                 instancesManager.dequeue();
             };
 
-            setInterval(function(){
+            setInterval(function () {
                 instancesManager.updateWorker(self.cameraObject, self.targetObject);
-            },200);
+            }, 200);
 
             animate();
         },
 
-        render :function () {
-            this.camera.updateProjectionMatrix();
-            this.renderer.render(this.scene, this.camera);
+        render: function () {
+            this.scene.updateMatrixWorld();
+            this.renderer.render(this.scene, this.cameraObject);
         },
 
         initDOM: function () {
             this.$container = $('div#container');
+            this.$container[0].setAttribute( 'tabindex', -1 );
             this.$sceneContainer = $("#scene_container");
             this.$blocker = new BlockerView().render().$el;
             this.$container.append(this.$blocker);
         },
 
         initRenderer: function () {
-            this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer:true, alpha: true});
+            this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
             this.renderer.setSize(this.$container.width(), this.$container.height());
             this.$container.append(this.renderer.domElement);
         },
 
-        initCamera: function () {
-            this.camera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
-            this.camera.position.set(this.defaultCameraPosition.x, this.defaultCameraPosition.y, this.defaultCameraPosition.z);
-            this.scene.add(this.camera);
-            if (!_.isUndefined(SCENE_INIT.camera)) {
-                this.camera.position.set(SCENE_INIT.camera.x, SCENE_INIT.camera.y, SCENE_INIT.camera.z);
-            }
-        },
-
         initLayerManager: function () {
             if (!_.isUndefined(APP_CONFIG.productId)) {
-                this.layerManager = new LayerManager(this.scene, this.camera, this.renderer, this.$container);
+                this.layerManager = new LayerManager();
                 this.layerManager.rescaleMarkers();
                 this.layerManager.renderList();
             }
         },
 
-        setMeasureListener:function(callback){
+        setMeasureListener: function (callback) {
             this.measureCallback = callback;
         },
 
-        initLights: function () {
+        initAmbientLight: function () {
             var ambient = new THREE.AmbientLight(0x101030);
             this.scene.add(ambient);
-            this.addLightsToCamera();
         },
 
-        addLightsToCamera:function(){
+        addLightsToCamera: function (camera) {
             var dirLight = new THREE.DirectionalLight(0xffffff);
             dirLight.position.set(200, 200, 1000).normalize();
-            this.camera.add(dirLight);
-            this.camera.add(dirLight.target);
+            camera.add(dirLight);
+            camera.add(dirLight.target);
         },
 
         initAxes: function () {
@@ -198,7 +193,7 @@ define([
         },
 
         loadWindowResize: function () {
-            THREEx.WindowResize(this.renderer, this.camera, this.$container);
+            THREEx.WindowResize(this.renderer, this.cameraObject, this.$container);
         },
 
         /*
@@ -214,7 +209,7 @@ define([
             this.applyMeasureStateOpacity(mesh);
         },
 
-        removeMesh:function(mesh){
+        removeMesh: function (mesh) {
             this.scene.remove(mesh);
         },
 
@@ -235,65 +230,60 @@ define([
             this.createTrackBallControls();
         },
 
-        onControlsChanged:function(){
+        onControlsChanged: function () {
+
         },
 
-        setPointerLockControls:function(){
+        setPointerLockControls: function () {
 
-            if(this.stateControl == this.STATECONTROL.PLC) {
+            if (this.stateControl == this.STATECONTROL.PLC) {
                 return;
             }
 
             this.stateControl = this.STATECONTROL.PLC;
 
             // Remove trackball controls
-            this.trackBallControls.removeEventListener("change",this.render);
+            this.trackBallControls.removeEventListener("change", this.render);
             this.trackBallControls.enabled = false;
+
             this.scene.remove(this.camera);
 
             $('#flying_mode_view_btn').addClass("active");
             this.$blocker.show();
 
-            this.cameraObject = this.camera;
+            this.cameraObject = this.pointerLockCamera;
             this.controlsObject = this.pointerLockControls;
             this.targetObject = this.pointerLockControls.getTarget(); // TODO implement
 
-            this.pointerLockControls.addEventListener("change",this.render);
-            this.pointerLockControls.resetCamera(this.camera);
-            this.scene.add(this.pointerLockControls.getObject());
+            this.pointerLockControls.addEventListener("change", this.render);
             this.pointerLockControls.moveToPosition(this.defaultCameraPosition);
+            this.scene.add(this.pointerLockControls.getObject());
 
             this.onControlsChanged();
         },
 
-        setTrackBallControls:function(){
+        setTrackBallControls: function () {
 
-            if(this.stateControl == this.STATECONTROL.TBC) {
+            if (this.stateControl == this.STATECONTROL.TBC) {
                 return;
             }
 
             this.stateControl = this.STATECONTROL.TBC;
 
-            this.pointerLockControls.removeEventListener("change",this.render);
+            this.pointerLockControls.removeEventListener("change", this.render);
             this.scene.remove(this.pointerLockControls.getObject());
-
-            // Ask the browser to release the pointer
-            document.exitPointerLock = document.exitPointerLock ||
-                document.mozExitPointerLock ||
-                document.webkitExitPointerLock;
-            document.exitPointerLock();
 
             $('#tracking_mode_view_btn').addClass("active");
             this.$blocker.hide();
 
             this.controlsObject = this.trackBallControls;
-            this.cameraObject = this.camera;
+            this.cameraObject = this.trackBallCamera;
             this.targetObject = this.trackBallControls.target;
 
             this.trackBallControls.enabled = true;
-            this.trackBallControls.addEventListener("change",this.render);
+            this.trackBallControls.addEventListener("change", this.render);
 
-            this.scene.add(this.camera);
+            this.scene.add(this.trackBallCamera);
 
             this.onControlsChanged();
         },
@@ -318,14 +308,16 @@ define([
                 this.$container[0].addEventListener('dblclick', this.bindPointerLock, false);
             }
 
-            this.pointerLockControls = new THREE.PointerLockControls(this.camera);
+            this.pointerLockCamera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
+            this.addLightsToCamera(this.pointerLockCamera);
+            this.pointerLockControls = new THREE.PointerLockControls(this.pointerLockCamera);
             this.scene.add(this.pointerLockControls.getObject())
         },
 
         bindPointerLock: function (event) {
 
-            if(this.stateControl != this.STATECONTROL.PLC){
-                return ;
+            if (this.stateControl != this.STATECONTROL.PLC) {
+                return;
             }
 
             this.$blocker.hide();
@@ -347,7 +339,10 @@ define([
         },
 
         createTrackBallControls: function () {
-            this.trackBallControls = new THREE.TrackballControls(this.camera, this.$container[0]);
+            this.trackBallCamera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
+            this.trackBallCamera.position.set(this.defaultCameraPosition.x, this.defaultCameraPosition.y, this.defaultCameraPosition.z);
+            this.addLightsToCamera(this.trackBallCamera);
+            this.trackBallControls = new THREE.TrackballControls(this.trackBallCamera, this.$container[0]);
             this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         },
 
@@ -386,15 +381,15 @@ define([
             this.wireframe = wireframe;
             var self = this;
             _(this.scene.children).each(function (child) {
-                if(child instanceof THREE.Mesh && child.partIterationId){
+                if (child instanceof THREE.Mesh && child.partIterationId) {
                     self.applyWireFrame(child);
                 }
             });
         },
 
-        applyWireFrame:function(mesh){
+        applyWireFrame: function (mesh) {
             mesh.material.wireframe = this.wireframe;
-            if((mesh.material.materials)){
+            if ((mesh.material.materials)) {
                 _(mesh.material.materials).each(function (m) {
                     m.wireframe = mesh.material.wireframe;
                 });
@@ -406,18 +401,18 @@ define([
             // this could be adjusted
             this.explosionCoeff = v * 0.1;
             _(this.scene.children).each(function (child) {
-                if(child instanceof THREE.Mesh && child.partIterationId){
+                if (child instanceof THREE.Mesh && child.partIterationId) {
                     self.applyExplosionCoeff(child);
                 }
             });
         },
 
-        applyExplosionCoeff:function(mesh){
+        applyExplosionCoeff: function (mesh) {
 
-            if(!mesh.geometry.boundingBox){
+            if (!mesh.geometry.boundingBox) {
                 mesh.geometry.computeBoundingBox();
                 mesh.geometry.computeBoundingSphere();
-                mesh.geometry.boundingBox.centroid = new THREE.Vector3 (
+                mesh.geometry.boundingBox.centroid = new THREE.Vector3(
                     (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
                     (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
                     (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
@@ -437,26 +432,26 @@ define([
             mesh.updateMatrix();
         },
 
-        setMeasureState:function(state){
-            this.$sceneContainer.toggleClass("measureMode",state);
+        setMeasureState: function (state) {
+            this.$sceneContainer.toggleClass("measureMode", state);
             this.measureState = state;
-            var opacity =  state ? 0.5 : 1;
+            var opacity = state ? 0.5 : 1;
             _(this.scene.children).each(function (child) {
-                if(child instanceof THREE.Mesh && child.partIterationId){
+                if (child instanceof THREE.Mesh && child.partIterationId) {
                     child.material.opacity = opacity;
                 }
             });
         },
 
-        applyMeasureStateOpacity:function(mesh){
-            if(this.measureState){
+        applyMeasureStateOpacity: function (mesh) {
+            if (this.measureState) {
                 mesh.material.opacity = this.measureState ? 0.5 : 1;
             }
         },
 
-        takeScreenShot:function(){
+        takeScreenShot: function () {
             var now = new Date();
-            var filename = APP_CONFIG.productId +"-"+now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
+            var filename = APP_CONFIG.productId + "-" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
             var pom = document.createElement('a');
             //pom.setAttribute('href', this.renderer.domElement.toDataURL('image/png'));
             pom.setAttribute('href', this.renderer.domElement.toDataURL('image/png'));
@@ -522,12 +517,11 @@ define([
 
             var cameraPosition;
             if (this.stateControl == this.STATECONTROL.PLC) {
-                this.projector.unprojectVector(vector, this.camera);
+                this.projector.unprojectVector(vector, this.cameraObject);
                 cameraPosition = this.controlsObject.getObject().position;
-
             } else {
-                this.projector.unprojectVector(vector, this.camera);
-                cameraPosition = this.camera.position;
+                this.projector.unprojectVector(vector, this.cameraObject);
+                cameraPosition = this.cameraObject.position;
             }
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
@@ -539,7 +533,7 @@ define([
                     $("body").append(mcmv.render().el);
                     mcmv.openModal();
                 }
-                else if(this.measureState){
+                else if (this.measureState) {
                     this.measureCallback(intersects[0].point.clone());
                     this.render(); // need a reframe
                 }
@@ -558,7 +552,7 @@ define([
             else {
                 Backbone.Events.trigger("selection:reset");
                 this.unsetSelectionBox();
-                if(this.measureState){
+                if (this.measureState) {
                     this.measureCallback(-1);
                 }
                 this.render(); // need a reframe
@@ -571,7 +565,7 @@ define([
         },
 
         clear: function () {
-           instancesManager.clear();
+            instancesManager.clear();
         }
 
     };
