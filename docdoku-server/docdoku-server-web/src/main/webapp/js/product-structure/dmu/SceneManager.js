@@ -126,7 +126,7 @@ define([
 
         initAxes: function () {
             var axes = new THREE.AxisHelper(100);
-            axes.position.set(-1000, 0, 0);
+            axes.position.set(0, 0, 0);
             this.scene.add(axes);
             var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 100);
             arrow.position.set(200, 0, 400);
