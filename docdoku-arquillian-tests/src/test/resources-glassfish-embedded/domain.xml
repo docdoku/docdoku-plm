@@ -1,4 +1,19 @@
 <domain log-root="${com.sun.aas.instanceRoot}/logs" application-root="${com.sun.aas.instanceRoot}/applications" version="5">
+    <security-configurations>
+        <authentication-service default="true" name="adminAuth" use-password-credential="true">
+            <security-provider name="spcrealm" type="LoginModule" provider-name="adminSpc">
+                <login-module-config name="adminSpecialLM" control-flag="sufficient" module-class="com.sun.enterprise.admin.util.AdminLoginModule">
+                    <property name="config" value="server-config"></property>
+                    <property name="auth-realm" value="admin-realm"></property>
+                </login-module-config>
+            </security-provider>
+        </authentication-service>
+        <authorization-service default="true" name="authorizationService">
+            <security-provider name="simpleAuthorization" type="Simple" provider-name="simpleAuthorizationProvider">
+                <authorization-provider-config support-policy-deploy="false" name="simpleAuthorizationProviderConfig"></authorization-provider-config>
+            </security-provider>
+        </authorization-service>
+    </security-configurations>
     <system-applications>
         <application context-root="" location="${com.sun.aas.installRootURI}/lib/install/applications/__admingui" name="__admingui" directory-deployed="true" object-type="system-admin">
             <module name="__admingui">
@@ -80,21 +95,22 @@
                 <jms-host host="localhost" name="default_JMS_host"></jms-host>
             </jms-service>
             <security-service>
-                <auth-realm name="docdokuRealm" classname="com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm">
-                    <property name="digest-algorithm" value="MD5"></property>
-                    <property name="user-name-column" value="LOGIN"></property>
+                <auth-realm name="docdokuRealm" classname="com.sun.enterprise.security.ee.auth.realm.jdbc.JDBCRealm">
+                    <property name="jaas-context" value="jdbcRealm"></property>
                     <property name="password-column" value="PASSWORD"></property>
-                    <property name="group-name-column" value="GROUPNAME"></property>
+                    <property name="datasource-jndi" value="jdbc/docdokuPU"></property>
                     <property name="group-table" value="USERGROUPMAPPING"></property>
                     <property name="user-table" value="CREDENTIAL"></property>
-                    <property name="datasource-jndi" value="jdbc/docdokuPU"></property>
-                    <property name="jaas-context" value="jdbcRealm"></property>
+                    <property name="group-name-column" value="GROUPNAME"></property>
+                    <property name="digestrealm-password-enc-algorithm" value="MD5"></property>
+                    <property name="digest-algorithm" value="MD5"></property>
+                    <property name="user-name-column" value="LOGIN"></property>
                 </auth-realm>
                 <jacc-provider policy-provider="com.sun.enterprise.security.provider.PolicyWrapper" name="default" policy-configuration-factory-provider="com.sun.enterprise.security.provider.PolicyConfigurationFactoryImpl">
                     <property name="repository" value="${com.sun.aas.instanceRoot}/generated/policy"></property>
                 </jacc-provider>
                 <jacc-provider policy-provider="com.sun.enterprise.security.jacc.provider.SimplePolicyProvider" name="simple" policy-configuration-factory-provider="com.sun.enterprise.security.jacc.provider.SimplePolicyConfigurationFactory"></jacc-provider>
-                <audit-module classname="com.sun.enterprise.security.Audit" name="default">
+                <audit-module classname="com.sun.enterprise.security.ee.Audit" name="default">
                     <property name="auditOn" value="false"></property>
                 </audit-module>
                 <message-security-config auth-layer="SOAP">
@@ -135,7 +151,6 @@
                     <provider-config provider-type="server" provider-id="GFConsoleAuthModule" class-name="org.glassfish.admingui.common.security.AdminConsoleAuthModule">
                         <request-policy auth-source="sender"></request-policy>
                         <response-policy></response-policy>
-                        <property name="restAuthURL" value="https://localhost:${ADMIN_LISTENER_PORT}/management/sessions"></property>
                         <property name="loginPage" value="/login.jsf"></property>
                         <property name="loginErrorPage" value="/loginError.jsf"></property>
                     </provider-config>
@@ -280,11 +295,11 @@
                     <property name="jaas-context" value="fileRealm"></property>
                 </auth-realm>
                 <auth-realm classname="com.sun.enterprise.security.auth.realm.certificate.CertificateRealm" name="certificate"></auth-realm>
-                <jacc-provider policy-provider="com.sun.enterprise.security.provider.PolicyWrapper" name="default" policy-configuration-factory-provider="com.sun.enterprise.security.provider.PolicyConfigurationFactoryImpl">
+                <jacc-provider policy-provider="com.sun.enterprise.security.provider.PolicyWrapper" name="toto" policy-configuration-factory-provider="com.sun.enterprise.security.provider.PolicyConfigurationFactoryImpl">
                     <property name="repository" value="${com.sun.aas.instanceRoot}/generated/policy"></property>
                 </jacc-provider>
                 <jacc-provider policy-provider="com.sun.enterprise.security.jacc.provider.SimplePolicyProvider" name="simple" policy-configuration-factory-provider="com.sun.enterprise.security.jacc.provider.SimplePolicyConfigurationFactory"></jacc-provider>
-                <audit-module classname="com.sun.enterprise.security.Audit" name="default">
+                <audit-module classname="com.sun.enterprise.security.ee.Audit" name="titi">
                     <property name="auditOn" value="false"></property>
                 </audit-module>
                 <message-security-config auth-layer="SOAP">
