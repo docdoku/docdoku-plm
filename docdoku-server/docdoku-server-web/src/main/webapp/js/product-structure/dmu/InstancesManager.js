@@ -195,14 +195,14 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             });
         },
 
-        updateWorker: function (camera, target) {
+        updateWorker: function (cameraPosition, target) {
 
             // Finish current work before, maybe we would abort all tasks instead ?
             if(queue.count){
                 return;
             }
 
-            this.worker.postMessage({context: {camera: camera.position, target: target || {} }});
+            this.worker.postMessage({context: {camera: cameraPosition, target: target || {} }});
         },
 
         clear:function(){

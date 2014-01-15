@@ -36,6 +36,8 @@ THREE.PointerLockControls = function ( camera ) {
 
 	var velocity = new THREE.Vector3();
 
+	this.target = new THREE.Vector3();
+
 	var PI_2 = Math.PI / 2;
 
 	var onMouseMove = function ( event ) {
@@ -147,6 +149,18 @@ THREE.PointerLockControls = function ( camera ) {
 		return yawObject;
 	};
 
+    this.getTarget = function(){
+        var target = scope.getDirection(scope.target).multiplyScalar(1000);
+        target.x += yawObject.position.x;
+        target.y += yawObject.position.y;
+        target.z += yawObject.position.z;
+        return target;
+    };
+
+    this.getCamPos = function(){
+        return yawObject.position;
+    };
+
 	this.getDirection = function() {
 
 		// assumes the camera itself is not rotated
@@ -216,9 +230,6 @@ THREE.PointerLockControls = function ( camera ) {
         pitchObject.add( camera );
     };
 
-    this.getTarget = function(){
-        return yawObject.position;
-    }
 };
 
 THREE.PointerLockControls.prototype = Object.create( THREE.EventDispatcher.prototype );

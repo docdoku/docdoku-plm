@@ -81,23 +81,18 @@ define(
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
             //try{
-
                 instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
-
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
                 this.$ControlsContainer.append(new ControlOptionsView().render().$el);
                 this.$ControlsContainer.append(new ControlExplodeView().render().$el);
-                //this.$ControlsContainer.append(new ControlCutPlanView().render().$el);
-
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
-
-
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
                 instancesManager.init();
                 sceneManager.init();
             /*}catch(ex){
+                console.log("Got exception in dmu")
                 this.onNoWebGLSupport();
             }*/
 

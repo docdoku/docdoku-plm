@@ -5,39 +5,29 @@ define([
     "dmu/LayerManager"
 ], function (MarkerCreateModalView, BlockerView, LayerManager) {
 
+    var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+    var needsReframe = false;
+
     var SceneManager = function (pOptions) {
 
         var options = pOptions || {};
         _.extend(this, options);
 
         this.isMoving = false;
-
         this.defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         this.cameraPosition = new THREE.Vector3(0, 10, 1000);
-
-        // Each kind of controls must implement following methods
-        // getObject
-        // getTarget
-        //  ...
-
-        this.controlsObject = null;
-
         this.STATECONTROL = { PLC: 0, TBC: 1};
         this.stateControl = null;
         this.time = Date.now();
-
         this.currentLayer = null;
         this.explosionCoeff = 0;
         this.wireframe = false;
-
         this.scene = new THREE.Scene();
         this.projector = new THREE.Projector();
-
         // Switching controls means different camera management
+        this.controlsObject = null;
         // Represent the eye
         this.cameraObject = null;
-        // Represent a target point (where we look at)
-        this.targetObject = null;
 
     };
 
@@ -67,18 +57,32 @@ define([
             var t = Date.now();
 
             var animate = function () {
+
                 requestAnimationFrame(animate);
                 self.controlsObject.update(Date.now() - t);
                 t = Date.now();
                 self.stats.update();
                 instancesManager.dequeue();
+                // Sometimes needs a reFrame
+                if(needsReframe){
+                    self.render();
+                    needsReframe = false;
+                }
+
             };
 
             setInterval(function () {
-                instancesManager.updateWorker(self.cameraObject, self.targetObject);
+                var target =  self.controlsObject.getTarget();
+                var camPos =  self.controlsObject.getCamPos();
+                instancesManager.updateWorker(camPos, target);
             }, 200);
 
             animate();
+
+        },
+
+        reFrame:function(){
+            needsReframe = true;
         },
 
         render: function () {
@@ -154,14 +158,11 @@ define([
         initStats: function () {
             this.stats = new Stats();
             this.$sceneContainer.append(this.stats.domElement);
-
             this.$stats = $(this.stats.domElement);
             this.$stats.attr('id', 'statsWin');
             this.$stats.attr('class', 'statsWinMaximized');
-
             this.$statsArrow = $("<i id=\"statsArrow\" class=\"icon-chevron-down\"></i>");
             this.$stats.prepend(this.$statsArrow);
-
             var that = this;
             this.$statsArrow.bind('click', function () {
                 that.$stats.toggleClass('statsWinMinimized statsWinMaximized');
@@ -186,10 +187,12 @@ define([
 
         showGrid: function () {
             this.scene.add(this.grid);
+            this.reFrame();
         },
 
         removeGrid: function () {
             this.scene.remove(this.grid);
+            this.reFrame();
         },
 
         loadWindowResize: function () {
@@ -207,10 +210,12 @@ define([
             this.applyExplosionCoeff(mesh);
             this.applyWireFrame(mesh);
             this.applyMeasureStateOpacity(mesh);
+            this.reFrame();
         },
 
         removeMesh: function (mesh) {
             this.scene.remove(mesh);
+            this.reFrame();
         },
 
         bind: function (scope, fn) {
@@ -228,10 +233,6 @@ define([
         initControls: function () {
             this.createPointerLockControls();
             this.createTrackBallControls();
-        },
-
-        onControlsChanged: function () {
-
         },
 
         setPointerLockControls: function () {
@@ -253,13 +254,10 @@ define([
 
             this.cameraObject = this.pointerLockCamera;
             this.controlsObject = this.pointerLockControls;
-            this.targetObject = this.pointerLockControls.getTarget(); // TODO implement
 
             this.pointerLockControls.addEventListener("change", this.render);
-            this.pointerLockControls.moveToPosition(this.defaultCameraPosition);
             this.scene.add(this.pointerLockControls.getObject());
 
-            this.onControlsChanged();
         },
 
         setTrackBallControls: function () {
@@ -270,27 +268,25 @@ define([
 
             this.stateControl = this.STATECONTROL.TBC;
 
+            // Remove pointerLock controls
             this.pointerLockControls.removeEventListener("change", this.render);
             this.scene.remove(this.pointerLockControls.getObject());
+            this.pointerLockControls.enabled = false;
 
             $('#tracking_mode_view_btn').addClass("active");
             this.$blocker.hide();
 
             this.controlsObject = this.trackBallControls;
             this.cameraObject = this.trackBallCamera;
-            this.targetObject = this.trackBallControls.target;
 
             this.trackBallControls.enabled = true;
             this.trackBallControls.addEventListener("change", this.render);
 
             this.scene.add(this.trackBallCamera);
 
-            this.onControlsChanged();
         },
 
         createPointerLockControls: function () {
-
-            var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
             if (havePointerLock) {
                 var self = this;
@@ -309,9 +305,7 @@ define([
             }
 
             this.pointerLockCamera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
-            this.addLightsToCamera(this.pointerLockCamera);
             this.pointerLockControls = new THREE.PointerLockControls(this.pointerLockCamera);
-            this.scene.add(this.pointerLockControls.getObject())
         },
 
         bindPointerLock: function (event) {
@@ -477,7 +471,6 @@ define([
         },
 
         onMouseEnter: function () {
-
         },
 
         onMouseLeave: function () {
@@ -515,14 +508,8 @@ define([
                 0.5
             );
 
-            var cameraPosition;
-            if (this.stateControl == this.STATECONTROL.PLC) {
-                this.projector.unprojectVector(vector, this.cameraObject);
-                cameraPosition = this.controlsObject.getObject().position;
-            } else {
-                this.projector.unprojectVector(vector, this.cameraObject);
-                cameraPosition = this.cameraObject.position;
-            }
+            var cameraPosition = this.cameraObject.position;
+            this.projector.unprojectVector(vector, this.cameraObject);
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
             var intersects = ray.intersectObjects(this.scene.children, false);
@@ -535,29 +522,25 @@ define([
                 }
                 else if (this.measureState) {
                     this.measureCallback(intersects[0].point.clone());
-                    this.render(); // need a reframe
                 }
                 else {
                     this.setSelectionBoxOnMesh(intersects[0].object);
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
-                    this.render(); // need a reframe
                 }
             }
-
             else if (intersects.length > 0 && intersects[0].object.markerId) {
-                // remove marker
                 this.layerManager.onMarkerClicked(intersects[0].object.markerId);
             }
-
             else {
                 Backbone.Events.trigger("selection:reset");
                 this.unsetSelectionBox();
+
                 if (this.measureState) {
                     this.measureCallback(-1);
                 }
-                this.render(); // need a reframe
             }
 
+            this.reFrame();
         },
 
         setPathForIFrame: function (pathForIFrame) {

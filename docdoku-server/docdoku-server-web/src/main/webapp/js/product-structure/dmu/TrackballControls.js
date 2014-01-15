@@ -343,6 +343,10 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	};
 
+    this.moveToPosition = function ( vector ) {
+       _this.object.position.set(vector.x,vector.y,vector.z);
+    };
+
 	// listeners
 
 	function keydown( event ) {
@@ -601,6 +605,18 @@ THREE.TrackballControls = function ( object, domElement ) {
     };
 
 	this.handleResize();
+
+    this.getTarget = function(){
+        return _this.target;
+    };
+
+    this.getCamPos = function(){
+        return _this.object.position;
+    };
+
+    this.getObject = function(){
+        return _this.object;
+    };
 
 };
 
