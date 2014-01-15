@@ -22,7 +22,6 @@ define(["models/part_iteration_visualization","dmu/SceneManager","dmu/InstancesM
             THREE.GeometryUtils.center(mesh.geometry);
             mesh.initialPosition=mesh.position;
             sceneManager.addMesh(mesh);
-            sceneManager.camera.lookAt(mesh.position);
         });
 
     }
