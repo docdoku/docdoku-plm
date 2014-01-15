@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.WorkflowNotFoundException;
@@ -55,16 +56,16 @@ public class ActivityCheckerInterceptor {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(taskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        DocumentMaster docM = new WorkflowDAO(em).getDocumentTarget(workflow);
-        if(docM == null){
+        DocumentRevision docR = new WorkflowDAO(em).getDocumentTarget(workflow);
+        if(docR == null){
             throw new WorkflowNotFoundException(new Locale(user.getLanguage()),workflow.getId());
         }
-        DocumentIteration doc = docM.getLastIteration();
+        DocumentIteration doc = docR.getLastIteration();
         if (em.createNamedQuery("findLogByDocumentAndUserAndEvent").
                 setParameter("userLogin", user.getLogin()).
                 setParameter("documentWorkspaceId", doc.getWorkspaceId()).
-                setParameter("documentId", doc.getDocumentMasterId()).
-                setParameter("documentVersion", doc.getDocumentMasterVersion()).
+                setParameter("documentId", doc.getId()).
+                setParameter("documentVersion", doc.getDocumentVersion()).
                 setParameter("documentIteration", doc.getIteration()).
                 setParameter("event", "DOWNLOAD").
                 getResultList().isEmpty()) {

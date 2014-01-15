@@ -23,7 +23,7 @@ package com.docdoku.core.sharing;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -37,46 +37,46 @@ import java.util.Date;
 @Table(name="SHAREDDOCUMENT")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="SharedDocument.deleteSharesForGivenDocument", query="DELETE FROM SharedDocument sd WHERE sd.documentMaster = :pDocM"),
+        @NamedQuery(name="SharedDocument.deleteSharesForGivenDocument", query="DELETE FROM SharedDocument sd WHERE sd.documentRevision = :pDocR"),
 })
 public class SharedDocument extends SharedEntity{
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "ID"),
-            @JoinColumn(name = "DOCUMENTMASTER_VERSION", referencedColumnName = "VERSION"),
+            @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "DOCUMENTMASTER_ID"),
+            @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "VERSION"),
             @JoinColumn(name = "ENTITY_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
-    private DocumentMaster documentMaster;
+    private DocumentRevision documentRevision;
 
     public SharedDocument(){
     }
 
-    public SharedDocument(Workspace workspace, User author, Date expireDate, String password, DocumentMaster documentMaster) {
+    public SharedDocument(Workspace workspace, User author, Date expireDate, String password, DocumentRevision documentRevision) {
         super(workspace, author, expireDate, password);
-        this.documentMaster = documentMaster;
+        this.documentRevision = documentRevision;
     }
 
-    public SharedDocument(Workspace workspace, User author, DocumentMaster documentMaster) {
+    public SharedDocument(Workspace workspace, User author, DocumentRevision documentRevision) {
         super(workspace, author);
-        this.documentMaster = documentMaster;
+        this.documentRevision = documentRevision;
     }
 
-    public SharedDocument(Workspace workspace, User author, Date expireDate, DocumentMaster documentMaster) {
+    public SharedDocument(Workspace workspace, User author, Date expireDate, DocumentRevision documentRevision) {
         super(workspace, author, expireDate);
-        this.documentMaster = documentMaster;
+        this.documentRevision = documentRevision;
     }
 
-    public SharedDocument(Workspace workspace, User author, String password, DocumentMaster documentMaster) {
+    public SharedDocument(Workspace workspace, User author, String password, DocumentRevision documentRevision) {
         super(workspace, author, password);
-        this.documentMaster = documentMaster;
+        this.documentRevision = documentRevision;
     }
 
-    public DocumentMaster getDocumentMaster() {
-        return documentMaster;
+    public DocumentRevision getDocumentRevision() {
+        return documentRevision;
     }
 
-    public void setDocumentMaster(DocumentMaster documentMaster) {
-        this.documentMaster = documentMaster;
+    public void setDocumentRevision(DocumentRevision documentRevision) {
+        this.documentRevision = documentRevision;
     }
 }

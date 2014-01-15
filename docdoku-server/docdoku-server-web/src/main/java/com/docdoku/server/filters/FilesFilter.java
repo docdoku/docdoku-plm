@@ -23,9 +23,7 @@ package com.docdoku.server.filters;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
@@ -155,8 +153,8 @@ public class FilesFilter implements Filter {
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
                         user = documentService.whoAmI(workspaceId);
                     }else{
-                        DocumentMasterKey docMK = new DocumentMasterKey(workspaceId, docMId, docMVersion);
-                        binaryResource = guestProxy.getPublicBinaryResourceForDocument(docMK,fullName);
+                        DocumentRevisionKey docRK = new DocumentRevisionKey(workspaceId, docMId, docMVersion);
+                        binaryResource = guestProxy.getPublicBinaryResourceForDocument(docRK,fullName);
                         docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);
                         user = guestProxy.whoAmI();
                     }
@@ -242,14 +240,14 @@ public class FilesFilter implements Filter {
                 }
 
                 if(sharedEntity instanceof SharedDocument){
-                    DocumentMaster docM = ((SharedDocument) sharedEntity).getDocumentMaster();
-                    docI =  docM.getLastIteration();
-                    String docMId = docM.getId();
-                    String docMVersion = docM.getVersion();
+                    DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
+                    docI =  documentRevision.getLastIteration();
+                    String id = documentRevision.getId();
+                    String version = documentRevision.getVersion();
                     iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
 
                     fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    fullName = workspaceId + "/" + "documents" + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
+                    fullName = workspaceId + "/" + "documents" + "/" + id + "/" + version + "/" + iteration + "/" + fileName;
 
                     if(account != null){
                         binaryResource = documentService.getBinaryResource(fullName);

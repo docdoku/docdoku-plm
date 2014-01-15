@@ -240,7 +240,7 @@ public class PartResource {
                 }
             }
 
-            productService.createPartVersion(revisionKey, description, workflowModelId, userEntries, userGroupEntries,roleMappings);
+            productService.createPartRevision(revisionKey, description, workflowModelId, userEntries, userGroupEntries, roleMappings);
 
             return Response.ok().build();
 
@@ -443,7 +443,7 @@ public class PartResource {
         if(productService.partMasterExists(partMasterKey)){
             return new PartMaster(userManager.getWorkspace(workspaceId),componentNumber);
         }else{
-           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.getDescription(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
+           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
         }
     }
 
@@ -457,7 +457,7 @@ public class PartResource {
     }
 
     private DocumentIterationKey createObject(DocumentIterationDTO dto) {
-        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
+        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
     }
 
 }

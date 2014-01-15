@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.FolderAlreadyExistsException;
 import com.docdoku.core.exceptions.FolderNotFoundException;
@@ -119,21 +120,21 @@ public class UserDAO {
         return memberships;
     }
 
-    public DocumentMaster[] removeUser(UserKey pKey) throws UserNotFoundException, NotAllowedException, FolderNotFoundException {
+    public DocumentRevision[] removeUser(UserKey pKey) throws UserNotFoundException, NotAllowedException, FolderNotFoundException {
         User user = loadUser(pKey);
         removeUserMembership(new WorkspaceUserMembershipKey(pKey.getWorkspaceId(), pKey.getWorkspaceId(), pKey.getLogin()));
         new SubscriptionDAO(em).removeAllSubscriptions(user);
         new UserGroupDAO(mLocale, em).removeUserFromAllGroups(user);
         new RoleDAO(mLocale,em).removeUserFromRoles(user);
         new ACLDAO(em).removeAclUserEntries(user);
-        List<DocumentMaster> docMs = new FolderDAO(mLocale, em).removeFolder(user.getWorkspaceId() + "/~" + user.getLogin());
+        List<DocumentRevision> docRs = new FolderDAO(mLocale, em).removeFolder(user.getWorkspaceId() + "/~" + user.getLogin());
         boolean author = isDocMAuthor(user) || isDocAuthor(user) || isDocMTemplateAuthor(user) || isWorkflowModelAuthor(user);
         boolean involved = isInvolvedInWF(user);
         if (author || involved) {
             throw new NotAllowedException(mLocale, "NotAllowedException8");
         } else {
             em.remove(user);
-            return docMs.toArray(new DocumentMaster[docMs.size()]);
+            return docRs.toArray(new DocumentRevision[docRs.size()]);
         }
     }
 

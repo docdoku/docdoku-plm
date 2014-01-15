@@ -52,7 +52,7 @@ public class PartCreationCommand extends AbstractCommandLine {
 
     public Object execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, description, false, null, "", null, null, null, null);
+        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, false, null, description, null, null, null, null);
         PartRevision pr = partMaster.getLastRevision();
         PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
         PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());

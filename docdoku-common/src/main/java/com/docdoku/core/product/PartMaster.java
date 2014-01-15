@@ -99,8 +99,6 @@ public class PartMaster implements Serializable {
 
     private String type;
 
-    @Lob
-    private String description;
     
     
     @OneToMany(mappedBy = "partMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)    
@@ -225,14 +223,6 @@ public class PartMaster implements Serializable {
 
     public PartMasterKey getKey() {
         return new PartMasterKey(getWorkspaceId(),number);
-    }
-        
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getWorkspaceId() {

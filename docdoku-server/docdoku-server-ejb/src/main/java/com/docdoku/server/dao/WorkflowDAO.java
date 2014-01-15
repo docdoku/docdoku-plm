@@ -20,6 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Workflow;
@@ -27,6 +28,7 @@ import com.docdoku.core.workflow.Workflow;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,27 +49,27 @@ public class WorkflowDAO {
         pWf.setActivities(activities);
     }
 
-    public DocumentMaster getDocumentTarget(Workflow pWorkflow) {
-        Query query = em.createQuery("SELECT m FROM DocumentMaster m WHERE m.workflow = :workflow");
+    public DocumentRevision getDocumentTarget(Workflow pWorkflow) {
+        TypedQuery<DocumentRevision> query = em.createQuery("SELECT d FROM DocumentRevision d WHERE d.workflow = :workflow", DocumentRevision.class);
         try{
-            return (DocumentMaster) query.setParameter("workflow", pWorkflow).getSingleResult();
+            return query.setParameter("workflow", pWorkflow).getSingleResult();
         }catch(NoResultException e){
             return null;
         }
     }
 
     public PartRevision getPartTarget(Workflow pWorkflow) {
-        Query query = em.createQuery("SELECT p FROM PartRevision p WHERE p.workflow = :workflow");
+        TypedQuery<PartRevision> query = em.createQuery("SELECT p FROM PartRevision p WHERE p.workflow = :workflow", PartRevision.class);
         try{
-            return (PartRevision) query.setParameter("workflow", pWorkflow).getSingleResult();
+            return query.setParameter("workflow", pWorkflow).getSingleResult();
         }catch(NoResultException e){
             return null;
         }
     }
 
-    public void removeWorkflowConstraints(DocumentMaster pDocM) {
-        List<Workflow> workflows = pDocM.getAbortedWorkflows();
-        Workflow workflow = pDocM.getWorkflow();
+    public void removeWorkflowConstraints(DocumentRevision pDocR) {
+        List<Workflow> workflows = pDocR.getAbortedWorkflows();
+        Workflow workflow = pDocR.getWorkflow();
         removeWorkflowConstraints(workflows,workflow);
     }
 
@@ -85,13 +87,11 @@ public class WorkflowDAO {
                 }
             }
         }
-        pWorkflows = new ArrayList<Workflow>();
         if(pWorkflow != null){
             for(Activity activity:pWorkflow.getActivities()){
                 activity.setRelaunchActivity(null);
             }
         }
-        pWorkflow = new Workflow();
         em.flush();
     }
 }

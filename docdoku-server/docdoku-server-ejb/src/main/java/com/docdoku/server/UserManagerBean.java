@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
@@ -294,9 +295,9 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         for (String login : pLogins) {
-            DocumentMaster[] docMs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
-            for (DocumentMaster docM : docMs) {
-                for (DocumentIteration doc : docM.getDocumentIterations()) {
+            DocumentRevision[] docRs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
+            for (DocumentRevision docR : docRs) {
+                for (DocumentIteration doc : docR.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
                         indexer.removeFromIndex(file.getFullName());
                         try {

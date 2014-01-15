@@ -23,6 +23,8 @@ package com.docdoku.server.filters;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -71,11 +73,11 @@ public class PermalinkFilter implements Filter {
                         try {
                             String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                             String documentMasterId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
-                            String documentMasterVersion = pathInfos[offset+2];
+                            String documentRevisionVersion = pathInfos[offset+2];
 
-                            DocumentMasterKey docMK  =  new DocumentMasterKey(workspaceId,documentMasterId,documentMasterVersion);
-                            DocumentMaster publicDocumentMaster = guestProxy.getPublicDocumentMaster(docMK);
-                            request.setAttribute("publicDocumentMaster",publicDocumentMaster);
+                            DocumentRevisionKey docRK  =  new DocumentRevisionKey(workspaceId,documentMasterId,documentRevisionVersion);
+                            DocumentRevision publicDocumentRevision = guestProxy.getPublicDocumentRevision(docRK);
+                            request.setAttribute("publicDocumentRevision",publicDocumentRevision);
                         } catch (Exception e) {
                             redirect = true;
                         }

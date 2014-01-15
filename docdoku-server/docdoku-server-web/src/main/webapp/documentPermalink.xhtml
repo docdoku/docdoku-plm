@@ -43,7 +43,7 @@
 
 <div id="page">
 
-    <h3>${documentMaster}</h3>
+    <h3>${documentRevision}</h3>
 
     <div id="content">
 
@@ -64,47 +64,47 @@
                         <tbody>
                         <tr>
                             <th scope="row">#{i18nDocument['general.author']}:</th>
-                            <td>${documentMaster.author.name}</td>
+                            <td>${documentRevision.author.name}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.date']}:</th>
                             <td>
-                                <h:outputText value="#{documentMaster.creationDate}">
+                                <h:outputText value="#{documentRevision.creationDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.type']}:</th>
-                            <td>${documentMaster.type}</td>
+                            <td>${documentRevision.documentMaster.type}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.titledoc']}:</th>
-                            <td>${documentMaster.title}</td>
+                            <td>${documentRevision.title}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.checkout_user']}:</th>
-                            <td>${documentMaster.checkOutUser.name}</td>
+                            <td>${documentRevision.checkOutUser.name}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.checkout_date']}:</th>
                             <td>
-                                <h:outputText value="#{documentMaster.checkOutDate}">
+                                <h:outputText value="#{documentRevision.checkOutDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.lifeCycleState']}:</th>
-                            <td>${documentMaster.lifeCycleState}</td>
+                            <td>${documentRevision.lifeCycleState}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.tags']}:</th>
-                            <td>${documentMaster.tags}</td>
+                            <td>${documentRevision.tags}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['general.description']}:</th>
-                            <td>${documentMaster.description}</td>
+                            <td>${documentRevision.description}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -116,23 +116,23 @@
                         <tbody>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.number']}:</th>
-                            <td>${documentMaster.lastIteration.iteration}</td>
+                            <td>${documentRevision.lastIteration.iteration}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.author']}:</th>
-                            <td>${documentMaster.lastIteration.author.name}</td>
+                            <td>${documentRevision.lastIteration.author.name}</td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.date']}:</th>
                             <td>
-                                <h:outputText value="#{documentMaster.lastIteration.creationDate}">
+                                <h:outputText value="#{documentRevision.lastIteration.creationDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.iterationNote']}:</th>
-                            <td>${documentMaster.lastIteration.revisionNote}</td>
+                            <td>${documentRevision.lastIteration.revisionNote}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -192,9 +192,9 @@
 
                 <div id="tab-document-links" class="tab-pane">
 
-                    <c:if test="${documentMaster.lastIteration.linkedDocuments.size()!=0}">
+                    <c:if test="${documentRevision.lastIteration.linkedDocuments.size()!=0}">
                         <ul>
-                            <c:forEach var="item" items="${documentMaster.lastIteration.linkedDocuments}">
+                            <c:forEach var="item" items="${documentRevision.lastIteration.linkedDocuments}">
                                 <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li>
                             </c:forEach>
                         </ul>
@@ -208,7 +208,7 @@
 
     </div>
 
-    <a href="/document-management/#{documentMaster.workspaceId}#folders/#{documentMaster.location.getRoutePath()}">#{i18nDocument['toApplicationLink']}</a>
+    <a href="/document-management/#{documentRevision.documentMaster.workspace.id}#folders/#{documentRevision.location.getRoutePath()}">#{i18nDocument['toApplicationLink']}</a>
 
 </div>
 </body>

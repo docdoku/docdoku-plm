@@ -98,16 +98,16 @@ public class TitleBlockGenerator {
 
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
 
-        String title = docI.getDocumentMasterId() + "-" + docI.getDocumentMasterVersion();
-        String subject = docI.getDocumentMaster().getTitle();
+        String title = docI.getId() + "-" + docI.getDocumentVersion();
+        String subject = docI.getDocumentRevision().getTitle();
         String authorName = docI.getAuthor().getName();
-        String version = docI.getDocumentMasterVersion();
+        String version = docI.getDocumentVersion();
         SimpleDateFormat simpleFormat = new SimpleDateFormat(bundle.getString("date.format"));
-        String creationDate = simpleFormat.format(docI.getDocumentMaster().getCreationDate());
+        String creationDate = simpleFormat.format(docI.getDocumentRevision().getCreationDate());
         String iterationDate = simpleFormat.format(docI.getCreationDate());
-        Set<Tag> tags = docI.getDocumentMaster().getTags();
+        Set<Tag> tags = docI.getDocumentRevision().getTags();
         String keywords = tags.toString();
-        String description = docI.getDocumentMaster().getDescription();
+        String description = docI.getDocumentRevision().getDescription();
         Map<String,InstanceAttribute> instanceAttributes = docI.getInstanceAttributes();
         String currentIteration = String.valueOf(docI.getIteration());
 
@@ -237,16 +237,16 @@ public class TitleBlockGenerator {
         }
 
         // Life cycle state
-        if(docI.getDocumentMaster().getWorkflow() != null){
+        if(docI.getDocumentRevision().getWorkflow() != null){
 
             // Table title
-            preface.add(new Paragraph(bundle.getString("lifecycle") + " : " + docI.getDocumentMaster().getLifeCycleState(), BOLD_12));
+            preface.add(new Paragraph(bundle.getString("lifecycle") + " : " + docI.getDocumentRevision().getLifeCycleState(), BOLD_12));
             addEmptyLine(preface,1);
 
             PdfPTable lifeCycleTable = new PdfPTable(5);
             lifeCycleTable.setWidthPercentage(100f);
 
-            for(Activity activity : docI.getDocumentMaster().getWorkflow().getActivities()){
+            for(Activity activity : docI.getDocumentRevision().getWorkflow().getActivities()){
 
                 boolean headerRendered = false ;
 

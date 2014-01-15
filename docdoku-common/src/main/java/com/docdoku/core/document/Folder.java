@@ -56,15 +56,6 @@ public class Folder implements Serializable, Comparable<Folder> {
         }
     }
 
-    public void setCompletePath(String completePath) {
-        this.completePath = completePath;
-    }
-
-    public void setParentFolder(Folder parentFolder) {
-        this.parentFolder = parentFolder;
-    }
-    
-
     public String getWorkspaceId(){
         return Folder.parseWorkspaceId(completePath);
     }
@@ -144,13 +135,6 @@ public class Folder implements Serializable, Comparable<Folder> {
             folders[i] = foldersStack.pop();
         }
         return folders;
-    }
-
-    public void changeName(String pNewName) {
-        if (!isRoot() && !isHome()){
-            int index = completePath.lastIndexOf('/');
-            completePath = completePath.substring(0, index + 1) + pNewName;
-        }
     }
     
     public String getShortName() {

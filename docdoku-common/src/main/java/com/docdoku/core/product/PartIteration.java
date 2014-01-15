@@ -274,9 +274,12 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public void setComponents(List<PartUsageLink> components) {
         this.components = components;
     }
-    
+
+    public PartRevisionKey getPartRevisionKey() {
+        return partRevision==null?new PartRevisionKey(new PartMasterKey("",""),""):partRevision.getKey();
+    }
     public PartIterationKey getKey() {
-        return new PartIterationKey(partRevision.getKey(),iteration);
+        return new PartIterationKey(getPartRevisionKey(),iteration);
     }
     
     public Source getSource() {
@@ -292,13 +295,18 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     }
 
     @Override
+    public String toString() {
+        return partRevision + "-" + iteration;
+    }
+
+    @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + getWorkspaceId().hashCode();
-	hash = 31 * hash + getPartNumber().hashCode();
+	    hash = 31 * hash + getWorkspaceId().hashCode();
+	    hash = 31 * hash + getPartNumber().hashCode();
         hash = 31 * hash + getPartVersion().hashCode();
         hash = 31 * hash + iteration;
-	return hash;
+	    return hash;
     }
     
     @Override

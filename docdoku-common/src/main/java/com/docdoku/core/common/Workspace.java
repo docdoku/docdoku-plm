@@ -35,7 +35,7 @@ import java.io.Serializable;
 @Table(name="WORKSPACE")
 @javax.persistence.Entity
 @NamedQueries({
-        @NamedQuery(name="Workspace.findWorkspacesWhereUserIsActive", query="SELECT w FROM Workspace w WHERE EXISTS (SELECT u.workspace FROM WorkspaceUserMembership u WHERE u.workspace = w AND u.member.login = :userLogin) OR EXISTS (SELECT g FROM WorkspaceUserGroupMembership g WHERE g.workspace = w AND EXISTS (SELECT gr FROM UserGroup gr, User us WHERE us.workspace = gr.workspace AND g.workspace = gr.workspace AND us.login = :userLogin AND us member of gr.users)) ")
+        @NamedQuery(name="Workspace.findWorkspacesWhereUserIsActive", query="SELECT w FROM Workspace w WHERE EXISTS (SELECT u.workspace FROM WorkspaceUserMembership u WHERE u.workspace = w AND u.member.login = :userLogin) OR EXISTS (SELECT g FROM WorkspaceUserGroupMembership g WHERE g.workspace = w AND EXISTS (SELECT gr FROM UserGroup gr, User us WHERE us.workspace = gr.workspace AND g.workspace = gr.workspace AND us.login = :userLogin AND us member of gr.users))")
 })
 public class Workspace implements Serializable, Cloneable {
 

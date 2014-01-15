@@ -30,6 +30,8 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
+
+import com.docdoku.core.document.DocumentRevisionKey;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -74,9 +76,9 @@ public class IndexSearcherBean {
         }
     }
 
-    public Set<DocumentMasterKey> searchInIndex(String pWorkspaceId, String pContent) {
+    public Set<DocumentRevisionKey> searchInIndex(String pWorkspaceId, String pContent) {
         try {
-            Set<DocumentMasterKey> indexedKeys = new HashSet<DocumentMasterKey>();
+            Set<DocumentRevisionKey> indexedKeys = new HashSet<>();
 
             Query fullNameQuery = new WildcardQuery(new Term("fullName", pWorkspaceId + "/*"));
             Query contentQuery = new TermQuery(new Term("content", pContent));
@@ -95,13 +97,11 @@ public class IndexSearcherBean {
                 org.apache.lucene.document.Document doc = indexReader.document(hits[i].doc);
                 String fullName = doc.get("fullName");
                 String[] partRefs = BinaryResource.parseOwnerRef(fullName).split("/");
-                DocumentMasterKey key = new DocumentMasterKey(pWorkspaceId, partRefs[0], partRefs[1]);
+                DocumentRevisionKey key = new DocumentRevisionKey(pWorkspaceId, partRefs[0], partRefs[1]);
                 indexedKeys.add(key);
             }
    
             return indexedKeys;
-        } catch (CorruptIndexException ex) {
-            throw new EJBException(ex);
         } catch (IOException ex) {
             throw new EJBException(ex);
         }

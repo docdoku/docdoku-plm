@@ -84,12 +84,9 @@ public class PartMasterDAO {
     }
 
     public void removePartM(PartMaster pPartM) {
-
-        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(em);
-        WorkflowDAO workflowDAO = new WorkflowDAO(em);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(mLocale, em);
         for(PartRevision partRevision:pPartM.getPartRevisions()){
-            sharedEntityDAO.deleteSharesForPart(partRevision);
-            workflowDAO.removeWorkflowConstraints(partRevision);
+            partRevisionDAO.removeRevision(partRevision);
         }
         em.remove(pPartM);
     }

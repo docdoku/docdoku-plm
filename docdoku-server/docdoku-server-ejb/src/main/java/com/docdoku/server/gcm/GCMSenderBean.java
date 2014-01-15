@@ -1,6 +1,6 @@
 package com.docdoku.server.gcm;
 
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.services.IGCMSenderLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -14,7 +14,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.net.ssl.HttpsURLConnection;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -44,42 +43,42 @@ public class GCMSenderBean implements IGCMSenderLocal {
 
     @Override
     @Asynchronous
-    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentMaster pDocumentMaster) {
+    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision documentRevision) {
         for(GCMAccount gcmAccount:pGCGcmAccounts){
-            sendStateNotification(gcmAccount,pDocumentMaster);
+            sendStateNotification(gcmAccount,documentRevision);
         }
     }
 
     @Override
     @Asynchronous
-    public void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentMaster pDocumentMaster) {
+    public void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision documentRevision) {
         for(GCMAccount gcmAccount:pGCGcmAccounts){
-            sendIterationNotification(gcmAccount, pDocumentMaster);
+            sendIterationNotification(gcmAccount, documentRevision);
         }
     }
 
-    private void sendStateNotification(GCMAccount gcmAccount, DocumentMaster documentMaster){
+    private void sendStateNotification(GCMAccount gcmAccount, DocumentRevision documentRevision){
         JsonObjectBuilder data = Json.createObjectBuilder()
         .add("type","stateNotification")
-        .add("workspaceId",documentMaster.getWorkspaceId())
-        .add("documentMasterId",documentMaster.getId())
-        .add("documentMasterVersion",documentMaster.getVersion())
-        .add("documentMasterIteration", documentMaster.getLastIteration().getIteration())
-        .add("hashCode", documentMaster.hashCode());
-        LOGGER.info("gcm Sender : Sending state notification for the document " + documentMaster.getLastIteration());
+        .add("workspaceId",documentRevision.getWorkspaceId())
+        .add("documentMasterId",documentRevision.getId())
+        .add("documentMasterVersion",documentRevision.getVersion())
+        .add("documentMasterIteration", documentRevision.getLastIteration().getIteration())
+        .add("hashCode", documentRevision.hashCode());
+        LOGGER.info("gcm Sender : Sending state notification for the document " + documentRevision.getLastIteration());
         sendMessage(data.build(),gcmAccount);
     }
 
 
-    private void sendIterationNotification(GCMAccount gcmAccount, DocumentMaster documentMaster) {
+    private void sendIterationNotification(GCMAccount gcmAccount, DocumentRevision documentRevision) {
         JsonObjectBuilder data = Json.createObjectBuilder()
         .add("type","iterationNotification")
-        .add("workspaceId",documentMaster.getWorkspaceId())
-        .add("documentMasterId",documentMaster.getId())
-        .add("documentMasterVersion",documentMaster.getVersion())
-        .add("documentMasterIteration",documentMaster.getLastIteration().getIteration())
-        .add("hashCode", documentMaster.hashCode());
-        LOGGER.info("gcm Sender : Sending iteration notification for the document " + documentMaster.getLastIteration());
+        .add("workspaceId",documentRevision.getWorkspaceId())
+        .add("documentMasterId",documentRevision.getId())
+        .add("documentMasterVersion",documentRevision.getVersion())
+        .add("documentMasterIteration",documentRevision.getLastIteration().getIteration())
+        .add("hashCode", documentRevision.hashCode());
+        LOGGER.info("gcm Sender : Sending iteration notification for the document " + documentRevision.getLastIteration());
         sendMessage(data.build(),gcmAccount);
     }
 

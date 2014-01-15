@@ -22,6 +22,7 @@ package com.docdoku.arquillian.tests;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
@@ -175,8 +176,8 @@ public class AccessRightsTest {
 
     @Test
     public void testCheckInCheckOut() throws Exception {
-        testBean.testDocumentCheckIn("user1", new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5", "A"));
-        testBean.testDocumentCheckOut("user4", new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5", "A"));
+        testBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
+        testBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }
 
     /*

@@ -32,7 +32,7 @@ import java.util.List;
  * @author Florent Garin
  */
 @XmlRootElement
-public class DocumentMasterDTO implements Serializable, Comparable<DocumentMasterDTO> {
+public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRevisionDTO> {
 
     private String workspaceId;
     private String id;    
@@ -61,10 +61,10 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     @XmlElement(nillable = true)
     private ACLDTO acl;
 
-    public DocumentMasterDTO() {
+    public DocumentRevisionDTO() {
     }
 
-    public DocumentMasterDTO(String workspaceId, String id, String version) {
+    public DocumentRevisionDTO(String workspaceId, String id, String version) {
         this.workspaceId = workspaceId;
         this.id = id;
         this.version = version;
@@ -261,11 +261,11 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentMasterDTO)) {
+        if (!(pObj instanceof DocumentRevisionDTO)) {
             return false;
         }
-        DocumentMasterDTO docM = (DocumentMasterDTO) pObj;
-        return ((docM.id.equals(id)) && (docM.workspaceId.equals(workspaceId)) && (docM.version.equals(version)));
+        DocumentRevisionDTO docR = (DocumentRevisionDTO) pObj;
+        return ((docR.id.equals(id)) && (docR.workspaceId.equals(workspaceId)) && (docR.version.equals(version)));
 
     }
 
@@ -278,16 +278,16 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
         return hash;
     }
 
-    public int compareTo(DocumentMasterDTO pDocM) {
-        int wksComp = workspaceId.compareTo(pDocM.workspaceId);
+    public int compareTo(DocumentRevisionDTO pDocR) {
+        int wksComp = workspaceId.compareTo(pDocR.workspaceId);
         if (wksComp != 0) {
             return wksComp;
         }
-        int idComp = id.compareTo(pDocM.id);
+        int idComp = id.compareTo(pDocR.id);
         if (idComp != 0) {
             return idComp;
         } else {
-            return version.compareTo(pDocM.version);
+            return version.compareTo(pDocR.version);
         }
     }
 }

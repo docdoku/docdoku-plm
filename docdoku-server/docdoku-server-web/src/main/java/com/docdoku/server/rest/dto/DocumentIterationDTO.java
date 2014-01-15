@@ -30,7 +30,7 @@ public class DocumentIterationDTO implements Serializable {
 
     private String workspaceId;
     private String documentMasterId;
-    private String documentMasterVersion;
+    private String documentRevisionVersion;
     private int iteration;
     private Date creationDate;
     private UserDTO author;
@@ -45,7 +45,7 @@ public class DocumentIterationDTO implements Serializable {
     public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
         workspaceId = pWorkspaceId;
         documentMasterId = pDocumentMasterId;
-        documentMasterVersion = pDocumentMasterVersion;
+        documentRevisionVersion = pDocumentMasterVersion;
         iteration = pIteration;
     }
 
@@ -99,7 +99,7 @@ public class DocumentIterationDTO implements Serializable {
 
     @Override
     public String toString() {
-        return workspaceId + "-" + documentMasterId + "-" + documentMasterVersion + "-" + iteration;
+        return workspaceId + "-" + documentMasterId + "-" + documentRevisionVersion + "-" + iteration;
     }
 
     public String getWorkspaceId() {
@@ -118,12 +118,12 @@ public class DocumentIterationDTO implements Serializable {
         documentMasterId = pDocumentMasterId;
     }
 
-    public String getDocumentMasterVersion() {
-        return documentMasterVersion;
+    public String getDocumentRevisionVersion() {
+        return documentRevisionVersion;
     }
 
-    public void setDocumentMasterVersion(String pDocumentMasterVersion) {
-        this.documentMasterVersion = pDocumentMasterVersion;
+    public void setDocumentRevisionVersion(String pDocumentRevisionVersion) {
+        this.documentRevisionVersion = pDocumentRevisionVersion;
     }
 
     public int getIteration() {

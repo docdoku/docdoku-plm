@@ -72,13 +72,13 @@ public class SubscriptionDAO {
         }
     }
 
-    public void removeAllSubscriptions(DocumentMaster pDocM) {
-        Query query = em.createQuery("DELETE FROM StateChangeSubscription s WHERE s.observedDocumentMaster = :docM");
-        query.setParameter("docM", pDocM);
+    public void removeAllSubscriptions(DocumentRevision pDocR) {
+        Query query = em.createQuery("DELETE FROM StateChangeSubscription s WHERE s.observedDocumentRevision = :docR");
+        query.setParameter("docR", pDocR);
         query.executeUpdate();
 
-        Query query2 = em.createQuery("DELETE FROM IterationChangeSubscription s WHERE s.observedDocumentMaster = :docM");
-        query2.setParameter("docM", pDocM);
+        Query query2 = em.createQuery("DELETE FROM IterationChangeSubscription s WHERE s.observedDocumentRevision = :docR");
+        query2.setParameter("docR", pDocR);
         query2.executeUpdate();
     }
 
@@ -92,52 +92,52 @@ public class SubscriptionDAO {
         query2.executeUpdate();
     }
 
-    public DocumentMasterKey[] getIterationChangeEventSubscriptions(User pUser) {
-        DocumentMasterKey[] docMKeys;
-        Query query = em.createQuery("SELECT s.observedDocumentMasterWorkspaceId, s.observedDocumentMasterId, s.observedDocumentMasterVersion FROM IterationChangeSubscription s WHERE s.subscriber = :user");
-        List listDocMKeys = query.setParameter("user", pUser).getResultList();
-        docMKeys = new DocumentMasterKey[listDocMKeys.size()];
-        for (int i = 0; i < listDocMKeys.size(); i++) {
-            Object[] values = (Object[]) listDocMKeys.get(i);
-            docMKeys[i] = new DocumentMasterKey((String) values[0], (String) values[1], (String) values[2]);
+    public DocumentRevisionKey[] getIterationChangeEventSubscriptions(User pUser) {
+        DocumentRevisionKey[] docRKeys;
+        Query query = em.createQuery("SELECT s.observedDocumentRevisionWorkspaceId, s.observedDocumentRevisionId, s.observedDocumentRevisionVersion FROM IterationChangeSubscription s WHERE s.subscriber = :user");
+        List listDocRKeys = query.setParameter("user", pUser).getResultList();
+        docRKeys = new DocumentRevisionKey[listDocRKeys.size()];
+        for (int i = 0; i < listDocRKeys.size(); i++) {
+            Object[] values = (Object[]) listDocRKeys.get(i);
+            docRKeys[i] = new DocumentRevisionKey((String) values[0], (String) values[1], (String) values[2]);
         }
 
 
-        return docMKeys;
+        return docRKeys;
     }
 
-    public DocumentMasterKey[] getStateChangeEventSubscriptions(User pUser) {
-        DocumentMasterKey[] docMKeys;
-        Query query = em.createQuery("SELECT s.observedDocumentMasterWorkspaceId, s.observedDocumentMasterId, s.observedDocumentMasterVersion FROM StateChangeSubscription s WHERE s.subscriber = :user");
-        List listDocMKeys = query.setParameter("user", pUser).getResultList();
-        docMKeys = new DocumentMasterKey[listDocMKeys.size()];
-        for (int i = 0; i < listDocMKeys.size(); i++) {
-            Object[] values = (Object[]) listDocMKeys.get(i);
-            docMKeys[i] = new DocumentMasterKey((String) values[0], (String) values[1], (String) values[2]);
+    public DocumentRevisionKey[] getStateChangeEventSubscriptions(User pUser) {
+        DocumentRevisionKey[] docRKeys;
+        Query query = em.createQuery("SELECT s.observedDocumentRevisionWorkspaceId, s.observedDocumentRevisionId, s.observedDocumentRevisionVersion FROM StateChangeSubscription s WHERE s.subscriber = :user");
+        List listDocRKeys = query.setParameter("user", pUser).getResultList();
+        docRKeys = new DocumentRevisionKey[listDocRKeys.size()];
+        for (int i = 0; i < listDocRKeys.size(); i++) {
+            Object[] values = (Object[]) listDocRKeys.get(i);
+            docRKeys[i] = new DocumentRevisionKey((String) values[0], (String) values[1], (String) values[2]);
         }
 
 
-        return docMKeys;
+        return docRKeys;
     }
 
 
-    public boolean isUserStateChangeEventSubscribedForGivenDocument(User pUser, DocumentMaster docM) {
-        return ! em.createNamedQuery("findStateChangeSubscriptionWithGivenUserAndGivenDocMaster").
-                setParameter("user", pUser).setParameter("docM", docM).getResultList().isEmpty();
+    public boolean isUserStateChangeEventSubscribedForGivenDocument(User pUser, DocumentRevision docR) {
+        return ! em.createNamedQuery("StateChangeSubscription.findSubscriptionByUserAndDocRevision").
+                setParameter("user", pUser).setParameter("docR", docR).getResultList().isEmpty();
 
     }
 
-    public boolean isUserIterationChangeEventSubscribedForGivenDocument(User pUser, DocumentMaster docM) {
-        return ! em.createNamedQuery("findIterationChangeSubscriptionWithGivenUserAndGivenDocMaster").
-                setParameter("user", pUser).setParameter("docM", docM).getResultList().isEmpty();
+    public boolean isUserIterationChangeEventSubscribedForGivenDocument(User pUser, DocumentRevision docR) {
+        return ! em.createNamedQuery("IterationChangeSubscription.findSubscriptionByUserAndDocRevision").
+                setParameter("user", pUser).setParameter("docR", docR).getResultList().isEmpty();
     }
 
 
 
-    public User[] getIterationChangeEventSubscribers(DocumentMaster pDocM) {
+    public User[] getIterationChangeEventSubscribers(DocumentRevision pDocR) {
         User[] users;
-        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentMaster = :docM");
-        List listUsers = query.setParameter("docM", pDocM).getResultList();
+        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM IterationChangeSubscription s WHERE s.observedDocumentRevision = :docR");
+        List listUsers = query.setParameter("docR", pDocR).getResultList();
         users = new User[listUsers.size()];
         for (int i = 0; i < listUsers.size(); i++) {
             users[i] = (User) listUsers.get(i);
@@ -146,10 +146,10 @@ public class SubscriptionDAO {
         return users;
     }
 
-    public User[] getStateChangeEventSubscribers(DocumentMaster pDocM) {
+    public User[] getStateChangeEventSubscribers(DocumentRevision pDocR) {
         User[] users;
-        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedDocumentMaster = :docM");
-        List listUsers = query.setParameter("docM", pDocM).getResultList();
+        Query query = em.createQuery("SELECT DISTINCT s.subscriber FROM StateChangeSubscription s WHERE s.observedDocumentRevision = :docR");
+        List listUsers = query.setParameter("docR", pDocR).getResultList();
         users = new User[listUsers.size()];
         for (int i = 0; i < listUsers.size(); i++) {
             users[i] = (User) listUsers.get(i);
@@ -158,10 +158,10 @@ public class SubscriptionDAO {
         return users;
     }
 
-    public GCMAccount[] getIterationChangeEventSubscribersGCMAccount(DocumentMaster pDocM) {
+    public GCMAccount[] getIterationChangeEventSubscribersGCMAccount(DocumentRevision pDocR) {
         GCMAccount[] gcmAccounts;
-        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, IterationChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentMaster = :docM");
-        List gcmAccountsList = query.setParameter("docM", pDocM).getResultList();
+        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, IterationChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentRevision = :docR");
+        List gcmAccountsList = query.setParameter("docR", pDocR).getResultList();
         gcmAccounts = new GCMAccount[gcmAccountsList.size()];
         for (int i = 0; i < gcmAccountsList.size(); i++) {
             gcmAccounts[i] = (GCMAccount) gcmAccountsList.get(i);
@@ -170,10 +170,10 @@ public class SubscriptionDAO {
         return gcmAccounts;
     }
 
-    public GCMAccount[] getStateChangeEventSubscribersGCMAccount(DocumentMaster pDocM) {
+    public GCMAccount[] getStateChangeEventSubscribersGCMAccount(DocumentRevision pDocR) {
         GCMAccount[] gcmAccounts;
-        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, StateChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentMaster = :docM");
-        List gcmAccountsList = query.setParameter("docM", pDocM).getResultList();
+        Query query = em.createQuery("SELECT DISTINCT gcm FROM GCMAccount gcm, StateChangeSubscription s WHERE gcm.account.login = s.subscriber.login AND s.observedDocumentRevision = :docR");
+        List gcmAccountsList = query.setParameter("docR", pDocR).getResultList();
         gcmAccounts = new GCMAccount[gcmAccountsList.size()];
         for (int i = 0; i < gcmAccountsList.size(); i++) {
             gcmAccounts[i] = (GCMAccount) gcmAccountsList.get(i);

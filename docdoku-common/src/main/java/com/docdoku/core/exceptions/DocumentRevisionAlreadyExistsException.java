@@ -18,17 +18,38 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.services;
+package com.docdoku.core.exceptions;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.gcm.GCMAccount;
+
+import java.text.MessageFormat;
+import java.util.Locale;
 
 /**
  *
  * @author Morgan Guimard
  */
-public interface IGCMSenderLocal {
-    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
-    void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
+public class DocumentRevisionAlreadyExistsException extends ApplicationException {
+
+    private DocumentRevision mDocR;
+
+
+    public DocumentRevisionAlreadyExistsException(String pMessage) {
+        super(pMessage);
+    }
+
+
+    public DocumentRevisionAlreadyExistsException(Locale pLocale, DocumentRevision pDocR) {
+        this(pLocale, pDocR, null);
+    }
+
+    public DocumentRevisionAlreadyExistsException(Locale pLocale, DocumentRevision pDocR, Throwable pCause) {
+        super(pLocale, pCause);
+        mDocR=pDocR;
+    }
+    
+    public String getLocalizedMessage() {
+        String message = getBundleDefaultMessage();
+        return MessageFormat.format(message,mDocR);
+    }
 }

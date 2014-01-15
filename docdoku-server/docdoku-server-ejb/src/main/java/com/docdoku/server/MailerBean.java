@@ -22,7 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.workflow.Task;
@@ -63,7 +63,7 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendStateNotification(User[] pSubscribers,
-            DocumentMaster pDocumentMaster) {
+                                      DocumentRevision pDocumentRevision) {
         try {
             javax.mail.Message message = new MimeMessage(mailSession);
 
@@ -75,12 +75,12 @@ public class MailerBean implements IMailerLocal {
                             pSubscribers[i].getName()));
                     message.setSubject(getStateNotificationSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getStateNotificationMessage(pDocumentMaster,locale),
+                    message.setContent(getStateNotificationMessage(pDocumentRevision,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
                     LOGGER.info("Sending state notification emails");
-                    LOGGER.info("for the document " + pDocumentMaster.getLastIteration());
+                    LOGGER.info("for the document " + pDocumentRevision.getLastIteration());
 
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
@@ -98,7 +98,7 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendIterationNotification(User[] pSubscribers,
-            DocumentMaster pDocumentMaster) {
+                                          DocumentRevision pDocumentRevision) {
         try {
             for (int i = 0; i < pSubscribers.length; i++) {
                 try {
@@ -109,12 +109,12 @@ public class MailerBean implements IMailerLocal {
                             pSubscribers[i].getName()));
                     message.setSubject(getIterationNotificationSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getIterationNotificationMessage(pDocumentMaster,locale),
+                    message.setContent(getIterationNotificationMessage(pDocumentRevision,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
                     LOGGER.info("Sending iteration notification emails");
-                    LOGGER.info("for the document " + pDocumentMaster.getLastIteration());
+                    LOGGER.info("for the document " + pDocumentRevision.getLastIteration());
 
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
@@ -131,7 +131,7 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendApproval(Collection<Task> pRunningTasks,
-            DocumentMaster pDocumentMaster) {
+                             DocumentRevision pDocumentRevision) {
         try {
             for (Task task : pRunningTasks) {
                 try {
@@ -142,12 +142,12 @@ public class MailerBean implements IMailerLocal {
                             new InternetAddress(worker.getEmail(), worker.getName()));
                     message.setSubject(getApprovalRequiredSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getApprovalRequiredMessage(task, pDocumentMaster,locale),
+                    message.setContent(getApprovalRequiredMessage(task, pDocumentRevision,locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
                     LOGGER.info("Sending approval required emails");
-                    LOGGER.info("for the document " + pDocumentMaster.getLastIteration());
+                    LOGGER.info("for the document " + pDocumentRevision.getLastIteration());
                 } catch (UnsupportedEncodingException pUEEx) {
                     LOGGER.warning("Mail address format error.");
                     LOGGER.warning(pUEEx.getMessage());
@@ -262,16 +262,16 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
-    public void sendDocumentMasterWorkflowRelaunchedNotification(DocumentMaster documentMaster) {
-        Workspace workspace = documentMaster.getWorkspace();
+    public void sendDocumentRevisionWorkflowRelaunchedNotification(DocumentRevision documentRevision) {
+        Workspace workspace = documentRevision.getDocumentMaster().getWorkspace();
         Account admin = workspace.getAdmin();
-        User author = documentMaster.getAuthor();
+        User author = documentRevision.getAuthor();
 
         // Mail both workspace admin and documentMaster author
-        sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), documentMaster);
+        sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), documentRevision);
 
         if(!admin.getLogin().equals(author.getLogin())){
-            sendWorkflowRelaunchedNotification(author.getName(),author.getEmail(), author.getLanguage(), workspace.getId(), documentMaster);
+            sendWorkflowRelaunchedNotification(author.getName(),author.getEmail(), author.getLanguage(), workspace.getId(), documentRevision);
         }
     }
 
@@ -305,15 +305,15 @@ public class MailerBean implements IMailerLocal {
     }
 
 
-    private void sendWorkflowRelaunchedNotification(String userName, String userEmail,  String userLanguage, String workspaceId, DocumentMaster documentMaster){
+    private void sendWorkflowRelaunchedNotification(String userName, String userEmail,  String userLanguage, String workspaceId, DocumentRevision documentRevision){
         try {
             Locale locale = new Locale(userLanguage);
             javax.mail.Message message = new MimeMessage(mailSession);
             message.setRecipient(javax.mail.Message.RecipientType.TO,
                     new InternetAddress(userEmail,userName));
-            message.setSubject(getDocumentMasterWorkflowRelaunchedSubject(locale));
+            message.setSubject(getDocumentRevisionWorkflowRelaunchedSubject(locale));
             message.setSentDate(new Date());
-            message.setContent(getDocumentMasterWorkflowRelaunchedMessage(workspaceId, documentMaster.getId(), documentMaster.getVersion() , documentMaster.getWorkflow().getLifeCycleState(), locale),
+            message.setContent(getDocumentRevisionWorkflowRelaunchedMessage(workspaceId, documentRevision.getId(), documentRevision.getVersion(), documentRevision.getWorkflow().getLifeCycleState(), locale),
                     "text/html; charset=utf-8");
             message.setFrom();
             Transport.send(message);
@@ -327,10 +327,10 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
-    private String getDocumentMasterWorkflowRelaunchedMessage(String workspaceId, String docMid, String version, String lifeCycleState, Locale pLocale) {
+    private String getDocumentRevisionWorkflowRelaunchedMessage(String workspaceId, String docMid, String version, String lifeCycleState, Locale pLocale) {
         Object[] args = {docMid+"-"+version,workspaceId,lifeCycleState};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return MessageFormat.format(bundle.getString("DocumentMaster_workflow_relaunched_text"), args);
+        return MessageFormat.format(bundle.getString("DocumentRevision_workflow_relaunched_text"), args);
     }
 
     private String getWorkspaceDeletionMessage(String workspaceId, Locale pLocale) {
@@ -361,41 +361,41 @@ public class MailerBean implements IMailerLocal {
     }
 
     private String getApprovalRequiredMessage(Task pTask,
-            DocumentMaster pDocumentMaster, Locale pLocale) {
+            DocumentRevision pDocumentRevision, Locale pLocale) {
         String voteURL = codebase + "/action/vote";
         String instructions = pTask.getInstructions()==null?"-":pTask.getInstructions();
-        Object[] args = {voteURL, pDocumentMaster.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentMaster), pDocumentMaster, instructions};
+        Object[] args = {voteURL, pDocumentRevision.getWorkspaceId(), pTask.getWorkflowId(), pTask.getActivityStep(), pTask.getNum(), pTask.getTitle(), getURL(pDocumentRevision), pDocumentRevision, instructions};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("Approval_document_text"), args);
     }
 
-    private String getIterationNotificationMessage(DocumentMaster pDocumentMaster, Locale pLocale) {
+    private String getIterationNotificationMessage(DocumentRevision pDocumentRevision, Locale pLocale) {
 
         Object[] args = {
-            pDocumentMaster,
-            pDocumentMaster.getLastIteration().getCreationDate(),
-            new Integer(pDocumentMaster.getLastIteration().getIteration()),
-            pDocumentMaster.getLastIteration().getAuthor(), getURL(pDocumentMaster)};
+                pDocumentRevision,
+                pDocumentRevision.getLastIteration().getCreationDate(),
+            new Integer(pDocumentRevision.getLastIteration().getIteration()),
+                pDocumentRevision.getLastIteration().getAuthor(), getURL(pDocumentRevision)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("IterationNotification_text"), args);
 
     }
 
-    private String getStateNotificationMessage(DocumentMaster pDocumentMaster, Locale pLocale) {
+    private String getStateNotificationMessage(DocumentRevision pDocumentRevision, Locale pLocale) {
 
         Object[] args = {
-            pDocumentMaster,
-            pDocumentMaster.getLastIteration().getCreationDate(),
-            getURL(pDocumentMaster)};
+                pDocumentRevision,
+                pDocumentRevision.getLastIteration().getCreationDate(),
+            getURL(pDocumentRevision)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("StateNotification_text"), args);
 
     }
 
-    private String getURL(DocumentMaster pDocM) {
-        String workspace = pDocM.getWorkspaceId();
-        String docMId = pDocM.getId();
-        return codebase + "/documents/" + workspace + "/" + docMId + "/" + pDocM.getVersion();
+    private String getURL(DocumentRevision pDocR) {
+        String workspace = pDocR.getWorkspaceId();
+        String docMId = pDocR.getId();
+        return codebase + "/documents/" + workspace + "/" + docMId + "/" + pDocR.getVersion();
     }
 
 
@@ -429,9 +429,9 @@ public class MailerBean implements IMailerLocal {
         return bundle.getString("PartRevision_workflow_relaunched_title");
 
     }
-    private String getDocumentMasterWorkflowRelaunchedSubject(Locale pLocale) {
+    private String getDocumentRevisionWorkflowRelaunchedSubject(Locale pLocale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        return bundle.getString("DocumentMaster_workflow_relaunched_title");
+        return bundle.getString("DocumentRevision_workflow_relaunched_title");
 
     }
 }

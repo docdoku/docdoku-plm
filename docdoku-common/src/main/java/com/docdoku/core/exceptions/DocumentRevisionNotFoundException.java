@@ -20,8 +20,9 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.document.DocumentRevisionKey;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -29,43 +30,43 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class DocumentMasterNotFoundException extends ApplicationException {
+public class DocumentRevisionNotFoundException extends ApplicationException {
 
 
     private String mDocMId;
-    private String mDocMStringVersion;
+    private String mDocRStringVersion;
      
     
     
-    public DocumentMasterNotFoundException(String pMessage) {
+    public DocumentRevisionNotFoundException(String pMessage) {
         super(pMessage);
     }
     
     
-    public DocumentMasterNotFoundException(Locale pLocale, DocumentMasterKey pDocMPK) {
-        this(pLocale, pDocMPK, null);
+    public DocumentRevisionNotFoundException(Locale pLocale, DocumentRevisionKey pDocRPK) {
+        this(pLocale, pDocRPK, null);
     }
 
-    public DocumentMasterNotFoundException(Locale pLocale, DocumentMasterKey pDocMPK, Throwable pCause) {
-        this(pLocale, pDocMPK.getId(), pDocMPK.getVersion(), pCause);
+    public DocumentRevisionNotFoundException(Locale pLocale, DocumentRevisionKey pDocRPK, Throwable pCause) {
+        this(pLocale, pDocRPK.getDocumentMaster().getId(), pDocRPK.getVersion(), pCause);
     }
 
-    public DocumentMasterNotFoundException(Locale pLocale, String pDocMID, Version pDocMVersion) {
-        this(pLocale, pDocMID, pDocMVersion.toString(), null);
+    public DocumentRevisionNotFoundException(Locale pLocale, String pDocMID, Version pDocRVersion) {
+        this(pLocale, pDocMID, pDocRVersion.toString(), null);
     }
 
-    public DocumentMasterNotFoundException(Locale pLocale, String pDocMId, String pDocMStringVersion) {
-        this(pLocale, pDocMId, pDocMStringVersion, null);
+    public DocumentRevisionNotFoundException(Locale pLocale, String pDocMId, String pDocRStringVersion) {
+        this(pLocale, pDocMId, pDocRStringVersion, null);
     }
 
-    public DocumentMasterNotFoundException(Locale pLocale, String pDocMId, String pDocMStringVersion, Throwable pCause) {
+    public DocumentRevisionNotFoundException(Locale pLocale, String pDocMId, String pDocRStringVersion, Throwable pCause) {
         super(pLocale, pCause);
         mDocMId=pDocMId;
-        mDocMStringVersion=pDocMStringVersion;
+        mDocRStringVersion=pDocRStringVersion;
     }
     
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mDocMId,mDocMStringVersion);     
+        return MessageFormat.format(message,mDocMId,mDocRStringVersion);
     }
 }

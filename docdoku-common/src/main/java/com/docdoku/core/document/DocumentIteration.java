@@ -23,6 +23,8 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.FileHolder;
+import com.docdoku.core.product.PartMasterKey;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -46,30 +48,24 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "DOCUMENTITERATION")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentIterationKey.class)
 @NamedQueries ({
-        @NamedQuery(name="DocumentIteration.findLinks", query = "SELECT l FROM DocumentLink l WHERE l.targetDocument = :target"),
-        @NamedQuery(name="DocumentIteration.findByBinaryResource", query = "SELECT d FROM DocumentIteration d WHERE :binaryResource member of d.attachedFiles")
+    @NamedQuery(name="DocumentIteration.findLinks", query = "SELECT l FROM DocumentLink l WHERE l.targetDocument = :target"),
+    @NamedQuery(name="DocumentIteration.findByBinaryResource", query = "SELECT d FROM DocumentIteration d WHERE :binaryResource member of d.attachedFiles")
 })
 @javax.persistence.Entity
 public class DocumentIteration implements Serializable, FileHolder, Comparable<DocumentIteration>, Cloneable {
 
+    @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "DOCUMENTMASTER_VERSION", referencedColumnName = "VERSION"),
+        @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "DOCUMENTMASTER_ID"),
+        @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "VERSION"),
         @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
-    private DocumentMaster documentMaster;
+    private DocumentRevision documentRevision;
+
     @javax.persistence.Id
     private int iteration;
-    @javax.persistence.Column(name = "DOCUMENTMASTER_ID", length = 50, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String documentMasterId = "";
-    @javax.persistence.Column(name = "DOCUMENTMASTER_VERSION", length = 10, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String documentMasterVersion = "";
-    @javax.persistence.Column(name = "WORKSPACE_ID", length = 50, nullable = false, insertable = false, updatable = false)
-    @javax.persistence.Id
-    private String workspaceId = "";
+
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "DOCUMENTITERATION_BINRES",
     inverseJoinColumns = {
@@ -78,7 +74,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     joinColumns = {
         @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
         @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "DOCUMENTMASTER_ID"),
-        @JoinColumn(name = "DOCUMENTMASTER_VERSION", referencedColumnName = "DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
     private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
@@ -101,7 +97,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     joinColumns = {
         @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
         @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "DOCUMENTMASTER_ID"),
-        @JoinColumn(name = "DOCUMENTMASTER_VERSION", referencedColumnName = "DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
     private Set<DocumentLink> linkedDocuments = new HashSet<DocumentLink>();
@@ -115,7 +111,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     joinColumns = {
         @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
         @JoinColumn(name = "DOCUMENTMASTER_ID", referencedColumnName = "DOCUMENTMASTER_ID"),
-        @JoinColumn(name = "DOCUMENTMASTER_VERSION", referencedColumnName = "DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
     private Map<String, InstanceAttribute> instanceAttributes = new HashMap<String, InstanceAttribute>();
@@ -123,17 +119,27 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     public DocumentIteration() {
     }
 
-    public DocumentIteration(DocumentMaster pDocumentMaster, int pIteration, User pAuthor) {
-        setDocumentMaster(pDocumentMaster);
+    public DocumentIteration(DocumentRevision pDocumentRevision, int pIteration, User pAuthor) {
+        setDocumentRevision(pDocumentRevision);
         iteration = pIteration;
         author = pAuthor;
     }
 
-    public void setDocumentMaster(DocumentMaster pDocumentMaster) {
-        documentMaster = pDocumentMaster;
-        documentMasterId = pDocumentMaster.getId();
-        documentMasterVersion = pDocumentMaster.getVersion();
-        workspaceId = pDocumentMaster.getWorkspaceId();
+    public void setDocumentRevision(DocumentRevision documentRevision) {
+        this.documentRevision = documentRevision;
+    }
+
+
+    public String getWorkspaceId() {
+        return documentRevision==null?"":documentRevision.getWorkspaceId();
+    }
+
+    public String getId() {
+        return documentRevision==null?"":documentRevision.getId();
+    }
+
+    public String getDocumentVersion() {
+        return documentRevision==null?"":documentRevision.getVersion();
     }
 
     public int getIteration() {
@@ -169,21 +175,13 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         return attachedFiles;
     }
 
+    public DocumentRevisionKey getDocumentRevisionKey() {
+        return documentRevision==null?new DocumentRevisionKey(new DocumentMasterKey("",""),""):documentRevision.getKey();
+    }
     public DocumentIterationKey getKey() {
-        return new DocumentIterationKey(workspaceId, documentMasterId, documentMasterVersion, iteration);
+        return new DocumentIterationKey(getDocumentRevisionKey(),iteration);
     }
 
-    public String getDocumentMasterId() {
-        return documentMasterId;
-    }
-
-    public String getDocumentMasterVersion() {
-        return documentMasterVersion;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
 
     public void setAuthor(User pAuthor) {
         author = pAuthor;
@@ -194,8 +192,8 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     }
 
     @XmlTransient
-    public DocumentMaster getDocumentMaster() {
-        return documentMaster;
+    public DocumentRevision getDocumentRevision() {
+        return documentRevision;
     }
 
     public void setCreationDate(Date pCreationDate) {
@@ -224,15 +222,15 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
     @Override
     public String toString() {
-        return documentMasterId + "-" + documentMasterVersion + "-" + iteration;
+        return documentRevision + "-" + iteration;
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = 31 * hash + workspaceId.hashCode();
-        hash = 31 * hash + documentMasterId.hashCode();
-        hash = 31 * hash + documentMasterVersion.hashCode();
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + getId().hashCode();
+        hash = 31 * hash + getDocumentVersion().hashCode();
         hash = 31 * hash + iteration;
         return hash;
     }
@@ -242,25 +240,27 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentIteration)) {
+        if (!(pObj instanceof DocumentIteration))
             return false;
-        }
-        DocumentIteration document = (DocumentIteration) pObj;
-        return ((document.documentMasterId.equals(documentMasterId)) && (document.workspaceId.equals(workspaceId)) && (document.documentMasterVersion.equals(documentMasterVersion)) && (document.iteration == iteration));
+        DocumentIteration docI = (DocumentIteration) pObj;
+        return ((docI.getId().equals(getId())) && (docI.getWorkspaceId().equals(getWorkspaceId()))  && (docI.getDocumentVersion().equals(getDocumentVersion())) && (docI.iteration==iteration));
     }
+
+
+
 
     @Override
     public int compareTo(DocumentIteration pDoc) {
 
-        int wksComp = workspaceId.compareTo(pDoc.workspaceId);
+        int wksComp = getWorkspaceId().compareTo(pDoc.getWorkspaceId());
         if (wksComp != 0) {
             return wksComp;
         }
-        int docmIdComp = documentMasterId.compareTo(pDoc.documentMasterId);
+        int docmIdComp = getId().compareTo(pDoc.getId());
         if (docmIdComp != 0) {
             return docmIdComp;
         }
-        int docmVersionComp = documentMasterVersion.compareTo(pDoc.documentMasterVersion);
+        int docmVersionComp = getDocumentVersion().compareTo(pDoc.getDocumentVersion());
         if (docmVersionComp != 0) {
             return docmVersionComp;
         } else {
