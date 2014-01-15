@@ -80,7 +80,7 @@ define(
 
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
-            //try{
+            try{
                 instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
@@ -91,10 +91,10 @@ define(
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
                 instancesManager.init();
                 sceneManager.init();
-            /*}catch(ex){
+            }catch(ex){
                 console.log("Got exception in dmu")
                 this.onNoWebGLSupport();
-            }*/
+            }
 
             this.listenEvents();
 
