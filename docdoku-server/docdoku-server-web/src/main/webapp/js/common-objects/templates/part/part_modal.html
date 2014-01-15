@@ -17,11 +17,10 @@
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
             </ul>
 
+            <form id="form-part" class="form-horizontal">
             <div class="tab-content form-horizontal">
 
                 <div id="tab-part-general" class="tab-pane active">
-
-                    <form id="form-part" class="form-horizontal">
                         <div class="control-group">
                             <label class="control-label">{{i18n.PART_NUMBER}}</label>
                             <div class="controls">
@@ -76,11 +75,9 @@
                                 <span class="help-inline">{{part.getDescription}}</span>
                             </div>
                         </div>
-                    </form>
                 </div>
 
                 <div id="tab-part-iteration" class="tab-pane">
-                    <form class="form-horizontal">
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
                             <div class="controls">
@@ -105,11 +102,11 @@
                                 <span class="help-inline">{{iteration.author.name}}</span>
                             </div>
                         </div>
-                    </form>
                 </div>
 
                 <div id="tab-part-attributes" class="tab-pane">
                     <div id="attributes-list" class="attributes attributes-edit"></div>
+
                 </div>
 
                 <div id="tab-part-files" class="tab-pane files">
@@ -128,7 +125,7 @@
                     <div id="iteration-lifecycle"></div>
                 </div>
             </div>
-
+            </form>
         </div>
 
     </div>

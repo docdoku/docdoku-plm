@@ -43,6 +43,14 @@
     }
   }
 
+  .attribute-mandatory {
+    display: none;
+  }
+  &.attributes-locked .attribute-mandatory {
+    display: inline-block;
+  }
+
+
   .controls {
     input[type="date"] {
       display: -webkit-inline-box;
@@ -58,17 +66,19 @@
     text-transform: capitalize;
   }
 
-  input[disabled] {
-    padding: 4px 0;
-    border: none;
-    background: none;
-    box-shadow: none;
+    input[disabled] {
+      padding: 4px 0;
+      border: none;
+      background: none;
+      box-shadow: none;
 
-    &.name{
-      font-weight: bold;
-    }
+      &.name{
+        font-weight: bold;
+      }
   }
 }
+
+
 
 div.attribute-edit {
   @leftWidth: 80px;

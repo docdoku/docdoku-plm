@@ -122,6 +122,7 @@ public class DocumentTemplateResource {
             String documentType = templateCreationDTO.getDocumentType();
             String mask = templateCreationDTO.getMask();
             boolean idGenerated = templateCreationDTO.isIdGenerated();
+            boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
@@ -131,7 +132,7 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
@@ -152,6 +153,7 @@ public class DocumentTemplateResource {
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
             boolean idGenerated = docMsTemplateDTO.isIdGenerated();
+            boolean attributesLocked = docMsTemplateDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
@@ -161,7 +163,7 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
@@ -211,6 +213,7 @@ public class DocumentTemplateResource {
         InstanceAttributeTemplate data = new InstanceAttributeTemplate();
         data.setName(instanceAttributeTemplateDTO.getName());
         data.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(instanceAttributeTemplateDTO.getAttributeType().name()));
+        data.setMandatory(instanceAttributeTemplateDTO.isMandatory());
         return data;
     }
 }

@@ -122,6 +122,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get("lifeCycleState");
         },
 
+        isAttributesLocked:function(){
+            return this.get("attributesLocked");
+        },
+
         checkout: function() {
             $.ajax({
                 context: this,

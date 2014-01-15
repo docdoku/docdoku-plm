@@ -46,6 +46,7 @@ define([
 					collection.unshift({
 						type: attributes[i].attributeType,
 						name: attributes[i].name,
+                        mandatory: attributes[i].mandatory,
 						value: ""
 					});
 				}
@@ -53,6 +54,8 @@ define([
 					this.generate_id(template);
 				}
 			}
+
+            this.attributesView.setAttributesLocked(template.isAttributesLocked());
 			this.attributesView.collection.reset(collection);
 		},
 		generate_id: function (template) {

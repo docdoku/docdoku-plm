@@ -11,7 +11,7 @@ define(
     "common-objects/views/workflow/lifecycle",
     "common-objects/utils/date"
     ],
-    function(ModalView, FileListView, template, i18n, PartAttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection,LifecycleView , date) {
+    function(ModalView, FileListView, template, i18n, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection,LifecycleView , date) {
 
 
         var PartModalView = ModalView.extend({
@@ -110,19 +110,21 @@ define(
 
         initAttributesView:function(){
 
-            var that = this ;
+            var that = this;
 
             this.attributes = new Backbone.Collection();
 
-            this.partAttributesView = new PartAttributesView({
+            this.attributesView = new AttributesView({
                 el:this.$("#attributes-list")
             });
 
-            this.partAttributesView.setEditMode(this.editMode);
-            this.partAttributesView.render();
+            this.attributesView.setAttributesLocked(this.model.isAttributesLocked());
+
+            this.attributesView.setEditMode(this.editMode);
+            this.attributesView.render();
 
             _.each(this.iteration.getAttributes().models ,function(item){
-                that.partAttributesView.addAndFillAttribute(item);
+                that.attributesView.addAndFillAttribute(item);
             });
 
         },
@@ -140,8 +142,8 @@ define(
 
             this.iteration.save({
                 iterationNote: this.$inputIterationNote.val(),
-                instanceAttributes: this.partAttributesView.collection.toJSON(),
                 components : this.partsManagementView.collection.toJSON(),
+                instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success:function(){
                 Backbone.Events.trigger("refresh_tree");

@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.rest.util;
+package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -66,22 +66,22 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
             throw new IllegalArgumentException("Instance attribute not supported");
         }
         
-        return new InstanceAttributeDTO(source.getName(), type, value);
+        return new InstanceAttributeDTO(source.getName(), type, value, source.isMandatory());
     }
 
     @Override
     public InstanceAttribute convertFrom(InstanceAttributeDTO source, InstanceAttribute destination) {
         switch(source.getType()){
             case BOOLEAN:
-                return new InstanceBooleanAttribute(source.getName(), Boolean.parseBoolean(source.getValue()));              
+                return new InstanceBooleanAttribute(source.getName(), Boolean.parseBoolean(source.getValue()), source.isMandatory());
             case DATE:
-                return new InstanceDateAttribute(source.getName(), new Date(Long.parseLong(source.getValue())));                
+                return new InstanceDateAttribute(source.getName(), new Date(Long.parseLong(source.getValue())), source.isMandatory());
             case NUMBER:
-                return new InstanceNumberAttribute(source.getName(), Float.parseFloat(source.getValue()));              
+                return new InstanceNumberAttribute(source.getName(), Float.parseFloat(source.getValue()), source.isMandatory());
             case TEXT:
-                return new InstanceTextAttribute(source.getName(), source.getValue());               
+                return new InstanceTextAttribute(source.getName(), source.getValue(), source.isMandatory());
             case URL:
-                return new InstanceURLAttribute(source.getName(), source.getValue());
+                return new InstanceURLAttribute(source.getName(), source.getValue(), source.isMandatory());
                       
         }
         throw new IllegalArgumentException("Instance attribute not supported");

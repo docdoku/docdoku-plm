@@ -1,9 +1,9 @@
-{{#editMode}}
+{{#lockMode}}
 <div class="controls">
     <a class="icon-remove"></a>
 </div>
 <div class="controls">
-	<select class="type" {{^editMode}}disabled="disabled"{{/editMode}}>
+	<select class="type">
 		<option value="TEXT">{{i18n.TEXT}}</option>
 		<option value="BOOLEAN">{{i18n.BOOLEAN}}</option>
 		<option value="DATE">{{i18n.DATE}}</option>
@@ -11,11 +11,11 @@
 		<option value="URL">{{i18n.URL}}</option>
 	</select>
 </div>
-{{/editMode}}
-{{^editMode}}
+{{/lockMode}}
+{{^lockMode}}
 <div class="controls type">
 </div>
-{{/editMode}}
+{{/lockMode}}
 <div class="controls">
-	<input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required {{^editMode}}disabled="disabled"{{/editMode}} />
+	<input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required {{^lockMode}}disabled="disabled"{{/lockMode}} />
 </div>

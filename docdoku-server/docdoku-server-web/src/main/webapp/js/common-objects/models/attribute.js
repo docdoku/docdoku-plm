@@ -6,6 +6,10 @@ define(function () {
             return this.get("type");
         },
 
+        isMandatory:function () {
+            return this.get("mandatory");
+        },
+
         getName:function () {
             return this.get("name");
         },

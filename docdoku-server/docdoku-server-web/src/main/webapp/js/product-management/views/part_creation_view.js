@@ -71,6 +71,21 @@ define(
             }).render();
         },
 
+        addAttributes:function(template){
+            var that = this ;
+
+            this.attributesView.setAttributesLocked(template.isAttributesLocked());
+
+            _.each(template.get("attributeTemplates"),function(object){
+                that.attributesView.collection.add({
+                    name: object.name,
+                    type: object.attributeType,
+                    mandatory: object.mandatory,
+                    value: ""
+                });
+            });
+        },
+
         onSubmitForm: function(e) {
             this.model = new Part({
                 number: this.$inputPartNumber.val(),
@@ -101,9 +116,18 @@ define(
         },
 
         onPartCreated: function() {
-            this.model.getLastIteration().save({instanceAttributes: this.attributesView.collection.toJSON()});
-            this.trigger('part:created', this.model);
-            this.closeModal();
+            var that = this;
+
+            this.model.getLastIteration().save({instanceAttributes: this.attributesView.collection.toJSON()}, {
+                success: function() {
+                    that.closeModal();
+                    that.model.fetch({
+                        success: function(model) {
+                            that.trigger('part:created', model);
+                        }
+                    });
+                }
+            });
         },
 
         onError: function(model, error) {
@@ -125,7 +149,7 @@ define(
         onChangeTemplate:function(e){
 
             this.resetMask();
-            this.resetAttributes();
+            this.bindAttributesView();
 
 
             var templateId = this.$inputPartTemplate.val();
@@ -155,23 +179,6 @@ define(
         setMask:function(template){
             this.mask = template.get("mask");
             this.$inputPartNumber.mask(this.mask);
-        },
-
-        resetAttributes:function(){
-            this.attributesView = new AttributesView({
-                el: this.$("#tab-attributes")
-            }).render();
-        },
-
-        addAttributes:function(template){
-            var that = this ;
-            _.each(template.get("attributeTemplates"),function(object){
-                that.attributesView.collection.add({
-                    name: object.name,
-                    type: object.attributeType || "TEXT",
-                    value: ""
-                });
-            });
         },
 
         onTemplateCollectionReset:function(){

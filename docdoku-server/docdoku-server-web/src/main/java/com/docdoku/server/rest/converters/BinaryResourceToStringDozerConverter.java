@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.rest.util;
+package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.common.BinaryResource;
 import org.dozer.DozerConverter;

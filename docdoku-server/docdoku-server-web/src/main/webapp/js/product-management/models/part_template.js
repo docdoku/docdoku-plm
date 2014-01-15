@@ -87,6 +87,10 @@ define([
 
         getBaseName:function(){
             return APP_CONFIG.workspaceId + "/part-templates/" + this.get("id");
+        },
+
+        isAttributesLocked:function(){
+            return this.get("attributesLocked");
         }
 
     });

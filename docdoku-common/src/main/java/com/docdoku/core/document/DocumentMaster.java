@@ -136,6 +136,8 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
 
     private boolean publicShared;
 
+    private boolean attributesLocked;
+
     public DocumentMaster() {
     }
     
@@ -418,6 +420,14 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
 
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 
     /**

@@ -69,7 +69,7 @@ public class ProductStructureSampleLoader {
         link.setAmount(1);
         link.setComponent(componentM);
         List<CADInstance> cads = new ArrayList<CADInstance>();
-        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D, CADInstance.Positioning.ABSOLUTE));
+        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D));
         link.setCadInstances(cads);
         subParts.add(link);
 
@@ -125,7 +125,7 @@ public class ProductStructureSampleLoader {
         link.setAmount(1);
         link.setComponent(componentM);
         List<CADInstance> cads = new ArrayList<CADInstance>();
-        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D, CADInstance.Positioning.ABSOLUTE));
+        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D));
         link.setCadInstances(cads);
         subParts.add(link);
 

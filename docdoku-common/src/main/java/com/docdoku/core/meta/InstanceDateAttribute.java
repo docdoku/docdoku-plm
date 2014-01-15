@@ -42,8 +42,8 @@ public class InstanceDateAttribute extends InstanceAttribute{
     public InstanceDateAttribute() {
     }
     
-    public InstanceDateAttribute(String pName, Date pValue) {
-        super(pName);
+    public InstanceDateAttribute(String pName, Date pValue, boolean pMandatory) {
+        super(pName, pMandatory);
         setDateValue(pValue);
     }
 

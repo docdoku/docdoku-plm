@@ -14,6 +14,7 @@ define([
 			this.events["change .type"] = "typeChanged";
 			this.events["change .name"] = "updateName";
 			this.events["click .icon-remove"] = "removeAction";
+            this.events["change .attribute-mandatory input"] = "mandatoryChanged";
 		},
 		rendered: function () {
 			var type = this.model.get("attributeType");
@@ -32,7 +33,12 @@ define([
 			this.model.set({
 				name: this.$el.find("input.name:first").val()
 			});
-		}
+		},
+        mandatoryChanged: function () {
+            this.model.set({
+                mandatory: this.$el.find(".attribute-mandatory input")[0].checked
+            });
+        }
 	});
 	return TemplateNewAttributeListItemView;
 });
