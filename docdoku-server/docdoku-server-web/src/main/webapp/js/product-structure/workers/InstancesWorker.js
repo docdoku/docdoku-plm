@@ -18,7 +18,7 @@ var target=new THREE.Vector3();
 var ct=new THREE.Vector3();
 var maxQualities=0;
 var bestRating = 0;
-
+var maxMeshesOnScene=500;
 var _meshCount = 0, _oldMeshCount = 0;
 
 var Context = {
@@ -184,7 +184,7 @@ function SortMeshes(){
 function SendMeshes(){
 
     // Take out 500 first
-    var bestRatingsMeshes = sortedMeshes.splice(0,500);
+    var bestRatingsMeshes = sortedMeshes.splice(0,maxMeshesOnScene);
 
     bestRatingsMeshes.sort(function(a,b){
         return a.dist>b.dist?1:a.dist< b.dist?-1:0;

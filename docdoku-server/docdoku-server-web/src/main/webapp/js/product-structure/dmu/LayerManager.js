@@ -43,19 +43,11 @@ define([
             );
 
             markerMesh.position.set(marker.getX(), marker.getY(), marker.getZ());
-
             markerMesh.markerId  = marker.cid;
 
-            var self = this;
-/*
-            this.domEvent.bind(markerMesh, 'click', function(){
-                if (self.state != STATE.HIDDEN) {
-                    self.showPopup(marker);
-                }
-            });
-*/
             // add the sphere to the scene
             sceneManager.scene.add( markerMesh );
+            sceneManager.reFrame();
 
             // rescale the marker to the others markers scale
             markerMesh.scale = this.markerScale;
@@ -80,8 +72,8 @@ define([
         },
 
         _removeMesh: function(cid) {
-           // this.domEvent.unbind(this.meshs[cid], 'click');
             sceneManager.scene.remove(this.meshs[cid]);
+            sceneManager.reFrame();
             delete this.meshs[cid];
         },
 
