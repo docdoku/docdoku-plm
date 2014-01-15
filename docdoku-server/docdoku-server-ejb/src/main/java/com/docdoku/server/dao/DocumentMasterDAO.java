@@ -25,6 +25,7 @@ import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentMasterAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentMasterNotFoundException;
+import com.docdoku.core.query.SearchQuery;
 
 import javax.persistence.*;
 import java.util.*;
@@ -47,7 +48,7 @@ public class DocumentMasterDAO {
 
     public List<DocumentMaster> searchDocumentMasters(String pWorkspaceId, String pDocMId, String pTitle,
             String pVersion, String pAuthor, String pType, java.util.Date pCreationDateFrom,
-            java.util.Date pCreationDateTo, Collection<Tag> pTags, Collection<DocumentSearchQuery.AbstractAttributeQuery> pAttrs) {
+            java.util.Date pCreationDateTo, Collection<Tag> pTags, Collection<SearchQuery.AbstractAttributeQuery> pAttrs) {
         StringBuilder queryStr = new StringBuilder();
         queryStr.append("SELECT DISTINCT m FROM DocumentMaster m ");
 
@@ -59,29 +60,29 @@ public class DocumentMasterDAO {
         if (pAttrs != null && pAttrs.size() > 0) {
             queryStr.append("AND d.iteration = (SELECT MAX(d2.iteration) FROM DocumentMaster m2 JOIN m2.documentIterations d2 WHERE m2=m) ");
             int i=0;
-            for(DocumentSearchQuery.AbstractAttributeQuery attr:pAttrs){
+            for(SearchQuery.AbstractAttributeQuery attr:pAttrs){
                 queryStr.append("AND EXISTS (");
-                if(attr instanceof DocumentSearchQuery.DateAttributeQuery){
+                if(attr instanceof SearchQuery.DateAttributeQuery){
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceDateAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".dateValue BETWEEN :attrLValue").append(i).append(" AND :attrUValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.TextAttributeQuery){
+                }else if(attr instanceof SearchQuery.TextAttributeQuery){
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceTextAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".textValue  = :attrValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.NumberAttributeQuery){
+                }else if(attr instanceof SearchQuery.NumberAttributeQuery){
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceNumberAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE ABS(attr").append(i).append(".numberValue - :attrValue").append(i).append(" ) < 0.0001");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.BooleanAttributeQuery){
+                }else if(attr instanceof SearchQuery.BooleanAttributeQuery){
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceBooleanAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".booleanValue  = :attrValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.URLAttributeQuery){
+                }else if(attr instanceof SearchQuery.URLAttributeQuery){
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceURLAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".urlValue  = :attrValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
@@ -123,18 +124,18 @@ public class DocumentMasterDAO {
         
         if (pAttrs != null && pAttrs.size() > 0) {
             int i=0;
-            for(DocumentSearchQuery.AbstractAttributeQuery attr:pAttrs){
-                if(attr instanceof DocumentSearchQuery.TextAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.TextAttributeQuery)attr).getTextValue());
-                }else if(attr instanceof DocumentSearchQuery.URLAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.URLAttributeQuery)attr).getUrlValue());
-                }else if(attr instanceof DocumentSearchQuery.NumberAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.NumberAttributeQuery)attr).getNumberValue());
-                }else if(attr instanceof DocumentSearchQuery.BooleanAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.BooleanAttributeQuery)attr).isBooleanValue());
-                }else if(attr instanceof DocumentSearchQuery.DateAttributeQuery){
-                    query.setParameter("attrLValue" + i, ((DocumentSearchQuery.DateAttributeQuery)attr).getFromDate());
-                    query.setParameter("attrUValue" + i, ((DocumentSearchQuery.DateAttributeQuery)attr).getToDate());
+            for(SearchQuery.AbstractAttributeQuery attr:pAttrs){
+                if(attr instanceof SearchQuery.TextAttributeQuery){
+                    query.setParameter("attrValue" + i, ((SearchQuery.TextAttributeQuery)attr).getTextValue());
+                }else if(attr instanceof SearchQuery.URLAttributeQuery){
+                    query.setParameter("attrValue" + i, ((SearchQuery.URLAttributeQuery)attr).getUrlValue());
+                }else if(attr instanceof SearchQuery.NumberAttributeQuery){
+                    query.setParameter("attrValue" + i, ((SearchQuery.NumberAttributeQuery)attr).getNumberValue());
+                }else if(attr instanceof SearchQuery.BooleanAttributeQuery){
+                    query.setParameter("attrValue" + i, ((SearchQuery.BooleanAttributeQuery)attr).isBooleanValue());
+                }else if(attr instanceof SearchQuery.DateAttributeQuery){
+                    query.setParameter("attrLValue" + i, ((SearchQuery.DateAttributeQuery)attr).getFromDate());
+                    query.setParameter("attrUValue" + i, ((SearchQuery.DateAttributeQuery)attr).getToDate());
                 }
                 query.setParameter("attrName" + (i++), attr.getName());
             }

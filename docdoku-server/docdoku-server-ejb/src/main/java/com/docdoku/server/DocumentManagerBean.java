@@ -25,6 +25,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -125,7 +126,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
 
-        User user = checkDocumentMasterWriteAccess(new DocumentMasterKey(pDocPK.getWorkspaceId(),pDocPK.getDocumentMasterId(),pDocPK.getDocumentMasterVersion()));
+        User user = checkDocumentMasterWriteAccess(new DocumentMasterKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentMasterVersion()));
 
         if (!NamingConvention.correct(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
@@ -518,6 +519,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster[] searchDocumentMasters(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        //esIndexer.indexAllBulk();                                                                                       // Index all resources
+
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentMaster> fetchedDocMs = esIndexer.search(pQuery);                                                   // Get Search Results
 
@@ -529,7 +532,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         while (ite.hasNext()) {
             DocumentMaster docM = ite.next();
 
-            if(docM.getLocation().isPrivate() && (!docM.getCheckOutUser().equals(user)) ){                              // Remove Private DocMaster From Results
+            if(docM.getLocation().isPrivate() && (!docM.getLocation().getOwner().equals(user.getLogin())) ){            // Remove Private DocMaster From Results
                 ite.remove();
                 continue docMBlock;
             }

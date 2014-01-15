@@ -42,7 +42,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 @XmlSeeAlso({DateBasedEffectivityConfigSpec.class, SerialNumberBasedEffectivityConfigSpec.class, LotBasedEffectivityConfigSpec.class})
 @Entity
 @NamedQuery(name="EffectivityConfigSpec.removeEffectivityConfigSpecFromConfigurationItem",query="DELETE FROM EffectivityConfigSpec ec WHERE ec.configurationItem.id = :configurationItemId AND ec.configurationItem.workspace.id = :workspaceId")
-
 public abstract class EffectivityConfigSpec extends ConfigSpec {
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER)

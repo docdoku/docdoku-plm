@@ -110,7 +110,6 @@ public class TagResource {
     @POST
     @Path("/multiple")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createTags(@PathParam("workspaceId") String workspaceId, List<TagDTO> tagsDTO) {
         try {
 
@@ -127,11 +126,10 @@ public class TagResource {
 
     @DELETE
     @Path("{tagId}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId) {
         try {
             documentService.deleteTag(new TagKey(workspaceId, tagId));
-            return Response.status(Response.Status.OK).build();
+            return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

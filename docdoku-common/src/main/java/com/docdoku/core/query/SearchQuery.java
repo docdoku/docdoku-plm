@@ -1,24 +1,4 @@
-/*
- * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
- *
- * This file is part of DocDokuPLM.
- *
- * DocDokuPLM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
- */
-
-package com.docdoku.core.product;
+package com.docdoku.core.query;
 
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
@@ -28,135 +8,65 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Wraps data needed to perform a query on part revisions.
- * 
- * @author Morgan Guimard
- * @version 2.0, 27/01/10
- * @since   V2.0
+ * Wraps data needed to perform a query on document or part revisions.
+ *
+ * @author Taylor LABEJOF
+ * @version 0.1, 03/01/2014
+ * @since   V0.1
  */
-public class PartSearchQuery implements Serializable{
+public class SearchQuery  implements Serializable {
 
-    private String workspaceId;
-    private String partNumber;
-    private String name;
-    private String version;
-    private String author;
-    private String type;
-    private Boolean standardPart;
-    private Date creationDateFrom;
-    private Date creationDateTo;
-    private AbstractAttributeQuery[] attributes;
+    protected String workspaceId;
+    protected String fullText;
+    protected String version;
+    protected String author;
+    protected String type;
+    protected Date creationDateFrom;
+    protected Date creationDateTo;
+    protected AbstractAttributeQuery[] attributes;
 
-
-    public PartSearchQuery(){
-
-    }
-
-    public PartSearchQuery(String workspaceId, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, PartSearchQuery.AbstractAttributeQuery[] attributes, Boolean standardPart){
-        this.workspaceId=workspaceId;
-        this.partNumber=partNumber;
-        this.name=name;
-        this.version=version;
-        this.author=author;
-        this.type=type;
-        this.creationDateFrom=creationDateFrom;
-        this.creationDateTo=creationDateTo;
-        this.attributes=attributes;
-        this.standardPart=standardPart;
-    }
-
-    public String getPartNumber() {
-        return partNumber;
-    }
-
-    public void setPartNumber(String partNumber) {
-        this.partNumber = partNumber;
-    }
-
-    public void setAttributes(AbstractAttributeQuery[] attributes) {
+    public SearchQuery(){}
+    public SearchQuery(String workspaceId, String fullText, String version, String author, String type, Date creationDateFrom, Date creationDateTo, AbstractAttributeQuery[] attributes) {
+        this.workspaceId = workspaceId;
+        this.fullText =fullText;
+        this.version = version;
+        this.author = author;
+        this.type = type;
+        this.creationDateFrom = creationDateFrom;
+        this.creationDateTo = creationDateTo;
         this.attributes = attributes;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setCreationDateFrom(Date creationDateFrom) {
-        this.creationDateFrom = creationDateFrom;
-    }
-
-    public void setCreationDateTo(Date creationDateTo) {
-        this.creationDateTo = creationDateTo;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-
-    public AbstractAttributeQuery[] getAttributes() {
-        return attributes;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public Date getCreationDateFrom() {
-        return creationDateFrom;
-    }
-
-    public Date getCreationDateTo() {
-        return creationDateTo;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean isStandardPart() {
-        return standardPart;
-    }
-
-    public void setStandardPart(Boolean standardPart) {
-        this.standardPart = standardPart;
-    }
+    // Getter
+    public String getWorkspaceId() {return workspaceId;}
+    public String getFullText() {return fullText;}
+    public String getVersion() {return version;}
+    public String getAuthor() {return author;}
+    public String getType() {return type;}
+    public Date getCreationDateFrom() {return creationDateFrom;}
+    public Date getCreationDateTo() {return creationDateTo;}
+    public AbstractAttributeQuery[] getAttributes() {return attributes;}
+    //Setter
+    public void setWorkspaceId(String workspaceId) {this.workspaceId = workspaceId;}
+    public void setFullText(String fullText){this.fullText = fullText;}
+    public void setVersion(String version) {this.version = version;}
+    public void setAuthor(String author) {this.author = author;}
+    public void setType(String type) {this.type = type;}
+    public void setCreationDateFrom(Date creationDateFrom) {this.creationDateFrom = creationDateFrom;}
+    public void setCreationDateTo(Date creationDateTo) {this.creationDateTo = creationDateTo;}
+    public void setAttributes(AbstractAttributeQuery[] attributes) {this.attributes = attributes;}
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})
     public static abstract class AbstractAttributeQuery implements Serializable{
         protected String name;
-        
+
         public String getName() {
             return name;
         }
+        public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
         public void setName(String name) {
             this.name = name;
         }
-        public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
         public AbstractAttributeQuery(){}
         public AbstractAttributeQuery(String name){
             this.name=name;

@@ -25,7 +25,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartSearchQuery;
+import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;

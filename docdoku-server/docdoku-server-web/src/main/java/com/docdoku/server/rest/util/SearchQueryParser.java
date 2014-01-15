@@ -20,8 +20,8 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.document.DocumentSearchQuery;
-import com.docdoku.core.product.PartSearchQuery;
+import com.docdoku.core.query.DocumentSearchQuery;
+import com.docdoku.core.query.PartSearchQuery;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
