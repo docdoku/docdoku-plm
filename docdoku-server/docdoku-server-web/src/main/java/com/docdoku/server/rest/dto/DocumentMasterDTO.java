@@ -57,6 +57,7 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
     private String path;
     private String lifeCycleState;
     private boolean publicShared;
+    private boolean attributesLocked;
 
     @XmlElement(nillable = true)
     private ACLDTO acl;
@@ -249,6 +250,14 @@ public class DocumentMasterDTO implements Serializable, Comparable<DocumentMaste
 
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 
     @Override

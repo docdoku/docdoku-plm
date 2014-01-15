@@ -28,6 +28,7 @@ import java.io.Serializable;
 public class InstanceAttributeDTO  implements Serializable{
     
     private String name;
+    private boolean mandatory;
     private Type type;
     public enum Type {
 
@@ -39,14 +40,15 @@ public class InstanceAttributeDTO  implements Serializable{
     
     }
 
-    public InstanceAttributeDTO(String pName, Type pType, String pValue){
+    public InstanceAttributeDTO(String pName, Type pType, String pValue, Boolean pMandatory){
         this.name=pName;
         this.type=pType;
         this.value=pValue;
+        this.mandatory=pMandatory;
     }
     
-    public InstanceAttributeDTO(String pName, String pType, String pValue){
-        this(pName,InstanceAttributeDTO.Type.valueOf(pType),pValue);
+    public InstanceAttributeDTO(String pName, String pType, String pValue, Boolean pMandatory){
+        this(pName,InstanceAttributeDTO.Type.valueOf(pType),pValue,pMandatory);
     }
     
     public String getName() {
@@ -73,6 +75,11 @@ public class InstanceAttributeDTO  implements Serializable{
         this.value = value;
     }
 
-    
-    
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
 }

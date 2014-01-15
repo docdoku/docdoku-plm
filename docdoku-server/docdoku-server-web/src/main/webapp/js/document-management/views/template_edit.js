@@ -23,7 +23,8 @@ define([
         rendered: function() {
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: "#tab-attributes-" + this.cid
+                    el: "#tab-attributes-" + this.cid,
+                    attributesLocked: this.model.isAttributesLocked()
                 })
             );
             this.attributesView.render();
@@ -54,7 +55,8 @@ define([
                 documentType: $("#form-" + this.cid + " .type").val(),
                 mask: $("#form-" + this.cid + " .mask").val(),
                 idGenerated: $("#form-" + this.cid + " .id-generated").is(':checked'),
-                attributeTemplates: this.attributesView.collection.toJSON()
+                attributeTemplates: this.attributesView.collection.toJSON(),
+                attributesLocked:this.attributesView.isAttributesLocked()
             }, {
                 success: this.success,
                 error: this.error

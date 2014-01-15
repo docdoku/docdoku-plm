@@ -41,8 +41,8 @@ public class InstanceNumberAttribute extends InstanceAttribute{
     public InstanceNumberAttribute() {
     }
     
-    public InstanceNumberAttribute(String pName, float pValue) {
-        super(pName);
+    public InstanceNumberAttribute(String pName, float pValue, boolean pMandatory) {
+        super(pName, pMandatory);
         setNumberValue(pValue);
     }
 

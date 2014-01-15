@@ -39,8 +39,8 @@ public class InstanceURLAttribute extends InstanceAttribute {
     public InstanceURLAttribute() {
     }
 
-    public InstanceURLAttribute(String pName, String pValue) {
-        super(pName);
+    public InstanceURLAttribute(String pName, String pValue, boolean pMandatory) {
+        super(pName, pMandatory);
         setUrlValue(pValue);
     }
 

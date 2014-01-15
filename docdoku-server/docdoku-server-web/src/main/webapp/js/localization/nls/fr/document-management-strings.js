@@ -149,5 +149,7 @@ define({
     CURRENT_WORKFLOW:               "Workflow en cours",
     "UNDO_CHECKOUT_?":              "Annuler la réservation ?",
     ALL_TASKS:                      "Toutes",
-    TASKS_IN_PROGRESS:              "En cours"
+    TASKS_IN_PROGRESS:              "En cours",
+    LOCK_ATTRIBUTES:                "Geler la structure des attributs",
+    MANDATORY:                      "Obligatoire"
 });

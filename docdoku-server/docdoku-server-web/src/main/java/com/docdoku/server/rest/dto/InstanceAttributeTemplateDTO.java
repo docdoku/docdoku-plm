@@ -26,6 +26,9 @@ import java.io.Serializable;
 public class InstanceAttributeTemplateDTO implements Serializable {
 
     private String name;
+
+    private boolean mandatory;
+
     private AttributeType attributeType;
 
     public enum AttributeType {
@@ -35,9 +38,10 @@ public class InstanceAttributeTemplateDTO implements Serializable {
     public InstanceAttributeTemplateDTO() {
     }
 
-    public InstanceAttributeTemplateDTO(String pName, AttributeType pAttributeType) {
+    public InstanceAttributeTemplateDTO(String pName, AttributeType pAttributeType, boolean pMandatory) {
         name = pName;
         attributeType = pAttributeType;
+        mandatory = pMandatory;
     }
 
     
@@ -47,6 +51,14 @@ public class InstanceAttributeTemplateDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 
     public InstanceAttributeTemplateDTO.AttributeType getAttributeType() {

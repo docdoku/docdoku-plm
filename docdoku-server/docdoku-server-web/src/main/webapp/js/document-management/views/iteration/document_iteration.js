@@ -134,21 +134,23 @@ define([
             this.tabs = this.$('.nav-tabs li');
 
 
-            this.customAttributesView =
+            this.attributesView =
                 this.addSubView(
                     new DocumentAttributesView({
                         el:"#iteration-additional-attributes-container"
                     })
             );
 
-            this.customAttributesView.setEditMode(editMode);
-            this.customAttributesView.render();
+            this.attributesView.setAttributesLocked(this.model.isAttributesLocked());
+
+            this.attributesView.setEditMode(editMode);
+            this.attributesView.render();
 
             var that = this;
 
             if (this.model.hasIterations()) {
                 this.iteration.getAttributes().each(function (item) {
-                    that.customAttributesView.addAndFillAttribute(item);
+                    that.attributesView.addAndFillAttribute(item);
                 });
 
                 this.fileListView = new FileListView({
@@ -201,18 +203,11 @@ define([
         },
 
         onSubmitForm:function(e){
-            // prevent page reload when pressing enter
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        },
-
-        primaryAction: function() {
 
             /*saving iteration*/
             this.iteration.save({
                 revisionNote: this.$('#inputRevisionNote').val(),
-                instanceAttributes: this.customAttributesView.collection.toJSON(),
+                instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             });
 
@@ -231,14 +226,18 @@ define([
             this.fileListView.deleteFilesToDelete();
 
             /*
-            * Delete tags if needed
-            * */
+             * Delete tags if needed
+             * */
 
             this.deleteClickedTags();
 
 
             this.hide();
 
+            // prevent page reload when pressing enter
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
 
         cancelAction: function() {

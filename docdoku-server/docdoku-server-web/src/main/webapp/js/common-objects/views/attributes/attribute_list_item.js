@@ -9,6 +9,8 @@ define([
 
         editMode: true,
 
+        attributesLocked: false,
+
         setEditMode: function(editMode) {
             this.editMode = editMode;
         },
@@ -23,7 +25,7 @@ define([
 
 		rendered: function() {
 			var type = this.model.get("type");
-            if(this.editMode){
+            if(this.editMode && !this.attributesLocked){
 			    this.$el.find("select.type").val(type);
             }
             else{
@@ -66,10 +68,16 @@ define([
             this.deleteSubViews();
             var partials = this.partials ? this.partials : null;
             var data = this.renderData();
+            data.lockMode = this.editMode && !this.attributesLocked;
             data.editMode = this.editMode;
+            data.attribute = this.model.attributes;
             this.$el.html(this.template(data, partials));
             this.rendered();
             return this;
+        },
+
+        setAttributesLocked: function(attributesLocked) {
+            this.attributesLocked = attributesLocked;
         }
 
 	});

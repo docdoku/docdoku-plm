@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License  
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
-package com.docdoku.server.rest.util;
+package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;

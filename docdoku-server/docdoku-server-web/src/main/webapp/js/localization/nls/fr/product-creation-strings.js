@@ -23,6 +23,8 @@ define({
     VISUALIZE_PRODUCT:"Visualiser le produit",
     NEW_PART_TEMPLATE:"Nouveau modèle d'article",
     WORKFLOW:"Workflow",
-    ACL:"Droits"
+    ACL:"Droits",
+    LOCK_ATTRIBUTES:"Geler la structure des attributs",
+    MANDATORY:"Obligatoire"
 
 });

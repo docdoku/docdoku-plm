@@ -49,6 +49,7 @@ public class PartDTO implements Serializable {
     private boolean publicShared;
     @XmlElement(nillable = true)
     private ACLDTO acl;
+    private boolean attributesLocked;
 
     public PartDTO() {
     }
@@ -179,5 +180,13 @@ public class PartDTO implements Serializable {
 
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 }

@@ -41,8 +41,8 @@ public class InstanceTextAttribute extends InstanceAttribute{
     public InstanceTextAttribute() {
     }
     
-    public InstanceTextAttribute(String pName, String pValue) {
-        super(pName);
+    public InstanceTextAttribute(String pName, String pValue, boolean pMandatory) {
+        super(pName, pMandatory);
         setTextValue(pValue);
     }
 

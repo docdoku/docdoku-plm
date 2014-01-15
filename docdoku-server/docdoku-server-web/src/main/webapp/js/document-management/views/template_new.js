@@ -37,7 +37,8 @@ define([
 					documentType: $("#form-" + this.cid + " .type").val(),
 					mask: $("#form-" + this.cid + " .mask").val(),
 					idGenerated: $("#form-" + this.cid + " .id-generated").is(':checked'),
-					attributeTemplates: this.attributesView.collection.toJSON()
+					attributeTemplates: this.attributesView.collection.toJSON(),
+                    attributesLocked:this.attributesView.isAttributesLocked()
 				}, {
                     wait: true,
 					success: this.success,

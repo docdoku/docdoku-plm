@@ -301,6 +301,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         getACLPermissionForCurrentUser:function(){
             return ACLChecker.getPermission(this.get("acl"));
+        },
+
+        isAttributesLocked:function(){
+            return this.get("attributesLocked");
         }
 
     });
