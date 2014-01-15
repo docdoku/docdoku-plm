@@ -206,6 +206,7 @@ define([
          * */
 
         addMesh: function (mesh) {
+            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
             this.scene.add(mesh);
             this.applyExplosionCoeff(mesh);
             this.applyWireFrame(mesh);
@@ -399,6 +400,7 @@ define([
                     self.applyExplosionCoeff(child);
                 }
             });
+            this.reFrame()
         },
 
         applyExplosionCoeff: function (mesh) {
@@ -508,8 +510,10 @@ define([
                 0.5
             );
 
-            var cameraPosition = this.cameraObject.position;
-            this.projector.unprojectVector(vector, this.cameraObject);
+            var cameraPosition = this.controlsObject.getObject().position;
+            var object = this.cameraObject;
+
+            this.projector.unprojectVector(vector, object);
 
             var ray = new THREE.Raycaster(cameraPosition, vector.sub(cameraPosition).normalize());
             var intersects = ray.intersectObjects(this.scene.children, false);

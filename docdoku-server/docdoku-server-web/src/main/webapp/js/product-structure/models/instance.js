@@ -65,8 +65,6 @@ Instance.prototype = {
             mesh.partIterationId = self.partIterationId;
             var m = new THREE.Matrix4(self.matrix[0],self.matrix[1],self.matrix[2],self.matrix[3],self.matrix[4],self.matrix[5],self.matrix[6],self.matrix[7],self.matrix[8],self.matrix[9],self.matrix[10],self.matrix[11],self.matrix[12],self.matrix[13],self.matrix[14],self.matrix[15]);
             mesh.applyMatrix(m);
-            //VisualizationUtils.rotateAroundWorldAxis(mesh, self.rotation.x, self.rotation.y, self.rotation.z);
-            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
             mesh.overdraw = true;
             sceneManager.addMesh(mesh);
         });

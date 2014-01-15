@@ -226,7 +226,6 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
                 var instance = instancesIndexed[uuid];
 
                 if (!instance) {
-                    console.log("cannot find instance");
                     queue.taskOver();
                     return;
                 }
@@ -256,7 +255,7 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
 
                             applyMatrix(instance);
 
-                            sceneManager.scene.add(instance.mesh);
+                            sceneManager.addMesh(instance.mesh);
 
                             queue.taskOver();
                         });
