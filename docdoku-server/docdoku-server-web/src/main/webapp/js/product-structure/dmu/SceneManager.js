@@ -380,6 +380,7 @@ define([
                     self.applyWireFrame(child);
                 }
             });
+            this.reFrame();
         },
 
         applyWireFrame: function (mesh) {
