@@ -64,6 +64,7 @@ public class AccessRightsTest {
 
     @Deployment
     public static Archive<?> createDeployment() {
+
         return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
                 .addPackage(Account.class.getPackage())
                 .addPackage(Workspace.class.getPackage())
@@ -90,7 +91,6 @@ public class AccessRightsTest {
                         Credential.class,
                         IWorkspaceManagerLocal.class,
                         WorkspaceManagerBean.class
-
                 )
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("WEB-INF/sun-web.xml")
