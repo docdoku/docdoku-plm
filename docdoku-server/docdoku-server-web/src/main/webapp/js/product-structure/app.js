@@ -192,9 +192,9 @@ define(
             var urlRoot = splitUrl[0] + "//" + splitUrl[2];
 
             var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
-                + '?cameraX=' + sceneManager.camera.position.x
-                + '&cameraY=' + sceneManager.camera.position.y
-                + '&cameraZ=' + sceneManager.camera.position.z;
+                + '?cameraX=' + sceneManager.cameraObject.position.x
+                + '&cameraY=' + sceneManager.cameraObject.position.y
+                + '&cameraZ=' + sceneManager.cameraObject.position.z;
 
             if(this.partsTreeView.componentSelected.getPath()){
                 iframeSrc += '&pathToLoad=' + this.partsTreeView.componentSelected.getPath();
