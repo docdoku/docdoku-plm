@@ -165,9 +165,11 @@
                 _(this.aclUserGroupEntries).each(function(aclEntry){
                     dto.groupEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()});
                 });
+                return dto;
             }
 
-            return dto;
+            return null;
+
         },
 
         onSubmit:function(e){

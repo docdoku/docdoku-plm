@@ -82,7 +82,6 @@ public class Tools {
        
        docMsDTO.setTags(null);
        docMsDTO.setWorkflow(null);
-       docMsDTO.setAcl(null);
 
        return docMsDTO;
    }

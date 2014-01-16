@@ -123,10 +123,6 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
-                ACL acl = docMs[i].getACL();
-                if(acl != null){
-                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
-                }
             }
 
             return docMsDTOs;
@@ -148,10 +144,6 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
-                ACL acl = docMs[i].getACL();
-                if(acl != null){
-                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
-                }
             }
 
             return docMsDTOs;
@@ -174,10 +166,6 @@ public class DocumentsResource {
                 docMsDTOs[i].setLifeCycleState(docMs[i].getLifeCycleState());
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
-                ACL acl = docMs[i].getACL();
-                if(acl != null){
-                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
-                }
             }
 
             return docMsDTOs;
@@ -197,10 +185,6 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
-                ACL acl = docMs[i].getACL();
-                if(acl != null){
-                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
-                }
             }
 
             return docMsDTOs;
@@ -236,10 +220,6 @@ public class DocumentsResource {
                 docDTO = Tools.createLightDocumentMasterDTO(docDTO);
                 docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
                 docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docMs[i]));
-                ACL acl = docMs[i].getACL();
-                if(acl != null){
-                    docDTO.setAcl(Tools.mapACLtoACLDTO(acl));
-                }
                 docMsDTOs.add(docDTO);
 
             }
@@ -268,10 +248,6 @@ public class DocumentsResource {
                 docMsDTOs[i] = Tools.createLightDocumentMasterDTO(docMsDTOs[i]);
                 docMsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
                 docMsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docMs[i]));
-                ACL acl = docMs[i].getACL();
-                if(acl != null){
-                    docMsDTOs[i].setAcl(Tools.mapACLtoACLDTO(acl));
-                }
             }
 
             return docMsDTOs;

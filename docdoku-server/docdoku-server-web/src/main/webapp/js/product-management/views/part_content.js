@@ -218,10 +218,10 @@ define([
 
             aclEditView.on("acl:update",function(){
 
-                var acl = aclEditView.toList() ;
+                var acl = aclEditView.toList();
 
                 selectedPart.updateACL({
-                    acl:acl,
+                    acl:acl||{userEntries:{},groupEntries:{}},
                     success:function(){
                         selectedPart.set("acl",acl);
                         aclEditView.closeModal();

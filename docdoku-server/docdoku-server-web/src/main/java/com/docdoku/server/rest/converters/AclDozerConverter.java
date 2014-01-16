@@ -58,9 +58,10 @@ public class AclDozerConverter extends DozerConverter<ACL, ACLDTO> {
                 ACLUserGroupEntry aclEntry = entry.getValue();
                 aclDTO.addGroupEntry(aclEntry.getPrincipalId(),aclEntry.getPermission());
             }
+            return aclDTO;
         }
 
-        return aclDTO;
+        return null;
     }
 
     @Override

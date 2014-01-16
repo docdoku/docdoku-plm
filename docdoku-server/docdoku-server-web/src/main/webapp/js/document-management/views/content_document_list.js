@@ -252,9 +252,11 @@ define([
 
                     aclEditView.openModal();
                     aclEditView.on("acl:update",function(){
-                        var acl = aclEditView.toList() ;
+
+                        var acl = aclEditView.toList();
+
                         documentChecked.updateACL({
-                            acl:acl,
+                            acl: acl||{userEntries:{},groupEntries:{}},
                             success:function(){
                                 documentChecked.set("acl",acl);
                                 aclEditView.closeModal();
