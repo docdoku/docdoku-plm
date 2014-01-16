@@ -49,11 +49,14 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     protected String name = "";
 
+    protected boolean mandatory;
+
     public InstanceAttribute() {
     }
 
-    public InstanceAttribute(String pName) {
+    public InstanceAttribute(String pName, boolean pMandatory) {
         name = pName;
+        mandatory = pMandatory;
     }
 
     public String getName() {
@@ -62,6 +65,14 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 
     @Override

@@ -28,7 +28,7 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.*;
 import com.docdoku.core.exceptions.*;
-import com.sun.appserv.security.ProgrammaticLogin;
+import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -54,7 +54,7 @@ public class TestEJBBean {
     @PersistenceContext
     private EntityManager em;
 
-    private com.sun.appserv.security.ProgrammaticLogin loginP = new ProgrammaticLogin();
+    private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
 
 

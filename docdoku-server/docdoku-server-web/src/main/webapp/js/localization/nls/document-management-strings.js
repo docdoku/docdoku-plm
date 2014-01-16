@@ -149,7 +149,9 @@ define({
         WORKFLOW_HISTORY:               "History",
         CURRENT_WORKFLOW:               "Current workflow",
         ALL_TASKS:                      "All",
-        TASKS_IN_PROGRESS:              "In progress"
+        TASKS_IN_PROGRESS:              "In progress",
+        LOCK_ATTRIBUTES:                "Freeze attributes structure",
+        MANDATORY:                      "Mandatory"
 
     },
     "fr": true,

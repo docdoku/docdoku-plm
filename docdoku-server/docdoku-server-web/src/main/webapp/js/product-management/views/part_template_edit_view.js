@@ -27,9 +27,11 @@ define(
 
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: "#tab-attributes"
+                    el: "#tab-attributes",
+                    attributesLocked: this.model.isAttributesLocked()
                 })
             ).render();
+
 
             this.fileListView = new FileListView({
                 baseName: this.model.getBaseName(),
@@ -75,7 +77,8 @@ define(
                 partType:this.$partTemplateType.val(),
                 mask: this.$partTemplateMask.val(),
                 idGenerated:  this.$partTemplateIdGenerated.is(":checked"),
-                attributeTemplates:this.attributesView.collection.toJSON()
+                attributeTemplates:this.attributesView.collection.toJSON(),
+                attributesLocked:this.attributesView.isAttributesLocked()
             }, {
                 wait: true,
                 success: this.onPartTemplateCreated,

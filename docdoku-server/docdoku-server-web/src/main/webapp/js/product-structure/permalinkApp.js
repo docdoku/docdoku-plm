@@ -7,28 +7,22 @@ define(["models/part_iteration_visualization","dmu/SceneManager","dmu/InstancesM
         this.fileName = fileName;
 
         SceneManager.prototype.initRenderer = function() {
-            this.renderer = new THREE.WebGLRenderer();
+            this.renderer = new THREE.WebGLRenderer({alpha: true});
             this.renderer.setSize(width, height);
             this.$container.append(this.renderer.domElement);
         };
 
-        SceneManager.prototype.initPermalinkScene = function() {
-            this.init();
-            var self = this;
-            instancesManager.loadMeshFromFile(fileName, function(mesh){
-
-                THREE.GeometryUtils.center(mesh.geometry);
-                mesh.initialPosition=mesh.position;
-
-                self.addMesh(mesh);
-                self.camera.lookAt(mesh.position);
-            });
-        };
-
         instancesManager = new InstancesManager();
-        instancesManager.init();
         sceneManager = new SceneManager();
-        sceneManager.initPermalinkScene();
+
+        instancesManager.init();
+        sceneManager.init();
+
+        instancesManager.loadMeshFromFile(fileName, function(mesh){
+            THREE.GeometryUtils.center(mesh.geometry);
+            mesh.initialPosition=mesh.position;
+            sceneManager.addMesh(mesh);
+        });
 
     }
 

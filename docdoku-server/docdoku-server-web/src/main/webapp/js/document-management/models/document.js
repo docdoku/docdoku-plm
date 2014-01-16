@@ -173,18 +173,33 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         },
 
+        removeTag: function(tag, callback) {
+            $.ajax({
+                type: "DELETE",
+                url:this.url() + "/tags/" +tag,
+                success: function() {
+                    callback();
+                }
+            });
+        },
+
         removeTags: function(tags, callback) {
-            var baseUrl = this.url() + "/tags/"
+            var baseUrl = this.url() + "/tags/";
+            var count = 0;
+            var total = _(tags).length;
             _(tags).each(function(tag){
                 $.ajax({
                     type: "DELETE",
                     url:baseUrl+tag,
                     success: function() {
-                       // callback();
+                        count ++;
+                        if(count >= total){
+                            callback();
+                        }
                     }
                 });
             });
-            callback();
+
         },
 
         createNewVersion: function(title, description, workflow, roleMappingList, aclList) {
@@ -288,6 +303,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         getACLPermissionForCurrentUser:function(){
             return ACLChecker.getPermission(this.get("acl"));
+        },
+
+        isAttributesLocked:function(){
+            return this.get("attributesLocked");
         }
 
     });

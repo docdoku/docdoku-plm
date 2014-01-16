@@ -24,119 +24,118 @@
                 <li><a href="#tab-iteration-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
             </ul>
 
-            <div id="form-{{view.cid}}" class="tab-content form-horizontal">
-                <div id="tab-iteration-document" class="tab-pane active">
-                    <form class="form-horizontal">
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.PATH}}</label>
-                            <div class="controls">
-                                <span class="help-inline"><a class="document-path"><i class="icon-folder-close"></i> {{master.path}}</a></span>
+            <form id="form-document" class="form-horizontal">
+
+                <div id="form-{{view.cid}}" class="tab-content form-horizontal">
+                    <div id="tab-iteration-document" class="tab-pane active">
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.PATH}}</label>
+                                <div class="controls">
+                                    <span class="help-inline"><a class="document-path"><i class="icon-folder-close"></i> {{master.path}}</a></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.REFERENCE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.id}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.REFERENCE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.id}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.AUTHOR}}</label>
-                            <div class="controls">
-                                <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.AUTHOR}}</label>
+                                <div class="controls">
+                                    <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.CREATION_DATE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.creationDate}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.CREATION_DATE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.creationDate}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.TYPE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.type}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.TYPE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.type}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.TITLE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.title}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.TITLE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.title}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
-                            <div class="controls">
-                                <span class="help-inline"><a class="checkout-user-popover">{{master.checkOutUser.name}}</a></span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
+                                <div class="controls">
+                                    <span class="help-inline"><a class="checkout-user-popover">{{master.checkOutUser.name}}</a></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.CHECKOUT_DATE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.checkOutDate}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.CHECKOUT_DATE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.checkOutDate}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.lifeCycleState}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.lifeCycleState}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.DESCRIPTION}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{master.description}}</span>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.DESCRIPTION}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{master.description}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.TAGS}}</label>
-                            <div class="controls">
-                                <ul class="help-inline master-tags-list unstyled"></ul>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.TAGS}}</label>
+                                <div class="controls">
+                                    <ul class="help-inline master-tags-list unstyled"></ul>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                    </div>
+                    <div id="tab-iteration-iteration" class="tab-pane">
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.REFERENCE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{reference}}</span>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
+                                <div class="controls">
+                                    <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^editMode}}disabled="disabled"{{/editMode}} />
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{iteration.creationDate}}</span>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.AUTHOR}}</label>
+                                <div class="controls">
+                                    <span class="help-inline">{{iteration.author.name}}</span>
+                                </div>
+                            </div>
+                    </div>
+                    <div id="tab-iteration-attributes" class="tab-pane attributes">
+                        <div id="iteration-additional-attributes-container" class="attributes-edit"></div>
+                        <div id="iteration-attributes"></div>
+                    </div>
+                    <div id="tab-iteration-files" class="tab-pane files">
+                        <div id="iteration-files"></div>
+                    </div>
+                    <div id="tab-iteration-lifecycle" class="tab-pane">
+                        <div id="iteration-lifecycle"></div>
+                    </div>
+                    <div id="tab-iteration-links" class="tab-pane">
+                        <div id="iteration-links"></div>
+                    </div>
                 </div>
-                <div id="tab-iteration-iteration" class="tab-pane">
-                    <form class="form-horizontal">
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.REFERENCE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{reference}}</span>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
-                            <div class="controls">
-                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}" {{^editMode}}disabled="disabled"{{/editMode}} />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{iteration.creationDate}}</span>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.AUTHOR}}</label>
-                            <div class="controls">
-                                <span class="help-inline">{{iteration.author.name}}</span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div id="tab-iteration-attributes" class="tab-pane attributes">
-                    <div id="iteration-additional-attributes-container" class="attributes-edit"></div>
-                    <div id="iteration-attributes"></div>
-                </div>
-                <div id="tab-iteration-files" class="tab-pane files">
-                    <div id="iteration-files"></div>
-                </div>
-                <div id="tab-iteration-lifecycle" class="tab-pane">
-                    <div id="iteration-lifecycle"></div>
-                </div>
-                <div id="tab-iteration-links" class="tab-pane">
-                    <div id="iteration-links"></div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
     <div class="modal-footer">
@@ -155,12 +154,12 @@
 
         {{#editMode}}
         <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
-        <button id="save-iteration" class="btn btn-primary" form="form-{{view.cid}}">
+        <button id="save-iteration" class="btn btn-primary" form="form-document">
             {{i18n.SAVE}}
         </button>
         {{/editMode}}
         {{^editMode}}
-        <button id="close-iteration" class="btn cancel close-iteration" form="form-{{view.cid}}">
+        <button id="close-iteration" class="btn cancel close-iteration" form="form-document">
             {{i18n.CLOSE}}
         </button>
         {{/editMode}}

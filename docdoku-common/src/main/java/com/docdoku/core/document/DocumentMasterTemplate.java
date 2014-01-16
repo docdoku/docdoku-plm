@@ -86,6 +86,8 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
             }
     )
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
+
+    private boolean attributesLocked;
     
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
@@ -172,7 +174,15 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         pAttributeTemplates.removeAll(attributeTemplates);
         attributeTemplates.addAll(pAttributeTemplates);
     }
-    
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
+    }
+
     public void setAuthor(User pAuthor) {
         author = pAuthor;
     }

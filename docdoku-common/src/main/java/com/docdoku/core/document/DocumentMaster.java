@@ -68,6 +68,8 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     @OrderBy("version ASC")
     private List<DocumentRevision> documentRevisions = new ArrayList<>();
 
+    private boolean attributesLocked;
+
     public DocumentMaster() {
     }
     
@@ -211,6 +213,14 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         else
             return id.compareTo(pDocM.id);
 
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 
     /**

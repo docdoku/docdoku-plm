@@ -11,6 +11,7 @@ public class PartTemplateCreationDTO {
     private String mask;
     private String attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private boolean attributesLocked;
 
     public PartTemplateCreationDTO(){
     }
@@ -66,6 +67,14 @@ public class PartTemplateCreationDTO {
 
     public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 
     public String getReference() {

@@ -40,8 +40,8 @@ public class InstanceBooleanAttribute extends InstanceAttribute{
     public InstanceBooleanAttribute() {
     }
     
-    public InstanceBooleanAttribute(String pName, boolean pValue) {
-        super(pName);
+    public InstanceBooleanAttribute(String pName, boolean pValue, boolean pMandatory) {
+        super(pName, pMandatory);
         setBooleanValue(pValue);
     }
 

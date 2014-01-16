@@ -33,6 +33,6 @@ public class MetaData {
     }
 
     public InstanceAttribute toInstanceAttribute() {
-        return new InstanceTextAttribute(title, value);
+        return new InstanceTextAttribute(title, value, false);
     }
 }

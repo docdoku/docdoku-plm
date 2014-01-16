@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
+import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
@@ -65,6 +66,7 @@ public class AccessRightsTest {
 
     @Deployment
     public static Archive<?> createDeployment() {
+
         return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
                 .addPackage(Account.class.getPackage())
                 .addPackage(Workspace.class.getPackage())
@@ -90,8 +92,8 @@ public class AccessRightsTest {
                         WorkspaceUserMembership.class,
                         Credential.class,
                         IWorkspaceManagerLocal.class,
-                        WorkspaceManagerBean.class
-
+                        WorkspaceManagerBean.class,
+                        JsonValue.class
                 )
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("WEB-INF/sun-web.xml")

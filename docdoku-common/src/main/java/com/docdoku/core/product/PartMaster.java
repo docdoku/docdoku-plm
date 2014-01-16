@@ -106,6 +106,8 @@ public class PartMaster implements Serializable {
     private List<PartRevision> partRevisions = new ArrayList<PartRevision>();
 
     private boolean standardPart;
+
+    private boolean attributesLocked;
     
     public PartMaster() {
     }
@@ -235,6 +237,14 @@ public class PartMaster implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 
     @Override

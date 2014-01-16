@@ -135,9 +135,12 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
 
+
+
                     this.BinaryLoader.load(filename, function (geometry, materials) {
+                        var _material = new THREE.MeshPhongMaterial( {color: materials[0].color,  overdraw: true } );
                         geometry.dynamic = false;
-                        callback(new THREE.Mesh(geometry, material));
+                        callback(new THREE.Mesh(geometry, _material));
                     }, texturePath);
 
                     break;

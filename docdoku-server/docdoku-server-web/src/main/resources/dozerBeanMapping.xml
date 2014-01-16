@@ -6,23 +6,23 @@
 
     <configuration>
         <custom-converters> <!-- these are always bi-directional -->
-            <converter type="com.docdoku.server.rest.util.BinaryResourceToStringDozerConverter" >
+            <converter type="com.docdoku.server.rest.converters.BinaryResourceToStringDozerConverter" >
                 <class-a>com.docdoku.core.common.BinaryResource</class-a>
                 <class-b>java.lang.String</class-b>
             </converter>
-            <converter type="com.docdoku.server.rest.util.InstanceAttributeDozerConverter" >
+            <converter type="com.docdoku.server.rest.converters.InstanceAttributeDozerConverter" >
                 <class-a>com.docdoku.core.meta.InstanceAttribute</class-a>
                 <class-b>com.docdoku.server.rest.dto.InstanceAttributeDTO</class-b>
             </converter>
-            <converter type="com.docdoku.server.rest.util.ActivityModelDozerConverter" >
+            <converter type="com.docdoku.server.rest.converters.ActivityModelDozerConverter" >
                 <class-a>com.docdoku.core.workflow.ActivityModel</class-a>
                 <class-b>com.docdoku.server.rest.dto.ActivityModelDTO</class-b>
             </converter>
-            <converter type="com.docdoku.server.rest.util.ActivityDozerConverter" >
+            <converter type="com.docdoku.server.rest.converters.ActivityDozerConverter" >
                 <class-a>com.docdoku.core.workflow.Activity</class-a>
                 <class-b>com.docdoku.server.rest.dto.ActivityDTO</class-b>
             </converter>
-            <converter type="com.docdoku.server.rest.util.AclDozerConverter" >
+            <converter type="com.docdoku.server.rest.converters.AclDozerConverter" >
                 <class-a>com.docdoku.core.security.ACL</class-a>
                 <class-b>com.docdoku.server.rest.dto.ACLDTO</class-b>
             </converter>
@@ -32,7 +32,7 @@
     <mapping>
         <class-a>com.docdoku.core.document.DocumentIteration</class-a>
         <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
-        <field custom-converter="com.docdoku.server.rest.util.MapToListDozerConverter">
+        <field custom-converter="com.docdoku.server.rest.converters.MapToListDozerConverter">
             <a>instanceAttributes</a>
             <b>instanceAttributes</b>
             <a-hint>java.util.HashMap</a-hint>
@@ -64,7 +64,7 @@
     <mapping>
         <class-a>com.docdoku.core.product.PartIteration</class-a>
         <class-b>com.docdoku.server.rest.dto.PartIterationDTO</class-b>
-        <field custom-converter="com.docdoku.server.rest.util.MapToListDozerConverter">
+        <field custom-converter="com.docdoku.server.rest.converters.MapToListDozerConverter">
             <a>instanceAttributes</a>
             <b>instanceAttributes</b>
             <a-hint>java.util.HashMap</a-hint>

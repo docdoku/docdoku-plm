@@ -40,6 +40,7 @@ public class DocumentTemplateCreationDTO implements Serializable{
 
     private List<String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private boolean attributesLocked;
     
     public DocumentTemplateCreationDTO(){
         
@@ -108,4 +109,11 @@ public class DocumentTemplateCreationDTO implements Serializable{
         this.reference = reference;
     }
 
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
+    }
 }

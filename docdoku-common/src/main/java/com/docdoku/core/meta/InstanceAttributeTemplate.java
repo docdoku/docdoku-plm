@@ -41,6 +41,8 @@ public class InstanceAttributeTemplate implements Serializable {
     @Column(length=50)
     private String name = "";
 
+    private  boolean mandatory;
+
     private AttributeType attributeType;
 
     public enum AttributeType {
@@ -72,6 +74,14 @@ public class InstanceAttributeTemplate implements Serializable {
         this.name = name;
     }
 
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
     public InstanceAttributeTemplate.AttributeType getAttributeType() {
         return attributeType;
     }
@@ -85,25 +95,24 @@ public class InstanceAttributeTemplate implements Serializable {
         switch (attributeType) {
             case TEXT:
                 attr = new InstanceTextAttribute();
-                attr.setName(name);
                 break;
             case NUMBER:
                 attr = new InstanceNumberAttribute();
-                attr.setName(name);
                 break;
             case BOOLEAN:
                 attr = new InstanceBooleanAttribute();
-                attr.setName(name);
                 break;
             case DATE:
                 attr = new InstanceDateAttribute();
-                attr.setName(name);
                 break;
             case URL :
                 attr = new InstanceURLAttribute();
-                attr.setName(name);
                 break;
         }
+
+        attr.setName(name);
+        attr.setMandatory(mandatory);
+
         return attr;
     }
 

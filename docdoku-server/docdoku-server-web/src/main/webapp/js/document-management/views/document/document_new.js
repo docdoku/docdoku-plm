@@ -8,7 +8,7 @@ define([
 	"text!templates/document/document_new.html"
 ], function (
 	ModalView,
-	DocumentAttributesView,
+	AttributesView,
 	DocumentTemplateListView,
 	DocumentWorkflowListView,
     DocumentWorkflowMappingView,
@@ -27,7 +27,7 @@ define([
         rendered: function() {
 
             this.attributesView = this.addSubView(
-                new DocumentAttributesView({
+                new AttributesView({
                     el: "#tab-attributes-" + this.cid
                 })
             );
@@ -97,10 +97,10 @@ define([
             }, {
                 success: function() {
                     that.hide();
+                    model.fetch();
                 },
                 error: this.error
             });
-            model.fetch();
         },
 
         error: function(model, error) {
