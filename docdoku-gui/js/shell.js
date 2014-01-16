@@ -4,7 +4,7 @@ define(function(){
 
     var WindowsCMD = {
         explore:function(path){
-            return 'start "'+path+'"';
+            return 'explorer "'+path+'"';
         }
     };
 
