@@ -1,3 +1,4 @@
+/*global sceneManager*/
 define([
     "collections/layer_collection",
     "models/layer",

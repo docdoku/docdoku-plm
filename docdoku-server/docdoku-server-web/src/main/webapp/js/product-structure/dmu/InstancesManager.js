@@ -19,16 +19,6 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
 
     var instancesIndexed=[];
 
-    function cleanAndRemoveMesh(object){
-        disposeQueue.add(object);
-        sceneManager.scene.remove(object);
-    }
-
-    function applyMatrix(instanceRaw){
-        var m = new THREE.Matrix4(instanceRaw.matrix[0],instanceRaw.matrix[1],instanceRaw.matrix[2],instanceRaw.matrix[3],instanceRaw.matrix[4],instanceRaw.matrix[5],instanceRaw.matrix[6],instanceRaw.matrix[7],instanceRaw.matrix[8],instanceRaw.matrix[9],instanceRaw.matrix[10],instanceRaw.matrix[11],instanceRaw.matrix[12],instanceRaw.matrix[13],instanceRaw.matrix[14],instanceRaw.matrix[15]);
-        instanceRaw.mesh.applyMatrix(m);
-    }
-
     var disposeQueue = {
         _q:[],
         disposeInALoop:8,
@@ -72,7 +62,7 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
                 try{
                     n();
                 }catch(e){
-                    console.log("Exception while executing a task : ")
+                    console.log("Exception while executing a task : ");
                     console.log(e);
                     queue.count--;
                 }
@@ -83,6 +73,16 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
             queue.next();
         }
     };
+
+    function cleanAndRemoveMesh(object){
+        disposeQueue.add(object);
+        sceneManager.scene.remove(object);
+    }
+
+    function applyMatrix(instanceRaw){
+        var m = new THREE.Matrix4(instanceRaw.matrix[0],instanceRaw.matrix[1],instanceRaw.matrix[2],instanceRaw.matrix[3],instanceRaw.matrix[4],instanceRaw.matrix[5],instanceRaw.matrix[6],instanceRaw.matrix[7],instanceRaw.matrix[8],instanceRaw.matrix[9],instanceRaw.matrix[10],instanceRaw.matrix[11],instanceRaw.matrix[12],instanceRaw.matrix[13],instanceRaw.matrix[14],instanceRaw.matrix[15]);
+        instanceRaw.mesh.applyMatrix(m);
+    }
 
     var findQualities = function (files) {
         var q = [];
@@ -98,7 +98,7 @@ define(["models/part_iteration_visualization", "dmu/LoaderManager"], function (P
                r = f.radius;
            }
         });
-        return r || 1;
+        return r || 1;
     };
     var InstancesManager = function () {
         this.partIterations = [];

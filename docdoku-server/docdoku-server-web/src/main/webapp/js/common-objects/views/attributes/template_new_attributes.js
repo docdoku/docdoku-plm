@@ -21,8 +21,9 @@ define([
 			this.events["click .add"] = this.addAttribute;
             this.events["change .lock input"] = this.attributesLockedChange;
 
-            if(this.options.attributesLocked)
+            if(this.options.attributesLocked){
                 this.attributesLocked = this.options.attributesLocked;
+            }
 		},
 
 		rendered: function () {

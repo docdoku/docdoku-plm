@@ -92,7 +92,7 @@ define(
                 instancesManager.init();
                 sceneManager.init();
             }catch(ex){
-                console.log("Got exception in dmu")
+                console.log("Got exception in dmu");
                 this.onNoWebGLSupport();
             }
 

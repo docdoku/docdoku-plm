@@ -67,7 +67,6 @@
 
             this.admin = new Admin();
             this.admin.fetch({reset:true,success:function(){
-                console.log(that.acl)
 
                 that.useACL = false ;
 
@@ -161,10 +160,10 @@
 
             if(this.useACL){
                 _(this.aclUserEntries).each(function(aclEntry){
-                    dto.userEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()})
+                    dto.userEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()});
                 });
                 _(this.aclUserGroupEntries).each(function(aclEntry){
-                    dto.groupEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()})
+                    dto.groupEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()});
                 });
             }
 

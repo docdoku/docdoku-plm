@@ -42,7 +42,9 @@ THREE.PointerLockControls = function ( camera ) {
 
 	var onMouseMove = function ( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
 
@@ -58,7 +60,9 @@ THREE.PointerLockControls = function ( camera ) {
 
 	var onKeyDown = function ( event ) {
 
-        if ( scope.enabled === false ) return;
+        if ( scope.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
 
@@ -93,7 +97,9 @@ THREE.PointerLockControls = function ( camera ) {
 
 	var onKeyUp = function ( event ) {
 
-        if ( scope.enabled === false ) return;
+        if ( scope.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
 
@@ -176,13 +182,15 @@ THREE.PointerLockControls = function ( camera ) {
 
 			return v;
 
-		}
+		};
 
 	}();
 
 	this.update = function ( delta ) {
 
-		if ( scope.enabled === false ) return;
+        if ( scope.enabled === false ){
+            return;
+        }
 
 		delta *= 0.1;
 

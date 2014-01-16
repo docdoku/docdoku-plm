@@ -38,7 +38,7 @@ define(
                         var partNumbers = [];
                         _(data).each(function(d){
                             partNumbers.push(d.partNumber);
-                        })
+                        });
                         process(partNumbers);
                     });
                 }

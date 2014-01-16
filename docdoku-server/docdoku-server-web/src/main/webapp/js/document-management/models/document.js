@@ -184,20 +184,22 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         removeTags: function(tags, callback) {
-            var baseUrl = this.url() + "/tags/"
-            var count = 0
+            var baseUrl = this.url() + "/tags/";
+            var count = 0;
+            var total = _(tags).length;
             _(tags).each(function(tag){
                 $.ajax({
                     type: "DELETE",
                     url:baseUrl+tag,
                     success: function() {
                         count ++;
+                        if(count >= total){
+                            callback();
+                        }
                     }
                 });
             });
-            if(count >= _(tags).length){
-                callback();
-            }
+
         },
 
         createNewVersion: function(title, description, workflow, roleMappingList, aclList) {

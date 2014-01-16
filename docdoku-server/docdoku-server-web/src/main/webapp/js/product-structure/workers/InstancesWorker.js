@@ -80,14 +80,28 @@ var Context = {
     },
 
     cameraChanged:function() {
-        if(_camera.x!=camera.x) return true;
-        if(_camera.y!=camera.y) return true;
-        if(_camera.z!=camera.z) return true;
-        if(_target.x!=target.x) return true;
-        if(_target.y!=target.y) return true;
-        if(_target.z!=target.z) return true;
+        if(_camera.x!=camera.x){
+            return true;
+        }
+        if(_camera.y!=camera.y){
+            return true;
+        }
+        if(_camera.z!=camera.z){
+            return true;
+        }
+        if(_target.x!=target.x){
+            return true;
+        }
+        if(_target.y!=target.y){
+            return true;
+        }
+        if(_target.z!=target.z){
+            return true;
+        }
 
-        if(_meshCount != _oldMeshCount) return true;
+        if(_meshCount != _oldMeshCount){
+            return true;
+        }
 
         return false;
     },
@@ -108,31 +122,6 @@ var Context = {
 
 };
 
-self.addEventListener('message', function(message) {
-
-    if(message.data.context){
-        Context.setFromMessage(message.data.context);
-        if(Context.changed()){
-            ComputeMeshesRatings();
-            SortMeshes();
-            SendMeshes();
-        }
-        _oldMeshCount=_meshCount;
-    }
-    else if(message.data.mesh){
-        Context.addMesh(message.data.mesh);
-    }
-    else if(message.data.unCheck){
-        Context.unCheckMesh(message.data.unCheck);
-    }
-    else if(message.data.check){
-        Context.checkMesh(message.data.check);
-    }
-    else if(message.data.clear){
-        Context.clear();
-    }
-
-}, false);
 
 function ComputeMeshesRatings(){
 
@@ -203,6 +192,15 @@ function SendMeshes(){
 
 }
 
+// Tells the scene to load a mesh in given quality
+function sendMesh(mesh,quality){
+    // If quality has change, tell the main thread to change it
+    if(mesh.currentQuality != quality){
+        mesh.currentQuality = quality;
+        self.postMessage({uuid:mesh.uuid,quality:quality,overall:mesh.globalRating/bestRating});
+    }
+}
+
 function sendMeshesWithQuality(_meshes,quality){
     _(_meshes).each(function(mesh){
         if(mesh.checked){
@@ -220,14 +218,6 @@ function sendMeshesWithQuality(_meshes,quality){
     });
 }
 
-// Tells the scene to load a mesh in given quality
-function sendMesh(mesh,quality){
-    // If quality has change, tell the main thread to change it
-    if(mesh.currentQuality != quality){
-        mesh.currentQuality = quality;
-        self.postMessage({uuid:mesh.uuid,quality:quality,overall:mesh.globalRating/bestRating});
-    }
-}
 
 function splitArrayIntoArrays(a, n) {
     var len = a.length,out = [], i = 0;
@@ -237,3 +227,30 @@ function splitArrayIntoArrays(a, n) {
     }
     return out;
 }
+
+
+self.addEventListener('message', function(message) {
+
+    if(message.data.context){
+        Context.setFromMessage(message.data.context);
+        if(Context.changed()){
+            ComputeMeshesRatings();
+            SortMeshes();
+            SendMeshes();
+        }
+        _oldMeshCount=_meshCount;
+    }
+    else if(message.data.mesh){
+        Context.addMesh(message.data.mesh);
+    }
+    else if(message.data.unCheck){
+        Context.unCheckMesh(message.data.unCheck);
+    }
+    else if(message.data.check){
+        Context.checkMesh(message.data.check);
+    }
+    else if(message.data.clear){
+        Context.clear();
+    }
+
+}, false);

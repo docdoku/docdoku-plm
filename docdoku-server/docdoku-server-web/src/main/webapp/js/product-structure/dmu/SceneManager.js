@@ -1,4 +1,4 @@
-/*global sceneManager,Instance,instancesManager*/
+/*global sceneManager,Instance,instancesManager,requestAnimationFrame*/
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -403,7 +403,7 @@ define([
                     self.applyExplosionCoeff(child);
                 }
             });
-            this.reFrame()
+            this.reFrame();
         },
 
         applyExplosionCoeff: function (mesh) {
