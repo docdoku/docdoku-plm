@@ -113,7 +113,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     private Folder location;
 
     @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="DOCUMENTMASTER_TAG",
+    @JoinTable(name="DOCUMENTREVISION_TAG",
     inverseJoinColumns={
         @JoinColumn(name="TAG_LABEL", referencedColumnName="LABEL"),
         @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
