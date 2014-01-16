@@ -195,7 +195,7 @@
                     <c:if test="${documentRevision.lastIteration.linkedDocuments.size()!=0}">
                         <ul>
                             <c:forEach var="item" items="${documentRevision.lastIteration.linkedDocuments}">
-                                <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li>
+                                <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentRevisionVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentRevisionVersion}-${item.targetDocumentIteration}</a></li>
                             </c:forEach>
                         </ul>
                     </c:if>
