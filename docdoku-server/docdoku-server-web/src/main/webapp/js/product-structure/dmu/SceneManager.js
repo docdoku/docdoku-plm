@@ -246,6 +246,7 @@ define([
 
             // Remove trackball controls
             this.trackBallControls.removeEventListener("change", this.render);
+            this.scene.remove(this.trackBallCamera);
             this.trackBallControls.enabled = false;
 
             this.scene.remove(this.camera);
@@ -307,6 +308,7 @@ define([
 
             this.pointerLockCamera = new THREE.PerspectiveCamera(45, this.$container.width() / this.$container.height(), 1, 50000);
             this.pointerLockControls = new THREE.PointerLockControls(this.pointerLockCamera);
+            this.addLightsToCamera(this.pointerLockCamera);
         },
 
         bindPointerLock: function (event) {
