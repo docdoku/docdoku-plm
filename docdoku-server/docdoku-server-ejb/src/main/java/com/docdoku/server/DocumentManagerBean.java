@@ -49,7 +49,6 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
@@ -518,37 +517,40 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMaster[] searchDocumentMasters(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        //esIndexer.indexAllBulk();                                                                                       // Index all resources
+    public DocumentMaster[] searchDocumentMasters(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
+        esIndexer.indexAll();                                                                                           // Index all resources
 
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentMaster> fetchedDocMs = esIndexer.search(pQuery);                                                   // Get Search Results
 
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        if(!fetchedDocMs.isEmpty()){
+            Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
+            boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
-        ListIterator<DocumentMaster> ite = fetchedDocMs.listIterator();
-        docMBlock:
-        while (ite.hasNext()) {
-            DocumentMaster docM = ite.next();
+            ListIterator<DocumentMaster> ite = fetchedDocMs.listIterator();
+            docMBlock:
+            while (ite.hasNext()) {
+                DocumentMaster docM = ite.next();
 
-            if(docM.getLocation().isPrivate() && (!docM.getLocation().getOwner().equals(user.getLogin())) ){            // Remove Private DocMaster From Results
-                ite.remove();
-                continue docMBlock;
+                if(docM.getLocation().isPrivate() && (!docM.getLocation().getOwner().equals(user.getLogin())) ){            // Remove Private DocMaster From Results
+                    ite.remove();
+                    continue docMBlock;
+                }
+
+                if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {                                      // Remove CheckedOut DocMaster From Results
+                    docM = docM.clone();
+                    docM.removeLastIteration();
+                    ite.set(docM);
+                }
+
+                if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {                              // Check Rigth Acces
+                    ite.remove();
+                    continue;
+                }
             }
-
-            if ((docM.isCheckedOut()) && (!docM.getCheckOutUser().equals(user))) {                                      // Remove CheckedOut DocMaster From Results
-                docM = docM.clone();
-                docM.removeLastIteration();
-                ite.set(docM);
-            }
-
-            if (!isAdmin && docM.getACL() != null && !docM.getACL().hasReadAccess(user)) {                              // Check Rigth Acces
-                ite.remove();
-                continue;
-            }
+            return fetchedDocMs.toArray(new DocumentMaster[fetchedDocMs.size()]);
         }
-        return fetchedDocMs.toArray(new DocumentMaster[fetchedDocMs.size()]);
+        return new DocumentMaster[0];
     }
 
     @RolesAllowed("users")
@@ -1005,7 +1007,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster saveTags(DocumentMasterKey pDocMPK, String[] pTags)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IndexerServerException {
         User user = checkDocumentMasterWriteAccess(pDocMPK);
 
         Locale userLocale = new Locale(user.getLanguage());
@@ -1065,7 +1067,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster removeTag(DocumentMasterKey pDocMPK, String pTag)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentMasterNotFoundException, NotAllowedException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentMasterNotFoundException, NotAllowedException, IndexerServerException {
 
         User user = checkDocumentMasterWriteAccess(pDocMPK);
 
@@ -1119,7 +1121,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMaster checkInDocument(DocumentMasterKey pDocMPK)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IndexerServerException {
 
         User user = checkDocumentMasterWriteAccess(pDocMPK);
 
@@ -1142,9 +1144,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 gcmNotifier.sendIterationNotification(gcmAccounts, docM);
             }
 
-            esIndexer.index(docM.getLastIteration());                                                                   // Index the last iteration in ElasticSearch
+            //esIndexer.index(docM.getLastIteration());                                                                 // Index the last iteration in ElasticSearch
+            for(DocumentIteration docIteration :docM.getDocumentIterations()){
+                esIndexer.index(docIteration);                                                                          // Index all iterations in ElasticSearch (decrease old iteration boost factor)
+            }
 
-            for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
+/*            for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
                 try {
                     InputStream inputStream = dataManager.getBinaryResourceInputStream(bin);
                     //indexer.addToIndex(bin.getFullName(), inputStream);
@@ -1152,7 +1157,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     e.printStackTrace();
                 }
             }
-
+*/
             return docM;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
@@ -1162,7 +1167,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentMasterKey[] deleteFolder(String pCompletePath)
-            throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException {
+            throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, IndexerServerException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
@@ -1185,7 +1190,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                             e.printStackTrace();
                         }
                     }
-                    esIndexer.rmIndex(doc);                                                                             // Remove ElasticSearch Index for this DocumentIteration
+                    esIndexer.delete(doc);                                                                             // Remove ElasticSearch Index for this DocumentIteration
                 }
             }
             return pks;
@@ -1222,7 +1227,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public void deleteDocumentMaster(DocumentMasterKey pDocMPK)
-            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+            throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IndexerServerException {
 
         User user = checkDocumentMasterWriteAccess(pDocMPK);
         DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
@@ -1249,7 +1254,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     e.printStackTrace();
                 }
 
-                esIndexer.rmIndex(doc);                                                                                 // Remove ElasticSearch Index for this DocumentIteration
+                esIndexer.delete(doc);                                                                                 // Remove ElasticSearch Index for this DocumentIteration
             }
         }
     }

@@ -1,9 +1,29 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2013 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.docdoku.server.esindexer;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.DocumentMasterNotFoundException;
+import com.docdoku.core.exceptions.IndexerServerException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -39,7 +59,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.ejb.*;
-import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,22 +66,19 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
  * Search Method using ElasticSearch API.
- *
  * @author Taylor LABEJOF
- * @version 0.1, 03/01/2014
- * @since   V0.1
  */
-@Singleton(name="ESIndexer")
-@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@Stateless(name="ESIndexer")
 public class ESIndexer{
-    public static final String HOST = "localhost";
-    public static final int PORT = 9300;
-    private Client client;
+    private static final String HOST = "localhost";
+    private static final int PORT = 9300;
 
     @PersistenceContext
     private EntityManager em;
@@ -77,106 +93,49 @@ public class ESIndexer{
     /**
      * Create a ElasticSearch Client to make QueryRequest
      */
-    private void createClient(){
-        if(client== null){
-            client = new TransportClient()
-                    .addTransportAddress(new InetSocketTransportAddress(HOST, PORT));
-        }
-    }
-
-    /**
-     * Close connexion with the ElasticSearch Server
-     */
-    private void closeClient(){
-        if(client != null){
-            client.close();
-            client = null;
+    private Client createClient() throws IndexerServerException {
+        try{
+            return new TransportClient().addTransportAddress(new InetSocketTransportAddress(HOST, PORT));
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
     /**
      * Index all content in all workspace
-     * @return True if all index success
-     */
-    public boolean indexAll(){
-        return (indexAllDocument() && indexAllPart());
-    }
-
-    /**
-     * Index all content in all workspace, using bulkRequest
-     * @return True if all index success
      */
     @Asynchronous
-    @Lock(LockType.WRITE)
-    public void indexAllBulk(){
-        createClient();
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
-        WorkspaceDAO wDAO = new WorkspaceDAO(em);
-        DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
-        PartMasterDAO partMasterDAO = new PartMasterDAO(em);
-        for(Workspace w : wDAO.getAll()){
-            for(DocumentMaster docMaster : docMasterDAO.getAllByWorkspace(w.getId())){
-                for(DocumentIteration docIte : docMaster.getDocumentIterations()){
-                    bulkRequest.add(indexRequest(docIte));
-                }
-            }
-            for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(w.getId())){
-                for(PartRevision partRev : partMaster.getPartRevisions()){
-                    for(PartIteration partIte : partRev.getPartIterations()){
-                        bulkRequest.add(indexRequest(partIte));
-                    }
-                }
-            }
-        }
-
-        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-        closeClient();
-        if (bulkResponse.hasFailures()) {                                                                               // TODO Failure case
-            System.out.println(bulkResponse.buildFailureMessage());
-        }
-    }
-
-    /**
-     * Index all document in all workspace
-     * @return True if the index of all documents success
-     */
-    public boolean indexAllDocument(){
+    public void indexAll() throws IndexerServerException {
         try{
+            Client client = createClient();
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
+            PartMasterDAO partMasterDAO = new PartMasterDAO(em);
             for(Workspace w : wDAO.getAll()){
                 for(DocumentMaster docMaster : docMasterDAO.getAllByWorkspace(w.getId())){
                     for(DocumentIteration docIte : docMaster.getDocumentIterations()){
-                        index(docIte);
+                        bulkRequest.add(indexRequest(client, docIte));
                     }
                 }
-            }
-            return true;
-        }catch (NoNodeAvailableException e){
-            return false;
-        }
-    }
-
-    /**
-     * Index all document in all workspace
-     * @return True if the index of all parts success
-     */
-    public boolean indexAllPart(){
-        try{
-            WorkspaceDAO wDAO = new WorkspaceDAO(em);
-            PartMasterDAO partMasterDAO = new PartMasterDAO(em);
-            for(Workspace w : wDAO.getAll()){
                 for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(w.getId())){
                     for(PartRevision partRev : partMaster.getPartRevisions()){
                         for(PartIteration partIte : partRev.getPartIterations()){
-                            index(partIte);
+                            bulkRequest.add(indexRequest(client, partIte));
                         }
                     }
                 }
             }
-            return true;
+
+            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+            client.close();
+            if (bulkResponse.hasFailures()) {                                                                               // TODO Failure case
+                System.out.println(bulkResponse.buildFailureMessage());
+            }
         }catch (NoNodeAvailableException e){
-            return false;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -185,18 +144,15 @@ public class ESIndexer{
      * @param doc The document iteration to index
      */
     @Asynchronous
-    @Lock(LockType.WRITE)
-    public void index(DocumentIteration doc){
+    public void index(DocumentIteration doc) throws IndexerServerException {
         try{
-            XContentBuilder jsonDoc = documentIterationToJSON(doc);
-            createClient();
-            client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                    .setSource(jsonDoc)
-                    .execute()
-                    .actionGet();
-            closeClient();
+            Client client = createClient();
+            indexRequest(client, doc).execute()
+                                     .actionGet();
+            client.close();
         }catch (NoNodeAvailableException e){
-            e.printStackTrace();
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -205,50 +161,15 @@ public class ESIndexer{
      * @param part The part iteration to index
      */
     @Asynchronous
-    @Lock(LockType.WRITE)
-    public void index(PartIteration part){
+    public void index(PartIteration part) throws IndexerServerException {
         try{
-            XContentBuilder jsonDoc = partIterationToJSON(part);
-            createClient();
-            client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
-                    .setSource(jsonDoc)
-                    .execute()
-                    .actionGet();
-            closeClient();
+            Client client = createClient();
+            indexRequest(client, part).execute()
+                              .actionGet();
+            client.close();
         }catch (NoNodeAvailableException e){
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Get the Index request for a documentIteration in ElasticSearch Cluster
-     * @param doc The document iteration to index
-     */
-    private IndexRequestBuilder indexRequest(DocumentIteration doc){
-        try{
-            XContentBuilder jsonDoc = documentIterationToJSON(doc);
-            IndexRequestBuilder irb = client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                    .setSource(jsonDoc);
-            return irb;
-        }catch (NoNodeAvailableException e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Get the Index request for a partIteration in ElasticSearch Cluster
-     * @param part The part iteration to index
-     */
-    private IndexRequestBuilder indexRequest(PartIteration part){
-        try{
-            XContentBuilder jsonDoc = partIterationToJSON(part);
-            IndexRequestBuilder irb = client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
-                    .setSource(jsonDoc);
-            return irb;
-        }catch (NoNodeAvailableException e){
-            e.printStackTrace();
-            return null;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -256,24 +177,36 @@ public class ESIndexer{
      * Remove this docIteration from ElasticSearch Cluster
      * @param doc The document iteration to remove from index
      */
-    public void rmIndex(DocumentIteration doc){
-        createClient();
-        client.prepareDelete(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                .execute()
-                .actionGet();
-        closeClient();
+    @Asynchronous
+    public void delete(DocumentIteration doc) throws IndexerServerException {
+        try{
+            Client client = createClient();
+            client.prepareDelete(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
+                    .execute()
+                    .actionGet();
+            client.close();
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }
     }
 
     /**
      * Remove this partIteration from ElasticSearch Cluster
      * @param part The part iteration to remove from index
      */
-    public void rmIndex(PartIteration part){
-        createClient();
-        client.prepareDelete(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
-                .execute()
-                .actionGet();
-        closeClient();
+    @Asynchronous
+    public void delete(PartIteration part) throws IndexerServerException {
+        try{
+            Client client = createClient();
+            client.prepareDelete(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
+                    .execute()
+                    .actionGet();
+            client.close();
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }
     }
 
     /**
@@ -281,11 +214,11 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentMaster> search(DocumentSearchQuery docQuery){
+    public List<DocumentMaster> search(DocumentSearchQuery docQuery) throws IndexerServerException {
         try{
-            createClient();
-            QueryBuilder qr = getDocumentQueryBuilder(docQuery);
-            SearchRequestBuilder srb = getSearchRequest(docQuery.getWorkspaceId().toLowerCase(), "document", qr);
+            Client client = createClient();
+            QueryBuilder qr = getQueryBuilder(docQuery);
+            SearchRequestBuilder srb = getSearchRequest(client, docQuery.getWorkspaceId().toLowerCase(), "document", qr);
             SearchResponse sr = srb.execute().actionGet();
 
 
@@ -294,17 +227,20 @@ public class ESIndexer{
                 SearchHit hit = sr.getHits().getAt(i);
                 Map<String,Object> source = hit.getSource();
                 DocumentMasterKey docMasterKey = new DocumentMasterKey(extractValue(source, "workspaceId"),extractValue(source, "docMId"),extractValue(source, "version"));
-                if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
-                    listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                try {
+                    if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
+                        listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                    }
+                } catch (DocumentMasterNotFoundException e) {
+                    e.printStackTrace();                                                                                    // TODO DocNotfound error
                 }
             }
 
-            closeClient();
+            client.close();
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
-            return null;
-        }catch (Exception e){
-            return null;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -313,11 +249,11 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery
      * @return List of part revision
      */
-    public List<PartRevision> search(PartSearchQuery partQuery){
+    public List<PartRevision> search(PartSearchQuery partQuery) throws IndexerServerException {
         try{
-            createClient();
-            QueryBuilder qr = getPartQueryBuilder(partQuery);
-            SearchRequestBuilder srb = getSearchRequest(partQuery.getWorkspaceId().toLowerCase(), "part", qr);
+            Client client = createClient();
+            QueryBuilder qr = getQueryBuilder(partQuery);
+            SearchRequestBuilder srb = getSearchRequest(client, partQuery.getWorkspaceId().toLowerCase(), "part", qr);
             SearchResponse sr = srb.execute().actionGet();
 
             List<PartRevision> listOfParts = new ArrayList<>();
@@ -325,19 +261,21 @@ public class ESIndexer{
                 SearchHit hit = sr.getHits().getAt(i);
                 Map<String,Object> source = hit.getSource();
                 PartRevisionKey partRevisionKey = new PartRevisionKey(extractValue(source, "workspaceId"), extractValue(source, "partNumber"), extractValue(source, "version"));
-                if(!listOfParts.contains(new PartRevisionDAO(em).loadPartR(partRevisionKey))){
-                    listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
+                try {
+                    if(!listOfParts.contains(new PartRevisionDAO(em).loadPartR(partRevisionKey))){
+                        listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
+                    }
+                } catch (PartRevisionNotFoundException e) {
+                    e.printStackTrace();                                                                                    // TODO PartNotFound error
                 }
             }
-            closeClient();
+            client.close();
             return listOfParts;
-
         }catch (NoNodeAvailableException e){
-            return null;
-        } catch (PartRevisionNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
+
     }
 
     /**
@@ -345,67 +283,50 @@ public class ESIndexer{
      * @param query PartSearchQuery
      * @return List of part revision
      */
-    public List<Objects> search(SearchQuery query){
+    public List<Object> search(SearchQuery query) throws IndexerServerException {
         try{
-            createClient();
+            Client client = createClient();
             QueryBuilder qr = getQueryBuilder(query);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
-            srbm.add(getSearchRequest(query.getWorkspaceId().toLowerCase(), "document", qr));
-            srbm.add(getSearchRequest(query.getWorkspaceId().toLowerCase(), "part", qr));
+            srbm.add(getSearchRequest(client, query.getWorkspaceId().toLowerCase(), "document", qr));
+            srbm.add(getSearchRequest(client, query.getWorkspaceId().toLowerCase(), "part", qr));
             MultiSearchResponse srm = srbm.execute().actionGet();
 
-            List<DocumentMaster> listOfDocuments = new ArrayList<>();
+            List<Object> ret= new ArrayList<>();
             MultiSearchResponse.Item sri = srm.getResponses()[0];
             SearchResponse sr = sri.getResponse();
             for(int i=0; i<sr.getHits().getHits().length;i++){
                 SearchHit hit = sr.getHits().getAt(i);
                 Map<String,Object> source = hit.getSource();
                 DocumentMasterKey docMasterKey = new DocumentMasterKey(source.get("workspaceId").toString(),source.get("docMId").toString(),source.get("version").toString());
-                if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
-                    listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                try {
+                    if(!ret.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
+                        ret.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                    }
+                } catch (DocumentMasterNotFoundException e) {
+                    e.printStackTrace();                                                                                    // TODO DocNotFound error
                 }
             }
 
-            List<PartRevision> listOfParts = new ArrayList<>();
             sri = srm.getResponses()[1];
             sr = sri.getResponse();
             for(int i=0; i<sr.getHits().getHits().length;i++){
                 SearchHit hit = sr.getHits().getAt(i);
                 Map<String,Object> source = hit.getSource();
                 PartRevisionKey partRevisionKey = new PartRevisionKey(source.get("workspaceId").toString(), source.get("partNumber").toString(), source.get("version").toString());
-                if(!listOfParts.contains(new PartRevisionDAO(em).loadPartR(partRevisionKey))){
-                    listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
+                try {
+                    if(!ret.contains(new PartRevisionDAO(em).loadPartR(partRevisionKey))){
+                        ret.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
+                    }
+                } catch (PartRevisionNotFoundException e) {
+                    e.printStackTrace();                                                                                // TODO PartNotFound error
                 }
             }
-            closeClient();
-            List ret= new ArrayList();
-            ret.addAll(listOfDocuments);
-            ret.addAll(listOfParts);
+            client.close();
             return ret;
         }catch (NoNodeAvailableException e){
-            return null;
-        } catch (PartRevisionNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (DocumentMasterNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Extract a value from a ES result
-     *
-     * @param source Source of a ES hit
-     * @param key Key of the field to extract
-     * @return The value of the field "key"
-     */
-    private String extractValue(Map<String, Object> source, String key){
-        Object ret = source.get(key);
-        if(ret instanceof List){
-            return ((List) ret).get(0).toString();
-        }else{
-            return ret.toString();
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -414,14 +335,14 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentMaster> searchInAllWorkspace(DocumentSearchQuery docQuery){
+    public List<DocumentMaster> searchInAllWorkspace(DocumentSearchQuery docQuery) throws IndexerServerException {
         try{
-            createClient();
-            QueryBuilder qr = getDocumentQueryBuilder(docQuery);
+            Client client = createClient();
+            QueryBuilder qr = getQueryBuilder(docQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for(Workspace w : wDAO.getAll()){
-                srbm.add(getSearchRequest(w.getId().toLowerCase(), "document", qr));
+                srbm.add(getSearchRequest(client, w.getId().toLowerCase(), "document", qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -434,18 +355,21 @@ public class ESIndexer{
                         SearchHit hit = sr.getHits().getAt(i);
                         Map<String,Object> source = hit.getSource();
                         DocumentMasterKey docMasterKey = new DocumentMasterKey(source.get("workspaceId").toString(),source.get("docMId").toString(),source.get("version").toString());
-                        if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
-                            listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                        try {
+                            if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
+                                listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                            }
+                        } catch (DocumentMasterNotFoundException e) {
+                            e.printStackTrace();                                                                        //TODO DocumentNotFound Error
                         }
                     }
                 }
             }
-            closeClient();
+            client.close();
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
-            return null;
-        }catch (Exception e){
-            return null;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -454,14 +378,14 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery
      * @return List of part revision
      */
-    public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery){
+    public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws IndexerServerException {
         try{
-            createClient();
-            QueryBuilder qr = getPartQueryBuilder(partQuery);
+            Client client = createClient();
+            QueryBuilder qr = getQueryBuilder(partQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for(Workspace w : wDAO.getAll()){
-                srbm.add(getSearchRequest(partQuery.getWorkspaceId().toLowerCase(), "part", qr));
+                srbm.add(getSearchRequest(client, w.getId().toLowerCase(), "part", qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -474,21 +398,22 @@ public class ESIndexer{
                         SearchHit hit = sr.getHits().getAt(i);
                         Map<String,Object> source = hit.getSource();
                         PartRevisionKey partRevisionKey = new PartRevisionKey(source.get("workspaceId").toString(), source.get("partNumber").toString(), source.get("version").toString());
-                        if(!listOfParts.contains(new PartRevisionDAO(em).loadPartR(partRevisionKey))){
-                            listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
+                        try {
+                            if(!listOfParts.contains(new PartRevisionDAO(em).loadPartR(partRevisionKey))){
+                                listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
+                            }
+                        } catch (PartRevisionNotFoundException e) {
+                            e.printStackTrace();                                                                            // TODO PartNotFound Error
                         }
                     }
                 }
             }
 
-            createClient();
+            client.close();
             return listOfParts;
-
         }catch (NoNodeAvailableException e){
-            return null;
-        } catch (PartRevisionNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -497,16 +422,42 @@ public class ESIndexer{
      * @param query PartSearchQuery
      * @return List of part revision
      */
-    public List<Objects> searchInAllWorkspace(SearchQuery query){                                                       // TODO Optimize it
-        try{
-            List<DocumentMaster> listOfDocuments = searchInAllWorkspace((DocumentSearchQuery) query);
-            List<PartRevision> listOfParts = searchInAllWorkspace((PartSearchQuery) query);
+    public List<Object> searchInAllWorkspace(SearchQuery query) throws IndexerServerException {                                                       // TODO Optimize it
+        List<DocumentMaster> listOfDocuments = searchInAllWorkspace((DocumentSearchQuery) query);
+        List<PartRevision> listOfParts = searchInAllWorkspace((PartSearchQuery) query);
 
-            List ret= new ArrayList();
-            ret.addAll(listOfDocuments);
-            ret.addAll(listOfParts);
-            return ret;
+        List<Object> ret= new ArrayList<>();
+        ret.addAll(listOfDocuments);
+        ret.addAll(listOfParts);
+        return ret;
+    }
+
+    /**
+     * Get the Index request for a documentIteration in ElasticSearch Cluster
+     * @param doc The document iteration to index
+     */
+    private IndexRequestBuilder indexRequest(Client client, DocumentIteration doc){
+        try{
+            XContentBuilder jsonDoc = documentIterationToJSON(doc);
+            return client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
+                         .setSource(jsonDoc);
         }catch (NoNodeAvailableException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Get the Index request for a partIteration in ElasticSearch Cluster
+     * @param part The part iteration to index
+     */
+    private IndexRequestBuilder indexRequest(Client client, PartIteration part){
+        try{
+            XContentBuilder jsonDoc = partIterationToJSON(part);
+            return client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
+                         .setSource(jsonDoc);
+        }catch (NoNodeAvailableException e){
+            e.printStackTrace();
             return null;
         }
     }
@@ -516,7 +467,7 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery wanted
      * @return a ElasticSearch.QueryBuilder
      */
-    private QueryBuilder getDocumentQueryBuilder (DocumentSearchQuery docQuery){
+    private QueryBuilder getQueryBuilder(DocumentSearchQuery docQuery){
         QueryBuilder qr;
         if(docQuery.getDocMId() != null){
             qr = QueryBuilders.fuzzyLikeThisQuery().likeText(docQuery.getDocMId());
@@ -567,13 +518,13 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery wanted
      * @return a ElasticSearch.QueryBuilder
      */
-    private QueryBuilder getPartQueryBuilder (PartSearchQuery partQuery){
+    private QueryBuilder getQueryBuilder (PartSearchQuery partQuery){
         QueryBuilder qr;
         if(partQuery.getPartNumber() != null){
             qr = QueryBuilders.fuzzyLikeThisQuery().likeText(partQuery.getPartNumber());
         }else{
             qr = QueryBuilders.boolQuery();
-            if(partQuery.getName() != null) ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("id").likeText(partQuery.getName()));
+            if(partQuery.getName() != null) ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("name").likeText(partQuery.getName()));
             if(partQuery.getVersion() != null) ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("version").likeText(partQuery.getVersion()));
             if(partQuery.getAuthor() != null) ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("author").likeText(partQuery.getAuthor()));
             if(partQuery.getType() != null) ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("type").likeText(partQuery.getType()));
@@ -647,12 +598,11 @@ public class ESIndexer{
      * @param pQuery Search criterion
      * @return the uniWorkspace Search Request
      */
-    private SearchRequestBuilder getSearchRequest(String workspaceId, String type, QueryBuilder pQuery){
-        SearchRequestBuilder srb = client.prepareSearch(workspaceId)
-                .setTypes(type)
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setQuery(pQuery);
-        return srb;
+    private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery){
+        return client.prepareSearch(workspaceId)
+                     .setTypes(type)
+                     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                     .setQuery(pQuery);
     }
 
     /**
@@ -825,6 +775,23 @@ public class ESIndexer{
     }
 
     /**
+     * Extract a value from a ES result
+     *
+     * @param source Source of a ES hit
+     * @param key Key of the field to extract
+     * @return The value of the field "key"
+     */
+    private String extractValue(Map<String, Object> source, String key){
+        Object ret = source.get(key);
+        if(ret instanceof List){
+            return ((List) ret).get(0).toString();
+        }else{
+            return ret.toString();
+        }
+    }
+
+
+    /**
      * Get Stream for a Bin Resource
      * @param fullName The full name of the resource
      * @param inputStream Stream of the resource
@@ -840,78 +807,86 @@ public class ESIndexer{
                 extension = fullName.substring(lastDotIndex);
             }
 
-            if (extension.equals(".odt")
-                    || extension.equals(".ods")
-                    || extension.equals(".odp")
-                    || extension.equals(".odg")
-                    || extension.equals(".odc")
-                    || extension.equals(".odf")
-                    || extension.equals(".odb")
-                    || extension.equals(".odi")
-                    || extension.equals(".odm")) {
-                final StringBuilder text = new StringBuilder();
-                ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream));
-                ZipEntry zipEntry;
-                while ((zipEntry = zipOpenDoc.getNextEntry()) != null) {
-                    if (zipEntry.getName().equals("content.xml")) {
-                        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-                        SAXParser parser = saxParserFactory.newSAXParser();
-                        parser.parse(zipOpenDoc, new DefaultHandler() {
+            switch (extension){
+                case ".odt":
+                case ".ods":
+                case ".odp":
+                case ".odg":
+                case ".odc":
+                case ".odf":
+                case ".odb":
+                case ".odi":
+                case ".odm":                                                                                            // OpenOffice Documents
+                    final StringBuilder text = new StringBuilder();
+                    ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream));
+                    ZipEntry zipEntry;
+                    while ((zipEntry = zipOpenDoc.getNextEntry()) != null) {
+                        if (zipEntry.getName().equals("content.xml")) {
+                            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+                            SAXParser parser = saxParserFactory.newSAXParser();
+                            parser.parse(zipOpenDoc, new DefaultHandler() {
 
-                            @Override
-                            public void characters(char[] ch,
-                                                   int start,
-                                                   int length)
-                                    throws SAXException {
-                                for (int i = start; i < start + length; i++) {
-                                    text.append(ch[i]);
+                                @Override
+                                public void characters(char[] ch,
+                                                       int start,
+                                                       int length)
+                                        throws SAXException {
+                                    for (int i = start; i < start + length; i++) {
+                                        text.append(ch[i]);
+                                    }
+                                    text.append("\r\n");
                                 }
-                                text.append("\r\n");
-                            }
-                        });
-                        break;
+                            });
+                            break;
+                        }
                     }
-                }
-                zipOpenDoc.close();
-                strRet = text.toString();
-            } else if (extension.equals(".doc")) {                                                                      //MSWord Document
-                InputStream wordStream = new BufferedInputStream(inputStream);
-                WordExtractor wordExtractor = new WordExtractor(wordStream);
-                strRet = wordExtractor.getText();
-                wordStream.close();
-            } else if (extension.equals(".docx")){
-                InputStream wordStream = new BufferedInputStream(inputStream);                                          //XMLWord Document
-                XWPFWordExtractor wordExtractor = new XWPFWordExtractor(new XWPFDocument(wordStream));
-                strRet = wordExtractor.getText();
-                wordStream.close();
-            } else if (extension.equals(".ppt") || extension.equals(".pps")) {                                          //MSPowerPoint Document
-                InputStream pptStream = new BufferedInputStream(inputStream);
-                PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
-                strRet = pptExtractor.getText(true, true);
-                pptStream.close();
-            } else if (extension.equals(".txt") || extension.equals(".csv")) {                                          //Text Document
-                strRet = new Scanner(inputStream,"UTF-8").useDelimiter("\\A").next();
-            } else if (extension.equals(".xls")) {                                                                      //MSExcelExtractor Document
-                POIFSFileSystem excelStream = new POIFSFileSystem(inputStream);
-                ExcelExtractor excelExtractor= new ExcelExtractor(excelStream);
-                strRet = excelExtractor.getText();
-            } else if (extension.equals(".html") || extension.equals(".htm")) {
-            } else if (extension.equals(".xml")) {
-            } else if (extension.equals(".rtf")) {
-            } else if (extension.equals(".pdf")) {                                                                      //PDF Files
-                PdfReader reader = new PdfReader(inputStream);
-                strRet = "";
-                for(int i=1; i<=reader.getNumberOfPages(); i++){
-                    strRet += PdfTextExtractor.getTextFromPage(reader,i);
-                }
-                reader.close();
-            } else if (extension.equals(".msg")) {
+                    zipOpenDoc.close();
+                    strRet = text.toString();
+                    break;
+                case ".doc":                                                                                            //MSWord Documents
+                    InputStream wordStream = new BufferedInputStream(inputStream);
+                    WordExtractor wordExtractor = new WordExtractor(wordStream);
+                    strRet = wordExtractor.getText();
+                    wordStream.close();
+                    break;
+                case ".docx":                                                                                           //XMLMSWord Documents
+                    InputStream wordXStream = new BufferedInputStream(inputStream);
+                    XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordXStream));
+                    strRet = wordXExtractor.getText();
+                    wordXStream.close();
+                    break;
+                case ".ppt":
+                case ".pps":                                                                                            //MSPowerPoint Document
+                    InputStream pptStream = new BufferedInputStream(inputStream);
+                    PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
+                    strRet = pptExtractor.getText(true, true);
+                    pptStream.close();
+                    break;
+                case ".txt":                                                                                            //Text Document
+                case ".csv":                                                                                            //CSV Document
+                    strRet = new Scanner(inputStream,"UTF-8").useDelimiter("\\A").next();
+                    break;
+                case ".xls":                                                                                            //MSExcelExtractor Document
+                    POIFSFileSystem excelStream = new POIFSFileSystem(inputStream);
+                    ExcelExtractor excelExtractor= new ExcelExtractor(excelStream);
+                    strRet = excelExtractor.getText();
+                    break;
+                case ".pdf":                                                                                            // PDF Document
+                    PdfReader reader = new PdfReader(inputStream);
+                    strRet = "";
+                    for(int i=1; i<=reader.getNumberOfPages(); i++){
+                        strRet += PdfTextExtractor.getTextFromPage(reader,i);
+                    }
+                    reader.close();
+                    break;
+                case ".html":
+                case ".htm":
+                case ".xml":
+                case ".rtf":
+                case ".msg":
+                default: break;
             }
-        } catch (ParserConfigurationException ex) {
-            throw new EJBException(ex);
-        } catch (SAXException ex) {
-            throw new EJBException(ex);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException|SAXException|IOException ex) {
             throw new EJBException(ex);
         }
         return strRet;

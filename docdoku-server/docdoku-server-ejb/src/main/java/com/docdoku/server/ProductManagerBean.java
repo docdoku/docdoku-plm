@@ -438,7 +438,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException {
+    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, IndexerServerException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
@@ -455,7 +455,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
 
-            esIndexer.index(partR.getLastIteration());                                                                  // Index the last iteration in ElasticSearch
+            //esIndexer.index(partR.getLastIteration());                                                                  // Index the last iteration in ElasticSearch
+            for(PartIteration partIteration : partR.getPartIterations()){
+                esIndexer.index(partIteration);                                                                         // Index all iterations in ElasticSearch (decrease old iteration boost factor)
+            }
             return partR;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
@@ -857,7 +860,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                      // Get Search Results
 
@@ -1234,7 +1237,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException {
+    public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, IndexerServerException {
 
         User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
 
@@ -1273,7 +1276,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // delete ElasticSearch Index for this revision iteration
         for (PartRevision partRevision : partMaster.getPartRevisions()) {
             for (PartIteration partIteration : partRevision.getPartIterations()) {
-                esIndexer.rmIndex(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
+                esIndexer.delete(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
             }
         }
 
@@ -1284,7 +1287,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException {
+    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, IndexerServerException {
 
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
 
@@ -1304,6 +1307,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // check if this part is in a partUsage
         if(partUsageLinkDAO.hasPartUsages(partMaster.getWorkspaceId(),partMaster.getNumber())){
             throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException2");
+        }
+
+        // delete ElasticSearch Index for this revision iteration
+        for (PartIteration partIteration : partR.getPartIterations()) {
+            esIndexer.delete(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
         }
 
         if(isLastRevision){

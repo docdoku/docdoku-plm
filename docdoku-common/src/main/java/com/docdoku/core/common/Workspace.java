@@ -50,17 +50,12 @@ public class Workspace implements Serializable, Cloneable {
     private String description;    
     
     private boolean folderLocked;
-    
-    private VaultType vaultType;
-    
-    public enum VaultType {DEMO,SMALL,LARGE,UNLIMITED}
 
 
-    public Workspace(String pId, Account pAdmin, String pDescription, VaultType pVaultType, boolean pFolderLocked) {
+    public Workspace(String pId, Account pAdmin, String pDescription, boolean pFolderLocked) {
         id = pId;
         admin = pAdmin;
         description = pDescription;
-        vaultType = pVaultType;
         folderLocked=pFolderLocked;
     }
     
@@ -93,14 +88,6 @@ public class Workspace implements Serializable, Cloneable {
     
     public String getDescription() {
         return description;
-    }
-
-    public VaultType getVaultType() {
-        return vaultType;
-    }
-
-    public void setVaultType(VaultType pVaultType) {
-        vaultType = pVaultType;
     }
 
     public boolean isFolderLocked() {

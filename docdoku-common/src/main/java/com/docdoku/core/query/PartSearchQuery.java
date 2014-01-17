@@ -20,10 +20,6 @@
 
 package com.docdoku.core.query;
 
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceDateAttribute;
-
-import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 import java.util.Date;
 

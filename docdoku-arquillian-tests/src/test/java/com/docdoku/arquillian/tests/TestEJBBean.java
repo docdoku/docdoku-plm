@@ -62,7 +62,7 @@ public class TestEJBBean {
 
     public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", Workspace.VaultType.LARGE, false);
+        Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
         loginP.logout();
         return workspace;
     }
@@ -117,7 +117,7 @@ public class TestEJBBean {
         loginP.logout();
     }
 
-    public void testDocumentCheckIn(String login, DocumentMasterKey documentMasterKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentMasterNotFoundException {
+    public void testDocumentCheckIn(String login, DocumentMasterKey documentMasterKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentMasterNotFoundException, IndexerServerException {
         loginP.login(login, password.toCharArray());
         documentManagerLocal.checkInDocument(documentMasterKey);
         loginP.logout();

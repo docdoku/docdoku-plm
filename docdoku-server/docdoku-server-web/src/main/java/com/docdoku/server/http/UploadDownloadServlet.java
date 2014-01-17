@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -132,6 +133,8 @@ public class UploadDownloadServlet extends HttpServlet {
                 fileName+="."+outputFormat;
             }
 
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            
             // Set content type
             String contentType = "";
             if (isSubResource) {

@@ -225,7 +225,7 @@ public class FolderResource {
         }
     }
     
-    private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException {
+    private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException, IndexerServerException {
 
         String decodedCompletePath = Tools.replaceColonWithSlash(pCompletePath);
 

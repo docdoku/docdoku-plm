@@ -128,8 +128,8 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed("users")
     @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, Workspace.VaultType pVaultType, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException {
-        Workspace workspace = new Workspace(pID, pAdmin, pDescription, pVaultType, pFolderLocked);
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException {
+        Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
         User userToCreate = new User(workspace, pAdmin.getLogin(), pAdmin.getName(), pAdmin.getEmail(), pAdmin.getLanguage());
         UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
@@ -291,7 +291,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
+    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
         Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         for (String login : pLogins) {
@@ -306,7 +306,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         }
                     }
 
-                    indexer.rmIndex(doc);
+                    indexer.delete(doc);
                 }
             }
         }

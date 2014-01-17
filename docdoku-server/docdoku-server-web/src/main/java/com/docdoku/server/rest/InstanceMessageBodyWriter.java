@@ -19,11 +19,11 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.server.rest.dto.GeometryDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.TransformationDTO;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -43,7 +43,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -72,21 +71,22 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
         PartUsageLink rootUsageLink = object.getRootUsageLink();
         List<Integer> usageLinkPaths = object.getUsageLinkPaths();
+        ConfigSpec cs=object.getConfigSpec();
         jg.writeStartArray();
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
-        generateInstanceStreamWithGlobalMatrix(rootUsageLink, gM, usageLinkPaths, new ArrayList<Integer>(), jg);
+        generateInstanceStreamWithGlobalMatrix(rootUsageLink, gM, usageLinkPaths, cs, new ArrayList<Integer>(), jg);
         jg.writeEnd();
         jg.flush();
     }
 
 
 
-    private void generateInstanceStreamWithGlobalMatrix(PartUsageLink usageLink, Matrix4d matrix, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
+    private void generateInstanceStreamWithGlobalMatrix(PartUsageLink usageLink, Matrix4d matrix, List<Integer> filteredPath, ConfigSpec cs, List<Integer> instanceIds, JsonGenerator jg) {
 
         PartMaster pm = usageLink.getComponent();
-        PartRevision partR = pm.getLastRevision();
-        PartIteration partI = partR.getLastIteration();
+        PartIteration partI = cs.filterConfigSpec(pm);
+        PartRevision partR = partI.getPartRevision();
 
         String partIterationId = new StringBuilder().append(pm.getNumber())
                 .append("-")
@@ -157,12 +157,12 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                     //List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
 
                     if (filteredPath.isEmpty()) {
-                        generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, filteredPath, copyInstanceIds, jg);
+                        generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, filteredPath, cs, copyInstanceIds, jg);
 
                     } else if (component.getId() == filteredPath.get(0)) {
                         List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
                         copyWithoutCurrentId.remove(0);
-                        generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, copyWithoutCurrentId, copyInstanceIds, jg);
+                        generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, copyWithoutCurrentId, cs, copyInstanceIds, jg);
                     }
                 }
             }
@@ -193,96 +193,4 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     }
 
 
-
-    private void generateInstanceStreamWithAllTransformations(PartUsageLink usageLink, List<TransformationDTO> transformations, List<Integer> filteredPath, List<Integer> instanceIds, JsonGenerator jg) {
-
-        PartMaster pm = usageLink.getComponent();
-        PartRevision partR = pm.getLastRevision();
-        PartIteration partI = partR.getLastIteration();
-
-        String partIterationId = new StringBuilder().append(pm.getNumber())
-                .append("-")
-                .append(partR.getVersion())
-                .append("-")
-                .append(partI.getIteration()).toString();
-
-        List<GeometryDTO> files = new ArrayList<GeometryDTO>();
-        List<InstanceAttributeDTO> attributes = new ArrayList<InstanceAttributeDTO>();
-
-        for (Geometry geometry : partI.getGeometries()) {
-            files.add(mapper.map(geometry, GeometryDTO.class));
-        }
-
-        for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
-            attributes.add(mapper.map(attr, InstanceAttributeDTO.class));
-        }
-
-
-        for (CADInstance instance : usageLink.getCadInstances()) {
-            if(instance.getId()!=-1)
-                instanceIds.add(instance.getId());
-
-            transformations.add(new TransformationDTO(instance.getTx(),instance.getTy(),instance.getTz(),instance.getRx(),instance.getRy(),instance.getRz()));
-
-            String id = StringUtils.join(instanceIds.toArray(),"-");
-            
-            if (!partI.isAssembly() && partI.getGeometries().size() > 0 && filteredPath.isEmpty()) {
-
-                jg.writeStartObject();
-                jg.write("id",id);
-                jg.write("partIterationId",partIterationId);
-
-                jg.writeStartArray("transformations");
-                for(TransformationDTO t:transformations){
-                    jg.writeStartObject();
-                    jg.write("tx",t.getTx());
-                    jg.write("ty",t.getTy());
-                    jg.write("tz",t.getTz());
-                    jg.write("rx",t.getRx());
-                    jg.write("ry",t.getRy());
-                    jg.write("rz",t.getRz());
-                    jg.writeEnd();
-                }
-                jg.writeEnd();
-
-                jg.writeStartArray("files");
-                for(GeometryDTO g:files){
-                    jg.writeStartObject();
-                    jg.write("fullName", g.getFullName());
-                    jg.write("quality", g.getQuality());
-                    jg.write("radius", g.getRadius());
-                    jg.writeEnd();
-                }
-                jg.writeEnd();
-
-                jg.writeStartArray("attributes");
-                for(InstanceAttributeDTO a:attributes){
-                    jg.writeStartObject();
-                    jg.write("name", a.getName());
-                    jg.write("type", a.getType().toString());
-                    jg.write("value", a.getValue());
-                    jg.writeEnd();
-                }
-                jg.writeEnd();
-                jg.writeEnd();
-                jg.flush();
-
-            } else {
-                for (PartUsageLink component : partI.getComponents()) {
-                    List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
-                    List<TransformationDTO> copyTransformations = new ArrayList<>(transformations);
-
-                    if (filteredPath.isEmpty()) {
-                        generateInstanceStreamWithAllTransformations(component, copyTransformations, filteredPath, copyInstanceIds, jg);
-
-                    } else if (component.getId() == filteredPath.get(0)) {
-                        List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
-                        copyWithoutCurrentId.remove(0);
-                        generateInstanceStreamWithAllTransformations(component, copyTransformations, copyWithoutCurrentId, copyInstanceIds, jg);
-                    }
-                }
-            }
-        }
-    }
-    
 }

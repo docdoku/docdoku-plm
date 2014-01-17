@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.product.PartUsageLink;
 import java.util.List;
 
@@ -32,15 +33,20 @@ public class InstanceCollection {
     
     private PartUsageLink rootUsageLink;
     private List<Integer> usageLinkPaths;
-    
+    private ConfigSpec configSpec;
     
     public InstanceCollection(){
         
     }
     
-    public InstanceCollection(PartUsageLink rootUsageLink, List<Integer> usageLinkPaths){
+    public InstanceCollection(PartUsageLink rootUsageLink, List<Integer> usageLinkPaths, ConfigSpec configSpec){
         this.rootUsageLink=rootUsageLink;
         this.usageLinkPaths=usageLinkPaths;
+        this.configSpec=configSpec;
+    }
+
+    public ConfigSpec getConfigSpec() {
+        return configSpec;
     }
 
     public PartUsageLink getRootUsageLink() {
