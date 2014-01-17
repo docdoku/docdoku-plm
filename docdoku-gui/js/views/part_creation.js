@@ -3,9 +3,10 @@ define(
         "text!templates/part_creation.html",
         "i18n!localization/nls/product-creation-strings",
         "models/part",
+        "views/loader",
         "dplm"
     ],
-    function (template, i18n, Part, Dplm) {
+    function (template, i18n, Part, Loader, Dplm) {
 
     var PartCreationView = Backbone.View.extend({
 
@@ -55,12 +56,17 @@ define(
 
             var self = this;
 
+            this.$(".modal-body").html(new Loader());
+            this.$(".modal-footer").hide();
+
             Dplm.createPart(part, this.model.getFullPath(),{
                 success:function() {
                     self.closeModal();
                     self.trigger("part:created",self.model);
                 },
                 error:function(error){
+                    alert("Impossible de créer l'article : " + error);
+                    self.closeModal();
                 }
             });
 
