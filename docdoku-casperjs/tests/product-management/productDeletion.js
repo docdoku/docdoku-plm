@@ -14,7 +14,6 @@ casper.waitForSelector('#product-nav',
 
 // delete the product
 casper.then(function() {
-
     casper.waitForSelector('#product_table tbody tr:first-child td:first-child input',
         function () {
             this.test.assertEquals(partCreationNumber, this.getHTML('#product_table tbody tr:first-child td:nth-child(3)'), 'Product to delete found');
@@ -27,7 +26,6 @@ casper.then(function() {
             // Popup handled auto.
         }
     );
-
 });
 
 casper.run(function() {
