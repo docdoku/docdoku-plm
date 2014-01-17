@@ -25,3 +25,5 @@ docdoku-client/build
 
 
 docdoku-cli/target
+docdoku-casperjs/partCreation.png
+docdoku-casperjs/testsResults.xml

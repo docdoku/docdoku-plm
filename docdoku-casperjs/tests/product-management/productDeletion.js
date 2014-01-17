@@ -14,14 +14,20 @@ casper.waitForSelector('#product-nav',
 
 // delete the product
 casper.then(function() {
-    this.test.assertEquals(partCreationNumber, this.getHTML('#product_table tbody tr:first-child td:nth-child(3)'), 'Product to delete found');
-    this.test.assertExists('#product_table tbody tr:first-child td:first-child input', 'Checkbox found');
-    this.click("#product_table tbody tr:first-child td:first-child input");
-    this.wait(500, function(){
-        this.test.assertExists('.delete-product', 'Delete product button found');
-        this.click(".delete-product");
-    })
-    // Popup handled auto.
+
+    casper.waitForSelector('#product_table tbody tr:first-child td:first-child input',
+        function () {
+            this.test.assertEquals(partCreationNumber, this.getHTML('#product_table tbody tr:first-child td:nth-child(3)'), 'Product to delete found');
+            this.test.assertExists('#product_table tbody tr:first-child td:first-child input', 'Checkbox found');
+            this.click("#product_table tbody tr:first-child td:first-child input");
+            this.wait(500, function(){
+                this.test.assertExists('.delete-product', 'Delete product button found');
+                this.click(".delete-product");
+            })
+            // Popup handled auto.
+        }
+    );
+
 });
 
 casper.run(function() {
