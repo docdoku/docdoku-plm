@@ -20,8 +20,6 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.product.PartRevisionKey;
-
 import java.io.Serializable;
 
 /**

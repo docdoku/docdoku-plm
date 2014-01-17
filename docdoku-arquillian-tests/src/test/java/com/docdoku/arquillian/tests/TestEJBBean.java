@@ -115,7 +115,7 @@ public class TestEJBBean {
         loginP.logout();
     }
 
-    public void testDocumentCheckIn(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException {
+    public void testDocumentCheckIn(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, IndexerServerException {
         loginP.login(login, password.toCharArray());
         documentManagerLocal.checkInDocument(documentRevisionKey);
         loginP.logout();

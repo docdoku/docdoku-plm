@@ -28,7 +28,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 

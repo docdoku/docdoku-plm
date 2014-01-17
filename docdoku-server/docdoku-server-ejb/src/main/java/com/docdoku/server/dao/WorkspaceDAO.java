@@ -270,4 +270,10 @@ public class WorkspaceDAO {
         dataManager.deleteWorkspaceFolder(workspaceId,binaryResourcesInWorkspace);
 
     }
+
+    public List<Workspace> getAll() {
+        List<Workspace> workspaces = em.createNamedQuery("Workspace.findAllWorkspaces")
+                .getResultList();
+        return workspaces;
+    }
 }

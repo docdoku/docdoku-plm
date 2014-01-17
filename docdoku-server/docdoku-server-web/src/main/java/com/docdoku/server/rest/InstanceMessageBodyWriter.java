@@ -24,7 +24,6 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.server.rest.dto.GeometryDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.TransformationDTO;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -44,7 +43,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *

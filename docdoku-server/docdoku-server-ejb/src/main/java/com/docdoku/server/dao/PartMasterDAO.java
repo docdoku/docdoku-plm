@@ -144,4 +144,11 @@ public class PartMasterDAO {
 
         return result != null ? result.longValue() : 0L;
     }
+
+    public List<PartMaster> getAllByWorkspace(String workspaceId) {
+        List<PartMaster> partMasters = em.createNamedQuery("PartMaster.findByWorkspace")
+                .setParameter("workspaceId",workspaceId)
+                .getResultList();
+        return partMasters;
+    }
 }

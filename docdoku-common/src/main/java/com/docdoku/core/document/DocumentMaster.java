@@ -41,8 +41,10 @@ import javax.persistence.*;
 @Table(name="DOCUMENTMASTER")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @javax.persistence.Entity
+@NamedQueries ({
+        @NamedQuery(name="DocumentMaster.findByWorkspace", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId")
+})
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
-
 
     @Column(name="ID", length=255)
     @Id
@@ -79,14 +81,11 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         this(pWorkspace, pId);
         author = pAuthor;
     }
-
     
     private DocumentMaster(Workspace pWorkspace, String pId) {
         id=pId;
         setWorkspace(pWorkspace);
     }
-
-
 
     public void setAuthor(User pAuthor) {
         author = pAuthor;
@@ -206,6 +205,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
 	    return hash;
     }
 
+    @Override
     public int compareTo(DocumentMaster pDocM) {
         int wksComp = getWorkspaceId().compareTo(pDocM.getWorkspaceId());
         if (wksComp != 0)

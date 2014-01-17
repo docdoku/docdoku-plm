@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentMasterAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
+import com.docdoku.core.query.SearchQuery;
 
 import javax.persistence.*;
 import java.util.*;

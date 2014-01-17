@@ -66,6 +66,7 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
     public void setName(String name) {
         this.name = name;
     }
+    public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
 
     public boolean isMandatory() {
         return mandatory;
@@ -99,13 +100,11 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     @Override
     public InstanceAttribute clone() {
-        InstanceAttribute clone = null;
         try {
-            clone = (InstanceAttribute) super.clone();
+            return (InstanceAttribute) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
-        return clone;
     }
 
     public void setId(int id) {
@@ -122,6 +121,6 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     public boolean isValueEquals(Object pValue) {
         Object value = getValue();
-        return value == null ? false : value.equals(pValue);
+        return value!=null && value.equals(pValue);
     }
 }

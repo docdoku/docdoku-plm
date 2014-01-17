@@ -196,7 +196,7 @@ public class WorkspaceBean {
         selectedLogins.clear();
     }
     
-    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
+    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
         if (!selectedLogins.isEmpty()) {
             userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
         }

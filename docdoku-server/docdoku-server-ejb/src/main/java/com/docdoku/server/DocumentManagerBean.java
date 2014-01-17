@@ -25,6 +25,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -35,6 +36,7 @@ import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -47,7 +49,6 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
@@ -74,11 +75,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @EJB
     private IGCMSenderLocal gcmNotifier;
 
-    @EJB
+/*    @EJB
     private IndexerBean indexer;
-
-    @EJB
+*/
+/*    @EJB
     private IndexSearcherBean indexSearcher;
+*/
+    @EJB
+    private ESIndexer esIndexer;
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -498,60 +502,40 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
+        esIndexer.indexAll();                                                                                           // Index all resources
+        
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        //preparing tag filtering
-        Set<Tag> tags = null;
-        if (pQuery.getTags() != null) {
-            Workspace wks = new Workspace();
-            wks.setId(pQuery.getWorkspaceId());
-            tags = new HashSet<Tag>();
-            for (String label : pQuery.getTags()) {
-                tags.add(new Tag(wks, label));
+        List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results
+
+        if(!fetchedDocRs.isEmpty()){
+            Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
+            boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+
+            ListIterator<DocumentRevision> ite = fetchedDocRs.listIterator();
+            docMBlock:
+            while (ite.hasNext()) {
+                DocumentRevision docR = ite.next();                
+                
+                if(docR.getLocation().isPrivate() && (!docR.getLocation().getOwner().equals(user.getLogin())) ){        // Remove Private DocMaster From Results
+                    ite.remove();
+                    continue docMBlock;
+                }
+
+                if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {                                  // Remove CheckedOut DocMaster From Results
+                    docR = docR.clone();
+                    docR.removeLastIteration();
+                    ite.set(docR);
+                }
+
+                if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {                          // Check Rigth Acces
+                    ite.remove();
+                    continue;
+                }
             }
+            return fetchedDocRs.toArray(new DocumentMaster[fetchedDocRs.size()]);
         }
-
-        List<DocumentRevision> fetchedDocRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).searchDocumentRevisions(pQuery.getWorkspaceId(), pQuery.getDocMId(), pQuery.getTitle(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo(), tags, pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null);
-
-        //preparing fulltext filtering
-        Set<DocumentRevisionKey> indexedKeys = null;
-        if (fetchedDocRs.size() > 0 && pQuery.getContent() != null && !pQuery.getContent().equals("")) {
-            indexedKeys = indexSearcher.searchInIndex(pQuery.getWorkspaceId(), pQuery.getContent());
-        }
-
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-
-        ListIterator<DocumentRevision> ite = fetchedDocRs.listIterator();
-        docRBlock:
-        while (ite.hasNext()) {
-            DocumentRevision docR = ite.next();
-            if (indexedKeys != null && (!indexedKeys.contains(docR.getKey()))) {
-                ite.remove();
-                continue docRBlock;
-            }
-
-            //TODO search should not fetch back private docR
-
-            if(docR.getLocation().isPrivate() && (!docR.getCheckOutUser().equals(user)) ){
-                ite.remove();
-                continue docRBlock;
-            }
-
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
-                docR = docR.clone();
-                docR.removeLastIteration();
-                ite.set(docR);
-            }
-
-            //Check access rights
-            if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {
-                ite.remove();
-                continue;
-            }
-        }
-        return fetchedDocRs.toArray(new DocumentRevision[fetchedDocRs.size()]);
+        return new DocumentMaster[0];
     }
 
     @RolesAllowed("users")
@@ -1004,8 +988,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentRevision saveTags(DocumentRevisionKey pDocRPK, String[] pTags) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
-
+    public DocumentRevision saveTags(DocumentRevisionKey pDocRPK, String[] pTags) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IndexerServerException {
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
 
         Locale userLocale = new Locale(user.getLanguage());
@@ -1040,6 +1023,44 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
             docR = docR.clone();
             docR.removeLastIteration();
+        }
+
+        for (DocumentIteration documentIteration:docR.getDocumentIterations()){
+            esIndexer.index(documentIteration);
+        }
+        return docR;
+    }
+
+    /**
+     * Remove a tag from a DocumentMaster
+     * @param pDocRPK DocumentRevision with the tag to remove
+     * @param pTag The tag to remove
+     * @return The DocumentMaster without the tag
+     * @throws WorkspaceNotFoundException
+     * @throws NotAllowedException
+     * @throws DocumentRevisionNotFoundException
+     * @throws AccessRightException
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     */
+    @RolesAllowed("users")
+    @Override
+    public DocumentRevision removeTag(DocumentRevisionKey pDocRPK, String pTag)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, IndexerServerException {
+
+        User user = checkDocumentRevisionWriteAccess(pDocRPK);
+
+        DocumentRevision docR = getDocumentRevision(pDocRPK);
+        Tag tagToRemove = new Tag(user.getWorkspace(), pTag);
+        docR.getTags().remove(tagToRemove);
+
+        if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+            docR = docR.clone();
+            docR.removeLastIteration();
+        }
+
+        for (DocumentIteration documentIteration:docR.getDocumentIterations()){
+            esIndexer.index(documentIteration);
         }
         return docR;
     }
@@ -1077,7 +1098,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+    public DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IndexerServerException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
 
@@ -1100,7 +1121,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 gcmNotifier.sendIterationNotification(gcmAccounts, docR);
             }
 
-            for (BinaryResource bin : docR.getLastIteration().getAttachedFiles()) {
+            //esIndexer.index(docM.getLastIteration());                                                                 // Index the last iteration in ElasticSearch
+            for(DocumentIteration docIteration :docM.getDocumentIterations()){
+                esIndexer.index(docIteration);                                                                          // Index all iterations in ElasticSearch (decrease old iteration boost factor)
+            }
+
+/*            for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
                 try {
                     InputStream inputStream = dataManager.getBinaryResourceInputStream(bin);
                     indexer.addToIndex(bin.getFullName(), inputStream);
@@ -1108,8 +1134,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     e.printStackTrace();
                 }
             }
-
-            return docR;
+*/
+            return docM;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
         }
@@ -1117,7 +1143,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException {
+    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, IndexerServerException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
@@ -1133,13 +1159,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 pks[i++] = docR.getKey();
                 for (DocumentIteration doc : docR.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
-                        indexer.removeFromIndex(file.getFullName());
+                        //indexer.removeFromIndex(file.getFullName());
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
                             e.printStackTrace();
                         }
                     }
+                    esIndexer.delete(doc);                                                                             // Remove ElasticSearch Index for this DocumentIteration
                 }
             }
             return pks;
@@ -1174,7 +1201,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+    public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, IndexerServerException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
@@ -1188,16 +1215,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException22");
         }
 
-        docRDAO.removeRevision(docR);
+        docRDAO.removeRevision(docR);                                                                                   //TODO Why double remove?
 
         for (DocumentIteration doc : docR.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
-                indexer.removeFromIndex(file.getFullName());
+                //indexer.removeFromIndex(file.getFullName());
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
                     e.printStackTrace();
                 }
+
+                esIndexer.delete(doc);                                                                                  // Remove ElasticSearch Index for this DocumentIteration
             }
         }
 
