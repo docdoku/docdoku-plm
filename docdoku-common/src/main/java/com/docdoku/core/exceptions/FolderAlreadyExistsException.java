@@ -21,6 +21,7 @@
 package com.docdoku.core.exceptions;
 
 import com.docdoku.core.document.Folder;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 

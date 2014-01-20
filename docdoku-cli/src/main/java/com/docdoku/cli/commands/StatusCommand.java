@@ -24,12 +24,12 @@ import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.exceptions.PartMasterNotFoundException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.exceptions.PartMasterNotFoundException;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 

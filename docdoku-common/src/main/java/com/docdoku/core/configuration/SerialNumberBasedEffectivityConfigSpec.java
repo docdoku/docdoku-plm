@@ -21,8 +21,6 @@
 
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.configuration.EffectivityConfigSpec;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;

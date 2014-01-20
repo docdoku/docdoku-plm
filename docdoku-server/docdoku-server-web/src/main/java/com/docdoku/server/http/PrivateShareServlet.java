@@ -22,14 +22,16 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.SharedEntityNotFoundException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IShareManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
@@ -148,15 +150,15 @@ public class PrivateShareServlet extends HttpServlet {
 
         if(sharedEntity instanceof SharedDocument){
 
-            DocumentMaster docM = ((SharedDocument) sharedEntity).getDocumentMaster();
-            DocumentIteration docI =  docM.getLastIteration();
+            DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
+            DocumentIteration documentIteration =  documentRevision.getLastIteration();
 
-            if(docI == null){
+            if(documentIteration == null){
                 throw new NotAllowedException(Locale.getDefault(), "NotAllowedException27");
             }
 
-            pRequest.setAttribute("documentMaster", docM);
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
+            pRequest.setAttribute("documentRevision", documentRevision);
+            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(documentIteration.getInstanceAttributes().values()));
             pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         }else if(sharedEntity instanceof SharedPart){

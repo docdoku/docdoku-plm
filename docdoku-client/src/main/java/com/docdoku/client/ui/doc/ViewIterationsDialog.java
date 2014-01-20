@@ -20,6 +20,7 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
@@ -28,7 +29,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.docdoku.client.localization.I18N;
 
 public class ViewIterationsDialog extends JDialog {
     private ViewIterationsPanel mIterationsPanel;

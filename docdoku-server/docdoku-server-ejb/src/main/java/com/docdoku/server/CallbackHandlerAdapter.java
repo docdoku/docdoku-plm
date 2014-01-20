@@ -21,7 +21,7 @@
 package com.docdoku.server;
 
 import javax.security.auth.callback.*;
-import java.io.*;
+import java.io.IOException;
 
 public class CallbackHandlerAdapter implements CallbackHandler {
 

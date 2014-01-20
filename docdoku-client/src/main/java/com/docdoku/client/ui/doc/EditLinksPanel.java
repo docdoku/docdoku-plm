@@ -20,10 +20,10 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
-
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -31,8 +31,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import com.docdoku.client.localization.I18N;
 
 public class EditLinksPanel extends JPanel implements ActionListener {
 

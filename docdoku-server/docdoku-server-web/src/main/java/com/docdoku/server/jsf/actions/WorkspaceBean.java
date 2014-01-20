@@ -24,7 +24,9 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -196,7 +198,7 @@ public class WorkspaceBean {
         selectedLogins.clear();
     }
     
-    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
+    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
         if (!selectedLogins.isEmpty()) {
             userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
         }

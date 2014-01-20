@@ -21,16 +21,16 @@
 package com.docdoku.client.ui.approval;
 
 
-import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.core.workflow.Task;
-import java.util.Collection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Collection;
 
 public class TaskPanel extends JPanel {
 

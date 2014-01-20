@@ -30,7 +30,6 @@ import javax.ejb.EJB;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class MultimediaViewerImpl implements DocumentViewer {
 

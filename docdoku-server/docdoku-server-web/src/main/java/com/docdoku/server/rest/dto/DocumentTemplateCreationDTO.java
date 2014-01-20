@@ -21,9 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**

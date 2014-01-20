@@ -21,12 +21,13 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.doc.ViewIterationsDialog;
+import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ViewIterationsAction extends ClientAbstractAction {
 

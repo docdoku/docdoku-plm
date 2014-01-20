@@ -207,10 +207,12 @@ public class ProductResource {
 
     private ComponentDTO createDTO(PartUsageLink usageLink, int depth) {
         PartMaster pm = usageLink.getComponent();
+        PartRevision partR = pm.getLastRevision();
+
         ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getId());
-        dto.setDescription(pm.getDescription());
+        dto.setDescription(partR.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
@@ -220,7 +222,7 @@ public class ProductResource {
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
         List<ComponentDTO> components = new ArrayList<ComponentDTO>();
 
-        PartRevision partR = pm.getLastRevision();
+
         PartIteration partI = null;
         if (partR != null) {
             partI = partR.getLastIteration();

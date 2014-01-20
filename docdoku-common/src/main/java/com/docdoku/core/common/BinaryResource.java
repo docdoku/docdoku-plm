@@ -20,9 +20,9 @@
 
 package com.docdoku.core.common;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * <a href="BinaryResource.html">BinaryResource</a> is the representation

@@ -20,9 +20,9 @@
 
 package com.docdoku.core.document;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 
 /**
  * This is a link class used to connect an object to a
@@ -51,7 +51,7 @@ public class DocumentLink implements Serializable, Cloneable{
     @JoinColumns({
         @JoinColumn(name="TARGET_ITERATION", referencedColumnName="ITERATION"),
         @JoinColumn(name="TARGET_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-        @JoinColumn(name="TARGET_DOCUMENTMASTER_VERSION", referencedColumnName="DOCUMENTMASTER_VERSION"),
+        @JoinColumn(name="TARGET_DOCUMENTREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
         @JoinColumn(name="TARGET_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private DocumentIteration targetDocument;
@@ -63,8 +63,8 @@ public class DocumentLink implements Serializable, Cloneable{
     @Column(name = "TARGET_DOCUMENTMASTER_ID", length=50, insertable = false, updatable = false)
     private String targetDocumentDocumentMasterId="";
     
-    @Column(name = "TARGET_DOCUMENTMASTER_VERSION", length=10, insertable = false, updatable = false)
-    private String targetDocumentDocumentMasterVersion="";
+    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=10, insertable = false, updatable = false)
+    private String targetDocumentDocumentRevisionVersion ="";
     
     @Column(name = "TARGET_WORKSPACE_ID", length=50, insertable = false, updatable = false)
     private String targetDocumentWorkspaceId="";
@@ -107,15 +107,15 @@ public class DocumentLink implements Serializable, Cloneable{
     }
 
     public DocumentIterationKey getTargetDocumentKey(){
-        return new DocumentIterationKey(targetDocumentWorkspaceId,targetDocumentDocumentMasterId,targetDocumentDocumentMasterVersion,targetDocumentIteration);
+        return new DocumentIterationKey(targetDocumentWorkspaceId,targetDocumentDocumentMasterId, targetDocumentDocumentRevisionVersion,targetDocumentIteration);
     }
 
     public String getTargetDocumentDocumentMasterId() {
         return targetDocumentDocumentMasterId;
     }
 
-    public String getTargetDocumentDocumentMasterVersion() {
-        return targetDocumentDocumentMasterVersion;
+    public String getTargetDocumentDocumentRevisionVersion() {
+        return targetDocumentDocumentRevisionVersion;
     }
 
     public int getTargetDocumentIteration() {
@@ -130,8 +130,8 @@ public class DocumentLink implements Serializable, Cloneable{
         this.targetDocumentDocumentMasterId = targetDocumentDocumentMasterId;
     }
 
-    public void setTargetDocumentDocumentMasterVersion(String targetDocumentDocumentMasterVersion) {
-        this.targetDocumentDocumentMasterVersion = targetDocumentDocumentMasterVersion;
+    public void setTargetDocumentDocumentRevisionVersion(String targetDocumentDocumentMasterVersion) {
+        this.targetDocumentDocumentRevisionVersion = targetDocumentDocumentMasterVersion;
     }
 
     public void setTargetDocumentIteration(int targetDocumentIteration) {
@@ -147,15 +147,15 @@ public class DocumentLink implements Serializable, Cloneable{
     public void setTargetDocument(DocumentIteration targetDocument) {
         this.targetDocument = targetDocument;
         targetDocumentIteration=targetDocument.getIteration();
-        targetDocumentDocumentMasterId=targetDocument.getDocumentMasterId();
-        targetDocumentDocumentMasterVersion=targetDocument.getDocumentMasterVersion();
+        targetDocumentDocumentMasterId=targetDocument.getId();
+        targetDocumentDocumentRevisionVersion =targetDocument.getDocumentVersion();
         targetDocumentWorkspaceId=targetDocument.getWorkspaceId();
     }
 
     
     @Override
     public String toString() {
-        return targetDocumentDocumentMasterId+"-"+targetDocumentDocumentMasterVersion+"-"+targetDocumentIteration;
+        return targetDocumentDocumentMasterId+"-"+ targetDocumentDocumentRevisionVersion +"-"+targetDocumentIteration;
     }
 
     @Override

@@ -22,10 +22,12 @@ package com.docdoku.arquillian.tests;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.*;
+import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.gcm.GCMSenderBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -67,15 +69,13 @@ public class AccessRightsTest {
     public static Archive<?> createDeployment() {
 
         return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
-                .addPackage(Account.class.getPackage())
                 .addPackage(Workspace.class.getPackage())
-                .addPackage(Credential.class.getPackage())
-                .addPackage(UserGroupMapping.class.getPackage())
                 .addClasses(
                         Account.class,
+                        Credential.class,
                         GCMAccount.class,
                         Workspace.class,
-                        TestEJBBean.class,
+ TestEJBBean.class,
                         IUserManagerLocal.class,
                         UserManagerBean.class,
                         IMailerLocal.class,
@@ -89,10 +89,10 @@ public class AccessRightsTest {
                         DataManagerBean.class,
                         IDataManagerLocal.class,
                         WorkspaceUserMembership.class,
-                        Credential.class,
                         IWorkspaceManagerLocal.class,
                         WorkspaceManagerBean.class,
-                        JsonValue.class
+                        JsonValue.class,
+                        ESIndexer.class
                 )
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("WEB-INF/sun-web.xml")
@@ -177,8 +177,8 @@ public class AccessRightsTest {
 
     @Test
     public void testCheckInCheckOut() throws Exception {
-        testBean.testDocumentCheckIn("user1", new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5", "A"));
-        testBean.testDocumentCheckOut("user4", new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5", "A"));
+        testBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
+        testBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }
 
     /*

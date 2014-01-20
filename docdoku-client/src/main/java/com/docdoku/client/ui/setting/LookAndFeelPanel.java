@@ -20,15 +20,11 @@
 
 package com.docdoku.client.ui.setting;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class LookAndFeelPanel extends JPanel {
 

@@ -71,19 +71,19 @@ public class Tools {
         return completePath.replaceAll(":", "/");
     }    
 
-    public static DocumentMasterDTO createLightDocumentMasterDTO(DocumentMasterDTO docMsDTO){
+    public static DocumentRevisionDTO createLightDocumentRevisionDTO(DocumentRevisionDTO docRsDTO){
        
-       if (docMsDTO.getLastIteration() != null) {      
-           DocumentIterationDTO lastIteration = docMsDTO.getLastIteration();
+       if (docRsDTO.getLastIteration() != null) {
+           DocumentIterationDTO lastIteration = docRsDTO.getLastIteration();
            List<DocumentIterationDTO> iterations = new ArrayList<DocumentIterationDTO>();
            iterations.add(lastIteration);
-           docMsDTO.setDocumentIterations(iterations);
+           docRsDTO.setDocumentIterations(iterations);
        }
        
-       docMsDTO.setTags(null);
-       docMsDTO.setWorkflow(null);
+       docRsDTO.setTags(null);
+       docRsDTO.setWorkflow(null);
 
-       return docMsDTO;
+       return docRsDTO;
    }
 
 
@@ -115,7 +115,7 @@ public class Tools {
         partDTO.setName(partRevision.getPartMaster().getName());
         partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
         partDTO.setVersion(partRevision.getVersion());
-
+        partDTO.setDescription(partRevision.getDescription());
         List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
         for(PartIteration partIteration : partRevision.getPartIterations()){
             partIterationDTOs.add(mapPartIterationToPartIterationDTO(partIteration));

@@ -20,16 +20,15 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.TaskNotFoundException;
 import com.docdoku.core.workflow.Task;
-import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.TaskKey;
-import java.util.List;
-import java.util.Locale;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
 
 public class TaskDAO {
     

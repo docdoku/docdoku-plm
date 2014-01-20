@@ -20,7 +20,10 @@
 
 package com.docdoku.server.rest.converters;
 
-import com.docdoku.core.workflow.*;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.ParallelActivity;
+import com.docdoku.core.workflow.SerialActivity;
+import com.docdoku.core.workflow.Task;
 import com.docdoku.server.rest.dto.ActivityDTO;
 import com.docdoku.server.rest.dto.TaskDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;

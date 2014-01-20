@@ -20,15 +20,15 @@
 
 package com.docdoku.client.actions;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.SaveWorkflowModelDialog;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
-import java.awt.event.*;
-
-import com.docdoku.client.localization.I18N;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SaveAsWorkflowModelActionListener implements ActionListener {
     

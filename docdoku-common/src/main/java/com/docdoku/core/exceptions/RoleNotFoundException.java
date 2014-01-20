@@ -19,7 +19,6 @@
  */
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.workflow.RoleKey;
 
 import java.text.MessageFormat;

@@ -28,8 +28,6 @@ import com.docdoku.core.util.FileIO;
 
 import java.io.File;
 
-import static junit.framework.TestCase.fail;
-
 /**
  * @author Asmae Chadid
  *
@@ -43,7 +41,7 @@ public class UploadFile {
 
         File cadFile =  FileIO.urlToFile(UploadFile.class.getResource(CAD_FILE));
         IProductManagerWS productS = ScriptingTools.createProductService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
-        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", "", true, null, "", null, null, null,null);
+        productS.createPartMaster(properties.getWorkspace(), PART_NUMBER, "", true, null, "", null, null, null,null);
 
         PartMasterKey partMPK = new PartMasterKey(properties.getWorkspace(), PART_NUMBER);
 

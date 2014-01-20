@@ -25,11 +25,11 @@ import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.services.IUploadDownloadWS;
 import com.docdoku.core.services.IWorkflowManagerWS;
 
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.MTOMFeature;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.MTOMFeature;
 
 /**
  *

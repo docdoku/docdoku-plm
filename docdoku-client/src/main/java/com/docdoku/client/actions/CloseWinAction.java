@@ -20,12 +20,11 @@
 
 package com.docdoku.client.actions;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;
-import java.awt.event.*;
-
-import com.docdoku.client.localization.I18N;
+import java.awt.event.ActionEvent;
 
 public class CloseWinAction extends ClientAbstractAction {
     public CloseWinAction(ExplorerFrame pOwner) {

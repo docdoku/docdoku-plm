@@ -21,6 +21,7 @@
 package com.docdoku.client.ui.common;
 
 import com.docdoku.client.localization.I18N;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 

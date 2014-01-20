@@ -24,7 +24,6 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import javax.swing.*;
-
 import java.awt.*;
 
 

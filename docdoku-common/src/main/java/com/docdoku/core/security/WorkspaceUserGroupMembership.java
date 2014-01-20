@@ -21,12 +21,9 @@ package com.docdoku.core.security;
 
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * Class that holds information on how a specific user group belongs to a

@@ -3,12 +3,13 @@ package com.docdoku.server.filters;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RunAs;
@@ -39,18 +40,18 @@ public class GuestProxy{
         }
     }
 
-    public DocumentMaster getPublicDocumentMaster(DocumentMasterKey documentMasterKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentMasterNotFoundException, UserNotActiveException, AccessRightException, LoginException {
+    public DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey) throws NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, AccessRightException, LoginException {
 
-        DocumentMaster documentMaster =  documentService.getDocumentMaster(documentMasterKey);
-        if(documentMaster.isPublicShared()){
-            return documentMaster;
+        DocumentRevision documentRevision =  documentService.getDocumentRevision(documentRevisionKey);
+        if(documentRevision.isPublicShared()){
+            return documentRevision;
         }else{
             throw new LoginException();
         }
     }
 
-    public BinaryResource getPublicBinaryResourceForDocument(DocumentMasterKey docMK, String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException, LoginException, DocumentMasterNotFoundException {
-        getPublicDocumentMaster(docMK);
+    public BinaryResource getPublicBinaryResourceForDocument(DocumentRevisionKey docRK, String fullName) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, UserNotActiveException, LoginException, DocumentRevisionNotFoundException {
+        getPublicDocumentRevision(docRK);
         return documentService.getBinaryResource(fullName);
     }
 

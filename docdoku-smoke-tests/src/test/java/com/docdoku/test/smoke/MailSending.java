@@ -22,9 +22,13 @@ package com.docdoku.test.smoke;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.services.IDocumentManagerWS;
 
-import javax.mail.*;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 import java.util.Properties;
 
@@ -50,16 +54,13 @@ public class MailSending {
         assertNotNull(documentS);
         documentS.createFolder(properties.getWorkspace(), FOLDER_NAME);
         documentS.createDocumentMaster(properties.getWorkspace() + "/" + FOLDER_NAME, DOCUMENT_ID, "", null, null, null, null, null, null);
-        DocumentMasterKey docMaster = new DocumentMasterKey();
-        docMaster.setWorkspaceId(properties.getWorkspace());
-        docMaster.setVersion("A");
-        docMaster.setId(DOCUMENT_ID);
+        DocumentRevisionKey docRevision = new DocumentRevisionKey(new DocumentMasterKey(properties.getWorkspace(), DOCUMENT_ID),"A");
 
-        documentS.subscribeToIterationChangeEvent(docMaster);
-        documentS.checkInDocument(docMaster);
+        documentS.subscribeToIterationChangeEvent(docRevision);
+        documentS.checkInDocument(docRevision);
 
         IDocumentManagerWS documentS2 = ScriptingTools.createDocumentService(properties.getURL(), properties.getLoginForUser2(), properties.getPassword());
-        documentS2.checkOutDocument(docMaster);
+        documentS2.checkOutDocument(docRevision);
         documentS.deleteFolder(properties.getWorkspace() + "/" + FOLDER_NAME);
     }
 

@@ -23,36 +23,36 @@ package com.docdoku.core.document;
 import java.io.Serializable;
 
 /**
+ * Identity class of <a href="DocumentIteration.html">DocumentIteration</a> objects.
  *
  * @author Florent Garin
  */
 public class DocumentIterationKey implements Serializable {
-    
-    private String workspaceId;
-    private String documentMasterId;
-    private String documentMasterVersion;
+
+    private DocumentRevisionKey documentRevision;
     private int iteration;
     
     public DocumentIterationKey() {
     }
-    
-    public DocumentIterationKey(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
-        workspaceId=pWorkspaceId;
-        documentMasterId=pDocumentMasterId;
-        documentMasterVersion=pDocumentMasterVersion;
+
+    public DocumentIterationKey(String pWorkspaceId, String pId, String pVersion, int pIteration) {
+        documentRevision= new DocumentRevisionKey(pWorkspaceId, pId, pVersion);
         iteration=pIteration;
     }
-    
+
+    public DocumentIterationKey(DocumentRevisionKey pDocumentRevisionKey, int pIteration) {
+        documentRevision=pDocumentRevisionKey;
+        iteration=pIteration;
+    }
+
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + documentMasterId.hashCode();
-        hash = 31 * hash + documentMasterVersion.hashCode();
+        hash = 31 * hash + documentRevision.hashCode();
         hash = 31 * hash + iteration;
-	return hash;
+        return hash;
     }
-    
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {
@@ -61,44 +61,40 @@ public class DocumentIterationKey implements Serializable {
         if (!(pObj instanceof DocumentIterationKey))
             return false;
         DocumentIterationKey key = (DocumentIterationKey) pObj;
-        return ((key.documentMasterId.equals(documentMasterId)) && (key.workspaceId.equals(workspaceId))  && (key.documentMasterVersion.equals(documentMasterVersion)) && (key.iteration==iteration));
+        return ((key.documentRevision.equals(documentRevision)) && (key.iteration==iteration));
     }
-    
+
     @Override
     public String toString() {
-        return workspaceId + "-" + documentMasterId + "-" + documentMasterVersion + "-" + iteration;
-    }
-    
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-    
-    public void setWorkspaceId(String pWorkspaceId) {
-        workspaceId = pWorkspaceId;
-    }
-    
-    public String getDocumentMasterId() {
-        return documentMasterId;
-    }
-    
-    public void setDocumentMasterId(String pDocumentMasterId) {
-        documentMasterId = pDocumentMasterId;
+        return documentRevision + "-" + iteration;
     }
 
-    public String getDocumentMasterVersion() {
-        return documentMasterVersion;
-    }
-
-    public void setDocumentMasterVersion(String pDocumentMasterVersion) {
-        this.documentMasterVersion = pDocumentMasterVersion;
-    }
-    
-    
     public int getIteration(){
         return iteration;
     }
     
     public void setIteration(int pIteration){
         iteration=pIteration;
+    }
+
+    public DocumentRevisionKey getDocumentRevision() {
+        return documentRevision;
+    }
+
+    public void setDocumentRevision(DocumentRevisionKey documentRevision) {
+        this.documentRevision = documentRevision;
+    }
+
+
+    public String getWorkspaceId() {
+        return documentRevision.getDocumentMaster().getWorkspace();
+    }
+
+    public String getDocumentMasterId() {
+        return documentRevision.getDocumentMaster().getId();
+    }
+
+    public String getDocumentRevisionVersion(){
+        return documentRevision.getVersion();
     }
 }

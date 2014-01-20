@@ -21,6 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.meta.InstanceAttribute;
+
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 

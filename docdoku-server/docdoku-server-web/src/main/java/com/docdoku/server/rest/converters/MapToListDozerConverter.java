@@ -20,16 +20,15 @@
 package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import java.lang.String;
+import org.dozer.DozerConverter;
+import org.dozer.Mapper;
+import org.dozer.MapperAware;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.dozer.DozerConverter;
-import org.dozer.Mapper;
-import org.dozer.MapperAware;
 
 /**
  *

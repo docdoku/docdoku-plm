@@ -22,7 +22,6 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
-import javax.persistence.criteria.Fetch;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;

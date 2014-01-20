@@ -104,7 +104,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed("users")
     @Override
     public void uploadToDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
+            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
 

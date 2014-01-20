@@ -27,17 +27,13 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceBooleanAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceURLAttribute;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+
+import javax.swing.*;
+import java.awt.*;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 /**
  *

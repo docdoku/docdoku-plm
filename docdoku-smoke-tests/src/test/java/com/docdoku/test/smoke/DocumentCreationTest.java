@@ -20,7 +20,6 @@
 
 package com.docdoku.test.smoke;
 
-import com.docdoku.test.smoke.DocumentCreation;
 import org.junit.Test;
 
 import static junit.framework.Assert.fail;

@@ -26,18 +26,18 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.Highlighter;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.text.DateFormat;
 import java.util.Date;
-import javax.swing.event.TableModelEvent;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 public class ElementsTable extends JXTable {
 

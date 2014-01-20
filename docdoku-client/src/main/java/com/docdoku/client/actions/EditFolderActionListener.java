@@ -6,10 +6,11 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.localization.I18N;
+
+import javax.swing.*;
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
-import javax.swing.tree.TreePath;
 
 /**
  *

@@ -21,6 +21,7 @@
 package com.docdoku.client.ui.workflow;
 
 import com.docdoku.client.localization.I18N;
+
 import javax.swing.*;
 import java.awt.event.ActionListener;
 

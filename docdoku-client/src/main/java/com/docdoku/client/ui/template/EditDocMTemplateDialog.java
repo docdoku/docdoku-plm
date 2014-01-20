@@ -24,9 +24,10 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +36,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.JPanel;
 
 
 public class EditDocMTemplateDialog extends DocMTemplateDialog implements ActionListener{

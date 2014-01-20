@@ -20,12 +20,12 @@
 package com.docdoku.client.ui.doc;
 
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 
 import javax.swing.*;
 import java.awt.*;
-import com.docdoku.client.localization.I18N;
 
 public class ScanPanel extends JPanel {
 

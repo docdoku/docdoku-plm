@@ -20,7 +20,6 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.PartRevision;
 
 import java.text.MessageFormat;

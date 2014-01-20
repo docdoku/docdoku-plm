@@ -20,20 +20,20 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.client.ui.common.OKCancelPanel;
-import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
-
 import com.docdoku.core.meta.InstanceAttribute;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 
 public class EditDocDialog extends JDialog implements ActionListener {

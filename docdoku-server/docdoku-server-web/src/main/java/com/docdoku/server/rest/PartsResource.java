@@ -25,7 +25,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartSearchQuery;
+import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -182,7 +182,7 @@ public class PartsResource {
                 }
             }
 
-            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.getDescription(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
+            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
             PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
             return partDTO;
 

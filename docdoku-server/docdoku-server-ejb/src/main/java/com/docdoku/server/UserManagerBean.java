@@ -21,12 +21,16 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -56,7 +60,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @EJB
     private IMailerLocal mailer;
     @EJB
-    private IndexerBean indexer;
+    private ESIndexer indexer;
     @EJB
     private IDataManagerLocal dataManager;
     private final static Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
@@ -290,21 +294,22 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
+    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
         Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         for (String login : pLogins) {
-            DocumentMaster[] docMs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
-            for (DocumentMaster docM : docMs) {
-                for (DocumentIteration doc : docM.getDocumentIterations()) {
+            DocumentRevision[] docRs = userDAO.removeUser(new UserKey(pWorkspaceId, login));
+            for (DocumentRevision docR : docRs) {
+                for (DocumentIteration doc : docR.getDocumentIterations()) {
                     for (BinaryResource file : doc.getAttachedFiles()) {
-                        indexer.removeFromIndex(file.getFullName());
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
                             e.printStackTrace();
                         }
                     }
+
+                    indexer.delete(doc);
                 }
             }
         }

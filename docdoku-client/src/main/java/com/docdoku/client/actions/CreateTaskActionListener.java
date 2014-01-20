@@ -20,16 +20,16 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.client.ui.workflow.EditActivityModelPanel;
 import com.docdoku.client.ui.workflow.CreateTaskModelDialog;
+import com.docdoku.client.ui.workflow.EditActivityModelPanel;
+import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.TaskModel;
-import com.docdoku.core.common.User;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
 
 public class CreateTaskActionListener implements ActionListener {
 

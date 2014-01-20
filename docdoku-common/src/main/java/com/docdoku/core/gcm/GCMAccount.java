@@ -21,10 +21,11 @@ package com.docdoku.core.gcm;
 
 import com.docdoku.core.common.Account;
 
-import javax.persistence.*;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 
 @Table(name="GCMACCOUNT")
 @javax.persistence.Entity

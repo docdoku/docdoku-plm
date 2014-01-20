@@ -20,18 +20,17 @@
 
 package com.docdoku.client.ui.search;
 
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.HelpButton;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import com.docdoku.client.ui.common.MaxLengthDocument;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.*;
-
-import com.docdoku.client.localization.I18N;
-import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.client.ui.common.MaxLengthDocument;
 
 public class SearchAdvancedPanel extends JPanel {
 

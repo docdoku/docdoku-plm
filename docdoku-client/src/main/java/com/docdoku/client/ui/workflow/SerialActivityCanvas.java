@@ -22,13 +22,13 @@ package com.docdoku.client.ui.workflow;
 
 
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.SerialActivity;
 import com.docdoku.core.workflow.Task;
-import java.awt.*;
-import java.util.Iterator;
+import com.docdoku.core.workflow.TaskModel;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.Iterator;
 
 
 public class SerialActivityCanvas extends JPanel {

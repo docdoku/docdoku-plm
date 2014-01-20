@@ -21,12 +21,12 @@
 package com.docdoku.client.ui.workflow;
 
 
-
 import com.docdoku.core.workflow.SerialActivityModel;
-import java.awt.Color;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.BorderFactory;
 
 
 public class EditableSerialActivityModelCanvas extends SerialActivityModelCanvas implements MouseListener {

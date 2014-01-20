@@ -24,7 +24,7 @@ public class ViewerBean {
     @EJB
     private IDocumentViewerManagerLocal documentViewerService;
 
-    @ManagedProperty(value = "#{documentMaster.lastIteration.attachedFiles}")
+    @ManagedProperty(value = "#{documentRevision.lastIteration.attachedFiles}")
     private Set<BinaryResource> attachedFiles;
 
     public void process() {

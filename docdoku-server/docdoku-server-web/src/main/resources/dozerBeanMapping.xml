@@ -52,8 +52,8 @@
             <b>documentMasterId</b>
         </field>
         <field>
-            <a>targetDocumentDocumentMasterVersion</a>
-            <b>documentMasterVersion</b>
+            <a>targetDocumentDocumentRevisionVersion</a>
+            <b>documentRevisionVersion</b>
         </field>
         <field>
             <a>targetDocumentWorkspaceId</a>

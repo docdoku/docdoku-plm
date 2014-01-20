@@ -19,8 +19,6 @@
  */
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.exceptions.ApplicationException;
-
 import java.text.MessageFormat;
 import java.util.Locale;
 

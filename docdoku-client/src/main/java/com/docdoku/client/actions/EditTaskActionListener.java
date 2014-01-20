@@ -22,13 +22,13 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.EditActivityModelPanel;
 import com.docdoku.client.ui.workflow.EditTaskModelDialog;
-import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.common.User;
+import com.docdoku.core.workflow.TaskModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
 
 public class EditTaskActionListener implements ActionListener {
 

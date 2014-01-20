@@ -19,18 +19,13 @@
  */
 package com.docdoku.client.ui.common;
 
-import java.awt.Cursor;
+import com.docdoku.client.localization.I18N;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URI;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Desktop;
-
-import com.docdoku.client.localization.I18N;
-import javax.swing.Icon;
 
 public class WebLink extends JLabel {
 

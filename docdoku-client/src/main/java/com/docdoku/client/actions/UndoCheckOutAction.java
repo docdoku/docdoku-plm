@@ -22,14 +22,14 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
-import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.ExplorerFrame;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.util.FileIO;
 
-import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class UndoCheckOutAction extends ClientAbstractAction {
     

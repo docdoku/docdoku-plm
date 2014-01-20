@@ -20,17 +20,17 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.ViewFilesPanel;
 import com.docdoku.core.document.DocumentIteration;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import com.docdoku.client.localization.I18N;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 
 public class ViewDocDetailsDialog extends JDialog {
     private ViewDocMPanel mDocMPanel;

@@ -21,8 +21,8 @@
 package com.docdoku.server.storage.filesystem;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.storage.StorageProvider;

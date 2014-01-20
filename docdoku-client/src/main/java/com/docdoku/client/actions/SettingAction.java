@@ -20,18 +20,16 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.core.common.User;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Action;
-
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.setting.SettingDialog;
-import javax.swing.JOptionPane;
+import com.docdoku.core.common.User;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SettingAction extends ClientAbstractAction {
 

@@ -22,18 +22,17 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.data.DocsTableModel;
 import com.docdoku.core.document.DocumentIteration;
-import java.awt.Color;
-
-import java.awt.Component;
-import java.text.DateFormat;
-import java.util.Date;
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 import org.jdesktop.swingx.JXTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class DocsTable extends JXTable {
 

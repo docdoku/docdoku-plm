@@ -21,10 +21,11 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
-import java.io.Serializable;
-import java.util.Map;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This is the model for creating instances of <a href="Task.html">Task</a>

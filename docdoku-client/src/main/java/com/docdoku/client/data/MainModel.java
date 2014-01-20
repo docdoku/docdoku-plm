@@ -19,39 +19,30 @@
  */
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.*;
-import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.services.IWorkflowManagerWS;
-import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.util.Tools;
-import java.awt.Component;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import javax.swing.*;
-import java.util.*;
-
-import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.DocumentSearchQuery;
+import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.core.services.IUploadDownloadWS;
+import com.docdoku.core.services.IWorkflowManagerWS;
+import com.docdoku.core.util.Tools;
+import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
+
+import javax.activation.DataHandler;
+import javax.swing.*;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
+import java.awt.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import javax.activation.DataHandler;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
+import java.util.*;
 
 public class MainModel {
 

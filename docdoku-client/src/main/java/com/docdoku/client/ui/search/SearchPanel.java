@@ -20,25 +20,22 @@
 
 package com.docdoku.client.ui.search;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.Date;
-import java.util.Calendar;
-
-import javax.swing.*;
-
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.client.ui.common.VersionFormat;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.client.ui.common.VersionFormat;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
-import java.awt.Component;
+import com.docdoku.core.document.DocumentMasterTemplate;
+import org.jdesktop.swingx.JXDatePicker;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.jdesktop.swingx.JXDatePicker;
 
 public class SearchPanel extends JPanel {
 

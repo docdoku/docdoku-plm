@@ -20,9 +20,9 @@
 package com.docdoku.server.dao;
 
 
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.SharedEntityNotFoundException;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
@@ -100,9 +100,9 @@ public class SharedEntityDAO {
         em.flush();
     }
 
-    public void deleteSharesForDocument(DocumentMaster pDocM) {
+    public void deleteSharesForDocument(DocumentRevision pDocR) {
         TypedQuery<SharedDocument> query = em.createNamedQuery("SharedDocument.deleteSharesForGivenDocument", SharedDocument.class);
-        query.setParameter("pDocM", pDocM).executeUpdate();
+        query.setParameter("pDocR", pDocR).executeUpdate();
     }
 
     public void deleteSharesForPart(PartRevision pPartR) {

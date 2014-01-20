@@ -23,7 +23,8 @@ package com.docdoku.client.data;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
-import javax.swing.table.*;
+
+import javax.swing.table.AbstractTableModel;
 
 public class DocsTableModel extends AbstractTableModel {
 

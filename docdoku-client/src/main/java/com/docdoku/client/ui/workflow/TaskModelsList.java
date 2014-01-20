@@ -22,12 +22,9 @@ package com.docdoku.client.ui.workflow;
 
 import com.docdoku.core.workflow.TaskModel;
 
-import java.lang.Integer;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 

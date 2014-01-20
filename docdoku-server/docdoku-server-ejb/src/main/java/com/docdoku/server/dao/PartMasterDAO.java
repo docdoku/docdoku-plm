@@ -21,13 +21,15 @@ package com.docdoku.server.dao;
 
 
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.PartMasterAlreadyExistsException;
+import com.docdoku.core.exceptions.PartMasterNotFoundException;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.exceptions.PartMasterAlreadyExistsException;
-import com.docdoku.core.exceptions.PartMasterNotFoundException;
-import java.util.*;
+
 import javax.persistence.*;
+import java.util.List;
+import java.util.Locale;
 
 public class PartMasterDAO {
 
@@ -84,12 +86,9 @@ public class PartMasterDAO {
     }
 
     public void removePartM(PartMaster pPartM) {
-
-        SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(em);
-        WorkflowDAO workflowDAO = new WorkflowDAO(em);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(mLocale, em);
         for(PartRevision partRevision:pPartM.getPartRevisions()){
-            sharedEntityDAO.deleteSharesForPart(partRevision);
-            workflowDAO.removeWorkflowConstraints(partRevision);
+            partRevisionDAO.removeRevision(partRevision);
         }
         em.remove(pPartM);
     }
@@ -146,5 +145,12 @@ public class PartMasterDAO {
                 .getSingleResult());
 
         return result != null ? result.longValue() : 0L;
+    }
+
+    public List<PartMaster> getAllByWorkspace(String workspaceId) {
+        List<PartMaster> partMasters = em.createNamedQuery("PartMaster.findByWorkspace")
+                .setParameter("workspaceId",workspaceId)
+                .getResultList();
+        return partMasters;
     }
 }

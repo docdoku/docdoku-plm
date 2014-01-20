@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest.converters;
 
-import org.dozer.DozerConverter;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.ParallelActivityModel;
 import com.docdoku.core.workflow.SerialActivityModel;
@@ -28,6 +27,7 @@ import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.TaskModelDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.DozerConverter;
 import org.dozer.Mapper;
 
 import java.util.ArrayList;

@@ -21,19 +21,17 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
-import com.docdoku.core.util.FileIO;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.ExplorerFrame;
+import com.docdoku.client.ui.template.CreateDocMTemplateDialog;
 import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.util.FileIO;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.InterruptedIOException;
-
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-
-import com.docdoku.client.localization.I18N;
-import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.ui.template.CreateDocMTemplateDialog;
 
 public class CreateDocMTemplateAction extends ClientAbstractAction {
     

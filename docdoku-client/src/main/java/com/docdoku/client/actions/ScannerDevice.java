@@ -20,23 +20,22 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
-import java.io.File;
-import java.awt.Window.*;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.IIOImage;
-import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
+import com.docdoku.core.util.FileIO;
 import uk.co.mmscomputing.device.scanner.Scanner;
 import uk.co.mmscomputing.device.scanner.ScannerIOException;
-import uk.co.mmscomputing.device.scanner.ScannerListener;
 import uk.co.mmscomputing.device.scanner.ScannerIOMetadata;
-import javax.swing.ImageIcon.*;
-import com.docdoku.core.util.FileIO;
+import uk.co.mmscomputing.device.scanner.ScannerListener;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class ScannerDevice implements ScannerListener {
 

@@ -19,12 +19,11 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.product.Marker;
 import com.docdoku.core.exceptions.MarkerNotFoundException;
-
-import java.util.Locale;
+import com.docdoku.core.product.Marker;
 
 import javax.persistence.EntityManager;
+import java.util.Locale;
 
 public class MarkerDAO {
 

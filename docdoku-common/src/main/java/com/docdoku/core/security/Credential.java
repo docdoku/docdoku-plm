@@ -20,9 +20,9 @@
 
 package com.docdoku.core.security;
 
+import javax.persistence.Table;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javax.persistence.Table;
 
 /**
  * Useful class for storing credential, login/password pair, to the persistence

@@ -20,18 +20,20 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.exceptions.AccountNotFoundException;
-import com.docdoku.core.exceptions.AccountAlreadyExistsException;
-import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.AccountAlreadyExistsException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.security.Credential;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.common.Workspace;
-import java.util.*;
+
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
 
 public class AccountDAO {
     

@@ -24,7 +24,6 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
-import com.docdoku.server.rest.dto.TaskDTO;
 import com.docdoku.server.rest.dto.TaskProcessDTO;
 
 import javax.annotation.security.DeclareRoles;

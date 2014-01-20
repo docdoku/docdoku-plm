@@ -19,9 +19,9 @@
  */
 package com.docdoku.core.util;
 
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.workflow.*;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
@@ -35,51 +35,6 @@ import java.util.regex.Pattern;
 public class Tools {
 
     private Tools() {
-    }
-
-    public static DocumentMaster resetParentReferences(DocumentMaster pDocM) {
-        for (DocumentIteration doc : pDocM.getDocumentIterations()) {
-            doc.setDocumentMaster(pDocM);
-        }
-
-        if (pDocM.getWorkflow() != null) {
-            resetParentReferences(pDocM.getWorkflow());
-        }
-
-        return pDocM;
-    }
-
-    public static DocumentMaster[] resetParentReferences(DocumentMaster[] pDocMs) {
-        for (DocumentMaster docM : pDocMs) {
-            resetParentReferences(docM);
-        }
-
-        return pDocMs;
-    }
-
-    private static Workflow resetParentReferences(Workflow pWf) {
-        for (Activity activity : pWf.getActivities()) {
-            activity.setWorkflow(pWf);
-            resetParentReferences(activity);
-        }
-
-        return pWf;
-    }
-
-    private static Activity resetParentReferences(Activity pActivity) {
-        for (Task task : pActivity.getTasks()) {
-            task.setActivity(pActivity);
-        }
-
-        return pActivity;
-    }
-
-    public static WorkflowModel[] resetParentReferences(WorkflowModel[] pWfs) {
-        for (WorkflowModel wf : pWfs) {
-            resetParentReferences(wf);
-        }
-
-        return pWfs;
     }
 
     public static WorkflowModel resetParentReferences(WorkflowModel pWf) {
@@ -99,25 +54,6 @@ public class Tools {
         return pActivity;
     }
 
-    /*
-    public static DocumentMasterTemplate[] resetParentReferences(DocumentMasterTemplate[] pTemplates) {
-        for (DocumentMasterTemplate template : pTemplates) {
-            resetParentReferences(template);
-        }
-
-        return pTemplates;
-    }
-    */
-
-    /*
-    public static DocumentMasterTemplate resetParentReferences(DocumentMasterTemplate pTemplate) {
-        for (InstanceAttributeTemplate attr : pTemplate.getAttributeTemplates()) {
-            attr.setDocumentMasterTemplate(pTemplate);
-        }
-
-        return pTemplate;
-    }
-    */
 
     public static boolean safeEquals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {

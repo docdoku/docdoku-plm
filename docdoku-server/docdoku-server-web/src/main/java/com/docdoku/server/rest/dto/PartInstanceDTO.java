@@ -1,8 +1,8 @@
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**

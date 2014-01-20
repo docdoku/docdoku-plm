@@ -20,11 +20,12 @@
 
 package com.docdoku.client.localization;
 
+import com.docdoku.client.data.Prefs;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import com.docdoku.client.data.Prefs;
 
 public class I18N {
 

@@ -21,15 +21,14 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.EditSerialActivityModelDialog;
+import com.docdoku.client.ui.workflow.EditableSerialActivityModelCanvas;
+import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.workflow.SerialActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.docdoku.client.ui.workflow.EditableSerialActivityModelCanvas;
-import com.docdoku.client.ui.workflow.WorkflowModelFrame;
-
-import javax.swing.*;
 
 public class EditSerialActivityModelActionListener implements ActionListener {
 

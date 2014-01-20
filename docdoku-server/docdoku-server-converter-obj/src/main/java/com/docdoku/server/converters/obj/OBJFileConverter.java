@@ -23,9 +23,10 @@ package com.docdoku.server.converters.obj;
 
 import javax.inject.Qualifier;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.ElementType.*;
 import java.lang.annotation.Target;
-import static java.lang.annotation.RetentionPolicy.*;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Qualifier
 @Retention(RUNTIME)

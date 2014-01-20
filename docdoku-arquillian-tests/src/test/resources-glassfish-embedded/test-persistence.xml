@@ -9,6 +9,7 @@
         <class>com.docdoku.core.common.UserGroup</class>
         <class>com.docdoku.core.common.Workspace</class>
         <class>com.docdoku.core.document.DocumentIteration</class>
+        <class>com.docdoku.core.document.DocumentRevision</class>
         <class>com.docdoku.core.document.DocumentMaster</class>
         <class>com.docdoku.core.document.DocumentLink</class>
         <class>com.docdoku.core.document.Folder</class>

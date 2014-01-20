@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
+
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;

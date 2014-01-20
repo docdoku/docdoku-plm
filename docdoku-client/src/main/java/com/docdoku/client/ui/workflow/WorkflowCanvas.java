@@ -20,16 +20,13 @@
 
 package com.docdoku.client.ui.workflow;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Toolkit;
-import javax.swing.*;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.ParallelActivity;
 import com.docdoku.core.workflow.SerialActivity;
 import com.docdoku.core.workflow.Workflow;
+
+import javax.swing.*;
+import java.awt.*;
 
 
 

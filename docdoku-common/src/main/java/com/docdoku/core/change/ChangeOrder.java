@@ -21,8 +21,8 @@
 
 package com.docdoku.core.change;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * A directive to implement an approved <a href="ChangeRequest.html">ChangeRequest</a>.

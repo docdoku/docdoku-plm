@@ -24,38 +24,18 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceBooleanAttribute;
-import com.docdoku.core.meta.InstanceDateAttribute;
-import com.docdoku.core.meta.InstanceNumberAttribute;
-import com.docdoku.core.meta.InstanceTextAttribute;
-import com.docdoku.core.meta.InstanceURLAttribute;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import com.docdoku.core.meta.*;
+import org.jdesktop.swingx.JXDatePicker;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import org.jdesktop.swingx.JXDatePicker;
+import java.util.*;
 
 /**
  *

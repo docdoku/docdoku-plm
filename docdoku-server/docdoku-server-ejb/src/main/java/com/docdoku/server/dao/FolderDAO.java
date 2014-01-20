@@ -20,22 +20,17 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.FolderAlreadyExistsException;
 import com.docdoku.core.exceptions.FolderNotFoundException;
-import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.DocumentMaster;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.*;
 
 public class FolderDAO {
     
@@ -77,7 +72,7 @@ public class FolderDAO {
     
     public Folder[] getSubFolders(String pCompletePath){
         Folder[] folders;
-        Query query = em.createQuery("SELECT DISTINCT f FROM Folder f WHERE f.parentFolder.completePath = :completePath");
+        TypedQuery<Folder> query = em.createQuery("SELECT DISTINCT f FROM Folder f WHERE f.parentFolder.completePath = :completePath", Folder.class);
         query.setParameter("completePath",pCompletePath);
         List listFolders = query.getResultList();
         folders = new Folder[listFolders.size()];
@@ -102,7 +97,7 @@ public class FolderDAO {
         return allSubFolders;
     }
     
-    public List<DocumentMaster> removeFolder(String pCompletePath) throws FolderNotFoundException{
+    public List<DocumentRevision> removeFolder(String pCompletePath) throws FolderNotFoundException{
         Folder folder = em.find(Folder.class,pCompletePath);
         if(folder==null)
             throw new FolderNotFoundException(mLocale, pCompletePath);
@@ -110,48 +105,48 @@ public class FolderDAO {
         return removeFolder(folder);
     }
     
-    public List<DocumentMaster> removeFolder(Folder pFolder){
-        DocumentMasterDAO docMDAO=new DocumentMasterDAO(mLocale,em);
-        List<DocumentMaster> allDocM = new LinkedList<DocumentMaster>();
-        List<DocumentMaster> docMs = docMDAO.findDocMsByFolder(pFolder.getCompletePath());
-        allDocM.addAll(docMs);
+    public List<DocumentRevision> removeFolder(Folder pFolder){
+        DocumentRevisionDAO docRDAO=new DocumentRevisionDAO(mLocale,em);
+        List<DocumentRevision> allDocR = new LinkedList<>();
+        List<DocumentRevision> docRs = docRDAO.findDocRsByFolder(pFolder.getCompletePath());
+        allDocR.addAll(docRs);
         
-        for(DocumentMaster docM:allDocM)
-            docMDAO.removeDocM(docM);
+        for(DocumentRevision docR:allDocR)
+            docRDAO.removeRevision(docR);
         
         Folder[] subFolders = getSubFolders(pFolder);
         for(Folder subFolder:subFolders)
-            allDocM.addAll(removeFolder(subFolder));
+            allDocR.addAll(removeFolder(subFolder));
         
         em.remove(pFolder);
         //flush to insure the right delete order to avoid integrity constraint
         //violation on folder.
         em.flush();
         
-        return allDocM;
+        return allDocR;
     }
 
-    public List<DocumentMaster> moveFolder(Folder pFolder, Folder pNewFolder) throws FolderAlreadyExistsException, CreationException{
-        DocumentMasterDAO docMDAO=new DocumentMasterDAO(mLocale,em);
-        List<DocumentMaster> allDocMs = new LinkedList<DocumentMaster>();
-        List<DocumentMaster> docMs = docMDAO.findDocMsByFolder(pFolder.getCompletePath());
-        allDocMs.addAll(docMs);
+    public List<DocumentRevision> moveFolder(Folder pFolder, Folder pNewFolder) throws FolderAlreadyExistsException, CreationException{
+        DocumentRevisionDAO docRDAO=new DocumentRevisionDAO(mLocale,em);
+        List<DocumentRevision> allDocRs = new LinkedList<>();
+        List<DocumentRevision> docRs = docRDAO.findDocRsByFolder(pFolder.getCompletePath());
+        allDocRs.addAll(docRs);
 
-        for(DocumentMaster docM:allDocMs){
-            docM.setLocation(pNewFolder);
+        for(DocumentRevision docR:allDocRs){
+            docR.setLocation(pNewFolder);
         }
 
         Folder[] subFolders = getSubFolders(pFolder);
         for(Folder subFolder:subFolders){
             Folder newSubFolder = new Folder(pNewFolder.getCompletePath(),subFolder.getShortName());
             createFolder(newSubFolder);
-            allDocMs.addAll(moveFolder(subFolder,newSubFolder));
+            allDocRs.addAll(moveFolder(subFolder,newSubFolder));
         }
         em.remove(pFolder);
         //flush to insure the right delete order to avoid integrity constraint
         //violation on folder.
         em.flush();
 
-        return allDocMs;
+        return allDocRs;
     }
 }

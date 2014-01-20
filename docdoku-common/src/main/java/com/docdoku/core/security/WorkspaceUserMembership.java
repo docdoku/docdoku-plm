@@ -21,8 +21,9 @@ package com.docdoku.core.security;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import java.io.Serializable;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Class that holds information on how a specific user belongs to a workspace.

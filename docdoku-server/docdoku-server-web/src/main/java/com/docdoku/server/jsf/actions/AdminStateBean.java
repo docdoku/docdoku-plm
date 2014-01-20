@@ -23,12 +23,14 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -148,20 +150,20 @@ public class AdminStateBean implements Serializable {
 
     public JsonObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
 
-        DocumentMaster[] checkedOutDocumentMasters = documentService.getAllCheckedOutDocumentMasters(selectedWorkspace);
+        DocumentRevision[] checkedOutDocumentRevisions = documentService.getAllCheckedOutDocumentRevisions(selectedWorkspace);
         JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
 
         Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
-        for(DocumentMaster documentMaster : checkedOutDocumentMasters){
+        for(DocumentRevision documentRevision : checkedOutDocumentRevisions){
 
-            String userLogin = documentMaster.getCheckOutUser().getLogin();
+            String userLogin = documentRevision.getCheckOutUser().getLogin();
             JsonArrayBuilder userArray=userArrays.get(userLogin);
             if(userArray==null) {
                 userArray = Json.createArrayBuilder();
                 userArrays.put(userLogin, userArray);
                 statsByUserBuilder.add(userLogin, userArray);
             }
-            userArray.add(Json.createObjectBuilder().add("date",documentMaster.getCheckOutDate().getTime()).build());
+            userArray.add(Json.createObjectBuilder().add("date",documentRevision.getCheckOutDate().getTime()).build());
         }
 
         return statsByUserBuilder.build();
