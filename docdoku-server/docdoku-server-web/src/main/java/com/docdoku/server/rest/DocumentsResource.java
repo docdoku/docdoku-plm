@@ -214,15 +214,15 @@ public class DocumentsResource {
                 }
             }
 
-            ArrayList<DocumentRevisionDTO> docRsDTOs = new ArrayList<DocumentRevisionDTO>();
+            ArrayList<DocumentRevisionDTO> docRsDTOs = new ArrayList<>();
 
-            for (int i = 0; i < docRs.length; i++) {
+            for (DocumentRevision docR : docRs) {
 
-                DocumentRevisionDTO docDTO = mapper.map(docRs[i], DocumentRevisionDTO.class);
-                docDTO.setPath(docRs[i].getLocation().getCompletePath());
+                DocumentRevisionDTO docDTO = mapper.map(docR, DocumentRevisionDTO.class);
+                docDTO.setPath(docR.getLocation().getCompletePath());
                 docDTO = Tools.createLightDocumentRevisionDTO(docDTO);
-                docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-                docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
+                docDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
+                docDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
                 docRsDTOs.add(docDTO);
 
             }
@@ -238,12 +238,6 @@ public class DocumentsResource {
         try{
             DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, pStringQuery);
             DocumentRevision[] docRs = documentService.searchDocumentRevisions(documentSearchQuery);
-            DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-            DocumentRevision[] docRs = com.docdoku.core.util.Tools.resetParentReferences(
-                    documentService.searchDocumentRevisions(documentSearchQuery)
-            );
-
             DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
             for (int i = 0; i < docRs.length; i++) {
@@ -298,7 +292,7 @@ public class DocumentsResource {
                 }
             }
 
-            Map<String, String> roleMappings = new HashMap<String,String>();
+            Map<String, String> roleMappings = new HashMap<>();
 
             if(rolesMappingDTO != null){
                 for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
@@ -357,10 +351,10 @@ public class DocumentsResource {
 
             DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReference(workspaceId, q, maxResults);
 
-            List<DocumentIterationDTO> docsLastIter = new ArrayList<DocumentIterationDTO>();
-            for (int i = 0; i < docRs.length; i++) {
-                DocumentIteration docLastIter = docRs[i].getLastIteration();
-                if(docLastIter != null)
+            List<DocumentIterationDTO> docsLastIter = new ArrayList<>();
+            for (DocumentRevision docR : docRs) {
+                DocumentIteration docLastIter = docR.getLastIteration();
+                if (docLastIter != null)
                     docsLastIter.add(new DocumentIterationDTO(docLastIter.getWorkspaceId(), docLastIter.getId(), docLastIter.getDocumentVersion(), docLastIter.getIteration()));
             }
 
