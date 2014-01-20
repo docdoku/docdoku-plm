@@ -20,15 +20,15 @@
 
 package com.docdoku.client.ui.setting;
 
-import com.docdoku.client.localization.I18N;
-import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.Prefs;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.OKCancelPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Locale;
 
 public class SettingDialog extends JDialog implements ActionListener {

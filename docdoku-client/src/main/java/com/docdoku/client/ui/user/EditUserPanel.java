@@ -20,9 +20,9 @@
 
 package com.docdoku.client.ui.user;
 
-import com.docdoku.core.common.User;
-import com.docdoku.client.ui.common.MaxLengthDocument;
 import com.docdoku.client.ui.common.GUIConstants;
+import com.docdoku.client.ui.common.MaxLengthDocument;
+import com.docdoku.core.common.User;
 
 import javax.swing.*;
 import java.awt.*;

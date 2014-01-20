@@ -4,7 +4,6 @@ import com.docdoku.server.mainchannel.MainChannelApplication;
 import com.docdoku.server.mainchannel.MainChannelDispatcher;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.websocket.Session;

@@ -22,7 +22,10 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;

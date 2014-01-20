@@ -20,7 +20,7 @@
 
 package com.docdoku.client.data;
 
-import java.lang.ref.*;
+import java.lang.ref.ReferenceQueue;
 import java.util.*;
 
 public class SoftValueHashMap <K,V> implements Map<K, V> {

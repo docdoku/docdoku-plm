@@ -20,19 +20,15 @@
 
 package com.docdoku.client.ui;
 
-import com.docdoku.client.data.Config;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.ButtonMenu;
+import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.OKButton;
-import java.net.URI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import com.docdoku.client.localization.I18N;
-import com.docdoku.client.ui.common.GUIConstants;
-import java.awt.Desktop;
 
 public class ExplorerMenu extends JMenuBar {
     

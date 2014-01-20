@@ -21,23 +21,20 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.data.MainModel;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.EditFilesPanel;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.common.FileHolder;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-
-import java.awt.Desktop;
-
-import javax.swing.*;
-
-import com.docdoku.client.localization.I18N;
 
 
 public class EditFileActionListener implements ActionListener {

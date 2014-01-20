@@ -20,7 +20,8 @@
 
 package com.docdoku.client.data;
 
-import java.lang.ref.*;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 
 public class SoftValue<T> extends SoftReference<T>{
   private Object mKey;

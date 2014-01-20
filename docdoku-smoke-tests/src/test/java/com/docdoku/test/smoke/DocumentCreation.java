@@ -21,8 +21,8 @@
 package com.docdoku.test.smoke;
 
 
-import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.cli.ScriptingTools;
+import com.docdoku.core.services.IDocumentManagerWS;
 
 import static org.junit.Assert.assertNotNull;
 

@@ -20,17 +20,17 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Date;
-import java.util.Set;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A model object from which we can create a

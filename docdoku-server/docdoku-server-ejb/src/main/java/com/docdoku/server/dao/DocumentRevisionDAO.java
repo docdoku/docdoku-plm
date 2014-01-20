@@ -21,13 +21,17 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.Tag;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 public class DocumentRevisionDAO {
 
@@ -44,7 +48,7 @@ public class DocumentRevisionDAO {
         em = pEM;
         mLocale = Locale.getDefault();
     }
-
+/*
     public List<DocumentRevision> searchDocumentRevisions(String pWorkspaceId, String pDocMId, String pTitle,
                                                           String pVersion, String pAuthor, String pType, java.util.Date pCreationDateFrom,
                                                           java.util.Date pCreationDateTo, Collection<Tag> pTags, Collection<DocumentSearchQuery.AbstractAttributeQuery> pAttrs) {
@@ -157,7 +161,7 @@ public class DocumentRevisionDAO {
         return query.getResultList();
 
     }
-
+*/
     public String findLatestDocMId(String pWorkspaceId, String pType) {
         String docMId;
         Query query = em.createQuery("SELECT m.id FROM DocumentMaster m "

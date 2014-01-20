@@ -28,17 +28,13 @@ import com.docdoku.client.data.RootTreeNode;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ActionFactory;
 import com.docdoku.client.ui.common.WebLink;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  *

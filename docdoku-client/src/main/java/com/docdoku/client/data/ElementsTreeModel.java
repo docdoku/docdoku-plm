@@ -21,12 +21,15 @@
 package com.docdoku.client.data;
 
 import com.docdoku.core.document.Folder;
+
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.tree.*;
-import javax.swing.event.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ElementsTreeModel implements TreeModel {
     private List<TreeModelListener> mTreeModelListeners;

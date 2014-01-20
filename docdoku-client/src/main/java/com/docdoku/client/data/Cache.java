@@ -20,17 +20,12 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.Tag;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.common.User;
-import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.common.Workspace;
-import java.lang.ref.*;
+import com.docdoku.core.document.*;
+import com.docdoku.core.workflow.WorkflowModel;
 
-
+import java.lang.ref.SoftReference;
 import java.util.*;
 
 public class Cache {

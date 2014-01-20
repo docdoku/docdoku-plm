@@ -19,22 +19,22 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.exceptions.UserGroupAlreadyExistsException;
-import com.docdoku.core.exceptions.UserGroupNotFoundException;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.UserGroupAlreadyExistsException;
+import com.docdoku.core.exceptions.UserGroupNotFoundException;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserGroupMembershipKey;
-import java.util.List;
-import java.util.Locale;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
 
 public class UserGroupDAO {
 

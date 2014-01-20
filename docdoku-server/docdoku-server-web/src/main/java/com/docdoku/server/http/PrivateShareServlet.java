@@ -22,7 +22,6 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.SharedEntityNotFoundException;
@@ -30,7 +29,9 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IShareManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;

@@ -23,8 +23,6 @@ package com.docdoku.server.rest.converters;
 import com.docdoku.core.common.BinaryResource;
 import org.dozer.DozerConverter;
 
-import java.util.Date;
-
 /**
  * @author Florent Garin
  */

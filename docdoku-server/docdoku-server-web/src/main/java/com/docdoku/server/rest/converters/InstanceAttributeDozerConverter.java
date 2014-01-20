@@ -20,13 +20,7 @@
 
 package com.docdoku.server.rest.converters;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceBooleanAttribute;
-import com.docdoku.core.meta.InstanceDateAttribute;
-import com.docdoku.core.meta.InstanceNumberAttribute;
-import com.docdoku.core.meta.InstanceTextAttribute;
-import com.docdoku.core.meta.InstanceURLAttribute;
+import com.docdoku.core.meta.*;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.dozer.DozerConverter;
 

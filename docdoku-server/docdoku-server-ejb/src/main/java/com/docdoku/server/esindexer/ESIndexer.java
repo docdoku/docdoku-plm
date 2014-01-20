@@ -22,12 +22,15 @@ package com.docdoku.server.esindexer;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.*;
-import com.docdoku.core.exceptions.DocumentMasterNotFoundException;
+import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.exceptions.IndexerServerException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.SearchQuery;
@@ -58,13 +61,18 @@ import org.elasticsearch.search.SearchHit;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.ejb.*;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,8 +85,16 @@ import java.util.zip.ZipInputStream;
  */
 @Stateless(name="ESIndexer")
 public class ESIndexer{
-    private static final String HOST = "localhost";
-    private static final int PORT = 9300;
+    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/obj/conf.properties";
+    private final static Properties CONF = new Properties();
+
+    static{
+        try {
+            CONF.load(ESIndexer.class.getResourceAsStream(CONF_PROPERTIES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @PersistenceContext
     private EntityManager em;
@@ -95,7 +111,7 @@ public class ESIndexer{
      */
     private Client createClient() throws IndexerServerException {
         try{
-            return new TransportClient().addTransportAddress(new InetSocketTransportAddress(HOST, PORT));
+            return new TransportClient().addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
@@ -114,9 +130,11 @@ public class ESIndexer{
             DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
             PartMasterDAO partMasterDAO = new PartMasterDAO(em);
             for(Workspace w : wDAO.getAll()){
-                for(DocumentMaster docMaster : docMasterDAO.getAllByWorkspace(w.getId())){
-                    for(DocumentIteration docIte : docMaster.getDocumentIterations()){
-                        bulkRequest.add(indexRequest(client, docIte));
+                for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(w.getId())){
+                    for(DocumentRevision docR : docM.getDocumentRevisions()){
+                        for(DocumentIteration docI : docR.getDocumentIterations()){
+                            bulkRequest.add(indexRequest(client, docI));
+                        }
                     }
                 }
                 for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(w.getId())){
@@ -214,7 +232,7 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentMaster> search(DocumentSearchQuery docQuery) throws IndexerServerException {
+    public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws IndexerServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
@@ -222,17 +240,18 @@ public class ESIndexer{
             SearchResponse sr = srb.execute().actionGet();
 
 
-            List<DocumentMaster> listOfDocuments = new ArrayList<>();
+            List<DocumentRevision> listOfDocuments = new ArrayList<>();
             for(int i=0; i<sr.getHits().getHits().length;i++){
                 SearchHit hit = sr.getHits().getAt(i);
                 Map<String,Object> source = hit.getSource();
-                DocumentMasterKey docMasterKey = new DocumentMasterKey(extractValue(source, "workspaceId"),extractValue(source, "docMId"),extractValue(source, "version"));
+                DocumentRevisionKey docRevisionKey = new DocumentRevisionKey(extractValue(source, "workspaceId"),extractValue(source, "docMId"),extractValue(source, "version"));
                 try {
-                    if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
-                        listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                    DocumentRevision docR = new DocumentRevisionDAO(em).loadDocR(docRevisionKey);
+                    if(!listOfDocuments.contains(docR)){
+                        listOfDocuments.add(docR);
                     }
-                } catch (DocumentMasterNotFoundException e) {
-                    e.printStackTrace();                                                                                    // TODO DocNotfound error
+                } catch (DocumentRevisionNotFoundException e) {
+                    e.printStackTrace();                                                                                // TODO DocNotfound error
                 }
             }
 
@@ -298,12 +317,13 @@ public class ESIndexer{
             for(int i=0; i<sr.getHits().getHits().length;i++){
                 SearchHit hit = sr.getHits().getAt(i);
                 Map<String,Object> source = hit.getSource();
-                DocumentMasterKey docMasterKey = new DocumentMasterKey(source.get("workspaceId").toString(),source.get("docMId").toString(),source.get("version").toString());
+                DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(source.get("workspaceId").toString(),source.get("docMId").toString(),source.get("version").toString());
                 try {
-                    if(!ret.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
-                        ret.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                    DocumentRevision docR = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
+                    if(!ret.contains(docR)){
+                        ret.add(docR);
                     }
-                } catch (DocumentMasterNotFoundException e) {
+                } catch (DocumentRevisionNotFoundException e) {
                     e.printStackTrace();                                                                                    // TODO DocNotFound error
                 }
             }
@@ -335,7 +355,7 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentMaster> searchInAllWorkspace(DocumentSearchQuery docQuery) throws IndexerServerException {
+    public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws IndexerServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
@@ -347,19 +367,20 @@ public class ESIndexer{
             MultiSearchResponse srm = srbm.execute().actionGet();
 
 
-            List<DocumentMaster> listOfDocuments = new ArrayList<>();
+            List<DocumentRevision> listOfDocuments = new ArrayList<>();
             for (MultiSearchResponse.Item sri : srm.getResponses()){
                 if(!sri.isFailure()){
                     SearchResponse sr = sri.getResponse();
                     for(int i=0; i<sr.getHits().getHits().length;i++){
                         SearchHit hit = sr.getHits().getAt(i);
                         Map<String,Object> source = hit.getSource();
-                        DocumentMasterKey docMasterKey = new DocumentMasterKey(source.get("workspaceId").toString(),source.get("docMId").toString(),source.get("version").toString());
+                        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(source.get("workspaceId").toString(),source.get("docMId").toString(),source.get("version").toString());
                         try {
-                            if(!listOfDocuments.contains(new DocumentMasterDAO(em).loadDocM(docMasterKey))){
-                                listOfDocuments.add(new DocumentMasterDAO(em).loadDocM(docMasterKey));
+                            DocumentRevision docR = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
+                            if(!listOfDocuments.contains(docR)){
+                                listOfDocuments.add(docR);
                             }
-                        } catch (DocumentMasterNotFoundException e) {
+                        } catch (DocumentRevisionNotFoundException e) {
                             e.printStackTrace();                                                                        //TODO DocumentNotFound Error
                         }
                     }
@@ -423,13 +444,14 @@ public class ESIndexer{
      * @return List of part revision
      */
     public List<Object> searchInAllWorkspace(SearchQuery query) throws IndexerServerException {                                                       // TODO Optimize it
-        List<DocumentMaster> listOfDocuments = searchInAllWorkspace((DocumentSearchQuery) query);
+       /* List<DocumentRevision> listOfDocuments = searchInAllWorkspace((DocumentSearchQuery) query);
         List<PartRevision> listOfParts = searchInAllWorkspace((PartSearchQuery) query);
 
         List<Object> ret= new ArrayList<>();
         ret.addAll(listOfDocuments);
         ret.addAll(listOfParts);
-        return ret;
+        return ret;*/
+        return null; //TODO
     }
 
     /**
@@ -612,7 +634,7 @@ public class ESIndexer{
      */
     private XContentBuilder documentIterationToJSON(DocumentIteration doc){
         try {
-            float nbIteration = doc.getDocumentMaster().getLastIteration().getIteration();                              // Calcul of the number of iteration
+            float nbIteration = doc.getDocumentRevision().getLastIteration().getIteration();                              // Calcul of the number of iteration
             float seniority = nbIteration - doc.getIteration();                                                         // Calcul of iteration seniority
             float coef = 1 - (seniority/nbIteration);                                                                   // Calcul of decrease factor
             if(coef < 0.40) coef = 0.40f;
@@ -621,14 +643,14 @@ public class ESIndexer{
                     if(doc.getWorkspaceId() != null){
                         tmp.field("workspaceId", doc.getWorkspaceId(), coef);
                     }
-                    if(doc.getDocumentMasterId() != null){
-                        tmp.field("docMId", doc.getDocumentMasterId(), (1.5 * coef));
+                    if(doc.getDocumentRevision().getDocumentMasterId() != null){
+                        tmp.field("docMId", doc.getDocumentRevision().getDocumentMasterId(), (1.5 * coef));
                     }
-                    if(doc.getDocumentMaster().getTitle() != null && ! doc.getDocumentMaster().getTitle().equals("")){
-                        tmp.field("title", doc.getDocumentMaster().getTitle(), (2.0 * coef));
+                    if(doc.getDocumentRevision().getTitle() != null && ! doc.getDocumentRevision().getTitle().equals("")){
+                        tmp.field("title", doc.getDocumentRevision().getTitle(), (2.0 * coef));
                     }
-                    if(doc.getDocumentMasterVersion() != null){
-                        tmp.field("version", doc.getDocumentMasterVersion(), coef);
+                    if(doc.getDocumentVersion() != null){
+                        tmp.field("version", doc.getDocumentVersion(), coef);
                     }
                     if(doc.getIteration() > 0){
                         tmp.field("iteration", "" + doc.getIteration(), coef);
@@ -636,27 +658,21 @@ public class ESIndexer{
                     if(doc.getAuthor() != null){
                         tmp.field("author", doc.getAuthor(), coef);
                     }
-                    if(doc.getDocumentMaster().getType() != null){
-                        tmp.field("type", doc.getDocumentMaster().getType(), coef);
+                    if(doc.getDocumentRevision().getDocumentMaster().getType() != null){
+                        tmp.field("type", doc.getDocumentRevision().getDocumentMaster().getType(), coef);
                     }
-                    if(doc.getDocumentMaster().getCreationDate() != null){
-                        tmp.field("creationDate", doc.getDocumentMaster().getCreationDate(), coef);
+                    if(doc.getDocumentRevision().getCreationDate() != null){
+                        tmp.field("creationDate", doc.getDocumentRevision().getCreationDate(), coef);
                     }
-                    if(doc.getDocumentMaster().getDescription() != null && ! doc.getDocumentMaster().getDescription().equals("")){
-                        tmp.field("description", doc.getDocumentMaster().getDescription(), coef);
-                    }
-                    if(doc.getDocumentMaster().getCheckOutUser() != null){
-                        tmp.field("checkOutUser", doc.getDocumentMaster().getCheckOutUser(), coef);
-                    }
-                    if(doc.getDocumentMaster().getCheckOutDate() != null){
-                        tmp.field("checkOutDate", doc.getDocumentMaster().getCheckOutDate(), coef);
+                    if(doc.getDocumentRevision().getDescription() != null && ! doc.getDocumentRevision().getDescription().equals("")){
+                        tmp.field("description", doc.getDocumentRevision().getDescription(), coef);
                     }
                     if(doc.getRevisionNote() != null){
                         tmp.field("revisionNote", doc.getRevisionNote(), (0.50f * coef));
                     }
-                    if(!doc.getDocumentMaster().getTags().isEmpty()){
+                    if(!doc.getDocumentRevision().getTags().isEmpty()){
                         tmp.startArray("tags");
-                            for(Tag tag:doc.getDocumentMaster().getTags()){
+                            for(Tag tag:doc.getDocumentRevision().getTags()){
                                 tmp.value(tag.getLabel());
                             }
                         tmp.endArray();
@@ -733,12 +749,6 @@ public class ESIndexer{
                     }
                     if(part.getPartRevision().getDescription() != null && !part.getPartRevision().getDescription().equals("")){
                         tmp.field("description", part.getPartRevision().getDescription(), coef);
-                    }
-                    if(part.getPartRevision().getCheckOutUser() != null){
-                        tmp.field("checkOutUser", part.getPartRevision().getCheckOutUser(), coef);
-                    }
-                    if(part.getPartRevision().getCreationDate() != null){
-                        tmp.field("checkOutDate", part.getPartRevision().getCheckOutDate(), coef);
                     }
                     if(part.getIterationNote() != null){
                         tmp.field("revisionNote", part.getIterationNote(), (0.5 * coef));

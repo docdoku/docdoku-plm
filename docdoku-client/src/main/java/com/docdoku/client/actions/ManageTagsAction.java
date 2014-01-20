@@ -20,15 +20,14 @@
 
 package com.docdoku.client.actions;
 
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.tag.ManageTagsDialog;
 import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.client.ui.ExplorerFrame;
 
 import javax.swing.*;
-
-import java.awt.event.*;
-
-import com.docdoku.client.localization.I18N;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ManageTagsAction extends ClientAbstractAction {
     

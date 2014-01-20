@@ -25,7 +25,10 @@ import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.services.IDocumentManagerWS;
 
-import javax.mail.*;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 import java.util.Properties;
 

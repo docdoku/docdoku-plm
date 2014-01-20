@@ -21,11 +21,8 @@
 
 package com.docdoku.core.change;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
-
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Represents an identified issue.

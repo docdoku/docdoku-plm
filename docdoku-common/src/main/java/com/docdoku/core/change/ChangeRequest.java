@@ -22,7 +22,6 @@
 package com.docdoku.core.change;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 /**

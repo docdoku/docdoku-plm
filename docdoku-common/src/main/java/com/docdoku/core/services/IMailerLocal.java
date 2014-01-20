@@ -21,7 +21,6 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Task;

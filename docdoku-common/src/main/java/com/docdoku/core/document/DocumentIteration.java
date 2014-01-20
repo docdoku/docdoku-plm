@@ -19,21 +19,15 @@
  */
 package com.docdoku.core.document;
 
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.common.User;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.FileHolder;
-import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.common.User;
+import com.docdoku.core.meta.InstanceAttribute;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This <a href="DocumentIteration.html">DocumentIteration</a>

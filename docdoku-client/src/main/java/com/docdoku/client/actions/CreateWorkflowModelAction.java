@@ -20,11 +20,11 @@
 
 package com.docdoku.client.actions;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 
 import javax.swing.*;
-import com.docdoku.client.localization.I18N;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;

@@ -21,8 +21,6 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.core.services.ApplicationException;
-import java.text.MessageFormat;
-import java.util.Locale;
 
 /**
  *

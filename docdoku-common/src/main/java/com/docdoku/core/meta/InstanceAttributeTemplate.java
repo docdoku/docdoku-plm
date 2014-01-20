@@ -19,8 +19,8 @@
  */
 package com.docdoku.core.meta;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * This class holds the definition of the custom attribute of the documents and parts

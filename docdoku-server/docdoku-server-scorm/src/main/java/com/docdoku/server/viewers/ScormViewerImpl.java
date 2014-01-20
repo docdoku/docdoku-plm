@@ -20,8 +20,8 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.viewers.utils.ScormManifestParser;
 import com.docdoku.server.viewers.utils.ScormOrganization;
 import com.docdoku.server.viewers.utils.ScormUtil;
@@ -33,7 +33,6 @@ import javax.ejb.EJB;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class ScormViewerImpl implements DocumentViewer {
 

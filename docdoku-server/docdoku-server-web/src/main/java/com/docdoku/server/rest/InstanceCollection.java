@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.product.PartUsageLink;
+
 import java.util.List;
 
 /**

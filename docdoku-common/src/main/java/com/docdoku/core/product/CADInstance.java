@@ -21,12 +21,8 @@
 
 package com.docdoku.core.product;
 
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * Represents a CAD instance of a specific part defined in a

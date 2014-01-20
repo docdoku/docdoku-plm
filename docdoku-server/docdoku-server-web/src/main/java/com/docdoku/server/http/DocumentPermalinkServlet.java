@@ -20,11 +20,12 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.exceptions.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;

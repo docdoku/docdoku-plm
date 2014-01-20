@@ -19,26 +19,19 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.exceptions.FolderAlreadyExistsException;
-import com.docdoku.core.exceptions.FolderNotFoundException;
-import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.exceptions.UserAlreadyExistsException;
-import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.common.User;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.common.UserKey;
-
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.persistence.*;
 
 public class UserDAO {
 

@@ -20,21 +20,20 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.data.Config;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.WebLink;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.client.ui.workflow.ViewWorkflowDetailsDialog;
 import com.docdoku.core.common.User;
-import java.text.DateFormat;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.workflow.Workflow;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import com.docdoku.client.ui.workflow.ViewWorkflowDetailsDialog;
-import com.docdoku.client.data.Config;
-import com.docdoku.client.localization.I18N;
-import com.docdoku.core.workflow.Workflow;
+import java.text.DateFormat;
 
 public class ViewDocMPanel extends DocPanel {
 

@@ -19,17 +19,16 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentMasterAlreadyExistsException;
-import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
-import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
-import com.docdoku.core.query.SearchQuery;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import java.util.List;
+import java.util.Locale;
 
 public class DocumentMasterDAO {
 
@@ -74,4 +73,10 @@ public class DocumentMasterDAO {
     }
 
 
+    public List<DocumentMaster> getAllByWorkspace(String workspaceId) {
+        List<DocumentMaster> documentMasters = em.createNamedQuery("DocumentMaster.findByWorkspace")
+                .setParameter("workspaceId",workspaceId)
+                .getResultList();
+        return documentMasters;
+    }
 }

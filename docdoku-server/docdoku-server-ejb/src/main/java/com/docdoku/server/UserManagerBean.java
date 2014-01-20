@@ -21,12 +21,14 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 

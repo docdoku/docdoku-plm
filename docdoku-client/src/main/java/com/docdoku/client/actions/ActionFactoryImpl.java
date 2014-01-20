@@ -20,26 +20,17 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.client.data.CheckedOutTreeNode;
-import com.docdoku.client.data.FolderTreeNode;
-import com.docdoku.client.data.HomeTreeNode;
-import com.docdoku.client.data.RootTreeNode;
-import com.docdoku.client.data.TagRootTreeNode;
-import com.docdoku.client.data.TagTreeNode;
-import com.docdoku.client.data.TemplateTreeNode;
-import com.docdoku.client.data.WorkflowModelTreeNode;
-import com.docdoku.core.common.User;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.*;
-
 import com.docdoku.client.backbone.ElementSelectedEvent;
 import com.docdoku.client.backbone.ElementSelectedEvent.ElementType;
+import com.docdoku.client.data.*;
 import com.docdoku.client.ui.ActionFactory;
 import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.data.MainModel;
+import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentMaster;
+
+import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActionFactoryImpl implements ActionFactory {
     

@@ -21,12 +21,13 @@ package com.docdoku.client.ui.doc;
 
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.OKCancelPanel;
+
 import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.ImageIcon.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author Gary Gautruche

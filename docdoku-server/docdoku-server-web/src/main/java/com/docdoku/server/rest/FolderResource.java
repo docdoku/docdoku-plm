@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;

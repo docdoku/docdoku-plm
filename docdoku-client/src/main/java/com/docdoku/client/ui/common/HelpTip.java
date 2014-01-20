@@ -21,21 +21,11 @@
 package com.docdoku.client.ui.common;
 
 import com.docdoku.client.localization.I18N;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Toolkit;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 
 public class HelpTip extends JInternalFrame {

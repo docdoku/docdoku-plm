@@ -19,10 +19,9 @@
  */
 package com.docdoku.core.util;
 
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.workflow.*;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.TaskModel;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;

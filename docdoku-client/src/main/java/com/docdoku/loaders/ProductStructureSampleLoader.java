@@ -22,8 +22,6 @@ package com.docdoku.loaders;
 import com.docdoku.client.ScriptingTools;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceNumberAttribute;
-import com.docdoku.core.product.*;
-import com.docdoku.core.services.*;
 
 import javax.activation.DataHandler;
 import java.io.Console;

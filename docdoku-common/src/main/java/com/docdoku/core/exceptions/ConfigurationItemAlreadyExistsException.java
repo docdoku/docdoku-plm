@@ -22,6 +22,7 @@ package com.docdoku.core.exceptions;
 
 
 import com.docdoku.core.product.ConfigurationItem;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 

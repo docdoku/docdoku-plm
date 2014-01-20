@@ -20,8 +20,8 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.Folder;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.Folder;
 
 public class FolderTreeNode implements Comparable<FolderTreeNode> {
 

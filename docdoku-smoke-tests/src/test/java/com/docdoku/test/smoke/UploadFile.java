@@ -28,8 +28,6 @@ import com.docdoku.core.util.FileIO;
 
 import java.io.File;
 
-import static junit.framework.TestCase.fail;
-
 /**
  * @author Asmae Chadid
  *

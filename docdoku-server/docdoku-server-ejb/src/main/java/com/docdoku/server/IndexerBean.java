@@ -26,8 +26,8 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJBException;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
-*/
 import javax.annotation.Resource;
+*/
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
@@ -55,10 +55,10 @@ import org.xml.sax.helpers.DefaultHandler;
 @Singleton(name="IndexerBean")
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class IndexerBean {
-
+    /*
     @Resource(name = "indexPath")
     private String indexPath;
-    /*
+
     @Asynchronous
     @Lock(LockType.WRITE)
     public void removeFromIndex(String fullName) {

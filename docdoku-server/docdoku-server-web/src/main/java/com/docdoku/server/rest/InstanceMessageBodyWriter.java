@@ -27,6 +27,7 @@ import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
+
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 import javax.vecmath.Matrix4d;

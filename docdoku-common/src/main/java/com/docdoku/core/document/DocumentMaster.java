@@ -20,14 +20,15 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.common.Version;
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.security.ACL;
-import com.docdoku.core.workflow.Workflow;
-import java.io.Serializable;
-import java.util.*;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This class holds the unchanging aspects of a document.

@@ -20,9 +20,9 @@
 
 package com.docdoku.core.meta;
 
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * Defines a date type custom attribute of a document.

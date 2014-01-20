@@ -21,19 +21,20 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
+import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.data.TagTreeNode;
-import com.docdoku.core.util.FileIO;
-import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.client.data.FolderTreeNode;
+import com.docdoku.client.ui.ExplorerFrame;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.util.FileIO;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 
 

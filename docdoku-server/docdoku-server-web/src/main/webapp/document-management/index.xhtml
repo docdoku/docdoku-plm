@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+        >
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
         <ui:define name="styles">
             <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/style.less?v=${BUILD_NUMBER}"/>
@@ -18,7 +18,7 @@
                     workspaceId: "${workspaceID}",
                     login: "${login}",
                     sessionId : "${session.id}",
-                    workspaceAdmin:${workspaceAdmin},
+                    workspaceAdmin:"${workspaceAdmin}",
                     groups: [${groups}]
                 };
                 $(document).ready(function() {

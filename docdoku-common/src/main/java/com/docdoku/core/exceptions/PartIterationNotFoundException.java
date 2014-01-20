@@ -22,7 +22,6 @@ package com.docdoku.core.exceptions;
 
 
 import com.docdoku.core.common.Version;
-import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.PartIterationKey;
 
 import java.text.MessageFormat;

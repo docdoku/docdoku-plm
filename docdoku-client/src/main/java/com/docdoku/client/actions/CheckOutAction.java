@@ -22,17 +22,16 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
-import com.docdoku.core.util.FileIO;
-import com.docdoku.core.common.BinaryResource;
-import java.awt.Cursor;
-import java.awt.Event;
-import java.awt.event.ActionEvent;
-import java.io.InterruptedIOException;
-
-import javax.swing.*;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.util.FileIO;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.InterruptedIOException;
 
 public class CheckOutAction extends ClientAbstractAction {
     

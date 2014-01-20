@@ -20,7 +20,6 @@
 
 package com.docdoku.server.http;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IDocumentManagerLocal;

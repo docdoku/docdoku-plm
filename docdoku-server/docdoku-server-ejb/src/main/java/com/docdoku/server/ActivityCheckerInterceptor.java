@@ -21,23 +21,23 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.WorkflowNotFoundException;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.TaskKey;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.dao.TaskDAO;
 import com.docdoku.server.dao.WorkflowDAO;
-import java.util.Locale;
+
 import javax.ejb.EJB;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Locale;
 
 @CheckActivity
 @Interceptor

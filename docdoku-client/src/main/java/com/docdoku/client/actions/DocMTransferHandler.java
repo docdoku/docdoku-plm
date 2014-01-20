@@ -22,9 +22,9 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.FolderTreeNode;
 import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.DocMSelection;
 import com.docdoku.client.ui.common.ElementsTable;
 import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.client.ui.common.DocMSelection;
 import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;

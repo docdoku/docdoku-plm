@@ -21,11 +21,12 @@
 package com.docdoku.core.document;
 
 import com.docdoku.core.common.User;
-import java.io.Serializable;
+
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 /**
  * Abstract class for defining subscription made by users on documents.  

@@ -21,6 +21,7 @@
 package com.docdoku.client.ui.workflow;
 
 import com.docdoku.core.workflow.WorkflowModel;
+
 import javax.swing.*;
 import java.awt.*;
 

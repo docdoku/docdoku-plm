@@ -21,6 +21,7 @@
 package com.docdoku.core.document;
 
 import com.docdoku.core.common.User;
+
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;

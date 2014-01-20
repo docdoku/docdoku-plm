@@ -19,8 +19,6 @@
  */
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.CADInstance;
-
 public class CADInstanceDTO {
 
     private Double rx;

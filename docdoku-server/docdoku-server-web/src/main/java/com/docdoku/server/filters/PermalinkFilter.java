@@ -21,8 +21,6 @@
 package com.docdoku.server.filters;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.product.PartRevision;

@@ -20,15 +20,15 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.common.Version;
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.Version;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.workflow.Workflow;
-import java.io.Serializable;
-import java.util.*;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * This class stands between <a href="DocumentMaster.html">DocumentMaster</a>
@@ -429,15 +429,15 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
      * perform a deep clone operation
      */
     @Override
-    public DocumentRevision clone() {
-        DocumentRevision clone = null;
+    public DocumentRevision clone() throws InternalError{
+        DocumentRevision clone;
         try {
             clone = (DocumentRevision) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        List<DocumentIteration> clonedDocumentIterations = new ArrayList<DocumentIteration>();
+        List<DocumentIteration> clonedDocumentIterations = new ArrayList<>();
         for (DocumentIteration document : documentIterations) {
             DocumentIteration clonedDocument=document.clone();
             clonedDocument.setDocumentRevision(clone);
@@ -459,7 +459,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         if(acl !=null)
             clone.acl = acl.clone();
 
-        clone.tags = new HashSet<Tag>(tags);
+        clone.tags = new HashSet<>(tags);
         
         if(creationDate!=null)
             clone.creationDate = (Date) creationDate.clone();

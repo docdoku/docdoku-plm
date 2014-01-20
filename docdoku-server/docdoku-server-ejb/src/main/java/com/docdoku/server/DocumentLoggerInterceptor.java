@@ -19,13 +19,11 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.log.DocumentLog;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.log.DocumentLog;
 import com.docdoku.server.dao.BinaryResourceDAO;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.interceptor.AroundInvoke;
@@ -33,6 +31,9 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @LogDocument
 @Interceptor

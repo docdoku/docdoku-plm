@@ -19,19 +19,19 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.exceptions.WorkflowModelNotFoundException;
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.WorkflowModelAlreadyExistsException;
+import com.docdoku.core.exceptions.WorkflowModelNotFoundException;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.exceptions.WorkflowModelAlreadyExistsException;
 import com.docdoku.core.workflow.WorkflowModelKey;
 
-import java.util.List;
-import java.util.Locale;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
 
 public class WorkflowModelDAO {
 

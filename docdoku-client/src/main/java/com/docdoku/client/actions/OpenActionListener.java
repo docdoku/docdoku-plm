@@ -21,22 +21,19 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.data.MainModel;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.ViewFilesPanel;
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.common.FileHolder;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.InterruptedIOException;
-
-import com.docdoku.client.ui.common.ViewFilesPanel;
-
-import javax.swing.*;
-
-import com.docdoku.client.localization.I18N;
-
-import java.awt.Desktop;
 
 public class OpenActionListener implements ActionListener {
     @Override

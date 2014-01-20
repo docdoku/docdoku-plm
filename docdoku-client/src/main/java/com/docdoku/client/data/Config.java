@@ -20,19 +20,16 @@
 
 package com.docdoku.client.data;
 
-import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import java.io.*;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
+
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.*;
 import java.util.List;
 import java.util.UUID;
-import javax.swing.filechooser.FileSystemView;
 
 public class Config {
 

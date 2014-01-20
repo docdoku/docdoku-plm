@@ -25,16 +25,15 @@ import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.search.SearchDialog;
 import com.docdoku.client.ui.search.SearchResultDialog;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentSearchQuery;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentSearchQuery;
 
-import java.awt.Cursor;
 import javax.swing.*;
-
-import java.awt.Event;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
 
 public class SearchAction extends ClientAbstractAction {

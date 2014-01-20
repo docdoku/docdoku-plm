@@ -21,11 +21,11 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.query.SearchQuery;
 
 import javax.persistence.EntityExistsException;

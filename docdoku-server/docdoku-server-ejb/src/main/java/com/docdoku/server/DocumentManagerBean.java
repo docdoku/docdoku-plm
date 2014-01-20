@@ -503,7 +503,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
-        esIndexer.indexAll();                                                                                           // Index all resources
+        //esIndexer.indexAll();                                                                                           // Index all resources
         
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results
@@ -533,9 +533,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     continue;
                 }
             }
-            return fetchedDocRs.toArray(new DocumentMaster[fetchedDocRs.size()]);
+            return fetchedDocRs.toArray(new DocumentRevision[fetchedDocRs.size()]);
         }
-        return new DocumentMaster[0];
+        return new DocumentRevision[0];
     }
 
     @RolesAllowed("users")
@@ -1044,7 +1044,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      * @throws UserNotActiveException
      */
     @RolesAllowed("users")
-    @Override
     public DocumentRevision removeTag(DocumentRevisionKey pDocRPK, String pTag)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, IndexerServerException {
 
@@ -1122,20 +1121,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             //esIndexer.index(docM.getLastIteration());                                                                 // Index the last iteration in ElasticSearch
-            for(DocumentIteration docIteration :docM.getDocumentIterations()){
+            for(DocumentIteration docIteration :docR.getDocumentIterations()){
                 esIndexer.index(docIteration);                                                                          // Index all iterations in ElasticSearch (decrease old iteration boost factor)
             }
 
-/*            for (BinaryResource bin : docM.getLastIteration().getAttachedFiles()) {
-                try {
-                    InputStream inputStream = dataManager.getBinaryResourceInputStream(bin);
-                    indexer.addToIndex(bin.getFullName(), inputStream);
-                } catch (StorageException e) {
-                    e.printStackTrace();
-                }
-            }
-*/
-            return docM;
+            return docR;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
         }

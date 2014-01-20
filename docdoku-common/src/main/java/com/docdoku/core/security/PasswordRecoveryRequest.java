@@ -20,8 +20,8 @@
 
 package com.docdoku.core.security;
 
-import java.util.UUID;
 import javax.persistence.Table;
+import java.util.UUID;
 
 /**
  * Represents a password recovery request. This class makes the link between

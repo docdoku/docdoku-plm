@@ -20,8 +20,6 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.exceptions.ApplicationException;
-
 import java.util.Locale;
 
 /**

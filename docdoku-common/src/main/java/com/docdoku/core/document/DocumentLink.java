@@ -20,9 +20,9 @@
 
 package com.docdoku.core.document;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 
 /**
  * This is a link class used to connect an object to a

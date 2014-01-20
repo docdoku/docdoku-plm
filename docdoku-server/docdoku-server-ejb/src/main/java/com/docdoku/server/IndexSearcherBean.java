@@ -31,9 +31,12 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import com.docdoku.core.document.DocumentRevisionKey;
 import org.apache.lucene.index.CorruptIndexException;
-*/import javax.annotation.Resource;
-import javax.ejb.Stateless;
+*/
+
 import org.apache.lucene.index.IndexReader;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
 /*import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;

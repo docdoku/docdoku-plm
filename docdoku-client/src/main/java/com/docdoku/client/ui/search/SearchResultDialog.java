@@ -20,19 +20,18 @@
 
 package com.docdoku.client.ui.search;
 
+import com.docdoku.client.data.SearchDocMsResultTableModel;
 import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.ElementsScrollPane;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.core.document.DocumentMaster;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import com.docdoku.client.data.SearchDocMsResultTableModel;
-import com.docdoku.client.ui.common.ElementsScrollPane;
 
 public class SearchResultDialog extends JDialog implements ActionListener {
     private ElementsScrollPane mSearchResultPanel;

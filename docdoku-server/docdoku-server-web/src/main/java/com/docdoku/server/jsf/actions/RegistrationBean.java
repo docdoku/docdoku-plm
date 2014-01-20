@@ -24,8 +24,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountAlreadyExistsException;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.services.IUserManagerLocal;
-import java.util.HashMap;
-import java.util.HashSet;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
@@ -33,6 +32,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @ManagedBean(name = "registrationBean")
 @RequestScoped

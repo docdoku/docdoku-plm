@@ -21,8 +21,8 @@ package com.docdoku.server.dao;
 
 
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.exceptions.SharedEntityNotFoundException;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;

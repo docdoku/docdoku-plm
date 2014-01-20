@@ -20,13 +20,13 @@
 
 package com.docdoku.client.ui.setting;
 
-import com.docdoku.client.localization.I18N;
 import com.docdoku.client.localization.DisplayableLocale;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.GUIConstants;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
-import com.docdoku.client.ui.common.GUIConstants;
 
 public class LocalePanel extends JPanel {
 

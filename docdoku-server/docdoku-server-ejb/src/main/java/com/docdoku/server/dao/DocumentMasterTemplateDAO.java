@@ -19,18 +19,18 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.exceptions.DocumentMasterTemplateNotFoundException;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentMasterTemplateAlreadyExistsException;
+import com.docdoku.core.exceptions.DocumentMasterTemplateNotFoundException;
 
-import java.util.List;
-import java.util.Locale;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
 
 public class DocumentMasterTemplateDAO {
 

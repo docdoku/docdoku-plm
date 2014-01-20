@@ -20,8 +20,8 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.workflow.WorkflowModel;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 

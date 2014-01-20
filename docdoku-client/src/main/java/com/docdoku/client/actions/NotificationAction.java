@@ -25,7 +25,8 @@ import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.notification.NotificationDialog;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class NotificationAction extends ClientAbstractAction {
 

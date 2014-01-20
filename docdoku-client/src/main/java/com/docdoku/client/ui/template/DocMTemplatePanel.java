@@ -20,13 +20,13 @@
 
 package com.docdoku.client.ui.template;
 
+import com.docdoku.client.data.MainModel;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.HelpButton;
-import com.docdoku.client.data.MainModel;
 
 import javax.swing.*;
 import java.awt.*;
-import com.docdoku.client.localization.I18N;
 
 public abstract class DocMTemplatePanel extends JPanel {
     

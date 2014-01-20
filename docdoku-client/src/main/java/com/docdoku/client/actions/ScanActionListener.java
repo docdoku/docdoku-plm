@@ -26,9 +26,9 @@ import com.docdoku.client.ui.doc.ScanDialog;
 import com.docdoku.core.util.FileIO;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
 import java.io.File;
 
 public class ScanActionListener implements ActionListener {

@@ -20,8 +20,9 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.Workspace;
-import java.io.Serializable;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * This class represents an entire product or some portion

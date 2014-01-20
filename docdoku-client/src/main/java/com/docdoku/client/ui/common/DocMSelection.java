@@ -22,8 +22,8 @@ package com.docdoku.client.ui.common;
 
 import com.docdoku.core.document.DocumentMaster;
 
-import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 

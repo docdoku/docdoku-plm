@@ -23,11 +23,14 @@ package com.docdoku.arquillian.tests;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.services.*;
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 import javax.ejb.EJB;

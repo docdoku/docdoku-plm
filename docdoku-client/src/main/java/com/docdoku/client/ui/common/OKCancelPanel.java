@@ -20,10 +20,11 @@
 
 package com.docdoku.client.ui.common;
 
+import com.docdoku.client.localization.I18N;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import com.docdoku.client.localization.I18N;
 
 public class OKCancelPanel extends JPanel {
 

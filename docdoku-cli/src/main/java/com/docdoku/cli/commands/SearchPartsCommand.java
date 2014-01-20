@@ -26,6 +26,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
+
 import java.util.List;
 
 /**

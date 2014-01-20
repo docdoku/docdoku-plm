@@ -31,7 +31,7 @@ import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.annotation.Resource;

@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Activity;
@@ -27,9 +26,7 @@ import com.docdoku.core.workflow.Workflow;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
 import java.util.List;
 
 public class WorkflowDAO {

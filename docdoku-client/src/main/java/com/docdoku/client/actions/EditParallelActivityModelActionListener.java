@@ -21,15 +21,14 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.ui.workflow.EditParallelActivityModelDialog;
+import com.docdoku.client.ui.workflow.EditableParallelActivityModelCanvas;
+import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.workflow.ParallelActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.docdoku.client.ui.workflow.EditableParallelActivityModelCanvas;
-import com.docdoku.client.ui.workflow.WorkflowModelFrame;
-
-import javax.swing.*;
 
 public class EditParallelActivityModelActionListener implements ActionListener {
 

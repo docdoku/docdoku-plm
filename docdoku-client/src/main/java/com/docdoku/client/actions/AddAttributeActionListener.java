@@ -26,9 +26,9 @@ import com.docdoku.client.ui.doc.EditAttributesPanel;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
 
 public class AddAttributeActionListener implements ActionListener {
 

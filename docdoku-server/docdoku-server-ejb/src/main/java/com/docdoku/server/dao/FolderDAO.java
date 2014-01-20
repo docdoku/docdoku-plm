@@ -21,18 +21,16 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.FolderAlreadyExistsException;
 import com.docdoku.core.exceptions.FolderNotFoundException;
-import com.docdoku.core.document.Folder;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import javax.persistence.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
+import java.util.*;
 
 public class FolderDAO {
     

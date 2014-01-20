@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+        >
 <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
     <ui:define name="title">
         <f:loadBundle var="i18nPM" basename="com.docdoku.server.localization.explorer_resource"/>
@@ -20,7 +20,7 @@
                 workspaceId: "${workspaceID}",
                 login: "${login}",
                 sessionId: "${session.id}",
-                workspaceAdmin:${workspaceAdmin},
+                workspaceAdmin:"${workspaceAdmin}",
                 groups: [${groups}]
             };
 

@@ -20,21 +20,21 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.data.MainModel;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.client.data.MainModel;
+import com.docdoku.core.common.Version.VersionUnit;
 import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.WorkflowModel;
+
+import javax.swing.*;
+import javax.swing.text.MaskFormatter;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.ParseException;
-
-import javax.swing.*;
-import java.awt.*;
-import com.docdoku.client.localization.I18N;
-import com.docdoku.core.common.Version.VersionUnit;
-import com.docdoku.core.util.Tools;
-import javax.swing.text.MaskFormatter;
 
 public class CreateDocMPanel extends JPanel {
     

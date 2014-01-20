@@ -22,7 +22,10 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.Tag;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
@@ -217,9 +220,7 @@ public class DocumentResource {
             }
 
             DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
-            DocumentIterationDTO docDTO = mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
-            return docDTO;
-
+            return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -230,9 +231,7 @@ public class DocumentResource {
     @Path("/newVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] createNewVersion(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, DocumentCreationDTO docCreationDTO) {
-
-        String pWorkspaceId = workspaceId;
+    public DocumentRevisionDTO[] createNewVersion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, DocumentCreationDTO docCreationDTO) {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
@@ -276,8 +275,8 @@ public class DocumentResource {
                 dtos[i].setPath(docR[i].getLocation().getCompletePath());
                 dtos[i].setLifeCycleState(docR[i].getLifeCycleState());
                 dtos[i] = Tools.createLightDocumentRevisionDTO(dtos[i]);
-                dtos[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docR[i]));
-                dtos[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docR[i]));
+                dtos[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(pWorkspaceId,docR[i]));
+                dtos[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(pWorkspaceId,docR[i]));
             }
 
             return dtos;
@@ -318,7 +317,7 @@ public class DocumentResource {
             DocumentRevisionKey docRPK=new DocumentRevisionKey(workspaceId, documentId, documentVersion);
             DocumentRevision docR = documentService.getDocumentRevision(docRPK);
             Set<Tag> tags = docR.getTags();
-            Set<String> tagLabels = new HashSet<String>();
+            Set<String> tagLabels = new HashSet<>();
 
             for(TagDTO tagDto:tagDtos){
                 tagLabels.add(tagDto.getLabel());
@@ -340,7 +339,7 @@ public class DocumentResource {
     @Path("/tags/{tagName}")
     public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("tagName") String tagName) {
         try {
-            documentService.removeTag(new DocumentMasterKey(workspaceId, documentId, documentVersion),tagName);
+            documentService.removeTag(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagName);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -395,8 +394,8 @@ public class DocumentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
         try {
-            DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, documentId, documentVersion));
-            documentMaster.setPublicShared(true);
+            DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+            documentRevision.setPublicShared(true);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -408,8 +407,8 @@ public class DocumentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
         try {
-            DocumentMaster documentMaster = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, documentId, documentVersion));
-            documentMaster.setPublicShared(false);
+            DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+            documentRevision.setPublicShared(false);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -422,11 +421,11 @@ public class DocumentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl) {
         try {
-            DocumentMasterKey documentMasterKey = new DocumentMasterKey(pWorkspaceId, documentId, documentVersion);
+            DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
             if (acl.getGroupEntries().size() > 0 && acl.getUserEntries().size() > 0) {
 
-                Map<String,String> userEntries = new HashMap<String,String>();
-                Map<String,String> groupEntries = new HashMap<String,String>();
+                Map<String,String> userEntries = new HashMap<>();
+                Map<String,String> groupEntries = new HashMap<>();
 
                 for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                     userEntries.put(entry.getKey(), entry.getValue().name());
@@ -436,9 +435,9 @@ public class DocumentResource {
                     groupEntries.put(entry.getKey(), entry.getValue().name());
                 }
 
-                documentService.updateDocumentACL(pWorkspaceId, documentMasterKey, userEntries, groupEntries);
+                documentService.updateDocumentACL(pWorkspaceId, documentRevisionKey, userEntries, groupEntries);
             }else{
-                documentService.removeACLFromDocumentMaster(documentMasterKey);
+                documentService.removeACLFromDocumentRevision(documentRevisionKey);
             }
             return Response.ok().build();
         } catch (ApplicationException ex) {
@@ -452,9 +451,9 @@ public class DocumentResource {
     public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
 
         try {
-            DocumentMaster docM = documentService.getDocumentMaster(new DocumentMasterKey(workspaceId, documentId, documentVersion));
-            List<Workflow> abortedWorkflows = docM.getAbortedWorkflows();
-            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<WorkflowDTO>();
+            DocumentRevision docR = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+            List<Workflow> abortedWorkflows = docR.getAbortedWorkflows();
+            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 
             for(Workflow abortedWorkflow:abortedWorkflows){
                 abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
@@ -523,7 +522,7 @@ public class DocumentResource {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
         int i = 0;
         for (DocumentIterationDTO dto : dtos) {
-            data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentMasterVersion(), dto.getIteration());
+            data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
         }
 
         return data;

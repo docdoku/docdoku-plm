@@ -23,8 +23,8 @@ package com.docdoku.client.ui.common;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.common.VersionFormatException;
 
-import java.text.Format;
 import java.text.FieldPosition;
+import java.text.Format;
 import java.text.ParsePosition;
 
 public class VersionFormat extends Format {
