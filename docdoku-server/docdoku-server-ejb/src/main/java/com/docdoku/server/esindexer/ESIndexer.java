@@ -85,7 +85,7 @@ import java.util.zip.ZipInputStream;
  */
 @Stateless(name="ESIndexer")
 public class ESIndexer{
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/obj/conf.properties";
+    private final static String CONF_PROPERTIES="/com/docdoku/server/esindexer/conf.properties";
     private final static Properties CONF = new Properties();
 
     static{
