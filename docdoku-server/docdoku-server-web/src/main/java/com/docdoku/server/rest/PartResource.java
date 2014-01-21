@@ -176,7 +176,7 @@ public class PartResource {
 
             PartRevisionKey revisionKey = new PartRevisionKey(workspaceId,partNumber,partVersion);
 
-            if (acl.getGroupEntries().size() > 0 && acl.getUserEntries().size() > 0) {
+            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
 
                 Map<String,String> userEntries = new HashMap<String,String>();
                 Map<String,String> groupEntries = new HashMap<String,String>();

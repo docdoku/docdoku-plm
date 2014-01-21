@@ -418,7 +418,8 @@ public class DocumentResource {
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl) {
         try {
             DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
-            if (acl.getGroupEntries().size() > 0 && acl.getUserEntries().size() > 0) {
+
+            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
 
                 Map<String,String> userEntries = new HashMap<>();
                 Map<String,String> groupEntries = new HashMap<>();

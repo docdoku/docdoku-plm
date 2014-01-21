@@ -269,8 +269,6 @@ define([
 
                     });
 
-
-
             }
 
             return false;
