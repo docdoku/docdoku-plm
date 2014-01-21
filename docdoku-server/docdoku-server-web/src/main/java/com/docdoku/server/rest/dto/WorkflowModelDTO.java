@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,8 @@ public class WorkflowModelDTO implements Serializable {
     private String finalLifeCycleState;
     private UserDTO author;
     private Date creationDate;
+
+    @XmlElement(nillable = false, required = true)
     private List<ActivityModelDTO> activityModels;
 
     public WorkflowModelDTO() {

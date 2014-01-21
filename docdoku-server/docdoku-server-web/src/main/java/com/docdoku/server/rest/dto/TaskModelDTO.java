@@ -37,6 +37,14 @@ public class TaskModelDTO implements Serializable {
     public TaskModelDTO() {
     }
 
+    public TaskModelDTO(int num, String title, String instructions, RoleDTO role, int duration) {
+        this.num = num;
+        this.title = title;
+        this.instructions = instructions;
+        this.role = role;
+        this.duration = duration;
+    }
+
     public int getNum() {
         return num;
     }
