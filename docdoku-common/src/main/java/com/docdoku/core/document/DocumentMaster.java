@@ -137,6 +137,10 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
             return documentRevisions.remove(index);
     }
 
+    public void removeRevision(DocumentRevision documentRevision) {
+        documentRevisions.remove(documentRevision);
+    }
+
     public DocumentRevision createNextRevision(User pUser){
         DocumentRevision lastRev=getLastRevision();
         Version version;

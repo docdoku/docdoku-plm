@@ -1205,8 +1205,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException22");
         }
 
-        docRDAO.removeRevision(docR);                                                                                   //TODO Why double remove?
-
         for (DocumentIteration doc : docR.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
                 //indexer.removeFromIndex(file.getFullName());
@@ -1223,6 +1221,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if(isLastRevision){
             documentMasterDAO.removeDocM(documentMaster);
         }else{
+            documentMaster.removeRevision(docR);
             docRDAO.removeRevision(docR);
         }
     }

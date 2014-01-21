@@ -254,6 +254,7 @@ public class DocumentRevisionDAO {
         sharedEntityDAO.deleteSharesForDocument(pDocR);
 
         em.remove(pDocR);
+        em.flush();
     }
 
     public List<DocumentRevision> findDocsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) {
