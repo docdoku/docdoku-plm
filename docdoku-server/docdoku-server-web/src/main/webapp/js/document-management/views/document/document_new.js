@@ -70,6 +70,8 @@ define([
             if (reference) {
                 var workflow = this.workflowsView.selected();
                 var template = this.templatesView.selected();
+                var acl = this.workspaceMembershipsView.toList();
+
                 var data = {
                     reference: reference,
                     title: $("#form-" + this.cid + " .title").val(),
@@ -77,7 +79,7 @@ define([
                     workflowModelId: workflow ? workflow.get("id") : null,
                     templateId: template ? template.get("id") : null,
                     roleMapping:workflow? this.workflowsMappingView.toList(): null,
-                    acl:this.workspaceMembershipsView.toList()
+                    acl:acl
                 };
 
                 this.collection.create(data, {
