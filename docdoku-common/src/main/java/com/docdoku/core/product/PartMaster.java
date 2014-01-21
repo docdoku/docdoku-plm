@@ -172,7 +172,11 @@ public class PartMaster implements Serializable {
         else
             return partRevisions.remove(index);
     }
-    
+
+    public void removeRevision(PartRevision partR) {
+        this.partRevisions.remove(partR);
+    }
+
     public PartRevision createNextRevision(User pUser){
         PartRevision lastRev=getLastRevision();
         Version version;
@@ -255,4 +259,5 @@ public class PartMaster implements Serializable {
     public String toString() {
         return number;
     }
+
 }

@@ -1318,6 +1318,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if(isLastRevision){
             partMasterDAO.removePartM(partMaster);
         }else{
+            partMaster.removeRevision(partR);
             partRevisionDAO.removeRevision(partR);
         }
 

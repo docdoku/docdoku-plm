@@ -57,6 +57,7 @@ public class PartResource {
     @EJB
     private IProductManagerLocal productService;
 
+
     @EJB
     private IUserManagerLocal userManager;
 
