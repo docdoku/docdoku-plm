@@ -165,11 +165,11 @@ public class DocumentRevisionDAO {
     public String findLatestDocMId(String pWorkspaceId, String pType) {
         String docMId;
         Query query = em.createQuery("SELECT m.id FROM DocumentMaster m "
-                + "WHERE m.workspaceId = :workspaceId "
+                + "WHERE m.workspace.id = :workspaceId "
                 + "AND m.type = :type "
                 + "AND m.creationDate = ("
                 + "SELECT MAX(m2.creationDate) FROM DocumentMaster m2 "
-                + "WHERE m2.workspaceId = :workspaceId "
+                + "WHERE m2.workspace.id = :workspaceId "
                 + "AND m2.type = :type"
                 + ")");
         query.setParameter("workspaceId", pWorkspaceId);
