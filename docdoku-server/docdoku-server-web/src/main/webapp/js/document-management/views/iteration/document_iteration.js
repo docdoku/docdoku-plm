@@ -113,7 +113,7 @@ define([
                 data.iteration = this.iteration.toJSON();
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
-                data.reference = this.iteration.getReference();
+                data.reference = this.iteration.getId();
                 data.iteration.creationDate = date.formatTimestamp(
                     i18n._DATE_FORMAT,
                     data.iteration.creationDate

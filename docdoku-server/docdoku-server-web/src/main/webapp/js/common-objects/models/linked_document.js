@@ -2,7 +2,6 @@ define(function () {
     var linkedDocument = Backbone.Model.extend({
 
         initialize: function () {
-            this.id = this.getReference();
         },
 
         getWorkspace : function(){
@@ -13,6 +12,10 @@ define(function () {
             return this.getDocKey() + "-" + this.getIteration();
         },
 
+        getId:function(){
+            return this.get("id");
+        },
+
         getIteration : function(){
             return this.get("iteration");
         },
@@ -21,12 +24,12 @@ define(function () {
             return  this.get("documentMasterId");
         },
 
-        getDocumentMasterVersion : function(){
-            return  this.get("documentMasterVersion");
+        getDocumentRevisionVersion : function(){
+            return  this.get("documentRevisionVersion");
         },
 
         getDocKey : function(){
-            return  this.getDocumentMasterId()+"-"+this.getDocumentMasterVersion();
+            return  this.getDocumentMasterId()+"-"+this.getDocumentRevisionVersion();
         },
 
         getDocumentMasterPermalink : function(){
@@ -37,7 +40,7 @@ define(function () {
                     + "/"
                     + this.getDocumentMasterId()
                     + "/"
-                    + this.getDocumentMasterVersion()
+                    + this.getDocumentRevisionVersion()
             );
         }
     });
