@@ -30,6 +30,7 @@ import java.util.List;
 public class DocumentIterationDTO implements Serializable {
 
     private String workspaceId;
+    private String id;
     private String documentMasterId;
     private String documentRevisionVersion;
     private int iteration;
@@ -43,15 +44,23 @@ public class DocumentIterationDTO implements Serializable {
     public DocumentIterationDTO() {
     }
 
-    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
+    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentRevisionVersion, int pIteration) {
         workspaceId = pWorkspaceId;
         documentMasterId = pDocumentMasterId;
-        documentRevisionVersion = pDocumentMasterVersion;
+        documentRevisionVersion = pDocumentRevisionVersion;
         iteration = pIteration;
     }
 
     public UserDTO getAuthor() {
         return author;
+    }
+
+    public String getId() {
+        return documentMasterId+"-"+documentRevisionVersion+"-"+iteration;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setAuthor(UserDTO author) {

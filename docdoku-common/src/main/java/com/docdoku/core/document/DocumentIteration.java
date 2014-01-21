@@ -136,6 +136,17 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         return documentRevision==null?"":documentRevision.getVersion();
     }
 
+    public String getDocumentMasterId() {
+        return getId();
+    }
+
+    public String getDocumentRevisionVersion(){
+        return getDocumentVersion();
+    }
+
+    public void setDocumentMasterId(String documentMasterId) {
+    }
+
     public int getIteration() {
         return iteration;
     }

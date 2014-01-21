@@ -77,10 +77,6 @@ public class DocumentResource {
             docRsDTO.setLifeCycleState(docR.getLifeCycleState());
             docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
             docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docR));
-            ACL acl = docR.getACL();
-            if(acl != null){
-                docRsDTO.setAcl(Tools.mapACLtoACLDTO(acl));
-            }
             return docRsDTO;
 
         } catch (ApplicationException ex) {

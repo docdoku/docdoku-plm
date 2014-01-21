@@ -17,6 +17,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
             return data;
         },
 
+        getId:function(){
+            return this.get("id");
+        },
+
         getReference: function() {
             var id = this.get("id");
             return id.substr(0,id.lastIndexOf("-"));

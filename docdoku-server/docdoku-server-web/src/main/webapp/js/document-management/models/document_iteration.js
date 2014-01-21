@@ -16,7 +16,6 @@ define([
         },
 
 		initialize: function () {
-            this.id = this.getReference();
 
             this.className = "DocumentIteration";
 
@@ -54,7 +53,11 @@ define([
         },
 
         getReference : function(){
-            return this.getDocKey() + "-" + this.getIteration();
+            console.log("deprecated use getId")
+            return this.getId();
+        },
+        getId : function(){
+            return this.get("id");
         },
 
         getIteration : function(){
@@ -65,12 +68,13 @@ define([
             return  this.get("documentMasterId");
         },
 
-        getDocumentMasterVersion : function(){
-            return  this.get("documentMasterVersion");
+        getDocumentRevisionVersion : function(){
+            return  this.get("documentRevisionVersion");
         },
 
+        // TODO rename getDocumentRevisionKey
         getDocKey : function(){
-            return  this.getDocumentMasterId()+"-"+this.getDocumentMasterVersion();
+            return  this.getDocumentMasterId()+"-"+this.getDocumentRevisionVersion();
         },
 
         getLinkedDocuments : function(){
@@ -85,7 +89,7 @@ define([
                     + "/"
                     + this.getDocumentMasterId()
                     + "/"
-                    + this.getDocumentMasterVersion()
+                    + this.getDocumentRevisionVersion()
             );
         },
 
@@ -95,7 +99,11 @@ define([
          * @returns string
          */
         getUploadBaseUrl: function () {
-            return "/files/" + this.getWorkspace() + "/documents/" + this.get("documentMasterId") + "/" + this.get("documentMasterVersion") + "/"+ this.getIteration()+"/";
+            return "/files/" + this.getBaseName() +"/";
+        },
+
+        getBaseName : function(){
+            return this.getWorkspace() + "/documents/" + this.getDocumentMasterId() + "/" + this.getDocumentRevisionVersion() + "/" + this.getIteration()
         }
 	});
 	return DocumentIteration;

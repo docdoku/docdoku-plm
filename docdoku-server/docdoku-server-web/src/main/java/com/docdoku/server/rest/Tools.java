@@ -69,7 +69,7 @@ public class Tools {
     
     public static String replaceColonWithSlash(String completePath){
         return completePath.replaceAll(":", "/");
-    }    
+    }
 
     public static DocumentRevisionDTO createLightDocumentRevisionDTO(DocumentRevisionDTO docRsDTO){
        
