@@ -226,6 +226,10 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         this.version = version;
     }
 
+    public String getType() {
+        return documentMaster == null ? "":documentMaster.getType();
+    }
+
     public Workflow getWorkflow() {
         return workflow;
     }

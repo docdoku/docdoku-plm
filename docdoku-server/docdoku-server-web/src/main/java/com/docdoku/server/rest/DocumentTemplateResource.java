@@ -28,6 +28,7 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
+import com.docdoku.server.rest.dto.TemplateGeneratedIdDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -102,15 +103,16 @@ public class DocumentTemplateResource {
     @GET
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public String generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    public TemplateGeneratedIdDTO generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            return documentService.generateId(workspaceId, templateId);
+            String generateId = documentService.generateId(workspaceId, templateId);
+            return new TemplateGeneratedIdDTO(generateId);
 
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-    }    
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

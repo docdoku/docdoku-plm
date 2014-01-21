@@ -191,9 +191,9 @@ define(
         generate_id: function (template) {
             var that = this;
             // Set field mask
-            $.get(template.generateIdUrl() , function (data) {
+            $.getJSON(template.generateIdUrl() , function (data) {
                 if (data) {
-                    that.$inputPartNumber.val(data);
+                    that.$inputPartNumber.val(data.id);
                 }
             }, "html");
         }

@@ -50,23 +50,31 @@ define([
 						value: ""
 					});
 				}
-				if (template.get("idGenerated")) {
+				if (template.get("mask")) {
+                    // Set field mask
+                    this.showMask(template);
+				}
+                if (template.get("idGenerated")) {
 					this.generate_id(template);
 				}
+
+                this.attributesView.setAttributesLocked(template.isAttributesLocked());
 			}
 
-            this.attributesView.setAttributesLocked(template.isAttributesLocked());
+
 			this.attributesView.collection.reset(collection);
 		},
+        showMask:function(template){
+            var elId = this.parentView.$el.find("input.reference:first");
+            var mask = template.get("mask");//.replace(/#/g, "9");
+            elId.mask(mask);
+        },
 		generate_id: function (template) {
 			var elId = this.parentView.$el.find("input.reference:first");
-			// Set field mask
-			var mask = template.get("mask");//.replace(/#/g, "9");
-			elId.mask(mask);
 			// Get the next id from the webservice if any
-			$.get(template.url() + "/generate_id", function (data) {
+			$.getJSON(template.url() + "/generate_id", function (data) {
 				if (data) {
-					elId.val(data);
+					elId.val(data.id);
 				}
 			}, "html"); // TODO: fixe the webservice return type (actualy: json)
 		}

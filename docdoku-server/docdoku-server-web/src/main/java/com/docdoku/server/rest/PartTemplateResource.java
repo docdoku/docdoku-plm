@@ -28,6 +28,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.PartMasterTemplateDTO;
 import com.docdoku.server.rest.dto.PartTemplateCreationDTO;
+import com.docdoku.server.rest.dto.TemplateGeneratedIdDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -102,10 +103,10 @@ public class PartTemplateResource {
     @GET
     @Path("{templateId}/generate_id")
     @Produces(MediaType.APPLICATION_JSON)
-    public String generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    public TemplateGeneratedIdDTO generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
-            return productService.generateId(workspaceId, templateId);
-
+            String generatedId = productService.generateId(workspaceId, templateId);
+            return new TemplateGeneratedIdDTO(generatedId);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
