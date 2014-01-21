@@ -623,7 +623,7 @@ public class ESIndexer{
     private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery){
         return client.prepareSearch(workspaceId)
                      .setTypes(type)
-                     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                     .setSearchType(SearchType.QUERY_THEN_FETCH)
                      .setQuery(pQuery);
     }
 

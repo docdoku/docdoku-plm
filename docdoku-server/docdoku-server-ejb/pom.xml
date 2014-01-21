@@ -203,7 +203,7 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>0.90.7</version>
+            <version>0.90.10</version>
         </dependency>
     </dependencies>
     <build>

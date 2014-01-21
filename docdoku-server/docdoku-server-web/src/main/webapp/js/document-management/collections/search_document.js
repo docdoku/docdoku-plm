@@ -17,12 +17,7 @@ define([
         url: function() {
             var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/search";
             return baseUrl + "/" + this.query + "/documents";
-        },
-
-        comparator: function(document) {
-            return document.get("id");
         }
-
 	});
 
 	return SearchDocumentList;
