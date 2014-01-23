@@ -20,25 +20,22 @@
             </a>
 
             <div class="navbar-inner">
+                <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
+
+                <c:choose>
+                    <c:when test="${isSuperAdmin==true}">
+                        <a id="brand-title" class="brand" href="/faces/admin/workspace/workspacesMenu.xhtml">
+                            DocDoku<strong>PLM</strong>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a id="brand-title" class="brand" href="/">
+                            DocDoku<strong>PLM</strong>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
                 <div class="nav-collapse collapse">
                     <div class="container-fluid">
-
-                        <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
-
-
-                        <c:choose>
-                            <c:when test="${isSuperAdmin==true}">
-                                <a id="brand-title" class="brand" href="/faces/admin/workspace/workspacesMenu.xhtml">
-                                    DocDoku<strong>PLM</strong>
-                                </a>
-                            </c:when>
-                            <c:otherwise>
-                            <a id="brand-title" class="brand" href="/">
-                                DocDoku<strong>PLM</strong>
-                            </a>
-                            </c:otherwise>
-                        </c:choose>
-
                         <c:choose>
                             <c:when test="${sessionScope.account==null}">
                                 <ul class="nav">
