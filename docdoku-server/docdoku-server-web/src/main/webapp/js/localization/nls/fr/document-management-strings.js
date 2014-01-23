@@ -102,7 +102,7 @@ define({
     "ROLE":                         "Rôle",
     "WORKSPACES":					"Workspaces",
     "VALIDATION_FAILED_FOR":        "Validation échouée pour ",
-    "ADD_NEW_TAG":                  "Créer un nouveau libellé",
+    "ADD_NEW_TAG":                  "Saisir un nouveau libellé",
     "EXISTING_TAGS":                "Libellés disponibles",
     "CURRENT_TAGS":                 "Libellés du document",
     "TAGS_TO_ADD":                  "Libellés à ajouter",

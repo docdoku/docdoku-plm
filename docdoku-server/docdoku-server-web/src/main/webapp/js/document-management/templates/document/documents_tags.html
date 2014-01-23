@@ -21,15 +21,17 @@
                     <ul class="unstyled existing-tags-list"></ul>
                 </div>
             </div>
-            <hr />
 
+            {{^isEmptyCollection}}
+            <hr />
             <div class="control-group">
                 {{#isSingleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.CURRENT_TAGS}}</label>{{/isSingleChecked}}
-                {{#isMultipleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.TAGS_TO_ADD}}</label>{{/isMultipleChecked}}
+                {{^isSingleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.TAGS_TO_ADD}}</label>{{/isSingleChecked}}
                 <div class="controls">
                     <ul class="unstyled tags-to-add-list"></ul>
                 </div>
             </div>
+            {{/isEmptyCollection}}
 
         </form>
     </div>

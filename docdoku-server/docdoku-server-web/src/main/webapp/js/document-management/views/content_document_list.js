@@ -34,6 +34,8 @@ define([
             this.newVersionButton = this.$(".actions .new-version");
             this.aclButton = this.$(".actions .edit-acl");
 
+            this.tagsButton.show();
+
             this.listView = this.addSubView(
                 new DocumentListView({
                     el: "#list-" + this.cid,
@@ -71,7 +73,7 @@ define([
         onNoDocumentSelected: function() {
             this.deleteButton.hide();
             this.checkoutGroup.hide();
-            this.tagsButton.hide();
+            //this.tagsButton.show();
             this.newVersionButton.hide();
             this.aclButton.hide();
         },
@@ -79,7 +81,6 @@ define([
         onOneDocumentSelected: function(document) {
             this.deleteButton.show();
             this.checkoutGroup.css('display', 'inline-block');
-            this.tagsButton.show();
             this.newVersionButton.show();
 
             if (document.isCheckout()) {
@@ -104,7 +105,6 @@ define([
 
         onSeveralDocumentsSelected: function() {
             this.deleteButton.show();
-            this.tagsButton.show();
             this.newVersionButton.hide();
             this.checkoutGroup.hide();
             this.aclButton.hide();

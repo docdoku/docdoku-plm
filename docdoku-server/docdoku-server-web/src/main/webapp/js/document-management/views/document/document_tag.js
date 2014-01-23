@@ -27,7 +27,7 @@ define(
             },
 
             render:function(){
-                this.$el.html(Mustache.render(template,{tag:this.model, isAdded:this.options.isAdded}));
+                this.$el.html(Mustache.render(template,{tag:this.model, isRemovable:this.isRemovable}));
                 return this ;
             },
 

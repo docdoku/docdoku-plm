@@ -17,18 +17,11 @@ define([
         templateExtraData : {},
 
         initialize: function() {
-
-            if(_.size(this.collection) == 1){
-                this.templateExtraData = {
-                    isSingleChecked: true,
-                    isMultipleChecked: false
-                };
-            }else{
-                this.templateExtraData = {
-                    isSingleChecked: false,
-                    isMultipleChecked: true
-                };
-            }
+            this._collectionSize = _.size(this.collection);
+            this.templateExtraData = {
+                isSingleChecked: this._collectionSize == 1,
+                isEmptyCollection: this._collectionSize == 0
+            };
 
             ModalView.prototype.initialize.apply(this, arguments);
             this.events["submit #form-" + this.cid] = "onSubmitForm";
@@ -131,7 +124,9 @@ define([
 
                 if(!modelAlreadyExists){
                     this._existingTagsCollection.push(newModel);
-                    this._currentTagsCollection.push(newModel);
+                    if(this._collectionSize!=0){
+                        this._currentTagsCollection.push(newModel);
+                    }
                     $newTagInput.val("");
                 }
             }
@@ -139,10 +134,10 @@ define([
 
         onTagCreated:function(model){
             this._tagsToCreate.push(model);
+            this.addTagViewToExistingTagsList(model);
         },
         onTagDelete: function(model){
-            var isInCreateList = false ;
-            isInCreateList = _.contains(this._tagsToCreate.models,model);
+            var isInCreateList = _.contains(this._tagsToCreate.models,model);
             if(isInCreateList){
                 this._tagsToCreate.remove(model);
             }else{
@@ -169,9 +164,8 @@ define([
             this.removeTagViewFromExistingTagsList(model);
         },
         onTagRemoved:function(model){
-            var isInTagsToAdd = false ;
             var isInOldTag = false ;
-            isInTagsToAdd = _.contains(this._tagsToAddCollection.models,model);
+            var isInTagsToAdd = _.contains(this._tagsToAddCollection.models,model);
             if(this._oldTagsCollection){
                 isInOldTag = _.contains(this._oldTagsCollection.models, model);
             }
@@ -190,14 +184,13 @@ define([
 
             this.createNewTags(function(){
                 that.cleanDeleteTags(function(){
-                    that.addTagsToDocuments();
-                    that.removeTagsToDocument();
+                    if(that._collectionSize!=0){
+                        that.addTagsToDocuments();
+                        that.removeTagsToDocument();
+                    }
                 });
             });
-            /*
-             this.createNewTagsAdded(function(){
-             that.addTagsToDocuments();
-             });*/
+
             this.hide();
             return false;
         },
@@ -206,17 +199,33 @@ define([
         addTagViewToExistingTagsList : function(model){
             var $existingTabs = this.$(".existing-tags-list");
             var that = this ;
-            var tagView =  new TagView({
-                model:model,
-                isAdded:false,
-                isAvailable:true,
-                clicked:function(){
-                    that._currentTagsCollection.push(model);
-                },
-                cross_clicked:function(){
-                    that._existingTagsCollection.remove(model);
-                }
-            }).render();
+            var tagView =  null;
+
+            if(this._collectionSize==0){
+                tagView = new TagView({
+                    model:model,
+                    isAdded:false,
+                    isAvailable:true,
+                    clicked:function(){
+                        that._currentTagsCollection.push(model);
+                    },
+                    cross_clicked:function(){
+                        that._existingTagsCollection.remove(model);
+                    }
+                }).render();
+            }else{
+                tagView = new TagView({
+                    model:model,
+                    isAdded:false,
+                    isAvailable:false,
+                    clicked:function(){
+                        that._currentTagsCollection.push(model);
+                    }
+                }).render();
+            }
+
+
+
              $existingTabs.append($(tagView.el));
             this._existingTagsViews.push(tagView);
         },

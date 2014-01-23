@@ -103,7 +103,7 @@ define({
         "ROLE":                         "Role",
         "WORKSPACES":					"Workspaces",
         "VALIDATION_FAILED_FOR":        "Validation failed for ",
-        "ADD_NEW_TAG":                  "Create a new tag",
+        "ADD_NEW_TAG":                  "Enter a new tag",
         "EXISTING_TAGS":                "Tags available",
         "CURRENT_TAGS":                 "Tags on the document",
         "TAGS_TO_ADD":                  "Tags to add",
