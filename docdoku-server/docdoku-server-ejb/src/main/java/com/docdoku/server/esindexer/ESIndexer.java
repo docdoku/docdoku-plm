@@ -644,10 +644,10 @@ public class ESIndexer{
                         tmp.field("workspaceId", doc.getWorkspaceId(), coef);
                     }
                     if(doc.getDocumentRevision().getDocumentMasterId() != null){
-                        tmp.field("docMId", doc.getDocumentRevision().getDocumentMasterId(), (1.5 * coef));
+                        tmp.field("docMId", doc.getDocumentRevision().getDocumentMasterId(), (1.75 * coef));
                     }
                     if(doc.getDocumentRevision().getTitle() != null && ! doc.getDocumentRevision().getTitle().equals("")){
-                        tmp.field("title", doc.getDocumentRevision().getTitle(), (2.0 * coef));
+                        tmp.field("title", doc.getDocumentRevision().getTitle(), (3.0 * coef));
                     }
                     if(doc.getDocumentVersion() != null){
                         tmp.field("version", doc.getDocumentVersion(), coef);
@@ -726,10 +726,10 @@ public class ESIndexer{
                         tmp.field("workspaceId", part.getWorkspaceId(), coef);
                     }
                     if(part.getPartNumber() != null){
-                        tmp.field("partNumber", part.getPartNumber(), (1.5 * coef));
+                        tmp.field("partNumber", part.getPartNumber(), (1.75 * coef));
                     }
                     if(part.getPartRevision().getPartMaster().getName() != null && ! part.getPartRevision().getPartMaster().getName().equals("")){
-                        tmp.field("name", part.getPartRevision().getPartMaster().getName(), (2.0 * coef));
+                        tmp.field("name", part.getPartRevision().getPartMaster().getName(), (3.0 * coef));
                     }
                     if(part.getPartVersion() != null){
                         tmp.field("version", part.getPartVersion(), coef);

@@ -141,6 +141,9 @@ define([
 			if (this.collection){
                 data.collection = this.collectionToJSON();
             }
+            if(this.templateExtraData){
+                _.extend(data,this.templateExtraData);
+            }
 			return data;
 		},
 		viewToJSON: function () {

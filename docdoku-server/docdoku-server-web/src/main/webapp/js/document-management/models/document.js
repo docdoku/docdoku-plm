@@ -67,7 +67,7 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         getTags: function() {
-            return this.tags;
+            return this.get("tags");
         },
 
         getPath: function() {
