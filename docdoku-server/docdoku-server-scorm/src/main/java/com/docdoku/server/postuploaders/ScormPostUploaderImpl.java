@@ -29,6 +29,7 @@ import javax.ejb.EJB;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -56,7 +57,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
     public void unzipScormArchive(BinaryResource archiveBinaryResource) {
         ZipInputStream zipInputStream = null;
         try {
-            zipInputStream = new ZipInputStream(dataManager.getBinaryResourceInputStream(archiveBinaryResource));
+            zipInputStream = new ZipInputStream(dataManager.getBinaryResourceInputStream(archiveBinaryResource), Charset.forName("ISO-8859-1"));
             ZipEntry zipEntry;
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 if (!zipEntry.isDirectory()) {
