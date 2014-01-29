@@ -861,8 +861,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed("users")
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
+        esIndexer.indexAll();                                                                                           // Index all resources
+
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                      // Get Search Results
+        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                    // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
