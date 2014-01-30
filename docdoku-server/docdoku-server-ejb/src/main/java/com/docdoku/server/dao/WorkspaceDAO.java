@@ -128,11 +128,11 @@ public class WorkspaceDAO {
                 .setParameter("workspace",workspace).executeUpdate();
 
         // Subscriptions
-        em.createQuery("DELETE FROM IterationChangeSubscription s where s.observedDocumentRevision.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+        em.createQuery("DELETE FROM IterationChangeSubscription s where s.observedDocumentRevisionWorkspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
 
-        em.createQuery("DELETE FROM StateChangeSubscription s where s.observedDocumentRevision.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
+        em.createQuery("DELETE FROM StateChangeSubscription s where s.observedDocumentRevisionWorkspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
 
         // Baselines
         em.createQuery("DELETE FROM Baseline b where b.configurationItem.workspace = :workspace")
@@ -169,7 +169,7 @@ public class WorkspaceDAO {
 
         // Clear all document links ...
         List<DocumentIteration> documentsIteration =
-                em.createQuery("SELECT d FROM DocumentIteration d WHERE d.documentMaster.workspace = :workspace", DocumentIteration.class)
+                em.createQuery("SELECT d FROM DocumentIteration d WHERE d.documentRevision.documentMaster.workspace = :workspace", DocumentIteration.class)
                         .setParameter("workspace",workspace).getResultList();
 
         List<PartIteration> partsIteration =
