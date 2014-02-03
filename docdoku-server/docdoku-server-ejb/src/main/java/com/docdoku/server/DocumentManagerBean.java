@@ -503,7 +503,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
-        //esIndexer.indexAll();                                                                                           // Index all resources
+        esIndexer.indexAll();                                                                                           // Index all resources
         
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results
@@ -1156,7 +1156,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                             e.printStackTrace();
                         }
                     }
-                    esIndexer.delete(doc);                                                                             // Remove ElasticSearch Index for this DocumentIteration
+                    esIndexer.delete(doc);                                                                              // Remove ElasticSearch Index for this DocumentIteration
                 }
             }
             return pks;

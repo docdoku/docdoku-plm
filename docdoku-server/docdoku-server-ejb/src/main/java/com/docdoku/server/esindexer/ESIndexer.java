@@ -492,7 +492,13 @@ public class ESIndexer{
     private QueryBuilder getQueryBuilder(DocumentSearchQuery docQuery){
         QueryBuilder qr;
         if(docQuery.getDocMId() != null){
-            qr = QueryBuilders.fuzzyLikeThisQuery().likeText(docQuery.getDocMId());
+            //qr = QueryBuilders.fuzzyLikeThisQuery().likeText(docQuery.getDocMId());                                     // TODO Cut the query and make a boolQuery() with all the words
+            qr = QueryBuilders.disMaxQuery()
+                              .add(QueryBuilders.fuzzyLikeThisQuery()
+                                                .likeText(docQuery.getDocMId()))
+                              .add(QueryBuilders.queryString(docQuery.getDocMId()+"*")
+                                                .boost(2.5f))
+                              .tieBreaker(1.2f);
         }else{
             qr = QueryBuilders.boolQuery();
             if(docQuery.getTitle() != null){
@@ -543,7 +549,13 @@ public class ESIndexer{
     private QueryBuilder getQueryBuilder (PartSearchQuery partQuery){
         QueryBuilder qr;
         if(partQuery.getPartNumber() != null){
-            qr = QueryBuilders.fuzzyLikeThisQuery().likeText(partQuery.getPartNumber());
+            qr = QueryBuilders.fuzzyLikeThisQuery().likeText(partQuery.getPartNumber());                                // TODO Cut the query and make a boolQuery() with all the words
+            qr = QueryBuilders.disMaxQuery()
+                    .add(QueryBuilders.fuzzyLikeThisQuery()
+                            .likeText(partQuery.getPartNumber()))
+                    .add(QueryBuilders.queryString(partQuery.getPartNumber()+"*")
+                            .boost(2.5f))
+                    .tieBreaker(1.2f);
         }else{
             qr = QueryBuilders.boolQuery();
             if(partQuery.getName() != null) ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery("name").likeText(partQuery.getName()));
@@ -634,42 +646,28 @@ public class ESIndexer{
      */
     private XContentBuilder documentIterationToJSON(DocumentIteration doc){
         try {
-            float nbIteration = doc.getDocumentRevision().getLastIteration().getIteration();                              // Calcul of the number of iteration
+            float nbIteration = doc.getDocumentRevision().getLastIteration().getIteration();                            // Calcul of the number of iteration
             float seniority = nbIteration - doc.getIteration();                                                         // Calcul of iteration seniority
-            float coef = 1 - (seniority/nbIteration);                                                                   // Calcul of decrease factor
-            if(coef < 0.40) coef = 0.40f;
+            float coef = (seniority/nbIteration) * 10;                                                                  // Calcul of decrease factor
             XContentBuilder tmp = XContentFactory.jsonBuilder()                                                         
                 .startObject();
-                    if(doc.getWorkspaceId() != null){
-                        tmp.field("workspaceId", doc.getWorkspaceId(), coef);
-                    }
-                    if(doc.getDocumentRevision().getDocumentMasterId() != null){
-                        tmp.field("docMId", doc.getDocumentRevision().getDocumentMasterId(), (1.75 * coef));
-                    }
-                    if(doc.getDocumentRevision().getTitle() != null && ! doc.getDocumentRevision().getTitle().equals("")){
-                        tmp.field("title", doc.getDocumentRevision().getTitle(), (3.0 * coef));
-                    }
-                    if(doc.getDocumentVersion() != null){
-                        tmp.field("version", doc.getDocumentVersion(), coef);
-                    }
-                    if(doc.getIteration() > 0){
-                        tmp.field("iteration", "" + doc.getIteration(), coef);
-                    }
+                    setField(tmp,"workspaceId",doc.getWorkspaceId(), 1f);
+                    setField(tmp,"docMId",doc.getDocumentRevision().getDocumentMasterId(), 1.75f);
+                    setField(tmp,"title",doc.getDocumentRevision().getTitle(),3f);
+                    setField(tmp,"version",doc.getDocumentVersion(), 0.5f);
+                    setField(tmp,"iteration",""+doc.getIteration(),0.5f);
                     if(doc.getAuthor() != null){
-                        tmp.field("author", doc.getAuthor(), coef);
+                        tmp.startObject("author");
+                            setField(tmp,"login",doc.getAuthor().getLogin(),1f);
+                            setField(tmp,"name",doc.getAuthor().getName(),1f);
+                        tmp.endObject();
                     }
-                    if(doc.getDocumentRevision().getDocumentMaster().getType() != null){
-                        tmp.field("type", doc.getDocumentRevision().getDocumentMaster().getType(), coef);
-                    }
-                    if(doc.getDocumentRevision().getCreationDate() != null){
-                        tmp.field("creationDate", doc.getDocumentRevision().getCreationDate(), coef);
-                    }
-                    if(doc.getDocumentRevision().getDescription() != null && ! doc.getDocumentRevision().getDescription().equals("")){
-                        tmp.field("description", doc.getDocumentRevision().getDescription(), coef);
-                    }
-                    if(doc.getRevisionNote() != null){
-                        tmp.field("revisionNote", doc.getRevisionNote(), (0.50f * coef));
-                    }
+                    setField(tmp,"type", doc.getDocumentRevision().getDocumentMaster().getType(), 1f);
+                    setField(tmp,"creationDate",doc.getDocumentRevision().getCreationDate(),1f);
+                    setField(tmp,"description",doc.getDocumentRevision().getDescription(),1f);
+                    setField(tmp,"revisionNote",doc.getRevisionNote(),0.5f);
+                    setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.5f);
+                    setField(tmp,"folder",doc.getDocumentRevision().getLocation().getShortName(),0.25f);
                     if(!doc.getDocumentRevision().getTags().isEmpty()){
                         tmp.startArray("tags");
                             for(Tag tag:doc.getDocumentRevision().getTags()){
@@ -681,7 +679,7 @@ public class ESIndexer{
                         tmp.startObject("attributes");
                             Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes().values();
                             for(InstanceAttribute attr:listAttr){
-                                tmp.field(attr.getNameWithoutWhiteSpace(),attr.getValue(), coef);
+                                setField(tmp,attr.getNameWithoutWhiteSpace(),attr.getValue(),1f);
                             }
                         tmp.endObject();
                     }
@@ -690,9 +688,8 @@ public class ESIndexer{
                         for (BinaryResource bin : doc.getAttachedFiles()) {
                             try {
                                 tmp.startObject(bin.getName());
-                                    tmp.field("name",bin.getName(), coef);
-                                    String str = streamToString(bin.getFullName(),dataManager.getBinaryResourceInputStream(bin));
-                                    tmp.field("content",str, coef);
+                                    setField(tmp,"name",bin.getName(),1f);
+                                    setField(tmp, "content", streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)), 1f);
                                 tmp.endObject();
                             } catch (StorageException e) {
                                 e.printStackTrace();
@@ -700,13 +697,13 @@ public class ESIndexer{
                         }
                         tmp.endObject();
                     }
+                    setField(tmp,"negative_boost_value","",coef);
                 tmp.endObject();
             return tmp;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-
     }
 
     /**
@@ -716,48 +713,33 @@ public class ESIndexer{
      */
     private XContentBuilder partIterationToJSON(PartIteration part) {
         try {
-            float nbIteration = part.getPartRevision().getLastIteration().getIteration();                               // Calcul of the number of iteration
-            float seniority = nbIteration - part.getIteration();                                                        // Calcul of iteration seniority
-            float coef = 1 - (seniority/nbIteration);                                                                   // Calcul of decrease factor
-            if(coef < 0.40) coef = 0.40f;
+            float nbIteration = part.getPartRevision().getLastIteration().getIteration();                            // Calcul of the number of iteration
+            float seniority = nbIteration - part.getIteration();                                                         // Calcul of iteration seniority
+            float coef = (seniority/nbIteration) * 10;                                                                  // Calcul of decrease factor
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                 .startObject();
-                    if(part.getWorkspaceId() != null){
-                        tmp.field("workspaceId", part.getWorkspaceId(), coef);
-                    }
-                    if(part.getPartNumber() != null){
-                        tmp.field("partNumber", part.getPartNumber(), (1.75 * coef));
-                    }
-                    if(part.getPartRevision().getPartMaster().getName() != null && ! part.getPartRevision().getPartMaster().getName().equals("")){
-                        tmp.field("name", part.getPartRevision().getPartMaster().getName(), (3.0 * coef));
-                    }
-                    if(part.getPartVersion() != null){
-                        tmp.field("version", part.getPartVersion(), coef);
-                    }
-                    if(part.getIteration() > 0){
-                        tmp.field("iteration", "" + part.getIteration(), coef);
-                    }
-                    tmp.field("standardPart", part.getPartRevision().getPartMaster().isStandardPart(), coef);
+                    setField(tmp,"workspaceId",part.getWorkspaceId(), 1f);
+                    setField(tmp,"partNumber",part.getPartNumber(), 1.75f);
+                    setField(tmp,"name",part.getPartRevision().getPartMaster().getName(), 3f);
+                    setField(tmp,"version",part.getPartVersion(), 0.5f);
+                    setField(tmp,"iteration",part.getIteration(), 0.5f);
+                    setField(tmp,"standardPart",part.getPartRevision().getPartMaster().isStandardPart(), 0.25f);
                     if(part.getAuthor() != null){
-                        tmp.field("author", part.getAuthor(), coef);
+                        tmp.startObject("author");
+                        setField(tmp,"login",part.getAuthor().getLogin(),1f);
+                        setField(tmp,"name",part.getAuthor().getName(),1f);
+                        tmp.endObject();
                     }
-                    if(part.getPartRevision().getPartMaster().getType() != null){
-                        tmp.field("type", part.getPartRevision().getPartMaster().getType(), coef);
-                    }
-                    if(part.getCreationDate() != null){
-                        tmp.field("creationDate", part.getCreationDate(), coef);
-                    }
-                    if(part.getPartRevision().getDescription() != null && !part.getPartRevision().getDescription().equals("")){
-                        tmp.field("description", part.getPartRevision().getDescription(), coef);
-                    }
-                    if(part.getIterationNote() != null){
-                        tmp.field("revisionNote", part.getIterationNote(), (0.5 * coef));
-                    }
+                    setField(tmp,"type",part.getPartRevision().getPartMaster().getType(),1f);
+                    setField(tmp,"creationDate",part.getCreationDate(),1f);
+                    setField(tmp,"description",part.getPartRevision().getDescription(),1f);
+                    setField(tmp,"revisionNote",part.getIterationNote(),0.5f);
+                    setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.5f);
                     if(! part.getInstanceAttributes().isEmpty()){
                         tmp.startObject("attributes");
                             Collection<InstanceAttribute> listAttr = part.getInstanceAttributes().values();
                             for(InstanceAttribute attr:listAttr){
-                                tmp.field(attr.getNameWithoutWhiteSpace(),attr.getValue(), coef);
+                                setField(tmp,attr.getNameWithoutWhiteSpace(),attr.getValue(),1f);
                             }
                         tmp.endObject();
                     }
@@ -766,9 +748,8 @@ public class ESIndexer{
                         for (BinaryResource bin : part.getAttachedFiles()) {
                             try {
                                 tmp.startObject(bin.getName());
-                                tmp.field("name",bin.getName(), coef);
-                                String str = streamToString(bin.getFullName(),dataManager.getBinaryResourceInputStream(bin));
-                                tmp.field("content",str, coef);
+                                setField(tmp,"name",bin.getName(),1f);
+                                setField(tmp, "content", streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)), 1f);
                                 tmp.endObject();
                             } catch (StorageException e) {
                                 e.printStackTrace();
@@ -776,6 +757,7 @@ public class ESIndexer{
                         }
                         tmp.endObject();
                     }
+                    setField(tmp,"negative_boost_value","",coef);
                 tmp.endObject();
             return tmp;
         } catch (IOException e) {
@@ -798,6 +780,24 @@ public class ESIndexer{
         }else{
             return ret.toString();
         }
+    }
+
+    private XContentBuilder setField(XContentBuilder object, String field, String value, float coef ) throws IOException {
+        value = (value != null && value !="") ? value : " ";
+        object.field(field, value, coef);
+        return object;
+    }
+
+    private XContentBuilder setField(XContentBuilder object, String field, int value, float coef ) throws IOException {
+        object.field(field, ""+value, coef);
+        return object;
+    }
+
+    private XContentBuilder setField(XContentBuilder object, String field, Object value, float coef ) throws IOException {
+        if(value != null){
+            return object.field(field, value, coef);
+        }
+        return null;
     }
 
 
