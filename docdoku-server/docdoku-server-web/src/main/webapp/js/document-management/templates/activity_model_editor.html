@@ -1,7 +1,7 @@
 <div class="activity {{activity.type}}">
     <div class="activity-topbar">
         <button class="switch-activity" title="{{switchModeTitle}}"></button>
-        <input id="tasksToComplete-{{cid}}" class="tasksToComplete" type="number" step="1" min="0" max="{{activity.taskModels.length}}" value="{{activity.tasksToComplete}}"/>
+        <input id="tasksToComplete-{{cid}}" class="tasksToComplete" type="number" step="1" min="1" max="{{activity.taskModels.length}}" value="{{activity.tasksToComplete}}"/>
         <label for="tasksToComplete-{{cid}}" class="tasksToComplete">{{i18n.NB_TASKS_TO_COMPLETE}}</label>
         <button class="delete-activity" title="{{i18n.DELETE_ACTIVITY}}"><i class="icon-remove"></i></button>
         <input class="activity-state" type="text" placeholder="{{i18n.ACTIVITY_STATE_PLACEHOLDER}}"
