@@ -27,6 +27,7 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,26 +41,34 @@ import java.util.logging.Logger;
 @Singleton
 public class FileConverter {
 
-    private String ooHome;
-    private int ooPort;
-
     private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
     private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
     private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
-
     private final static Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
+
+    private OfficeManager officeManager;
 
     @PostConstruct
     private void init() {
         try {
             Properties properties = new Properties();
             properties.load(FileConverter.class.getResourceAsStream(PROPERTIES_FILE));
-            ooHome = properties.getProperty(OO_HOME_KEY);
-            ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
+            String ooHome = properties.getProperty(OO_HOME_KEY);
+            int ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
+            officeManager = new DefaultOfficeManagerConfiguration()
+                    .setOfficeHome(new File(ooHome))
+                    .setPortNumber(ooPort)
+                    .buildOfficeManager();
+            officeManager.start();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
             throw new RuntimeException(e);
         }
+    }
+
+    @PreDestroy
+    private void close(){
+        officeManager.stop();
     }
 
     @Lock(LockType.WRITE)
@@ -84,16 +93,8 @@ public class FileConverter {
 
     private File convertToPDF(File fileToConvert) {
         File pdfFile = new File(fileToConvert.getParentFile(), "converted.pdf");
-
-        OfficeManager officeManager = new DefaultOfficeManagerConfiguration()
-                .setOfficeHome(new File(ooHome))
-                .setPortNumber(ooPort)
-                .buildOfficeManager();
-        officeManager.start();
         OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
         converter.convert(fileToConvert, pdfFile);
-        officeManager.stop();
-
         return pdfFile;
     }
 
