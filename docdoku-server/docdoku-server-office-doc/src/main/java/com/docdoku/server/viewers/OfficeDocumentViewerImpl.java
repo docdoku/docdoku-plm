@@ -49,6 +49,7 @@ public class OfficeDocumentViewerImpl implements DocumentViewer {
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(docResource,uuid));
         scopes.put("thisId", UUID.randomUUID().toString());
+        scopes.put("fileName", docResource.getName());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
