@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.meta;
 
 import com.docdoku.core.common.Workspace;
 
@@ -28,22 +28,22 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * A tag is just a label pinned on a document.  
+ * A tag is just a label pinned on an entity.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
 @Table(name="TAG")
-@javax.persistence.IdClass(com.docdoku.core.document.TagKey.class)
+@javax.persistence.IdClass(TagKey.class)
 @javax.persistence.Entity
 public class Tag implements Serializable {
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
 
-    @Column(length=50)
+    @Column(length=255)
     @javax.persistence.Id
     private String label="";
     

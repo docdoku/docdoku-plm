@@ -20,7 +20,7 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.document.TagKey;
+import com.docdoku.core.meta.TagKey;
 
 import java.text.MessageFormat;
 import java.util.Locale;

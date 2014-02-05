@@ -44,6 +44,8 @@ public class ChangeIssue extends ChangeItem {
 
     private Priority priority;
 
+
+
     public ChangeIssue() {
     }
 

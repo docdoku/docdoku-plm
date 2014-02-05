@@ -21,8 +21,10 @@
 
 package com.docdoku.core.change;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A directive to implement an approved <a href="ChangeRequest.html">ChangeRequest</a>.
@@ -35,6 +37,19 @@ import javax.persistence.Table;
 @Entity
 public class ChangeOrder extends ChangeItem {
 
+
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="CHANGEORDER_CHANGEREQUEST",
+            inverseJoinColumns={
+                    @JoinColumn(name="CHANGEREQUEST_ID", referencedColumnName="ID")
+            },
+            joinColumns={
+                    @JoinColumn(name="CHANGEORDER_ID", referencedColumnName="ID")
+            })
+    private Set<ChangeRequest> addressedChangeRequests=new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Milestone milestone;
 
     private Priority priority;
 

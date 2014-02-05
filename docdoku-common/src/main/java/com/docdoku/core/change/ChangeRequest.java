@@ -23,6 +23,8 @@ package com.docdoku.core.change;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class represents a request for a change,
@@ -36,11 +38,18 @@ import java.util.Date;
 public class ChangeRequest extends ChangeItem {
 
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dueDate;
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="CHANGEREQUEST_CHANGEISSUE",
+            inverseJoinColumns={
+                    @JoinColumn(name="CHANGEISSUE_ID", referencedColumnName="ID")
+            },
+            joinColumns={
+                    @JoinColumn(name="CHANGEREQUEST_ID", referencedColumnName="ID")
+            })
+    private Set<ChangeIssue> addressedChangeIssues=new HashSet<>();
 
-    @Lob
-    private String changeProposal;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Milestone milestone;
 
     private Priority priority;
 

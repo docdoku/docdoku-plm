@@ -20,6 +20,7 @@
 
 package com.docdoku.core.security;
 
+import javax.persistence.Column;
 import javax.persistence.Table;
 import java.util.UUID;
 
@@ -34,7 +35,8 @@ import java.util.UUID;
 @Table(name="PASSWORDRECOVERYREQUEST")
 @javax.persistence.Entity
 public class PasswordRecoveryRequest implements java.io.Serializable {
-    
+
+    @Column(length = 255)
     @javax.persistence.Id
     private String uuid="";
     

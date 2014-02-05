@@ -47,6 +47,8 @@ public abstract class Effectivity implements Serializable {
     @Id
     private int id;
     protected String name;
+
+    @Lob
     private String description;
     
     @ManyToOne(optional = true, fetch = FetchType.EAGER)

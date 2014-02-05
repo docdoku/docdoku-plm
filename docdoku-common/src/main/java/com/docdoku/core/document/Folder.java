@@ -20,6 +20,7 @@
 
 package com.docdoku.core.document;
 
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -37,8 +38,8 @@ import java.util.Stack;
 @Table(name="FOLDER")
 @javax.persistence.Entity
 public class Folder implements Serializable, Comparable<Folder> {
-       
-    
+
+    @Column(length=255)
     @javax.persistence.Id
     private String completePath="";
             

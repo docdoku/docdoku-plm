@@ -60,13 +60,13 @@ public class DocumentLink implements Serializable, Cloneable{
     @Column(name = "TARGET_ITERATION", insertable = false, updatable = false)
     private int targetDocumentIteration;
     
-    @Column(name = "TARGET_DOCUMENTMASTER_ID", length=50, insertable = false, updatable = false)
+    @Column(name = "TARGET_DOCUMENTMASTER_ID", length=255, insertable = false, updatable = false)
     private String targetDocumentDocumentMasterId="";
     
-    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=10, insertable = false, updatable = false)
+    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=255, insertable = false, updatable = false)
     private String targetDocumentDocumentRevisionVersion ="";
     
-    @Column(name = "TARGET_WORKSPACE_ID", length=50, insertable = false, updatable = false)
+    @Column(name = "TARGET_WORKSPACE_ID", length=255, insertable = false, updatable = false)
     private String targetDocumentWorkspaceId="";
     
     @Column(name="COMMENTDATA")

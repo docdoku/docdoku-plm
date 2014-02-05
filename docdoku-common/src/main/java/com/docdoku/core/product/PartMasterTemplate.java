@@ -47,11 +47,11 @@ import java.util.Set;
 @Entity
 public class PartMasterTemplate implements Serializable, Comparable<PartMasterTemplate> {
 
-    @Column(length=50)
+    @Column(length=255)
     @Id
     private String id="";
 
-    @Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @Id
     private String workspaceId="";
 

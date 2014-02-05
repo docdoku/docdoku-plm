@@ -46,7 +46,10 @@ public class PartUsageLink implements Serializable, Cloneable {
     private int id;
     private double amount;
     private String unit;
+
+    @Lob
     private String referenceDescription;
+
     @Column(name = "COMMENTDATA")
     private String comment;
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

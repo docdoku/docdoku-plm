@@ -38,7 +38,7 @@ public class InstanceAttributeTemplate implements Serializable {
     @Id
     private int id;
 
-    @Column(length=50)
+    @Column(length=255)
     private String name = "";
 
     private  boolean mandatory;

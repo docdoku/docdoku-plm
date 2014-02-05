@@ -15,7 +15,7 @@
         <class>com.docdoku.core.document.Folder</class>
         <class>com.docdoku.core.document.IterationChangeSubscription</class>
         <class>com.docdoku.core.document.StateChangeSubscription</class>
-        <class>com.docdoku.core.document.Tag</class>
+        <class>com.docdoku.core.meta.Tag</class>
         <class>com.docdoku.core.log.DocumentLog</class>
         <class>com.docdoku.core.log.PartLog</class>
         <class>com.docdoku.core.log.WorkspaceLog</class>
