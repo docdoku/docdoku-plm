@@ -45,7 +45,7 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
 
     @Override
     public ActivityDTO convertTo(Activity activity, ActivityDTO activityDTO) {
-        List<TaskDTO> tasksDTO = new ArrayList<TaskDTO>();
+        List<TaskDTO> tasksDTO = new ArrayList<>();
 
         for(int i=0; i<activity.getTasks().size(); i++){
             tasksDTO.add(mapper.map(activity.getTasks().get(i), TaskDTO.class));
@@ -68,12 +68,12 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
             throw new IllegalArgumentException("Activity type not supported");
         }
 
-        return new ActivityDTO(activity.getStep(), tasksDTO, activity.getLifeCycleState(), type, tasksToComplete, activity.isComplete(), activity.isStopped(), relaunchStep);
+        return new ActivityDTO(activity.getStep(), tasksDTO, activity.getLifeCycleState(), type, tasksToComplete, activity.isComplete(), activity.isStopped(), activity.isInProgress(), relaunchStep);
     }
 
     @Override
     public Activity convertFrom(ActivityDTO activityDTO, Activity activity) {
-        List<Task> tasks = new ArrayList<Task>();
+        List<Task> tasks = new ArrayList<>();
         for(int i=0; i<activityDTO.getTasks().size(); i++){
             tasks.add(mapper.map(activityDTO.getTasks().get(i), Task.class));
         }

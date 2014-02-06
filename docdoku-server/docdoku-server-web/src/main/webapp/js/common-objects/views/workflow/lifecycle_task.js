@@ -31,6 +31,7 @@ define([
                     i18n._DATE_FORMAT,
                     this.task.closureDate
                 );
+                this.task.ClosureStatus = (this.task.status.toLowerCase() == "approved") ? i18n.TASK_APPROVED_ON : i18n.TASK_REJECT_ON;
             }
 
             this.task.isAcceptableOrRejectable = (

@@ -159,6 +159,8 @@ public abstract class Activity implements Serializable, Cloneable {
 
     public abstract boolean isStopped();
 
+    public abstract boolean isInProgress();
+
     public abstract void relaunch();
 
     @Override

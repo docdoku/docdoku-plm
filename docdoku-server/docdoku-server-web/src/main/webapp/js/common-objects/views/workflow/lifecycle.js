@@ -82,8 +82,9 @@ define([
             this.$lifecycleActivities = this.$("#lifecycle-activities");
         },
 
-        history:function(){
+        history:function(e){
             this.$historyContent.toggleClass("hide");
+            this.currentWorkflow(e);
         },
 
         currentWorkflow:function(e){

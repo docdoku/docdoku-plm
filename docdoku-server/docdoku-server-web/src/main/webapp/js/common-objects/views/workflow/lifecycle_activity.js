@@ -32,7 +32,12 @@ define([
 
             this.$el.html(Mustache.render(template, {i18n: i18n, activity:this.activity}));
 
-            var completeClass = this.activity.complete ? "complete" : "incomplete";
+            var completeClass = "incomplete";// = this.activity.complete ? "complete" : "incomplete";
+
+            if(this.activity.complete){ completeClass ="complete";}
+            if(this.activity.stopped){ completeClass ="rejected";}
+            if(this.activity.inProgress){ completeClass ="in_progress";}
+            console.log(this.activity);
 
             this.$el.addClass(this.activity.type.toLowerCase()).addClass(completeClass);
 
@@ -43,6 +48,10 @@ define([
                 task.parentWorkflowId = that.activity.parentWorkflowId;
                 task.parentActivityStep = that.activity.step;
                 task.index = index;
+
+                if((that.activity.stopped || that.activity.complete) && task.status.toLowerCase()=="in_progress"){
+                    task.status="NOT_STARTED";                                                                          // Disable task if activity is close
+                }
 
                 var lifecycleTaskView = new LifecycleTaskView().setTask(task).setEntityType(that.entityType).render();
 

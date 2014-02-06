@@ -110,6 +110,18 @@ public class ParallelActivity extends Activity {
     }
 
     @Override
+    public boolean isInProgress() {
+        if (!isComplete() && !isStopped()) {
+            for (Task task : tasks) {
+                if(task.isInProgress()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void relaunch(){
         for(Task t : tasks){
             t.start();

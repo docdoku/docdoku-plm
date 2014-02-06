@@ -28,7 +28,15 @@
         background: white;
 
         &.complete {
-          border: 2px solid #5bb75b;
+          border: 3px solid #5bb75b;
+        }
+
+        &.in_progress{
+          border: 3px dashed royalblue;
+        }
+
+        &.rejected{
+          border: 3px solid #ee5f5b;
         }
 
         &.incomplete {
@@ -44,14 +52,17 @@
             padding: 9px 19px;
 
             &.not_started {
-              border: 1px dashed #aaaaaa;
+              border: 1px dotted #aaaaaa;
             }
+
             &.in_progress {
               border: 2px dashed royalblue;
             }
+
             &.approved {
               border: 2px solid #5bb75b;
             }
+
             &.rejected {
               border: 2px solid #ee5f5b;
             }
@@ -127,7 +138,7 @@
         &.serial {
           .tasks {
             .task {
-              float: left;
+              //float: left;
             }
           }
         }
@@ -141,6 +152,42 @@
 
       }
 
+    }
+
+    .lifecycle-legend{
+      padding: 10px 0px;
+
+      span{
+        margin-right: 10px;
+
+        &:before{
+          content: "";
+          display: inline-block;
+          width: 5px;
+          height: 5px;
+          margin: 0px 2px;
+          border: 2px solid #000;
+          -webkit-border-radius: 50%;
+          -moz-border-radius: 50%;
+          border-radius: 50%;
+        }
+
+        &.lifecycle-legend-incomplete:before{
+          background: #aaaaaa;
+        }
+
+        &.lifecycle-legend-complete:before{
+          background: #5bb75b;
+        }
+
+        &.lifecycle-legend-in-progress:before{
+          background: royalblue;
+        }
+
+        &.lifecycle-legend-rejected:before{
+          background: #ee5f5b;;
+        }
+      }
     }
   }
 }
