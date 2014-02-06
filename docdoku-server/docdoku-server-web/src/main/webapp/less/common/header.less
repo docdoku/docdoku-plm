@@ -44,5 +44,65 @@ body > form {
       margin: 5px;
     }
 
+    ul.breadcrumb-menu{
+      > li{
+        padding: 3px 0px;
+
+        > a{
+          padding: 7px 14px 7px !important;
+          background-color: #334d7c;
+          border: 1px solid #213251;
+          border-right: 0px;
+          border-left: 0px;
+
+          &:hover{
+            background-color: #213251;
+
+            &:after{
+              border-left: 8px solid #213251;
+            }
+          }
+
+          &:before, &:after{
+            content: "";
+            position: absolute;
+            top: 13px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+          }
+
+          &:before{
+            left: -2px;
+            border-left: 8px solid #d4f2ff;
+          }
+
+          &:after{
+            right: -3px;
+            z-index: 1;
+            border-left: 8px solid #334d7c;
+          }
+
+        }
+
+        &:first-child{
+          > a{
+            border-left: 1px;
+            border-radius: 10px 0px 0px 10px;
+          }
+        }
+
+        &:last-child{
+          > a{
+            border-right: 1px;
+            border-radius: 0px 10px 10px 0px;
+          }
+        }
+
+        &:first-child > a:before , &:last-child > a:after{
+          display: none;
+        }
+      }
+    }
+
   }
 }

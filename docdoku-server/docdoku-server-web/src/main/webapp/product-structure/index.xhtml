@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:em="http://java.sun.com/jsf/composite/default"
         >
 <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
     <ui:define name="title">
@@ -78,6 +79,9 @@
 
             });
         </script>
+    </ui:define>
+    <ui:define name="header">
+        <em:header moduleName="product-structure" moduleIcon="icon-briefcase" moduleTranslate="#{i18nTemplate['toplinks.product']}"/>
     </ui:define>
     <ui:define name="content"></ui:define>
 </ui:composition>

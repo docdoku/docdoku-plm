@@ -3,7 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:em="http://java.sun.com/jsf/composite/default"
       xmlns:f="http://java.sun.com/jsf/core"
         >
     <f:loadBundle var="i18nTemplate" basename="com.docdoku.server.localization.header_footer_resource"/>
@@ -44,7 +43,7 @@
     </h:head>
 
     <h:body>
-        <em:header />
+        <ui:insert name="header" />
 
         <div id="content">
             <ui:insert name="content"/>

@@ -3,10 +3,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:composite="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+        >
 <body>
 <composite:interface>
     <composite:attribute name="formStyle" required="false"/>
+    <composite:attribute name="moduleName" required="true"/>
+    <composite:attribute name="moduleIcon" required="true"/>
+    <composite:attribute name="moduleTranslate" required="true"/>
 </composite:interface>
 
 <composite:implementation>
@@ -63,18 +67,27 @@
                                     </c:when>
                                     <c:otherwise>
 
-                                        <ul class="nav" id="header_left_menu">
+                                        <ul class="nav breadcrumb-menu" id="header_left_menu">
 
                                             <!-- current workspace & workspaces dropdown menu-->
                                             <li class="dropdown" id="workspace_container">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                                     <i class="icon-home"></i>
-                                                    #{i18nTemplate['toplinks.workspace']}
-                                                    <span class="caret"></span>
+                                                    #{i18nTemplate['toplinks.workspace']} :
+                                                    ${workspaceID}
+                                                    <span class="caret hidden-desktop"></span>
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <c:forEach var="item" items="${administeredWorkspaces}">
-                                                        <li class="dropdown-submenu">
+                                                        <li class="visible-desktop">
+                                                            <a href="#{request.contextPath}/document-management/${item.value.id}#folders">
+                                                                <c:if test="${workspaceID==item.value.id}">
+                                                                    <i class="icon-ok"></i>
+                                                                </c:if>
+                                                                ${item.value.id}
+                                                            </a>
+                                                        </li>
+                                                        <li class="dropdown-submenu hidden-desktop">
                                                             <a href="#">
                                                                 <c:if test="${workspaceID==item.value.id}">
                                                                     <i class="icon-ok"></i>
@@ -84,45 +97,72 @@
                                                             <ul class="dropdown-menu">
                                                                 <li><a href="#{request.contextPath}/document-management/${item.value.id}#folders">#{i18nTemplate['sublinks.documents']}</a></li>
                                                                 <li><a href="#{request.contextPath}/product-management/${item.value.id}#products">#{i18nTemplate['sublinks.products']}</a></li>
+                                                                <!--li><a href="#{request.contextPath}/workflow-management/${item.value.id}#products">#{i18nTemplate['sublinks.products']}</a></li>
+                                                                <li><a href="#{request.contextPath}/search/${item.value.id}#products">#{i18nTemplate['sublinks.products']}</a></li-->
                                                             </ul>
                                                         </li>
                                                     </c:forEach>
                                                     <c:forEach var="item" items="${regularWorkspaces}">
-                                                        <li class="dropdown-submenu">
+                                                        <li class="visible-desktop">
+                                                            <a href="#{request.contextPath}/document-management/${item.id}#folders">
+                                                                <c:if test="${workspaceID==item.id}">
+                                                                    <i class="icon-ok"></i>
+                                                                </c:if>
+                                                                ${item.id}
+                                                            </a>
+                                                        </li>
+                                                        <li class="dropdown-submenu hidden-desktop">
                                                             <a href="#">
                                                                 <c:if test="${workspaceID==item.id}">
                                                                     <i class="icon-ok"></i>
                                                                 </c:if>
                                                                 ${item.id}
                                                             </a>
-                                                            <ul class="dropdown-menu">
+                                                            <ul class="dropdown-submenu">
                                                                 <li><a href="#{request.contextPath}/document-management/${item.id}#folders">#{i18nTemplate['sublinks.documents']}</a></li>
                                                                 <li><a href="#{request.contextPath}/product-management/${item.id}#products">#{i18nTemplate['sublinks.products']}</a></li>
+                                                                <!--li><a href="#{request.contextPath}/workflow-management/${item.id}">#{i18nTemplate['sublinks.workflows']}</a></li>
+                                                                <li><a href="#{request.contextPath}/search/${item.id}">#{i18nTemplate['sublinks.search']}</a></li-->
                                                             </ul>
                                                         </li>
                                                     </c:forEach>
                                                 </ul>
                                             </li>
 
-                                            <!-- my products link-->
-
-                                            <li id="products_link">
-                                                <a href="#{request.contextPath}/product-management/${workspaceID}">
-                                                    <i class="icon-briefcase"></i>
-                                                    #{i18nTemplate['toplinks.product']}
+                                            <!-- current position-->
+                                            <li class="dropdown visible-desktop">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="#{cc.attrs.moduleIcon}"></i>
+                                                    #{cc.attrs.moduleTranslate}
+                                                    <span class="caret hidden-desktop"></span>
                                                 </a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#{request.contextPath}/document-management/${workspaceID}#folders">
+                                                        <c:if test="#{cc.attrs.moduleName == 'document-manager'}">
+                                                            <i class="icon-ok"></i>
+                                                        </c:if>
+                                                        #{i18nTemplate['sublinks.documents']}
+                                                    </a></li>
+                                                    <li><a href="#{request.contextPath}/product-management/${workspaceID}#products">
+                                                        <c:if test="#{cc.attrs.moduleName =='product-manager' or cc.attrs.moduleName =='product-structure'}">
+                                                            <i class="icon-ok"></i>
+                                                        </c:if>
+                                                        #{i18nTemplate['sublinks.products']}
+                                                    </a></li>
+                                                    <!--li><a href="#{request.contextPath}/workflow-management/${workspaceID}">
+                                                        <c:if test="#{cc.attrs.moduleName =='workflow-manager'}">
+                                                            <i class="icon-ok"></i>
+                                                        </c:if>
+                                                        #{i18nTemplate['sublinks.workflows']}
+                                                    </a></li-->
+                                                    <!--li><a href="#{request.contextPath}/search/${workspaceID}">
+                                                        <c:if test="#{cc.attrs.moduleName =='search'}">
+                                                            <i class="icon-ok"></i>
+                                                        </c:if>
+                                                        #{i18nTemplate['sublinks.search']}
+                                                    </a></li-->
+                                                </ul>
                                             </li>
-
-                                            <!-- my documents link-->
-
-                                            <li id="documents_link">
-                                                <a href="#{request.contextPath}/document-management/${workspaceID}">
-                                                    <i class="icon-file"></i>
-                                                    #{i18nTemplate['toplinks.document']}
-                                                </a>
-                                            </li>
-
-
                                         </ul>
 
 

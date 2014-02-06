@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:em="http://java.sun.com/jsf/composite/default"
         >
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
         <ui:define name="styles">
@@ -49,6 +50,9 @@
                     ]);
                 });
             </script>
+        </ui:define>
+        <ui:define name="header">
+            <em:header moduleName="document-manager" moduleIcon="icon-file" moduleTranslate="#{i18nTemplate['toplinks.document']}"/>
         </ui:define>
         <ui:define name="content">
             <div id="workspace"></div>
