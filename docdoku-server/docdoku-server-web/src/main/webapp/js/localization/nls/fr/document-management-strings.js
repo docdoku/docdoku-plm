@@ -126,6 +126,8 @@ define({
     "CONTENT":                      "Contenu",
     "CONTENT_HELP":                 "Contenu du document",
     "COMMENT":                      "Commentaire",
+    "SERIAL_ACTIVITY":              "En série",
+    "PARALLEL_ACTIVITY":            "En parallèle, nécessite",
     "TASK_CLOSED_ON":               "Tâche fermée le",
     "TASK_APPROVED_ON":             "Tâche effectuée le",
     "TASK_REJECT_ON":               "Tâche rejetée le",

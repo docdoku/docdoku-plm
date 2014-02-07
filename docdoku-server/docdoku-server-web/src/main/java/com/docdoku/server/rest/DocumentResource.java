@@ -456,6 +456,8 @@ public class DocumentResource {
                 abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
             }
 
+            Collections.sort(abortedWorkflowsDTO);
+
             return abortedWorkflowsDTO;
 
         } catch (ApplicationException ex) {

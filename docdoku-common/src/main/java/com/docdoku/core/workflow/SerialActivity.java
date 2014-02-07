@@ -82,18 +82,6 @@ public class SerialActivity extends Activity {
     }
 
     @Override
-    public boolean isInProgress() {
-        if (!isComplete() && !isStopped()) {
-            for (Task task : tasks) {
-                if(task.isInProgress()){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public void relaunch(){
         tasks.get(0).start();
     }

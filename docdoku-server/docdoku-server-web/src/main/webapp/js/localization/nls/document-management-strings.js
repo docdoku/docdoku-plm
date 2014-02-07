@@ -127,6 +127,8 @@ define({
         "CONTENT":                      "Content",
         "CONTENT_HELP":                 "Document content",
         "COMMENT":                      "Comment",
+        SERIAL_ACTIVITY:                "In serial",
+        PARALLEL_ACTIVITY:              "In parallel, require ",
         "TASK_CLOSED_ON":               "Task closed on",
         "TASK_APPROVED_ON":             "Task done on",
         "TASK_REJECT_ON":               "Task reject on",

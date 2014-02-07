@@ -10,12 +10,12 @@
         </ul>
     </div>
 {{/abortedWorkflows.length}}
+<div class="lifecycle-legend">
+    <span class="lifecycle-legend-incomplete">{{i18n.WORKFLOW_LEGEND_INCOMPLETE}}</span>
+    <span class="lifecycle-legend-complete">{{i18n.WORKFLOW_LEGEND_COMPLETE}}</span>
+    <span class="lifecycle-legend-rejected">{{i18n.WORKFLOW_LEGEND_REJECTED}}</span>
+    <span class="lifecycle-legend-in-progress">{{i18n.WORKFLOW_LEGEND_INPROGRESS}}</span>
+</div>
 <div id="lifecycle-activities-wrapper">
-    <div class="lifecycle-legend">
-        <span class="lifecycle-legend-incomplete">{{i18n.WORKFLOW_LEGEND_INCOMPLETE}}</span>
-        <span class="lifecycle-legend-complete">{{i18n.WORKFLOW_LEGEND_COMPLETE}}</span>
-        <span class="lifecycle-legend-rejected">{{i18n.WORKFLOW_LEGEND_REJECTED}}</span>
-        <span class="lifecycle-legend-in-progress">{{i18n.WORKFLOW_LEGEND_INPROGRESS}}</span>
-    </div>
     <div id="lifecycle-activities"></div>
 </div>

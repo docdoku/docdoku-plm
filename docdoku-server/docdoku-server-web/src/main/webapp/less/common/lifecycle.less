@@ -1,6 +1,11 @@
 #tab-iteration-lifecycle {
 
   .history-content{
+
+    max-height: 68px;
+    overflow-y: scroll;
+    border: solid 1px lightblue;
+
     a:not(.active){
       color:#333;
     }
@@ -8,9 +13,9 @@
 
   #lifecycle-activities-wrapper {
 
-    //width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     //height: 340px;
-    //overflow: auto;
 
     #lifecycle-activities {
 
@@ -153,40 +158,40 @@
       }
 
     }
+  }
 
-    .lifecycle-legend{
-      padding: 10px 0px;
+  .lifecycle-legend{
+    padding: 10px 0px;
 
-      span{
-        margin-right: 10px;
+    span{
+      margin-right: 10px;
 
-        &:before{
-          content: "";
-          display: inline-block;
-          width: 5px;
-          height: 5px;
-          margin: 0px 2px;
-          border: 2px solid #000;
-          -webkit-border-radius: 50%;
-          -moz-border-radius: 50%;
-          border-radius: 50%;
-        }
+      &:before{
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        margin: 0px 2px;
+        border: 2px solid #000;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+      }
 
-        &.lifecycle-legend-incomplete:before{
-          background: #aaaaaa;
-        }
+      &.lifecycle-legend-incomplete:before{
+        background: #aaaaaa;
+      }
 
-        &.lifecycle-legend-complete:before{
-          background: #5bb75b;
-        }
+      &.lifecycle-legend-complete:before{
+        background: #5bb75b;
+      }
 
-        &.lifecycle-legend-in-progress:before{
-          background: royalblue;
-        }
+      &.lifecycle-legend-in-progress:before{
+        background: royalblue;
+      }
 
-        &.lifecycle-legend-rejected:before{
-          background: #ee5f5b;;
-        }
+      &.lifecycle-legend-rejected:before{
+        background: #ee5f5b;;
       }
     }
   }

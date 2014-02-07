@@ -30,14 +30,22 @@ define([
 
             var that = this ;
 
-            this.$el.html(Mustache.render(template, {i18n: i18n, activity:this.activity}));
+            switch(this.activity.type){
+                case "SERIAL":
+                    this.activityType = i18n.SERIAL_ACTIVITY;
+                    break;
+                case "PARALLEL":
+                    this.activityType = i18n.PARALLEL_ACTIVITY+" "+this.activity.tasksToComplete;
+                    break;
+            }
+
+            this.$el.html(Mustache.render(template, {i18n: i18n, activity:this.activity, activityType:this.activityType}));
 
             var completeClass = "incomplete";// = this.activity.complete ? "complete" : "incomplete";
 
             if(this.activity.complete){ completeClass ="complete";}
             if(this.activity.stopped){ completeClass ="rejected";}
             if(this.activity.inProgress){ completeClass ="in_progress";}
-            console.log(this.activity);
 
             this.$el.addClass(this.activity.type.toLowerCase()).addClass(completeClass);
 
